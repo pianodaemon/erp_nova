@@ -1,4 +1,4 @@
-#forma-buscacontratipo-overlay {
+#forma-requisicionop-overlay {
 	position: fixed;
 	z-index:100;
 	top: 0px;
@@ -9,7 +9,7 @@
 	display: none;
 }
 
-#forma-buscacontratipo-window {
+#forma-requisicionop-window {
 	position: fixed;
 	z-index: 102;
 	/*display:block;*/
@@ -30,7 +30,7 @@
 }
 */
 
-.div_dos_buscacontratipo{
+.div_dos_requisicionop{
 	border-radius:10px;
 	background-color:#e9e9e9;
     border:3px solid #454442;
@@ -38,7 +38,7 @@
 	box-shadow:3px 5px 10px -3px;
 }
 
-.titulo_buscacontratipo{
+.titulo_requisicionop{
 	/*font-family:tahoma;*/
 	font-size:15px;
     background-color:#454442;
