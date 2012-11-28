@@ -9,7 +9,8 @@
         <link rel="stylesheet" href="../../css/components/jquery-ui/jquery-ui-1.8.21.custom.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaProOrdenProduccion.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaBuscaproducto.css" type="text/css" />
-        <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaBuscacontratipo.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaRequisicionOP.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaEquivalentes.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaEspecificaciones.css" type="text/css" />
         
         
@@ -22,7 +23,8 @@
         <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxProOrdenProduccion.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxBuscaproducto.js"></script>
-        <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxBuscacontratipo.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxRequisicionOP.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxEquivalentes.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxEspecificaciones.js"></script>
         <script type="text/javascript" src="../../js/implements/proordenproduccion/index.js" ></script>
 	
@@ -55,6 +57,8 @@
                                     <td width="10">&nbsp;</td>
                                     <td>Tipo de Orden</td>
                                     <td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td>Codigo Producto</td>
+                                    <td width="20">&nbsp;</td>
                                     
                                     <td width="25">&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                     <td></td>
@@ -72,6 +76,8 @@
                                         </select>
                                     </td>
                                     <td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                    <td><INPUT TYPE="text" name="sku_producto_busqueda" style="width:100px;"></td>
+                                    <td width="20">&nbsp;</td>
                                     
                                     <td width="25">&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                     <td><INPUT TYPE="button" value="Buscar"></td>
@@ -743,116 +749,123 @@
 
 
 
-<!-- Para mostrar los contratipos-->
-<div class="buscador_buscacontratipo" style="display:none;">
-    <table width="100%" border="0" class="formaBusqueda_buscacontratipo">
+<!-- Para mostrar la requisicion y los contratipos-->
+<div class="buscador_requisicionop" style="display:none;">
+    <table width="100%" border="0" class="formaBusqueda_requisicionop">
         <tr>
             <td>
-                <div class="div_dos_buscacontratipo">
+                <div class="div_dos_requisicionop">
                     <table width="100%" border="0">
                         <thead>
                             <tr>
-                                <td colspan="8" height="50" valign="top"><div class="titulo_buscacontratipo" width="100%"><strong>Equivalentes</strong></div></td>
+                                <td colspan="9" height="50" valign="top">
+                                    <!--
+                                    <div class="titulo_requisicionop" width="100%"><strong>Requisici&oacute;n</strong>
+                                        <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
+                                    </div>
+                                    -->
+                                    
+                                    <div class="titulo_requisicionop" width="100%" >
+                                        <div class="columns on-2">
+                                            <div class="fixed column" style="width:785px; padding-left:6px;"><strong>Requisici&oacute;n</strong></div>
+                                            <div class="fixed column" style="width:20px; height:25px;">
+                                                <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </td>
                             </tr>
                         </thead>
                         
                         <tbody>
-                            <!--
-                            <tr>
-                                <td width="10"></td>
-                                <td width="10" style="background:#ffffff;"></td>
-                                <td colspan="4" style="background:#ffffff;" width="600">
-                                    
-                                    <table id="tabla_busqueda" border="0"  class="contenidobusqueda">
-                                        <tr>
-                                            <td colspan="7" width="600" height="10"></td>
-                                        </tr>
-                                        <tr>
-                                            <td width="70">C&oacute;digo&nbsp;</td>
-                                            <td width="120"><INPUT TYPE="text" name="campo_sku" style="width:120px;"></td>
-                                            <td width="25"></td>
-                                            <td width="90">Tipo&nbsp;de&nbsp;Producto</td>
-                                            <td width="200">
-                                                <SELECT NAME="tipo_producto" style="width:180px;">
-                                                        <OPTION value="0" selected="yes">[--Seleccionar Tipo--]</OPTION>
-                                                </SELECT>
-                                            </td>
-                                            <td width="25"></td>
-                                            <td width="90"></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="7" width="600" height="10"></td>
-                                        </tr>
-                                        <tr>
-                                            <td width="70">Descripci&oacute;n</td>
-                                            <td width="400" colspan="4"><INPUT TYPE="text" name="campo_descripcion" style="width:415px;"></td>
-                                            <td width="25"></td>
-                                            <td width="90" align="right">
-                                                <INPUT TYPE="button" id="busca_producto_modalbox" class="onmouseOutBuscar">
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                </td>
-                                <td width="10" style="background:#ffffff"></td>
-                                <td width="10"></td>
-                            </tr>
-                            -->
-                            
                             <tr style="font-size:13px;">
-                                <td width="10"></td>
-                                <td width="10" style="background:#ffffff"></td>
-
-                                <td width="120" style="background:#A8A9AB;">C&oacute;digo&nbsp;</td>
-                                <td width="280" style="background:#A8A9AB;">Nombre</td>
-                                <td width="90" style="background:#A8A9AB;">Unidad</td>
-                                <td width="110" style="background:#A8A9AB;">Tipo</td>
-
-                                <td width="10" style="background:#ffffff"></td>
-                                <td width="10"></td>
+                                <td width="10px"></td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td width="100px" style="background:#A8A9AB;">#</td>
+                                <td width="100px" style="background:#A8A9AB;">C&oacute;digo&nbsp;</td>
+                                <td width="300px" style="background:#A8A9AB;">Nombre</td>
+                                <td width="100px" style="background:#A8A9AB;">Cantidad</td>
+                                <td width="100px" style="background:#A8A9AB;">Existencia</td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td width="10px"></td>
                             </tr>
-                            
                             <tr>
-                                <td width="10"></td>
-                                <td width="10" style="background:#ffffff"></td>
-                                <td style="background:#ffffff; border: solid 1px #313E74;" colspan="4" width="600">
-                                    <div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
-                                        <table  border="0" id="tabla_resultado" width="580" style="font-size:12px;">
+                                <td width="10px"></td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td style="background:#ffffff; border: solid 1px #313E74;" colspan="5" width="800px">
+                                    <div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:800px; height:200px; align=top;">
+                                        <table  border="0" id="tabla_resultado" width="785px" style="font-size:12px;">
                                             <!--aqui van los resultados de la busqueda-->
-                                            <!--
-                                                <tr>
-                                                    <td width="70">Lote</td>
-                                                    <td width="140">Sku</td>
-                                                    <td width="300">Nombre</td>
-                                                    <td width="70">Disponible</td>
-                                                </tr>
-                                            -->
+                                            
                                         </table>
                                     </div>
                                 </td>
-                                <td width="10" style="background:#ffffff"></td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td width="10px"></td>
+                            </tr>
+                            <tr>
+                                <td width="10"></td>
+                                <td width="10" colspan="7" height="4" style="background:#ffffff">
+                                    
+                                    
+                                    <!-- Codigo html para las alertas de la requisicion-->
+                                        <div id="div_warning_grid" style="display:none;">
+                                            <table border ="0">
+                                                <tr>
+                                                    <td width="10"></td>
+                                                    <td width="750" colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
+                                                    <td width="10"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5"></td>
+                                                    <td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
+                                                    <!--<td width="120" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo&nbsp;producto</td>-->
+                                                    <!--<td width="200" style="background-color:#A8A9AB; font-weight: bold;">Nombre</td>-->
+                                                    <td width="675" colspan="2" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+                                                    <td width="10"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="10"></td>
+                                                    <td colspan="4">
+                                                        <div align="left" style="width:732px; height:58px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+                                                            <table id="grid_warning" border="0" style="width:725px;"">
+                                                                <!-- Aqui se muestran los warning
+                                                                style="background-color:#e7e8ea;"
+                                                                -->
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                    <td width="10"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <!-- termina html para las alertas de la requisicion-->
+                                        
+                                    
+                                </td>
                                 <td width="10"></td>
                             </tr>
                             <tr>
                                 <td width="10"></td>
-                                <td width="10" colspan="6" height="4" style="background:#ffffff"></td>
-                                <td width="10"></td>
-                            </tr>
-                            <tr>
-                                <td width="10"></td>
                                 <td width="10" style="background:#ffffff"></td>
+                                <td width="120" style="background:#ffffff"></td>
                                 <td width="120"  style="background:#ffffff"></td>
                                 <td width="280" style="background:#ffffff"></td>
-                                <td width="90" style="background:#ffffff"></td>
-                                <td width="110" style="background:#ffffff" align="right">
-                                        <INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+                                <td width="80" style="background:#ffffff"  align="right">
+                                    <!--type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"-->
+                                    <!--<INPUT TYPE="button" id="" class="onmouseOutCancelar">-->
+                                </td>
+                                <td width="130" style="background:#ffffff" align="right">
+                                    <INPUT TYPE="button" id="enviar_requisicion" name="confirmar_requisicion" value="Enviar A Produccion" style="height:20px;" class="confirmar">
+                                    <!--<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">-->
                                 </td>
                                 <td width="10" style="background:#ffffff"></td>
                                 <td width="10"></td>
                             </tr>
                             <tr>
                                 <td width="10"></td>
-                                <td width="10" colspan="6" height="6" style="background:#ffffff"></td>
+                                <td width="10" colspan="7" height="6" style="background:#ffffff"></td>
                                 <td width="10"></td>
                             </tr>
                         </tbody>
@@ -867,115 +880,76 @@
 
 
 
-
-
-
-
-
-
-<!--De aqui en adelante por el momento no se usa-->
-
-<div class="panel_procedimiento" style="display:none;">	
-	<table width="100%" border="0" class="formapanel_procedimiento">
-		<tr>
-			<td>
-				<div class="procedidmiento_div_two">
-					<table width="810px" border="0">
-						<thead>
-							<tr>
-								<td colspan="7" height="50" valign="top"><div class="titulo_procedidmiento" width="800px"><strong>Procedidmiento</strong></div></td>
-							</tr>
-						</thead>
-						
-						<tbody>
-                                                    <tr>
-                                                        <td width="10"></td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td colspan="3" style="background:#ffffff;" width="700">
-                                                            <table id="tabla_busqueda" border="0"  class="contenidobusqueda">
-                                                                <tr>
-                                                                    <td colspan="9" width="500" height="10"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="70">Titulo</td>
-                                                                    <td width="350" colspan="3"><INPUT TYPE="text" name="paso_titulo" style="width:500px;"></td>
-                                                                    <td width="25"></td>
-                                                                    <td width="120"><a href="agregar_paso">(Agregar Paso)</a></td>
-                                                                    <td width="10"></td>
-                                                                    <td width="120"><a href="buscar_procedidmiento">(Buscar)</a></td>
-                                                                    <td width="10"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="9" width="500" height="10"></td>
-                                                                </tr>
-                                                            </table>
-                                                        </td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td width="10"></td>
-                                                    </tr>
-                                                    <tr >
-                                                        <td width="10"></td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td style="background:#A8A9AB;border: solid 1px #313E74;font-size:13px;" colspan="3" width="700" >
-                                                            <table  border="0" width="750" >
-                                                                <tr>
-                                                                    <td width="100">#</td>
-                                                                    <td width="80">Numero</td>
-                                                                    <td width="590">Titulo</td>
-                                                                </tr>
-                                                            </table>
-                                                        </td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td width="10"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="10"></td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td style="background:#ffffff; border: solid 1px #313E74;" colspan="3" width="700">
-                                                            <div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:750px; height:120px; align=top;">
-                                                                <table  border="0" id="tabla_resultado" width="750" style="font-size:12px;">
-                                                                    <!--aqui van los resultados de los paso agregados-->
-                                                                    
-                                                                </table>
-                                                            </div>
-                                                        </td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td width="10"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="10"></td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td width="10" colspan="3" height="4" style="background:#ffffff"></td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td width="10"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="10"></td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td width="560"  style="background:#ffffff"></td>
-                                                        <td width="70" style="background:#ffffff">
-                                                            <INPUT TYPE="button" id="acepta_procedidmiento" class="button_procedidmiento">
-                                                        </td>
-                                                        <td width="70" style="background:#ffffff" align="right">
-                                                            <INPUT TYPE="button" id="cencela_procedidmiento" class="onmouseOutCancelar">
-                                                        </td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td width="10"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="10"></td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td width="10" colspan="3" height="6" style="background:#ffffff"></td>
-                                                        <td width="10" style="background:#ffffff;"></td>
-                                                        <td width="10"></td>
-                                                    </tr>
-						</tbody>
-						
-					</table>
-				</div>
-			</td>
-		</tr>
-	</table>
+<!-- Para mostrar los equivalentes de los productos-->
+<div class="buscador_equivalentes" style="display:none;">
+    <table width="100%" border="0" class="formaBusqueda_equivalentes">
+        <tr>
+            <td>
+                <div class="div_dos_equivalentes">
+                    <table width="100%" border="0">
+                        <thead>
+                            <tr>
+                                <td colspan="7" height="50" valign="top">
+                                    <div class="titulo_equivalentes" width="100%"><strong>Equivalente</strong>
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                            <tr style="font-size:13px;">
+                                <td width="10px"></td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td width="100px" style="background:#A8A9AB;">C&oacute;digo&nbsp;</td>
+                                <td width="300px" style="background:#A8A9AB;">Nombre</td>
+                                <td width="100px" style="background:#A8A9AB;">Existencia</td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td width="10px"></td>
+                            </tr>
+                            
+                            <tr>
+                                <td width="10px"></td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td style="background:#ffffff; border: solid 1px #313E74;" colspan="3" width="500px">
+                                    <div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:500px; height:150px; align=top;">
+                                        <table  border="0" id="tabla_resultado" width="485px" style="font-size:12px;">
+                                            <!--aqui van los resultados de la busqueda-->
+                                            
+                                        </table>
+                                    </div>
+                                </td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td width="10px"></td>
+                            </tr>
+                            
+                            <tr>
+                                <td width="10"></td>
+                                <td width="10" colspan="5" height="4" style="background:#ffffff"></td>
+                                <td width="10"></td>
+                            </tr>
+                            <tr>
+                                <td width="10"></td>
+                                <td width="10"  style="background:#ffffff"></td>
+                                <td width="100" style="background:#ffffff"></td>
+                                <td width="300" style="background:#ffffff"></td>
+                                <td width="100" style="background:#ffffff" align="right">
+                                    <INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+                                </td>
+                                <td width="10" style="background:#ffffff"></td>
+                                <td width="10"></td>
+                            </tr>
+                            <tr>
+                                <td width="10"></td>
+                                <td width="10" colspan="5" height="6" style="background:#ffffff"></td>
+                                <td width="10"></td>
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 
 
