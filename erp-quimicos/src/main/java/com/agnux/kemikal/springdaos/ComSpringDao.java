@@ -1403,7 +1403,54 @@ public class ComSpringDao  implements ComInterfaceDao {
      
     //fin de metodos requisiciona aorden de compra
 
-    
+     //Estadistico de Compras
+    //************************************************************************************++
+    @Override
+    public ArrayList<HashMap<String, String>> getEstadisticoCompras(Integer tipo_reporte, String proveedor, String producto, String fecha_inicial, String fecha_final, Integer id_empresa) {
+         String sql_to_query = "select * from repestadisticocompras("+tipo_reporte+",'"+proveedor+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+") as foo( "
+                                + " folio character varying, "        
+                                + " razon_social character varying, "
+                                + " codigo character varying, "
+                                + " producto character varying, "
+                                + " factura character varying , "
+                                + " unidad character varying , "
+                                + " cantidad double precision, "
+                                + " precio_unitario double precision, "
+                                + " moneda text, "
+                                + " tipo_cambio double precision, " 
+                                + " total_pesos double precision,  fecha_factura text); ";
+
+                       System.out.println("sql_to_query:"+ sql_to_query);
+          
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_to_query, 
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                   
+                    row.put("folio",rs.getString("folio"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("producto",rs.getString("producto"));
+                    row.put("factura",rs.getString("factura"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("cantidad",rs.getString("cantidad"));
+                    row.put("precio_unitario",rs.getString("precio_unitario"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("tipo_cambio",rs.getString("tipo_cambio"));
+                    row.put("total_pesos",rs.getString("total_pesos"));
+                    row.put("fecha_factura",rs.getString("fecha_factura"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+     // TERMINA EL REPORTE DE ESTADISTICO DE COMPRAS
+    //************************************************************************************************************+++++
+
     
     
 }
