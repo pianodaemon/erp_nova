@@ -64,4 +64,7 @@ public interface ComInterfaceDao {
     public ArrayList<HashMap<String, String>> getCom_oc_req_Datos(Integer id_requisicion);
     public ArrayList<HashMap<String, String>> getCom_oc_req_DatosGrid(Integer id_requisicion);
     
+    //Metodos para el reporte de estadistico de compras
+    public ArrayList<HashMap<String, String>> getEstadisticoCompras(Integer tipo_reporte, String proveedor, String producto, String fecha_inicial, String fecha_final, Integer id_empresa);
+    
 }
