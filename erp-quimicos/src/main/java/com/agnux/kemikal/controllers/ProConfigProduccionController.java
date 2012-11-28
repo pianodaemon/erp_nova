@@ -2,6 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
 */
+
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
@@ -915,7 +916,7 @@ public class ProConfigProduccionController {
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
-        int size = (int) file.length(); // Tamaño del archivo
+        int size = (int) file.length(); // Tama√±o del archivo
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
         response.setBufferSize(size);
         response.setContentLength(size);
@@ -990,7 +991,7 @@ public class ProConfigProduccionController {
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         if (file.exists()){
-            int size = (int) file.length(); // Tamaño del archivo
+            int size = (int) file.length(); // Tama√±o del archivo
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
             response.setBufferSize(size);
             response.setContentLength(size);

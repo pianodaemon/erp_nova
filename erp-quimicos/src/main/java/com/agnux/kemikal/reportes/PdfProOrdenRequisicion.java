@@ -266,8 +266,10 @@ public class PdfProOrdenRequisicion {
                     
                     HashMap<String,String> reg_element = prod_formula.get(k);
                     
+                    System.out.println(reg_element.get("cantidad").toString());
                     //Double cantidad = Double.parseDouble(calculaTotalComponenteFormula(reg_element.get("cantidad").toString(),String.valueOf(registro.get("cantidad")) ));
                     Double cantidad = Double.parseDouble(reg_element.get("cantidad").toString());
+                    Double cantidad_adicional = Double.parseDouble(reg_element.get("cantidad_adicional").toString());
                     //1           
                     celdaF = new PdfPCell(new Paragraph(String.valueOf(reg_element.get("sku")),smallFont));
                     celdaF.setUseAscender(true);
@@ -292,7 +294,7 @@ public class PdfProOrdenRequisicion {
                     tablaFormX.addCell(celdaF);
                     
                     //2
-                    celdaF = new PdfPCell(new Paragraph("",fuenteCont));
+                    celdaF = new PdfPCell(new Paragraph(""+StringHelper.roundDouble(String.valueOf(cantidad_adicional), 4),smallFont));
                     celdaF.setUseAscender(true);
                     celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
                     celdaF.setUseDescender(true);
@@ -994,6 +996,106 @@ public class PdfProOrdenRequisicion {
                 }
                 */
                 
+                
+                
+                //procedimientos
+                //Lista de Subprocesos
+                ArrayList<HashMap<String, String>> lista_procedimiento = (ArrayList<HashMap<String, String>>) registro.get("lista_procedimiento");
+                
+                /*Codigo para los procedidmientos*/
+                 String verifica_procedimiento = "0";
+                 ArrayList<HashMap<String, String>> listaproc = lista_procedimiento;
+                 for (int l=0;l<listaproc.size();l++){
+                     HashMap<String,String> registro_tmp = listaproc.get(l);
+                     verifica_procedimiento = registro_tmp.get("id");
+                 }
+                 
+                 if(!verifica_procedimiento.equals("0")){
+                     
+                     //crear nueva pagina, esto permite que lo que sigue se pase a  otra pagina nueva
+                     reporte.newPage();
+                     
+                     float [] widthsProc = {0.8f,2.5f,10.3F,0.8F};//Tama√±o de las Columnas.
+                     PdfPTable tablaProc = new PdfPTable(widthsProc);
+                     PdfPCell celdaProc;
+                     tablaProc.setKeepTogether(false);
+                     tablaProc.setHeaderRows(2);
+
+
+                     String id_proced = "";
+                     ArrayList<HashMap<String, String>> listaproced = lista_procedimiento;
+                     for (int l=0;l<listaproced.size();l++){
+                         HashMap<String,String> registro_tmp = listaproced.get(l);
+
+                        if(!id_proced.equals(registro_tmp.get("pro_subp_prod_id"))){
+                            id_proced = registro_tmp.get("pro_subp_prod_id");
+                             //colspan 4 fil1
+                             celdaProc = new PdfPCell(new Paragraph("",fuentenegrita));
+                             celdaProc.setHorizontalAlignment(Element.ALIGN_LEFT);
+                             celdaProc.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                             celdaProc.setBorderWidthBottom(0);
+                             celdaProc.setColspan(4);
+                             celdaProc.setBorderWidthTop(0);
+                             celdaProc.setBorderWidthRight(0);
+                             celdaProc.setBorderWidthLeft(0);
+                             tablaProc.addCell(celdaProc);
+
+                             //colspan 4 fil1
+                             celdaProc = new PdfPCell(new Paragraph("PROCEDIMIENTO PARA : "+registro_tmp.get("titulo"),fuentenegrita));
+                             celdaProc.setHorizontalAlignment(Element.ALIGN_LEFT);
+                             celdaProc.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                             celdaProc.setBorderWidthBottom(0);
+                             celdaProc.setColspan(4);
+                             celdaProc.setBorderWidthTop(0);
+                             celdaProc.setBorderWidthRight(0);
+                             celdaProc.setBorderWidthLeft(0);
+                             tablaProc.addCell(celdaProc);
+
+                             //1
+                             celdaProc = new PdfPCell(new Paragraph("NUMERO",smallBoldFont));
+                             celdaProc.setUseAscender(true);
+                             celdaProc.setHorizontalAlignment(Element.ALIGN_CENTER);
+                             celdaProc.setUseDescender(true);
+                             celdaProc.setColspan(2);
+                             celdaProc.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                             celdaProc.setBackgroundColor(BaseColor.BLACK);
+                             tablaProc.addCell(celdaProc);
+
+                             //AQUI VA EL ENCABEZADO 2 DEL DOCUMENTO
+                             //1
+                             celdaProc = new PdfPCell(new Paragraph("DESCRIPCION",smallBoldFont));
+                             celdaProc.setUseAscender(true);
+                             celdaProc.setHorizontalAlignment(Element.ALIGN_CENTER);
+                             celdaProc.setUseDescender(true);
+                             celdaProc.setColspan(2);
+                             celdaProc.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                             celdaProc.setBackgroundColor(BaseColor.BLACK);
+                             tablaProc.addCell(celdaProc);
+                         }
+
+
+                         celdaProc = new PdfPCell(new Paragraph(registro_tmp.get("posicion"),fuenteCont));
+                         celdaProc.setUseAscender(true);
+                         celdaProc.setHorizontalAlignment(Element.ALIGN_LEFT);
+                         celdaProc.setUseDescender(true);
+                         celdaProc.setColspan(2);
+                         celdaProc.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                         tablaProc.addCell(celdaProc);
+
+                         celdaProc = new PdfPCell(new Paragraph(StringHelper.replaceStringMacro("macrocoma", ",", registro_tmp.get("descripcion")),fuenteCont));
+                         celdaProc.setUseAscender(true);
+                         celdaProc.setHorizontalAlignment(Element.ALIGN_LEFT);
+                         celdaProc.setUseDescender(true);
+                         celdaProc.setColspan(2);
+                         celdaProc.setVerticalAlignment(Element.ALIGN_MIDDLE);     
+                         tablaProc.addCell(celdaProc);
+
+                     }
+
+                     reporte.add(tablaProc);
+                 }
+                
+                
             }
             
             
@@ -1036,7 +1138,7 @@ public class PdfProOrdenRequisicion {
             tablaAut.addCell(celdaAut);
             
             //columna 3 fil2
-            celdaAut = new PdfPCell(new Paragraph("___________________",fuentenegrita));
+            celdaAut = new PdfPCell(new Paragraph("______________",fuentenegrita));
             celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celdaAut.setBorderWidthBottom(0);
@@ -1192,7 +1294,7 @@ public class PdfProOrdenRequisicion {
         }
         
         
-        /*Añadimos una tabla con  una imagen del logo de megestiono y creamos la fuente para el documento, la imagen esta escalada para que no se muestre pixelada*/   
+        /*A√±adimos una tabla con  una imagen del logo de megestiono y creamos la fuente para el documento, la imagen esta escalada para que no se muestre pixelada*/   
         @Override
         public void onOpenDocument(PdfWriter writer, Document document) {
             try {
@@ -1207,7 +1309,7 @@ public class PdfProOrdenRequisicion {
             }
         }
         
-        /*añadimos pie de página, borde y más propiedades*/
+        /*a√±adimos pie de p√°gina, borde y m√°s propiedades*/
         @Override
         public void onEndPage(PdfWriter writer, Document document) {
             /*
@@ -1225,7 +1327,7 @@ public class PdfProOrdenRequisicion {
             
             
             //texto centro pie de pagina
-            String text_center ="Página " + writer.getPageNumber() + " de ";
+            String text_center ="P√°gina " + writer.getPageNumber() + " de ";
             float text_center_Size = helv.getWidthPoint(text_center, 7);
             float pos_text_center = (document.getPageSize().getWidth()/2)-(text_center_Size/2);
             float adjust = text_center_Size + 3; 
@@ -1270,7 +1372,7 @@ public class PdfProOrdenRequisicion {
             
             
             //texto centro pie de pagina
-            String text_center ="Página " + writer.getPageNumber() + " de ";
+            String text_center ="P√°gina " + writer.getPageNumber() + " de ";
             float text_center_Size = helv.getWidthPoint(text_center, 7);
             float pos_text_center = (document.getPageSize().getWidth()/2)-(text_center_Size/2);
             float adjust = text_center_Size + 3; 

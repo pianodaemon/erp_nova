@@ -96,11 +96,11 @@ public class ProOrdenProduccionController {
         //infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("id", "Acciones:70");
         infoConstruccionTabla.put("folio", "Folio:100");
+        infoConstruccionTabla.put("sku", "Codigo:100");
         infoConstruccionTabla.put("accesor_tipo", "Tipo de Orden:150");
         infoConstruccionTabla.put("fecha_elavorar", "Fecha:150");
         infoConstruccionTabla.put("folio", "Folio:100");
         infoConstruccionTabla.put("proceso", "Estatus:100");
-        
         
         ModelAndView x = new ModelAndView("proordenproduccion/startup", "title", "Orden de Produccion");
         
@@ -150,8 +150,9 @@ public class ProOrdenProduccionController {
         //variables para el buscador
         String folio_orden = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio_orden")))+"%";
         String tipo_orden = has_busqueda.get("tipo_orden").equals(null) ? "0" : has_busqueda.get("tipo_orden");
+        String sku_producto_busqueda = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("sku_producto_busqueda")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio_orden+"___"+tipo_orden;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio_orden+"___"+tipo_orden+"___"+sku_producto_busqueda;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getProDao().countAll(data_string);
@@ -225,6 +226,7 @@ public class ProOrdenProduccionController {
             if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("3")){
                 
                 datosOrdenDet = this.getProDao().getProOrden_EspecificacionesDetalle(id);
+                
                 
             }else{
                 
@@ -355,6 +357,74 @@ public class ProOrdenProduccionController {
         jsonretorno.put("Lote", arrayTiposProducto);
         return jsonretorno;
     }
+    
+    
+    //genera la requisicion
+    //send_requisicion_op
+    //crear y editar una  formula
+    @RequestMapping(method = RequestMethod.POST, value="/send_requisicion_op.json")
+    public @ResponseBody HashMap<String, String> guardaRequisicionJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="data_string", required=true) String cadena,
+            @RequestParam(value="command_selected", required=true) String command_selected,
+            @RequestParam(value="iu", required=true) String user,
+                Model model
+            ) {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        HashMap<String, String> succes = new HashMap<String, String>();
+        Integer app_selected = 93;//catalogo de preorden produccion
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        //String extra_data_array = "'sin datos'";
+        String actualizo = "0";
+        int no_partida = 0;
+        String accion = "";
+        String command_selected1 = "";
+        
+        String arreglo[];
+        //serializar el arreglo
+        String extra_data_array = "";
+        accion = "requisicion";
+        
+        if(!cadena.equals("") && cadena.length() > 2){
+            cadena = "'"+cadena+"'";
+            arreglo = cadena.split("\\$\\$\\$\\$");
+            extra_data_array = StringUtils.join(arreglo, "','");
+        }else{
+            extra_data_array = "'Sin Datos'";
+        }
+        
+        if( id ==0 ){
+            command_selected1 = "new";
+        }else{
+            command_selected1 = "edit";
+        }
+        
+        
+        String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___0___0___0___"+command_selected+"___"+accion;
+        
+        succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        if( String.valueOf(succes.get("success")).equals("true") ){
+            actualizo = this.getProDao().selectFunctionForApp_Produccion(data_string, extra_data_array);
+        }
+        
+        jsonretorno.put("success",String.valueOf(succes.get("success")));
+        
+        log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        
+        return jsonretorno;
+        
+        
+    }
+    
     
     
     //crear y editar una  formula
@@ -501,7 +571,7 @@ public class ProOrdenProduccionController {
                 extra_data_array = "'Sin Datos'";
             }
         }else{
-            if(command_selected.equals("2") || command_selected.equals("1")){
+            if( command_selected.equals("2") || command_selected.equals("1")){
                 for(int i=0; i<id_reg.length; i++) {
                     if(Integer.parseInt(eliminar[i]) != 0){
                         no_partida++;//si no esta eliminado incrementa el contador de partidas
@@ -509,6 +579,7 @@ public class ProOrdenProduccionController {
                     
                     arreglo[i]= "'"+eliminar[i] +"___" + id_reg[i]+"___" + inv_prod_id[i]+"___" + subproceso_id[i]+"___"+ pro_subproceso_prod_id[i]+"___"+ 
                             persona[i]+"___"+ equipo[i]+"___"+ eq_adicional[i]+"___"+ cantidad[i]+"___" + no_partida+"___"+ unidad_default[i]+"___"+ densidad[i]+"___"+ unidad_id[i]+"'";
+                    
                     //System.out.println(arreglo[i]);
                 }
                 
@@ -516,15 +587,35 @@ public class ProOrdenProduccionController {
                 extra_data_array = StringUtils.join(arreglo, ",");
             }else{
                 if(command_selected.equals("4") ){
+                    
                     accion = "";
+                    
+                    for(int i=0; i<id_reg.length; i++) {
+                        if(Integer.parseInt(eliminar[i]) != 0){
+                            no_partida++;//si no esta eliminado incrementa el contador de partidas
+                        }
+                        
+                        //                  1                   2                   3                       4                       5                               
+                        arreglo[i]= "'"+eliminar[i] +"___" + id_reg[i]+"___" + inv_prod_id[i]+"___" + 
+                                //   4                   5                      6                  7                  8
+                                cantidad[i]+"___" + no_partida+"___"+ unidad_default[i]+"___"+ densidad[i]+"___"+ unidad_id[i]+"'";
+                        
+                        //System.out.println(arreglo[i]);
+                    }
+                    
+                    extra_data_array = StringUtils.join(arreglo, ",");
+                    
+                    //esto estaba antes de que se actualizara la cantidad al finalizar ala orden de produccion
+                    /*
                     if(!especificaicones_lista.equals("") && especificaicones_lista.length() > 2){
-
+                        
                         especificaicones_lista = "'"+especificaicones_lista+"'";
                         arreglo = especificaicones_lista.split("\\$\\$\\$\\$");
                         extra_data_array = StringUtils.join(arreglo, "','");
                     }else{
                         extra_data_array = "'Sin Datos'";
                     }
+                    */
                 }else{
                     extra_data_array = "'Sin Datos'";
                 }
@@ -612,10 +703,10 @@ public class ProOrdenProduccionController {
         return jsonretorno;
     }
     
-    //obtiene los productos para el buscador
+    //obtiene los productos equivalentes para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/get_buscador_equivalentes.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getEquivalentesJson(
-            @RequestParam(value="id_prod", required=true) String id_prod,
+            @RequestParam(value="id_producto", required=true) String id_producto,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
@@ -630,9 +721,34 @@ public class ProOrdenProduccionController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        equivalentes = this.getProDao().getBuscadorEquivalentes(id_prod, id_empresa);
+        equivalentes = this.getProDao().getBuscadorEquivalentes(id_producto, id_empresa, id_usuario);
         
         jsonretorno.put("equivalentes", equivalentes);
+        
+        return jsonretorno;
+    }
+    
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_requisicion_orden_prod.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getgetRequisicionOPJson(
+            @RequestParam(value="id_orden", required=true) String id_orden,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", ProOrdenProduccionController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> equivalentes = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        equivalentes = this.getProDao().getRequisicionOP(id_orden, id_empresa, id_usuario);
+        
+        jsonretorno.put("requisicion", equivalentes);
         
         return jsonretorno;
     }
@@ -853,7 +969,7 @@ public class ProOrdenProduccionController {
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         if (file.exists()){
-            int size = (int) file.length(); // Tamaño del archivo
+            int size = (int) file.length(); // Tama√±o del archivo
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
             response.setBufferSize(size);
             response.setContentLength(size);
@@ -932,7 +1048,7 @@ public class ProOrdenProduccionController {
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         if (file.exists()){
-            int size = (int) file.length(); // Tamaño del archivo
+            int size = (int) file.length(); // Tama√±o del archivo
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
             response.setBufferSize(size);
             response.setContentLength(size);
@@ -1008,7 +1124,7 @@ public class ProOrdenProduccionController {
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         if (file.exists()){
-            int size = (int) file.length(); // Tamaño del archivo
+            int size = (int) file.length(); // Tama√±o del archivo
             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
             response.setBufferSize(size);
             response.setContentLength(size);

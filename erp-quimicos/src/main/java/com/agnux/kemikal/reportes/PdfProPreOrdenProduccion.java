@@ -1206,7 +1206,7 @@ public class PdfProPreOrdenProduccion {
         }
         
         
-        /*Añadimos una tabla con  una imagen del logo de megestiono y creamos la fuente para el documento, la imagen esta escalada para que no se muestre pixelada*/   
+        /*A√±adimos una tabla con  una imagen del logo de megestiono y creamos la fuente para el documento, la imagen esta escalada para que no se muestre pixelada*/   
         @Override
         public void onOpenDocument(PdfWriter writer, Document document) {
             try {
@@ -1221,7 +1221,7 @@ public class PdfProPreOrdenProduccion {
             }
         }
         
-        /*añadimos pie de página, borde y más propiedades*/
+        /*a√±adimos pie de p√°gina, borde y m√°s propiedades*/
         @Override
         public void onEndPage(PdfWriter writer, Document document) {
             
@@ -1247,7 +1247,7 @@ public class PdfProPreOrdenProduccion {
             
             
             //texto centro pie de pagina
-            String text_center ="Página " + writer.getPageNumber() + " de ";
+            String text_center ="P√°gina " + writer.getPageNumber() + " de ";
             float text_center_Size = helv.getWidthPoint(text_center, 7);
             float pos_text_center = (document.getPageSize().getWidth()/2)-(text_center_Size/2);
             float adjust = text_center_Size + 3; 

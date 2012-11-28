@@ -23,7 +23,9 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion,Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProductosPedidoSeleccionado(String id_pedido, Integer id_usuario);
     
-    public ArrayList<HashMap<String, String>> getBuscadorEquivalentes(String id_producto,Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getBuscadorEquivalentes(String id_producto,Integer id_empresa, Integer user_id);
+    
+    public ArrayList<HashMap<String, String>> getRequisicionOP(String id_orden,Integer id_empresa, Integer user_id);
     
     public ArrayList<HashMap<String, String>> getBuscadorFormulacionesParaProcedidmientos(String sku, String descripcion,Integer id_empresa,Integer subproceso);
     
