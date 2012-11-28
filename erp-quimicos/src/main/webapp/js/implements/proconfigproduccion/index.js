@@ -495,7 +495,7 @@ $(function() {
                 
                 if(patron.test($(this).val())){
                         var calculo_porcentaje=0;
-
+                        
                         if(parseFloat($porcentaje_temporal.val()) != parseFloat($(this).val())){
                                 calculo_porcentaje=(parseFloat($(this).val()) / parseFloat($cantidad_calculo.val())) *100;
                                 $(this).val(parseFloat(calculo_porcentaje).toFixed(4));
@@ -506,7 +506,7 @@ $(function() {
                                     jAlert("Esta excediendo el 100 % de la configuración", 'Atencion!');
                                 }
                         }
-
+                        
                         $grid_productos_componentes.find('tbody > tr').each(function (index){
                             if(parseInt($(this).find('#delete').val())!=0){
                                     total = parseFloat(total) + parseFloat(calculo_porcentaje);

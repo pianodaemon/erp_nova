@@ -1,6 +1,6 @@
 (function($){
 	$.fn.extend({
-		modalPanel_Buscacontratipo: function() {
+		modalPanel_RequisicionOP: function() {
 		    
 		    //Our function for hiding the modalbox
 			function modalHide() {
@@ -20,9 +20,9 @@
 			}
                         
 			//Create our overlay object
-			var overlay = $("<div id='forma-buscacontratipo-overlay'></div>");
+			var overlay = $("<div id='forma-requisicionop-overlay'></div>");
 			//Create our modal window
-			var modalWindow = $("<div id='forma-buscacontratipo-window'></div>");
+			var modalWindow = $("<div id='forma-requisicionop-window'></div>");
 			
 					if (typeof document.body.style.maxHeight === "undefined") { //if IE 6
 						$("body","html").css({height: "100%", width: "100%"});
@@ -45,7 +45,7 @@
 					//		"margin-top": -250,
 					//	});
 					//modalWindow.css("opacity", 1.0);
-					$("#forma-buscacontratipo-overlay").append(modalWindow);
+					$("#forma-requisicionop-overlay").append(modalWindow);
 					//modalWindow.fadeIn(50);
 		}
 	});
