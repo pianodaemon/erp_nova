@@ -246,6 +246,7 @@
 												<a href="#" class="sub">Reportes&raquo;</a>
 												<ul>
 													<li class="topline"><a href="../invrepcomprasnetasporproducto/startup.agnux">Compras Netas por Producto</a></li>
+                                                                                                        <li class="topline"><a href="../repestadisticocompras/startup.agnux">Estadistico de Compras</a></li>
 												</ul>
 											</li>
 										</ul>
