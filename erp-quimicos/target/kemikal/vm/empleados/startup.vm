@@ -1,0 +1,861 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>${title}</title>
+        
+        #include("${layoutheader}")
+		
+        <!--  css for this catalogo -->
+        <link rel="stylesheet" href="../../css/modalbox/empleados/formaEmpleados.css" type="text/css" />
+        
+
+        <!--  js for this catalogo -->
+        <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/empleados/modalbox.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/empleados/modalboxDirconsignacion.js"></script>
+        <script type="text/javascript" src="../../js/implements/empleados/index.js" ></script>
+        
+        #include("${layoutmenu}")
+        
+        <input type="hidden" name="contextpath" value="$url">
+        <input type="hidden" name="user" value="$username">
+        <input type="hidden" name="iu" value="$iu">
+        <input type="hidden" name="emp" value="$empresa">
+        <input type="hidden" name="suc" value="$sucursal">
+        
+        <!--Esta tabla va  en la barra de acciones -->
+		<table class="table_acciones" style="display:none" border="0">
+			<tr>
+				<td width="15" height="30"></td>
+				<td height="30"><a href="new_item" class="tooltip"><img src="../../img/catalogo/crear.png" border=0 ><span>Registrar nuevo Cliente</span></a></td>
+				<td width="15" height="30"></td>
+				<td height="30"><a href="visualiza_buscador" class="tooltip"><img src="../../img/catalogo/buscar.png" border=0 ><span>Busqueda</span></a>  </td>
+			</tr>
+		</table>
+        
+        <!--Esta tabla va  en la barra de buscador -->
+		<table border="0" class="tabla_buscador" style="display:none">
+				<tr>
+						<td colspan="13">&nbsp;&nbsp;</td>
+				</tr>
+				<tr>
+						<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>Buscar</td>
+						<td width=10>&nbsp;&nbsp;</td>
+						<td><INPUT TYPE="text" name="cadena_buscar" style="width:200px;"></td>
+						<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>Filtro por</td>
+						<td width=10>&nbsp;&nbsp;</td>
+						<td>
+                                                    <SELECT NAME="filtropor" style="width:150px;">
+                                                    <!--
+                                                    <option value="0">[-- Opcion busqueda --]</option>
+                                                    <option value="1">No. de control</option>
+                                                    <option value="2">RFC</option>
+                                                    <option value="3">Razon social</option>
+                                                    <option value="4">CURP</option>
+                                                    -->
+                                                    </SELECT>
+						</td>
+						<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td><INPUT TYPE="button" value="Buscar"></td>
+						<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td ><INPUT TYPE="button" value="Limpiar"></td>
+						<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				</tr>
+		</table>
+        
+        <!--  otra parte -->
+        <table class="acciones">
+            <tr>
+                <td>&nbsp;&nbsp;</td>
+                <td >
+                    ${grid}
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;</td>
+                <td ></td>
+            </tr>
+        </table>
+		
+        
+        
+		
+        
+        
+		
+        
+        
+        <!--form for empleados -->
+        <form id="formaEmpleados00" action="edit.json" method="POST" >
+        <!--clase la quite por causar problemas      tabulador -->
+                <div id="div_one" class="panelcito_modal empleados_div_one"  style="display:none;" title="">
+                
+                <input type="hidden" name="identificador_empleado">
+                <input type="hidden" name="total_tr" value="0">
+                <input type="hidden" name="identificador">
+               
+					
+                    <div id="div_two" title="" class="empleados_div_two">
+                        <div class="columns on-2">
+                            <div class="fixed column" id="cierra" style="width:765px; padding-left:6px;"><strong>Empleados</strong></div>
+                            <div class="fixed column" style="width:20px; height:25px;">
+                                <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div id="div_three" title="" class="empleados_div_three">
+                        <div class="columns" >
+                            <div class=" fixed column">
+                                <ul class="pestanas">
+                                    <li><a href="#tabx-1"><strong>Datos Personales</strong></a></li>
+                                    <li><a href="#tabx-2"><strong>Direccion y Contacto</strong></a></li>
+                                    <li><a href="#tabx-3"><strong>Emergencia/Salud</strong></a></li>
+                                     <li><a href="#tabx-5"><strong>Organizaci&oacute;n</strong></a></li>
+                                    <li><a href="#tabx-4"><strong>Usuario/Roles</strong></a></li>
+                                    <li><a href="#tabx-6"><strong>Agentes</strong></a></li>
+                                   
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="columns" style="background:#731F6C;">
+                            <div class="container" style="background:white;">
+                                <div class="fixed column" class="content_x" >
+                                <!--DATOS  PERSONALES EMPLEADO -->
+                                    <div id="tabx-1" class="contenidoPes" >
+                                            <table border="0">
+                                                 <tr>
+                                                    <td width="5" height="7" colspan="39">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5"></td>
+                                                    <td width="25">Empleado</td>
+                                                    <td width="5"></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="empleado_id" style="width:120px;" readOnly="true"></td>
+                                                    <td width="25"></td>
+                                                    <td></td>
+                                                    <td width="2"></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td width="25"></td>
+                                                    <td></td>
+                                                    <td width="85"></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td width="1"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5" height="7" colspan="39">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5"></td>
+                                                    <td width="25">Nombre&nbsp;(s)</td>
+                                                    <td width="5"></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="nombre" style="width:120px;"></td>
+                                                    
+                                                    <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombre"></div></td>
+                                                    
+                                                    <td width="95">Apellido Paterno&nbsp;</td>
+                                                    <td></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="appaterno" style="width:150px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_apellidopaterno"></div></td>
+                                                    <td></td>
+                                                    <td width="95">Apellido Materno&nbsp;&nbsp;</td>
+                                                    <td></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="apmaterno" style="width:150px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_apellidomaterno"></div></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5" height="7" colspan="39">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5"></td>
+                                                    <td width="25">No.IMSS</td>
+                                                    <td width="5"></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="imss" style="width:120px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_imss"></div></td>
+                                                    
+                                                    <td width="85">Infonavit</td>
+                                                    <td></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="infonavit" style="width:120px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_infonavit"></div></td>
+                                                    <td></td>
+                                                    <td width="85">CURP</td>
+                                                    <td></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="curp" style="width:120px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_curp"></div></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5" height="7" colspan="39">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5"></td>
+                                                    <td width="25">RFC</td>
+                                                    <td width="5"></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="rfc" style="width:120px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfc"></div></td>
+                                                    
+                                                    <td width="85">Fecha  Nacimiento</td>
+                                                    <td></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="f_nacimiento" style="width:120px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fechanacimiento"></div></td>
+                                                    <td></td>
+                                                    <td width="85">Fecha  Ingreso</td>
+                                                    <td></td>
+                                                    <td colspan="7"><INPUT TYPE="text" name="f_ingreso" style="width:120px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fechaingreso"></div></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5" height="7" colspan="39">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5"></td>
+                                                    <td width="25">Escolaridad</td>
+                                                    <td width="5"></td>
+                                                    <td colspan="7"><SELECT name="escolaridad" style="width:150px;"></SELECT> </td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_escolaridad"></div></td>
+                                                    
+                                                    <td width="85">Genero Sexual</td>
+                                                    <td></td>
+                                                    <td colspan="7"><SELECT name="sexo" style="width:150px;"></SELECT> </td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_genero"></div></td>
+                                                    <td></td>
+                                                    <td width="85">Estado Civil</td>
+                                                    <td></td>
+                                                    <td colspan="7"><SELECT name="edocivil" style="width:150px;"></SELECT> </td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_civil"></div></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5" height="7" colspan="39">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5"></td>
+                                                    <td width="25">Religi&oacute;n</td>
+                                                    <td width="5"></td>
+                                                    <td colspan="7"><SELECT name="religion" style="width:150px;"></SELECT></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_religion"></div></td>
+                                                    
+                                                    <td width="85"></td>
+                                                    <td></td>
+                                                    <td colspan="7"></td>
+                                                    <td width="25"></td>
+                                                    <td></td>
+                                                    <td width="85"></td>
+                                                    <td></td>
+                                                    <td colspan="7"></td>
+                                                    <td width="25"></td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td width="5" height="7" colspan="39">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="5"></td>
+                                                    <td width="25"></td>
+                                                    <td width="5"></td>
+                                                    <td colspan="7"></td>
+                                                    
+                                                    <td></td>
+                                                    <td width="85"></td>
+                                                    <td></td>
+                                                    <td colspan="7"></td>
+                                                    <td width="25"></td>
+                                                    <td></td>
+                                                    <td width="85"></td>
+                                                    <td></td>
+                                                    <td colspan="7"></td>
+                                                    <td width="25"></td>
+                                                </tr>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                        </table>
+                                    </div>
+                                    <!--DATOS DIRECCION Y CONTACTO -->
+                                    <div id="tabx-2" class="contenidoPes" >
+                                            <table border="0">
+                                                     <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td width="60">Telefono</td>
+                                                        <td></td>
+                                                        <td width="50"><INPUT TYPE="text" name="telefono" style="width:120px;"></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_telefono"></div></td>
+                                                        <td width="20"></td>
+                                                        <td width="60">Movil</td>
+                                                        <td></td>
+                                                        <td width="50"><INPUT TYPE="text" name="movil" style="width:120px;"></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_grupo"></div></td>
+                                                        <td width="20"></td>
+                                                        <td width="60">Correo Personal</td>
+                                                        <td></td>
+                                                        <td width="50"><INPUT TYPE="text" name="correo_personal" style="width:150px;"></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipocliente"></div></td>
+                                                        <td width="20"></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td width="60">Pa&iacute;s</td>
+                                                        <td></td>
+                                                        <td width="50"><SELECT NAME="pais" style="width:150px;"></SELECT></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_pais"></div></td>
+                                                        <td width="20"></td>
+                                                        <td width="60">Estado</td>
+                                                        <td></td>
+                                                        <td width="50"><SELECT NAME="estado" style="width:150px;"></SELECT></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_estado"></div></td>
+                                                        <td width="20"></td>
+                                                        <td width="60">Municipio</td>
+                                                        <td></td>
+                                                        <td width="50"><SELECT NAME="municipio" style="width:150px;"></SELECT></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_municipio"></div></td>
+                                                        <td width="20"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td width="60">Calle</td>
+                                                        <td></td>
+                                                        <td width="50" colspan="1"><INPUT TYPE="text" name="calle" style="width:200px;"></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_calle"></div></td>
+                                                        <td width="20"></td>
+                                                        <td width="60">Numero</td>
+                                                        <td></td>
+                                                        <td width="50"><INPUT TYPE="text" name="numero" style="width:120px;"></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_numero"></div></td>
+                                                        <td width="20"></td>
+                                                        <td width="60"></td>
+                                                        <td></td>
+                                                        <td width="50"></td>
+                                                        <td></td>
+                                                        <td width="5"></td>
+                                                        <td width="20"></td>
+                                                    </tr>
+                                                     <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td width="60">Colonia</td>
+                                                        <td></td>
+                                                        <td width="50"><INPUT TYPE="text" name="colonia" style="width:180px;"></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_colonia"></div></td>
+                                                        <td width="20"></td>
+                                                        <td width="60">CP</td>
+                                                        <td></td>
+                                                        <td width="50"><INPUT TYPE="text" name="cp" style="width:120px;"></td>
+                                                        <td></td>
+                                                        <td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cp"></div></td>
+                                                        <td width="20"></td>
+                                                        <td width="60"></td>
+                                                        <td></td>
+                                                        <td width="50"></td>
+                                                        <td></td>
+                                                        <td width="5"></td>
+                                                        <td width="20"></td>
+                                                    </tr>
+                                                     <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td width="60"></td>
+                                                        <td></td>
+                                                        <td width="50"></td>
+                                                        <td></td>
+                                                        <td width="5"></td>
+                                                        <td width="20"></td>
+                                                        <td width="60"></td>
+                                                        <td></td>
+                                                        <td width="50"></td>
+                                                        <td></td>
+                                                        <td width="5"></td>
+                                                        <td width="20"></td>
+                                                        <td width="60"></td>
+                                                        <td></td>
+                                                        <td width="50"></td>
+                                                        <td></td>
+                                                        <td width="5"></td>
+                                                        <td width="20"></td>
+                                                    </tr>
+                                                     <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    
+                                            </table>
+
+                                    </div>
+                                    <!--EMERGENCIA Y SALUD -->
+                                    <div id="tabx-3" class="contenidoPes" >
+                                            <table border="0">
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="90">Contacto</td>
+                                                        <td width="5"></td>
+                                                        <td width="135"><INPUT TYPE="text" name="contacto"  style="width:135px;"></td>
+                                                        <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ncontacto"></div></td>
+                                                        <td width="10"></td>
+                                                        <td width="80">Telefono Contacto</td>
+                                                        <td width="5"></td>
+                                                        <td width="120"><INPUT TYPE="text" name="telcontacto" style="width:135px;"></td>
+                                                        <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tcontacto"></div></td>
+                                                        <td width="10"></td>
+                                                        <td width="115"></td>
+                                                        <td width="5"></td>
+                                                        <td width="90"></td>
+                                                        <td width="5"></td>
+                                                        <td width="25"></td>
+                                                    </tr>
+                                                    <tr>
+                                                            <td width="5">&nbsp;</td>
+                                                            <td width="90"></td>
+                                                            <td width="5"></td>
+                                                            <td width="135"></td>
+                                                            <td width="25"></td>
+                                                            <td width="10"></td>
+                                                            <td width="80"></td>
+                                                            <td width="5"></td>
+                                                            <td width="120"></td>
+                                                            <td width="25"></td>
+                                                            <td width="10"></td>
+                                                            <td width="115"></td>
+                                                            <td width="5"></td>
+                                                            <td width="90"></td>
+                                                            <td width="5"></td>
+                                                            <td width="25"></td>
+                                                    </tr>
+                                                        <tr>
+                                                            <td width="5"></td>
+                                                            <td width="90">Tipo de Sangre</td>
+                                                            <td width="5"></td>
+                                                            <td width="135"><SELECT NAME="tipo_sangre" style="width:150px"></SELECT></td>
+                                                            <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sangre"></div></td>
+                                                            <td width="10"></td>
+                                                            <td width="80"></td>
+                                                            <td width="5"></td>
+                                                            <td width="120"></td>
+                                                            <td width="25"></td>
+                                                            <td width="10"></td>
+                                                            <td width="115"></td>
+                                                            <td width="5"></td>
+                                                            <td width="90"></td>
+                                                            <td width="5"></td>
+                                                            <td width="25"></td>
+                                                    </tr>
+                                                    <tr>
+                                                            <td width="5" colspan="16">&nbsp;</td>
+                                                    </tr>
+                                                        <tr>
+                                                            <td width="5"></td>
+                                                            <td width="90">Enfermedades</td>
+                                                            <td width="5"></td>
+                                                            <td width="135"></td>
+                                                            <td width="25"></td>
+                                                            <td width="10"></td>
+                                                            <td width="80"></td>
+                                                            <td width="5"></td>
+                                                            <td width="120">Alergias</td>
+                                                            <td width="25"></td>
+                                                            <td width="10"></td>
+                                                            <td width="75"></td>
+                                                            <td width="5"></td>
+                                                            <td width="90"></td>
+                                                            <td width="5"></td>
+                                                            <td width="25"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="90" colspan="6">
+                                                                <textarea name="enfermedades" rows="2" cols="60" style="width:340px; resize: none;"></textarea>
+                                                        </td>
+                                                        <td width="5"></td>
+                                                        <td width="100" colspan="6">
+                                                                <textarea name="alergias" rows="2" cols="60" style="width:355px; resize: none;"></textarea>
+                                                        </td>
+                                                        <td width="5"></td>
+                                                        <td width="25"></td>
+                                                    </tr>
+                                            </table>
+                                    </div>
+									
+									
+                                    <!--LOGIN Y ROLES-->
+                                    <div id="tabx-4" class="contenidoPes" >
+                                            <table border="0">
+                                                    
+                                                    <tr>
+                                                        <td width="5" height="9" colspan="11">&nbsp;</td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td width="5" height="9" colspan="11">&nbsp;</td>
+                                                    </tr>  
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="20">Usuario</td>
+                                                        <td width="5"></td>
+                                                        <td ><INPUT TYPE="text" name="email_usr" style="width:150px;"></td>
+                                                        <td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_email_usr"></div></td>
+                                                        <td width="5"></td>
+                                                        <td width="40">Password</td>
+                                                        <td width="5"></td>
+                                                        <td width="55"><INPUT TYPE="password" name="password" style="width:150px;"></td>
+                                                        <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_password"></div></td>
+                                                        
+                                                        <td width="100">Verifica Password</td>
+                                                        <td width="5"></td>
+                                                        <td ><INPUT TYPE="password" name="verifica_pass" style="width:100px;"></td>
+                                                        <td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_verificapass"></div></td>
+                                                        <td width="5"></td>
+                                                        <td ></td>
+                                                        
+                                                    </tr>
+                                                     <tr>
+                                                        <td width="5" height="7" colspan="11">&nbsp;</td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="1"></td>
+                                                        <td width="5"></td>
+                                                        <td></td>
+                                                        <td width="45"></td>
+                                                        <td ></td>
+                                                        <td ></td>
+                                                        <td></td>
+                                                        <td ></td>
+                                                        <td ></td>
+                                                        <td ></td>
+                                                       
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="11">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                   
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="1"></td>
+                                                        <td width="5"></td>
+                                                        <td ></td>
+                                                        <td width="45"></td>
+                                                        <td width="5"></td>
+                                                        <td ></td>
+                                                        <td></td>
+                                                        <td ></td>
+                                                        <td ></td>
+                                                        <td ></td>
+                                                       
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="11">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="2"></td>
+                                                        <td width="5"></td>
+                                                        <td><h4>Roles Disponibles</h4></td>
+                                                        <td width="45"></td>
+                                                        <td width="5"></td>
+                                                        <td width="55"></td>
+                                                        <td width="5"></td>
+                                                        <td width="55"></td>
+                                                        <td width="25"></td>
+                                                        <td width="55" colspan="3" align="center"><h4>Permitir acceso al sistema</h4></td>
+                                                        <td><SELECT NAME="permite" style="width:50;">
+                                                            <!--<option value="0">SI</option>
+                                                            <option value="1">NO</option>-->
+                                                            
+                                                        </SELECT></td>
+                                                        <td></td>
+                                                        
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="11">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                         <td width="5" colspan="8">
+                                                         <!--Genera el grid de roles disponibles-->
+                                                            <table id="rol_empleado" width="78%" border="1" >
+                                                                <tr>
+                                                                    <td>
+                                                                        <div id="roles" style="border: 1px solid #81BEF7;height:170px; overflow:scroll;overflow-x:auto;overflow-y:auto;width:400px; ">     
+                                                                            <!--Muestra los roles disponibles-->
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                         <!--fin del plugin de roles-->
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                       <td></td>
+                                                       
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="11">&nbsp;</td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="30"></td>
+                                                        <td width="5"></td>
+                                                        <td ></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        
+                                                    </tr>
+                                                   
+
+                                            </table>
+                                    </div>
+
+
+                                    <!-- ORGANIZACION -->
+                                    <div id="tabx-5" class="contenidoPes" >
+                                            <table border="0">
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                   <tr>
+                                                        <td width="5"></td>
+                                                        <td width="55">Sucursal</td>
+                                                        <td width="5"></td>
+                                                        <td width="55"><SELECT NAME="sucursal" style="width:210px;"></SELECT></td>
+                                                        <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sucursal"></div></td>
+                                                        <td width="5"></td>
+                                                        <td width="55"></td>
+                                                        <td width="5"></td>
+                                                        <td width="55"></td>
+                                                        <td width="25"></td>
+                                                        <td width="55"></td>
+                                                       
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="90">Puesto</td>
+                                                        <td width="5"></td>
+                                                        <td ><SELECT NAME="puesto" style="width:210px;"></SELECT></td>
+                                                        <td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_puesto"></div></td>
+                                                        <td width="5"></td>
+                                                        <td width="55">Categoria</td>
+                                                        <td width="5"></td>
+                                                        <td width="55"><SELECT name="categoria" style="width:210px;"></SELECT></td>
+                                                        <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_categoria"></div></td>
+                                                        <td width="55"></td>
+                                                       
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="90"></td>
+                                                        <td width="5"></td>
+                                                        <td colspan="3"></td>
+                                                        <td width="45"></td>
+                                                        <td width="5"></td>
+                                                        <td width="55"></td>
+                                                        <td width="5"></td>
+                                                        <td width="55"></td>
+                                                        <td width="25"></td>
+                                                        <td width="55"></td>
+                                                        
+                                                    </tr>
+                                                     <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="150">Comentarios</td>
+                                                        <td width="5"></td>
+                                                        <td colspan="3"><textarea name="comentarios" rows="2" cols="60" style="width:355px; resize: none;"></textarea></td>
+                                                        <td width="45"></td>
+                                                        <td width="5"></td>
+                                                        <td ></td>
+                                                        <td></td>
+                                                        <td ></td>
+                                                        <td ></td>
+                                                        <td ></td>
+                                                       
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                   
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="150"></td>
+                                                        <td width="5"></td>
+                                                        <td colspan="3"></td>
+                                                        <td width="45"></td>
+                                                        <td width="5"></td>
+                                                        <td ></td>
+                                                        <td></td>
+                                                        <td ></td>
+                                                        <td ></td>
+                                                        <td ></td>                                                      
+                                                    </tr>
+                                                   
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                            </table>
+                                    </div>
+                                    
+                                    <!-- Agentes -->
+                                    <div id="tabx-6" class="contenidoPes" >
+                                            <table border="0">
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                   <tr>
+                                                        <td width="5"></td>
+                                                        <td width="55">Comisi&oacute;n</td>
+                                                        <td width="5"></td>
+                                                         <td width="25">
+                                                            <INPUT TYPE="text" name="comision" style="width:125px">
+                                                        </td>
+                                                        <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_comision"></div></td>
+                                                        <td width="5"></td>
+                                                        <td width="55">Regi&oacute;n</td>
+                                                        <td ></td>
+                                                        <td width="5"><SELECT name="region" style="width:120px;"></SELECT></td>
+                                                        <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_region"></div></td>
+                                                        <td width="5"></td>
+                                                       
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="90">Comisi&oacute;n&nbsp;2</td>
+                                                        <td width="5"></td>
+                                                        <td><INPUT TYPE="text" name="comision2" style="width:90px"></td>
+                                                        <td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_comision2"></div></td>
+                                                        <td width="5"></td>
+                                                        <td width="55">Comisi&oacute;n&nbsp;3</td>
+                                                        <td ></td>
+                                                        <td width="55"><INPUT TYPE="text" name="comision3" style="width:90px"</td>
+                                                        <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_comision3"></div></td>
+                                                       
+                                                        <td ></td>
+                                                        <td width="65">Comisi&oacute;n&nbsp;4</td>
+                                                        <td ></td>
+                                                        <td width="55"><INPUT TYPE="text" name="comision4" style="width:90px"</td>
+                                                        <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_comision4"></div></td>
+                                                        <td width="5"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="5"></td>
+                                                        <td width="90">Dias Comisi&oacute;n</td>
+                                                        <td width="5"></td>
+                                                        <td ><INPUT TYPE="text" name="dias_comision" style="width:50px"></td>
+                                                        <td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_dcomision"></div></td>
+                                                        <td width="5"></td>
+                                                        <td width="90">Dias Comisi&oacute;n&nbsp;2</td>
+                                                        <td></td>
+                                                        <td width="55"><INPUT TYPE="text" name="dias_comision2" style="width:50px"></td>
+                                                        <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_dcomision2"></div></td>
+                                                        <td></td>
+                                                        
+                                                        <td width="95">Dias Comisi&oacute;n&nbsp;3</td>
+                                                        <td width="5"></td>
+                                                        <td width="55"><INPUT TYPE="text" name="dias_comision3" style="width:50px"></td>
+                                                        <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_dcomision3"></div></td>
+                                                        <td width="5"></td>
+                                                       
+                                                    </tr>
+                                                    
+                                                     
+                                            </table>
+                                        </div>
+                                     </div>
+                                </div>
+                            </div>
+                           
+
+                            <div class="fixed column" id="botones" style="width:790px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                                <table border="0">
+                                        <tr>
+                                                <td width="590"></td>
+                                                <td>
+                                                        <input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
+                                                </td>
+                                                <td width="30"></td>
+                                                <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
+                                        </tr>
+                                </table>      
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </form>
+     
+        
+        #include("${layoutfooter}")
+        
+        
+    </body>
+</html>
+
+
