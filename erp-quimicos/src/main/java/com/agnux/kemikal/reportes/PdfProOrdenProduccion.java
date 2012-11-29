@@ -336,13 +336,23 @@ public class PdfProOrdenProduccion {
                     celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     tablaFormX.addCell(celdaF);
                     
-                    //2cantidad_adicional
-                    celdaF = new PdfPCell(new Paragraph(""+StringHelper.roundDouble(String.valueOf(cantidad_adicional), 4),smallFont));
-                    celdaF.setUseAscender(true);
-                    celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    celdaF.setUseDescender(true);
-                    celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    tablaFormX.addCell(celdaF);
+                    if(cantidad_adicional > 0){
+                        //2cantidad_adicional
+                        celdaF = new PdfPCell(new Paragraph(""+StringHelper.roundDouble(String.valueOf(cantidad_adicional), 4),smallFont));
+                        celdaF.setUseAscender(true);
+                        celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celdaF.setUseDescender(true);
+                        celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        tablaFormX.addCell(celdaF);
+                    }else{
+                        //2cantidad_adicional
+                        celdaF = new PdfPCell(new Paragraph("",smallFont));
+                        celdaF.setUseAscender(true);
+                        celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celdaF.setUseDescender(true);
+                        celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        tablaFormX.addCell(celdaF);
+                    }
                     
                     //13
                     //celda = new PdfPCell(new Paragraph(registro.get("observaciones"),fuenteCont));
@@ -353,6 +363,10 @@ public class PdfProOrdenProduccion {
                     celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);     
                     tablaFormX.addCell(celdaF);
                     
+                    //agrega a la sum atoria la cantidad adicional
+                    sumatoria += cantidad_adicional;
+                    
+                    //agrega a la sum atoria la cantidad
                     sumatoria += cantidad;
                     contador++;
                 }
