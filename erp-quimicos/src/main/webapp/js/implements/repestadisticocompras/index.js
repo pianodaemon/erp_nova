@@ -481,8 +481,12 @@ $(function() {
                             
         $Buscar_estadistico_compras.click(function(event){
             event.preventDefault();
-            
-            $div_ventas_netas_productofactura.children().remove();
+            if($fecha_inicial.val()=='' || $fecha_final.val()==''){
+                
+                jAlert("Seleccione una rango de fechas",'Atencion!');
+                
+            }else{
+                $div_ventas_netas_productofactura.children().remove();
                 if ($select_tipo_reporte.val() == 1 || $select_tipo_reporte.val() == 2){
 			
                         var arreglo_parametros = {	tipo_reporte: $select_tipo_reporte.val(),
@@ -1016,6 +1020,8 @@ $(function() {
                         
                 }//FIN DE LA VISTA DE PRODUCTO SUMARIZADOs
                 
+            }
+       
 	});//fin del evento click al mostrar el reporte en pantalla 
 });   
        
