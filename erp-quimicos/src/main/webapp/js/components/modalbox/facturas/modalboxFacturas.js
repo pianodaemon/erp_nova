@@ -2,7 +2,7 @@
 	$.fn.extend({
 		modalPanel_facturas: function() {
                         
-                        /*
+                        
                         //Our function for hiding the modalbox
 			function modalHide() {
 				$(document).unbind("keydown", handleEscape);
@@ -19,7 +19,7 @@
 					modalHide();
 				}
 			}
-			*/
+			
                         
 			//Create our overlay object
 			var overlay = $("<div id='forma-facturas-overlay'></div>");
@@ -51,7 +51,7 @@
 					//e.preventDefault();
 					
 					//Activate a listener 
-					//$(document).keydown(handleEscape);	
+					$(document).keydown(handleEscape);	
 
 					//modalWindow.css({
 					//		"margin-left": -400,
