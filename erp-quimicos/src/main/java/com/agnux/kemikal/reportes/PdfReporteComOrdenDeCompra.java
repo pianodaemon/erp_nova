@@ -319,9 +319,6 @@ public class PdfReporteComOrdenDeCompra {
             String simbolo_mon ="";
             simbolo_mon = datosOrdenCompra.get("moneda_simbolo");
             
-            
-            
-            
             //TABLA PARA AGREGAR EL TEXTO "ANEXAR CERTIFICADOS DE CALIDAD Y HOJAS DE SEGURIDAD"
             float [] widths = {0.5f,0.5f,10}; 
             PdfPTable table_texto = new PdfPTable(widths);
@@ -371,7 +368,7 @@ public class PdfReporteComOrdenDeCompra {
              celdaBody.setBorder(0);
              celdaBody.setVerticalAlignment(Element.ALIGN_CENTER);
              tablaBody.addCell(celdaBody);
-
+             
              celdaBody = new PdfPCell(new Paragraph("SUBTOTAL",fuentenegrita));
              celdaBody.setUseAscender(true);
              celdaBody.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -380,7 +377,7 @@ public class PdfReporteComOrdenDeCompra {
              celdaBody.setColspan(2);
              celdaBody.setVerticalAlignment(Element.ALIGN_LEFT);
              tablaBody.addCell(celdaBody);
-
+             
              celdaBody = new PdfPCell(new Paragraph(simbolo_mon,fuenteCont));
              celdaBody.setHorizontalAlignment(Element.ALIGN_RIGHT);
              celdaBody.setVerticalAlignment(Element.ALIGN_LEFT);
@@ -388,7 +385,7 @@ public class PdfReporteComOrdenDeCompra {
              celdaBody.setBorderWidthTop(0);
              celdaBody.setBorderWidthRight(0);
              tablaBody.addCell(celdaBody);
-
+             
              celdaBody = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(datosOrdenCompra.get("subtotal"),2)),fuenteCont));
              celdaBody.setBorderWidthBottom(0);
              celdaBody.setBorderWidthTop(0);
@@ -396,7 +393,7 @@ public class PdfReporteComOrdenDeCompra {
              celdaBody.setHorizontalAlignment(Element.ALIGN_RIGHT);
              celdaBody.setVerticalAlignment(Element.ALIGN_LEFT);
              tablaBody.addCell(celdaBody);
-
+             
              //IMPUESTO
              /*
              celdaBody = new PdfPCell(new Paragraph("",fuenteCont));
@@ -413,7 +410,7 @@ public class PdfReporteComOrdenDeCompra {
              celdaBody.setColspan(2);
              celdaBody.setVerticalAlignment(Element.ALIGN_LEFT);
              tablaBody.addCell(celdaBody);
-
+             
              celdaBody = new PdfPCell(new Paragraph(simbolo_mon,fuenteCont));
              celdaBody.setHorizontalAlignment(Element.ALIGN_RIGHT);
              celdaBody.setVerticalAlignment(Element.ALIGN_LEFT);
@@ -421,7 +418,7 @@ public class PdfReporteComOrdenDeCompra {
              celdaBody.setBorderWidthTop(0);
              celdaBody.setBorderWidthRight(0);  
              tablaBody.addCell(celdaBody);
-
+             
              celdaBody = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(datosOrdenCompra.get("impuesto"),2)),fuenteCont));
              celdaBody.setHorizontalAlignment(Element.ALIGN_RIGHT);
              celdaBody.setVerticalAlignment(Element.ALIGN_LEFT);
@@ -429,8 +426,8 @@ public class PdfReporteComOrdenDeCompra {
              celdaBody.setBorderWidthTop(0);
              celdaBody.setBorderWidthLeft(0);
              tablaBody.addCell(celdaBody);
-
-
+             
+             
              //TOTAL
              /*
              celdaBody = new PdfPCell(new Paragraph("",fuenteCont));
@@ -447,14 +444,14 @@ public class PdfReporteComOrdenDeCompra {
              celdaBody.setColspan(2);
              celdaBody.setVerticalAlignment(Element.ALIGN_LEFT);
              tablaBody.addCell(celdaBody);
-
+             
              celdaBody = new PdfPCell(new Paragraph(simbolo_mon,fuenteCont));
              celdaBody.setHorizontalAlignment(Element.ALIGN_RIGHT);
              celdaBody.setVerticalAlignment(Element.ALIGN_LEFT);
              celdaBody.setBorderWidthTop(0);
              celdaBody.setBorderWidthRight(0);  
              tablaBody.addCell(celdaBody);
-
+             
              celdaBody = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(datosOrdenCompra.get("total"),2)),fuenteCont));
              celdaBody.setHorizontalAlignment(Element.ALIGN_RIGHT);
              celdaBody.setVerticalAlignment(Element.ALIGN_LEFT);
@@ -474,10 +471,6 @@ public class PdfReporteComOrdenDeCompra {
             PdfPTable tablapie = new PdfPTable(tam_tablapie);
             PdfPCell celdapie;
             
-            
-            
-            
-            
             /*
             //agregar la tabla texto a la celda
             celdapie = new PdfPCell(table_texto);
@@ -485,6 +478,7 @@ public class PdfReporteComOrdenDeCompra {
             celdapie.setBorder(0);celdapie.setColspan(6);
             tablapie.addCell(celdapie);
              */
+            
             //columna para colocar en el pie de la pagina 1
             celdapie = new PdfPCell(new Paragraph("TEL.",fuentePie));
             celdapie.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -508,8 +502,8 @@ public class PdfReporteComOrdenDeCompra {
             //6
             celdapie = new PdfPCell(new Paragraph("",fuenteCont));
             celdapie.setBorder(0);tablapie.addCell(celdapie);
-
-
+            
+            
             //FILA 2
             celdapie = new PdfPCell(new Paragraph("CANTIDAD",fuentePie));
             celdapie.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -533,7 +527,7 @@ public class PdfReporteComOrdenDeCompra {
             //6
             celdapie = new PdfPCell(new Paragraph("RECIBIDO POR:",fuentePie));
             celdapie.setBorder(0);tablapie.addCell(celdapie);
-
+            
             //FILAS EN BLANCO 
             celdapie = new PdfPCell(new Paragraph("\n \n \n",fuenteCont));
             tablapie.addCell(celdapie);
@@ -552,66 +546,99 @@ public class PdfReporteComOrdenDeCompra {
             //6
             celdapie = new PdfPCell(new Paragraph("",fuenteCont));
             celdapie.setBorder(0);tablapie.addCell(celdapie); 
-
+            
             //6 FILA EN BLANCO PARA SEPARAR LAS TABLAS
             celdapie = new PdfPCell(new Paragraph("\n \n \n",fuenteCont));
             celdapie.setBorder(0);
             celdapie.setColspan(6);
             tablapie.addCell(celdapie); 
-
+            
             reporte.add(tablapie);
-
+            
             //esto es para los cuadro de abajo para finalizar el PDF
-
+            
             PdfPTable tablapie2 = new PdfPTable(6);
             PdfPCell celdapie2;
             //tablapie2.setKeepTogether(false);
+            
             //1
             celdapie2 = new PdfPCell(new Paragraph("SOLICITADO POR:                              NOMBRE Y FIRMA:                         FECHA",fuentePie));
             celdapie2.setColspan(3);
             celdapie2.setHorizontalAlignment(Element.ALIGN_LEFT);
             tablapie2.addCell(celdapie2);
-
+            
             celdapie2 = new PdfPCell(new Paragraph("NO PODEMOS RECIBIR NI PAGAR OPORTUNAMENTE SI SUS "
                     + "REMISIONES Y FACTURAS NO LLEVAN EL NÚMERO DE ESTE PEDIDO "
                     + "Y EL DEL PROVEEDOR, ASI COMO LA DESCRIPCIÓN BODEGA "
                     + "INDICADA Y FECHA DE ENTREGA SOLICITADA POR NOSOTROS. "
                     + "SIRVASE VERIFICAR EL SELLO Y FIRMA DE RECIBIDO EN SU "
                     + "REMISIÓN AL ENTREGAR.",fuentePie));
-            celdapie2.setRowspan(2); celdapie2.setColspan(3);
+            celdapie2.setRowspan(2); 
+            celdapie2.setColspan(3);
             celdapie2.setHorizontalAlignment(Element.ALIGN_LEFT);
             tablapie2.addCell(celdapie2);
-
+            
             //2
             celdapie2 = new PdfPCell(new Paragraph("\n \n"+datosOrdenCompra.get("fecha"),fuentePie));
             celdapie2.setColspan(3);
             celdapie2.setHorizontalAlignment(Element.ALIGN_RIGHT);
             tablapie2.addCell(celdapie2);
-            //3
-            celdapie2 = new PdfPCell(new Paragraph("\n \nAUTORIZADO P/COMPRAS:              NOMBRE Y FIRMA                          FECHA: "+datosOrdenCompra.get("fecha"),fuentePie));
+            
+
+            
+            //columna 1,2,3
+            celdapie2 = new PdfPCell(new Paragraph("\n "+datosOrdenCompra.get("user_elabora").toString(),fuentePie));
             celdapie2.setColspan(3);
             celdapie2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdapie2.setBorderWidthTop(1);
+            celdapie2.setBorderWidthBottom(0);
+            celdapie2.setBorderWidthLeft(1);
+            celdapie2.setBorderWidthRight(1);
             tablapie2.addCell(celdapie2);
+            
             //3
             celdapie2 = new PdfPCell(new Paragraph("\n\nTODO EL MATERIAL SE RECIBE SUJETO A INSPECCIÓN DE CALIDAD Y "
                     + "ESPECIFICACIONES ASÍ COMO A RECONTEO, RECIBIMOS DE LUNES A "
                     + "VIERNES DE 8:00 AM A 4:30 PM, TODO MATERIAL DEBERÁ VENIR "
                     + "AMPARADO POR REMISIÓN ORIGINAL Y CUATRO COPIAS.",fuentePie));
-            celdapie2.setColspan(3);celdapie2.setRowspan(2);
-            celdapie2.setHorizontalAlignment(Element.ALIGN_LEFT);
-            tablapie2.addCell(celdapie2);                
-            //4
-            celdapie2 = new PdfPCell(new Paragraph("\n \nAUTORIZADO POR:                            NOMBRE Y FIRMA                          FECHA: "+datosOrdenCompra.get("fecha"),fuentePie));
             celdapie2.setColspan(3);
+            celdapie2.setRowspan(4);
             celdapie2.setHorizontalAlignment(Element.ALIGN_LEFT);
             tablapie2.addCell(celdapie2);
-
+            
+            //3
+            celdapie2 = new PdfPCell(new Paragraph("AUTORIZADO P/COMPRAS:              NOMBRE Y FIRMA                          FECHA: "+datosOrdenCompra.get("fecha"),fuentePie));
+            celdapie2.setColspan(3);
+            celdapie2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdapie2.setBorderWidthBottom(1);
+            celdapie2.setBorderWidthTop(0);
+            celdapie2.setBorderWidthLeft(1);
+            celdapie2.setBorderWidthRight(1);
+            tablapie2.addCell(celdapie2);
+            
+            
+            
+            //columna 1,2,3
+            celdapie2 = new PdfPCell(new Paragraph("\n "+datosOrdenCompra.get("user_autoriza").toString(),fuentePie));
+            celdapie2.setColspan(3);
+            celdapie2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdapie2.setBorderWidthTop(1);
+            celdapie2.setBorderWidthBottom(0);
+            celdapie2.setBorderWidthLeft(1);
+            celdapie2.setBorderWidthRight(1);
+            tablapie2.addCell(celdapie2);
+            
+            //columna 1,2,3
+            celdapie2 = new PdfPCell(new Paragraph("AUTORIZADO POR:                            NOMBRE Y FIRMA                          FECHA: "+datosOrdenCompra.get("fecha"),fuentePie));
+            celdapie2.setColspan(3);
+            celdapie2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdapie2.setBorderWidthBottom(1);
+            celdapie2.setBorderWidthTop(0);
+            celdapie2.setBorderWidthLeft(1);
+            celdapie2.setBorderWidthRight(1);
+            tablapie2.addCell(celdapie2);
+            
             reporte.add(tablapie2);
-                
-                
-            
-            
-             
         }
          
         catch (Exception e){

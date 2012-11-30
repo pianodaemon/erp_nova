@@ -606,60 +606,70 @@ public class ComSpringDao  implements ComInterfaceDao {
     @Override
     public HashMap<String, String> getDatosPDFOrdenCompra(Integer id_ordenCompra){
         HashMap<String, String> mappdf = new HashMap<String, String>();
-        String sql_query = "SELECT com_orden_compra.id, "
-                            + " com_orden_compra.grupo, "
-                            + " to_char(com_orden_compra.momento_creacion,'dd/mm/yyyy HH24:MI') as fecha, "
-                            + " com_orden_compra.folio, "
-                            + " com_orden_compra.consignado_a, "
-                            + " cxp_prov_tipos_embarque.titulo AS tipo_embarque, "
-                            + " cxp_prov.razon_social, cxp_prov.correo_electronico as correo_prov, "
-                            + " cxp_prov.rfc, "
-                            + " cxp_prov.calle||' #'||cxp_prov.numero AS direccion, " 
-                            + " cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo AS colonia, "
-                            + "'C.P. '||cxp_prov.cp||' TEL. '||cxp_prov.telefono1||' EXT. '||cxp_prov.extension1 AS cpytel, "
-                            + " cxp_prov.folio as no_provedor, "
-                            + " cxp_prov.telefono1 as tel_proveedor, "
-                            + " cxp_prov.vent_contacto as representante, "
-                            + " cxp_prov_credias.descripcion as condiciones_pago, "
-                            + " erp_monedas.descripcion_abr AS moneda, "
-                            + " erp_monedas.descripcion AS moneda_titulo, "
-                            + " erp_monedas.simbolo AS moneda_simbolo, "
-                            + " com_orden_compra.subtotal,"
-                            + " com_orden_compra.impuesto, "
-                            + " com_orden_compra.total "
-                            + " from com_orden_compra "
-                            + " join cxp_prov on cxp_prov.id=com_orden_compra.proveedor_id "
-                            + " join gral_mun on gral_mun.id=cxp_prov.municipio_id "
-                            + " join gral_edo on gral_edo.id=cxp_prov .estado_id "
-                            + " join gral_pais on  gral_pais.id=cxp_prov .pais_id "
-                            + " join erp_monedas on erp_monedas.id= com_orden_compra.moneda_id left "
-                            + " join cxp_prov_credias on cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
-                            + " join cxp_prov_tipos_embarque on cxp_prov_tipos_embarque.id =com_orden_compra.tipo_embarque_id "
-                            + " WHERE com_orden_compra.id="+id_ordenCompra;
-                            
-        System.out.println("DATOS PARA EL PDF  DE ORDEN DE COMPRA:"+sql_query);
+        String sql_query = ""
+                + "SELECT "
+                    + "com_orden_compra.id, "
+                    + " com_orden_compra.grupo, "
+                    + " to_char(com_orden_compra.momento_creacion,'dd/mm/yyyy HH24:MI') as fecha, "
+                    + " com_orden_compra.folio, "
+                    + " com_orden_compra.consignado_a, "
+                    + " cxp_prov_tipos_embarque.titulo AS tipo_embarque, "
+                    + " cxp_prov.razon_social, cxp_prov.correo_electronico as correo_prov, "
+                    + " cxp_prov.rfc, "
+                    + " cxp_prov.calle||' #'||cxp_prov.numero AS direccion, " 
+                    + " cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo AS colonia, "
+                    + "'C.P. '||cxp_prov.cp||' TEL. '||cxp_prov.telefono1||' EXT. '||cxp_prov.extension1 AS cpytel, "
+                    + " cxp_prov.folio as no_provedor, "
+                    + " cxp_prov.telefono1 as tel_proveedor, "
+                    + " cxp_prov.vent_contacto as representante, "
+                    + " cxp_prov_credias.descripcion as condiciones_pago, "
+                    + " erp_monedas.descripcion_abr AS moneda, "
+                    + " erp_monedas.descripcion AS moneda_titulo, "
+                    + " erp_monedas.simbolo AS moneda_simbolo, "
+                    + " com_orden_compra.subtotal,"
+                    + " com_orden_compra.impuesto, "
+                    + " com_orden_compra.total,"
+                    + " tblEmpCrea.nombre_pila||' '||tblEmpCrea.apellido_paterno||' '||tblEmpCrea.apellido_materno AS user_elabora, "
+                    + " tblEmpAutoriza.nombre_pila||' '||tblEmpAutoriza.apellido_paterno||' '||tblEmpAutoriza.apellido_materno AS user_autoriza "
+                + " FROM com_orden_compra "
+                + " JOIN cxp_prov ON cxp_prov.id=com_orden_compra.proveedor_id "
+                + " JOIN gral_mun ON gral_mun.id=cxp_prov.municipio_id "
+                + " JOIN gral_edo ON gral_edo.id=cxp_prov.estado_id "
+                + " JOIN gral_pais ON  gral_pais.id=cxp_prov.pais_id "
+                + " JOIN erp_monedas ON erp_monedas.id= com_orden_compra.moneda_id left "
+                + " JOIN cxp_prov_credias ON cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
+                + " JOIN cxp_prov_tipos_embarque ON cxp_prov_tipos_embarque.id=com_orden_compra.tipo_embarque_id "
+                + " LEFT JOIN gral_usr AS tblUserCrea ON tblUserCrea.id=com_orden_compra.gral_usr_id_creacion  "
+                + " LEFT JOIN gral_empleados AS tblEmpCrea ON tblEmpCrea.id = tblUserCrea.gral_empleados_id  "
+                + " LEFT JOIN gral_usr AS tblUserAutoriza ON tblUserAutoriza.id=com_orden_compra.gral_usr_id_autoriza  "
+                + " LEFT JOIN gral_empleados AS tblEmpAutoriza ON tblEmpAutoriza.id = tblUserCrea.gral_empleados_id  "
+                + " WHERE com_orden_compra.id="+id_ordenCompra;
+        
+        System.out.println("getDatosPDFOrdenCompra:"+sql_query);
         Map<String, Object> mapdatosquery = this.getJdbcTemplate().queryForMap(sql_query);
-            mappdf.put("id_ordencompra", mapdatosquery.get("id").toString());
-            mappdf.put("grupo", mapdatosquery.get("grupo").toString());
-            mappdf.put("fecha", mapdatosquery.get("fecha").toString());
-            mappdf.put("folio", mapdatosquery.get("folio").toString());
-            mappdf.put("consignado_a", mapdatosquery.get("consignado_a").toString());
-            mappdf.put("tipo_embarque", mapdatosquery.get("tipo_embarque").toString());
-            mappdf.put("correo_prov", mapdatosquery.get("correo_prov").toString());
-            mappdf.put("razon_social_prov", mapdatosquery.get("razon_social").toString());
-            mappdf.put("rfc", mapdatosquery.get("rfc").toString());
-            mappdf.put("direccion", mapdatosquery.get("direccion").toString());
-            mappdf.put("no_provedor", mapdatosquery.get("no_provedor").toString());
-            mappdf.put("tel_proveedor", mapdatosquery.get("tel_proveedor").toString());
-            mappdf.put("representante", mapdatosquery.get("representante").toString());
-            mappdf.put("condiciones_pago", mapdatosquery.get("condiciones_pago").toString());
-            mappdf.put("moneda", mapdatosquery.get("moneda").toString());
-            mappdf.put("moneda_simbolo", mapdatosquery.get("moneda_simbolo").toString());
-            mappdf.put("cpytel", mapdatosquery.get("cpytel").toString());
-            mappdf.put("colonia", mapdatosquery.get("colonia").toString());
-            mappdf.put("subtotal", StringHelper.roundDouble(mapdatosquery.get("subtotal").toString(),2));
-            mappdf.put("impuesto", StringHelper.roundDouble(mapdatosquery.get("impuesto").toString(),2));
-            mappdf.put("total", StringHelper.roundDouble(mapdatosquery.get("total").toString(),2));
+        mappdf.put("id_ordencompra", mapdatosquery.get("id").toString());
+        mappdf.put("grupo", mapdatosquery.get("grupo").toString());
+        mappdf.put("fecha", mapdatosquery.get("fecha").toString());
+        mappdf.put("folio", mapdatosquery.get("folio").toString());
+        mappdf.put("consignado_a", mapdatosquery.get("consignado_a").toString());
+        mappdf.put("tipo_embarque", mapdatosquery.get("tipo_embarque").toString());
+        mappdf.put("correo_prov", mapdatosquery.get("correo_prov").toString());
+        mappdf.put("razon_social_prov", mapdatosquery.get("razon_social").toString());
+        mappdf.put("rfc", mapdatosquery.get("rfc").toString());
+        mappdf.put("direccion", mapdatosquery.get("direccion").toString());
+        mappdf.put("no_provedor", mapdatosquery.get("no_provedor").toString());
+        mappdf.put("tel_proveedor", mapdatosquery.get("tel_proveedor").toString());
+        mappdf.put("representante", mapdatosquery.get("representante").toString());
+        mappdf.put("condiciones_pago", mapdatosquery.get("condiciones_pago").toString());
+        mappdf.put("moneda", mapdatosquery.get("moneda").toString());
+        mappdf.put("moneda_simbolo", mapdatosquery.get("moneda_simbolo").toString());
+        mappdf.put("cpytel", mapdatosquery.get("cpytel").toString());
+        mappdf.put("colonia", mapdatosquery.get("colonia").toString());
+        mappdf.put("subtotal", StringHelper.roundDouble(mapdatosquery.get("subtotal").toString(),2));
+        mappdf.put("impuesto", StringHelper.roundDouble(mapdatosquery.get("impuesto").toString(),2));
+        mappdf.put("total", StringHelper.roundDouble(mapdatosquery.get("total").toString(),2));
+        mappdf.put("user_elabora", mapdatosquery.get("user_elabora").toString());
+        mappdf.put("user_autoriza", mapdatosquery.get("user_autoriza").toString());
         return mappdf;
     }
     
@@ -682,7 +692,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                         + " join inv_prod on inv_prod.id=com_orden_compra_detalle.inv_prod_id "
                         + " join inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                         + " WHERE com_orden_compra.id="+id_ordenCompra;
-                
+    
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper(){
