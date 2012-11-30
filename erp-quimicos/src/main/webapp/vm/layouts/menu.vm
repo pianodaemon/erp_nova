@@ -313,11 +313,10 @@
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
 													
-													<li class="topline"><a href="../invordenentrada/startup.agnux">Orden de Entrada</a></li>
-													<li class="topline"><a href="../invordensalida/startup.agnux">Orden de Salida</a></li>
+
 													<li class="topline"><a href="../invajustes/startup.agnux">Ajustes</a></li>
 													<li class="topline"><a href="../invtraspasos/startup.agnux">Traspasos</a></li>
-													<li class="topline"><a href="../invordentras/startup.agnux">Orden de Traspaso</a></li>
+													
 													
 													<!--
 													<li class="topline"><a href="../invordendev/startup.agnux">Orden de Devoluci&oacute;n</a></li>
@@ -488,45 +487,6 @@
 									
 									
 									
-									
-									
-									<li class="accessible">
-										<a href="http://jdsharp.us" class="accessible">Producci&oacute;n &raquo;</a>
-										<ul>
-											
-											<li>
-												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
-												<ul>
-													<li><a href="../protipoequipo/startup.agnux">Tipos de Equipo</a></li>
-												</ul>
-											</li>
-											
-											<li>
-												<a href="#" class="sub">Procesos &raquo;</a>
-												<ul>
-													<li class="topline"><a href="../proconfigproduccion/startup.agnux">Configuraci&oacute;n</a></li>
-													<li class="topline"><a href="../propreordenproduccion/startup.agnux">Preorden Producci&oacute;n</a></li>
-													<li class="topline"><a href="../proordenproduccion/startup.agnux">Orden Producci&oacute;n</a></li>
-													
-													<!--
-													<li class="topline"><a href="#">Cancelaci&oacute;n</a></li>
-													<li class="topline"><a href="#">Nota Cargo/Cr&eacute;dito</a></li>
-													<li class="topline"><a href="#">Consulta Cancelaci&oacute;n/Devoluci&oacute;n</a></li>
-													<li class="topline"><a href="#">Recepci&oacute;n Documentos XML</a></li>
-													-->
-												</ul>
-											</li>
-											
-											<!--
-											<li>
-												<a href="#" class="sub">Reportes&raquo;</a>
-												<ul>
-													<li class="topline"><a href="#">F&oacute;rmulas</a></li>
-												</ul>
-											</li>
-											-->
-										</ul>
-									</li>
 									
 									
 									
