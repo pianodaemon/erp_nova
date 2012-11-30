@@ -225,10 +225,10 @@
 											<li>
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
-													
+													<!--
 													<li class="topline"><a href="../com_requisicion/startup.agnux">Requisici&oacute;n</a></li>
 													<li class="topline"><a href="../com_oc_req/startup.agnux">Autorizaci&oacute;n de Requisicion</a></li>
-													
+													-->
 													<li class="topline"><a href="../comordencompra/startup.agnux">Orden de Compra</a></li>
 													<li class="topline"><a href="../comcompraautorizacion/startup.agnux">Autorizaci&oacute;n de O. C.</a></li>
 													<li class="topline"><a href="../entradamercancias/startup.agnux">Facturas de Compras</a></li>
@@ -326,10 +326,10 @@
 													
 													<!--
 													esto solo es para kemika y kathion
-													-->
+													
 													<li class="topline"><a href="../invordpresuben/startup.agnux">Orden de Producci&oacute;n</a></li>
 													<li class="topline"><a href="../invordsubensamble/startup.agnux">Producci&oacute;n de Subensamble</a></li>
-													
+													-->
 													
 													
 													<!--
@@ -413,6 +413,8 @@
 											-->
 										</ul>
 									</li>
+									
+									<!--
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible" id="mod_contable">Contabilidad &raquo;</a>
 										<ul>
@@ -426,6 +428,9 @@
 													<li><a href="../tipopolizas/startup.agnux">Tipos de P&oacute;liza</a></li>
 												</ul>
 											</li>
+									-->
+											
+											
 											<!--
 											<li>
 												<a href="#" class="sub">Generaci&oacute;n P&oacute;lizas Contables &raquo;</a>
@@ -446,10 +451,11 @@
 													<li><a href="#">Estado de Resultados/Proforma IETU</a></li>
 												</ul>
 											</li>
-												-->
+											-->
+									<!--
 										</ul>
 									</li>
-									
+									-->
 									
 									
 									<li class="accessible">
