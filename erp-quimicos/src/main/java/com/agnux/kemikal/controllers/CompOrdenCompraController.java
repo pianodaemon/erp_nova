@@ -480,12 +480,12 @@ public class CompOrdenCompraController {
         datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
         datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
         String titulo_reporte2 = this.getGralDao().getTituloReporte(id_empresa, app_selected);
-        System.out.println("ESTE ES EL QUERY DE TITULO DEL REPORTE: "+titulo_reporte2);
+        System.out.println(titulo_reporte2);
         //obtener el directorio temporal
         String dir_tmp = this.getGralDao().getTmpDir();
         String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());        
+        
         datosOrdenCompra = this.getComDao().getDatosPDFOrdenCompra(id_ordenCompra);
         conceptosOrdenCompra = this.getComDao().getconceptosOrdenCompra(id_ordenCompra);        
         String municipio = this.getGralDao().getMunicipioSucursalEmisora(id_sucursal);
