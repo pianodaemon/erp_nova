@@ -2196,7 +2196,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
     
     
     //reporte de ventas netas
-@Override
+    @Override
     public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa) {
     String sql_to_query = "select * from repventasnetasproductofactura("+tipo_reporte+",'"+cliente+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+") as foo( "
                                     + " numero_control character varying, "        
@@ -2211,7 +2211,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     + " tipo_cambio double precision, " 
                                     + " total_pesos double precision,  fecha_factura text); ";
 
-                       System.out.println("sql_to_query:"+ sql_to_query);
+       System.out.println("getVentasNetasProductoFactura:"+ sql_to_query);
           
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query, 
@@ -2681,7 +2681,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
         + ") AS sbt2 "
                 + "ORDER BY cliente, moneda_factura asc,factura";//cliente,moneda_factura;";
         
-        System.out.println("sql_ant_saldos: "+sql_to_query);
+        System.out.println("getDatos_ReporteAntiguedadSaldos: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query, 
@@ -3183,39 +3183,40 @@ public class CxcSpringDao implements CxcInterfaceDao{
             where = "  and erp_pagos.cliente_id=" +cliente;
         }
         
-        String sql_to_query = "SELECT   "
-                                +" erp_h_facturas.serie_folio AS factura, "
-                                +" to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura, "    
-                                +" erp_pagos.cliente_id AS id_cliente, "
-                                +" cxc_clie.razon_social AS cliente,  "
-                                +" erp_monedas.id as id_moneda_fac, "
-                                +" erp_monedas.simbolo AS simbolo_moneda_fac,  "
-                                +" erp_monedas.descripcion_abr AS moneda_fac, "
-                                +" erp_h_facturas.monto_total AS monto_factura, "
-                                +" erp_monedas.simbolo AS simbolo_moneda_aplicado,  "
-                                +" erp_pagos_detalles.cantidad AS pago_aplicado, " 
-                                +" to_char(erp_pagos.fecha_deposito,'dd/mm/yyyy') AS fecha_pago, "
-                                +" gra_mon.id as id_moneda_pago, "
-                                +" gra_mon.simbolo AS simbolo_moneda_pago, "
-                                +" gra_mon.descripcion_abr AS moneda_pago, "
-                                +" (CASE WHEN erp_h_facturas.moneda_id=1 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad "
-                                +" WHEN erp_h_facturas.moneda_id=2 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad "
-                                +" WHEN erp_h_facturas.moneda_id=1 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad/erp_pagos.tipo_cambio "
-                                +" WHEN erp_h_facturas.moneda_id=2 AND erp_pagos.moneda_id=1 THEN erp_pagos_detalles.cantidad*erp_pagos.tipo_cambio "
-                                +" ELSE erp_pagos_detalles.cantidad "
-                                +" END ) AS monto_pago "
-                            +" FROM erp_pagos "
-                            +" JOIN erp_pagos_detalles ON erp_pagos_detalles.pago_id= erp_pagos.id "
-                            +" JOIN erp_h_facturas ON erp_h_facturas.serie_folio = erp_pagos_detalles.serie_folio  "
-                            +" JOIN cxc_clie  ON cxc_clie.id= erp_pagos.cliente_id "
-                            +" JOIN erp_monedas ON erp_monedas.id = erp_h_facturas.moneda_id "
-                            +" JOIN erp_monedas AS gra_mon ON gra_mon.id = erp_pagos.moneda_id "
-                            +" WHERE erp_pagos.empresa_id=" +id_empresa + " "+where
-                            +" AND (to_char(erp_pagos.fecha_deposito,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
-                            +" ORDER BY erp_pagos.fecha_deposito;";
+        String sql_to_query = ""
+                + "SELECT   "
+                        +" erp_h_facturas.serie_folio AS factura, "
+                        +" to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura, "    
+                        +" erp_pagos.cliente_id AS id_cliente, "
+                        +" cxc_clie.razon_social AS cliente,  "
+                        +" erp_monedas.id as id_moneda_fac, "
+                        +" erp_monedas.simbolo AS simbolo_moneda_fac,  "
+                        +" erp_monedas.descripcion_abr AS moneda_fac, "
+                        +" erp_h_facturas.monto_total AS monto_factura, "
+                        +" erp_monedas.simbolo AS simbolo_moneda_aplicado,  "
+                        +" erp_pagos_detalles.cantidad AS pago_aplicado, " 
+                        +" to_char(erp_pagos.fecha_deposito,'dd/mm/yyyy') AS fecha_pago, "
+                        +" gra_mon.id as id_moneda_pago, "
+                        +" gra_mon.simbolo AS simbolo_moneda_pago, "
+                        +" gra_mon.descripcion_abr AS moneda_pago, "
+                        +" (CASE WHEN erp_h_facturas.moneda_id=1 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad "
+                        +" WHEN erp_h_facturas.moneda_id=2 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad "
+                        +" WHEN erp_h_facturas.moneda_id=1 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad/erp_pagos.tipo_cambio "
+                        +" WHEN erp_h_facturas.moneda_id=2 AND erp_pagos.moneda_id=1 THEN erp_pagos_detalles.cantidad*erp_pagos.tipo_cambio "
+                        +" ELSE erp_pagos_detalles.cantidad "
+                        +" END ) AS monto_pago "
+                    +" FROM erp_pagos "
+                    +" JOIN erp_pagos_detalles ON erp_pagos_detalles.pago_id= erp_pagos.id "
+                    +" JOIN erp_h_facturas ON erp_h_facturas.serie_folio = erp_pagos_detalles.serie_folio  "
+                    +" JOIN cxc_clie  ON cxc_clie.id= erp_pagos.cliente_id "
+                    +" JOIN erp_monedas ON erp_monedas.id = erp_h_facturas.moneda_id "
+                    +" JOIN erp_monedas AS gra_mon ON gra_mon.id = erp_pagos.moneda_id "
+                    +" WHERE erp_pagos.empresa_id=" +id_empresa + " "
+                    + "AND erp_pagos_detalles.cancelacion=FALSE "+where
+                    +" AND (to_char(erp_pagos.fecha_deposito,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
+                    +" ORDER BY erp_pagos.fecha_deposito;";
         
-        
-        System.out.println("sql_to_query:"+ sql_to_query);
+        System.out.println("getCobranzaDiaria:"+ sql_to_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query, 

@@ -153,9 +153,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                                     +"cxc_clie.razon_social as cliente, "
                                     +"fac_docs.total, "
                                     +"erp_monedas.descripcion_abr AS moneda, "
-                                    +"(CASE WHEN fac_docs.cancelado=FALSE THEN (CASE WHEN erp_h_facturas.pagado=TRUE THEN 'PAGADO' ELSE '' END) ELSE 'CANCELADO' END) AS estado, "
                                     +"to_char(fac_docs.momento_creacion,'dd/mm/yyyy') AS fecha_facturacion, "
-                                    +"to_char(fac_docs.fecha_vencimiento,'dd/mm/yyyy') AS fecha_venc "
+                                    +"to_char(fac_docs.fecha_vencimiento,'dd/mm/yyyy') AS fecha_venc, "
+                                    +"(CASE WHEN fac_docs.cancelado=FALSE THEN (CASE WHEN erp_h_facturas.pagado=TRUE THEN 'PAGADO' ELSE '' END) ELSE 'CANCELADO' END) AS estado, "
+                                    +"(CASE WHEN fac_docs.cancelado=FALSE THEN (CASE WHEN erp_h_facturas.pagado=TRUE THEN to_char(fecha_ultimo_pago::timestamp with time zone,'dd/mm/yyyy') ELSE '' END) ELSE '' END) AS fecha_pago "
                             +"FROM fac_docs  "
                             +"JOIN erp_proceso on erp_proceso.id=fac_docs.proceso_id  "
                             +"LEFT JOIN cxc_clie on cxc_clie.id=fac_docs.cxc_clie_id  "
@@ -178,9 +179,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("cliente",rs.getString("cliente"));
                     row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getString("total"),2)));
                     row.put("moneda",rs.getString("moneda"));
-                    row.put("estado",rs.getString("estado"));
                     row.put("fecha_facturacion",rs.getString("fecha_facturacion"));
                     row.put("fecha_venc",rs.getString("fecha_venc"));
+                    row.put("estado",rs.getString("estado"));
+                    row.put("fecha_pago",rs.getString("fecha_pago"));
                     return row;
                 }
             }
