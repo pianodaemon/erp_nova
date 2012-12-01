@@ -47,15 +47,15 @@
 						<td>Filtro por</td>
 						<td width=10>&nbsp;&nbsp;</td>
 						<td>
-                                                    <SELECT NAME="filtropor" style="width:150px;">
-                                                    <!--
-                                                    <option value="0">[-- Opcion busqueda --]</option>
-                                                    <option value="1">No. de control</option>
-                                                    <option value="2">RFC</option>
-                                                    <option value="3">Razon social</option>
-                                                    <option value="4">CURP</option>
-                                                    -->
-                                                    </SELECT>
+							<SELECT NAME="filtropor" style="width:150px;">
+							<!--
+							<option value="0">[-- Opcion busqueda --]</option>
+							<option value="1">No. de control</option>
+							<option value="2">RFC</option>
+							<option value="3">Razon social</option>
+							<option value="4">CURP</option>
+							-->
+							</SELECT>
 						</td>
 						<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 						<td><INPUT TYPE="button" value="Buscar"></td>
