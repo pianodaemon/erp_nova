@@ -103,10 +103,12 @@ public class FacturasController {
         infoConstruccionTabla.put("cliente", "Cliente:300");
         infoConstruccionTabla.put("total", "Monto:90");
         infoConstruccionTabla.put("moneda", "Moneda:60");
-        infoConstruccionTabla.put("fecha_facturacion","Fecha&nbsp;Exp.:100");
-        infoConstruccionTabla.put("fecha_venc","Fecha&nbsp;Ven.:100");
-        infoConstruccionTabla.put("estado", "Estado:90");
-        infoConstruccionTabla.put("fecha_pago","Fecha&nbsp;Pago:100");
+        infoConstruccionTabla.put("fecha_facturacion","Fecha&nbsp;Exp.:80");
+        infoConstruccionTabla.put("fecha_venc","Fecha&nbsp;Ven.:80");
+        infoConstruccionTabla.put("folio_pedido","Pedido:80");
+        infoConstruccionTabla.put("oc","O.C.:80");
+        infoConstruccionTabla.put("estado", "Estado:80");
+        infoConstruccionTabla.put("fecha_pago","Fecha&nbsp;Pago:80");
         
         ModelAndView x = new ModelAndView("facturas/startup", "title", "Facturas de Clientes");
         

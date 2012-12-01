@@ -155,6 +155,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                                     +"erp_monedas.descripcion_abr AS moneda, "
                                     +"to_char(fac_docs.momento_creacion,'dd/mm/yyyy') AS fecha_facturacion, "
                                     +"to_char(fac_docs.fecha_vencimiento,'dd/mm/yyyy') AS fecha_venc, "
+                                    +"(CASE WHEN fac_docs.folio_pedido IS NULL THEN '' ELSE fac_docs.folio_pedido END ) AS folio_pedido, "
+                                    +"(CASE WHEN fac_docs.orden_compra IS NULL THEN '' ELSE fac_docs.orden_compra END) AS oc, "
                                     +"(CASE WHEN fac_docs.cancelado=FALSE THEN (CASE WHEN erp_h_facturas.pagado=TRUE THEN 'PAGADO' ELSE '' END) ELSE 'CANCELADO' END) AS estado, "
                                     +"(CASE WHEN fac_docs.cancelado=FALSE THEN (CASE WHEN erp_h_facturas.pagado=TRUE THEN to_char(fecha_ultimo_pago::timestamp with time zone,'dd/mm/yyyy') ELSE '' END) ELSE '' END) AS fecha_pago "
                             +"FROM fac_docs  "
@@ -181,6 +183,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("moneda",rs.getString("moneda"));
                     row.put("fecha_facturacion",rs.getString("fecha_facturacion"));
                     row.put("fecha_venc",rs.getString("fecha_venc"));
+                    row.put("folio_pedido",rs.getString("folio_pedido"));
+                    row.put("oc",rs.getString("oc"));
                     row.put("estado",rs.getString("estado"));
                     row.put("fecha_pago",rs.getString("fecha_pago"));
                     return row;

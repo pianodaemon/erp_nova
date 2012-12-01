@@ -122,6 +122,8 @@ public class PrefacturasController {
         infoConstruccionTabla.put("cliente", "Cliente:320");
         infoConstruccionTabla.put("total", "Monto:100");
         infoConstruccionTabla.put("denominacion", "Moneda:70");
+        infoConstruccionTabla.put("folio_pedido","Pedido:80");
+        infoConstruccionTabla.put("oc","O.C.:80");
         infoConstruccionTabla.put("estado", "Estado:100");
         infoConstruccionTabla.put("fecha_creacion","Fecha creacion:110");
         

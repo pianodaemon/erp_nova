@@ -94,6 +94,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                         +"cxc_clie.razon_social as cliente, "
                         +"erp_prefacturas.total, "
                         +"erp_monedas.descripcion_abr AS denominacion,   "
+                        +"(CASE WHEN erp_prefacturas.folio_pedido IS NULL THEN '' ELSE erp_prefacturas.folio_pedido END ) AS folio_pedido, "
+                        +"(CASE WHEN erp_prefacturas.orden_compra IS NULL THEN '' ELSE erp_prefacturas.orden_compra END) AS oc, "
                         +"(CASE WHEN erp_proceso.proceso_flujo_id=2 THEN '' ELSE erp_proceso_flujo.titulo END) as estado, "
                         +"to_char(erp_prefacturas.momento_creacion,'dd/mm/yyyy') as fecha_creacion, "
                         +"(CASE WHEN erp_prefacturas.refacturar=FALSE THEN 1 ELSE 0 END) refacturar "
@@ -121,6 +123,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("cliente",rs.getString("cliente"));
                     row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(rs.getString("total"),2)));
                     row.put("denominacion",rs.getString("denominacion"));
+                    row.put("folio_pedido",rs.getString("folio_pedido"));
+                    row.put("oc",rs.getString("oc"));
                     row.put("estado",rs.getString("estado"));
                     row.put("fecha_creacion",rs.getString("fecha_creacion"));
                     return row;
