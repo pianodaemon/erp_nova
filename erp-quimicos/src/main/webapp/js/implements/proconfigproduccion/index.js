@@ -398,6 +398,7 @@ $(function() {
 	}//termina buscador de productos
 	
         $verifica_porcentaje = function($tabla_tmp, accion){
+            /*
             $sum_porciento = 0;
             $tabla_tmp.find('tbody > tr').each(function (index){
                 
@@ -408,6 +409,17 @@ $(function() {
                     }
                 }
             });
+            */
+            $sum_porciento = 0;
+            $tabla_tmp.find('tbody > tr').each(function (index){
+                if(parseInt($(this).find('#delete').val())!=0){
+                    $porciento = parseFloat($(this).find('input[name=cantidad]').val()).toFixed(4);
+                    if(! isNaN($porciento)){
+                        $sum_porciento = parseFloat($sum_porciento) + parseFloat($porciento);
+                    }
+                }
+            });
+            $sum_porciento =  parseFloat(parseFloat($sum_porciento).toFixed(4));
             
             if(accion == 'confirm'){
                 $sum_porciento = parseFloat($sum_porciento).toFixed(4);
@@ -473,6 +485,7 @@ $(function() {
                     $(this).parent().parent().hide();
                     //$(this).parent().parent().remove();
                 }
+                
             });
             
             
@@ -480,6 +493,7 @@ $(function() {
                 if($(this).val() !=''){
                     $porcentaje_temporal.val($(this).val());
                     valida_porciento_tmp = $verifica_porcentaje($grid_productos_componentes, 'valida');
+                    
                     if(valida_porciento_tmp == false){
                         $porcentaje_temporal.val(0);
                         jAlert("Esta excediendo el 100 % de la configuración", 'Atencion!');
@@ -498,8 +512,9 @@ $(function() {
                         var calculo_porcentaje=0;
                         
                         if(parseFloat($porcentaje_temporal.val()) != parseFloat($(this).val())){
-                            
-                                calculo_porcentaje=(parseFloat($(this).val()) / parseFloat($cantidad_calculo.val())) *100;
+                                //calculo_porcentaje=(parseFloat($(this).val()) / parseFloat($cantidad_calculo.val())) *100;
+                                
+                                calculo_porcentaje=(parseFloat(parseFloat($(this).val()).toFixed(4)) / parseFloat(parseFloat($cantidad_calculo.val()).toFixed(4))) *100;
                                 $(this).val(parseFloat(calculo_porcentaje).toFixed(4));
                                 
                                 valida_porciento_tmp = $verifica_porcentaje($grid_productos_componentes, 'valida');
@@ -515,7 +530,8 @@ $(function() {
                             }
                         });
                         $total_porcentaje.val(total);
-
+                        //alert("total_porcentaje: "+$total_porcentaje.val()+"       total: "+total);
+                        
                 }else{
                         jAlert("La cantidad debe tener un 0, ejemplo: 0.3, 456.5, 654.9",'! Atencion');
                         $(this).val(0.0)
@@ -1886,7 +1902,7 @@ $(function() {
                             //$.getJSON(json_string,function(entry){
                             $.post(input_json,$arreglo,function(entry){
                                 $.each(entry,function(entryIndex,form){
-
+                                    
                                     trr = '<tr>';
                                         trr += '<td width="100">';
                                         trr += '<span class="id_formula" style="display:none">'+form['id']+'</span>';
@@ -1895,12 +1911,12 @@ $(function() {
                                         trr += '<td width="80"> <span class="sku" >'+form['sku']+'</span></td>';
                                         trr += '<td width="390"><span class="descripcion" >'+form['descripcion']+'</span></td>';
                                     trr += '</tr>';
-
+                                    
                                     $tabla_resultados_formulas.append(trr);
-
+                                    
                                     $colorea_tr_grid($tabla_resultados_formulas);
-
-
+                                    
+                                    
                                     $tabla_resultados_formulas.find('tr').click(function(){
 
                                         var $grid_sub_procesos = $('#forma-proconfigproduccion-window').find('#tabla_subprocesos_seleccionados');
