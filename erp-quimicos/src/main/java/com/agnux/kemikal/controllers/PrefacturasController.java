@@ -558,7 +558,7 @@ public class PrefacturasController {
                         
                         command_selected = "facturar_cfd";
                         extra_data_array = "'sin datos'";
-                        datosExtrasXmlFactura = this.getFacdao().getDatosExtrasFacturaXml(String.valueOf(id_prefactura),tipo_cambio_vista,String.valueOf(id_usuario),String.valueOf(id_moneda),id_empresa,refacturar, app_selected, command_selected, extra_data_array);
+                        datosExtrasXmlFactura = this.getFacdao().getDatosExtrasFacturaXml(String.valueOf(id_prefactura),tipo_cambio_vista,String.valueOf(id_usuario),String.valueOf(id_moneda),id_empresa, id_sucursal, refacturar, app_selected, command_selected, extra_data_array);
                         
                         //xml factura
                         this.getBf().init(dataFacturaCliente, conceptos,impRetenidos,impTrasladados , proposito,datosExtrasXmlFactura, id_empresa, id_sucursal);
@@ -595,8 +595,8 @@ public class PrefacturasController {
                         extra_data_array = "'sin datos'";
                         command_selected="facturar_cfdi";
                         
-                        String Serie=this.getGralDao().getSerieFactura(id_empresa);
-                        String Folio=this.getGralDao().getFolioFactura(id_empresa);
+                        String Serie=this.getGralDao().getSerieFactura(id_empresa, id_sucursal);
+                        String Folio=this.getGralDao().getFolioFactura(id_empresa, id_sucursal);
                         rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                         
                         Integer id_factura=0;
@@ -631,7 +631,7 @@ public class PrefacturasController {
                         this.getBfcfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
                         this.getBfcfdi().start();
                         
-                        this.getGralDao().actualizarFolioFactura(id_empresa);
+                        this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
                         
                         jsonretorno.put("folio",Serie+Folio);
                     }

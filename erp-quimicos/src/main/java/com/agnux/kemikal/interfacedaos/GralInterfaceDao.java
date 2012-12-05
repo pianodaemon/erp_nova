@@ -33,26 +33,26 @@ public interface GralInterfaceDao {
     public String getRfcEmpresaEmisora(Integer id_empresa);
     public String getRegimenFiscalEmpresaEmisora(Integer id_empresa);
     
-    public String getCertificadoEmpresaEmisora(Integer id_empresa);
-    public String getNoCertificadoEmpresaEmisora(Integer id_empresa);
-    public String getFicheroLlavePrivada(Integer id_empresa);
-    public String getPasswordLlavePrivada(Integer id_empresa);
-    public String getFolioFactura(Integer id_empresa);
-    public String getFolioNotaCredito(Integer id_empresa);
-    public String getFolioNotaCargo(Integer id_empresa);
-    public String getSerieNotaCargo(Integer id_empresa);
-    public String getAnoAprobacionNotaCargo(Integer id_empresa);
-    public String getNoAprobacionNotaCargo(Integer id_empresa);
-    public String getNoAprobacionNotaCredito(Integer id_empresa);
-    public String getSerieNotaCredito(Integer id_empresa);
-    public String getAnoAprobacionNotaCredito(Integer id_empresa);
-    public String getSerieFactura(Integer id_empresa);
-    public String getAnoAprobacionFactura(Integer id_empresa);
-    public String getNoAprobacionFactura(Integer id_empresa);
+    public String getCertificadoEmpresaEmisora(Integer id_empresa, Integer id_sucursal);
+    public String getNoCertificadoEmpresaEmisora(Integer id_empresa, Integer id_sucursal);
+    public String getFicheroLlavePrivada(Integer id_empresa, Integer id_sucursal);
+    public String getPasswordLlavePrivada(Integer id_empresa, Integer id_sucursal);
+    public String getFolioFactura(Integer id_empresa, Integer id_sucursal);
+    public String getFolioNotaCredito(Integer id_empresa, Integer id_sucursal);
+    public String getFolioNotaCargo(Integer id_empresa, Integer id_sucursal);
+    public String getSerieNotaCargo(Integer id_empresa, Integer id_sucursal);
+    public String getAnoAprobacionNotaCargo(Integer id_empresa, Integer id_sucursal);
+    public String getNoAprobacionNotaCargo(Integer id_empresa, Integer id_sucursal);
+    public String getNoAprobacionNotaCredito(Integer id_empresa, Integer id_sucursal);
+    public String getSerieNotaCredito(Integer id_empresa, Integer id_sucursal);
+    public String getAnoAprobacionNotaCredito(Integer id_empresa, Integer id_sucursal);
+    public String getSerieFactura(Integer id_empresa, Integer id_sucursal);
+    public String getAnoAprobacionFactura(Integer id_empresa, Integer id_sucursal);
+    public String getNoAprobacionFactura(Integer id_empresa, Integer id_sucursal);
     
-    public void actualizarFolioFactura(Integer id_empresa);
-    public void actualizarFolioNotaCredito(Integer id_empresa);
-    public void actualizarFolioNotaCargo(Integer id_empresa);
+    public void actualizarFolioFactura(Integer id_empresa, Integer id_sucursal);
+    public void actualizarFolioNotaCredito(Integer id_empresa, Integer id_sucursal);
+    public void actualizarFolioNotaCargo(Integer id_empresa, Integer id_sucursal);
     
     public String getCalleDomicilioFiscalEmpresaEmisora(Integer id_empresa);
     public String getCpDomicilioFiscalEmpresaEmisora(Integer id_empresa);

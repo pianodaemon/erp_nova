@@ -128,7 +128,7 @@ public final class pdfCfd {
         
         
         
-        this.setNo_certificado(this.getGralDao().getNoCertificadoEmpresaEmisora(id_empresa));
+        this.setNo_certificado(this.getGralDao().getNoCertificadoEmpresaEmisora(id_empresa, id_sucursal));
         this.setProposito(extras.get("proposito"));
         this.setSerie_folio(extras.get("serieFolio"));
         this.setCadena_original(extras.get("cadena_original"));
@@ -146,20 +146,20 @@ public final class pdfCfd {
         
         switch (Proposito.valueOf(this.getProposito())) {
             case FACTURA:
-                this.setNo_aprobacion(this.getGralDao().getNoAprobacionFactura(id_empresa));
-                this.setAno_aprobacion(this.getGralDao().getAnoAprobacionFactura(id_empresa));
+                this.setNo_aprobacion(this.getGralDao().getNoAprobacionFactura(id_empresa, id_sucursal));
+                this.setAno_aprobacion(this.getGralDao().getAnoAprobacionFactura(id_empresa, id_sucursal));
                 this.setEtiqueta_tipo_doc("FACTURA No. / INVOICE No.");
                 break;
                 
             case NOTA_CREDITO:
-                this.setNo_aprobacion(this.getGralDao().getNoAprobacionNotaCredito(id_empresa));
-                this.setAno_aprobacion(this.getGralDao().getAnoAprobacionNotaCredito(id_empresa));
+                this.setNo_aprobacion(this.getGralDao().getNoAprobacionNotaCredito(id_empresa, id_sucursal));
+                this.setAno_aprobacion(this.getGralDao().getAnoAprobacionNotaCredito(id_empresa, id_sucursal));
                 this.setEtiqueta_tipo_doc("NOTA DE CREDITO No. / CREDIT NOTE No.");
                 break;
                 
             case NOTA_CARGO:
-                this.setNo_aprobacion(this.getGralDao().getNoAprobacionNotaCargo(id_empresa));
-                this.setAno_aprobacion(this.getGralDao().getAnoAprobacionNotaCargo(id_empresa));
+                this.setNo_aprobacion(this.getGralDao().getNoAprobacionNotaCargo(id_empresa, id_sucursal));
+                this.setAno_aprobacion(this.getGralDao().getAnoAprobacionNotaCargo(id_empresa, id_sucursal));
                 break;
         }
         

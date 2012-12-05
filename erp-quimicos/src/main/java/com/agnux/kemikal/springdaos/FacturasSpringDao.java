@@ -781,7 +781,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     //obtiene datos extras para la factura
     @Override
-    public LinkedHashMap<String, String> getDatosExtrasFacturaXml(String id_prefactura, String tipo_cambio_vista, String id_usuario, String id_moneda, Integer id_empresa,  String refacturar, Integer app_selected, String command_selected, String extra_data_array) {
+    public LinkedHashMap<String, String> getDatosExtrasFacturaXml(String id_prefactura, String tipo_cambio_vista, String id_usuario, String id_moneda, Integer id_empresa, Integer id_sucursal,  String refacturar, Integer app_selected, String command_selected, String extra_data_array) {
         LinkedHashMap<String,String> datosExtras = new LinkedHashMap<String,String>();
         //estos son requeridos para cfd
         datosExtras.put("prefactura_id", id_prefactura);
@@ -789,6 +789,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         datosExtras.put("moneda_id", id_moneda);
         datosExtras.put("usuario_id", id_usuario);
         datosExtras.put("empresa_id", String.valueOf(id_empresa));
+        datosExtras.put("sucursal_id", String.valueOf(id_sucursal));
         datosExtras.put("refacturar", refacturar);
         datosExtras.put("app_selected", String.valueOf(app_selected));
         datosExtras.put("command_selected", command_selected);

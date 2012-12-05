@@ -105,8 +105,9 @@ public final class BeanFacturador {
         try {
             
             Integer id_empresa = Integer.parseInt(this.getDatosExtras().get("empresa_id"));
+            Integer id_sucursal = Integer.parseInt(this.getDatosExtras().get("sucursal_id"));
             
-            String comprobante_firmado = this.generarComprobanteFirmado(id_empresa);
+            String comprobante_firmado = this.generarComprobanteFirmado(id_empresa, id_sucursal);
             
             BeanFromCfdXml pop = new BeanFromCfdXml(comprobante_firmado.getBytes("UTF-8"));
             
@@ -224,7 +225,7 @@ public final class BeanFacturador {
         
     }
     
-    private String generarComprobanteFirmado(Integer id_empresa) throws Exception {
+    private String generarComprobanteFirmado(Integer id_empresa, Integer id_sucursal) throws Exception {
         
         this.checkdata();
         
@@ -282,30 +283,30 @@ public final class BeanFacturador {
         
         switch (Proposito.valueOf(this.getProposito())) {
             case FACTURA:
-                String folio_factura = this.getGralDao().getFolioFactura(id_empresa);
+                String folio_factura = this.getGralDao().getFolioFactura(id_empresa, id_sucursal);
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_factura);
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieFactura(id_empresa));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionFactura(id_empresa));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionFactura(id_empresa));
-                this.getGralDao().actualizarFolioFactura(id_empresa);
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieFactura(id_empresa, id_sucursal));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionFactura(id_empresa, id_sucursal));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionFactura(id_empresa, id_sucursal));
+                this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
                 break;
                 
             case NOTA_CREDITO:
-                String folio_credito = this.getGralDao().getFolioNotaCredito(id_empresa);
+                String folio_credito = this.getGralDao().getFolioNotaCredito(id_empresa, id_sucursal);
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_credito);
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCredito(id_empresa));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCredito(id_empresa));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCredito(id_empresa));
-                this.getGralDao().actualizarFolioNotaCredito(id_empresa);
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCredito(id_empresa, id_sucursal));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCredito(id_empresa, id_sucursal));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCredito(id_empresa, id_sucursal));
+                this.getGralDao().actualizarFolioNotaCredito(id_empresa, id_sucursal);
                 break;
                 
             case NOTA_CARGO:
-                String folio_notadecargo = this.getGralDao().getFolioNotaCargo(id_empresa);
+                String folio_notadecargo = this.getGralDao().getFolioNotaCargo(id_empresa, id_sucursal);
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_notadecargo);
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCargo(id_empresa));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCargo(id_empresa));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCargo(id_empresa));
-                this.getGralDao().actualizarFolioNotaCargo(id_empresa);
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCargo(id_empresa, id_sucursal));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCargo(id_empresa, id_sucursal));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCargo(id_empresa, id_sucursal));
+                this.getGralDao().actualizarFolioNotaCargo(id_empresa, id_sucursal);
                 break;
         }
         
@@ -313,10 +314,10 @@ public final class BeanFacturador {
         this.setCadenaOriginal(cadena_original);
         
         
-        String ruta_fichero_llave = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa);
+        String ruta_fichero_llave = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
         //System.out.println("ruta_fichero_llave: "+ruta_fichero_llave);
         
-        String sello = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa), cadena_original);
+        String sello = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal), cadena_original);
         valor_retorno = comprobante_sin_firmar.replaceAll("@SELLO_DIGITAL", sello);
         
         this.setSelloDigital(sello);
@@ -336,11 +337,11 @@ public final class BeanFacturador {
         this.setProposito(propos);
         
         
-        System.out.println("Leyendo fichero: "+this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getCertificadoEmpresaEmisora(id_empresa));
+        System.out.println("Leyendo fichero: "+this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getCertificadoEmpresaEmisora(id_empresa, id_sucursal));
         
         //Datos Base del CFD ------- INICIO -----------------------------------
         
-        this.setCertificado(CryptoEngine.encodeCertToBase64(this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getCertificadoEmpresaEmisora(id_empresa)));
+        this.setCertificado(CryptoEngine.encodeCertToBase64(this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getCertificadoEmpresaEmisora(id_empresa, id_sucursal)));
         
         this.setFecha(data.get("comprobante_attr_fecha"));
         
@@ -384,7 +385,7 @@ public final class BeanFacturador {
         this.setRfc_emisor(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getRfcEmpresaEmisora(id_empresa))));
         this.setRegimen_fiscal_emisor(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getRegimenFiscalEmpresaEmisora(id_empresa))));
         
-        this.setNoCertificado(this.getGralDao().getNoCertificadoEmpresaEmisora(id_empresa));
+        this.setNoCertificado(this.getGralDao().getNoCertificadoEmpresaEmisora(id_empresa, id_sucursal));
         this.setCalle_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getCalleDomicilioFiscalEmpresaEmisora(id_empresa))));
         this.setCodigoPostal_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa))));
         this.setColonia_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getColoniaDomicilioFiscalEmpresaEmisora(id_empresa))));

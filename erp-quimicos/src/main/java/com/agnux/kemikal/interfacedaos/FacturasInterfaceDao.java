@@ -40,7 +40,7 @@ public interface FacturasInterfaceDao {
     public ArrayList<LinkedHashMap<String, String>> getListaConceptosFacturaXml(Integer id_prefactura);
     public ArrayList<LinkedHashMap<String, String>> getImpuestosRetenidosFacturaXml();
     public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal);
-    public LinkedHashMap<String, String> getDatosExtrasFacturaXml(String id_prefactura, String tipo_cambio_vista, String id_usuario, String id_moneda, Integer id_empresa, String refacturar, Integer app_selected, String command_selected, String extra_data_array);
+    public LinkedHashMap<String, String> getDatosExtrasFacturaXml(String id_prefactura, String tipo_cambio_vista, String id_usuario, String id_moneda, Integer id_empresa, Integer id_sucursal, String refacturar, Integer app_selected, String command_selected, String extra_data_array);
     
     public LinkedHashMap<String, String> getDatosExtrasCfdi(Integer id_factura);
     public ArrayList<LinkedHashMap<String, String>> getListaConceptosCfdi(Integer id_factura, String rfcEmisor);

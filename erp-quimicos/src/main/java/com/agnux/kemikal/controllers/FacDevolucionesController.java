@@ -449,8 +449,8 @@ public class FacDevolucionesController {
                         extra_data_array = "'sin datos'";
                         command_selected="genera_nota_credito_cfdi";
                         
-                        String Serie=this.getGralDao().getSerieNotaCredito(id_empresa);
-                        String Folio=this.getGralDao().getFolioNotaCredito(id_empresa);
+                        String Serie=this.getGralDao().getSerieNotaCredito(id_empresa, id_sucursal);
+                        String Folio=this.getGralDao().getFolioNotaCredito(id_empresa, id_sucursal);
                         rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                         
                         //lista de conceptos para la Nota de Credito cfdi
@@ -482,7 +482,7 @@ public class FacDevolucionesController {
                         actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
                         
                         //actualiza el folio de la Nota de Credito
-                        this.getGralDao().actualizarFolioNotaCredito(id_empresa);
+                        this.getGralDao().actualizarFolioNotaCredito(id_empresa, id_sucursal);
                         
                         jsonretorno.put("folio",Serie+Folio);
                     }//termina tipo CFDI

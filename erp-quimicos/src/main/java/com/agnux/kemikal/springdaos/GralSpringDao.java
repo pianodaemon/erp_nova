@@ -81,14 +81,14 @@ public class GralSpringDao implements GralInterfaceDao{
         String zebradir = this.getZebraDir()+ "/"+"in";
         return zebradir;
     }
-
-
+    
+    
     @Override
     public String getZebraOutDir() {
         String zebradir = this.getZebraDir()+ "/"+"out";
         return zebradir;
     }
-
+    
     @Override
     public String getZebraProcessingDir() {
         String zebradir = this.getZebraDir()+ "/"+"processing";
@@ -160,18 +160,17 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     
     @Override
-    public String getCertificadoEmpresaEmisora(Integer id_empresa) {
-        String sql_to_query = "SELECT fac_cfds_conf.archivo_certificado FROM gral_emp JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id WHERE gral_emp.id ="+id_empresa;
+    public String getCertificadoEmpresaEmisora(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.archivo_certificado FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_certificado = this.getJdbcTemplate().queryForMap(sql_to_query);
         String certificado_emisora = map_certificado.get("archivo_certificado").toString();
         return certificado_emisora;
     }
     
     
-    
     @Override
-    public String getNoCertificadoEmpresaEmisora(Integer id_empresa) {
-        String sql_to_query = "SELECT fac_cfds_conf.numero_certificado FROM gral_emp JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id WHERE gral_emp.id ="+id_empresa;
+    public String getNoCertificadoEmpresaEmisora(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.numero_certificado FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_no_cert = this.getJdbcTemplate().queryForMap(sql_to_query);
         String no_cert_emisora = map_no_cert.get("numero_certificado").toString();
         return no_cert_emisora;
@@ -179,8 +178,8 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getFicheroLlavePrivada(Integer id_empresa) {
-        String sql_to_query = "SELECT fac_cfds_conf.archivo_llave FROM gral_emp JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id WHERE gral_emp.id ="+id_empresa;
+    public String getFicheroLlavePrivada(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.archivo_llave FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_archivo_llave = this.getJdbcTemplate().queryForMap(sql_to_query);
         String archivo_llave_emisora = map_archivo_llave.get("archivo_llave").toString();
         return archivo_llave_emisora;
@@ -189,8 +188,8 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getPasswordLlavePrivada(Integer id_empresa) {
-        String sql_to_query = "SELECT fac_cfds_conf.password_llave FROM gral_emp JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id WHERE gral_emp.id ="+id_empresa;
+    public String getPasswordLlavePrivada(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.password_llave FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_password_llave = this.getJdbcTemplate().queryForMap(sql_to_query);
         String password_llave_emisora = map_password_llave.get("password_llave").toString();
         return password_llave_emisora;
@@ -199,12 +198,13 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getFolioFactura(Integer id_empresa) {
+    public String getFolioFactura(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.folio_actual "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'FAC' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito = 'FAC' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" "
+                + "AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_folio_factura = this.getJdbcTemplate().queryForMap(sql_to_query);
         String folio_factura_emisora = map_folio_factura.get("folio_actual").toString();
         return folio_factura_emisora;
@@ -213,12 +213,13 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getSerieFactura(Integer id_empresa) {
+    public String getSerieFactura(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.serie "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'FAC' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito='FAC' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" "
+                + "AND fac_cfds_conf.gral_suc_id="+ id_sucursal+";";
         Map<String, Object> map_serie_factura = this.getJdbcTemplate().queryForMap(sql_to_query);
         String serie_factura_emisora = map_serie_factura.get("serie").toString();
         return serie_factura_emisora;
@@ -227,12 +228,13 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getAnoAprobacionFactura(Integer id_empresa) {
+    public String getAnoAprobacionFactura(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.ano_aprobacion "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'FAC' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito = 'FAC' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" "
+                + "AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_ano_aprobacion_factura = this.getJdbcTemplate().queryForMap(sql_to_query);
         String ano_aprobacion_factura_emisora = map_ano_aprobacion_factura.get("ano_aprobacion").toString();
         return ano_aprobacion_factura_emisora;
@@ -241,12 +243,11 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getNoAprobacionFactura(Integer id_empresa) {
+    public String getNoAprobacionFactura(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.no_aprobacion "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'FAC' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito = 'FAC' AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_num_aprobacion_factura = this.getJdbcTemplate().queryForMap(sql_to_query);
         String num_aprobacion_factura_emisora = map_num_aprobacion_factura.get("no_aprobacion").toString();
         return num_aprobacion_factura_emisora;
@@ -254,12 +255,11 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getSerieNotaCredito(Integer id_empresa) {
+    public String getSerieNotaCredito(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.serie "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'NCR' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito = 'NCR' AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_serie_nota_credito = this.getJdbcTemplate().queryForMap(sql_to_query);
         String serie_nota_credito_emisora = map_serie_nota_credito.get("serie").toString();
         return serie_nota_credito_emisora;
@@ -268,12 +268,12 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getFolioNotaCredito(Integer id_empresa) {
+    public String getFolioNotaCredito(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.folio_actual "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'NCR' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito = 'NCR' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_folio_nota_credito = this.getJdbcTemplate().queryForMap(sql_to_query);
         String folio_nota_credito_emisora = map_folio_nota_credito.get("folio_actual").toString();
         return folio_nota_credito_emisora;
@@ -281,12 +281,12 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getNoAprobacionNotaCredito(Integer id_empresa) {
+    public String getNoAprobacionNotaCredito(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.no_aprobacion "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'NCR' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito = 'NCR' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_num_aprobacion_nota_credito = this.getJdbcTemplate().queryForMap(sql_to_query);
         String num_aprobacion_nota_credito_emisora = map_num_aprobacion_nota_credito.get("no_aprobacion").toString();
         return num_aprobacion_nota_credito_emisora;
@@ -294,12 +294,12 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getAnoAprobacionNotaCredito(Integer id_empresa) {
+    public String getAnoAprobacionNotaCredito(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.ano_aprobacion "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'NCR' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito = 'NCR' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_ano_aprobacion_nota_credito = this.getJdbcTemplate().queryForMap(sql_to_query);
         String ano_aprobacion_nota_credito_emisora = map_ano_aprobacion_nota_credito.get("ano_aprobacion").toString();
         return ano_aprobacion_nota_credito_emisora;
@@ -308,12 +308,12 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getSerieNotaCargo(Integer id_empresa) {
-        String sql_to_query = "SELECT fac_cfds_conf_folios.serie "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
-                + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'NCA' AND gral_emp.id ="+id_empresa;
+    public String getSerieNotaCargo(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf_folios.serie  "
+                + "FROM fac_cfds_conf  "
+                + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id  "
+                + "WHERE fac_cfds_conf_folios.proposito = 'NCA'  "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_serie_nota_cargo = this.getJdbcTemplate().queryForMap(sql_to_query);
         String serie_nota_cargo_emisora = map_serie_nota_cargo.get("serie").toString();
         return serie_nota_cargo_emisora;
@@ -322,12 +322,12 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getFolioNotaCargo(Integer id_empresa) {
+    public String getFolioNotaCargo(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.folio_actual "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'NCA' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito = 'NCA' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_folio_nota_cargo = this.getJdbcTemplate().queryForMap(sql_to_query);
         String folio_nota_cargo_emisora = map_folio_nota_cargo.get("folio_actual").toString();
         return folio_nota_cargo_emisora;
@@ -335,12 +335,12 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getAnoAprobacionNotaCargo(Integer id_empresa) {
+    public String getAnoAprobacionNotaCargo(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.ano_aprobacion "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'NCA' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito='NCA' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_ano_aprobacion_nota_cargo = this.getJdbcTemplate().queryForMap(sql_to_query);
         String ano_aprobacion_nota_cargo_emisora = map_ano_aprobacion_nota_cargo.get("ano_aprobacion").toString();
         return ano_aprobacion_nota_cargo_emisora;
@@ -349,12 +349,12 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public String getNoAprobacionNotaCargo(Integer id_empresa) {
+    public String getNoAprobacionNotaCargo(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.no_aprobacion "
-                + "FROM gral_emp "
-                + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
+                + "FROM fac_cfds_conf "
                 + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
-                + "WHERE fac_cfds_conf_folios.proposito = 'NCA' AND gral_emp.id ="+id_empresa;
+                + "WHERE fac_cfds_conf_folios.proposito = 'NCA' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map_num_aprobacion_nota_cargo = this.getJdbcTemplate().queryForMap(sql_to_query);
         String num_aprobacion_nota_cargo_emisora = map_num_aprobacion_nota_cargo.get("no_aprobacion").toString();
         return num_aprobacion_nota_cargo_emisora;
@@ -363,12 +363,27 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     @Override
-    public void actualizarFolioFactura(Integer id_empresa) {
+    public void actualizarFolioFactura(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.id "
-                            + "FROM gral_emp  "
-                            + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
-                            + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id  "
-                            + "WHERE fac_cfds_conf_folios.proposito = 'FAC' AND gral_emp.id ="+id_empresa;
+                + "FROM fac_cfds_conf "
+                + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
+                + "WHERE fac_cfds_conf_folios.proposito='FAC' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        int id_fac_cfds_conf_folios = this.getJdbcTemplate().queryForInt(sql_to_query);
+        
+        String sql_to_query_update = "UPDATE fac_cfds_conf_folios SET folio_actual=(folio_actual+1) WHERE id="+id_fac_cfds_conf_folios;
+        this.getJdbcTemplate().execute(sql_to_query_update);
+    }
+    
+    
+    
+    @Override
+    public void actualizarFolioNotaCredito(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf_folios.id "
+                + "FROM fac_cfds_conf "
+                + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
+                + "WHERE fac_cfds_conf_folios.proposito = 'NCR' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         int id_fac_cfds_conf_folios = this.getJdbcTemplate().queryForInt(sql_to_query);
         
         String sql_to_query_update = "UPDATE fac_cfds_conf_folios SET folio_actual = folio_actual+1 WHERE id = "+id_fac_cfds_conf_folios;
@@ -377,29 +392,14 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     
-    @Override
-    public void actualizarFolioNotaCredito(Integer id_empresa) {
-        String sql_to_query = "SELECT fac_cfds_conf_folios.id "
-                            + "FROM gral_emp  "
-                            + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
-                            + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id  "
-                            + "WHERE fac_cfds_conf_folios.proposito = 'NCR' AND gral_emp.id ="+id_empresa;
-        int id_fac_cfds_conf_folios = this.getJdbcTemplate().queryForInt(sql_to_query);
-        
-        String sql_to_query_update = "UPDATE fac_cfds_conf_folios SET folio_actual = folio_actual+1 WHERE id = "+id_fac_cfds_conf_folios;
-        this.getJdbcTemplate().execute(sql_to_query_update);
-    }
-    
-    
-    
     
     @Override
-    public void actualizarFolioNotaCargo(Integer id_empresa) {
+    public void actualizarFolioNotaCargo(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.id "
-                            + "FROM gral_emp  "
-                            + "JOIN fac_cfds_conf ON fac_cfds_conf.empresa_id = gral_emp.id "
-                            + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id  "
-                            + "WHERE fac_cfds_conf_folios.proposito = 'NCA' AND gral_emp.id ="+id_empresa;
+                + "FROM fac_cfds_conf "
+                + "JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id "
+                + "WHERE fac_cfds_conf_folios.proposito='NCA' "
+                + "AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         int id_fac_cfds_conf_folios = this.getJdbcTemplate().queryForInt(sql_to_query);
         
         String sql_to_query_update = "UPDATE fac_cfds_conf_folios SET folio_actual = folio_actual+1 WHERE id = "+id_fac_cfds_conf_folios;
