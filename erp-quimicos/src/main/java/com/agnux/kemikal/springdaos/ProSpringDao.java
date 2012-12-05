@@ -186,6 +186,107 @@ public class ProSpringDao implements ProInterfaceDao{
         return docs;
     }
     
+    
+    //obtiene los datos del grid de formulas de Productos en produccion
+    @Override
+    public ArrayList<HashMap<String, Object>> getFormulasLaboratorio_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        
+        String sql_busqueda = "SELECT id FROM gral_bus_catalogos('"+data_string+"') AS foo (id integer)";
+        
+	String sql_to_query = "SELECT pro_estruc.id, inv_prod.sku as codigo, inv_prod.descripcion, pro_estruc.version "
+                            + "FROM pro_estruc JOIN ("+sql_busqueda+") as subt on subt.id=pro_estruc.id "
+                + "JOIN inv_prod ON inv_prod.id=pro_estruc.inv_prod_id  "
+                            +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        System.out.println("Busqueda GetPage: "+sql_to_query+"   "+data_string);
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("version",String.valueOf(rs.getInt("version")));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    //obtiene los datos de una formula de laboratorio
+    @Override
+    public ArrayList<HashMap<String, String>> getFormulaLaboratorio_Datos(String id_formula) {
+        
+        String sql_to_query =    " select pro_estruc.id, pro_estruc.inv_prod_id,inv_prod.sku as codigo, inv_prod.descripcion, "
+                + "inv_prod_tipos.titulo as tipo_producto,inv_prod_unidades.titulo_abr as unidad from pro_estruc join inv_prod on "
+                + "inv_prod.id=pro_estruc.inv_prod_id join  inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id join inv_prod_tipos "
+                + "on inv_prod_tipos.id=inv_prod.tipo_de_producto_id where pro_estruc.id="+id_formula;
+        
+        System.out.println("segundo query"+sql_to_query);
+        ArrayList<HashMap<String, String>> datos_formulas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("tipo_producto",rs.getString("tipo_producto"));
+                    row.put("unidad",rs.getString("unidad"));
+                    
+                    return row;
+                }
+            }
+        );
+        return datos_formulas;
+    }
+    
+    
+    
+    //:::::::::::CONSULTA QUE RETORNA EL GRID DE FORMULAS EN DESARROLLO DE ACUERDO A SU PASO::::::::::::::::::::::::
+    @Override
+    public ArrayList<HashMap<String, String>> getFormulaLaboratorio_DatosMinigrid(String id_tabla_formula, String id_nivel) {
+        
+         String sql_to_query = "select pro_estruc_det.id,inv_prod.sku AS codigo,  inv_prod.descripcion, pro_estruc_det.nivel, "
+                 + "pro_estruc_det.elemento, pro_estruc_det.inv_prod_id, pro_estruc_det.cantidad  from pro_estruc_det JOIN "
+                 + "inv_prod ON inv_prod.id=pro_estruc_det.inv_prod_id where pro_estruc_id="+id_tabla_formula+" and pro_estruc_det.nivel="+id_nivel+" "
+                 + "order by pro_estruc_det.elemento asc";
+         
+        //.get("inv_prod_id_master").toString();
+        System.out.println("Checar este query??"+sql_to_query);
+        ArrayList<HashMap<String, String>> datos_formulas_minigrid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),4));
+                    row.put("nivel",String.valueOf(rs.getInt("nivel")));
+                    row.put("elemento",String.valueOf(rs.getInt("elemento")));
+                    
+                    return row;
+                }
+            }
+        );
+        return datos_formulas_minigrid;
+    }
+    
+    
+    
     @Override
     public ArrayList<HashMap<String, String>> getDocumentos(String cadena) {
         //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
@@ -4035,7 +4136,7 @@ public class ProSpringDao implements ProInterfaceDao{
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccion("+id_producto+","+id_orden+","+id_subproceso+", 0)  as "
                 + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
                 + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
-                + "lote character varying, inv_osal_id integer)";
+                + "lote character varying, inv_osal_id integer) order by elemento;";
         
         //and tmp_salida.cantidad_tmp=tmp_det.cantidad // se quito, por que no mostraba los lotes
         System.out.println("Ejecutando query de: "+ sql_to_query);
@@ -4191,7 +4292,7 @@ public class ProSpringDao implements ProInterfaceDao{
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccion("+id_producto+","+id_orden+",1, 0)  as "
                 + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
                 + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
-                + "lote character varying, inv_osal_id integer)";
+                + "lote character varying, inv_osal_id integer) order by elemento";
         
         
         System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
