@@ -402,14 +402,15 @@ $(function() {
             $tabla_tmp.find('tbody > tr').each(function (index){
                 
                 if(parseInt($(this).find('#delete').val())!=0){
-                    $porciento = parseFloat($(this).find('input[name=cantidad]').val());
+                    $porciento = parseFloat($(this).find('input[name=cantidad]').val()).toFixed(4);
                     if(! isNaN($porciento)){
                         $sum_porciento = parseFloat($sum_porciento) + parseFloat($porciento);
                     }
                 }
             });
+            
             if(accion == 'confirm'){
-                $sum_porciento = parseFloat($sum_porciento).toFixed(1);
+                $sum_porciento = parseFloat($sum_porciento).toFixed(4);
                 if(parseFloat($sum_porciento) == 100 || parseFloat($sum_porciento) == 100.00){
                     return true;
                 }else{
@@ -473,8 +474,8 @@ $(function() {
                     //$(this).parent().parent().remove();
                 }
             });
-
-
+            
+            
             tabla.find('#porcentaje'+trCount).focus(function(){
                 if($(this).val() !=''){
                     $porcentaje_temporal.val($(this).val());
@@ -486,8 +487,8 @@ $(function() {
                 }
                 //alert('Este es e porcentaje temporal'+$porcentaje_temporal.val());
             });
-
-
+            
+            
             //calcula porcentaje al perder enfoque 
             tabla.find('#porcentaje'+trCount).blur(function(){
                 var total=0
@@ -497,6 +498,7 @@ $(function() {
                         var calculo_porcentaje=0;
                         
                         if(parseFloat($porcentaje_temporal.val()) != parseFloat($(this).val())){
+                            
                                 calculo_porcentaje=(parseFloat($(this).val()) / parseFloat($cantidad_calculo.val())) *100;
                                 $(this).val(parseFloat(calculo_porcentaje).toFixed(4));
                                 
@@ -1903,7 +1905,7 @@ $(function() {
 
                                         var $grid_sub_procesos = $('#forma-proconfigproduccion-window').find('#tabla_subprocesos_seleccionados');
                                         $grid_sub_procesos.find('tbody').find('tr').each(function(){
-                                            alert($(this).html());
+                                            //alert($(this).html());
                                         });
 
                                         var id_prod_master_ = $(this).find('span.inv_prod_id_master').html();
@@ -1974,7 +1976,7 @@ $(function() {
 
                                 var $grid_sub_procesos = $('#forma-proconfigproduccion-window').find('#tabla_subprocesos_seleccionados');
                                 $grid_sub_procesos.find('tbody').find('tr').each(function(){
-                                    alert($(this).html());
+                                    //alert($(this).html());
                                 });
 
                                 var id_prod_master_ = $(this).find('span.inv_prod_id_master').html();

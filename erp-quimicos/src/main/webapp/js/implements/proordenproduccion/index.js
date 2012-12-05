@@ -474,8 +474,6 @@ $(function() {
                                 trr += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
                                 trr += '<input type="hidden" id="inv_prod_id" name="inv_prod_id" value="'+producto_id +'">';
                                 trr += '<input type="hidden" name="densidad" value="'+densidad+'" >';
-                                trr += '<input type="hidden" name="unidad_id" value="'+unidad_id+'" >';
-                                trr += '<input type="hidden" name="unidad_default" value="'+unidad_id+'" >';
                             trr += '</td>';
                             
                             trr += '<td width="100" class="grid1">';
@@ -506,7 +504,6 @@ $(function() {
                                 trr += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
                                 trr += '<input type="hidden" id="inv_prod_id" name="inv_prod_id" value="'+producto_id +'">';
                                 trr += '<input type="hidden" name="densidad" value="'+densidad+'" >';
-                                trr += '<input type="hidden" name="unidad_default" value="'+unidad_id+'" >';
                             trr += '</td>';
                             
                             trr += '<td width="100" class="grid1">';
@@ -586,11 +583,11 @@ $(function() {
                     });
                     
                     $tabla_productos_orden.find('#remov_persona'+ trCount).bind('click',function(event){
-                        alert($(this).parent().html());
+                        //alert($(this).parent().html());
                     });
                     
                     $tabla_productos_orden.find('#add_persona'+ trCount).bind('click',function(event){
-                        alert($(this).parent().html());
+                        //alert($(this).parent().html());
                     });
                     
                     //para el autocomplete
@@ -762,7 +759,7 @@ $(function() {
                         tmp_html += '<a href="#remov_persona" id="remov_persona'+trCount+'">-</a>';
                     tmp_html += '</span>';
                     $tmp_parent.append(tmp_html);
-                    alert($tmp_parent.html());
+                    //alert($tmp_parent.html());
                 });
                 
                 
@@ -1016,7 +1013,7 @@ $(function() {
                         tmp_html += '<a href="#remov_persona" id="remov_persona'+trCount+'">-</a>';
                     tmp_html += '</span>';
                     $tmp_parent.append(tmp_html);
-                    alert($tmp_parent.html());
+                    //alert($tmp_parent.html());
                 });
                 
                 
