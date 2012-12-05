@@ -200,7 +200,7 @@ public class ComSpringDao  implements ComInterfaceDao {
     
     @Override
     public ArrayList<HashMap<String, String>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  erp_monedas WHERE borrado_logico=FALSE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND compras=TRUE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -291,7 +291,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "cxp_prov.razon_social, "
                     + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxp_prov.cp AS direccion, "
                     + "com_orden_compra.moneda_id, "
-                    + "erp_monedas.descripcion_abr AS moneda, "
+                    + "gral_mon.descripcion_abr AS moneda, "
                     + "com_orden_compra.tipo_cambio, "
                     + "com_orden_compra.grupo, "
 
@@ -310,11 +310,11 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
                     + "join gral_edo on gral_edo.id=cxp_prov .estado_id "
                     + "join gral_pais on  gral_pais.id=cxp_prov .pais_id "
-                    + "join erp_monedas on erp_monedas.id= com_orden_compra.moneda_id "
+                    + "join gral_mon on gral_mon.id= com_orden_compra.moneda_id "
                     + "left join cxp_prov_credias on cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
                     + "join cxp_prov_tipos_embarque on cxp_prov_tipos_embarque.id =com_orden_compra.tipo_embarque_id "
                     + "WHERE com_orden_compra.id="+id_orden_compra;
-       System.out.println("ESto es de l atabal header de orden de compra::::"+sql_query); 
+       System.out.println("getComOrdenCompra_Datos::::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -501,19 +501,18 @@ public class ComSpringDao  implements ComInterfaceDao {
                     +" (CASE WHEN com_orden_compra.status=0 then 'ORDEN GENERADA' " 
 	            +" when com_orden_compra.status=1 then 'AUTORIZADO' "
                     +" else 'CANCELADO'end ) as estado, "
-                    +" (CASE WHEN com_orden_compra.moneda_id=1 THEN 'M.N.'   "
-                    +" ELSE erp_monedas.descripcion_abr END) as denominacion,  "
-                    + "to_char(com_orden_compra.momento_creacion,'yyyy/mm/dd')as momento_creacion, "
+                    +" gral_mon.descripcion_abr AS denominacion,  "
+                    + "to_char(com_orden_compra.momento_creacion,'dd/mm/yyyy')as momento_creacion, "
                     + "com_orden_compra.total "
                     +" FROM com_orden_compra  "
                     +" JOIN ("+sql_busqueda+") as subt on subt.id=com_orden_compra.id "
                     +" JOIN cxp_prov on cxp_prov.id = com_orden_compra.proveedor_id   "
-                    +" JOIN erp_monedas ON erp_monedas.id=com_orden_compra.moneda_id   "
+                    +" JOIN gral_mon ON gral_mon.id=com_orden_compra.moneda_id   "
                     +" JOIN com_proceso on com_proceso.id = com_orden_compra.com_proceso_id   "
                     +" JOIN com_proceso_flujo on com_proceso_flujo.id = com_proceso.com_proceso_flujo_id "
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
-        System.out.println("datos del grid principal: "+sql_to_query);
+        System.out.println("getComOrdenCompra_PaginaGrid: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -623,9 +622,9 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + " cxp_prov.telefono1 as tel_proveedor, "
                     + " cxp_prov.vent_contacto as representante, "
                     + " cxp_prov_credias.descripcion as condiciones_pago, "
-                    + " erp_monedas.descripcion_abr AS moneda, "
-                    + " erp_monedas.descripcion AS moneda_titulo, "
-                    + " erp_monedas.simbolo AS moneda_simbolo, "
+                    + " gral_mon.descripcion_abr AS moneda, "
+                    + " gral_mon.descripcion AS moneda_titulo, "
+                    + " gral_mon.simbolo AS moneda_simbolo, "
                     + " com_orden_compra.subtotal,"
                     + " com_orden_compra.impuesto, "
                     + " com_orden_compra.total,"
@@ -636,7 +635,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + " JOIN gral_mun ON gral_mun.id=cxp_prov.municipio_id "
                 + " JOIN gral_edo ON gral_edo.id=cxp_prov.estado_id "
                 + " JOIN gral_pais ON  gral_pais.id=cxp_prov.pais_id "
-                + " JOIN erp_monedas ON erp_monedas.id= com_orden_compra.moneda_id left "
+                + " JOIN gral_mon ON gral_mon.id= com_orden_compra.moneda_id left "
                 + " JOIN cxp_prov_credias ON cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
                 + " JOIN cxp_prov_tipos_embarque ON cxp_prov_tipos_embarque.id=com_orden_compra.tipo_embarque_id "
                 + " LEFT JOIN gral_usr AS tblUserCrea ON tblUserCrea.id=com_orden_compra.gral_usr_id_creacion  "
@@ -683,12 +682,12 @@ public class ComSpringDao  implements ComInterfaceDao {
                             + " inv_prod.descripcion, "
                             + " inv_prod_unidades.titulo as unit, "
                             + " com_orden_compra_detalle.precio_unitario, "
-                            + " erp_monedas.descripcion_abr AS moneda, "
-                            + " erp_monedas.descripcion AS moneda_titulo, "
-                            + " erp_monedas.simbolo AS moneda_simbolo "
+                            + " gral_mon.descripcion_abr AS moneda, "
+                            + " gral_mon.descripcion AS moneda_titulo, "
+                            + " gral_mon.simbolo AS moneda_simbolo "
                         + " from com_orden_compra "
-                        + " join erp_monedas on erp_monedas.id= com_orden_compra.moneda_id left "
-                        + " join com_orden_compra_detalle on com_orden_compra_detalle.com_orden_compra_id = com_orden_compra.id "
+                        + " join gral_mon on gral_mon.id= com_orden_compra.moneda_id  "
+                        + " left join com_orden_compra_detalle on com_orden_compra_detalle.com_orden_compra_id = com_orden_compra.id "
                         + " join inv_prod on inv_prod.id=com_orden_compra_detalle.inv_prod_id "
                         + " join inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                         + " WHERE com_orden_compra.id="+id_ordenCompra;
@@ -729,12 +728,12 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "cxp_prov.razon_social AS  proveedor, "
                     + "cxp_nota_credito.total, "
                     + "to_char(cxp_nota_credito.fecha_expedicion::timestamp with time zone,'dd/mm/yyyy') AS fecha_expedicion, "
-                    + "erp_monedas.descripcion_abr AS moneda, "
+                    + "gral_mon.descripcion_abr AS moneda, "
                     + "cxp_nota_credito.factura, "
                     + "(CASE WHEN cxp_nota_credito.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) AS estado "
                 + "FROM cxp_nota_credito "
                 + "LEFT JOIN cxp_prov ON cxp_prov.id=cxp_nota_credito.cxp_prov_id "
-                + "LEFT JOIN erp_monedas ON erp_monedas.id=cxp_nota_credito.moneda_id " 
+                + "LEFT JOIN gral_mon ON gral_mon.id=cxp_nota_credito.moneda_id " 
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=cxp_nota_credito.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         //System.out.println("data_string: "+data_string);
@@ -777,10 +776,10 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "cxp_facturas.saldo_factura, "
                     + "cxp_facturas.moneda_id, "
                     + "(CASE WHEN cxp_facturas.orden_compra IS NULL THEN '' ELSE cxp_facturas.orden_compra END) AS orden_compra, "
-                    + "erp_monedas.descripcion_abr AS moneda, "
+                    + "gral_mon.descripcion_abr AS moneda, "
                     + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_factura "
                 + "FROM cxp_facturas "
-                + "JOIN erp_monedas ON erp_monedas.id=cxp_facturas.moneda_id "
+                + "JOIN gral_mon ON gral_mon.id=cxp_facturas.moneda_id "
                 + "WHERE cxp_facturas.cxc_prov_id="+id_proveedor+" "
                 + "AND cxp_facturas.pagado=FALSE "
                 + "AND cxp_facturas.cancelacion=FALSE "
@@ -1033,9 +1032,9 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "cxp_nota_credito.serie_folio AS nota_credito,"
                     + "cxp_nota_credito.concepto,"
                     + "to_char(cxp_nota_credito.fecha_expedicion::timestamp with time zone,'dd/mm/yyyy') AS fecha_expedicion,"
-                    + "erp_monedas.descripcion AS moneda,"
-                    + "erp_monedas.descripcion_abr AS moneda_abr,"
-                    + "erp_monedas.simbolo AS simbolo_moneda,"
+                    + "gral_mon.descripcion AS moneda,"
+                    + "gral_mon.descripcion_abr AS moneda_abr,"
+                    + "gral_mon.simbolo AS simbolo_moneda,"
                     + "cxp_nota_credito.observaciones,"
                     + "cxp_nota_credito.tipo_cambio,"
                     + "cxp_nota_credito.subtotal,"
@@ -1056,7 +1055,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + "LEFT JOIN gral_mun ON gral_mun.id=cxp_prov.municipio_id "
                 + "LEFT JOIN gral_edo ON gral_edo.id=cxp_prov.estado_id "
                 + "LEFT JOIN gral_pais ON gral_pais.id=cxp_prov.pais_id "
-                + "LEFT JOIN erp_monedas ON erp_monedas.id=cxp_nota_credito.moneda_id "
+                + "LEFT JOIN gral_mon ON gral_mon.id=cxp_nota_credito.moneda_id "
                 + "WHERE cxp_nota_credito.id="+id+";";
         
         //System.out.println("Datos PDF NC::::"+sql_to_query);
@@ -1124,22 +1123,19 @@ public class ComSpringDao  implements ComInterfaceDao {
 @Override
     public ArrayList<HashMap<String, Object>> getCom_requisicion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-                    String sql_to_query = "SELECT  "
+                    String sql_to_query = ""
+                    + "SELECT  "
                     +" com_oc_req.id,   "
                     +" com_oc_req.folio,   "
-                    
                     +" (CASE WHEN com_oc_req.status=0 then 'REQUISICION GENERADA' " 
-	            +" when com_oc_req.status=1 then 'AUTORIZADO' "
-                    +" else 'CANCELADO'end ) as estado, "
+	            +" WHEN com_oc_req.status=1 THEN 'AUTORIZADO' ELSE 'CANCELADO' END ) AS estado, "
                     
-                    + "to_char(com_oc_req.momento_creacion,'yyyy/mm/dd')as momento_creacion"
-                    
+                    + "to_char(com_oc_req.momento_creacion,'dd/mm/yyyy')as momento_creacion"
                     +" FROM com_oc_req  "
                     +" JOIN ("+sql_busqueda+") as subt on subt.id=com_oc_req.id "
-                    
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
-        System.out.println("datos del grid principal: "+sql_to_query);
+                    
+        System.out.println("getCom_requisicion_PaginaGrid: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -1171,7 +1167,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + " com_oc_req.status              "
                     + " from com_oc_req                  "
                     + " WHERE com_oc_req.id= "+id_requisicion;
-       System.out.println("ESto es del header de Requisicion de orden de compra::::"+sql_query); 
+       System.out.println("getCom_requisicion_Datos::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -1212,7 +1208,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 +" LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_oc_req_detalle.presentacion_id "
                 +" WHERE com_oc_req_detalle.com_oc_req_id="+id_requisicion;
         
-        System.out.println("Obtiene datos grid requisiciones: "+sql_query);
+        System.out.println("getCom_requisicion_DatosGrid: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -1229,7 +1225,6 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
                     
                     row.put("status",rs.getString("status"));
-                    
                     
                     return row;
                 }
@@ -1250,22 +1245,19 @@ public class ComSpringDao  implements ComInterfaceDao {
                     +" com_orden_compra.folio,   "
                     +" cxp_prov.razon_social as proveedor,  "
                     +" (CASE WHEN com_orden_compra.status=0 then 'ORDEN GENERADA' " 
-	            +" when com_orden_compra.status=1 then 'AUTORIZADO' "
-                    +" else 'CANCELADO'end ) as estado, "
-                    +" (CASE WHEN com_orden_compra.moneda_id=1 THEN 'M.N.'   "
-                    +" ELSE erp_monedas.descripcion_abr END) as denominacion,  "
-                    + "to_char(com_orden_compra.momento_creacion,'yyyy/mm/dd')as momento_creacion, "
+	            +" when com_orden_compra.status=1 then 'AUTORIZADO' ELSE 'CANCELADO'end ) AS estado, "
+                    +" gral_mon.descripcion_abr AS denominacion,  "
+                    + "to_char(com_orden_compra.momento_creacion,'dd/mm/yyyy')as momento_creacion, "
                     + "com_orden_compra.total "
                     +" FROM com_orden_compra  "
-                    //+" join com_orden_compra_detalle on  com_orden_compra_detalle.com_orden_compra_id=com_orden_compra.id "
                     +" JOIN ("+sql_busqueda+") as subt on subt.id=com_orden_compra.id "
                     +" JOIN cxp_prov on cxp_prov.id = com_orden_compra.proveedor_id   "
-                    +" JOIN erp_monedas ON erp_monedas.id=com_orden_compra.moneda_id  "
+                    +" JOIN gral_mon ON gral_mon.id=com_orden_compra.moneda_id  "
                     +" JOIN com_proceso on com_proceso.id = com_orden_compra.com_proceso_id   "
                     +" JOIN com_proceso_flujo on com_proceso_flujo.id = com_proceso.com_proceso_flujo_id  where com_orden_compra.tipo_orden_compra = 1"
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
-        System.out.println("datos del grid principal: "+sql_to_query);
+        System.out.println("getCom_oc_req_PaginaGrid: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -1303,7 +1295,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "cxp_prov.razon_social, "
                     + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxp_prov.cp AS direccion, "
                     + "com_orden_compra.moneda_id, "
-                    + "erp_monedas.descripcion_abr AS moneda, "
+                    + "gral_mon.descripcion_abr AS moneda, "
                     + "com_orden_compra.tipo_cambio, "
                     + "com_orden_compra.grupo, "
 
@@ -1322,11 +1314,11 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
                     + "join gral_edo on gral_edo.id=cxp_prov .estado_id "
                     + "join gral_pais on  gral_pais.id=cxp_prov .pais_id "
-                    + "join erp_monedas on erp_monedas.id= com_orden_compra.moneda_id "
+                    + "join gral_mon on gral_mon.id= com_orden_compra.moneda_id "
                     + "left join cxp_prov_credias on cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
                     + "join cxp_prov_tipos_embarque on cxp_prov_tipos_embarque.id =com_orden_compra.tipo_embarque_id "
                     + "WHERE com_orden_compra.id="+id_com_oc_req;
-       System.out.println("ESto es de l atabal header de orden de compra::::"+sql_query); 
+       System.out.println("getCom_oc_req_Datos::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -1430,7 +1422,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                                 + " tipo_cambio double precision, " 
                                 + " total_pesos double precision,  fecha_factura text); ";
 
-                       System.out.println("sql_to_query:"+ sql_to_query);
+       System.out.println("getEstadisticoCompras:"+ sql_to_query);
           
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query, 

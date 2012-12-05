@@ -557,7 +557,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, Object>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  erp_monedas WHERE borrado_logico=FALSE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm_monedas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -963,13 +963,13 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     +"erp_pagos.monto_pago AS total,  "
                     +"cxc_clie.razon_social AS cliente,  "
                     +"erp_pagos_formas.titulo AS forma_pago,  "
-                    +"erp_monedas.descripcion_abr AS moneda,  "
+                    +"gral_mon.descripcion_abr AS moneda,  "
                     +"to_char(erp_pagos.fecha_deposito::timestamp with time zone,'dd/mm/yyyy') AS fecha_deposito, "
                     +"(CASE WHEN tbl_pag_det.pago_id IS NULL THEN 'CANCELADO' ELSE '' END) AS estado "
                 +"FROM erp_pagos  "
                 +"JOIN cxc_clie ON cxc_clie.id=erp_pagos.cliente_id  "
                 +"JOIN erp_pagos_formas ON erp_pagos_formas.id=erp_pagos.forma_pago_id  "
-                +"JOIN erp_monedas ON erp_monedas.id=erp_pagos.moneda_id   "
+                +"JOIN gral_mon ON gral_mon.id=erp_pagos.moneda_id   "
                 +"LEFT JOIN (SELECT DISTINCT pago_id FROM erp_pagos_detalles WHERE cancelacion=FALSE) AS tbl_pag_det ON tbl_pag_det.pago_id=erp_pagos.id "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=erp_pagos.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -1142,7 +1142,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     +"sbt.razon_social,"
                                     +"sbt.direccion,"
                                     +"sbt.moneda_id,"
-                                    +"erp_monedas.descripcion as moneda "
+                                    +"gral_mon.descripcion as moneda "
                             +"FROM(SELECT cxc_clie.id,"
                                             +"cxc_clie.numero_control,"
                                             +"cxc_clie.rfc, "
@@ -1156,7 +1156,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
                                     +" AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
-                            +"LEFT JOIN erp_monedas on erp_monedas.id = sbt.moneda_id ORDER BY sbt.id;";
+                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id;";
         
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -1313,20 +1313,20 @@ public class CxcSpringDao implements CxcInterfaceDao{
         String sql_to_query = ""
                 + "SELECT "
                         + "erp_h_facturas.serie_folio as numero_factura, "
-                        + "erp_monedas.descripcion_abr AS denominacion_factura, "
+                        + "gral_mon.descripcion_abr AS denominacion_factura, "
                         + "erp_h_facturas.monto_total as monto_factura, "
                         + "(erp_h_facturas.total_pagos + erp_h_facturas.total_notas_creditos) AS monto_pagado, "
                         + "erp_h_facturas.saldo_factura, "
                         + "to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_facturacion, "
                         + "(CASE WHEN erp_h_facturas.fecha_ultimo_pago IS NULL THEN 'Sin efectuar' ELSE to_char(erp_h_facturas.fecha_ultimo_pago::timestamp with time zone,'dd/mm/yyyy') END) AS fecha_ultimo_pago "
                     + "FROM erp_h_facturas  "
-                    + "JOIN erp_monedas ON erp_monedas.id = erp_h_facturas.moneda_id "
+                    + "JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id "
                     + "WHERE erp_h_facturas.cliente_id="+id_cliente
                     + "AND erp_h_facturas.cancelacion=FALSE "
                     + "AND erp_h_facturas.pagado=FALSE "
                     + "ORDER BY erp_h_facturas.id;";
         
-        System.out.println("Buscando facturas: "+sql_to_query);
+        System.out.println("getCartera_Facturas:: "+sql_to_query);
         ArrayList<HashMap<String, Object>> facturas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1450,18 +1450,18 @@ public class CxcSpringDao implements CxcInterfaceDao{
         String sql_to_query = "SELECT erp_pagos_detalles.serie_folio, "
                                     +"erp_h_facturas.monto_total, "
                                     +"erp_pagos_detalles.cantidad, "
-                                    +"erp_monedas.descripcion_abr AS denominacion, "
+                                    +"gral_mon.descripcion_abr AS denominacion, "
                                     +"erp_h_facturas.momento_facturacion, "
                                     +"erp_pagos_detalles.momento_pago, "
                                     +"erp_pagos.numero_transaccion "
                             +"FROM erp_pagos "
                             +"JOIN erp_pagos_detalles ON erp_pagos_detalles.pago_id=erp_pagos.id "
                             +"JOIN erp_h_facturas ON erp_h_facturas.serie_folio = erp_pagos_detalles.serie_folio "
-                            +"JOIN erp_monedas ON erp_monedas.id = erp_h_facturas.moneda_id "
+                            +"JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id "
                             +"WHERE erp_pagos_detalles.cancelacion=FALSE "
                             + "AND erp_pagos.numero_transaccion = "+num_transaccion+";";
                             
-        System.out.println("Buscando facturas del cliente: "+sql_to_query);
+        System.out.println("getCartera_FacturasTransaccion:: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm_fact = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1548,7 +1548,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 + "round((monto_total-(CASE WHEN importe_pagado IS NULL THEN 0 ELSE importe_pagado END ))::numeric,2) as saldo_factura  "
                 + "FROM (  "
                         + "SELECT cxc_clie.razon_social as cliente,  "
-                                + "erp_monedas.descripcion_abr as denominacion,  "
+                                + "gral_mon.descripcion_abr as denominacion,  "
                                 + "erp_h_facturas.serie_folio,  "
                                 + "erp_h_facturas.orden_compra, "
                                 + "to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy')as fecha_facturacion,  "
@@ -1558,7 +1558,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                 + "erp_h_facturas.moneda_id "
                         + "FROM erp_h_facturas  "
                         + "JOIN cxc_clie ON cxc_clie.id = erp_h_facturas.cliente_id "
-                        + "JOIN erp_monedas ON erp_monedas.id = erp_h_facturas.moneda_id "
+                        + "JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id "
                         + "WHERE erp_h_facturas.pagado=FALSE  "
                         + "AND erp_h_facturas.cancelacion=FALSE   "+ where_cliente +" "
                         + "AND erp_h_facturas.empresa_id="+ id_empresa + " "
@@ -1569,7 +1569,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
         
         
         
-        System.out.println("Buscando facturas edo cta.: "+sql_to_query);
+        System.out.println("getCartera_DatosReporteEdoCta: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1631,7 +1631,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                 + "erp_pagos.numerocuenta_id, "
                                 + "tes_che.titulo as no_cuenta, "
                                 + "tes_che.moneda_id as moneda_id_cuenta, "
-                                + "erp_monedas.descripcion_abr as moneda_cuenta, "
+                                + "gral_mon.descripcion_abr as moneda_cuenta, "
                                 + "erp_pagos.fecha_deposito, "
                                 + "erp_pagos.forma_pago_id, "
                                 + "erp_pagos_formas.titulo as forma_pago, "
@@ -1650,7 +1650,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                             + "JOIN erp_pagos_detalles ON erp_pagos_detalles.pago_id=erp_pagos.id "
                             + "JOIN tes_ban ON tes_ban.id=erp_pagos.bancokemikal_id::integer "
                             + "JOIN tes_che ON tes_che.id=erp_pagos.numerocuenta_id "
-                            + "JOIN erp_monedas ON  erp_monedas.id=tes_che.moneda_id "
+                            + "JOIN gral_mon ON  gral_mon.id=tes_che.moneda_id "
                             + "JOIN erp_pagos_formas ON  erp_pagos_formas.id=erp_pagos.forma_pago_id "
                             + "WHERE erp_pagos_detalles.cancelacion=false "
                             + "GROUP BY erp_pagos.id,banco_id, bancokemikal_id, banco, numerocuenta_id, no_cuenta, moneda_id_cuenta, moneda_cuenta, fecha_deposito, forma_pago_id, forma_pago, moneda_id_pago, tipo_cambio, monto_pago, empresa_id "
@@ -1696,8 +1696,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
                         + "erp_pagos.numero_transaccion, "
                         + "to_char(erp_pagos.fecha_deposito,'dd/mm/yyyy') AS fecha_deposito,  "
                         + "erp_pagos.moneda_id as moneda_pago_id,  "
-                        + "erp_monedas.descripcion AS moneda_pago, "
-                        + "erp_monedas.simbolo AS simbolo_moneda_pago,  "
+                        + "gral_mon.descripcion AS moneda_pago, "
+                        + "gral_mon.simbolo AS simbolo_moneda_pago,  "
                         + "erp_pagos.monto_pago,  "
                         + "erp_pagos.tipo_cambio,  "
                         + "tes_ban.titulo AS banco,  "
@@ -1706,7 +1706,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                         + "(CASE WHEN erp_pagos.forma_pago_id=2 THEN erp_pagos.numero_cheque ELSE erp_pagos.referencia END ) AS cheque_referencia "
                     + "FROM erp_pagos "
                     + "LEFT JOIN tes_ban ON tes_ban.id=erp_pagos.bancokemikal_id::integer  "
-                    + "LEFT JOIN erp_monedas ON erp_monedas.id=erp_pagos.moneda_id  "
+                    + "LEFT JOIN gral_mon ON gral_mon.id=erp_pagos.moneda_id  "
                     + "LEFT JOIN erp_pagos_formas ON erp_pagos_formas.id=erp_pagos.forma_pago_id  "
                     + "LEFT JOIN cxc_clie ON cxc_clie.id=erp_pagos.cliente_id  "
                     + "LEFT JOIN tes_che ON tes_che.id=erp_pagos.bancokemikal_id::integer "
@@ -1747,8 +1747,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
             String sql_to_query = ""
                 + "SELECT "
                     + "erp_pagos.moneda_id as moneda_fac_id,  "
-                    + "erp_monedas.descripcion AS moneda_fac,  "
-                    + "erp_monedas.simbolo AS simbolo_moneda_fac,  "
+                    + "gral_mon.descripcion AS moneda_fac,  "
+                    + "gral_mon.simbolo AS simbolo_moneda_fac,  "
                     + "erp_pagos_detalles.serie_folio,  "
                     + "to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura,  "
                     + "erp_pagos_detalles.cantidad AS monto_aplicado,  "
@@ -1761,7 +1761,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 + "FROM erp_pagos  "
                 + "LEFT JOIN erp_pagos_detalles ON erp_pagos_detalles.pago_id=erp_pagos.id  "
                 + "LEFT JOIN erp_h_facturas ON erp_h_facturas.serie_folio=erp_pagos_detalles.serie_folio  "
-                + "LEFT JOIN erp_monedas ON erp_monedas.id=erp_h_facturas.moneda_id  "
+                + "LEFT JOIN gral_mon ON gral_mon.id=erp_h_facturas.moneda_id  "
                 + "WHERE erp_pagos.id="+ id_pago;
             
         //System.out.println("Buscando datos para reporte aplicacion de pago: "+sql_to_query);
@@ -1855,8 +1855,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
                           +"cxc_clie.razon_social as cliente,  "
                           +"to_char(erp_h_facturas.fecha_ultimo_pago,'dd/mm/yyyy')AS fecha_pago ,   "
                           +"(select to_date(erp_h_facturas.fecha_ultimo_pago::text,'yyyy-mm-dd') - to_date(erp_h_facturas.momento_facturacion::text,'yyyy-mm-dd')) AS numero_dias_pago,  "
-                          +"erp_monedas.descripcion_abr as moneda_factura, "
-                          //+"(CASE WHEN erp_monedas.id=1 THEN erp_h_facturas.subtotal ELSE (erp_h_facturas.subtotal * erp_h_facturas.tipo_cambio) END ) AS valor_mn , "
+                          +"gral_mon.descripcion_abr as moneda_factura, "
+                          //+"(CASE WHEN gral_mon.id=1 THEN erp_h_facturas.subtotal ELSE (erp_h_facturas.subtotal * erp_h_facturas.tipo_cambio) END ) AS valor_mn , "
                           +"cxc_agen.dias_tope_comision, "
                           +"cxc_agen.dias_tope_comision2, "
                           +"cxc_agen.dias_tope_comision3, "
@@ -1867,18 +1867,18 @@ public class CxcSpringDao implements CxcInterfaceDao{
                           +"erp_h_facturas.tipo_cambio, "
                           +"to_date(erp_h_facturas.momento_actualizacion::text,'yyyy-mm-dd') as momento_actualizacion, "
                           +"to_date(erp_h_facturas.momento_facturacion::text,'yyyy-mm-dd') as momento_creacion,  "
-                          +"erp_monedas.id as id_moneda "
+                          +"gral_mon.id as id_moneda "
                       +"FROM erp_h_facturas "
                       +"JOIN cxc_clie ON cxc_clie.id = erp_h_facturas.cliente_id "
                       +"JOIN cxc_agen ON cxc_agen.id= erp_h_facturas.cxc_agen_id "
-                      +"JOIN erp_monedas ON erp_monedas.id = erp_h_facturas.moneda_id  "
+                      +"JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id  "
                       +"WHERE erp_h_facturas.pagado=true "+where+" "
                       +"AND to_char(erp_h_facturas.fecha_ultimo_pago,'yyyymmdd')::integer between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer  "
                       +"AND erp_h_facturas.empresa_id="+id_empresa+" order by nombre_agente asc,moneda_factura, serie_folio asc "//order by numero_agente,moneda_factura asc "
               +")AS sbt ";
         
         
-	 System.out.println("BUSCANDO DATOS PARA EL REPORTE COBRANZA AGENTE: "+sql_to_query);
+	 System.out.println("DatosReporteCobranzaAgente:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_cobranza_agente = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1928,12 +1928,12 @@ public class CxcSpringDao implements CxcInterfaceDao{
                       + " FROM fac_docs "
                       + " JOIN cxc_clie ON cxc_clie.id = fac_docs.cxc_clie_id "
                       + " JOIN cxc_agen ON cxc_agen.id=  fac_docs.cxc_agen_id "
-                      + " JOIN erp_monedas ON erp_monedas.id = fac_docs.moneda_id "
+                      + " JOIN gral_mon ON gral_mon.id = fac_docs.moneda_id "
                       + " JOIN  erp_proceso ON erp_proceso.id= proceso_id "
                       + " WHERE  to_char(fac_docs.momento_creacion,'yyyymmdd')::integer  between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer  "
                       + " AND erp_proceso.empresa_id="+id_empresa+" "+where+" "
                     + " order by nombre_agente asc,moneda_factura,serie_folio asc";// by numero_agente,moneda_factura asc ";
-        System.out.println("BUSCANDO DATOS PARA EL REPORTE VENTAS X AGENTE: "+sql_to_query);
+        System.out.println("DatosReporteVentaxAgente:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_venta_agente = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2155,7 +2155,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                         + " FROM fac_docs     "
                                         + " JOIN erp_proceso on erp_proceso.id=fac_docs.proceso_id  "
                                         + " JOIN cxc_clie ON cxc_clie.id = fac_docs.cxc_clie_id     "
-                                        + " JOIN erp_monedas ON erp_monedas.id = fac_docs.moneda_id  "
+                                        + " JOIN gral_mon ON gral_mon.id = fac_docs.moneda_id  "
                                         + " WHERE fac_docs.cancelado = false    "
                                         + " AND erp_proceso.empresa_id = "+id_empresa+" "
                                         + " AND to_char(fac_docs.momento_creacion,'yyyymmdd')   "
@@ -2553,9 +2553,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         //throw new UnsupportedOperationException("Not supported yet.");
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
-	String sql_to_query = "SELECT cxc_mov_tipos.id, cxc_mov_tipos.titulo,cxc_mov_tipos.descripcion,erp_monedas.descripcion_abr as moneda "
+	String sql_to_query = "SELECT cxc_mov_tipos.id, cxc_mov_tipos.titulo,cxc_mov_tipos.descripcion,gral_mon.descripcion_abr as moneda "
                                + " FROM cxc_mov_tipos "
-                               + " JOIN erp_monedas on erp_monedas.id= cxc_mov_tipos.moneda_id "
+                               + " JOIN gral_mon on gral_mon.id= cxc_mov_tipos.moneda_id "
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_mov_tipos.id "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -2665,15 +2665,15 @@ public class CxcSpringDao implements CxcInterfaceDao{
                             + "cxc_clie.razon_social AS cliente,"
                             + "erp_h_facturas.serie_folio AS factura,"
                             + "erp_h_facturas.monto_total AS monto_factura,"
-                            + "erp_monedas.descripcion_abr AS moneda_factura,"
-                            + "erp_monedas.simbolo AS simbolo_moneda,"
+                            + "gral_mon.descripcion_abr AS moneda_factura,"
+                            + "gral_mon.simbolo AS simbolo_moneda,"
                             + "to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_facturacion,"
                             + "to_char(erp_h_facturas.fecha_vencimiento,'dd/mm/yyyy') as fecha_vencimiento,"
                             + "NOW()::DATE-erp_h_facturas.fecha_vencimiento::DATE  AS dias_vencidos,"
                             + "erp_h_facturas.saldo_factura "
                         + "FROM erp_h_facturas "
                         + "JOIN cxc_clie ON cxc_clie.id = erp_h_facturas.cliente_id "
-                        + "JOIN erp_monedas ON erp_monedas.id = erp_h_facturas.moneda_id "
+                        + "JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id "
                         + "WHERE erp_h_facturas.cancelacion = FALSE "
                         + "AND erp_h_facturas.pagado = FALSE "
                         + "AND erp_h_facturas.empresa_id="+id_empresa +" "+ where_cliente
@@ -3189,16 +3189,16 @@ public class CxcSpringDao implements CxcInterfaceDao{
                         +" to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura, "    
                         +" erp_pagos.cliente_id AS id_cliente, "
                         +" cxc_clie.razon_social AS cliente,  "
-                        +" erp_monedas.id as id_moneda_fac, "
-                        +" erp_monedas.simbolo AS simbolo_moneda_fac,  "
-                        +" erp_monedas.descripcion_abr AS moneda_fac, "
+                        +" gral_mon.id as id_moneda_fac, "
+                        +" gral_mon.simbolo AS simbolo_moneda_fac,  "
+                        +" gral_mon.descripcion_abr AS moneda_fac, "
                         +" erp_h_facturas.monto_total AS monto_factura, "
-                        +" erp_monedas.simbolo AS simbolo_moneda_aplicado,  "
+                        +" gral_mon.simbolo AS simbolo_moneda_aplicado,  "
                         +" erp_pagos_detalles.cantidad AS pago_aplicado, " 
                         +" to_char(erp_pagos.fecha_deposito,'dd/mm/yyyy') AS fecha_pago, "
-                        +" gra_mon.id as id_moneda_pago, "
-                        +" gra_mon.simbolo AS simbolo_moneda_pago, "
-                        +" gra_mon.descripcion_abr AS moneda_pago, "
+                        +" gra_mon_pago.id as id_moneda_pago, "
+                        +" gra_mon_pago.simbolo AS simbolo_moneda_pago, "
+                        +" gra_mon_pago.descripcion_abr AS moneda_pago, "
                         +" (CASE WHEN erp_h_facturas.moneda_id=1 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad "
                         +" WHEN erp_h_facturas.moneda_id=2 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad "
                         +" WHEN erp_h_facturas.moneda_id=1 AND erp_pagos.moneda_id=2 THEN erp_pagos_detalles.cantidad/erp_pagos.tipo_cambio "
@@ -3209,8 +3209,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     +" JOIN erp_pagos_detalles ON erp_pagos_detalles.pago_id= erp_pagos.id "
                     +" JOIN erp_h_facturas ON erp_h_facturas.serie_folio = erp_pagos_detalles.serie_folio  "
                     +" JOIN cxc_clie  ON cxc_clie.id= erp_pagos.cliente_id "
-                    +" JOIN erp_monedas ON erp_monedas.id = erp_h_facturas.moneda_id "
-                    +" JOIN erp_monedas AS gra_mon ON gra_mon.id = erp_pagos.moneda_id "
+                    +" JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id "
+                    +" JOIN gral_mon AS gra_mon_pago ON gra_mon_pago.id = erp_pagos.moneda_id "
                     +" WHERE erp_pagos.empresa_id=" +id_empresa + " "
                     + "AND erp_pagos_detalles.cancelacion=FALSE "+where
                     +" AND (to_char(erp_pagos.fecha_deposito,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "

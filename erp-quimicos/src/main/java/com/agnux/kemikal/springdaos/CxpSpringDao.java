@@ -559,7 +559,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  erp_monedas WHERE borrado_logico=FALSE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND compras=TRUE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1099,13 +1099,13 @@ public class CxpSpringDao implements CxpInterfaceDao{
         String sql_to_query = "SELECT cxp_facturas.id, "
                                 + "cxp_facturas.serie_folio AS factura, "
                                 + "cxp_prov.razon_social AS proveedor, "
-                                + "erp_monedas.descripcion_abr AS moneda, "
+                                + "gral_mon.descripcion_abr AS moneda, "
                                 + "cxp_facturas.monto_total AS total, "
                                 + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_factura, "
                                 + "(CASE WHEN cxp_facturas.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado " 
                         + "FROM cxp_facturas "
                         + "JOIN cxp_prov ON cxp_prov.id=cxp_facturas.cxc_prov_id "
-                        + "JOIN erp_monedas ON erp_monedas.id=cxp_facturas.moneda_id " 
+                        + "JOIN gral_mon ON gral_mon.id=cxp_facturas.moneda_id " 
                         +"JOIN ("+sql_busqueda+") as subt on subt.id=cxp_facturas.id "
                         + "ORDER  BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
                         
@@ -1644,9 +1644,9 @@ public class CxpSpringDao implements CxpInterfaceDao{
         //throw new UnsupportedOperationException("Not supported yet.");
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
-	String sql_to_query = "SELECT cxp_mov_tipos.id, cxp_mov_tipos.titulo,cxp_mov_tipos.descripcion,erp_monedas.descripcion_abr as moneda "
+	String sql_to_query = "SELECT cxp_mov_tipos.id, cxp_mov_tipos.titulo,cxp_mov_tipos.descripcion,gral_mon.descripcion_abr as moneda "
                                + " FROM cxp_mov_tipos "
-                               + " JOIN erp_monedas on erp_monedas.id= cxp_mov_tipos.moneda_id "
+                               + " JOIN gral_mon on gral_mon.id= cxp_mov_tipos.moneda_id "
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxp_mov_tipos.id "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -1729,15 +1729,15 @@ public class CxpSpringDao implements CxpInterfaceDao{
                                         + "cxp_prov.folio AS clave_proveedor, "
                                         + "cxp_prov.razon_social AS proveedor, "
                                         + "cxp_facturas.serie_folio, "
-                                        + "erp_monedas.descripcion_abr AS moneda_factura, "
-                                        + "erp_monedas.simbolo AS simbolo_moneda, "
+                                        + "gral_mon.descripcion_abr AS moneda_factura, "
+                                        + "gral_mon.simbolo AS simbolo_moneda, "
                                         + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') as fecha_factura, "
                                         + "to_char(cxp_facturas.fecha_vencimiento,'dd/mm/yyyy') as fecha_vencimiento, "
                                         + "cxp_facturas.saldo_factura, "
                                         + "NOW()::DATE-cxp_facturas.fecha_vencimiento::DATE  AS dias_vencidos "
                                 + "FROM cxp_facturas "
                                 + "LEFT JOIN cxp_prov ON cxp_prov.id=cxp_facturas.cxc_prov_id "
-                                + "JOIN erp_monedas ON erp_monedas.id=cxp_facturas.moneda_id "
+                                + "JOIN gral_mon ON gral_mon.id=cxp_facturas.moneda_id "
                                 + "WHERE cxp_facturas.pagado=FALSE  "
                                 + "AND cxp_facturas.cancelacion=FALSE "
                                 + "AND cxp_facturas.empresa_id="+id_empresa
@@ -1789,13 +1789,13 @@ public class CxpSpringDao implements CxpInterfaceDao{
                                     +"cxp_pagos.monto_pago AS total, "
                                     +"cxp_prov.razon_social, "
                                     +"tes_mov_tipos.titulo AS forma_pago, "
-                                    +"erp_monedas.descripcion_abr AS moneda, "
+                                    +"gral_mon.descripcion_abr AS moneda, "
                                     +"(CASE WHEN cxp_pagos.cancelacion=FALSE THEN '' ELSE 'CANCELADO' END) AS estado, "
                                     +"to_char(cxp_pagos.fecha_pago::timestamp with time zone,'dd/mm/yyyy') AS fecha_pago "
                             +"FROM cxp_pagos "
                             +"JOIN cxp_prov ON cxp_prov.id=cxp_pagos.cxp_prov_id "
                             +"JOIN tes_mov_tipos ON tes_mov_tipos.id=cxp_pagos.tes_mov_tipo_id "
-                            +"JOIN erp_monedas ON erp_monedas.id=cxp_pagos.moneda_id " 
+                            +"JOIN gral_mon ON gral_mon.id=cxp_pagos.moneda_id " 
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=cxp_pagos.id "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -1983,14 +1983,14 @@ public class CxpSpringDao implements CxpInterfaceDao{
         String sql_to_query = " "
                     + "SELECT "
                             + "cxp_facturas.serie_folio AS numero_factura,"
-                            + "erp_monedas.descripcion_abr AS denominacion_factura,"
+                            + "gral_mon.descripcion_abr AS denominacion_factura,"
                             + "cxp_facturas.monto_total AS monto_factura, "
                             + "(cxp_facturas.total_pagos + cxp_facturas.total_notas_creditos) AS monto_pagado, "
                             + "cxp_facturas.saldo_factura,"
                             + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_facturacion,"
                             + "(CASE WHEN cxp_facturas.fecha_ultimo_pago IS NULL THEN 'Sin efectuar' ELSE to_char(cxp_facturas.fecha_ultimo_pago,'dd/mm/yyyy') END) AS fecha_ultimo_pago "
                     + "FROM cxp_facturas "
-                    + "JOIN erp_monedas ON erp_monedas.id=cxp_facturas.moneda_id "
+                    + "JOIN gral_mon ON gral_mon.id=cxp_facturas.moneda_id "
                     + "WHERE cxp_facturas.cancelacion=FALSE "
                     + "AND cxp_facturas.pagado=FALSE "
                     + "AND cxc_prov_id ="+id_proveedor+" "
@@ -2091,7 +2091,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
         String sql_to_query = " "
                     + "SELECT "
                         + "cxp_pagos_detalles.serie_folio AS numero_factura,"
-                        + "erp_monedas.descripcion_abr AS denominacion_factura,"
+                        + "gral_mon.descripcion_abr AS denominacion_factura,"
                         + "cxp_facturas.monto_total AS monto_factura, "
                         + "(cxp_facturas.total_pagos + cxp_facturas.total_notas_creditos) AS monto_pagado, "
                         + "cxp_facturas.saldo_factura, "
@@ -2101,7 +2101,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                         + "(CASE WHEN cxp_facturas.fecha_ultimo_pago IS NULL THEN 'Sin efectuar' ELSE to_char(cxp_facturas.fecha_ultimo_pago,'dd/mm/yyyy') END) AS fecha_ultimo_pago "
                     + "FROM cxp_pagos_detalles "
                     + "JOIN cxp_facturas ON cxp_facturas.serie_folio=cxp_pagos_detalles.serie_folio "
-                    + "JOIN erp_monedas ON erp_monedas.id=cxp_facturas.moneda_id "
+                    + "JOIN gral_mon ON gral_mon.id=cxp_facturas.moneda_id "
                     + "WHERE cxp_pagos_detalles.cxp_pago_id="+id_pago+" "
                     + "ORDER BY cxp_facturas.fecha_factura, cxp_pagos_detalles.serie_folio;";
         
@@ -2139,8 +2139,8 @@ public class CxpSpringDao implements CxpInterfaceDao{
             + "SELECT cxp_prov.razon_social AS proveedor,"
                     + "cxp_pagos.numero_transaccion,"
                     + "to_char(cxp_pagos.fecha_pago::timestamp with time zone,'dd/mm/yyyy') AS fecha_pago,"
-                    + "erp_monedas.descripcion AS moneda_pago,"
-                    + "erp_monedas.simbolo AS simbolo_moneda_pago,"
+                    + "gral_mon.descripcion AS moneda_pago,"
+                    + "gral_mon.simbolo AS simbolo_moneda_pago,"
                     + "cxp_pagos.monto_pago,"
                     + "tes_ban.titulo AS banco,"
                     + "tes_mov_tipos.titulo AS forma_pago,"
@@ -2160,12 +2160,12 @@ public class CxpSpringDao implements CxpInterfaceDao{
             + "JOIN (	SELECT cxp_facturas.serie_folio, "
                             + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_factura, "
                             + "cxp_facturas.moneda_id AS moneda_id_factura, "
-                            + "erp_monedas.simbolo AS simbolo_moneda_factura "
-                    + "FROM cxp_facturas LEFT JOIN erp_monedas ON erp_monedas.id=cxp_facturas.moneda_id "
+                            + "gral_mon.simbolo AS simbolo_moneda_factura "
+                    + "FROM cxp_facturas LEFT JOIN gral_mon ON gral_mon.id=cxp_facturas.moneda_id "
                     + "WHERE cxp_facturas.cxc_prov_id="+id_proveedor +" "
             + ") AS cxp_fac ON cxp_fac.serie_folio = cxp_pagos_detalles.serie_folio "
             + "JOIN cxp_prov ON cxp_prov.id=cxp_pagos.cxp_prov_id "
-            + "JOIN erp_monedas ON erp_monedas.id=cxp_pagos.moneda_id "
+            + "JOIN gral_mon ON gral_mon.id=cxp_pagos.moneda_id "
             + "LEFT JOIN tes_ban ON tes_ban.id=cxp_pagos.tes_ban_id "
             + "JOIN tes_mov_tipos ON tes_mov_tipos.id=cxp_pagos.tes_mov_tipo_id "
             + "WHERE cxp_pagos.id="+ id_pago;
@@ -2315,18 +2315,18 @@ public class CxpSpringDao implements CxpInterfaceDao{
                                     +"cxp_ant.cantidad AS total, "
                                     +"cxp_prov.razon_social, "
                                     +"tes_mov_tipos.titulo AS forma_pago, "
-                                    +"erp_monedas.descripcion_abr AS moneda, "
+                                    +"gral_mon.descripcion_abr AS moneda, "
                                     +"(CASE WHEN cxp_ant.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) AS estado, "
                                     +"to_char(cxp_ant.fecha_anticipo,'dd-mm-yyyy') AS fecha_anticipo "
                             +"FROM cxp_ant "
                             +"JOIN cxp_prov ON cxp_prov.id=cxp_ant.cxp_prov_id "
                             +"JOIN tes_mov_tipos ON tes_mov_tipos.id=cxp_ant.cxp_mov_tipo_id "
-                            +"JOIN erp_monedas ON erp_monedas.id=cxp_ant.moneda_id " 
+                            +"JOIN gral_mon ON gral_mon.id=cxp_ant.moneda_id " 
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=cxp_ant.id "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
         System.out.println("sql_busqueda: "+sql_busqueda);
-        System.out.println("Busqueda GetPage: "+sql_to_query);
+        System.out.println("ProveedoresAnticipos_PaginaGrid:: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -2642,7 +2642,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     //ESTO VA EN EL CXP SPRING DAO ES LO UNICO QUE AGREGUÉ
     @Override
-    public ArrayList<HashMap<String, String>> getCartera_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte,Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getProveedor_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte,Integer id_empresa) {
         
         String where_proveedor="";
         if(tipo_reporte==1){
@@ -2654,21 +2654,21 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 + "cxp_facturas.orden_compra, "
                 + "cxp_facturas.monto_total, "
                 + "(cxp_facturas.total_pagos + cxp_facturas.total_notas_creditos) AS importe_pagado, "
-                + "(CASE WHEN cxp_facturas.fecha_ultimo_pago is null THEN '/ /'  ELSE  to_char(cxp_facturas.fecha_ultimo_pago,'dd/mm/yyyy') END) AS fecha_ultimo_pago, "
+                + "(CASE WHEN cxp_facturas.fecha_ultimo_pago is null THEN ' /  / '  ELSE  to_char(cxp_facturas.fecha_ultimo_pago,'dd/mm/yyyy') END) AS fecha_ultimo_pago, "
                 + "cxp_facturas.saldo_factura, "
-                + "erp_monedas.descripcion_abr, "
+                + "gral_mon.descripcion_abr, "
                 + "cxp_prov.id, "
                 + "cxp_prov.razon_social "
                 + "FROM cxp_facturas "
                 + "JOIN cxp_prov on cxp_prov.id = cxp_facturas.cxc_prov_id "
-                + "JOIN erp_monedas on erp_monedas.id = cxp_facturas.moneda_id "
+                + "JOIN gral_mon on gral_mon.id = cxp_facturas.moneda_id "
                 + "WHERE cxp_facturas.pagado=FALSE "
                 + "AND cxp_facturas.cancelacion=FALSE   "+ where_proveedor +" "
                 + "AND cxp_facturas.empresa_id="+ id_empresa + " "
                 + "AND cxp_facturas.moneda_id ="+ id_moneda
                 + "ORDER BY cxp_facturas.moneda_id, cxp_prov.razon_social, cxp_facturas.fecha_factura;"; 
         
-        System.out.println("Buscando facturas edo cta.: "+sql_to_query);
+        System.out.println("Proveedor_DatosReporteEdoCta:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2707,12 +2707,12 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     + "cxp_prov.razon_social AS  proveedor, "
                     + "cxp_nota_credito.total, "
                     + "to_char(cxp_nota_credito.fecha_expedicion::timestamp with time zone,'dd/mm/yyyy') AS fecha_expedicion, "
-                    + "erp_monedas.descripcion_abr AS moneda, "
+                    + "gral_mon.descripcion_abr AS moneda, "
                     + "cxp_nota_credito.factura, "
                     + "(CASE WHEN cxp_nota_credito.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) AS estado "
                 + "FROM cxp_nota_credito "
                 + "LEFT JOIN cxp_prov ON cxp_prov.id=cxp_nota_credito.cxp_prov_id "
-                + "LEFT JOIN erp_monedas ON erp_monedas.id=cxp_nota_credito.moneda_id " 
+                + "LEFT JOIN gral_mon ON gral_mon.id=cxp_nota_credito.moneda_id " 
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=cxp_nota_credito.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -2753,10 +2753,10 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     + "cxp_facturas.total_notas_creditos AS nc_aplicado, "
                     + "cxp_facturas.saldo_factura, "
                     + "cxp_facturas.moneda_id, "
-                    + "erp_monedas.descripcion_abr AS moneda, "
+                    + "gral_mon.descripcion_abr AS moneda, "
                     + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy') AS fecha_factura "
                 + "FROM cxp_facturas "
-                + "JOIN erp_monedas ON erp_monedas.id=cxp_facturas.moneda_id "
+                + "JOIN gral_mon ON gral_mon.id=cxp_facturas.moneda_id "
                 + "WHERE cxp_facturas.cxc_prov_id="+id_proveedor+" "
                 + "AND cxp_facturas.pagado=FALSE "
                 + "AND cxp_facturas.cancelacion=FALSE;";
@@ -2899,9 +2899,9 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     + "cxp_nota_credito.serie_folio AS nota_credito,"
                     + "cxp_nota_credito.concepto,"
                     + "to_char(cxp_nota_credito.fecha_expedicion::timestamp with time zone,'dd/mm/yyyy') AS fecha_expedicion,"
-                    + "erp_monedas.descripcion AS moneda,"
-                    + "erp_monedas.descripcion_abr AS moneda_abr,"
-                    + "erp_monedas.simbolo AS simbolo_moneda,"
+                    + "gral_mon.descripcion AS moneda,"
+                    + "gral_mon.descripcion_abr AS moneda_abr,"
+                    + "gral_mon.simbolo AS simbolo_moneda,"
                     + "cxp_nota_credito.observaciones,"
                     + "cxp_nota_credito.tipo_cambio,"
                     + "cxp_nota_credito.subtotal,"
@@ -2922,7 +2922,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 + "LEFT JOIN gral_mun ON gral_mun.id=cxp_prov.municipio_id "
                 + "LEFT JOIN gral_edo ON gral_edo.id=cxp_prov.estado_id "
                 + "LEFT JOIN gral_pais ON gral_pais.id=cxp_prov.pais_id "
-                + "LEFT JOIN erp_monedas ON erp_monedas.id=cxp_nota_credito.moneda_id "
+                + "LEFT JOIN gral_mon ON gral_mon.id=cxp_nota_credito.moneda_id "
                 + "WHERE cxp_nota_credito.id="+id+";";
         
         //System.out.println("Datos PDF NC::::"+sql_to_query);

@@ -416,7 +416,7 @@ public class CotizacionesSpringDao implements CotizacionesInterfaceDao {
         String sql_query = "SELECT erp_cotizacions.id,"
                                 +"erp_cotizacions.status_id,"
                                 +"tblclient.moneda as moneda_id,"
-                                +"erp_monedas.descripcion as moneda,"
+                                +"gral_mon.descripcion as moneda,"
                                 +"erp_cotizacions.observaciones,"
                                 +"tblclient.id as cliente_id,"
                                 +"tblclient.numero_control,"
@@ -436,7 +436,7 @@ public class CotizacionesSpringDao implements CotizacionesInterfaceDao {
                                     + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
                                     + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
                         +") AS tblclient ON tblclient.id = erp_cotizacions.cliente_id "
-                        +"LEFT JOIN  erp_monedas on erp_monedas.id = tblclient.moneda  "
+                        +"LEFT JOIN  gral_mon on gral_mon.id = tblclient.moneda  "
                         +"WHERE erp_cotizacions.id = ? ";
                         
         //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
@@ -540,7 +540,7 @@ public class CotizacionesSpringDao implements CotizacionesInterfaceDao {
     //obtiene todas la monedas
     @Override
     public ArrayList<HashMap<String, Object>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion_abr FROM  erp_monedas where borrado_logico=FALSE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion_abr FROM  gral_mon where borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm_monedas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -587,7 +587,7 @@ public class CotizacionesSpringDao implements CotizacionesInterfaceDao {
                                     +"sbt.razon_social,"
                                     +"sbt.direccion,"
                                     +"sbt.moneda_id,"
-                                    +"erp_monedas.descripcion as moneda, "
+                                    +"gral_mon.descripcion as moneda, "
                                     +"sbt.contacto "
                             +"FROM(SELECT cxc_clie.id,"
                                             +"cxc_clie.numero_control,"
@@ -603,7 +603,7 @@ public class CotizacionesSpringDao implements CotizacionesInterfaceDao {
                                     +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
                                     + " AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
-                            +"LEFT JOIN erp_monedas on erp_monedas.id = sbt.moneda_id;";
+                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
         
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -803,10 +803,10 @@ public class CotizacionesSpringDao implements CotizacionesInterfaceDao {
                             //"erp_cotizacions.impuesto, "+
                             //"erp_cotizacions.total, "+
                             //"erp_cotizacions.moneda_id, "+
-                            //"erp_monedas.descripcion as moneda, "+
+                            //"gral_mon.descripcion as moneda, "+
                             "to_char((CASE WHEN erp_cotizacions.momento_actualizacion IS NULL THEN erp_cotizacions.momento_creacion ELSE erp_cotizacions.momento_actualizacion END),'yyyy-mm-dd') as fecha_cotizacion "+
                     "FROM erp_cotizacions  "+
-                    //"left JOIN erp_monedas on erp_monedas.id = erp_cotizacions.moneda_id "+
+                    //"left JOIN gral_mon on gral_mon.id = erp_cotizacions.moneda_id "+
                     "WHERE  erp_cotizacions.id =" + id_cotizacion + " limit 1";
         
         //System.out.println("sql_query_cotizacion: "+sql_query_cotizacion);
@@ -866,13 +866,13 @@ public class CotizacionesSpringDao implements CotizacionesInterfaceDao {
                             "inv_prod_presentaciones.titulo as presentacion, "+
                             "erp_cotizacions_detalles.cantidad, "+
                             "erp_cotizacions_detalles.precio_unitario, "+
-                            "erp_monedas.descripcion_abr as moneda, "+
+                            "gral_mon.descripcion_abr as moneda, "+
                             "(erp_cotizacions_detalles.cantidad * erp_cotizacions_detalles.precio_unitario) AS importe "+
                     "FROM erp_cotizacions_detalles "+
                     "LEFT JOIN inv_prod on inv_prod.id = erp_cotizacions_detalles.producto_id "+
                     "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "+
                     "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_cotizacions_detalles.presentacion_id "+
-                    "LEFT JOIN erp_monedas on erp_monedas.id = erp_cotizacions_detalles.moneda_id "+
+                    "LEFT JOIN gral_mon on gral_mon.id = erp_cotizacions_detalles.moneda_id "+
                     "WHERE erp_cotizacions_detalles.cotizacions_id = "+ id_cotizacion + "" +
                     "ORDER BY erp_cotizacions_detalles.id";
         

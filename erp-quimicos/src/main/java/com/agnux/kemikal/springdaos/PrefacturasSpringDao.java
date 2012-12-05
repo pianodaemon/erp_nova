@@ -93,7 +93,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                         +"erp_prefacturas.id, "
                         +"cxc_clie.razon_social as cliente, "
                         +"erp_prefacturas.total, "
-                        +"erp_monedas.descripcion_abr AS denominacion,   "
+                        +"gral_mon.descripcion_abr AS denominacion,   "
                         +"(CASE WHEN erp_prefacturas.folio_pedido IS NULL THEN '' ELSE erp_prefacturas.folio_pedido END ) AS folio_pedido, "
                         +"(CASE WHEN erp_prefacturas.orden_compra IS NULL THEN '' ELSE erp_prefacturas.orden_compra END) AS oc, "
                         +"(CASE WHEN erp_proceso.proceso_flujo_id=2 THEN '' ELSE erp_proceso_flujo.titulo END) as estado, "
@@ -104,7 +104,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 +"LEFT JOIN fac_docs on fac_docs.proceso_id = erp_proceso.id  "
                 +"LEFT JOIN erp_proceso_flujo on erp_proceso_flujo.id = erp_proceso.proceso_flujo_id  "
                 +"LEFT JOIN cxc_clie on cxc_clie.id = erp_prefacturas.cliente_id  "
-                +"LEFT JOIN erp_monedas ON erp_monedas.id=erp_prefacturas.moneda_id "
+                +"LEFT JOIN gral_mon ON gral_mon.id=erp_prefacturas.moneda_id "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=erp_prefacturas.id "
         +") AS sbt2 "
         +"order by refacturar, "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -170,7 +170,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 + "erp_prefacturas.folio_pedido, "
                                 + "erp_proceso.proceso_flujo_id, "
                                 + "erp_prefacturas.moneda_id, "
-                                + "erp_monedas.descripcion as moneda, "
+                                + "gral_mon.descripcion as moneda, "
                                 + "erp_prefacturas.observaciones, "
                                 + "cxc_clie.id as cliente_id, "
                                 + "cxc_clie.numero_control, "
@@ -194,7 +194,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 + "erp_prefacturas.inv_alm_id "
                             + "FROM erp_prefacturas  "
                             + "LEFT JOIN erp_proceso ON erp_proceso.id = erp_prefacturas.proceso_id  "
-                            + "LEFT JOIN erp_monedas ON erp_monedas.id = erp_prefacturas.moneda_id  "
+                            + "LEFT JOIN gral_mon ON gral_mon.id = erp_prefacturas.moneda_id  "
                             + "LEFT JOIN cxc_clie ON cxc_clie.id=erp_prefacturas.cliente_id  "
                             + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id  "
                             + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id  "
@@ -260,10 +260,10 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 +"(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
                                 +"erp_prefacturas_detalles.tipo_impuesto_id,"
                                 +"erp_prefacturas_detalles.valor_imp, "
-                                +"erp_monedas.descripcion as moneda "
+                                +"gral_mon.descripcion as moneda "
                         + "FROM erp_prefacturas "
                         + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
-                        + "LEFT JOIN erp_monedas on erp_monedas.id = erp_prefacturas.moneda_id "
+                        + "LEFT JOIN gral_mon on gral_mon.id = erp_prefacturas.moneda_id "
                         + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
                         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_prefacturas_detalles.presentacion_id "
@@ -309,7 +309,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     //obtiene todas la monedas
     @Override
     public ArrayList<HashMap<String, Object>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  erp_monedas WHERE borrado_logico=FALSE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm_monedas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -450,7 +450,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                     +"sbt.razon_social,"
                                     +"sbt.direccion,"
                                     +"sbt.moneda_id,"
-                                    +"erp_monedas.descripcion as moneda, "
+                                    +"gral_mon.descripcion as moneda, "
                                     +"sbt.cxc_agen_id,"
                                     +"sbt.terminos_id, "
                                     +"sbt.empresa_immex, "
@@ -476,7 +476,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                     +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
                                     + " AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
-                            +"LEFT JOIN erp_monedas on erp_monedas.id = sbt.moneda_id;";
+                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
         
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
@@ -674,11 +674,11 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                         + "fac_rems.total AS monto_remision,"
                                         + "fac_rems.moneda_id,"
                                         + "fac_rems.inv_alm_id AS id_almacen,"
-                                        + "erp_monedas.descripcion_abr AS moneda,"
+                                        + "gral_mon.descripcion_abr AS moneda,"
                                         + "to_char(fac_rems.momento_creacion,'dd/mm/yyyy') AS fecha_remision, "
                                         + "fac_rems_docs.fac_rem_id "
                                 + "FROM fac_rems "
-                                + "JOIN erp_monedas ON erp_monedas.id = fac_rems.moneda_id "
+                                + "JOIN gral_mon ON gral_mon.id = fac_rems.moneda_id "
                                 + "LEFT JOIN fac_rems_docs ON fac_rems_docs.fac_rem_id=fac_rems.id "
                                 + "WHERE fac_rems.facturado=false "
                                 + "AND fac_rems.cancelado=false "

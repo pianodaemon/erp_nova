@@ -85,7 +85,7 @@ public class PocSpringDao implements PocInterfaceDao{
                                     +"poc_pedidos.folio, "
                                     +"cxc_clie.razon_social as cliente, "
                                     +"poc_pedidos.total, "
-                                    +"erp_monedas.descripcion_abr AS denominacion, "
+                                    +"gral_mon.descripcion_abr AS denominacion, "
                                     +"(CASE WHEN poc_pedidos.cancelado=TRUE THEN 'CANCELADO' ELSE erp_proceso_flujo.titulo END) as estado, "
                                     +"to_char(poc_pedidos.momento_creacion,'dd/mm/yyyy') as fecha_creacion "
                             +"FROM poc_pedidos "
@@ -93,7 +93,7 @@ public class PocSpringDao implements PocInterfaceDao{
                             +"LEFT JOIN fac_docs on fac_docs.proceso_id = erp_proceso.id "
                             +"LEFT JOIN erp_proceso_flujo on erp_proceso_flujo.id = erp_proceso.proceso_flujo_id "
                             +"LEFT JOIN cxc_clie on cxc_clie.id = poc_pedidos.cxc_clie_id "
-                            +"LEFT JOIN erp_monedas ON erp_monedas.id=poc_pedidos.moneda_id "
+                            +"LEFT JOIN gral_mon ON gral_mon.id=poc_pedidos.moneda_id "
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_pedidos.id "
                             + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -129,7 +129,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "poc_pedidos.folio,"
                 + "erp_proceso.proceso_flujo_id,"
                 + "poc_pedidos.moneda_id,"
-                + "erp_monedas.descripcion as moneda,"
+                + "gral_mon.descripcion as moneda,"
                 + "poc_pedidos.observaciones,"
                 + "cxc_clie.id as cliente_id,"
                 + "cxc_clie.numero_control,"
@@ -155,7 +155,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "cxc_clie.cta_pago_usd "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
-        + "LEFT JOIN erp_monedas ON erp_monedas.id = poc_pedidos.moneda_id "
+        + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
         + "LEFT JOIN cxc_clie ON cxc_clie.id=poc_pedidos.cxc_clie_id "
         + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
         + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
@@ -273,7 +273,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "poc_pedidos.folio,"
                 + "erp_proceso.proceso_flujo_id,"
                 + "poc_pedidos.moneda_id,"
-                + "erp_monedas.descripcion as moneda,"
+                + "gral_mon.descripcion as moneda,"
                 + "poc_pedidos.observaciones,"
                 + "cxc_clie.id as cliente_id,"
                 + "cxc_clie.numero_control,"
@@ -308,7 +308,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "poc_pedidos.cancelado "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
-        + "LEFT JOIN erp_monedas ON erp_monedas.id = poc_pedidos.moneda_id "
+        + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
         + "LEFT JOIN cxc_clie ON cxc_clie.id=poc_pedidos.cxc_clie_id "
         + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
         + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
@@ -392,7 +392,7 @@ public class PocSpringDao implements PocInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  erp_monedas WHERE borrado_logico=FALSE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -524,7 +524,7 @@ public class PocSpringDao implements PocInterfaceDao{
                                     +"sbt.razon_social,"
                                     +"sbt.direccion,"
                                     +"sbt.moneda_id,"
-                                    +"erp_monedas.descripcion as moneda, "
+                                    +"gral_mon.descripcion as moneda, "
                                     +"sbt.cxc_agen_id,"
                                     +"sbt.terminos_id, "
                                     +"sbt.empresa_immex, "
@@ -547,10 +547,11 @@ public class PocSpringDao implements PocInterfaceDao{
                                     + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
                                     + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
                                     + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                                    +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
+                                    //+" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
+                                    +" WHERE empresa_id ="+id_empresa+" "
                                     + " AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
-                            +"LEFT JOIN erp_monedas on erp_monedas.id = sbt.moneda_id;";
+                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
         
         ArrayList<HashMap<String, String>> hm_cli = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -694,7 +695,7 @@ public class PocSpringDao implements PocInterfaceDao{
                                 +"fac_rems.folio, "
                                 +"cxc_clie.razon_social as cliente, "
                                 +"fac_rems.total, "
-                                +"erp_monedas.descripcion_abr AS denominacion, "
+                                +"gral_mon.descripcion_abr AS denominacion, "
                                 +"(CASE WHEN fac_rems.cancelado=TRUE THEN 'CANCELADO' "
                                 + "ELSE "
                                     + "(CASE WHEN fac_rems.facturado=TRUE THEN 'FACTURADO' ELSE '' END )"
@@ -705,7 +706,7 @@ public class PocSpringDao implements PocInterfaceDao{
                             +"LEFT JOIN fac_docs on fac_docs.proceso_id = erp_proceso.id "
                             +"LEFT JOIN erp_proceso_flujo on erp_proceso_flujo.id = erp_proceso.proceso_flujo_id "
                             +"LEFT JOIN cxc_clie on cxc_clie.id = fac_rems.cxc_clie_id "
-                            +"LEFT JOIN erp_monedas ON erp_monedas.id=fac_rems.moneda_id "
+                            +"LEFT JOIN gral_mon ON gral_mon.id=fac_rems.moneda_id "
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=fac_rems.id "
                             + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -764,7 +765,7 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "fac_rems.folio_pedido, "
                         + "erp_proceso.proceso_flujo_id, "
                         + "fac_rems.moneda_id, "
-                        + "erp_monedas.descripcion as moneda, "
+                        + "gral_mon.descripcion as moneda, "
                         + "fac_rems.observaciones, "
                         + "cxc_clie.id as cliente_id, "
                         + "cxc_clie.numero_control, "
@@ -785,7 +786,7 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "(CASE WHEN (select count(id) from fac_rems_docs where fac_rem_id="+id_remision+") = 0 AND fac_rems.cancelado is false AND  fac_rems.estatus=0 THEN 0 ELSE 1 END) as estatus "//agregado por paco, por el boton de pagar
                 + "FROM fac_rems  "
                 + "LEFT JOIN erp_proceso ON erp_proceso.id = fac_rems.proceso_id  "
-                + "LEFT JOIN erp_monedas ON erp_monedas.id = fac_rems.moneda_id  "
+                + "LEFT JOIN gral_mon ON gral_mon.id = fac_rems.moneda_id  "
                 + "LEFT JOIN cxc_clie ON cxc_clie.id=fac_rems.cxc_clie_id   "
                 + "WHERE fac_rems.id="+id_remision; 
 
@@ -895,9 +896,9 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "fac_rems.orden_compra,"
                         + "fac_rems.observaciones,"
                         + "to_char(fac_rems.momento_creacion,'dd/mm/yyyy') AS fecha_remision,"
-                        + "erp_monedas.simbolo AS simbolo_moneda,"
-                        + "erp_monedas.descripcion_abr AS moneda_abr,"
-                        + "erp_monedas.descripcion AS titulo_moneda,"
+                        + "gral_mon.simbolo AS simbolo_moneda,"
+                        + "gral_mon.descripcion_abr AS moneda_abr,"
+                        + "gral_mon.descripcion AS titulo_moneda,"
                         + "cxc_clie_credias.dias AS dias_credito,"
                         + "cxc_clie.razon_social AS cliente,"
                         + "cxc_clie.rfc AS cliente_rfc, "
@@ -912,7 +913,7 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "cxc_agen.nombre AS vendedor, "
                         + "(CASE WHEN fac_rems.cancelado=TRUE THEN 'REMISION CANCELADA' ELSE 'NO' END) AS cancelado "
                 + "FROM fac_rems "
-                + "JOIN erp_monedas ON erp_monedas.id=fac_rems.moneda_id "
+                + "JOIN gral_mon ON gral_mon.id=fac_rems.moneda_id "
                 + "JOIN cxc_clie ON cxc_clie.id=fac_rems.cxc_clie_id "
                 + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
                 + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
@@ -1043,8 +1044,8 @@ public class PocSpringDao implements PocInterfaceDao{
                                 + "to_char(poc_pedidos.momento_creacion,'dd/mm/yyyy') as fecha_factura, "
                                 + "(CASE WHEN poc_pedidos.cancelado=FALSE THEN cxc_clie.razon_social ELSE 'CANCELADA' END) AS cliente, "
                                 + "poc_pedidos.moneda_id, "
-                                + "erp_monedas.descripcion_abr AS moneda_factura, "
-                                + "erp_monedas.simbolo AS simbolo_moneda, "
+                                + "gral_mon.descripcion_abr AS moneda_factura, "
+                                + "gral_mon.simbolo AS simbolo_moneda, "
                                 + "(CASE WHEN poc_pedidos.cancelado=FALSE THEN poc_pedidos.subtotal ELSE 0.0 END) AS subtotal,  "
                                 + "(CASE WHEN poc_pedidos.cancelado=FALSE THEN poc_pedidos.impuesto ELSE 0.0 END) AS impuesto, "
                                 + "(CASE WHEN poc_pedidos.cancelado=FALSE THEN poc_pedidos.total ELSE 0.0 END) AS total,  "
@@ -1052,7 +1053,7 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "FROM poc_pedidos "
                         + "JOIN erp_proceso ON erp_proceso.id=poc_pedidos.proceso_id "
                         + "JOIN cxc_clie ON cxc_clie.id = poc_pedidos.cxc_clie_id   "
-                        + "JOIN erp_monedas ON erp_monedas.id = poc_pedidos.moneda_id  "
+                        + "JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id  "
                         + "WHERE erp_proceso.empresa_id="+id_empresa+" "+where+" "
                         + "AND (to_char(poc_pedidos.momento_creacion,'yyyymmdd')::integer BETWEEN  to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
                 + ") AS sbt "

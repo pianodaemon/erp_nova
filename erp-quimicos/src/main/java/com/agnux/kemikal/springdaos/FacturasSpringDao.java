@@ -152,7 +152,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                                     +"fac_docs.serie_folio, "
                                     +"cxc_clie.razon_social as cliente, "
                                     +"fac_docs.total, "
-                                    +"erp_monedas.descripcion_abr AS moneda, "
+                                    +"gral_mon.descripcion_abr AS moneda, "
                                     +"to_char(fac_docs.momento_creacion,'dd/mm/yyyy') AS fecha_facturacion, "
                                     +"to_char(fac_docs.fecha_vencimiento,'dd/mm/yyyy') AS fecha_venc, "
                                     +"(CASE WHEN fac_docs.folio_pedido IS NULL THEN '' ELSE fac_docs.folio_pedido END ) AS folio_pedido, "
@@ -162,7 +162,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                             +"FROM fac_docs  "
                             +"JOIN erp_proceso on erp_proceso.id=fac_docs.proceso_id  "
                             +"LEFT JOIN cxc_clie on cxc_clie.id=fac_docs.cxc_clie_id  "
-                            +"LEFT JOIN erp_monedas ON erp_monedas.id=fac_docs.moneda_id  "
+                            +"LEFT JOIN gral_mon ON gral_mon.id=fac_docs.moneda_id  "
                             +"LEFT JOIN erp_h_facturas ON erp_h_facturas.serie_folio=fac_docs.serie_folio "
         +"JOIN ("+sql_busqueda+") as subt on subt.id=fac_docs.id "
         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -224,7 +224,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         +"FROM fac_docs   "
         +"JOIN erp_h_facturas ON erp_h_facturas.serie_folio=fac_docs.serie_folio "
         +"LEFT JOIN cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
-        +"LEFT JOIN erp_monedas ON erp_monedas.id = fac_docs.moneda_id "
+        +"LEFT JOIN gral_mon ON gral_mon.id = fac_docs.moneda_id "
         +"LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
         +"LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
         +"LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
@@ -320,7 +320,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     //obtiene todas la monedas
     @Override
     public ArrayList<HashMap<String, Object>> getFactura_Monedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  erp_monedas WHERE borrado_logico=FALSE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm_monedas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -690,13 +690,13 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                                         + "erp_prefacturas_detalles.valor_imp,"
                                         + "erp_prefacturas.tasa_retencion_immex,"
                                         + "erp_prefacturas.moneda_id,"
-                                        + "erp_monedas.descripcion AS nombre_moneda,"
-                                        + "erp_monedas.descripcion_abr AS moneda_abr,"
-                                        + "erp_monedas.simbolo AS simbolo_moneda,"
+                                        + "gral_mon.descripcion AS nombre_moneda,"
+                                        + "gral_mon.descripcion_abr AS moneda_abr,"
+                                        + "gral_mon.simbolo AS simbolo_moneda,"
                                         + "erp_prefacturas.tipo_cambio "
                                 + "FROM erp_prefacturas "
                                 + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
-                                + "JOIN erp_monedas on erp_monedas.id=erp_prefacturas.moneda_id "
+                                + "JOIN gral_mon on gral_mon.id=erp_prefacturas.moneda_id "
                                 + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
                                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                                 + "WHERE erp_prefacturas_detalles.prefacturas_id="+id_prefactura+" "
@@ -815,8 +815,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + "translate(fac_docs.serie_folio,'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ abcdefghijklmnñopqrstuvwxyz','') AS folio,"
                         + "(CASE WHEN fac_docs.orden_compra='' THEN '-' ELSE fac_docs.orden_compra END) AS orden_compra,"
                         + "fac_docs.moneda_id, "
-                        + "erp_monedas.descripcion_abr AS simbolo_moneda, "
-                        + "erp_monedas.iso_4217 AS nombre_moneda,"
+                        + "gral_mon.descripcion_abr AS simbolo_moneda, "
+                        + "gral_mon.iso_4217 AS nombre_moneda,"
                         + "fac_docs.tipo_cambio,"
                         + "(CASE WHEN fac_docs.cxc_agen_id=0 THEN '' ELSE cxc_agen.nombre END ) AS clave_agente, "
                         + "fac_docs.subtotal as subtotal_conceptos, "
@@ -824,11 +824,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + "fac_docs.total as monto_total, "
                         + "fac_docs.observaciones "
                 + "FROM fac_docs "
-                + "JOIN erp_monedas ON erp_monedas.id=fac_docs.moneda_id "
+                + "JOIN gral_mon ON gral_mon.id=fac_docs.moneda_id "
                 + "JOIN cxc_agen ON cxc_agen.id=fac_docs.cxc_agen_id "
                 + "WHERE  fac_docs.id="+id_factura+";";
         
-        System.out.println("sql_to_query: "+sql_to_query);
+        System.out.println("DatosExtrasCfdi: "+sql_to_query);
         
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         
@@ -1045,10 +1045,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_docs_detalles.cantidad,"
             + "fac_docs_detalles.precio_unitario,"
             + "(fac_docs_detalles.cantidad * fac_docs_detalles.precio_unitario) AS importe, "
-            + "erp_monedas.descripcion as moneda "
+            + "gral_mon.descripcion as moneda "
         + "FROM fac_docs "
         + "JOIN fac_docs_detalles on fac_docs_detalles.fac_doc_id=fac_docs.id "
-        + "LEFT JOIN erp_monedas on erp_monedas.id = fac_docs.moneda_id "
+        + "LEFT JOIN gral_mon on gral_mon.id = fac_docs.moneda_id "
         + "LEFT JOIN inv_prod on inv_prod.id = fac_docs_detalles.inv_prod_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = fac_docs_detalles.inv_prod_presentacion_id "
@@ -1116,11 +1116,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "cxc_agen.nombre AS nombre_vendedor, "
                     + "cxc_clie_credias.descripcion AS terminos,"
                     + "cxc_clie_credias.dias, "
-                    + "erp_monedas.descripcion AS nombre_moneda,"
-                    + "erp_monedas.descripcion_abr AS moneda_abr "
+                    + "gral_mon.descripcion AS nombre_moneda,"
+                    + "gral_mon.descripcion_abr AS moneda_abr "
                 + "FROM fac_docs  "
                 + "LEFT JOIN cxc_clie_credias ON cxc_clie_credias.id = fac_docs.terminos_id "
-                + "LEFT JOIN erp_monedas on erp_monedas.id = fac_docs.moneda_id "
+                + "LEFT JOIN gral_mon on gral_mon.id = fac_docs.moneda_id "
                 + "JOIN cxc_agen ON cxc_agen.id =  fac_docs.cxc_agen_id  "
                 + "WHERE fac_docs.serie_folio='"+serieFolio+"';";
         
@@ -1374,9 +1374,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                             + "fac_docs.orden_compra, "
                             + "to_char(fac_docs.momento_creacion,'dd/mm/yyyy') as fecha_factura,"
                             + "(CASE WHEN fac_docs.cancelado=FALSE THEN cxc_clie.razon_social ELSE 'CANCELADA' END) AS cliente, "
-                            + "erp_monedas.id AS id_moneda, "
-                            + "erp_monedas.descripcion_abr AS moneda_factura, "
-                            + "erp_monedas.simbolo AS simbolo_moneda, "
+                            + "gral_mon.id AS id_moneda, "
+                            + "gral_mon.descripcion_abr AS moneda_factura, "
+                            + "gral_mon.simbolo AS simbolo_moneda, "
                             + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.subtotal ELSE 0.0 END) AS subtotal, "
                             + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.subtotal*tipo_cambio ELSE 0.0 END) AS subtotal_mn, "
                             + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.impuesto ELSE 0.0 END) AS impuesto, "
@@ -1387,14 +1387,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "FROM fac_docs   "
                     + "JOIN erp_proceso ON erp_proceso.id=fac_docs.proceso_id  "
                     + "JOIN cxc_clie ON cxc_clie.id = fac_docs.cxc_clie_id   "
-                    + "JOIN erp_monedas ON erp_monedas.id = fac_docs.moneda_id  "
+                    + "JOIN gral_mon ON gral_mon.id = fac_docs.moneda_id  "
                     + "WHERE erp_proceso.empresa_id ="+id_empresa + "  "
                     + "AND fac_docs.serie_folio ILIKE '"+factura+"' "
                     + "AND cxc_clie.razon_social ILIKE '"+cliente+"'  "+where+" "
                     + "AND (to_char(fac_docs.momento_creacion,'yyyymmdd') BETWEEN  to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd') AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')) "
                     + "ORDER BY fac_docs.id;";
             
-        System.out.println("Buscando facturas: "+sql_to_query);
+        System.out.println("ReporteFacturacion:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1463,8 +1463,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                             + "to_char(fac_rems.momento_creacion,'dd/mm/yyyy') as fecha_remision,"
                             + "(CASE WHEN fac_rems.cancelado=FALSE THEN cxc_clie.razon_social ELSE 'CANCELADA' END) AS cliente, "
                             + "fac_rems.moneda_id, "
-                            + "erp_monedas.simbolo AS moneda_simbolo, "
-                            + "erp_monedas.descripcion_abr AS moneda_remision, "
+                            + "gral_mon.simbolo AS moneda_simbolo, "
+                            + "gral_mon.descripcion_abr AS moneda_remision, "
                             + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.subtotal ELSE 0.0 END) AS subtotal, "
                             + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.subtotal*tipo_cambio ELSE 0.0 END) AS subtotal_mn, "
                             + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.impuesto ELSE 0.0 END) AS impuesto, "
@@ -1475,7 +1475,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "FROM fac_rems   "
                     + "JOIN erp_proceso ON erp_proceso.id=fac_rems.proceso_id  "
                     + "JOIN cxc_clie ON cxc_clie.id = fac_rems.cxc_clie_id   "
-                    + "JOIN erp_monedas ON erp_monedas.id = fac_rems.moneda_id  "
+                    + "JOIN gral_mon ON gral_mon.id = fac_rems.moneda_id  "
                     + "WHERE erp_proceso.empresa_id ="+id_empresa + "  "
                     + "AND fac_rems.folio ILIKE '"+remision+"' " 
                     + "AND cxc_clie.razon_social ILIKE '"+cliente+"'  "+where+" "
@@ -1543,13 +1543,13 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "(CASE WHEN fac_rems.moneda_id=1 THEN 'M.N.' else 'USD' end) as moneda_remision_facturada, "
                     + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.impuesto ELSE 0.0 END) AS impuesto,  "
                     + "fac_rems.moneda_id, "
-                    + "erp_monedas.descripcion_abr AS moneda_abr, "
-                    + "erp_monedas.simbolo AS moneda_simbolo "
+                    + "gral_mon.descripcion_abr AS moneda_abr, "
+                    + "gral_mon.simbolo AS moneda_simbolo "
                 + "FROM fac_rems   "
                 + "LEFT JOIN erp_proceso ON erp_proceso.id=fac_rems.proceso_id   "
                 + "LEFT JOIN cxc_clie ON cxc_clie.id=fac_rems.cxc_clie_id   "
                 + "LEFT JOIN ( SELECT fac_rems_docs.fac_rem_id,fac_docs.serie_folio  FROM fac_docs LEFT JOIN fac_rems_docs  ON fac_rems_docs.erp_proceso_id=fac_docs.proceso_id LEFT JOIN erp_proceso ON erp_proceso.id=fac_rems_docs.erp_proceso_id WHERE erp_proceso.empresa_id="+id_empresa+" ) AS tbl_fac ON tbl_fac.fac_rem_id=fac_rems.id  "
-                + "LEFT JOIN erp_monedas ON erp_monedas.id=fac_rems.moneda_id "
+                + "LEFT JOIN gral_mon ON gral_mon.id=fac_rems.moneda_id "
                 +" WHERE erp_proceso.empresa_id ="+id_empresa+"  "
                 + "AND fac_rems.folio ILIKE '"+remision+"'  "
                 + "AND cxc_clie.razon_social ILIKE '"+cliente+"' "+where+" "
@@ -1599,12 +1599,12 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "cxc_clie.razon_social as cliente,"
                     + "fac_nota_credito.total, "
                     + "to_char(fac_nota_credito.momento_creacion,'dd/mm/yyyy') AS fecha_expedicion,"
-                    + "erp_monedas.descripcion_abr AS moneda, "
+                    + "gral_mon.descripcion_abr AS moneda, "
                     + "fac_nota_credito.serie_folio_factura AS factura, "
                     + "(CASE WHEN fac_nota_credito.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) AS estado "
                 + "FROM fac_nota_credito "
                 + "LEFT JOIN cxc_clie on cxc_clie.id = fac_nota_credito.cxc_clie_id  "
-                + "LEFT JOIN erp_monedas ON erp_monedas.id=fac_nota_credito.moneda_id  "
+                + "LEFT JOIN gral_mon ON gral_mon.id=fac_nota_credito.moneda_id  "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=fac_nota_credito.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -1738,7 +1738,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                                     +"sbt.razon_social,"
                                     +"sbt.direccion,"
                                     +"sbt.moneda_id,"
-                                    +"erp_monedas.descripcion as moneda, "
+                                    +"gral_mon.descripcion as moneda, "
                                     +"sbt.cxc_agen_id,"
                                     +"sbt.terminos_id, "
                                     +"sbt.empresa_immex, "
@@ -1764,7 +1764,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                                     +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
                                     + " AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
-                            +"LEFT JOIN erp_monedas on erp_monedas.id = sbt.moneda_id;";
+                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
         
         ArrayList<HashMap<String, String>> hm_cli = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
@@ -1804,11 +1804,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "erp_h_facturas.monto_total AS monto_factura, "
                     + "erp_h_facturas.saldo_factura, "
                     + "erp_h_facturas.moneda_id, "
-                    + "erp_monedas.descripcion_abr AS moneda, "
+                    + "gral_mon.descripcion_abr AS moneda, "
                     + "erp_h_facturas.cxc_agen_id,"
                     + "to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura "
                 + "FROM erp_h_facturas "
-                + "JOIN erp_monedas ON erp_monedas.id=erp_h_facturas.moneda_id "
+                + "JOIN gral_mon ON gral_mon.id=erp_h_facturas.moneda_id "
                 + "WHERE erp_h_facturas.cliente_id="+id_cliente+" "
                 + "AND erp_h_facturas.pagado=FALSE "
                 + "AND erp_h_facturas.cancelacion=FALSE;";
@@ -2051,11 +2051,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "''::character varying AS numero_lote, "
                     + "1::double precision AS cantidad, "
                     + "''::character varying AS unidad, "
-                    + "erp_monedas.descripcion as moneda, "
+                    + "gral_mon.descripcion as moneda, "
                     + "fac_nota_credito.total AS precio_unitario, "
                     + "fac_nota_credito.total AS importe "
                 + "FROM fac_nota_credito "
-                + "LEFT JOIN erp_monedas ON erp_monedas.id = fac_nota_credito.moneda_id "
+                + "LEFT JOIN gral_mon ON gral_mon.id = fac_nota_credito.moneda_id "
                 + "WHERE fac_nota_credito.serie_folio='"+serieFolio+"';";
         
         //System.out.println("Obtiene lista conceptos pdf: "+sql_query);
@@ -2109,10 +2109,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "to_char(fac_nota_credito.momento_expedicion,'yyyy-mm-dd') AS fecha_comprobante, "
                     + "fac_nota_credito.observaciones, "
                     + "cxc_agen.nombre AS nombre_vendedor, "
-                    + "erp_monedas.descripcion AS nombre_moneda,"
-                    + "erp_monedas.descripcion_abr AS moneda_abr "
+                    + "gral_mon.descripcion AS nombre_moneda,"
+                    + "gral_mon.descripcion_abr AS moneda_abr "
                 + "FROM fac_nota_credito  "
-                + "LEFT JOIN erp_monedas on erp_monedas.id = fac_nota_credito.moneda_id "
+                + "LEFT JOIN gral_mon on gral_mon.id = fac_nota_credito.moneda_id "
                 + "JOIN cxc_agen ON cxc_agen.id =  fac_nota_credito.cxc_agen_id  "
                 + "WHERE fac_nota_credito.serie_folio='"+serieFolio+"';";
         
@@ -2195,8 +2195,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         String sql_to_query = ""
                 + "SELECT "
                     + "fac_nota_credito.moneda_id, "
-                    + "erp_monedas.descripcion_abr AS simbolo_moneda, "
-                    + "erp_monedas.iso_4217 AS nombre_moneda,"
+                    + "gral_mon.descripcion_abr AS simbolo_moneda, "
+                    + "gral_mon.iso_4217 AS nombre_moneda,"
                     + "fac_nota_credito.tipo_cambio, "
                     + "(CASE WHEN fac_nota_credito.cxc_agen_id=0 THEN '' ELSE cxc_agen.nombre END ) AS clave_agente, "
                     + "fac_nota_credito.subtotal as subtotal_conceptos, "
@@ -2205,7 +2205,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "fac_nota_credito.observaciones, "
                     + "(CASE WHEN fac_nota_credito.moneda_id=1 THEN 1 ELSE fac_nota_credito.tipo_cambio END) AS tipo_cambio "
                 + "FROM fac_nota_credito "
-                + "JOIN erp_monedas ON erp_monedas.id=fac_nota_credito.moneda_id "
+                + "JOIN gral_mon ON gral_mon.id=fac_nota_credito.moneda_id "
                 + "JOIN cxc_agen ON cxc_agen.id=fac_nota_credito.cxc_agen_id "
                 + "WHERE  fac_nota_credito.id="+id_nota_credito+";";
         

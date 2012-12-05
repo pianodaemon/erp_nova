@@ -127,7 +127,7 @@ public interface CxpInterfaceDao {
     
     
     //ESTO VA EN EL CXP INTERFACE DAO
-    public ArrayList<HashMap<String, String>> getCartera_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte,Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getProveedor_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte,Integer id_empresa);
     
     //metodos para Notas de Credito Proveedores
     public ArrayList<HashMap<String, String>> getProvNotasCredito_Facturas(Integer id_proveedor);

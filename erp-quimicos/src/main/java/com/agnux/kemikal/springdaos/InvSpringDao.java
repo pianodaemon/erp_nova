@@ -1132,7 +1132,7 @@ public class InvSpringDao implements InvInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  erp_monedas WHERE borrado_logico=FALSE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -2232,7 +2232,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "com_fac_detalle.cantidad, "
                 + "com_fac_detalle.costo_unitario, "
                 + "com_fac.tipo_de_cambio AS tipo_cambio, "
-                + "erp_monedas.descripcion_abr AS moneda, "
+                + "gral_mon.descripcion_abr AS moneda, "
                 + "(CASE WHEN com_fac.moneda_id=1 THEN  "
                         + "com_fac_detalle.costo_unitario * com_fac_detalle.cantidad  "
                 + "ELSE  "
@@ -2243,7 +2243,7 @@ public class InvSpringDao implements InvInterfaceDao{
         + "JOIN cxp_prov ON cxp_prov.id=com_fac.proveedor_id "
         + "JOIN inv_prod ON inv_prod.id=com_fac_detalle.producto_id "
         + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-        + "JOIN erp_monedas ON erp_monedas.id=com_fac.moneda_id "
+        + "JOIN gral_mon ON gral_mon.id=com_fac.moneda_id "
         + "WHERE com_fac.empresa_id="+id_empresa+" "
         + "AND com_fac.borrado_logico=FALSE "
         + "AND com_fac.cancelacion=FALSE "
