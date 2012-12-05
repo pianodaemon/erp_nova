@@ -159,32 +159,32 @@
 													
 													<table border="0" class="gral">
 														<tr>
-															<td width="10"></td>
-															<td>Titulo del Proceso</td>
-															<td></td>
-															<td>C&oacute;digo&nbsp;Producto</td>
-															<td></td>
-															<td></td>
-															<td></td>
-															<td>Descripci&oacute;n</td>
-															<td></td>
-															<!--<td>Direccion Producto</td>-->
+                                                                                                                    <td width="10"></td>
+                                                                                                                    <td>Titulo del Proceso</td>
+                                                                                                                    <td></td>
+                                                                                                                    <td>C&oacute;digo&nbsp;Producto</td>
+                                                                                                                    <td></td>
+                                                                                                                    <td></td>
+                                                                                                                    <td></td>
+                                                                                                                    <td>Descripci&oacute;n</td>
+                                                                                                                    <td></td>
+                                                                                                                    <!--<td>Direccion Producto</td>-->
 														</tr>
 														<tr>
-															<td width="10"></td>
-															<td>
-																<INPUT TYPE="text" name="titulo" style="width:260px;">
-															</td>
-															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
-															<td>
-																<input type="hidden" name="id_producto">
-																<INPUT TYPE="text" name="sku" style="width:160px;" readOnly="true">
-															</td>
-															<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sku"></td>
-															<td width="100"><a href="busca_producto">(Buscar Producto)</a></td>
-															<td width="20"></td>
-															<td><INPUT TYPE="text" name="descripcion" style="width:300px;" readOnly="true"></td>
-															<td width="15"></td>
+                                                                                                                    <td width="10"></td>
+                                                                                                                    <td>
+                                                                                                                        <INPUT TYPE="text" name="titulo" style="width:260px;">
+                                                                                                                    </td>
+                                                                                                                    <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
+                                                                                                                    <td>
+                                                                                                                        <input type="hidden" name="id_producto">
+                                                                                                                        <INPUT TYPE="text" name="sku" style="width:160px;" readOnly="true">
+                                                                                                                    </td>
+                                                                                                                    <td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sku"></td>
+                                                                                                                    <td width="100"><a href="busca_producto">(Buscar Producto)</a></td>
+                                                                                                                    <td width="20"></td>
+                                                                                                                    <td><INPUT TYPE="text" name="descripcion" style="width:300px;" readOnly="true"></td>
+                                                                                                                    <td width="15"></td>
 														</tr>
 													</table>
 
