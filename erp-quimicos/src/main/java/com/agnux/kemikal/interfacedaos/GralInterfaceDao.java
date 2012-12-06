@@ -37,6 +37,7 @@ public interface GralInterfaceDao {
     public String getNoCertificadoEmpresaEmisora(Integer id_empresa, Integer id_sucursal);
     public String getFicheroLlavePrivada(Integer id_empresa, Integer id_sucursal);
     public String getPasswordLlavePrivada(Integer id_empresa, Integer id_sucursal);
+    public String getFicheroXsl(Integer id_empresa, Integer id_sucursal);
     public String getFolioFactura(Integer id_empresa, Integer id_sucursal);
     public String getFolioNotaCredito(Integer id_empresa, Integer id_sucursal);
     public String getFolioNotaCargo(Integer id_empresa, Integer id_sucursal);
