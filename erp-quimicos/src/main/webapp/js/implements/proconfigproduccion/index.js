@@ -1185,7 +1185,6 @@ $(function() {
                     $cantidad=$cantidad_calculo.val();
                     $codigo_producto_minigrid.val();
                     
-                    
                     //$descripcion_producto_minigrid.val();
                     $id_producto_master.val(entry['Formulas']['0']['inv_prod_id']);
                     $id_producto_entrante.val();
