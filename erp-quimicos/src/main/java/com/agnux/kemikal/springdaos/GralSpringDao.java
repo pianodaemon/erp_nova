@@ -30,7 +30,6 @@ public class GralSpringDao implements GralInterfaceDao{
         this.jdbcTemplate = jdbcTemplate;
     }
     
-    
     @Override
     public String getCfdEmitidosDir() {
         String cfdemitidosdir = System.getenv("HOME") + "/" + "resources" + "/"+"cfd" + "/"+"emitidos" + "/";
@@ -195,6 +194,13 @@ public class GralSpringDao implements GralInterfaceDao{
         return password_llave_emisora;
     }
     
+    @Override
+    public String getFicheroXsl(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.archivo_xsl FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map_certificado = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero_xsl = map_certificado.get("archivo_xsl").toString();
+        return fichero_xsl;
+    }
     
     
     @Override
