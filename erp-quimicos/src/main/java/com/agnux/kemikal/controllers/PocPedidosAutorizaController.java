@@ -94,6 +94,7 @@ public class PocPedidosAutorizaController {
         infoConstruccionTabla.put("denominacion", "Moneda:70");
         infoConstruccionTabla.put("estado", "Estado:100");
         infoConstruccionTabla.put("fecha_creacion","Fecha creaci&oacute;n:110");
+        infoConstruccionTabla.put("suc","Sucursal:150");
         
         ModelAndView x = new ModelAndView("pocpedidosautoriza/startup", "title", "Autorizaci&oacute;n de Pedidos de Clientes");
         x = x.addObject("layoutheader", resource.getLayoutheader());

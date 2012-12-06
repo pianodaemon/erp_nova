@@ -87,13 +87,15 @@ public class PocSpringDao implements PocInterfaceDao{
                                     +"poc_pedidos.total, "
                                     +"gral_mon.descripcion_abr AS denominacion, "
                                     +"(CASE WHEN poc_pedidos.cancelado=TRUE THEN 'CANCELADO' ELSE erp_proceso_flujo.titulo END) as estado, "
-                                    +"to_char(poc_pedidos.momento_creacion,'dd/mm/yyyy') as fecha_creacion "
+                                    +"to_char(poc_pedidos.momento_creacion,'dd/mm/yyyy') as fecha_creacion,"
+                                    + "gral_suc.titulo AS suc "
                             +"FROM poc_pedidos "
                             +"LEFT JOIN erp_proceso on erp_proceso.id = poc_pedidos.proceso_id "
                             +"LEFT JOIN fac_docs on fac_docs.proceso_id = erp_proceso.id "
                             +"LEFT JOIN erp_proceso_flujo on erp_proceso_flujo.id = erp_proceso.proceso_flujo_id "
                             +"LEFT JOIN cxc_clie on cxc_clie.id = poc_pedidos.cxc_clie_id "
                             +"LEFT JOIN gral_mon ON gral_mon.id=poc_pedidos.moneda_id "
+                            + "LEFT JOIN gral_suc ON gral_suc.id=erp_proceso.sucursal_id "
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_pedidos.id "
                             + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
@@ -111,6 +113,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("denominacion",rs.getString("denominacion"));
                     row.put("estado",rs.getString("estado"));
                     row.put("fecha_creacion",rs.getString("fecha_creacion"));
+                    row.put("suc",rs.getString("suc"));
                     return row;
                 }
             }
