@@ -310,7 +310,7 @@ public final class BeanFacturador {
                 break;
         }
         
-        String cadena_original = this.cadenaOriginal(comprobante_sin_firmar);
+        String cadena_original = this.cadenaOriginal(comprobante_sin_firmar, id_empresa, id_sucursal);
         this.setCadenaOriginal(cadena_original);
         
         
@@ -1164,11 +1164,12 @@ public final class BeanFacturador {
         return cadenaOriginal;
     }
     
-    private String cadenaOriginal(String comprobante_sin_firmar) throws Exception {
+    private String cadenaOriginal(String comprobante_sin_firmar, Integer id_empresa, Integer id_sucursal) throws Exception {
         String valor_retorno = new String();
         //System.out.println("Comprobante sin firmar:"+comprobante_sin_firmar);
         //valor_retorno = XmlHelper.transformar(comprobante_sin_firmar, this.getGralDao().getXslDir() + "get_original_string.xsl");
-        valor_retorno = XmlHelper.transformar(comprobante_sin_firmar, this.getGralDao().getXslDir() + "cadenaoriginal_2_2.xslt");
+        valor_retorno = XmlHelper.transformar(comprobante_sin_firmar, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
+        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
         return valor_retorno;
     }
     
