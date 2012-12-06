@@ -1193,7 +1193,6 @@ $(function() {
                     
                     //Formulas_DatosMinigrid.
                     $.each(entry['Formulas_DatosMinigrid'],function(entryIndex,elemento){
-                        
                         $add_grid_componente_formulaciones(elemento['id'],elemento['inv_prod_id'],elemento['codigo'],elemento['descripcion'],elemento['cantidad'],elemento['elemento'] );
                         sum_porciento = parseFloat(parseFloat(sum_porciento).toFixed(4)) + parseFloat(parseFloat(elemento['cantidad']).toFixed(4));
                         //Esto es para el numero de paso
