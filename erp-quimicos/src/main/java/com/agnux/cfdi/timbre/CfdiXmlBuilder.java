@@ -44,7 +44,7 @@ public class CfdiXmlBuilder {
         
 	public void construyeNodoFactura(String tipoDeComprobante,String condicionesDePago,String formaDePago,String fecha,String subTotal,String total,String no_certificado_emisor,String certificado, String metodoDePago, String LugarExpedicion, String numTarjeta) {
             //Document tmp = this.getDomImpl().createDocument("http://www.sat.gob.mx/cfd/2", "Comprobante", null);
-            Document tmp = this.getDomImpl().createDocument("", "Comprobante", null);
+            Document tmp = this.getDomImpl().createDocument("", "cfdi:Comprobante", null);
             tmp.getDocumentElement().setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
             tmp.getDocumentElement().setAttribute("xsi:schemaLocation","http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd http://www.sat.gob.mx/detallista http://www.sat.gob.mx/sitio_internet/cfd/detallista/detallista.xsd http://www.sat.gob.mx/ecc http://www.sat.gob.mx/sitio_internet/cfd/ecc/ecc.xsd http://www.sat.gob.mx/terceros http://www.sat.gob.mx/sitio_internet/cfd/terceros/terceros11.xsd http://www.sat.gob.mx/implocal http://www.sat.gob.mx/sitio_internet/cfd/implocal/implocal.xsd http://www.sat.gob.mx/ecb http://www.sat.gob.mx/sitio_internet/cfd/ecb/ecb.xsd http://www.buzonfiscal.com/ns/addenda/bf/2 http://www.buzonfiscal.com/schema/xsd/Addenda_BF_v2.2.xsd http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/TimbreFiscalDigital/TimbreFiscalDigital.xsd http://www.sat.gob.mx/iedu http://www.sat.gob.mx/sitio_internet/cfd/iedu/iedu.xsd http://www.sat.gob.mx/ventavehiculos http://www.sat.gob.mx/sitio_internet/cfd/ventavehiculos/ventavehiculos.xsd http://http://www.sat.gob.mx/TuristaPasajeroExtranjero http://www.sat.gob.mx/sitio_internet/cfd/TuristaPasajeroExtranjero/TuristaPasajeroExtranjero.xsd http://www.sat.gob.mx/pfic http://www.sat.gob.mx/sitio_internet/cfd/pfic/pfic.xsd http://www.sat.gob.mx/leyendasFiscales http://www.sat.gob.mx/sitio_internet/cfd/leyendasFiscales/leyendasFisc.xsd http://www.sat.gob.mx/donat http://www.sat.gob.mx/sitio_internet/cfd/donat/donat11.xsd http://www.sat.gob.mx/divisas http://www.sat.gob.mx/sitio_internet/cfd/divisas/Divisas.xsd http://www.buzonfiscal.com/ns/addenda/bf/3 http://www.buzonfiscal.com/schema/xsd/Addenda_BF_v3.xsd");
             tmp.getDocumentElement().setAttribute("xmlns:ecb","http://www.sat.gob.mx/ecb");
@@ -81,7 +81,7 @@ public class CfdiXmlBuilder {
             }
             tmp.getDocumentElement().setAttribute("","");
             tmp.getDocumentElement().setAttribute("","");
-
+            
             this.setDoc(tmp);
 	}
         
@@ -90,7 +90,7 @@ public class CfdiXmlBuilder {
             Element element = tmp.createElement("cfdi:Emisor");
             element.setAttribute("nombre", razon_social_emisor );
             element.setAttribute("rfc", rfc_emisor );
-
+            
             Element extra = this.getDoc().createElement("cfdi:DomicilioFiscal");
             extra.setAttribute("codigoPostal",codigo_postal);
             extra.setAttribute("pais",pais);
@@ -100,21 +100,21 @@ public class CfdiXmlBuilder {
             extra.setAttribute("colonia",colonia);
             extra.setAttribute("noExterior",no_exterior);
             element.appendChild(extra);
-
+            
             Element extra2 = this.getDoc().createElement("cfdi:RegimenFiscal");
             extra2.setAttribute("Regimen",regimenfiscal);
             element.appendChild(extra2);
-
+            
             tmp.getDocumentElement().appendChild(element);
             this.setDoc(tmp);
 	}
-
+        
 	public void configurarNodoReceptor(String nombre,String rfc,String pais, String noExterior, String calle, String colonia, String municipio, String estado, String codigoPostal ){
             Document tmp = this.getDoc();
             Element element = tmp.createElement("cfdi:Receptor");
             element.setAttribute("nombre", StringEscapeUtils.escapeHtml(nombre) );
             element.setAttribute("rfc", rfc );
-
+            
             Element extra = this.getDoc().createElement("cfdi:Domicilio");
             extra.setAttribute("codigoPostal",codigoPostal);
             extra.setAttribute("estado",StringEscapeUtils.escapeHtml(estado));
@@ -124,7 +124,7 @@ public class CfdiXmlBuilder {
             extra.setAttribute("pais",StringEscapeUtils.escapeHtml(pais));
             extra.setAttribute("calle",StringEscapeUtils.escapeHtml(calle));
             element.appendChild(extra);
-
+            
             tmp.getDocumentElement().appendChild(element);
             this.setDoc(tmp);
 	}
@@ -165,7 +165,7 @@ public class CfdiXmlBuilder {
 		}
 		this.setDoc(tmp);
 	}
-
+        
         public void configurarImpuestos(ArrayList<LinkedHashMap<String,String>> lista_de_retenidos,ArrayList<LinkedHashMap<String,String>> lista_de_traslados){
 	//public void configurarImpuestos(String trans, String ret, String impuesto, String tasa){
 		Document tmp = this.getDoc();
@@ -194,7 +194,7 @@ public class CfdiXmlBuilder {
                 }
                 root.appendChild(child_1);
                 
-
+                
 		Element child_2 = tmp.createElement("Traslados");
                 if (lista_de_traslados.size() > 0){
                     for( LinkedHashMap<String,String> i : lista_de_traslados ){
@@ -215,40 +215,40 @@ public class CfdiXmlBuilder {
                     }
                 }
 		root.appendChild(child_2);
-
+                
 		tmp.getDocumentElement().appendChild(root);
 		this.setDoc(tmp);
 	}
-
-
+        
+        
 	public DocumentBuilder getDb() {
 		return db;
 	}
-
+        
 	public void setDb(DocumentBuilder db) {
 		this.db = db;
 	}
-
+        
 	public DocumentBuilderFactory getDbf() {
 		return dbf;
 	}
-
+        
 	public void setDbf(DocumentBuilderFactory dbf) {
 		this.dbf = dbf;
 	}
-
+        
 	public Document getDoc() {
 		return doc;
 	}
-
+        
 	public void setDoc(Document doc) {
 		this.doc = doc;
 	}
-
+        
 	public DOMImplementation getDomImpl() {
 		return domImpl;
 	}
-
+        
 	public void setDomImpl(DOMImplementation domImpl) {
 		this.domImpl = domImpl;
 	}
@@ -256,12 +256,12 @@ public class CfdiXmlBuilder {
         public String getOutXmlString() throws TransformerConfigurationException, TransformerException{
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
+            
             //initialize StreamResult with File object to save to file
             StreamResult result = new StreamResult(new StringWriter());
             DOMSource source = new DOMSource(this.getDoc());
             transformer.transform(source, result);
-
+            
             return result.getWriter().toString().replace("standalone=\"no\"", " ");
         }
 }
