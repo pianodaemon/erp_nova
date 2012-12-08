@@ -4690,4 +4690,54 @@ public class ProSpringDao implements ProInterfaceDao{
     }
     
     
+    @Override
+    public ArrayList<HashMap<String, String>> getInstrumentosMedicion_Datos(Integer id) {
+        String sql_to_query = "SELECT id,titulo FROM pro_instrumentos WHERE id="+id;
+        ArrayList<HashMap<String, String>> dato_datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo")); 
+                    
+                    return row;
+                }
+            }
+        );
+        return dato_datos;
+    }
+    
+    
+    // catalogo de instrumentos de medicion SpringDao
+    @Override
+    public ArrayList<HashMap<String, Object>> getInstrumentosMedicion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc, Integer id_empresa) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT pro_instrumentos.id, pro_instrumentos.titulo "                              
+                                +"FROM pro_instrumentos "                        
+                                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = pro_instrumentos.id "
+                                +"WHERE pro_instrumentos.borrado_logico=false "
+                                +"and pro_instrumentos.gral_emp_id= " +id_empresa
+                                +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    //-------------------------------------------fin catalogo de instrumentos de medicion----------------------------------------
+    
 }

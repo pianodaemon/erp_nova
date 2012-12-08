@@ -123,6 +123,15 @@ public interface ProInterfaceDao {
     //public ArrayList<HashMap<String, String>> getPro_DatosFormulaEspecificacionesPdf(Integer formula_id);
     //public ArrayList<HashMap<String, String>> getPro_DatosFormulaProcedidmientoPdf(Integer formula_id);
     
+    
+    
+    //catalogo de instrumentos de medicion  InterfaceDao
+    public ArrayList<HashMap<String, String>> getInstrumentosMedicion_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getInstrumentosMedicion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc,Integer id_empresa);
+    
+    
+    
+    
     //catalogos de Ezequiel
     //catalogo de inventario tipo de equipos
     public ArrayList<HashMap<String, Object>> getProTipoEquipo_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
