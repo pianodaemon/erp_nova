@@ -54,12 +54,13 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getFormulas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     
     
-    /*Catalogo para formulas en produccion*/
+    /*Catalogo para formulas en desarrollo*/
     public ArrayList<HashMap<String, String>> getFormulaLaboratorio_Datos(String id_formula);
     public ArrayList<HashMap<String, String>> getFormulaLaboratorio_DatosMinigrid(String id_formula, String id_nivel);
     public ArrayList<HashMap<String, Object>> getFormulasLaboratorio_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     
-    
+    /*Buscador de formulas en desarrollo*/
+    public ArrayList<HashMap<String, String>> getBuscadorVersionesFormulas(String sku, String descripcion,Integer id_empresa);
     
     /*pdf de formulas*/
     public ArrayList<HashMap<String, Object>> getPro_ListaProductosFormulaPdf(Integer formula_id);

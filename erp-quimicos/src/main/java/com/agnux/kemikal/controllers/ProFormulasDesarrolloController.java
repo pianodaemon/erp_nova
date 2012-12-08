@@ -94,8 +94,8 @@ public class ProFormulasDesarrolloController {
         infoConstruccionTabla.put("codigo", "C&oacute;digo:130");
         infoConstruccionTabla.put("descripcion", "Descripci&oacute;n:130");
         infoConstruccionTabla.put("unidad", "Unidad:130");
-        infoConstruccionTabla.put("tipo_producto", "Tipo producto:130");
-        infoConstruccionTabla.put("nivel", "Nivel:130");
+        //infoConstruccionTabla.put("tipo_producto", "Tipo producto:130");
+        infoConstruccionTabla.put("version", "Nivel:130");
        
         
         ModelAndView x = new ModelAndView("proformulasdesarrollo/startup", "title", "Cat&aacute;logo de F&oacute;rmulas en Desarrollo");
@@ -223,8 +223,138 @@ public class ProFormulasDesarrolloController {
 
         return jsonretorno;
     }
+     
+     
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_buscador_productos.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProductosJson(
+            @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="tipo", required=true) String tipo,
+            @RequestParam(value="descripcion", required=true) String descripcion,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", ProConfigProduccionController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        productos = this.getProDao().getBuscadorProductos(sku, tipo, descripcion, id_empresa);
+        
+        jsonretorno.put("productos", productos);
+        
+        return jsonretorno;
+    }
     
-     /*
+     //obtiene tipos de productos y datos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/getProductoTipos.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataLineasJson(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        //ArrayList<HashMap<String, String>> arrayLineas = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
+        //HashMap<String, String> cadenaLineas = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        
+        arrayTiposProducto=this.getProDao().getProducto_Tipos();
+        
+        //cadenaLineas.put("cad_lineas", genera_treeview( this.getInvDao().getProducto_Lineas() ));
+        //arrayLineas.add(cadenaLineas);
+        //jsonretorno.put("Lines",arrayLineas);
+        jsonretorno.put("prodTipos", arrayTiposProducto);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //Busca un sku en especifico
+    @RequestMapping(method = RequestMethod.POST, value="/get_busca_sku_prod.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscaSkuProdJson(
+            @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        Integer app_selected = 69; //aplicativo asignacion de Rutas
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        jsonretorno.put("Sku", this.daoPro.getProProductoPorSku(sku.toUpperCase(), id_empresa));
+        
+        return jsonretorno;
+    }
+    
+    
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_buscador_versione_formulasdesarrollo.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorVersioneFormulasDesarrolloJson(
+            @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="descripcion", required=true) String descripcion,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", ProConfigProduccionController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        productos = this.getProDao().getBuscadorVersionesFormulas(sku, descripcion, id_empresa);
+        
+        jsonretorno.put("formulas", productos);
+        
+        return jsonretorno;
+    }
+    
+    
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_productos_formuladesarrollo.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProductosFormulasDesarrolloJson(
+            @RequestParam(value="id_formuladesarrollo", required=true) String id_formuladesarrollo,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", ProConfigProduccionController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        productos = this.getProDao().getFormulaLaboratorio_DatosMinigrid(id_formuladesarrollo, "1");
+        
+        jsonretorno.put("productos", productos);
+        
+        return jsonretorno;
+    }
+    
+    
     //crear y editar una  formula
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
@@ -254,12 +384,21 @@ public class ProFormulasDesarrolloController {
         @RequestParam(value="select_prodtipo", required=true) String select_prodtipo,
         //select_unidad	Kilogramo
         @RequestParam(value="select_unidad", required=true) String select_unidad,
+        //numero_pasos	1
+        @RequestParam(value="version", required=true) String version,
+        //numero_pasos	1
+        @RequestParam(value="pro_config_prod_pertenece_id", required=true) String pro_config_prod_pertenece_id,
         //eliminar	56
         @RequestParam(value="eliminar", required=true) String[] eliminado,
+        //id del reg	56
+        @RequestParam(value="id_reg", required=true) String[] id_reg,
         //id_prod_entrante	56
         @RequestParam(value="id_prod_entrante", required=true) String[] producto_elemento_id,
+        @RequestParam(value="id_prod_componente", required=true) String[] id_prod_componente,
         //cantidad	0.8
         @RequestParam(value="cantidad", required=false) String[] cantidad,
+        //cantidad	0.8
+        @RequestParam(value="posicion", required=false) String[] posicion,
         //total_porcentaje	0.8
         @RequestParam(value="total_porcentaje", required=true) String total_porcentaje,
         Model model,@ModelAttribute("user") UserSessionData user
@@ -267,17 +406,23 @@ public class ProFormulasDesarrolloController {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
-        Integer app_selected = 69;//catalogo de agentes
+        Integer app_selected = 108;//catalogo de agentes
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         //String extra_data_array = "'sin datos'";
         String actualizo = "0";
+        int no_partida = 0;
         
         String arreglo[];
             arreglo = new String[eliminado.length];
             
-            for(int i=0; i<eliminado.length; i++) { 
-                arreglo[i]= "'"+eliminado[i] +"___" + cantidad[i]+"'";
+            for(int i=0; i<eliminado.length; i++) {
+                if(Integer.parseInt(eliminado[i]) != 0){
+                    no_partida++;//si no esta eliminado incrementa el contador de partidas
+                }
+                
+                arreglo[i]= "'"+id_prod_componente[i] +"___" + cantidad[i]+"___" + posicion[i]+"___" + 
+                        eliminado[i]+"___" + no_partida+"___" + id_reg[i]+"'";
                 //System.out.println(arreglo[i]);
             }
             
@@ -299,13 +444,14 @@ public class ProFormulasDesarrolloController {
         }
         
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+id_prod_master+"___"+inv_prod_id+"___"+nivel;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+id_prod_master+"___"+
+                inv_prod_id+"___"+nivel+"___"+pro_config_prod_pertenece_id+"___"+version;
         
-        succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
         if( String.valueOf(succes.get("success")).equals("true") ){
-            actualizo = this.getProDao().selectFunctionForThisApp(data_string, extra_data_array);
+            actualizo = this.getProDao().selectFunctionForApp_Produccion(data_string, extra_data_array);
         }
         
         jsonretorno.put("success",String.valueOf(succes.get("success")));
@@ -314,7 +460,8 @@ public class ProFormulasDesarrolloController {
         return jsonretorno;
     }
     
-     //cambia el estatus del borrado logico
+    
+    //cambia el estatus del borrado logico
     @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
     public @ResponseBody HashMap<String, String> logicDeleteJson(
             @RequestParam(value="id", required=true) Integer id,
@@ -326,7 +473,7 @@ public class ProFormulasDesarrolloController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
-        Integer app_selected = 69;
+        Integer app_selected = 108;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
@@ -337,7 +484,7 @@ public class ProFormulasDesarrolloController {
         return jsonretorno;
     }
     
-    
+    /*
     //Buscador de de productos
     @RequestMapping(method = RequestMethod.POST, value="/get_buscador_productos_ingredientes.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorProductosIngredientesJson(
@@ -363,47 +510,6 @@ public class ProFormulasDesarrolloController {
         return jsonretorno;
     }
     //fin del buscador de productos
-    
-    //obtiene lineas de producto y datos para el buscador
-    @RequestMapping(method = RequestMethod.POST, value="/getProductoTipos.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataLineasJson(
-            @RequestParam(value="iu", required=true) String id_user_cod,
-            @RequestParam(value="buscador_producto", required=true) Integer buscador_producto,
-            Model model
-    ) {
-        System.out.println(buscador_producto);
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        //ArrayList<HashMap<String, String>> arrayLineas = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
-        //HashMap<String, String> cadenaLineas = new HashMap<String, String>();
-        
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        
-        arrayTiposProducto=this.getProDao().getProducto_Tipos_para_formulas(buscador_producto);
-        
-        //cadenaLineas.put("cad_lineas", genera_treeview( this.getInvDao().getProducto_Lineas() ));
-        //arrayLineas.add(cadenaLineas);
-        //jsonretorno.put("Lines",arrayLineas);
-        jsonretorno.put("prodTipos", arrayTiposProducto);
-        
-        return jsonretorno;
-    }
-    
-    //Busca un sku en especifico
-    @RequestMapping(method = RequestMethod.POST, value="/get_busca_sku_prod.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscaSkuProdJson(
-            @RequestParam(value="sku", required=true) String sku,
-            @RequestParam(value="iu", required=true) String id_user,
-            Model model
-            ) {
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        jsonretorno.put("Sku", this.getInvDao().getFormulas_sku(sku.toUpperCase(),id_usuario));
-        
-        return jsonretorno;
-    }
     
     
     //localhost:8080/com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/logasignarutas/getPdfRuta/1/NQ==/out.json
