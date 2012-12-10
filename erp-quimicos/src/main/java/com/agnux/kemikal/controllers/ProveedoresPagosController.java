@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.n2t;
 import com.agnux.common.obj.DataPost;
@@ -485,7 +486,7 @@ public class ProveedoresPagosController {
                 HttpServletRequest request, 
                 HttpServletResponse response, 
                 Model model)
-            throws ServletException, IOException, URISyntaxException, DocumentException {
+            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         
@@ -497,7 +498,7 @@ public class ProveedoresPagosController {
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        
+        String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
         String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
         
@@ -505,16 +506,15 @@ public class ProveedoresPagosController {
         String dir_tmp = this.getGralDao().getTmpDir();
         
         
-        String[] array_company = razon_social_empresa.split(" ");
-        String company_name= array_company[0].toLowerCase();
-        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
-        
+        //String[] array_company = razon_social_empresa.split(" ");
+        //String company_name= array_company[0].toLowerCase();
+        //String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+        String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         
         File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        
-        String file_name = "recibo_pago_proveedor.pdf";
+        String file_name = "RECIBO_PAGO_PROVEEDOR_"+rfc_empresa+".pdf";
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
@@ -537,6 +537,8 @@ public class ProveedoresPagosController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
+        
+        FileHelper.delete(fileout);
         
         return null;
         

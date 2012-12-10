@@ -42,7 +42,7 @@ public class CfdiXmlBuilder {
             this.setDomImpl(this.getDb().getDOMImplementation());
 	}
         
-	public void construyeNodoFactura(String tipoDeComprobante,String condicionesDePago,String formaDePago,String fecha,String subTotal,String total,String no_certificado_emisor,String certificado, String metodoDePago, String LugarExpedicion, String numTarjeta) {
+	public void construyeNodoFactura(String tipoDeComprobante,String condicionesDePago,String formaDePago,String fecha,String subTotal,String total, String moneda, String tipo_cambio, String no_certificado_emisor,String certificado, String metodoDePago, String LugarExpedicion, String numTarjeta) {
             //Document tmp = this.getDomImpl().createDocument("http://www.sat.gob.mx/cfd/2", "Comprobante", null);
             Document tmp = this.getDomImpl().createDocument("", "cfdi:Comprobante", null);
             tmp.getDocumentElement().setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
@@ -76,11 +76,12 @@ public class CfdiXmlBuilder {
             tmp.getDocumentElement().setAttribute("metodoDePago",StringEscapeUtils.escapeHtml(metodoDePago));
             tmp.getDocumentElement().setAttribute("subTotal",subTotal);
             tmp.getDocumentElement().setAttribute("total",total);
+            tmp.getDocumentElement().setAttribute("Moneda",moneda);
+            tmp.getDocumentElement().setAttribute("TipoCambio",tipo_cambio);
+            
             if(!numTarjeta.equals("")){
                 tmp.getDocumentElement().setAttribute("NumCtaPago",numTarjeta);
             }
-            tmp.getDocumentElement().setAttribute("","");
-            tmp.getDocumentElement().setAttribute("","");
             
             this.setDoc(tmp);
 	}

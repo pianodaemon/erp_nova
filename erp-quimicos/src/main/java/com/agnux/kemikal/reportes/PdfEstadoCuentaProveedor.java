@@ -41,7 +41,7 @@ public class PdfEstadoCuentaProveedor {
     
     
     /*en el metodo creamos el documento lo abrimosañadimos parrafos de texto y lo cerramos, tambien creamos nuestro archivo pdf*/
-    public PdfEstadoCuentaProveedor(String fileout, String ruta_imagen, String razon_soc_empresa, String fecha_corte,ArrayList<HashMap<String, String>> facturasMN,ArrayList<HashMap<String, String>> facturasUSD) throws DocumentException, IOException {
+    public PdfEstadoCuentaProveedor(String fileout, String ruta_imagen, String razon_soc_empresa, String fecha_corte,ArrayList<HashMap<String, String>> facturasMN, ArrayList<HashMap<String, String>> facturasUSD, ArrayList<HashMap<String, String>> facturasEUR) throws DocumentException, IOException {
         //variables para totales del proveedor
         double suma_monto_total_proveedor;
         double suma_importe_pagado_proveedor;
@@ -152,8 +152,9 @@ public class PdfEstadoCuentaProveedor {
             cell.setColspan(2);
             table.addCell(cell);
             
-            String simbolo_moneda="$ ";
+            String simbolo_moneda="";
             if(facturasMN.size() > 0){
+                simbolo_moneda=facturasMN.get(0).get("moneda_simbolo").toString();
                 
                 cell = new PdfPCell(new Paragraph("Adeudos en Moneda Nacional",largeBoldFont));
                 //cell.setUseAscender(true);
@@ -537,9 +538,9 @@ public class PdfEstadoCuentaProveedor {
             //agrega nueva pagina al pdf
             doc.newPage();
             
-            simbolo_moneda="USD";
+            //simbolo_moneda="USD";
             if(facturasUSD.size() > 0){
-                
+                simbolo_moneda=facturasMN.get(0).get("moneda_simbolo").toString();
                 cell = new PdfPCell(new Paragraph("Adeudos en Dolares",largeBoldFont));
                 //cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -790,7 +791,7 @@ public class PdfEstadoCuentaProveedor {
                 cell.setBorder(0);
                 cell.setColspan(3);
                 table.addCell(cell);
-
+                
                 //aqui va el simbolo de la moneda
                 cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
@@ -801,7 +802,7 @@ public class PdfEstadoCuentaProveedor {
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(1);
                 table.addCell(cell);
-
+                
                 //aqui va el simbolo de la moneda
                 cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
@@ -812,12 +813,12 @@ public class PdfEstadoCuentaProveedor {
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(1);
                 table.addCell(cell);
-
+                
                 cell= new PdfPCell(new Paragraph(" ",smallFont));
                 cell.setHorizontalAlignment (Element.ALIGN_CENTER);
                 cell.setBorder(0);
                 table.addCell(cell);
-
+                
                 //aqui va el simbolo de la moneda
                 cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
@@ -904,9 +905,383 @@ public class PdfEstadoCuentaProveedor {
                 cell.setUseDescender(true);
                 cell.setBorder(11);
                 table.addCell(cell);
-                
-                
             }
+            
+            //agrega nueva pagina al pdf
+            doc.newPage();
+            
+            //AQUI INICIA DATOS EN EUROS************************************************************************************************
+            
+            
+            if(facturasEUR.size() > 0){
+                simbolo_moneda=facturasEUR.get(0).get("moneda_simbolo").toString();
+                cell = new PdfPCell(new Paragraph("Adeudos en Euros",largeBoldFont));
+                //cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                //cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                cell.setColspan(10);
+                cell.setBorder(0);
+                cell.setFixedHeight(18);
+                table.addCell(cell);
+                
+                //pintamos en el pdf la razon social del primer proveedor
+                cell = new PdfPCell(new Paragraph(facturasEUR.get(0).get("proveedor").toString(),smallBoldFont));
+                //cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                //cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                cell.setColspan(10);
+                cell.setBorder(0);
+                //cell.setFixedHeight(18);
+                table.addCell(cell);
+                
+                
+                suma_monto_total_proveedor=0;
+                suma_importe_pagado_proveedor=0;
+                suma_saldo_pendiente_proveedor=0;
+                
+                suma_monto_total_moneda=0;
+                suma_importe_pagado_moneda=0;
+                suma_saldo_pendiente_moneda=0;
+                
+                //obtiene el la razon social del primer proveedor
+                proveedor_actual=facturasEUR.get(0).get("proveedor").toString();
+                // Ciclo "FOR"
+                for (int x=0; x<=facturasEUR.size()-1;x++){
+                    HashMap<String,String> registro = facturasEUR.get(x);
+                    
+                    if(proveedor_actual.equals(registro.get("proveedor").toString())){
+                        cell= new PdfPCell(new Paragraph(registro.get("serie_folio").toString(),smallFont));
+                        cell.setVerticalAlignment (Element.ALIGN_CENTER);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        cell= new PdfPCell(new Paragraph(registro.get("fecha_facturacion").toString(),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        cell= new PdfPCell(new Paragraph(registro.get("orden_compra"),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        //aqui va el simbolo de la moneda
+                        cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("monto_total").toString()),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        //aqui va el simbolo de la moneda
+                        cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("importe_pagado").toString()),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        cell= new PdfPCell(new Paragraph(registro.get("ultimo_pago").toString(),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        //aqui va el simbolo de la moneda
+                        cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("saldo_factura").toString()),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        //acumular totales para el proveedor actual
+                        suma_monto_total_proveedor = suma_monto_total_proveedor+ Double.parseDouble(registro.get("monto_total").toString());
+                        suma_importe_pagado_proveedor = suma_importe_pagado_proveedor + Double.parseDouble(registro.get("importe_pagado").toString());
+                        suma_saldo_pendiente_proveedor = suma_saldo_pendiente_proveedor + Double.parseDouble(registro.get("saldo_factura").toString());
+                        
+                        //acumular montos para el total de la moneda
+                        suma_monto_total_moneda = suma_monto_total_moneda+ Double.parseDouble(registro.get("monto_total").toString());
+                        suma_importe_pagado_moneda = suma_importe_pagado_moneda + Double.parseDouble(registro.get("importe_pagado").toString());
+                        suma_saldo_pendiente_moneda = suma_saldo_pendiente_moneda + Double.parseDouble(registro.get("saldo_factura").toString());
+                        
+                    }else{
+                        //imprimir totales del proveedor anterior
+                        cell= new PdfPCell(new Paragraph("Totales del proveedor",smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        cell.setColspan(3);
+                        table.addCell(cell);
+
+                        //aqui va el simbolo de la moneda
+                        cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_monto_total_proveedor,2)),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(1);
+                        table.addCell(cell);
+
+                        //aqui va el simbolo de la moneda
+                        cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_importe_pagado_proveedor,2)),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(1);
+                        table.addCell(cell);
+
+                        cell= new PdfPCell(new Paragraph(" ",smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        //aqui va el simbolo de la moneda
+                        cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_saldo_pendiente_proveedor,2)),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(1);
+                        table.addCell(cell);
+                        
+                        //ponemos una fila vacia para separar el proveedor aterior con el nuevo proveedor
+                        cell = new PdfPCell(new Paragraph(" ",smallBoldFont2));
+                        cell.setColspan(10);
+                        cell.setBorder(0);
+                        cell.setFixedHeight(16);
+                        table.addCell(cell);
+                        
+                        
+                        //obtiene razon social del nuevo proveedor
+                        proveedor_actual=registro.get("proveedor").toString();
+                        
+                        //se inicializan variables para el nuevo proveedor
+                        suma_monto_total_proveedor=0;
+                        suma_importe_pagado_proveedor=0;
+                        suma_saldo_pendiente_proveedor=0;
+                        
+                        
+                        //pintamos en el pdf la razon social del nuevo proveedor
+                        cell = new PdfPCell(new Paragraph(proveedor_actual,smallBoldFont));
+                        //cell.setUseAscender(true);
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        //cell.setUseDescender(true);
+                        cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                        cell.setColspan(10);
+                        cell.setBorder(0);
+                        //cell.setFixedHeight(18);
+                        table.addCell(cell);
+
+                        
+                        //aqui va la primera fila para el proveedor nuevo
+                        cell= new PdfPCell(new Paragraph(registro.get("serie_folio").toString(),smallFont));
+                        cell.setVerticalAlignment (Element.ALIGN_CENTER);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        cell= new PdfPCell(new Paragraph(registro.get("fecha_facturacion").toString(),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        cell= new PdfPCell(new Paragraph(registro.get("orden_compra"),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        //aqui va el simbolo de la moneda
+                        cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("monto_total").toString()),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        //aqui va el simbolo de la moneda
+                        cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("importe_pagado").toString()),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        cell= new PdfPCell(new Paragraph(registro.get("ultimo_pago").toString(),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+
+                        //aqui va el simbolo de la moneda
+                        cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("saldo_factura").toString()),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        //acumular totales del primer registro del nuevo proveedor
+                        suma_monto_total_proveedor = suma_monto_total_proveedor+ Double.parseDouble(registro.get("monto_total").toString());
+                        suma_importe_pagado_proveedor = suma_importe_pagado_proveedor + Double.parseDouble(registro.get("importe_pagado").toString());
+                        suma_saldo_pendiente_proveedor = suma_saldo_pendiente_proveedor + Double.parseDouble(registro.get("saldo_factura").toString());
+                        
+                        //seguir acumulando montos para el total de la moneda
+                        suma_monto_total_moneda = suma_monto_total_moneda+ Double.parseDouble(registro.get("monto_total").toString());
+                        suma_importe_pagado_moneda = suma_importe_pagado_moneda + Double.parseDouble(registro.get("importe_pagado").toString());
+                        suma_saldo_pendiente_moneda = suma_saldo_pendiente_moneda + Double.parseDouble(registro.get("saldo_factura").toString());
+                        
+                    }
+                    
+
+                }
+                
+                //aqui se imprimen los totales en dolares del ultimo proveedor 
+                cell= new PdfPCell(new Paragraph("Totales del proveedor",smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                cell.setColspan(3);
+                table.addCell(cell);
+                
+                //aqui va el simbolo de la moneda
+                cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_monto_total_proveedor,2)),smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                table.addCell(cell);
+                
+                //aqui va el simbolo de la moneda
+                cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_importe_pagado_proveedor,2)),smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(" ",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                //aqui va el simbolo de la moneda
+                cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_saldo_pendiente_proveedor,2)),smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                table.addCell(cell);
+                
+                
+                
+                //fila vacia para separar totales
+                cell = new PdfPCell(new Paragraph(" ",smallBoldFont2));
+                cell.setColspan(10);
+                cell.setBorder(0);
+                cell.setFixedHeight(15);
+                table.addCell(cell);
+                
+                
+                cell= new PdfPCell(new Paragraph("Totales en Euros",smallBoldFont2));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                cell.setUseDescender(true);
+                cell.setBorder(0);
+                cell.setColspan(3);
+                table.addCell(cell);
+                
+                //aqui va el simbolo de la moneda
+                cell= new PdfPCell(new Paragraph(simbolo_moneda,smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                cell.setBorder(7);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_monto_total_moneda,2)),smallBoldFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                cell.setUseDescender(true);
+                cell.setBorder(3);
+                table.addCell(cell);
+
+                //aqui va el simbolo de la moneda
+                cell= new PdfPCell(new Paragraph(simbolo_moneda,smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                cell.setUseAscender(true);
+                cell.setUseDescender(true);
+                cell.setBorder(3);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_importe_pagado_moneda,2)),smallBoldFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                cell.setUseDescender(true);
+                cell.setBorder(3);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(" ",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                cell.setUseDescender(true);
+                cell.setBorder(3);
+                table.addCell(cell);
+
+                //aqui va el simbolo de la moneda
+                cell= new PdfPCell(new Paragraph(simbolo_moneda,smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                cell.setUseAscender(true);
+                cell.setUseDescender(true);
+                cell.setBorder(3);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_saldo_pendiente_moneda,2)),smallBoldFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                cell.setUseDescender(true);
+                cell.setBorder(11);
+                table.addCell(cell);
+            }
+            
+            //AQUI TERMINA DATOS EN EUROS************************************************************************************************
             
             doc.add(table);   
             doc.close();

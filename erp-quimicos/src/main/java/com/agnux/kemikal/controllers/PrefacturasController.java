@@ -9,6 +9,7 @@ import com.agnux.cfd.v2.ArchivoInformeMensual;
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.cfd.v2.BeanFacturador;
 import com.agnux.cfdi.BeanFacturadorCfdi;
+import com.agnux.cfdi.timbre.BeanFacturadorCfdiTimbre;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.kemikal.interfacedaos.PrefacturasInterfaceDao;
 import com.agnux.common.helpers.StringHelper;
@@ -70,7 +71,15 @@ public class PrefacturasController {
     
     @Autowired
     @Qualifier("beanFacturador")
-    BeanFacturador bf;
+    BeanFacturador bfcfd;
+    
+    @Autowired
+    @Qualifier("beanFacturadorCfdi")
+    BeanFacturadorCfdi bfcfdi;
+    
+    @Autowired
+    @Qualifier("beanFacturadorCfdiTf")
+    BeanFacturadorCfdiTimbre bfCfdiTf;
     
     @Autowired
     @Qualifier("daoFacturas")
@@ -80,9 +89,7 @@ public class PrefacturasController {
     @Qualifier("daoHome")
     private HomeInterfaceDao HomeDao;
     
-    @Autowired
-    @Qualifier("beanFacturadorCfdi")
-    BeanFacturadorCfdi bfcfdi;
+
     
     public HomeInterfaceDao getHomeDao() {
         return HomeDao;
@@ -96,18 +103,21 @@ public class PrefacturasController {
         return gralDao;
     }
     
-    public BeanFacturador getBf() {
-        return bf;
-    }
-    
     public FacturasInterfaceDao getFacdao() {
         return facdao;
     }
     
-    public BeanFacturadorCfdi getBfcfdi() {
+    public BeanFacturador getBfCfd() {
+        return bfcfd;
+    }
+    
+    public BeanFacturadorCfdi getBfCfdcfdi() {
         return bfcfdi;
     }
     
+    public BeanFacturadorCfdiTimbre getBfCfdiTf() {
+        return bfCfdiTf;
+    }
 
     
     @RequestMapping(value="/startup.agnux")
@@ -561,16 +571,16 @@ public class PrefacturasController {
                         datosExtrasXmlFactura = this.getFacdao().getDatosExtrasFacturaXml(String.valueOf(id_prefactura),tipo_cambio_vista,String.valueOf(id_usuario),String.valueOf(id_moneda),id_empresa, id_sucursal, refacturar, app_selected, command_selected, extra_data_array);
                         
                         //xml factura
-                        this.getBf().init(dataFacturaCliente, conceptos,impRetenidos,impTrasladados , proposito,datosExtrasXmlFactura, id_empresa, id_sucursal);
-                        this.getBf().start();
+                        this.getBfCfd().init(dataFacturaCliente, conceptos,impRetenidos,impTrasladados , proposito,datosExtrasXmlFactura, id_empresa, id_sucursal);
+                        this.getBfCfd().start();
                         
                         //obtiene serie_folio de la factura que se acaba de guardar
                         serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura);
                         
-                        String cadena_original=this.getBf().getCadenaOriginal();
+                        String cadena_original=this.getBfCfd().getCadenaOriginal();
                         //System.out.println("cadena_original:"+cadena_original);
                         
-                        String sello_digital = this.getBf().getSelloDigital();
+                        String sello_digital = this.getBfCfd().getSelloDigital();
                         //System.out.println("sello_digital:"+sello_digital);
                         
                         //conceptos para el pdfcfd
@@ -585,11 +595,10 @@ public class PrefacturasController {
                         //pdfFactura.viewPDF();
                         
                         jsonretorno.put("folio",serieFolio);
-                        
                     }
                     
                     
-                    //tipo facturacion CFDI
+                    //tipo facturacion CFDI(CFD CON CONECTOR FISCAL)
                     if(tipo_facturacion.equals("cfdi")){
                         
                         extra_data_array = "'sin datos'";
@@ -628,13 +637,68 @@ public class PrefacturasController {
                         leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
                         
                         //generar archivo de texto para cfdi
-                        this.getBfcfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
-                        this.getBfcfdi().start();
+                        this.getBfCfdcfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
+                        this.getBfCfdcfdi().start();
                         
                         this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
                         
                         jsonretorno.put("folio",Serie+Folio);
                     }
+                    
+                    
+                    
+                    //tipo facturacion CFDITF(CFDI TIMBRE FISCAL)
+                    if(tipo_facturacion.equals("cfditf")){
+                        conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
+                        impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
+                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal);
+                        dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
+                        
+                        command_selected = "facturar_cfditf";
+                        extra_data_array = "'sin datos'";
+                        
+                        //estos son requeridos para cfditf
+                        datosExtrasXmlFactura.put("prefactura_id", String.valueOf(id_prefactura));
+                        datosExtrasXmlFactura.put("tipo_cambio", tipo_cambio_vista);
+                        datosExtrasXmlFactura.put("moneda_id", id_moneda);
+                        datosExtrasXmlFactura.put("usuario_id", String.valueOf(id_usuario));
+                        datosExtrasXmlFactura.put("empresa_id", String.valueOf(id_empresa));
+                        datosExtrasXmlFactura.put("sucursal_id", String.valueOf(id_sucursal));
+                        datosExtrasXmlFactura.put("refacturar", refacturar);
+                        datosExtrasXmlFactura.put("app_selected", String.valueOf(app_selected));
+                        datosExtrasXmlFactura.put("command_selected", command_selected);
+                        datosExtrasXmlFactura.put("extra_data_array", extra_data_array);
+                        
+                        
+                        
+                        //genera xml factura
+                        this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
+                        this.getBfCfdiTf().start();
+                        
+                        //obtiene serie_folio de la factura que se acaba de guardar
+                        serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura);
+                        
+                        String cadena_original=this.getBfCfdiTf().getCadenaOriginal();
+                        //System.out.println("cadena_original:"+cadena_original);
+                        
+                        String sello_digital = this.getBfCfdiTf().getSelloDigital();
+                        //System.out.println("sello_digital:"+sello_digital);
+                        
+                        //conceptos para el pdfcfd
+                        listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
+                        
+                        //datos para el pdf
+                        datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital,id_sucursal);
+                        
+                        
+                        //pdf factura
+                        pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                        //pdfFactura.viewPDF();
+                        
+                        jsonretorno.put("folio",serieFolio);
+                    }
+                    
+                    
                     
                 }
                 

@@ -6,8 +6,6 @@ package com.agnux.kemikal.reportes;
 
 import com.agnux.common.helpers.StringHelper;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -277,7 +275,7 @@ public class PdfOrdenEntrada {
             cell.setBorderWidthLeft(0);
             tableElaboro.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(datos_entrada.get("nombre_usuario_elaboro"),smallFont));
+            cell = new PdfPCell(new Paragraph(datos_entrada.get("nombre_usuario_elaboro").toUpperCase(),smallFont));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             cell.setFixedHeight(25);
@@ -515,22 +513,16 @@ public class PdfOrdenEntrada {
             String denominacion = "";
             String denom = "";
             String simbolo_moneda="";
-            if(datos_entrada.get("moneda_id").equals("1")){
-                denominacion = "pesos";
-                denom = "M.N.";
-                simbolo_moneda="$";
-            }
-            if(datos_entrada.get("moneda_id").equals("2")){
-                denominacion = "dolares";
-                //denom = "USCY";
-                denom = "USD";
-                simbolo_moneda="USD";
-            }
+            
+            denominacion = datos_entrada.get("moneda");
+            denom = datos_entrada.get("moneda_abr");
+            simbolo_moneda=datos_entrada.get("moneda_simbolo");
             
             //suma_cantidad();
             Font small = new Font(Font.FontFamily.COURIER,6,Font.NORMAL,BaseColor.BLACK);
             //Font smallFont = new Font(Font.FontFamily.COURIER,8,Font.NORMAL,BaseColor.BLACK);
             Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
+            Font smallFontItalic = new Font(Font.FontFamily.HELVETICA,7,Font.ITALIC,BaseColor.BLACK);
             Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
             Font smallBoldFont1 = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD, BaseColor.WHITE);
             Font smallBoldFontBlack = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.BLACK);
@@ -538,7 +530,7 @@ public class PdfOrdenEntrada {
             
             
             //float [] widths = {2f, 5.5f, 3f, 2f, 1.5f, 2f,2f,2f,2f};
-            float [] widths = {2f, 5.5f, 2.5f,3f, 1.5f, 2f,2.5f,2.5f,2.5f,2.5f,2.5f};
+            float [] widths = {2f, 5.5f, 2.5f,3f, 1.8f, 2f,2.5f,2.2f,2.5f,2.5f,2.5f};
             PdfPTable table = new PdfPTable(widths);
             PdfPCell cell;
 
@@ -688,7 +680,7 @@ public class PdfOrdenEntrada {
                 table.addCell(cell);
                 
                 //CANTIDAD
-                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(map.get("cantidad")), smallFont));
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(StringHelper.AgregaComas(map.get("cantidad"))), smallFont));
                 cell.setRightIndent(3);
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -700,7 +692,7 @@ public class PdfOrdenEntrada {
                 
                 if(map.get("costo_unitario")!=null){
                     if(!map.get("costo_unitario").equals("0.00")){
-                        cell = new PdfPCell(new Paragraph(simbolo_moneda+" " + map.get("costo_unitario"), smallFont));
+                        cell = new PdfPCell(new Paragraph(simbolo_moneda+" " + StringHelper.AgregaComas(map.get("costo_unitario")), smallFont));
                         cell.setRightIndent(3);
                         cell.setUseAscender(true);
                         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -776,7 +768,7 @@ public class PdfOrdenEntrada {
                 cell.setBorderWidthTop(b);
                 table.addCell(cell);
                 
-                cell = new PdfPCell(new Paragraph(map.get("cant_rec"), smallFont));
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(map.get("cant_rec")), smallFont));
                 cell.setRightIndent(3);
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -814,7 +806,7 @@ public class PdfOrdenEntrada {
                      
                      if(map.get("id_detalle").equals(lts.get("id_detalle_oent")) ){
                         cell = new PdfPCell(new Paragraph("", smallFont));
-                        cell.setColspan(2);
+                        cell.setColspan(3);
                         cell.setRightIndent(2);
                         cell.setUseAscender(true);
                         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -822,7 +814,7 @@ public class PdfOrdenEntrada {
                         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                         table.addCell(cell);
 
-
+                        /*
                         cell = new PdfPCell(new Paragraph("Lote Int.", smallFont));
                         cell.setRightIndent(2);
                         cell.setUseAscender(true);
@@ -830,8 +822,8 @@ public class PdfOrdenEntrada {
                         cell.setUseDescender(true);
                         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                         table.addCell(cell);
-
-                        cell = new PdfPCell(new Paragraph(lts.get("lote_int"), smallFont));
+                         */
+                        cell = new PdfPCell(new Paragraph("Lote Int." +"      "+ lts.get("lote_int"), smallFontItalic));
                         cell.setColspan(3);
                         cell.setRightIndent(3);
                         cell.setUseAscender(true);
@@ -839,8 +831,8 @@ public class PdfOrdenEntrada {
                         cell.setUseDescender(true);
                         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                         table.addCell(cell);
-
-
+                        
+                        /*
                         cell = new PdfPCell(new Paragraph("Lote Prov.", smallFont));
                         cell.setRightIndent(3);
                         cell.setUseAscender(true);
@@ -848,16 +840,29 @@ public class PdfOrdenEntrada {
                         cell.setUseDescender(true);
                         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                         table.addCell(cell);
+                         */
+                        if(!lts.get("lote_prov_lote").equals("") && !lts.get("lote_prov_lote").equals(" ") && !lts.get("lote_prov_lote").equals("null") && lts.get("lote_prov_lote")!=null){
+                            cell = new PdfPCell(new Paragraph("Lote Prov." +"      "+ lts.get("lote_prov_lote"), smallFontItalic));
+                            cell.setRightIndent(3);
+                            cell.setColspan(2);
+                            cell.setUseAscender(true);
+                            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                            cell.setUseDescender(true);
+                            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                            table.addCell(cell);
+                        }else{
+                            cell = new PdfPCell(new Paragraph("", smallFontItalic));
+                            cell.setRightIndent(3);
+                            cell.setColspan(2);
+                            cell.setUseAscender(true);
+                            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                            cell.setUseDescender(true);
+                            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                            table.addCell(cell);
+                        }
+                        
 
-                        cell = new PdfPCell(new Paragraph(lts.get("lote_prov_lote"), smallFont));
-                        cell.setRightIndent(3);
-                        cell.setUseAscender(true);
-                        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                        cell.setUseDescender(true);
-                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                        table.addCell(cell);
-
-                        cell = new PdfPCell(new Paragraph(lts.get("cantidad_lote"), smallFont));
+                        cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(lts.get("cantidad_lote")), smallFont));
                         cell.setRightIndent(3);
                         cell.setUseAscender(true);
                         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);

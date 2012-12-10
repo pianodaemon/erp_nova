@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CxpInterfaceDao;
@@ -154,6 +155,7 @@ public class RepEdoCtaProvController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> facturasMN = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> facturasUSD = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> facturasEUR = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -165,10 +167,13 @@ public class RepEdoCtaProvController {
         facturasMN = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_proveedor), 1, fecha_corte,id_empresa);
         //obtiene facturas en dolares. Moneda 2
         facturasUSD = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_proveedor), 2, fecha_corte, id_empresa);
+        //obtiene facturas en EUROS. Moneda 3
+        facturasEUR = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_proveedor), 3, fecha_corte, id_empresa);
         
         jsonretorno.put("Facturasmn", facturasMN);
         jsonretorno.put("Facturasusd", facturasUSD);
-        //jsonretorno.put("Totales", totales);
+        jsonretorno.put("FacturasEuros", facturasEUR);
+        
         
         return jsonretorno;
     }
@@ -213,7 +218,7 @@ public class RepEdoCtaProvController {
         System.out.println("ruta_imagen: "+ruta_imagen);
         
         File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
         
         String file_name = "edo_cta_proveedor"+id_proveedor+"_"+fecha_corte+".pdf";
@@ -222,14 +227,17 @@ public class RepEdoCtaProvController {
         
         ArrayList<HashMap<String, String>> facturasMN = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> facturasUSD = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> facturasEUR = new ArrayList<HashMap<String, String>>();
         
         //obtiene facturas en pesos. Moneda 1
         facturasMN = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,id_proveedor, 1, fecha_corte,id_empresa);
         //obtiene facturas en dolares. Moneda 2
         facturasUSD = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,id_proveedor, 2, fecha_corte, id_empresa);
+        //obtiene facturas en Euros Moneda 3
+        facturasEUR = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,id_proveedor, 3, fecha_corte, id_empresa);
         
         //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del proveedor
-        PdfEstadoCuentaProveedor x = new PdfEstadoCuentaProveedor( fileout,ruta_imagen,razon_social_empresa,fecha_corte,facturasMN,facturasUSD);
+        PdfEstadoCuentaProveedor x = new PdfEstadoCuentaProveedor( fileout,ruta_imagen,razon_social_empresa,fecha_corte,facturasMN,facturasUSD, facturasEUR);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
@@ -241,6 +249,8 @@ public class RepEdoCtaProvController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
+        
+        FileHelper.delete(fileout);
         
         return null;
         

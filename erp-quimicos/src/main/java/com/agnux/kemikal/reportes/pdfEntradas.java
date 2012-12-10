@@ -558,17 +558,10 @@ public class pdfEntradas {
             String denominacion = "";
             String denom = "";
             String simbolo_moneda="";
-            if(datos_entrada.get("moneda_id").equals("1")){
-                denominacion = "pesos";
-                denom = "M.N.";
-                simbolo_moneda="$";
-            }
-            if(datos_entrada.get("moneda_id").equals("2")){
-                denominacion = "dolares";
-                //denom = "USCY";
-                denom = "USD";
-                simbolo_moneda="USD";
-            }
+            
+            denominacion = datos_entrada.get("moneda");
+            denom = datos_entrada.get("moneda_abr");
+            simbolo_moneda=datos_entrada.get("moneda_simbolo");
             
             //suma_cantidad();
             Font small = new Font(Font.FontFamily.COURIER,6,Font.NORMAL,BaseColor.BLACK);

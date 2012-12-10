@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -346,7 +347,7 @@ public class InvOrdenEntradaController {
                 HttpServletRequest request, 
                 HttpServletResponse response, 
                 Model model)
-            throws ServletException, IOException, URISyntaxException, DocumentException {
+            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosProveedor = new ArrayList<HashMap<String, String>>();
@@ -372,17 +373,18 @@ public class InvOrdenEntradaController {
         String dir_tmp = this.getGralDao().getTmpDir();
         
         
-        String[] array_company = razon_social_empresa.split(" ");
-        String company_name= array_company[0].toLowerCase();
+        //String[] array_company = razon_social_empresa.split(" ");
+        //String company_name= array_company[0].toLowerCase();
         //String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+        String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
-        String ruta_imagen = this.getGralDao().getImagesDir()+this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"_logo.png";
+        String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         
         File file_dir_tmp = new File(dir_tmp);
         System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
         
-        String file_name = "Orden de Entrada_"+company_name+".pdf";
+        String file_name = "ORDEN_ENTRADA_"+rfc_empresa+".pdf";
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         Integer app_selected = 87; //aplicativo Orden de Entrada
@@ -452,6 +454,8 @@ public class InvOrdenEntradaController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
+        
+        FileHelper.delete(fileout);
         
         return null;
         

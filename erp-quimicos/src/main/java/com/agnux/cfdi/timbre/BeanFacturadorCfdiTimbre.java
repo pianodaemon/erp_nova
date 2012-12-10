@@ -1,9 +1,11 @@
-/********************************************/
-/**Written by Edwin Plauchu******************/
-/*****************************Agnux Mexico***/
-/********************************************/
-package com.agnux.cfd.v2;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.agnux.cfdi.timbre;
 
+import com.agnux.cfd.v2.BeanFromCfdXml;
+import com.agnux.cfd.v2.CryptoEngine;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.XmlHelper;
@@ -23,10 +25,15 @@ import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-public final class BeanFacturador {
+/**
+ *
+ * @author Noe Martínez
+ * gpmarsan@gmail.com
+ * 09/diciembre/2012
+ */
+public class BeanFacturadorCfdiTimbre {
     
-    private static final Logger log = Logger.getLogger(BeanFacturador.class.getName());
+    private static final Logger log = Logger.getLogger(BeanFacturadorCfdiTimbre.class.getName());
     @Autowired
     @Qualifier("daoGral")
     private GralInterfaceDao gralDao;
@@ -39,12 +46,17 @@ public final class BeanFacturador {
         FACTURA, NOTA_CREDITO, NOTA_CARGO
     };
     
+    private Integer id_sucursal;
+    private Integer id_empresa;
+    
     private String proposito;
     private String fecha;
     private String formaDePago;
     private String noCertificado;
     private String total;
     private String subTotal;
+    private String moneda;
+    private String tipoCambio;
     private String tipoDeComprobante;
     private String certificado;
     private String condicionesDePago;
@@ -56,12 +68,11 @@ public final class BeanFacturador {
     private String lugar_expedicion;
     private String numero_cuenta;
     
-    
     // datos Emisor
     private String razon_social_emisor;
     private String rfc_emisor;
     private String regimen_fiscal_emisor;
-
+    
     // DomicilioFiscal
     private String calle_domicilio_fiscal;
     private String municipio_domicilio_fiscal;
@@ -98,27 +109,116 @@ public final class BeanFacturador {
     private BigDecimal sumatoriaImportes = new BigDecimal("0");
     private Validacion valedor = null;
     
+    public void init(HashMap<String, String> data, ArrayList<LinkedHashMap<String, String>> conceptos, ArrayList<LinkedHashMap<String, String>> impuestos_retenidos, ArrayList<LinkedHashMap<String, String>> impuestos_trasladados, String propos, LinkedHashMap<String,String> extras, Integer id_empresa, Integer id_sucursal) {
+        
+        this.setId_empresa(id_empresa);
+        this.setId_sucursal(id_sucursal);
+        
+        this.setValedor(new Validacion());
+        this.setProposito(propos);
+        
+        String ruta_fichero_certificado = new String();
+        ruta_fichero_certificado = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa())+ "/" + this.getGralDao().getCertificadoEmpresaEmisora(this.getId_empresa(), this.getId_sucursal());
+        
+        System.out.println("Leyendo fichero: "+ ruta_fichero_certificado);
+        
+        //Datos Base del CFD ------- INICIO -----------------------------------
+        
+        this.setCertificado(CryptoEngine.encodeCertToBase64(ruta_fichero_certificado));
+        this.setNoCertificado(this.getGralDao().getNoCertificadoEmpresaEmisora(this.getId_empresa(), this.getId_sucursal()));
+        this.setFecha(data.get("comprobante_attr_fecha"));
+        
+        switch (Proposito.valueOf(this.getProposito())) {
+            case FACTURA:
+                this.setTipoDeComprobante("ingreso");
+                break;
+                
+            case NOTA_CREDITO:
+                this.setTipoDeComprobante("egreso");
+                break;
+                
+            case NOTA_CARGO:
+                this.setTipoDeComprobante("ingreso");
+                break;
+        }
+        
+        this.setCondicionesDePago(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_condicionesdepago")).replace("'", "")));
+        this.setFormaDePago(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_formadepago"))));
+        this.setMotivoDescuento(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_motivodescuento")).replace("'", "")));
+        
+        this.setDescuento(data.get("comprobante_attr_descuento"));
+        this.setSubTotal(data.get("comprobante_attr_subtotal"));
+        this.setTotal(data.get("comprobante_attr_total"));
+        this.setMoneda(data.get("comprobante_attr_moneda"));
+        this.setTipoCambio(data.get("comprobante_attr_tc"));
+        
+        this.setMetodoDePago(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_metododepago")).replace("'", "")));
+        this.setLugar_expedicion(StringHelper.normalizaString(StringHelper.remueve_tildes( this.getGralDao().getMunicipioSucursalEmisora(this.getId_sucursal()).toUpperCase()+", "+this.getGralDao().getEstadoSucursalEmisora(this.getId_sucursal()).toUpperCase() ).replace("'", "")));
+        this.setNumero_cuenta(data.get("comprobante_attr_numerocuenta"));
+        //Datos Base del CFD ------- FIN --------------------------------------
+        
+        //Datos del Emisor ------- INICIO ------------------------------------- 
+        this.setRazon_social_emisor(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getRazonSocialEmpresaEmisora(this.getId_empresa()))));
+        this.setRfc_emisor(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa()))));
+        this.setRegimen_fiscal_emisor(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getRegimenFiscalEmpresaEmisora(this.getId_empresa()))));
+        this.setCalle_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getCalleDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        this.setCodigoPostal_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        this.setColonia_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getColoniaDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        this.setEstado_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getEstadoDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        this.setMunicipio_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getMunicipioDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        this.setNoExterior_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getNoExteriorDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        this.setNoInterior_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getNoInteriorDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        this.setPais_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getPaisDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        this.setReferencia_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getReferenciaDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        
+        this.setLocalidad_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getLocalidadDomicilioFiscalEmpresaEmisora(this.getId_empresa()))));
+        //Datos del Emisor ------- FIN ----------------------------------------
+        
+        //Datos del Receptor ------- INICIO ----------------------------------- 
+        this.setRazon_social_receptor(StringHelper.remueve_tildes(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_attr_nombre")))));
+        this.setRfc_receptor(StringHelper.remueve_tildes(data.get("comprobante_receptor_attr_rfc")));
+        this.setCalle_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_calle")).replace("'", "")));
+        this.setNoExterior_domicilio_receptor(data.get("comprobante_receptor_domicilio_attr_noexterior"));
+        this.setNoInterior_domicilio_receptor(data.get("comprobante_receptor_domicilio_attr_nointerior"));
+        this.setColonia_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_colonia")).replace("'", "")));
+        this.setLocalidad_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_localidad")).replace("'", "")));
+        this.setReferencia_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_referencia")).replace("'", "")));
+        this.setMunicipio_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_municipio")).replace("'", "")));
+        this.setEstado_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_estado")).replace("'", "")));
+        this.setPais_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_pais")).replace("'", "")));
+        this.setCodigoPostal_domicilio_receptor(data.get("comprobante_receptor_domicilio_attr_codigopostal"));
+        //Datos del Receptor ------- FIN -------------------------------------- 
+        
+        this.setListaConceptos(conceptos);
+        this.setListaRetenciones(impuestos_retenidos);
+        this.setListaTraslados(impuestos_trasladados);
+        this.setDatosExtras(extras);
+    }
+    
+    
+    
     public void start() {
         
         try {
             
-            Integer id_empresa = Integer.parseInt(this.getDatosExtras().get("empresa_id"));
-            Integer id_sucursal = Integer.parseInt(this.getDatosExtras().get("sucursal_id"));
+            String comprobante_firmado = this.generarComprobanteFirmado();
             
-            String comprobante_firmado = this.generarComprobanteFirmado(id_empresa, id_sucursal);
-            
+            //hay que crear el parser
             BeanFromCfdXml pop = new BeanFromCfdXml(comprobante_firmado.getBytes("UTF-8"));
             
             String xml_file_name = new String();
+            String path_file = new String();
             
-            xml_file_name += pop.getSerie();
-            xml_file_name += pop.getFolio();
-            xml_file_name += ".xml";
+            //directorio para el fichero
+            path_file = this.getGralDao().getCfdEmitidosDir() + this.getRfc_emisor();
             
-            boolean fichero_xml_ok = FileHelper.createFileWithText(this.getGralDao().getCfdEmitidosDir() + this.getRfc_emisor(), xml_file_name, comprobante_firmado);
+            //nombre del fichero xml
+            xml_file_name += pop.getSerie() + pop.getFolio()+".xml";
+            
+            boolean fichero_xml_ok = FileHelper.createFileWithText(path_file, xml_file_name, comprobante_firmado);
             
             if (fichero_xml_ok) {
-                //Aqui va la rutina que mete los datos de este comprobante fiscal a la tabla erp_facturas
+                //Aqui va la rutina que mete los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
                 //De preferencia un store procedure....
                 
                 String cadena_conceptos = this.getFacdao().formar_cadena_conceptos(pop.getListaConceptos());
@@ -171,7 +271,9 @@ public final class BeanFacturador {
                                 num_cuenta,
                                 lugar_de_expedicion
                         );
+                        
                         break;
+                        
                         
                     case NOTA_CREDITO:
                         Integer id_nota_credito = Integer.parseInt(this.getDatosExtras().get("id_nota_credito"));
@@ -205,33 +307,27 @@ public final class BeanFacturador {
                                 fac_saldado;
                                 
                                 String actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
-                                
                         break;
-                        
                 }
-                
-
-                
             } else {
                 throw new Exception("Fallo al generar fichero xml: " + xml_file_name);
             }
-            
         } catch (Exception ex) {
-            Logger.getLogger(BeanFacturador.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BeanFacturadorCfdiTimbre.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
     }
+
     
-    private String generarComprobanteFirmado(Integer id_empresa, Integer id_sucursal) throws Exception {
+    
+    
+    private String generarComprobanteFirmado() throws Exception {
         
         this.checkdata();
         
         String valor_retorno = new String();
         
-        CfdXmlBuilder cfd = new CfdXmlBuilder();
+        CfdiXmlBuilder cfd = new CfdiXmlBuilder();
         cfd.init();
-        
         
         cfd.construyeNodoFactura(
                 this.getTipoDeComprobante(),
@@ -240,12 +336,14 @@ public final class BeanFacturador {
                 this.getFecha(),
                 this.getSubTotal(),
                 this.getTotal(),
+                this.getMoneda(), 
+                this.getTipoCambio(),
                 this.getNoCertificado(),
                 this.getCertificado(),
                 this.getMetodoDePago(),
                 this.getLugar_expedicion(),
                 this.getNumero_cuenta() );
-                
+        
         cfd.configurarNodoEmisor(
                 this.getRazon_social_emisor(),
                 this.getRfc_emisor(),
@@ -278,44 +376,43 @@ public final class BeanFacturador {
         comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_RETENIDOS", this.getTotalRetenciones().toString());
         comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_TRASLADADOS", this.getTotalTraslados().toString());
         
-        
         switch (Proposito.valueOf(this.getProposito())) {
             case FACTURA:
-                String folio_factura = this.getGralDao().getFolioFactura(id_empresa, id_sucursal);
+                String folio_factura = this.getGralDao().getFolioFactura(this.getId_empresa(), this.getId_sucursal());
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_factura);
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieFactura(id_empresa, id_sucursal));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionFactura(id_empresa, id_sucursal));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionFactura(id_empresa, id_sucursal));
-                this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieFactura(this.getId_empresa(), this.getId_sucursal()));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionFactura(this.getId_empresa(), this.getId_sucursal()));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionFactura(this.getId_empresa(), this.getId_sucursal()));
+                this.getGralDao().actualizarFolioFactura(this.getId_empresa(), this.getId_sucursal());
                 break;
                 
             case NOTA_CREDITO:
-                String folio_credito = this.getGralDao().getFolioNotaCredito(id_empresa, id_sucursal);
+                String folio_credito = this.getGralDao().getFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_credito);
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCredito(id_empresa, id_sucursal));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCredito(id_empresa, id_sucursal));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCredito(id_empresa, id_sucursal));
-                this.getGralDao().actualizarFolioNotaCredito(id_empresa, id_sucursal);
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCredito(this.getId_empresa(), this.getId_sucursal()));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCredito(this.getId_empresa(), this.getId_sucursal()));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCredito(this.getId_empresa(), this.getId_sucursal()));
+                this.getGralDao().actualizarFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
                 break;
                 
             case NOTA_CARGO:
-                String folio_notadecargo = this.getGralDao().getFolioNotaCargo(id_empresa, id_sucursal);
+                String folio_notadecargo = this.getGralDao().getFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_notadecargo);
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCargo(id_empresa, id_sucursal));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCargo(id_empresa, id_sucursal));
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCargo(id_empresa, id_sucursal));
-                this.getGralDao().actualizarFolioNotaCargo(id_empresa, id_sucursal);
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCargo(this.getId_empresa(), this.getId_sucursal()));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCargo(this.getId_empresa(), this.getId_sucursal()));
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCargo(this.getId_empresa(), this.getId_sucursal()));
+                this.getGralDao().actualizarFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
                 break;
         }
         
-        String cadena_original = this.cadenaOriginal(comprobante_sin_firmar, id_empresa, id_sucursal);
+        String cadena_original = this.cadenaOriginal(comprobante_sin_firmar, this.getId_empresa(), this.getId_sucursal());
         this.setCadenaOriginal(cadena_original);
         
         
-        String ruta_fichero_llave = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
+        String ruta_fichero_llave = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa())+ "/" + this.getGralDao().getFicheroLlavePrivada(this.getId_empresa(), this.getId_sucursal());
         //System.out.println("ruta_fichero_llave: "+ruta_fichero_llave);
         
-        String sello = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal), cadena_original);
+        String sello = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(this.getId_empresa(), this.getId_sucursal()), cadena_original);
         valor_retorno = comprobante_sin_firmar.replaceAll("@SELLO_DIGITAL", sello);
         
         this.setSelloDigital(sello);
@@ -323,103 +420,24 @@ public final class BeanFacturador {
         return valor_retorno;
     }
     
+    
     private void checkdata() throws Exception {
         this.validar_datos();
         this.validar_Conceptos();
         this.validarImpuestos(this.getListaRetenciones(), this.getListaTraslados());
     }
     
-    public void init(HashMap<String, String> data, ArrayList<LinkedHashMap<String, String>> conceptos, ArrayList<LinkedHashMap<String, String>> impuestos_retenidos, ArrayList<LinkedHashMap<String, String>> impuestos_trasladados, String propos, LinkedHashMap<String,String> extras, Integer id_empresa, Integer id_sucursal) {
-        
-        this.setValedor(new Validacion());
-        this.setProposito(propos);
-        
-        
-        System.out.println("Leyendo fichero: "+this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getCertificadoEmpresaEmisora(id_empresa, id_sucursal));
-        
-        //Datos Base del CFD ------- INICIO -----------------------------------
-        
-        this.setCertificado(CryptoEngine.encodeCertToBase64(this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getCertificadoEmpresaEmisora(id_empresa, id_sucursal)));
-        
-        this.setFecha(data.get("comprobante_attr_fecha"));
-        
-        switch (Proposito.valueOf(this.getProposito())) {
-            case FACTURA:
-                
-                this.setTipoDeComprobante("ingreso");
-                
-                break;
-                
-            case NOTA_CREDITO:
-                
-                this.setTipoDeComprobante("egreso");
-                
-                break;
-                
-            case NOTA_CARGO:
-                
-                this.setTipoDeComprobante("ingreso");
-                
-                break;
-        }
-        
-        this.setCondicionesDePago(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_condicionesdepago")).replace("'", "")));
-        this.setFormaDePago(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_formadepago"))));
-        this.setMotivoDescuento(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_motivodescuento")).replace("'", "")));
-        
-        this.setDescuento(data.get("comprobante_attr_descuento"));
-        this.setSubTotal(data.get("comprobante_attr_subtotal"));
-        this.setTotal(data.get("comprobante_attr_total"));
-        
-        this.setMetodoDePago(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_metododepago")).replace("'", "")));
-        this.setLugar_expedicion(StringHelper.normalizaString(StringHelper.remueve_tildes( this.getGralDao().getMunicipioSucursalEmisora(id_sucursal).toUpperCase()+", "+this.getGralDao().getEstadoSucursalEmisora(id_sucursal).toUpperCase() ).replace("'", "")));
-        this.setNumero_cuenta(data.get("comprobante_attr_numerocuenta"));
-        
-        //Datos Base del CFD ------- FIN --------------------------------------
-        
-        
-        //Datos del Emisor ------- INICIO ------------------------------------- 
-        this.setRazon_social_emisor(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa))));
-        this.setRfc_emisor(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getRfcEmpresaEmisora(id_empresa))));
-        this.setRegimen_fiscal_emisor(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getRegimenFiscalEmpresaEmisora(id_empresa))));
-        
-        this.setNoCertificado(this.getGralDao().getNoCertificadoEmpresaEmisora(id_empresa, id_sucursal));
-        this.setCalle_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getCalleDomicilioFiscalEmpresaEmisora(id_empresa))));
-        this.setCodigoPostal_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa))));
-        this.setColonia_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getColoniaDomicilioFiscalEmpresaEmisora(id_empresa))));
-        this.setEstado_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getEstadoDomicilioFiscalEmpresaEmisora(id_empresa))));
-        this.setLocalidad_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getLocalidadDomicilioFiscalEmpresaEmisora(id_empresa))));
-        this.setMunicipio_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getMunicipioDomicilioFiscalEmpresaEmisora(id_empresa))));
-        this.setNoExterior_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getNoExteriorDomicilioFiscalEmpresaEmisora(id_empresa))));
-        this.setNoInterior_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getNoInteriorDomicilioFiscalEmpresaEmisora(id_empresa))));
-        this.setPais_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getPaisDomicilioFiscalEmpresaEmisora(id_empresa))));
-        this.setReferencia_domicilio_fiscal(StringHelper.normalizaString(StringHelper.remueve_tildes(this.getGralDao().getReferenciaDomicilioFiscalEmpresaEmisora(id_empresa))));
-        
-        
-        //Datos del Emisor ------- FIN ----------------------------------------
-        
-        
-        //Datos del Receptor ------- INICIO ----------------------------------- 
-        this.setRazon_social_receptor(StringHelper.remueve_tildes(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_attr_nombre")))));
-        this.setRfc_receptor(StringHelper.remueve_tildes(data.get("comprobante_receptor_attr_rfc")));
-        this.setCalle_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_calle")).replace("'", "")));
-        this.setNoExterior_domicilio_receptor(data.get("comprobante_receptor_domicilio_attr_noexterior"));
-        this.setNoInterior_domicilio_receptor(data.get("comprobante_receptor_domicilio_attr_nointerior"));
-        this.setColonia_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_colonia")).replace("'", "")));
-        this.setLocalidad_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_localidad")).replace("'", "")));
-        this.setReferencia_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_referencia")).replace("'", "")));
-        this.setMunicipio_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_municipio")).replace("'", "")));
-        this.setEstado_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_estado")).replace("'", "")));
-        this.setPais_domicilio_receptor(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_receptor_domicilio_attr_pais")).replace("'", "")));
-        this.setCodigoPostal_domicilio_receptor(data.get("comprobante_receptor_domicilio_attr_codigopostal"));
-        //Datos del Receptor ------- FIN -------------------------------------- 
-        
-        this.setListaConceptos(conceptos);
-        this.setListaRetenciones(impuestos_retenidos);
-        this.setListaTraslados(impuestos_trasladados);
-        this.setDatosExtras(extras);
-        
+    private String cadenaOriginal(String comprobante_sin_firmar, Integer id_empresa, Integer id_sucursal) throws Exception {
+        String valor_retorno = new String();
+        valor_retorno = XmlHelper.transformar(comprobante_sin_firmar, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
+        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
+        return valor_retorno;
     }
+    
+    
+    
+    
+    
     
     
     private void validarImpuestos(ArrayList<LinkedHashMap<String, String>> lista_retenciones, ArrayList<LinkedHashMap<String, String>> lista_traslados) throws Exception {
@@ -568,7 +586,6 @@ public final class BeanFacturador {
     }
 
     private void validar_datos() throws Exception {
-
         if (this.getCondicionesDePago().isEmpty()) {
             log.log(Level.FINE, "El Atributo(Opcional) condicionesDePago del Tag Comprobante fiscal es incorrecto");
         }
@@ -729,7 +746,6 @@ public final class BeanFacturador {
         if (!this.getValedor().isCodigoPostalCorrecto(this.getCodigoPostal_domicilio_receptor())) {
             log.log(Level.FINE, "El Atrdocibuto(Opcional) codigoPostal del Tag Domicilio es incorrecto");
         }
-        
     }
 
     private class Validacion {
@@ -889,7 +905,7 @@ public final class BeanFacturador {
             }
             return valor_retorno;
         }
-
+        
         private boolean isNumeroDelEsquemaCorrecto(String noEsquema) {
             throw new UnsupportedOperationException("Not yet implemented");
         }
@@ -949,7 +965,23 @@ public final class BeanFacturador {
         }
     }
     
+
     
+    public Integer getId_empresa() {
+        return id_empresa;
+    }
+    
+    public void setId_empresa(Integer id_empresa) {
+        this.id_empresa = id_empresa;
+    }
+
+    public Integer getId_sucursal() {
+        return id_sucursal;
+    }
+
+    public void setId_sucursal(Integer id_sucursal) {
+        this.id_sucursal = id_sucursal;
+    }
     
     public GralInterfaceDao getGralDao() {
         return gralDao;
@@ -1120,19 +1152,19 @@ public final class BeanFacturador {
         this.totalRetenciones = totalRetenciones;
     }
     
-
+    
     public String getTasaIva() {
         return tasaIva;
     }
-
+    
     public void setTasaIva(String tasaIva) {
         this.tasaIva = tasaIva;
     }
-
+    
     public String getTasaRetencion() {
         return tasaRetencion;
     }
-
+    
     public void setTasaRetencion(String tasaRetencion) {
         this.tasaRetencion = tasaRetencion;
     }
@@ -1160,15 +1192,6 @@ public final class BeanFacturador {
     
     public String getCadenaOriginal() {
         return cadenaOriginal;
-    }
-    
-    private String cadenaOriginal(String comprobante_sin_firmar, Integer id_empresa, Integer id_sucursal) throws Exception {
-        String valor_retorno = new String();
-        //System.out.println("Comprobante sin firmar:"+comprobante_sin_firmar);
-        //valor_retorno = XmlHelper.transformar(comprobante_sin_firmar, this.getGralDao().getXslDir() + "get_original_string.xsl");
-        valor_retorno = XmlHelper.transformar(comprobante_sin_firmar, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
-        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
-        return valor_retorno;
     }
     
     public String getSelloDigital() {
@@ -1217,6 +1240,22 @@ public final class BeanFacturador {
     
     public final void setSubTotal(String subTotal) {
         this.subTotal = subTotal;
+    }
+    
+    public String getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(String moneda) {
+        this.moneda = moneda;
+    }
+
+    public String getTipoCambio() {
+        return tipoCambio;
+    }
+
+    public void setTipoCambio(String tipoCambio) {
+        this.tipoCambio = tipoCambio;
     }
     
     public final String getTipoDeComprobante() {
@@ -1388,5 +1427,5 @@ public final class BeanFacturador {
     public String getRegimen_fiscal_emisor() {
         return regimen_fiscal_emisor;
     }
-    
+
 }

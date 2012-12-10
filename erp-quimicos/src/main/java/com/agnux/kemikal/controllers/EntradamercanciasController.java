@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -528,7 +529,7 @@ public class EntradamercanciasController {
                 HttpServletRequest request, 
                 HttpServletResponse response, 
                 Model model)
-            throws ServletException, IOException, URISyntaxException, DocumentException {
+            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosEntrada = new ArrayList<HashMap<String, String>>();
@@ -554,17 +555,17 @@ public class EntradamercanciasController {
         String dir_tmp = this.getGralDao().getTmpDir();
         
         
-        String[] array_company = razon_social_empresa.split(" ");
-        String company_name= array_company[0].toLowerCase();
+        //String[] array_company = razon_social_empresa.split(" ");
+        //String company_name= array_company[0].toLowerCase();
         //String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+        String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
-        String ruta_imagen = this.getGralDao().getImagesDir()+this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"_logo.png";
+        String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         
         File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        
-        String file_name = "entrada_"+company_name+".pdf";
+        String file_name = "FAC_COM_"+rfc_empresa+".pdf";
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
@@ -594,6 +595,10 @@ public class EntradamercanciasController {
         datos_entrada.put("retencion", datosEntrada.get(0).get("retencion"));
         datos_entrada.put("total", datosEntrada.get(0).get("total"));
         datos_entrada.put("moneda_id", datosEntrada.get(0).get("moneda_id"));
+        datos_entrada.put("moneda", datosEntrada.get(0).get("moneda"));
+        datos_entrada.put("moneda_abr", datosEntrada.get(0).get("moneda_abr"));
+        datos_entrada.put("moneda_simbolo", datosEntrada.get(0).get("moneda_simbolo"));
+        
         if(datosEntrada.get(0).get("estado").equals("")){
             datos_entrada.put("estado", "0");
         }else{
@@ -639,6 +644,8 @@ public class EntradamercanciasController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
+        
+        FileHelper.delete(fileout);
         
         return null;
         

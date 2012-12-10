@@ -63,6 +63,7 @@ public interface ComInterfaceDao {
     public ArrayList<HashMap<String, Object>> getCom_oc_req_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getCom_oc_req_Datos(Integer id_requisicion);
     public ArrayList<HashMap<String, String>> getCom_oc_req_DatosGrid(Integer id_requisicion);
+    public ArrayList<HashMap<String, String>> getCom_oc_req_Grid();
     
     //Metodos para el reporte de estadistico de compras
     public ArrayList<HashMap<String, String>> getEstadisticoCompras(Integer tipo_reporte, String proveedor, String producto, String fecha_inicial, String fecha_final, Integer id_empresa);

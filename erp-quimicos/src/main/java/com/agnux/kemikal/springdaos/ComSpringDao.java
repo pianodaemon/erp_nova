@@ -1117,46 +1117,47 @@ public class ComSpringDao  implements ComInterfaceDao {
     //**************************************************************************************************************
 
 
+//metodos para La REQUISISION 
 
 
-    
 @Override
-    public ArrayList<HashMap<String, Object>> getCom_requisicion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
-        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-                    String sql_to_query = ""
-                    + "SELECT  "
+	public ArrayList<HashMap<String, Object>> getCom_requisicion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+	String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+                    String sql_to_query = "SELECT  "
                     +" com_oc_req.id,   "
                     +" com_oc_req.folio,   "
                     +" (CASE WHEN com_oc_req.status=0 then 'REQUISICION GENERADA' " 
-	            +" WHEN com_oc_req.status=1 THEN 'AUTORIZADO' ELSE 'CANCELADO' END ) AS estado, "
-                    
-                    + "to_char(com_oc_req.momento_creacion,'dd/mm/yyyy')as momento_creacion"
+	            +" when com_oc_req.status=1 then 'AUTORIZADO' "
+                    +" else 'CANCELADO'end ) as estado, "
+                    + "to_char(com_oc_req.momento_creacion,'yyyy/mm/dd')as momento_creacion"
                     +" FROM com_oc_req  "
                     +" JOIN ("+sql_busqueda+") as subt on subt.id=com_oc_req.id "
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-                    
-        System.out.println("getCom_requisicion_PaginaGrid: "+sql_to_query);
-        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, Object> row = new HashMap<String, Object>();
-                    row.put("id",rs.getInt("id"));
-                    row.put("folio",rs.getString("folio"));
-                    row.put("estado",rs.getString("estado"));
-                    row.put("momento_creacion",rs.getString("momento_creacion"));
-                    
-                    
-                    return row;
-                }
-            }
-        );
-        return hm;
-    }
-    
-	@Override
-    public ArrayList<HashMap<String, String>> getCom_requisicion_Datos(Integer id_requisicion) {
+        
+        	System.out.println("datos del grid principal: "+sql_to_query);
+		ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+		    sql_to_query, 
+		    new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+		        @Override
+		        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		            HashMap<String, Object> row = new HashMap<String, Object>();
+		            row.put("id",rs.getInt("id"));
+		            row.put("folio",rs.getString("folio"));
+		            row.put("estado",rs.getString("estado"));
+		            row.put("momento_creacion",rs.getString("momento_creacion"));
+		            
+		            
+		            return row;
+		        }
+		    }
+		);
+		return hm;
+	}
+
+///////////////////////////7777777777777777////////////
+
+@Override
+	public ArrayList<HashMap<String, String>> getCom_requisicion_Datos(Integer id_requisicion) {
         String sql_query = "    "
                     + "SELECT      "
                     + " com_oc_req.id, "
@@ -1167,7 +1168,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + " com_oc_req.status              "
                     + " from com_oc_req                  "
                     + " WHERE com_oc_req.id= "+id_requisicion;
-       System.out.println("getCom_requisicion_Datos::"+sql_query); 
+       System.out.println("ESto es del header de Requisicion de orden de compra::::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -1187,8 +1188,10 @@ public class ComSpringDao  implements ComInterfaceDao {
         return hm;
     } 
 
+///////////////////////////////////////////////////////////////////////
+
 @Override
-    public ArrayList<HashMap<String, String>> getCom_requisicion_DatosGrid(Integer id_requisicion) {
+	public ArrayList<HashMap<String, String>> getCom_requisicion_DatosGrid(Integer id_requisicion) {
         String sql_query = ""
                     +" SELECT com_oc_req_detalle.id as id_detalle,"
                     +" com_oc_req_detalle.inv_prod_id,"
@@ -1200,91 +1203,92 @@ public class ComSpringDao  implements ComInterfaceDao {
                     +" (CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN 'sin_presentacion' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
                     +" com_oc_req_detalle.cantidad ,   "
                     +" com_oc_req_detalle.status"
-                    
-                  
-                +" FROM com_oc_req_detalle "
-                +" LEFT JOIN inv_prod on inv_prod.id = com_oc_req_detalle.inv_prod_id "
-                +" LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
-                +" LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_oc_req_detalle.presentacion_id "
-                +" WHERE com_oc_req_detalle.com_oc_req_id="+id_requisicion;
+                    +" FROM com_oc_req_detalle "
+		    +" LEFT JOIN inv_prod on inv_prod.id = com_oc_req_detalle.inv_prod_id "
+		    +" LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+		    +" LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_oc_req_detalle.presentacion_id "
+		    +" WHERE com_oc_req_detalle.com_oc_req_id="+id_requisicion;
         
-        System.out.println("getCom_requisicion_DatosGrid: "+sql_query);
-        ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
-            new Object[]{}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id_detalle",String.valueOf(rs.getInt("id_detalle")));
-                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
-                    row.put("codigo",rs.getString("codigo"));
-                    row.put("titulo",rs.getString("titulo"));
-                    row.put("unidad",rs.getString("unidad"));
-                    row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
-                    row.put("presentacion",rs.getString("presentacion"));
-                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
-                    
-                    row.put("status",rs.getString("status"));
-                    
-                    return row;
-                }
-            }
-        );
-        return hm_grid;
-    }
+		System.out.println("Obtiene datos grid requisiciones: "+sql_query);
+		ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+		    sql_query,  
+		    new Object[]{}, new RowMapper() {
+		        @Override
+		        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		            HashMap<String, String> row = new HashMap<String, String>();
+		            row.put("id_detalle",String.valueOf(rs.getInt("id_detalle")));
+		            row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+		            row.put("codigo",rs.getString("codigo"));
+		            row.put("titulo",rs.getString("titulo"));
+		            row.put("unidad",rs.getString("unidad"));
+		            row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
+		            row.put("presentacion",rs.getString("presentacion"));
+		            row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
+		            
+		            row.put("status",rs.getString("status"));
+		            
+		            
+		            return row;
+		        }
+		    }
+		);
+         return hm_grid;
+	}
 
-//terminan  metodos de requisicion
 
 
-//metodos para cuando va a mandar una requision a ordend e compra
+//////////////////////////////////////////////////////
+
+    //Metodos para convertir las Requisiciones en ORden de Compra.
     @Override
-    public ArrayList<HashMap<String, Object>> getCom_oc_req_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
-    String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+	public ArrayList<HashMap<String, Object>> getCom_oc_req_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+	String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
                     String sql_to_query = "SELECT  "
                     +" com_orden_compra.id,   "
                     +" com_orden_compra.folio,   "
                     +" cxp_prov.razon_social as proveedor,  "
                     +" (CASE WHEN com_orden_compra.status=0 then 'ORDEN GENERADA' " 
-	            +" when com_orden_compra.status=1 then 'AUTORIZADO' ELSE 'CANCELADO'end ) AS estado, "
-                    +" gral_mon.descripcion_abr AS denominacion,  "
-                    + "to_char(com_orden_compra.momento_creacion,'dd/mm/yyyy')as momento_creacion, "
+	            +" when com_orden_compra.status=1 then 'AUTORIZADO' "
+                    +" else 'CANCELADO'end ) as estado, "
+                    +" (CASE WHEN com_orden_compra.moneda_id=1 THEN 'M.N.'   "
+                    +" ELSE erp_monedas.descripcion_abr END) as denominacion,  "
+                    + "to_char(com_orden_compra.momento_creacion,'yyyy/mm/dd')as momento_creacion, "
                     + "com_orden_compra.total "
                     +" FROM com_orden_compra  "
+                    //+" join com_orden_compra_detalle on  com_orden_compra_detalle.com_orden_compra_id=com_orden_compra.id "
                     +" JOIN ("+sql_busqueda+") as subt on subt.id=com_orden_compra.id "
                     +" JOIN cxp_prov on cxp_prov.id = com_orden_compra.proveedor_id   "
-                    +" JOIN gral_mon ON gral_mon.id=com_orden_compra.moneda_id  "
+                    +" JOIN erp_monedas ON erp_monedas.id=com_orden_compra.moneda_id  "
                     +" JOIN com_proceso on com_proceso.id = com_orden_compra.com_proceso_id   "
                     +" JOIN com_proceso_flujo on com_proceso_flujo.id = com_proceso.com_proceso_flujo_id  where com_orden_compra.tipo_orden_compra = 1"
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
-        System.out.println("getCom_oc_req_PaginaGrid: "+sql_to_query);
-        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, Object> row = new HashMap<String, Object>();
-                    row.put("id",rs.getInt("id"));
-                    row.put("folio",rs.getString("folio"));
-                    row.put("proveedor",rs.getString("proveedor"));
-                    row.put("denominacion",rs.getString("denominacion"));
-                    row.put("estado",rs.getString("estado"));
-                    row.put("momento_creacion",rs.getString("momento_creacion"));
-                    row.put("total",StringHelper.roundDouble(String.valueOf(rs.getDouble("total")),2));
-                    
-                    return row;
-                }
-            }
-        );
-        return hm;
-    }
-
-
+		System.out.println("datos del grid principal: "+sql_to_query);
+		ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+		    sql_to_query, 
+		    new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+		        @Override
+		        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		            HashMap<String, Object> row = new HashMap<String, Object>();
+		            row.put("id",rs.getInt("id"));
+		            row.put("folio",rs.getString("folio"));
+		            row.put("proveedor",rs.getString("proveedor"));
+		            row.put("denominacion",rs.getString("denominacion"));
+		            row.put("estado",rs.getString("estado"));
+		            row.put("momento_creacion",rs.getString("momento_creacion"));
+		            row.put("total",StringHelper.roundDouble(String.valueOf(rs.getDouble("total")),2));
+		            
+		            return row;
+		        }
+		    }
+		);
+		return hm;
+	}
     
     
-    @Override
-    public ArrayList<HashMap<String, String>> getCom_oc_req_Datos(Integer id_com_oc_req) {
-    String sql_query = ""
+	@Override
+	public ArrayList<HashMap<String, String>> getCom_oc_req_Datos(Integer id_com_oc_req) {
+	String sql_query = ""
                     + "SELECT  "
                     + "com_orden_compra.id, "
                     + "cxp_prov.rfc, "
@@ -1295,66 +1299,104 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "cxp_prov.razon_social, "
                     + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxp_prov.cp AS direccion, "
                     + "com_orden_compra.moneda_id, "
-                    + "gral_mon.descripcion_abr AS moneda, "
+                    + "erp_monedas.descripcion_abr AS moneda, "
                     + "com_orden_compra.tipo_cambio, "
                     + "com_orden_compra.grupo, "
-
-                    //+ "comorden_compra.cxp_prov_credias_id, "
-                    + "cxp_prov_credias.id  as  cxp_prov_credias_id ,"
+		    + "cxp_prov_credias.id  as  cxp_prov_credias_id ,"
                     + "cxp_prov_credias.descripcion AS termino, "
-
-                    + "com_orden_compra.consignado_a, "
+	            + "com_orden_compra.consignado_a, "
                     + "com_orden_compra.tipo_embarque_id as tipo_embarque_id, "
                     + "cxp_prov_tipos_embarque.titulo AS    tipo_embarque,  "
                     + "com_orden_compra.status  "
-
-
-                    + "from com_orden_compra "
+		    + "from com_orden_compra "
                     + "join cxp_prov on cxp_prov.id=com_orden_compra.proveedor_id "
                     + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
                     + "join gral_edo on gral_edo.id=cxp_prov .estado_id "
                     + "join gral_pais on  gral_pais.id=cxp_prov .pais_id "
-                    + "join gral_mon on gral_mon.id= com_orden_compra.moneda_id "
+                    + "join erp_monedas on erp_monedas.id= com_orden_compra.moneda_id "
                     + "left join cxp_prov_credias on cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
                     + "join cxp_prov_tipos_embarque on cxp_prov_tipos_embarque.id =com_orden_compra.tipo_embarque_id "
                     + "WHERE com_orden_compra.id="+id_com_oc_req;
-       System.out.println("getCom_oc_req_Datos::"+sql_query); 
+       
+		System.out.println("ESto es header de com_oc_req cuandoedita::::"+sql_query); 
+		ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+		    sql_query,  
+		    new Object[]{}, new RowMapper() {
+		        @Override
+		        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+		            HashMap<String, String> row = new HashMap<String, String>();
+		            row.put("id",String.valueOf(rs.getInt("id")));
+		            row.put("rfc",rs.getString("rfc"));
+		            row.put("folio",rs.getString("folio"));
+		            row.put("cancelado",rs.getString("cancelado"));
+		            row.put("observaciones",rs.getString("observaciones"));
+		            row.put("proveedor_id",String.valueOf(rs.getInt("proveedor_id")));
+		            row.put("razon_social",rs.getString("razon_social"));
+		            row.put("direccion",rs.getString("direccion"));
+		            row.put("moneda_id",rs.getString("moneda_id"));
+		            row.put("moneda",rs.getString("moneda"));
+		            row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
+		            row.put("grupo",rs.getString("grupo"));
+		            row.put("cxp_prov_credias_id",rs.getString("cxp_prov_credias_id"));
+		            row.put("termino",rs.getString("termino"));
+		            row.put("consignado_a",rs.getString("consignado_a"));
+		            row.put("tipo_embarque_id",rs.getString("tipo_embarque_id"));
+		            row.put("tipo_embarque",rs.getString("tipo_embarque"));
+		            row.put("status",String.valueOf(rs.getInt("status")));
+		            return row;
+			    }
+		     }
+		);
+        	return hm;
+	} 
+    
+        
+    ////
+    @Override
+    public ArrayList<HashMap<String, String>> getCom_oc_req_Grid() {
+    String sql_query = "SELECT  "
+            +"  com_oc_req_detalle.inv_prod_id, "
+            +"  0::integer presentacion_id, "
+            +"  ''::character varying presentacion, "
+            +"  sum(com_oc_req_detalle.cantidad)as cantidad, "
+            +"  inv_prod.sku AS codigo, "
+            +"  inv_prod.descripcion , "
+            +"  (CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad, "
+            +"  (CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales "
+            +"  FROM com_oc_req_detalle  "
+            +"  JOIN com_oc_req on  com_oc_req.id= com_oc_req_detalle.com_oc_req_id "
+            +"  LEFT JOIN inv_prod on inv_prod.id = com_oc_req_detalle.inv_prod_id  "
+            +"  LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id  "
+            +"  LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_oc_req_detalle.presentacion_id "
+            +"  where com_oc_req_detalle.status=false and com_oc_req.cancelado =false and com_oc_req.status=0  "
+            +"  GROUP BY com_oc_req_detalle.inv_prod_id,inv_prod.sku,inv_prod.descripcion,inv_prod_unidades.titulo,inv_prod_unidades.decimales";
+                    
+       System.out.println("ESto es el grid de requisiciones a autorizar a orden de compra<:::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id",String.valueOf(rs.getInt("id")));
-                    row.put("rfc",rs.getString("rfc"));
-                    row.put("folio",rs.getString("folio"));
-                    row.put("cancelado",rs.getString("cancelado"));
-                    row.put("observaciones",rs.getString("observaciones"));
-                    row.put("proveedor_id",String.valueOf(rs.getInt("proveedor_id")));
-                    row.put("razon_social",rs.getString("razon_social"));
-                    row.put("direccion",rs.getString("direccion"));
-                    row.put("moneda_id",rs.getString("moneda_id"));
-                    row.put("moneda",rs.getString("moneda"));
-                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
-                    row.put("grupo",rs.getString("grupo"));
-                    
-                    row.put("cxp_prov_credias_id",rs.getString("cxp_prov_credias_id"));
-                    row.put("termino",rs.getString("termino"));
-                    row.put("consignado_a",rs.getString("consignado_a"));
-                    row.put("tipo_embarque_id",rs.getString("tipo_embarque_id"));
-                    row.put("tipo_embarque",rs.getString("tipo_embarque"));
-                    row.put("status",String.valueOf(rs.getInt("status")));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("cantidad",rs.getString("cantidad"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("titulo",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("decimales",rs.getString("decimales"));
                     return row;
                 }
             }
         );
         return hm;
-    }
-
+    } 
 
 
 	@Override
-    	public ArrayList<HashMap<String, String>> getCom_oc_req_DatosGrid(Integer id_com_oc_req) {
+    public ArrayList<HashMap<String, String>> getCom_oc_req_DatosGrid( Integer id_com_oc_req) {
+    
         String sql_query = ""
                     + "SELECT com_orden_compra_detalle.id as id_detalle,"
                     + "com_orden_compra_detalle.inv_prod_id,"
@@ -1375,7 +1417,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_orden_compra_detalle.presentacion_id "
                 + "WHERE com_orden_compra_detalle.com_orden_compra_id="+id_com_oc_req;
         
-        //System.out.println("Obtiene datos grid prefactura: "+sql_query);
+        System.out.println("Obtiene datos grid requisiciones cuando edita: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -1402,8 +1444,8 @@ public class ComSpringDao  implements ComInterfaceDao {
         );
         return hm_grid;
     }
-     
-    //fin de metodos requisiciona aorden de compra
+    
+
 
      //Estadistico de Compras
     //************************************************************************************++

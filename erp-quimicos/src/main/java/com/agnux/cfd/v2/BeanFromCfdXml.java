@@ -101,7 +101,7 @@ public final class BeanFromCfdXml {
 	private String datosExtras;
         private String lugarExpedicion;
         private String numeroCuenta;
-
+        
         
 	public BeanFromCfdXml(byte[] comprobante){
 		InputStream is = new ByteArrayInputStream(comprobante);
@@ -110,9 +110,9 @@ public final class BeanFromCfdXml {
 	}
         
 	public BeanFromCfdXml(String fichero){
-
+            
 		String comprobante = new String();
-
+                
 		File file = new File(fichero);
 
 		try { BufferedReader in = new BufferedReader(new FileReader(file));

@@ -2150,7 +2150,8 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     + "cxp_fac.simbolo_moneda_factura,"
                     + "cxp_pagos_detalles.cantidad AS monto_aplicado, "
                     + "(CASE WHEN (cxp_pagos.moneda_id=1) THEN  "
-                            + "(CASE WHEN (cxp_fac.moneda_id_factura=2) THEN cxp_pagos_detalles.cantidad * cxp_pagos_detalles.tipo_cambio  ELSE cxp_pagos_detalles.cantidad  END) "
+                            //+ "(CASE WHEN (cxp_fac.moneda_id_factura=2) THEN cxp_pagos_detalles.cantidad * cxp_pagos_detalles.tipo_cambio  ELSE cxp_pagos_detalles.cantidad  END) "
+                            + "(CASE WHEN (cxp_fac.moneda_id_factura!=1) THEN cxp_pagos_detalles.cantidad * cxp_pagos_detalles.tipo_cambio  ELSE cxp_pagos_detalles.cantidad  END) "
                     + "ELSE  "
                             + "(CASE WHEN (cxp_fac.moneda_id_factura=1) THEN  cxp_pagos_detalles.cantidad / cxp_pagos_detalles.tipo_cambio ELSE cxp_pagos_detalles.cantidad END) "
                     + "END) AS monto_aplicado_factura, "
@@ -2657,6 +2658,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 + "(CASE WHEN cxp_facturas.fecha_ultimo_pago is null THEN ' /  / '  ELSE  to_char(cxp_facturas.fecha_ultimo_pago,'dd/mm/yyyy') END) AS fecha_ultimo_pago, "
                 + "cxp_facturas.saldo_factura, "
                 + "gral_mon.descripcion_abr, "
+                + "gral_mon.simbolo AS moneda_simbolo, "
                 + "cxp_prov.id, "
                 + "cxp_prov.razon_social "
                 + "FROM cxp_facturas "
@@ -2677,6 +2679,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("proveedor",rs.getString("razon_social"));
                     row.put("denominacion",rs.getString("descripcion_abr"));
+                    row.put("moneda_simbolo",rs.getString("moneda_simbolo"));
                     row.put("serie_folio",rs.getString("serie_folio"));
                     row.put("orden_compra",rs.getString("orden_compra"));
                     row.put("fecha_facturacion",rs.getString("fecha_factura"));

@@ -857,6 +857,9 @@ public class InvSpringDao implements InvInterfaceDao{
                                     +"to_char(com_fac.factura_fecha_expedicion,'dd/mm/yyyy') AS fecha_fac,"//este es solo para el pdf
                                     +"to_char(com_fac.momento_creacion,'dd/mm/yyyy') AS fecha_entrada,"
                                     +"com_fac.moneda_id,"
+                                    + "gral_mon.descripcion AS moneda,"
+                                    + "gral_mon.descripcion_abr AS moneda_abr,"
+                                    + "gral_mon.simbolo AS moneda_simbolo, "
                                     +"com_fac.tipo_de_cambio as tipo_cambio,"
                                     +"com_fac.fletera_id,"
                                     +"com_fac.numero_guia,"
@@ -871,6 +874,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                     + "com_fac.retencion, "
                                     + "com_fac.total "
                             +"FROM com_fac "
+                            + "LEFT JOIN gral_mon ON gral_mon.id=com_fac.moneda_id "
                             +"where com_fac.id="+ id + ";";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -888,6 +892,9 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("fecha_fac",rs.getString("fecha_fac"));
                     row.put("fecha_entrada",rs.getString("fecha_entrada"));
                     row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("moneda_abr",rs.getString("moneda_abr"));
+                    row.put("moneda_simbolo",rs.getString("moneda_simbolo"));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getString("tipo_cambio"),4));
                     row.put("fletera_id",rs.getString("fletera_id"));
                     row.put("numero_guia",rs.getString("numero_guia"));
@@ -4418,7 +4425,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "inv_lote.inv_prod_id AS inv_prod_id_lote, "
                             + "inv_lote.inv_alm_id AS inv_alm_id_lote, "
                             + "inv_lote.lote_int, "
-                            + "inv_lote.lote_prov AS lote_prov_lote, "
+                            + "(CASE WHEN inv_lote.lote_prov IS NULL THEN '' ELSE inv_lote.lote_prov END) AS lote_prov_lote, "
                             + "inv_lote.inicial AS cantidad_lote, "
                             + "(CASE WHEN inv_lote.pedimento='' OR inv_lote.pedimento IS NULL THEN ' ' ELSE inv_lote.pedimento END) AS pedimento,"
                             +"(CASE WHEN to_char(inv_lote.caducidad,'yyyymmdd') = '29991231' THEN ''::character varying ELSE inv_lote.caducidad::character varying END) AS caducidad "
@@ -4463,6 +4470,9 @@ public class InvSpringDao implements InvInterfaceDao{
                                     +" (CASE WHEN inv_oent.orden_de_compra IS NULL OR inv_oent.orden_de_compra='' THEN '-' ELSE inv_oent.orden_de_compra END) AS orden_compra,    "
                                     +" (CASE WHEN inv_oent.cxp_prov_id IS NULL THEN 0 ELSE inv_oent.cxp_prov_id END ) AS id_prov,"
                                     +" inv_oent.moneda_id,"
+                                    + "gral_mon.descripcion AS moneda,"
+                                    + "gral_mon.descripcion_abr AS moneda_abr,"
+                                    + "gral_mon.simbolo AS moneda_simbolo, "
                                     +" inv_oent.tipo_de_cambio,"
                                     +" inv_oent.observaciones,"
                                     + "(CASE WHEN inv_oent.tipo_documento=1 AND cxp_prov.razon_social IS NOT NULL THEN 'PROVEEDOR' "
@@ -4485,6 +4495,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                 + "LEFT JOIN inv_mov_tipos ON inv_mov_tipos.id=inv_oent.inv_mov_tipo_id "
                                 + "JOIN gral_usr ON gral_usr.id=inv_oent.gral_usr_id_actualizacion "
                                 + "LEFT JOIN gral_empleados ON gral_empleados.id = gral_usr.gral_empleados_id "
+                                + "LEFT JOIN gral_mon ON gral_mon.id=inv_oent.moneda_id "
                                 + "WHERE inv_oent.id="+id+";";
         System.out.println("Header PDF OENT::::"+sql_to_query);
         
@@ -4495,6 +4506,9 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("orden_compra",map.get("orden_compra").toString());
         data.put("proveedor_id",map.get("id_prov").toString());
         data.put("moneda_id",map.get("moneda_id").toString());
+        data.put("moneda",map.get("moneda").toString());
+        data.put("moneda_abr",map.get("moneda_abr").toString());
+        data.put("moneda_simbolo",map.get("moneda_simbolo").toString());
         data.put("observaciones",map.get("observaciones").toString());
         data.put("origen",map.get("origen").toString());
         data.put("proveedor_tipo_movimiento",map.get("proveedor_tipo_movimiento").toString());
