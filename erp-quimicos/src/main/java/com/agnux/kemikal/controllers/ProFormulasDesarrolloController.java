@@ -205,7 +205,7 @@ public class ProFormulasDesarrolloController {
             datosFormulas = this.getProDao().getFormulaLaboratorio_Datos(id);
             datosFormulasMinigrid = this.getProDao().getFormulaLaboratorio_DatosMinigrid(id, "1");
             
-            //datosFormulasProductoSaliente = this.getProDao().getFormulas_DatosProductoSaliente(id, nivel);
+            datosFormulasProductoSaliente = this.getProDao().getFormula_DatosProductoSaliente(id, "1");
             
         }
         
@@ -217,10 +217,7 @@ public class ProFormulasDesarrolloController {
        jsonretorno.put("Formulas", datosFormulas);
        jsonretorno.put("Formulas_DatosMinigrid", datosFormulasMinigrid);
        jsonretorno.put("Formulas_DatosProductoSaliente", datosFormulasProductoSaliente);
-        // jsonretorno.put("ProdTipos", tiposProducto);
-        //jsonretorno.put("Unidades",unidades);
-        //        jsonretorno.put("Regiones", regiones);
-
+       
         return jsonretorno;
     }
      
@@ -358,6 +355,8 @@ public class ProFormulasDesarrolloController {
     //crear y editar una  formula
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
+            //identificador	0
+        @RequestParam(value="identificador", required=true) Integer id,
         //codigo_master	ACI207
         @RequestParam(value="codigo_master", required=true) String codigo_master,
         //codigo_producto_minigrid
@@ -374,8 +373,6 @@ public class ProFormulasDesarrolloController {
         @RequestParam(value="id_prod_master", required=true) String id_prod_master,
         //id_prod_saliente	1389
         @RequestParam(value="id_prod_saliente", required=true) String inv_prod_id,
-        //identificador	0
-        @RequestParam(value="identificador", required=true) Integer id,
         //numero_pasos	1
         @RequestParam(value="numero_pasos", required=true) String nivel,
         //paso_actual	1
