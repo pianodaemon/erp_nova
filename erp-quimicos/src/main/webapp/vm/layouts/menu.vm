@@ -492,7 +492,7 @@
 												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
 												<ul>
 													<li><a href="../protipoequipo/startup.agnux">Tipos de Equipo</a></li>
-                                                                                                        <li><a href="../proinstrumentosmedicion/startup.agnux">Instrumentos de Medici&oacute;n</a></li>
+													<li><a href="../proinstrumentosmedicion/startup.agnux">Instrumentos de Medici&oacute;n</a></li>
 												</ul>
 											</li>
 											
@@ -565,22 +565,25 @@
 											
 										</ul>
 									</li>
-
-                                                                        <li class="accessible" >
-                                                                            <a href="http://jdsharp.us" class="accessible">CRM &raquo;</a>
-                                                                            <ul>
-                                                                                <li><a href="#" class="sub">Catalogos &raquo;</a>
-                                                                                    <ul>
-                                                                                        <li class="topline"><a href="../crmmotivosvisitas/startup.agnux">Motivo&nbsp;de&nbsp;Visita.</a></li>
-                                                                                        <li class="topline"><a href="../crmformascontacto/startup.agnux">Formas&nbsp;de&nbsp;Contacto.</a></li>
-                                                                                        <li class="topline"><a href="../crmmotivosllamadas/startup.agnux">Motivos&nbsp;de&nbsp;Llamadas.</a></li>
-                                                                                    </ul>
-                                                                                </li>
-                                                                                
-                                                                            </ul>
-                                                                        </li>
 									
 									
+									<!--
+									
+									<li class="accessible" >
+										<a href="http://jdsharp.us" class="accessible">CRM &raquo;</a>
+										<ul>
+											<li><a href="#" class="sub">Catalogos &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../crmmotivosvisitas/startup.agnux">Motivo&nbsp;de&nbsp;Visita.</a></li>
+													<li class="topline"><a href="../crmformascontacto/startup.agnux">Formas&nbsp;de&nbsp;Contacto.</a></li>
+													<li class="topline"><a href="../crmmotivosllamadas/startup.agnux">Motivos&nbsp;de&nbsp;Llamadas.</a></li>
+												</ul>
+											</li>
+											
+										</ul>
+									</li>
+									
+									-->
 									
 									
 									
