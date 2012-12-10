@@ -53,16 +53,17 @@
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://localhost:5432/kathion" />
-	     <property name="username" value="kemikal" />
-	     <property name="password" value="kemikal" />
+	     <property name="username" value="ms" />
+	     <property name="password" value="ms" />
 	</bean>
+        
         
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://localhost:5432/saar23112012" />
-	     <property name="username" value="kemikal" />
-	     <property name="password" value="kemikal" />
+	     <property name="username" value="ms" />
+	     <property name="password" value="ms" />
 	</bean>
         -->
         
@@ -75,6 +76,7 @@
 	     <property name="password" value="instance01" />
 	</bean>
         -->
+        
         
         <!--Conexion a bd saar SAAR-->
         <!--
@@ -109,12 +111,22 @@
         -->
         
         
+        <!--
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	     <property name="driverClassName" value="org.postgresql.Driver" />
+	     <property name="url" value="jdbc:postgresql://localhost:5432/disnp" />
+	     <property name="username" value="disnp" />
+	     <property name="password" value="disnp" />
+	</bean>
+        -->
+        
         <!--<bean name="beanOutCfdi" class="com.agnux.cfdi.BeanSolicitidesOut"></bean>-->
         
         <!--http://static.springsource.org/spring/docs/2.5.x/reference/beans.html#beans-factory-lifecycle-initializingbean-->
         
         <bean name="beanFacturador" class="com.agnux.cfd.v2.BeanFacturador"></bean>
         <bean name="beanFacturadorCfdi" class="com.agnux.cfdi.BeanFacturadorCfdi"></bean>
+        <bean name="beanFacturadorCfdiTf" class="com.agnux.cfdi.BeanFacturadorCfdTf"></bean>
         <bean name="beanCancelaCfdi" class="com.agnux.cfdi.BeanCancelaCfdi"></bean>
         
         <!--
@@ -216,10 +228,12 @@
         </bean>
         
         <bean name="daoCom" class="com.agnux.kemikal.springdaos.ComSpringDao">
-	 <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
+            <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
         </bean>
         
-        
+        <bean name="daoCrm" class="com.agnux.kemikal.springdaos.CrmSpringDao">
+             <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
+        </bean>
         
         
 </beans>
