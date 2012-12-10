@@ -237,7 +237,7 @@ $(function() {
 				$tabla_resultados.find('tr').click(function(){
 					//asigna la razon social del proveedor al campo correspondiente
 					$razon_proveedor.val($(this).find('#razon_social').html());
-                                        $id_proveedor_edo_cta.val($(this).find('#id_prov').val());
+					$id_proveedor_edo_cta.val($(this).find('#id_prov').val());
 					//elimina la ventana de busqueda
 					var remove = function() { $(this).remove(); };
 					$('#forma-buscaproveedor-overlay').fadeOut(remove);
@@ -259,20 +259,6 @@ $(function() {
     });
 	
 //	//genera pdf del reporte de estados de cuenta de proveedores
-//	$genera_PDF.click(function(event){
-//            event.preventDefault();
-//                
-//		
-//		var fecha = $fecha_corte.val();
-//		var id_proveedor=$id_proveedor_edo_cta.val();
-//		var tipo_reporte = $select_tipo_reporte.val();
-//		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-//		alert("tipo_reporte"+tipo_reporte+"id_proveedor"+id_proveedor+"fecha_corte"+fecha+"iu"+iu);
-//		var input_json = config.getUrlForGetAndPost() + '/get_genera_pdf_estado_cuenta_prov/'+tipo_reporte+'/'+id_proveedor+'/'+fecha+'/'+iu+'/out.json'
-//		window.location.href=input_json;
-//		alert("Aqui estoy");
-//	});//termina llamada json
-	//genera pdf del reporte de estados de cuenta de clientes
 	$genera_PDF.click(function(event){
 		event.preventDefault();
 		var fecha = $fecha_corte.val();
@@ -301,13 +287,13 @@ $(function() {
 			$.post(restful_json_service,arreglo_parametros,function(entry){
 				var body_tabla = entry['Facturasmn'];
 				var body_tablausd = entry['Facturasusd'];
-				var footer_tabla = entry['Totales'];
+				var body_tablaEur = entry['FacturasEuros'];
 				var header_tabla = {
-					serie_folio		:'Factura',
+					serie_folio			:'Factura',
 					fecha_facturacion	:'Fecha',
 					orden_compra		:'O. Compra',
 					moneda_total		:'',
-					monto_total		:'Monto Facturado',
+					monto_total			:'Monto Facturado',
 					moneda_pagado		:'',
 					importe_pagado  	:'Monto Pagado',
 					ultimo_pago    		:'Ultimo Pago',
@@ -357,7 +343,6 @@ $(function() {
 				}
 				html_reporte +='</tr> </thead>';
 				
-				
 				html_fila_vacia +='<tr>';
 				html_fila_vacia +='<td align="left"  id="sin_borde" height="10"></td>';
 				html_fila_vacia +='<td align="left"  id="sin_borde"></td>';
@@ -370,10 +355,6 @@ $(function() {
 				html_fila_vacia +='<td align="right" id="sin_borde"></td>';
 				html_fila_vacia +='<td align="right" id="sin_borde"></td>';
 				html_fila_vacia +='</tr>';
-				
-				
-				
-				
 				
 				var orden_compra="";
 				var simbolo_moneda="";
@@ -399,12 +380,7 @@ $(function() {
 							orden_compra=body_tabla[i]["orden_compra"];
 						}
 						
-						if(body_tabla[i]["denominacion"]=="M.N."){
-							simbolo_moneda="$";
-						}else{
-							simbolo_moneda=body_tabla[i]["denominacion"];
-						}
-						
+						simbolo_moneda=body_tabla[i]["moneda_simbolo"];
 						
 						if(proveedor_actual == body_tabla[i]["proveedor"]){
 							html_reporte +='<tr>';
@@ -508,6 +484,8 @@ $(function() {
 					html_footer +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_saldo_pendiente_moneda).toFixed(2))+'</td>';
 					html_footer +='</tr>';
 				}
+				
+				//**INICIA DATOS EN DOLARES************************************************************************************
                 //inicializar variables
                 suma_monto_total_proveedor=0.0;
                 suma_importe_pagado_proveedor=0.0;
@@ -532,13 +510,7 @@ $(function() {
 							orden_compra=body_tablausd[i]["orden_compra"];
 						}
 						
-						if(body_tablausd[i]["denominacion"]=="M.N."){
-							simbolo_moneda="$";
-						}else{
-							simbolo_moneda=body_tablausd[i]["denominacion"];
-						}
-						
-						
+						simbolo_moneda=body_tablausd[i]["moneda_simbolo"];
 						
 						if(proveedor_actual == body_tablausd[i]["proveedor"]){
 							html_reporte +='<tr>';
@@ -643,9 +615,139 @@ $(function() {
 					html_footer +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
 					html_footer +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_saldo_pendiente_moneda).toFixed(2))+'</td>';
 					html_footer +='</tr>';
-					
 				}
+				//**TERMINA DATOS EN DOLARES************************************************************************************
 				
+				//**INICIA DATOS EN EUROS************************************************************************************
+                //inicializar variables
+                suma_monto_total_proveedor=0.0;
+                suma_importe_pagado_proveedor=0.0;
+                suma_saldo_pendiente_proveedor=0.0;
+                
+                suma_monto_total_moneda=0.0;
+                suma_importe_pagado_moneda=0.0;
+                suma_saldo_pendiente_moneda=0.0;
+				
+				if(parseInt(body_tablaEur.length)>0){
+					proveedor_actual=body_tablaEur[0]["proveedor"];
+					//fila vacia
+					html_reporte +=html_fila_vacia;
+					html_reporte +=html_fila_vacia;
+					html_reporte +='<tr id="tr_totales"><td align="left" colspan="12">'+proveedor_actual+'</td></tr>';
+					for(var i=0; i<body_tablaEur.length; i++){
+						if(body_tablaEur[i]["orden_compra"]==null){
+							orden_compra="";
+						}else{
+							orden_compra=body_tablaEur[i]["orden_compra"];
+						}
+						
+						simbolo_moneda=body_tablaEur[i]["moneda_simbolo"];
+						
+						if(proveedor_actual == body_tablaEur[i]["proveedor"]){
+							html_reporte +='<tr>';
+							html_reporte +='<td align="left" >'+body_tablaEur[i]["serie_folio"]+'</td>';
+							html_reporte +='<td align="center" >'+body_tablaEur[i]["fecha_facturacion"]+'</td>';
+							html_reporte +='<td align="left" >'+orden_compra+'</td>';
+							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tablaEur[i]["monto_total"]).toFixed(2))+'</td>';
+							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tablaEur[i]["importe_pagado"]).toFixed(2))+'</td>';
+							html_reporte +='<td align="center" >'+body_tablaEur[i]["ultimo_pago"]+'</td>';
+							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tablaEur[i]["saldo_factura"]).toFixed(2))+'</td>';
+							html_reporte +='</tr>';
+							
+							suma_monto_total_proveedor=parseFloat(suma_monto_total_proveedor) + parseFloat(body_tablaEur[i]["monto_total"]);
+							suma_importe_pagado_proveedor=parseFloat(suma_importe_pagado_proveedor) + parseFloat(body_tablaEur[i]["importe_pagado"]);
+							suma_saldo_pendiente_proveedor=parseFloat(suma_saldo_pendiente_proveedor) + parseFloat(body_tablaEur[i]["saldo_factura"]);
+							
+							suma_monto_total_moneda=parseFloat(suma_monto_total_moneda) + parseFloat(body_tablaEur[i]["monto_total"]);
+							suma_importe_pagado_moneda=parseFloat(suma_importe_pagado_moneda) + parseFloat(body_tablaEur[i]["importe_pagado"]);
+							suma_saldo_pendiente_moneda=parseFloat(suma_saldo_pendiente_moneda) + parseFloat(body_tablaEur[i]["saldo_factura"]);
+						}else{
+							//imprimir totales
+							html_reporte +='<tr id="tr_totales">';
+							html_reporte +='<td align="left" id="sin_borde_derecho"></td>';
+							html_reporte +='<td align="left" id="sin_borde"></td>';
+							html_reporte +='<td align="right" id="sin_borde">Total Proveedor</td>';
+							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_monto_total_proveedor).toFixed(2))+'</td>';
+							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_importe_pagado_proveedor).toFixed(2))+'</td>';
+							html_reporte +='<td align="left" ></td>';
+							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_saldo_pendiente_proveedor).toFixed(2))+'</td>';
+							html_reporte +='</tr>';
+							
+							//fila vacia
+							html_reporte +=html_fila_vacia;
+							
+							//reinicializar varibles
+							suma_monto_total_proveedor=0.0;
+							suma_importe_pagado_proveedor=0.0;
+							suma_saldo_pendiente_proveedor=0.0;
+							
+							//tomar razon social de nuevo prov
+							proveedor_actual=body_tablaEur[i]["proveedor"];
+							
+							html_reporte +='<tr id="tr_totales"><td align="left" colspan="12">'+proveedor_actual+'</td></tr>';
+							//crear primer registro del nuevo prov
+							html_reporte +='<tr>';
+							html_reporte +='<td align="left" >'+body_tablaEur[i]["serie_folio"]+'</td>';
+							html_reporte +='<td align="center" >'+body_tablaEur[i]["fecha_facturacion"]+'</td>';
+							html_reporte +='<td align="left" >'+orden_compra+'</td>';
+							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tablaEur[i]["monto_total"]).toFixed(2))+'</td>';
+							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tablaEur[i]["importe_pagado"]).toFixed(2))+'</td>';
+							html_reporte +='<td align="center" >'+body_tablaEur[i]["ultimo_pago"]+'</td>';
+							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tablaEur[i]["saldo_factura"]).toFixed(2))+'</td>';
+							html_reporte +='</tr>';
+							
+							//sumar montos del nuevo prov
+							suma_monto_total_proveedor=parseFloat(suma_monto_total_proveedor) + parseFloat(body_tablaEur[i]["monto_total"]);
+							suma_importe_pagado_proveedor=parseFloat(suma_importe_pagado_proveedor) + parseFloat(body_tablaEur[i]["importe_pagado"]);
+							suma_saldo_pendiente_proveedor=parseFloat(suma_saldo_pendiente_proveedor) + parseFloat(body_tablaEur[i]["saldo_factura"]);
+							
+							suma_monto_total_moneda=parseFloat(suma_monto_total_moneda) + parseFloat(body_tablaEur[i]["monto_total"]);
+							suma_importe_pagado_moneda=parseFloat(suma_importe_pagado_moneda) + parseFloat(body_tablaEur[i]["importe_pagado"]);
+							suma_saldo_pendiente_moneda=parseFloat(suma_saldo_pendiente_moneda) + parseFloat(body_tablaEur[i]["saldo_factura"]);
+						}
+					}
+					
+					//imprimir total del ultimo prov
+					html_reporte +='<tr id="tr_totales">';
+					html_reporte +='<td align="left" id="sin_borde_derecho"></td>';
+					html_reporte +='<td align="left" id="sin_borde"></td>';
+					html_reporte +='<td align="right" id="sin_borde">Total proveedor</td>';
+					html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_monto_total_proveedor).toFixed(2))+'</td>';
+					html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_importe_pagado_proveedor).toFixed(2))+'</td>';
+					html_reporte +='<td align="left" ></td>';
+					html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_saldo_pendiente_proveedor).toFixed(2))+'</td>';
+					html_reporte +='</tr>';
+					
+					//$div_reporte_estados_de_cuenta.append(html_reporte); 
+					
+					
+					//imprimir totales de la moneda
+					html_footer +='<tr id="tr_totales">';
+					html_footer +='<td align="left" id="sin_borde_derecho"></td>';
+					html_footer +='<td align="left" id="sin_borde"></td>';
+					html_footer +='<td align="right" id="sin_borde">Total EUR</td>';
+					html_footer +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+					html_footer +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_monto_total_moneda).toFixed(2))+'</td>';
+					html_footer +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+					html_footer +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_importe_pagado_moneda).toFixed(2))+'</td>';
+					html_footer +='<td align="left" ></td>';
+					html_footer +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+					html_footer +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_saldo_pendiente_moneda).toFixed(2))+'</td>';
+					html_footer +='</tr>';
+				}
+				//**TERMINA DATOS EN DOLARES************************************************************************************
 				
 				html_reporte +='<tfoot>';
 					html_reporte += html_footer;

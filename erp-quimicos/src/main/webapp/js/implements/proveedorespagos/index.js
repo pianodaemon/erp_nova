@@ -663,6 +663,7 @@ $(function() {
 		if(parseInt(moneda_pago)==1 && denominacion_factura=='M.N.'){
 			return true;
 		}
+		
 		if(parseInt(moneda_pago)==1 && denominacion_factura=='USD'){
 			return true;
 		}

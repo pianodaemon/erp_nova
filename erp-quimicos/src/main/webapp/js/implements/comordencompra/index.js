@@ -1052,14 +1052,14 @@ $(function() {
 		var $rfc_proveedor = $('#forma-comordencompra-window').find('input[name=rfc_proveedor]');
 		var $razon_proveedor = $('#forma-comordencompra-window').find('input[name=razonproveedor]');
 		var $dir_proveedor = $('#forma-comordencompra-window').find('input[name=dirproveedor]');
-                var $observaciones = $('#forma-comordencompra-window').find('textarea[name=observaciones]');
-                
-                var $select_moneda = $('#forma-comordencompra-window').find('select[name=select_moneda]');
+		var $observaciones = $('#forma-comordencompra-window').find('textarea[name=observaciones]');
+		
+		var $select_moneda = $('#forma-comordencompra-window').find('select[name=select_moneda]');
 		var $tipo_cambio = $('#forma-comordencompra-window').find('input[name=tipo_cambio]');
-                var $grupo = $('#forma-comordencompra-window').find('input[name=grupo]');
-                var $select_condiciones = $('#forma-comordencompra-window').find('select[name=select_condiciones]');
-                var consigandoA= $('#forma-comordencompra-window').find('input[name=consigandoA]');
-                var $select_via_embarque = $('#forma-comordencompra-window').find('select[name=via_envarque]');
+		var $grupo = $('#forma-comordencompra-window').find('input[name=grupo]');
+		var $select_condiciones = $('#forma-comordencompra-window').find('select[name=select_condiciones]');
+		var consigandoA= $('#forma-comordencompra-window').find('input[name=consigandoA]');
+		var $select_via_embarque = $('#forma-comordencompra-window').find('select[name=via_envarque]');
                 
 		var $sku_producto = $('#forma-comordencompra-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-comordencompra-window').find('input[name=nombre_producto]');
