@@ -424,7 +424,6 @@ $(function() {
                                     var prod_tipos_html = '';
                                     
                                     $.each($tipos_productos_array,function(entryIndex,tipo){
-                                        alert(tipo['id']);
                                         if(tipo['id'] == tipo_id_prod_buscador){
                                             prod_tipos_html += '<option value="' + tipo['id'] + '" selected="yes" >' + tipo['titulo'] + '</option>';
                                         }else{
