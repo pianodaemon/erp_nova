@@ -536,7 +536,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //obtiene datos para la factura
+    //obtiene datos para la factura(CFD, CFDI, CFDTF)
     @Override
     public HashMap<String, String> getDataFacturaXml(Integer id_prefactura) {
         HashMap<String, String> data = new HashMap<String, String>();
@@ -546,10 +546,13 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "SELECT erp_prefacturas.cliente_id, "
                         + "fac_metodos_pago.titulo AS metodo_pago, "
                         + "erp_prefacturas.no_cuenta, "
-                        + "cxc_clie_credias.descripcion AS condicion_pago "
+                        + "cxc_clie_credias.descripcion AS condicion_pago,"
+                        + "gral_mon.iso_4217 AS moneda, "
+                        + "erp_prefacturas.tipo_cambio "
                 + "FROM erp_prefacturas  "
                 + "LEFT JOIN fac_metodos_pago ON fac_metodos_pago.id=erp_prefacturas.fac_metodos_pago_id "
                 + "LEFT JOIN cxc_clie_credias ON cxc_clie_credias.id=erp_prefacturas.terminos_id "
+                + "LEFT JOIN gral_mon ON gral_mon.id=erp_prefacturas.moneda_id "
                 + "WHERE erp_prefacturas.id="+id_prefactura;
                 
         
@@ -562,8 +565,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         //formato fecha: 2011-03-01T00:00:00
         this.setFechaComprobante(fecha_hora[0]);//este solo se utiliza en pdfcfd
         
-        //System.out.println("fecha_comprobante: "+ fecha_hora[0]+"T"+fecha_hora[1] );
-        
         data.put("comprobante_attr_fecha",fecha_hora[0]+"T"+fecha_hora[1]);
         data.put("comprobante_attr_condicionesdepago",map.get("condicion_pago").toString().toUpperCase());
         data.put("comprobante_attr_formadepago","PAGO EN UNA SOLA EXIBICION");
@@ -571,12 +572,15 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         data.put("comprobante_attr_descuento","0.00");
         data.put("comprobante_attr_subtotal",this.getSubTotal());
         data.put("comprobante_attr_total",this.getTotal());
+        data.put("comprobante_attr_moneda",map.get("moneda").toString().toUpperCase());
+        data.put("comprobante_attr_tc",StringHelper.roundDouble(map.get("tipo_cambio").toString(), 4));
         data.put("comprobante_attr_metododepago",map.get("metodo_pago").toString().toUpperCase());
         String no_cta ="";
         if (!map.get("no_cuenta").toString().equals("null") && !map.get("no_cuenta").toString().equals("")){
             no_cta=map.get("no_cuenta").toString();
         }
         data.put("comprobante_attr_numerocuenta",no_cta);
+        
         //System.out.println("Obteniendo datos del cliente:"+ id_cliente);
         //obtener datos del cliente
 	String sql_query_cliente = "SELECT  cxc_clie.numero_control, "
@@ -622,7 +626,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //este se utiliza para cfd: en xml de Factura y Nota de Credito CFD
+    //este se utiliza en: 
+    //xml de Factura CFD y Nota de Credito CFD
+    
     public void calcula_Totales_e_Impuestos(ArrayList<LinkedHashMap<String, String>> conceptos) throws SQLException{
         Double sumaImporte = 0.0;
         Double sumaImpuesto = 0.0;
@@ -632,7 +638,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         for (int x=0; x<=conceptos.size()-1;x++){
             LinkedHashMap<String,String> con = conceptos.get(x);
-            
             sumaImporte = sumaImporte + Double.parseDouble(StringHelper.roundDouble(con.get("importe"),2));
             sumaImpuesto = sumaImpuesto + Double.parseDouble(StringHelper.roundDouble(con.get("importe_impuesto"),2));
             tasa_retencion = Double.parseDouble(StringHelper.roundDouble(con.get("tasa_retencion"),2));
@@ -641,7 +646,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         System.out.println("Canculando Totales de la Factura");
         
         monto_retencion = sumaImporte * tasa_retencion;
-        
         montoTotal = sumaImporte + sumaImpuesto - monto_retencion;
         
         this.setSubTotal(StringHelper.roundDouble(sumaImporte,2));
@@ -650,12 +654,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         this.setTasaRetencion(StringHelper.roundDouble(tasa_retencion,2));
         this.setTotal(StringHelper.roundDouble(montoTotal,2));
         
-        
-        System.out.println("Subtotal: "+ this.getSubTotal());
-        System.out.println("Trasladado: "+ sumaImpuesto);
-        System.out.println("Retenido: "+ monto_retencion);
         System.out.println("tasa_retencion: "+ tasa_retencion);
-        System.out.println("Total: "+ this.getTotal());
+        System.out.println("Subtotal: "+ this.getSubTotal()+"      Trasladado: "+ sumaImpuesto+ "      Retenido: "+ monto_retencion+ "      Total: "+ this.getTotal());
         
     }
     
@@ -750,7 +750,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    
+    //Éste método se utiliza para CFD y CFDI con Timbre Fiscal
     @Override
     public ArrayList<LinkedHashMap<String, String>> getImpuestosRetenidosFacturaXml() {
         ArrayList<LinkedHashMap<String, String>>  impuestos = new ArrayList<LinkedHashMap<String, String>>();
@@ -764,7 +764,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     
-    
+    //Éste método se utiliza para CFD y CFDI con Timbre Fiscal
     @Override
     public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal) {
         ArrayList<LinkedHashMap<String, String>>  impuestos = new ArrayList<LinkedHashMap<String, String>>();
@@ -881,7 +881,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //obtiene la lista de conceptos para cfdi
+    //obtiene la lista de conceptos para cfdi con Buzon Fiscal
     @Override
     public ArrayList<LinkedHashMap<String, String>> getListaConceptosCfdi(Integer id_factura, String rfcEmisor) {
         
@@ -984,11 +984,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     @Override
     public ArrayList<String> getLeyendasEspecialesCfdi(Integer id_empresa) {
-        
-        String sql_to_query = "SELECT leyenda FROM gral_emp_leyenda WHERE gral_emp_id="+id_empresa+";";
         final ArrayList<String> retorno = new ArrayList<String>();
-        
-        System.out.println("sql_to_query:"+sql_to_query);
+        String sql_to_query = "SELECT leyenda FROM gral_emp_leyenda WHERE gral_emp_id="+id_empresa+";";
+        System.out.println("getLeyendasEspecialesCfdi:"+sql_to_query);
         
         ArrayList<HashMap<String, String>> ret = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1002,12 +1000,79 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 }
             }
         );
-        
-        
-        
         return retorno;
-        
     }
+    
+    
+    //***************************************************************************************************************************
+    //Comienza métodos específicos para Facturación CFDI TIMBRE FISCAL
+    //***************************************************************************************************************************
+    //obtiene la lista de conceptos para la factura
+    @Override
+    public ArrayList<LinkedHashMap<String, String>> getListaConceptosXmlCfdiTf(Integer id_prefactura) {
+        String sql_query = ""
+                + "SELECT "
+                        + "inv_prod.sku,"
+                        + "inv_prod.descripcion,"
+                        + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
+                        + "erp_prefacturas_detalles.cantidad,"
+                        + "erp_prefacturas_detalles.precio_unitario,"
+                        + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
+                        + "erp_prefacturas_detalles.valor_imp,"
+                        + "erp_prefacturas.tasa_retencion_immex "
+                + "FROM erp_prefacturas "
+                + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
+                + "JOIN gral_mon on gral_mon.id=erp_prefacturas.moneda_id "
+                + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
+                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                + "WHERE erp_prefacturas_detalles.prefacturas_id="+id_prefactura+";";
+        
+        //System.out.println(sql_query);
+        System.out.println("getListaConceptosXmlCfdiTimbreFiscal: "+sql_query);
+        
+        //System.out.println("noIdentificacion "+" | descripcion      "+" | cant"+" | precio_uni"+" | importe"+" | importe_imp"+" | valor_imp"+" | tasa_ret"  );
+        
+        ArrayList<LinkedHashMap<String, String>> hm_conceptos = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("noIdentificacion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("sku"))));
+                    row.put("descripcion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("descripcion"))));
+                    row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("unidad"))));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
+                    row.put("valorUnitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
+                    row.put("importe_impuesto",StringHelper.roundDouble(rs.getDouble("importe_impuesto"),4) );
+                    row.put("numero_aduana","");
+                    row.put("fecha_aduana","");
+                    row.put("aduana_aduana","");
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
+                    row.put("tasa_retencion",StringHelper.roundDouble(rs.getDouble("tasa_retencion_immex"),2) );
+                    
+                    //System.out.println(row.get("noIdentificacion")+"   "+row.get("descripcion")+"   "+row.get("cantidad")+"   "+row.get("valorUnitario")+"   "+row.get("importe")+"   "+row.get("importe_impuesto")+"   "+row.get("valor_imp")+"   "+row.get("tasa_retencion"));
+                    
+                    return row;
+                }
+            }
+        );
+        
+        try {
+            calcula_Totales_e_Impuestos(hm_conceptos);
+        } catch (SQLException ex) {
+            Logger.getLogger(FacturasSpringDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return hm_conceptos;
+    }
+    
+    
+    
+    //Termina métodos específicos para Facturación CFDI TIMBRE FISCAL
+    //***************************************************************************************************************************
+
+    
     
     
     
@@ -1191,8 +1256,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         //obtener tipo de facturacion
         String tipo_facturacion = getTipoFacturacion();
         if(tipo_facturacion.equals("cfdi")){
+            //para facturacion tipo CFDI Buzon Fiscal
             sql_to_query = "SELECT serie_folio AS nombre_archivo FROM fac_docs WHERE id ="+id_factura+";";
         }else{
+            //para facturacion tipo CFD
             sql_to_query = "SELECT split_part(fac_cfds.nombre_archivo, '.', 1) AS nombre_archivo FROM fac_docs  JOIN erp_proceso ON erp_proceso.id=fac_docs.proceso_id JOIN  fac_cfds ON fac_cfds.proceso_id= erp_proceso.id WHERE fac_docs.id="+id_factura+" ORDER BY fac_cfds.id DESC LIMIT 1;";
         }
         
@@ -1207,7 +1274,19 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     @Override
     public String getSerieFolioFacturaByIdPrefactura(Integer id_prefactura) {
-        String sql_to_query = "SELECT split_part(fac_cfds.nombre_archivo, '.', 1) AS serie_folio FROM erp_prefacturas  JOIN erp_proceso ON erp_proceso.id=erp_prefacturas.proceso_id JOIN  fac_cfds ON fac_cfds.proceso_id= erp_proceso.id WHERE erp_prefacturas.id="+id_prefactura+" ORDER BY fac_cfds.id DESC LIMIT 1;";
+        String sql_to_query="";
+        
+        //obtener tipo de facturacion
+        String tipo_facturacion = getTipoFacturacion();
+        
+        if(tipo_facturacion.equals("cfd")){
+            //para facturacion tipo CFD
+            sql_to_query = "SELECT split_part(fac_cfds.nombre_archivo, '.', 1) AS serie_folio FROM erp_prefacturas  JOIN erp_proceso ON erp_proceso.id=erp_prefacturas.proceso_id JOIN  fac_cfds ON fac_cfds.proceso_id= erp_proceso.id WHERE erp_prefacturas.id="+id_prefactura+" ORDER BY fac_cfds.id DESC LIMIT 1;";
+        }else{
+            //para facturacion tipo CFDI Timbre Fiscal
+            sql_to_query = "SELECT fac_docs.serie_folio FROM erp_prefacturas  JOIN  fac_docs ON fac_docs.proceso_id=erp_prefacturas.proceso_id WHERE erp_prefacturas.id="+id_prefactura+" AND fac_docs.cancelado=false ORDER BY fac_docs.id DESC LIMIT 1;";
+        }
+        
         System.out.println("GetSerieFolio:"+sql_to_query);
         Map<String, Object> map_iva = this.getJdbcTemplate().queryForMap(sql_to_query);
         String serie_folio = map_iva.get("serie_folio").toString();

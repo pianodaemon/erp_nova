@@ -226,7 +226,7 @@ public class BeanFacturadorCfdiTimbre {
                 String cadena_imp_retenidos = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosRetenidos(),this.getTasaRetencion());
                 
                 Integer id_usuario = Integer.parseInt(this.getDatosExtras().get("usuario_id"));
-                String tipo_cambio = this.getDatosExtras().get("tipo_cambio");
+                String tipo_cambio = this.getTipoCambio();
                 String app_selected = this.getDatosExtras().get("app_selected");
                 String command_selected = this.getDatosExtras().get("command_selected");
                 String extra_data_array = this.getDatosExtras().get("extra_data_array");
@@ -244,45 +244,12 @@ public class BeanFacturadorCfdiTimbre {
                         Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
                         String refacturar = this.getDatosExtras().get("refacturar");
                         String id_moneda = this.getDatosExtras().get("moneda_id");
-                        this.getFacdao().fnSalvaDatosFacturas(
-                                pop.getRfc_receptor(),
-                                pop.getSerie(),
-                                pop.getFolio(),
-                                pop.getNoAprobacion(),
-                                pop.getTotal(),
-                                pop.getTotalImpuestosTrasladados(),
-                                estado_comprobante,
-                                xml_file_name ,
-                                pop.getFecha(),
-                                pop.getRazon_social_receptor(),
-                                pop.getTipoDeComprobante(),
-                                this.getProposito(),
-                                pop.getAnoAprobacion() ,
-                                cadena_conceptos,
-                                cadena_imp_trasladados,
-                                cadena_imp_retenidos,
-                                prefactura_id,
-                                id_usuario,
-                                Integer.parseInt(id_moneda),
-                                tipo_cambio,
-                                refacturar,
-                                regimen_fiscal,
-                                metodo_pago,
-                                num_cuenta,
-                                lugar_de_expedicion
-                        );
                         
-                        break;
-                        
-                        
-                    case NOTA_CREDITO:
-                        Integer id_nota_credito = Integer.parseInt(this.getDatosExtras().get("id_nota_credito"));
-                        String fac_saldado = this.getDatosExtras().get("fac_saldado");
                         data_string = 
                                 app_selected+"___"+
                                 command_selected+"___"+
                                 id_usuario+"___"+
-                                id_nota_credito+"___"+
+                                prefactura_id+"___"+
                                 pop.getRfc_receptor()+"___"+
                                 pop.getSerie()+"___"+
                                 pop.getFolio()+"___"+
@@ -295,19 +262,25 @@ public class BeanFacturadorCfdiTimbre {
                                 pop.getRazon_social_receptor()+"___"+
                                 pop.getTipoDeComprobante()+"___"+
                                 this.getProposito()+"___"+
-                                pop.getAnoAprobacion() +"___"+
+                                pop.getAnoAprobacion()+"___"+
                                 cadena_conceptos+"___"+
                                 cadena_imp_trasladados+"___"+
                                 cadena_imp_retenidos+"___"+
+                                Integer.parseInt(id_moneda)+"___"+
                                 tipo_cambio+"___"+
+                                refacturar+"___"+
                                 regimen_fiscal+"___"+
                                 metodo_pago+"___"+
                                 num_cuenta+"___"+
                                 lugar_de_expedicion+"___"+
-                                fac_saldado;
-                                
-                                String actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+                                extra_data_array;
+                        
                         break;
+                        
+                        
+                    case NOTA_CREDITO:
+                        break;
+                        
                 }
             } else {
                 throw new Exception("Fallo al generar fichero xml: " + xml_file_name);
@@ -316,7 +289,7 @@ public class BeanFacturadorCfdiTimbre {
             Logger.getLogger(BeanFacturadorCfdiTimbre.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     
     
     
@@ -526,7 +499,7 @@ public class BeanFacturadorCfdiTimbre {
                             log.log(Level.FINE, "El Atributo(Opcional) unidad de un tag Concepto es incorrecto o se dejo vacio");
                         }
                     }
-
+                    
                     if (llave.equals("noIdentificacion")) {
                         if (valor.isEmpty()) {
                             log.log(Level.FINE, "El Atributo(Opcional) noIdentificacion de un tag Concepto es incorrecto o se dejo vacio");
@@ -544,13 +517,13 @@ public class BeanFacturadorCfdiTimbre {
                             throw new Exception("El Atributo(Requerido) descripcion de un tag Concepto es incorrecto");
                         }
                     }
-
+                    
                     if (llave.equals("valorUnitario")) {
                         if (!this.getValedor().isMontoDelaOperacionCorrecto(valor)) {
                             throw new Exception("El Atributo(Requerido) valorUnitario de un tag Concepto es incorrecto");
                         }
                     }
-
+                    
                     if (llave.equals("importe")) {
                         if (!this.getValedor().isMontoDelaOperacionCorrecto(valor)) {
                             throw new Exception("El Atributo(Requerido) importe de un tag Concepto es incorrecto");
@@ -558,20 +531,20 @@ public class BeanFacturadorCfdiTimbre {
                             sumImportes = sumImportes.add(new BigDecimal(valor));
                         }
                     }
-
+                    
                     ///validar informacion aduanera
                     if (llave.equals("numero_aduana")) {
                         if (valor.isEmpty()) {
                             log.log(Level.FINE, "El Atributo(Opcional) numero  de un tag Aduana es incorrecto");
                         }
                     }
-
+                    
                     if (llave.equals("fecha_aduana")) {
                         if (!this.getValedor().isValidFecha_Aduana(valor)) {
                             log.log(Level.FINE, "El Atributo(Opcional) fecha  de un tag Aduana es incorrecto");
                         }
                     }
-
+                    
                     if (llave.equals("aduana_aduana")) {
                         if (valor.isEmpty()) {
                             log.log(Level.FINE, "El Atributo(Opcional) aduana  de un tag Aduana es incorrecto");

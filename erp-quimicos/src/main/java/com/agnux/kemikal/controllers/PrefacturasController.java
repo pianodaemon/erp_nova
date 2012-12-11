@@ -111,7 +111,7 @@ public class PrefacturasController {
         return bfcfd;
     }
     
-    public BeanFacturadorCfdi getBfCfdcfdi() {
+    public BeanFacturadorCfdi getBfCfdi() {
         return bfcfdi;
     }
     
@@ -494,12 +494,12 @@ public class PrefacturasController {
         String folio="";
         String serieFolio="";
         String rfcEmisor="";
+        Integer id_factura=0;
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
-        
         
         String arreglo[];
         arreglo = new String[eliminado.length];
@@ -559,7 +559,9 @@ public class PrefacturasController {
                     
                     System.out.println("tipo_facturacion:::"+tipo_facturacion);
                     
+                    //**********************************************************
                     //tipo facturacion CFD
+                    //**********************************************************
                     if(tipo_facturacion.equals("cfd")){
                         conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
                         impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
@@ -597,8 +599,9 @@ public class PrefacturasController {
                         jsonretorno.put("folio",serieFolio);
                     }
                     
-                    
-                    //tipo facturacion CFDI(CFD CON CONECTOR FISCAL)
+                    //**********************************************************
+                    //tipo facturacion CFDI(CFDI CON CONECTOR FISCAL)
+                    //**********************************************************
                     if(tipo_facturacion.equals("cfdi")){
                         
                         extra_data_array = "'sin datos'";
@@ -608,7 +611,7 @@ public class PrefacturasController {
                         String Folio=this.getGralDao().getFolioFactura(id_empresa, id_sucursal);
                         rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                         
-                        Integer id_factura=0;
+                        id_factura=0;
                         data_string=
                                 app_selected+"___"+
                                 command_selected+"___"+
@@ -637,8 +640,8 @@ public class PrefacturasController {
                         leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
                         
                         //generar archivo de texto para cfdi
-                        this.getBfCfdcfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
-                        this.getBfCfdcfdi().start();
+                        this.getBfCfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
+                        this.getBfCfdi().start();
                         
                         this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
                         
@@ -646,20 +649,22 @@ public class PrefacturasController {
                     }
                     
                     
-                    
+                    //**********************************************************
                     //tipo facturacion CFDITF(CFDI TIMBRE FISCAL)
+                    //**********************************************************
                     if(tipo_facturacion.equals("cfditf")){
-                        conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
-                        impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
-                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal);
-                        dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                         
                         command_selected = "facturar_cfditf";
                         extra_data_array = "'sin datos'";
                         
+                        conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura);
+                        impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
+                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal);
+                        dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
+                        
                         //estos son requeridos para cfditf
                         datosExtrasXmlFactura.put("prefactura_id", String.valueOf(id_prefactura));
-                        datosExtrasXmlFactura.put("tipo_cambio", tipo_cambio_vista);
+                        datosExtrasXmlFactura.put("tipo_documento", String.valueOf(select_tipo_documento));
                         datosExtrasXmlFactura.put("moneda_id", id_moneda);
                         datosExtrasXmlFactura.put("usuario_id", String.valueOf(id_usuario));
                         datosExtrasXmlFactura.put("empresa_id", String.valueOf(id_empresa));
@@ -668,8 +673,6 @@ public class PrefacturasController {
                         datosExtrasXmlFactura.put("app_selected", String.valueOf(app_selected));
                         datosExtrasXmlFactura.put("command_selected", command_selected);
                         datosExtrasXmlFactura.put("extra_data_array", extra_data_array);
-                        
-                        
                         
                         //genera xml factura
                         this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
