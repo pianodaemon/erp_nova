@@ -192,6 +192,7 @@ public class ProFormulasDesarrolloController {
         ArrayList<HashMap<String, String>> datosFormulasMinigrid = new ArrayList<HashMap<String, String>>(); 
         ArrayList<HashMap<String, String>> datosFormulasProductoSaliente = new ArrayList<HashMap<String, String>>(); 
         
+        ArrayList<HashMap<String, String>> tipos_productos = new ArrayList<HashMap<String, String>>(); 
         //ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
         //ArrayList<HashMap<String, String>> unidades = new ArrayList<HashMap<String, String>>();
         
@@ -208,7 +209,7 @@ public class ProFormulasDesarrolloController {
             datosFormulasProductoSaliente = this.getProDao().getFormula_DatosProductoSaliente(id, "1");
             
         }
-        
+        tipos_productos = this.getProDao().getProducto_Tipos();
         //estos aray list seretornan a la vista al momento de click en nuevo   y los retorna en un HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno
         //tiposProducto = this.getInvDao().getProducto_Tipos_para_formulas(numero_buscador);
         //unidades = this.getInvDao().getProducto_Unidades_para_formulas();
@@ -217,6 +218,7 @@ public class ProFormulasDesarrolloController {
        jsonretorno.put("Formulas", datosFormulas);
        jsonretorno.put("Formulas_DatosMinigrid", datosFormulasMinigrid);
        jsonretorno.put("Formulas_DatosProductoSaliente", datosFormulasProductoSaliente);
+       jsonretorno.put("prodTipos", tipos_productos);
        
         return jsonretorno;
     }
@@ -371,6 +373,8 @@ public class ProFormulasDesarrolloController {
         @RequestParam(value="descripcion_master", required=true) String descripcion_master,
         //id_prod_master	56
         @RequestParam(value="id_prod_master", required=true) String id_prod_master,
+        //prodtipo_id      guarda el id de el tipo de producto
+        @RequestParam(value="select_prodtipo", required=true) String prodtipo_id,
         //id_prod_saliente	1389
         @RequestParam(value="id_prod_saliente", required=true) String inv_prod_id,
         //numero_pasos	1
@@ -442,7 +446,7 @@ public class ProFormulasDesarrolloController {
         
         
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+id_prod_master+"___"+
-                inv_prod_id+"___"+nivel+"___"+pro_config_prod_pertenece_id+"___"+version;
+                inv_prod_id+"___"+nivel+"___"+pro_config_prod_pertenece_id+"___"+version+"___"+prodtipo_id;
         
         succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

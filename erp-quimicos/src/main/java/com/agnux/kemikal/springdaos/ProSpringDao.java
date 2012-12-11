@@ -226,7 +226,8 @@ public class ProSpringDao implements ProInterfaceDao{
     public ArrayList<HashMap<String, String>> getFormulaLaboratorio_Datos(String id_formula) {
         
         String sql_to_query =    " select pro_estruc.id, pro_estruc.inv_prod_id,inv_prod.sku as codigo, inv_prod.descripcion, "
-                + "inv_prod_tipos.titulo as tipo_producto,inv_prod_unidades.titulo_abr as unidad from pro_estruc join inv_prod on "
+                + "inv_prod_tipos.id as tipo_producto_id, inv_prod_tipos.titulo as tipo_producto,inv_prod_unidades.titulo_abr as unidad, "
+                + "pro_estruc.pro_estruc_id, pro_estruc.version from pro_estruc join inv_prod on "
                 + "inv_prod.id=pro_estruc.inv_prod_id join  inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id join inv_prod_tipos "
                 + "on inv_prod_tipos.id=inv_prod.tipo_de_producto_id where pro_estruc.id="+id_formula;
         
@@ -237,13 +238,15 @@ public class ProSpringDao implements ProInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    
                     row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("pro_estruc_id",String.valueOf(rs.getInt("pro_estruc_id")));
                     row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("tipo_producto",rs.getString("tipo_producto"));
+                    row.put("tipo_producto_id",String.valueOf(rs.getInt("tipo_producto_id")));
                     row.put("unidad",rs.getString("unidad"));
+                    row.put("version",String.valueOf(rs.getInt("version")));
                     
                     return row;
                 }
@@ -1298,6 +1301,7 @@ public class ProSpringDao implements ProInterfaceDao{
                                 + "inv_prod.unidad_id, "
                                 + "inv_prod_unidades.titulo AS unidad, "
 				+"inv_prod_tipos.titulo AS tipo,"
+                                +"inv_prod_tipos.id AS tipo_id,"
                                 + "inv_prod_unidades.decimales "
 		+"FROM inv_prod "
                 + "LEFT JOIN (select id, titulo from inv_prod_tipos where id in (2, 1,8,7 )) as inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
@@ -1318,6 +1322,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("tipo",rs.getString("tipo"));
+                    row.put("tipo_id",String.valueOf(rs.getInt("tipo_id")));
                     row.put("decimales",String.valueOf(rs.getInt("decimales")));
                     return row;
                 }
