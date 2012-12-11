@@ -169,9 +169,8 @@ $(function() {
                 $(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
             });
             
-            
             $campo_sku.val(sku_buscar);
-
+            
             //click buscar productos
             $buscar_plugin_producto.click(function(event){
                     event.preventDefault();
@@ -223,13 +222,14 @@ $(function() {
                                     $.post(input_json,$arreglo,function(data){
                                         //Formulas_DatosMinigrid.
                                         $.each(data['productos'],function(entryIndex,elemento){
-                                            $('#forma-proformulasdesarrollo-window').find('input[name=version]').val(version_selected);
+                                            //$('#forma-proformulasdesarrollo-window').find('input[name=version]').val(version_selected);
                                             var $grid_productos_componentes     = $('#forma-proformulasdesarrollo-window').find('div.div_formulaciones');
                                             valida_porciento_tmp = $verifica_porcentaje($grid_productos_componentes, 'valida');
                                             if( valida_porciento_tmp==true){
                                                 
                                                 //convierte la verdsion de la formula a entero y le suma uno
                                                 version_tmp= (parseInt(elemento['version']) + 1);
+                                                //alert(elemento['version']);
                                                 $('#forma-proformulasdesarrollo-window').find('input[name=version]').val(version_tmp);
                                                 
                                                 $add_grid_componente_formulaciones(elemento['id'],elemento['inv_prod_id'],elemento['codigo'],elemento['descripcion'],elemento['cantidad'],elemento['elemento'] );
@@ -245,7 +245,7 @@ $(function() {
                                             ///Esto es para el numero de paso
                                             //$numero_pasos.val(elemento['nivel']);
                                             //$paso_actual.val(elemento['nivel']);
-                                        });
+                                        }); 
                                     });
                                 }
                                 
@@ -308,32 +308,34 @@ $(function() {
             $cancelar_plugin_busca_producto.mouseout(function(){
                     $(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
             });
-
+            
+            //$tipos_productos_array = new Array();
+            
             //buscar todos los tipos de productos
             var input_json_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
             $arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
             $.post(input_json_tipos,$arreglo,function(data){
-
+                
                 //Llena el select tipos de productos en el buscador
                 $select_tipo_producto.children().remove();
                 //<option value="0" selected="yes">[--Seleccionar Tipo--]</option>
                 var prod_tipos_html = '';
-
+                $tipos_productos_array = data['prodTipos'];
                 $.each(data['prodTipos'],function(entryIndex,pt){
-
+                    
                     //buscador principal de el proceso
                     if(tipo_busqueda == 1){
                         if(pt['id'] == 2 || pt['id'] == 1 || pt['id'] == 8){
                             prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
                         }
                     }
-                    //para buscar un producto master
+                    //para buscar un producto master (solo puede b uscar productos de laboratorio)
                     if(tipo_busqueda == 2){
-                        if(pt['id'] == 2 || pt['id'] == 1 ){
+                        if(pt['id'] == 8 ){
                             prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
                         }
                     }
-
+                    
                     //para buscar elementos de el proceso
                     if(tipo_busqueda == 3){
                         if(pt['id'] == 2 || pt['id'] == 1  || pt['id'] == 7 ){
@@ -344,16 +346,16 @@ $(function() {
                             }
                         }
                     }
-
-                    //para buscar el producto de salida
+                    
+                    //para buscar el producto de salida (solo puede buscar productos de laboratorio)
                     if(tipo_busqueda == 4){
-                        if(pt['id'] == 2 || pt['id'] == 1 ){
+                        if(pt['id'] == 8 ){
                             prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
                         }
                     }
                 });
                 $select_tipo_producto.append(prod_tipos_html);
-
+                
             $campo_sku.val(sku_buscar);
 
             //click buscar productos
@@ -378,11 +380,13 @@ $(function() {
                                     trr += '</td>';
                                     trr += '<td width="280"><span class="titulo_prod_buscador">'+producto['descripcion']+'</span></td>';
                                     trr += '<td width="90"><span class="unidad_prod_buscador">'+producto['unidad']+'</span></td>';
-                                    trr += '<td width="90"><span class="tipo_prod_buscador">'+producto['tipo']+'</span></td>';
+                                    trr += '<td width="90">';
+                                        trr += '<span class="tipo_id_prod_buscador">'+producto['tipo_id']+'</span>';
+                                    trr += '</td>';
                                 trr += '</tr>';
                                 $tabla_resultados.append(trr);
                             });
-
+                            
                             $colorea_tr_grid($tabla_resultados);
                             
                             
@@ -393,8 +397,9 @@ $(function() {
                                 var descripcion=$(this).find('span.titulo_prod_buscador').html();
                                 var producto=$(this).find('span.tipo_prod_buscador').html();
                                 var unidad=$(this).find('span.unidad_prod_buscador').html();
-                                /*
+                                var tipo_id_prod_buscador=$(this).find('span.tipo_id_prod_buscador').html();
                                 
+                                /*
                                 //La opcion tipo_busqueda = 1 , por el momento no se utiliza 
                                 //buscador principal de el proceso
                                 if(tipo_busqueda == 1){
@@ -412,11 +417,25 @@ $(function() {
                                     $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_master]').val(id_prod);
                                     $('#forma-proformulasdesarrollo-window').find('input[name=codigo_master]').val(codigo);
                                     $('#forma-proformulasdesarrollo-window').find('input[name=descripcion_master]').val(descripcion);
-                                    $('#forma-proformulasdesarrollo-window').find('input[name=select_prodtipo]').val(producto);
+                                    $select_prodtipo = $('#forma-proformulasdesarrollo-window').find('select[name=select_prodtipo]');
                                     $('#forma-proformulasdesarrollo-window').find('input[name=select_unidad]').val(unidad);
+                                    
+                                    $select_prodtipo.children().remove();
+                                    var prod_tipos_html = '';
+                                    
+                                    $.each($tipos_productos_array,function(entryIndex,tipo){
+                                        alert(tipo['id']);
+                                        if(tipo['id'] == tipo_id_prod_buscador){
+                                            prod_tipos_html += '<option value="' + tipo['id'] + '" selected="yes" >' + tipo['titulo'] + '</option>';
+                                        }else{
+                                            prod_tipos_html += '<option value="' + tipo['id'] + '" >' + tipo['titulo'] + '</option>';
+                                        }
+                                    });
+                                    
+                                    $select_prodtipo.append(prod_tipos_html);
                                     //fin del primer plugin
                                 }
-
+                                
                                 //para buscar elementos de el proceso
                                 if(tipo_busqueda ==3){
                                    //guardando los datos del pluguin si es que ligio buscar elementos para el grid
@@ -425,7 +444,7 @@ $(function() {
                                     $('#forma-proformulasdesarrollo-window').find('input[name=descr_producto_minigrid]').val(descripcion);
 
                                 }
-
+                                
                                 //para buscar el producto de salida
                                 if(tipo_busqueda ==4){
                                     //guardando los datos del pluguin si es que ligio buscar elementos para el grid
@@ -433,7 +452,7 @@ $(function() {
                                     $('#forma-proformulasdesarrollo-window').find('input[name=codigo_producto_saliente]').val(codigo);
                                     $('#forma-proformulasdesarrollo-window').find('input[name=descr_producto_saliente]').val(descripcion);
                                 }
-
+                                
                                 //elimina la ventana de busqueda
                                 var remove = function() {$(this).remove();};
                                 $('#forma-buscaproducto-overlay').fadeOut(remove);
@@ -521,7 +540,7 @@ $(function() {
                         
                         //agrega productos a el grid de formulaciones
                         $add_grid_componente_formulaciones(0,prod['Sku'][0]['id'],prod['Sku'][0]['sku'],prod['Sku'][0]['descripcion'],0,0);
-
+                        
                     }else{
                             jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
                     }
@@ -604,8 +623,10 @@ $(function() {
         var $codigo_Productomaster          = $('#forma-proformulasdesarrollo-window').find('input[name=codigo_master]');
         var $descripcion_Productomaster     = $('#forma-proformulasdesarrollo-window').find('input[name=descripcion_master]');
         var $href_buscar_Productomaster     = $('#forma-proformulasdesarrollo-window').find('a[href*=buscar_productomaster]');
+        var $pro_config_prod_pertenece_id           = $('#forma-proformulasdesarrollo-window').find('input[name=pro_config_prod_pertenece_id]');
+        //pro_config_prod_pertenece_id
         
-        var $buscar_version_formula         = $('#forma-proformulasdesarrollo-window').find('input[name=buscar_version_formula]');
+        //var $buscar_version_formula         = $('#forma-proformulasdesarrollo-window').find('input[name=buscar_version_formula]');
         var $version                        = $('#forma-proformulasdesarrollo-window').find('input[name=version]');
         var $numero_pasos                   = $('#forma-proformulasdesarrollo-window').find('input[name=numero_pasos]');
         var $paso_actual                    = $('#forma-proformulasdesarrollo-window').find('input[name=paso_actual]');
@@ -616,7 +637,7 @@ $(function() {
         var $agregar_producto_minigrid      = $('#forma-proformulasdesarrollo-window').find('a[href*=agregar_producto_minigrid]');
         var $buscar_version_formula      = $('#forma-proformulasdesarrollo-window').find('a[href*=buscar_version_formula]');
         
-        var $prod_tipo = $('#forma-proformulasdesarrollo-window').find('input[name=select_prodtipo]');
+        var $prod_tipo = $('#forma-proformulasdesarrollo-window').find('select[name=select_prodtipo]');
         var $unidad = $('#forma-proformulasdesarrollo-window').find('input[name=select_unidad]');
         var $id_producto_master             = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_master]');
         var $id_producto_entrante           = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_entrante]');
@@ -636,7 +657,7 @@ $(function() {
         var $cerrar_plugin = $('#forma-proformulasdesarrollo-window').find('#close');
         var $cancelar_plugin = $('#forma-proformulasdesarrollo-window').find('#boton_cancelar');
         var $submit_actualizar = $('#forma-proformulasdesarrollo-window').find('#submit');
-
+        
         var $genera_pdf_formulas = $('#forma-proformulasdesarrollo-window').find('#genera_pdf_formulas');
         
         
@@ -647,9 +668,10 @@ $(function() {
         $codigo_Productosaliente.attr({'readOnly':true});
         $descripcion_Productosaliente.attr({'readOnly':true});
         
-        
         $version.val(0);
-        buscar_version_formula.val(0);
+        //$buscar_version_formula.val(0);
+        $campo_id.val(0);
+        $pro_config_prod_pertenece_id.val(0);
         $('#forma-proformulasdesarrollo-window').find('.gen_pdf').hide();
         
         var respuestaProcesadaFormulacion = function(data){
@@ -735,7 +757,7 @@ $(function() {
                                         
                                         //$grid_productos_componentes.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
                                         //$grid_productos_componentes.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-
+                                        
                                         var tr_warning = '<tr>';
                                                 tr_warning += '<td style="width:25px;"><div><IMG SRC="../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
                                                 tr_warning += '<td style="width:122px;" >';
@@ -768,7 +790,7 @@ $(function() {
         var $descripcion_producto="";
         var $id_unidad=0;
         var $descripcion_unidad="";
-
+        
         $numero_pasos.change(function() {
             
             $numero_pasos.attr({'readOnly':true});
@@ -813,6 +835,7 @@ $(function() {
         
         $buscar_version_formula.click(function(event){
             event.preventDefault();
+            
             valida_paso = $valida_cantidades();
             if(valida_paso == ""){
                 buscador_versionformula=1;
@@ -820,6 +843,7 @@ $(function() {
             }else{
                 jAlert(valida_paso, 'Atencion!');
             }
+            
         });
         
         
@@ -862,7 +886,7 @@ $(function() {
     
     
     
-    $add_grid_componente_formulaciones = function(id_reg,sku_id,sku,descripcion,cantidad,posicion ){
+    $add_grid_componente_formulaciones = function(id_reg,sku_id,sku,descripcion,cantidad,posicion){
         
         var $grid_productos_componentes     = $('#forma-proformulasdesarrollo-window').find('div.div_formulaciones');
         var $cantidad_calculo              = $('#forma-proformulasdesarrollo-window').find('input[name=cantidad_calculo]');
@@ -876,25 +900,27 @@ $(function() {
         }
         
         trr = '<tr>';
-                trr += '<td width="92px">';
-                        trr += '<a href=#>Eliminar</a>';
-                        trr += '<input type="hidden" id="delete" name="eliminar" value="1">';
-                        trr += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
-                        trr += '<input type="hidden" id="id_prod_componente" name="id_prod_componente" value="'+sku_id+'">';
-                trr += '</td>';
-                trr += '<td width="92px">';
-                    trr += '<INPUT TYPE="text" id="posicion'+trCount+'" value="'+posicion+'" name="posicion" style="width:70px;height:20px">';
-                trr += '</td>';
-                trr += '<td width="90px">';
-                    trr += '<INPUT TYPE="text" name="sku'+ trCount +'" value="'+sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:70px;">';
-                trr += '</td>';
-                trr += '<td width="370px">';
-                    trr += '<INPUT TYPE="text" name="nombre'+ trCount +'" 	value="'+ descripcion +'" id="nom" class="borde_oculto" readOnly="true" style="width:350px;">';
-                trr += '</td>';
-                trr += '<td width="90px">';
-                        trr += '<INPUT TYPE="text" id="porcentaje'+trCount+'" value="'+cantidad+'" name="cantidad" style="width:88px;height:20px">';
-                trr += '</td>';
+            trr += '<td width="92px">';
+                trr += '<a href=#>Eliminar</a>';
+                trr += '<input type="hidden" id="delete" name="eliminar" value="1">';
+                trr += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
+                trr += '<input type="hidden" id="id_prod_componente" name="id_prod_componente" value="'+sku_id+'">';
+            trr += '</td>';
+            trr += '<td width="92px">';
+                trr += '<INPUT TYPE="text" id="posicion'+trCount+'" value="'+posicion+'" name="posicion" style="width:70px;height:20px">';
+            trr += '</td>';
+            trr += '<td width="90px">';
+                trr += '<INPUT TYPE="text" name="sku'+ trCount +'" value="'+sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:70px;">';
+            trr += '</td>';
+            trr += '<td width="370px">';
+                trr += '<INPUT TYPE="text" name="nombre'+ trCount +'" 	value="'+ descripcion +'" id="nom" class="borde_oculto" readOnly="true" style="width:350px;">';
+            trr += '</td>';
+            trr += '<td width="90px">';
+                    trr += '<INPUT TYPE="text" id="porcentaje'+trCount+'" value="'+cantidad+'" name="cantidad" style="width:88px;height:20px">';
+            trr += '</td>';
         trr += '</tr>';
+        
+        
         var tabla = $grid_productos_componentes.find('tbody');
         tabla.prepend(trr);
         
@@ -964,7 +990,7 @@ $(function() {
     
     
     //======bueva version de nuevo y edicion
-    var carga_formaFormulacionDesarrollo00_for_datagrid00 = function(id_to_show, accion_mode){
+    var carga_formaFormulacionDesarrollo00_for_datagrid00 = function(id_to_show_form, accion_mode){
             
             $(this).modalPanel_formulasdesarrollo();
             
@@ -977,61 +1003,74 @@ $(function() {
 		$forma_selected.prependTo('#forma-proformulasdesarrollo-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show_form , style:'display:table'});
                 
-            /*
-            var $dialogoc =  $('#forma-proformulasdesarrollo-window');
-            //var $dialogoc.prependTo('#forma-buscaproduct-window');
-            $dialogoc.append($('div.plugin_formulaciones').find('table.formaBusqueda_formulaciones').clone());
-            
-            $('#forma-proformulasdesarrollo-window').css({"margin-left": -390, 	"margin-top": -270});
-            */
-            
-            var $campo_id                       = $('#forma-proformulasdesarrollo-window').find('input[name=identificador]');
-            //var $id_producto_master             = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_master]');
-            //var $id_producto_entrante           = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_entrante]');
-            var $id_producto_saliente           = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_saliente]');
-            //var $prod_tipo               = $('#forma-proformulasdesarrollo-window').find('input[name=select_prodtipo]');
-            //var $unidad                  = $('#forma-proformulasdesarrollo-window').find('input[name=select_unidad]');
-            var $codigo_Productomaster          = $('#forma-proformulasdesarrollo-window').find('input[name=codigo_master]');
-            var $descripcion_Productomaster     = $('#forma-proformulasdesarrollo-window').find('input[name=descripcion_master]');
-            var $href_buscar_Productomaster     = $('#forma-proformulasdesarrollo-window').find('a[href*=buscar_productomaster]');
-            var $numero_pasos                   = $('#forma-proformulasdesarrollo-window').find('input[name=numero_pasos]');                                                            
-            var $paso_actual                    = $('#forma-formuproformulasdesarrollolas-window').find('input[name=paso_actual]');
-            var $cantidad_calculo              = $('#forma-proformulasdesarrollo-window').find('input[name=cantidad_calculo]');
-            var $codigo_producto_minigrid       = $('#forma-proformulasdesarrollo-window').find('input[name=codigo_producto_minigrid]');
-            var $descripcion_producto_minigrid  = $('#forma-proformulasdesarrollo-window').find('input[name=descr_producto_minigrid]');
-            var $buscar_producto_para_minigrid  = $('#forma-proformulasdesarrollo-window').find('a[href*=busca_producto_ingrediente]');
-            var $agregar_producto_minigrid      = $('#forma-proformulasdesarrollo-window').find('a[href*=agregar_producto_minigrid]');
-            
-            var $prod_tipo = $('#forma-proformulasdesarrollo-window').find('input[name=select_prodtipo]');
-            var $unidad = $('#forma-proformulasdesarrollo-window').find('input[name=select_unidad]');
-            var $id_producto_master             = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_master]');
-            var $id_producto_entrante           = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_entrante]');
-            var $id_producto_saliente           = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_saliente]');
-            
-            var $codigo_Productosaliente        = $('#forma-proformulasdesarrollo-window').find('input[name=codigo_producto_saliente]');
-            var $descripcion_Productosaliente   = $('#forma-proformulasdesarrollo-window').find('input[name=descr_producto_saliente]');
-            var $href_buscar_Productosaliente   = $('#forma-proformulasdesarrollo-window').find('a[href*=busca_producto_saliente]');
-            
-            //grid de productos
-            var $grid_productos_componentes     = $('#forma-proformulasdesarrollo-window').find('div.div_formulaciones');
-            
-            //grid de errores
-            var $grid_warning = $('#forma-proformulasdesarrollo-window').find('#div_warning_grid').find('#grid_warning');
-            
-            //botones		
-            var $cerrar_plugin = $('#forma-proformulasdesarrollo-window').find('#close');
-            var $cancelar_plugin = $('#forma-proformulasdesarrollo-window').find('#boton_cancelar');
-            var $submit_actualizar = $('#forma-proformulasdesarrollo-window').find('#submit');
-            
-            var $genera_pdf_formulas = $('#forma-proformulasdesarrollo-window').find('#genera_pdf_formulas');
-            
-            
-            $codigo_Productomaster.attr({'readOnly':true});
-            $descripcion_Productomaster.attr({'readOnly':true});
-            $codigo_producto_minigrid.attr({'readOnly':true});
-            $descripcion_producto_minigrid.attr({'readOnly':true});
-            $codigo_Productosaliente.attr({'readOnly':true});
-            $descripcion_Productosaliente.attr({'readOnly':true});
+                /*
+                var $dialogoc =  $('#forma-proformulasdesarrollo-window');
+                //var $dialogoc.prependTo('#forma-buscaproduct-window');
+                $dialogoc.append($('div.plugin_formulaciones').find('table.formaBusqueda_formulaciones').clone());
+                
+                $('#forma-proformulasdesarrollo-window').css({"margin-left": -390, 	"margin-top": -270});
+                */
+               
+                var $campo_id                       = $('#forma-proformulasdesarrollo-window').find('input[name=identificador]');
+                var $id_producto_saliente           = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_saliente]');
+                var $codigo_Productomaster          = $('#forma-proformulasdesarrollo-window').find('input[name=codigo_master]');
+                var $descripcion_Productomaster     = $('#forma-proformulasdesarrollo-window').find('input[name=descripcion_master]');
+                var $href_buscar_Productomaster     = $('#forma-proformulasdesarrollo-window').find('a[href*=buscar_productomaster]');
+                var $pro_config_prod_pertenece_id           = $('#forma-proformulasdesarrollo-window').find('input[name=pro_config_prod_pertenece_id]');
+                //pro_config_prod_pertenece_id
+                
+                
+                var $version                        = $('#forma-proformulasdesarrollo-window').find('input[name=version]');
+                var $numero_pasos                   = $('#forma-proformulasdesarrollo-window').find('input[name=numero_pasos]');
+                var $paso_actual                    = $('#forma-proformulasdesarrollo-window').find('input[name=paso_actual]');
+                var $cantidad_calculo               = $('#forma-proformulasdesarrollo-window').find('input[name=cantidad_calculo]');
+                var $codigo_producto_minigrid       = $('#forma-proformulasdesarrollo-window').find('input[name=codigo_producto_minigrid]');
+                var $descripcion_producto_minigrid  = $('#forma-proformulasdesarrollo-window').find('input[name=descr_producto_minigrid]');
+                var $buscar_producto_para_minigrid  = $('#forma-proformulasdesarrollo-window').find('a[href*=busca_producto_ingrediente]');
+                var $agregar_producto_minigrid      = $('#forma-proformulasdesarrollo-window').find('a[href*=agregar_producto_minigrid]');
+                var $buscar_version_formula      = $('#forma-proformulasdesarrollo-window').find('a[href*=buscar_version_formula]');
+                
+                var $prod_tipo = $('#forma-proformulasdesarrollo-window').find('select[name=select_prodtipo]');
+                var $unidad = $('#forma-proformulasdesarrollo-window').find('input[name=select_unidad]');
+                var $id_producto_master             = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_master]');
+                var $id_producto_entrante           = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_entrante]');
+                var $id_producto_saliente           = $('#forma-proformulasdesarrollo-window').find('input[name=id_prod_saliente]');
+                
+                var $codigo_Productosaliente        = $('#forma-proformulasdesarrollo-window').find('input[name=codigo_producto_saliente]');
+                var $descripcion_Productosaliente   = $('#forma-proformulasdesarrollo-window').find('input[name=descr_producto_saliente]');
+                var $href_buscar_Productosaliente   = $('#forma-proformulasdesarrollo-window').find('a[href*=busca_producto_saliente]');
+                
+                //grid de productos
+                var $grid_productos_componentes     = $('#forma-proformulasdesarrollo-window').find('div.div_formulaciones');
+                
+                //grid de errores
+                var $grid_warning = $('#forma-proformulasdesarrollo-window').find('#div_warning_grid').find('#grid_warning');
+                
+                //botones
+                var $cerrar_plugin = $('#forma-proformulasdesarrollo-window').find('#close');
+                var $cancelar_plugin = $('#forma-proformulasdesarrollo-window').find('#boton_cancelar');
+                var $submit_actualizar = $('#forma-proformulasdesarrollo-window').find('#submit');
+                
+                var $genera_pdf_formulas = $('#forma-proformulasdesarrollo-window').find('#genera_pdf_formulas');
+                
+                
+                $buscar_version_formula.hide();
+                $version.val(0);
+                $campo_id.val(0);
+                $pro_config_prod_pertenece_id.val(0);
+                $('#forma-proformulasdesarrollo-window').find('.gen_pdf').hide();
+                
+                
+                var $genera_pdf_formulas = $('#forma-proformulasdesarrollo-window').find('#genera_pdf_formulas');
+                
+                
+                $codigo_Productomaster.attr({'readOnly':true});
+                $descripcion_Productomaster.attr({'readOnly':true});
+                $codigo_producto_minigrid.attr({'readOnly':true});
+                $version.attr({'readOnly':true});
+                $descripcion_producto_minigrid.attr({'readOnly':true});
+                $codigo_Productosaliente.attr({'readOnly':true});
+                $descripcion_Productosaliente.attr({'readOnly':true});
                 
                 
                 $campo_id.attr({'value' : id_to_show_form});
@@ -1144,6 +1183,9 @@ $(function() {
                     $unidad.val(entry['Formulas']['0']['unidad']);
                     $codigo_Productomaster.val(entry['Formulas']['0']['codigo']);
                     $descripcion_Productomaster.val(entry['Formulas']['0']['descripcion']);
+                    $pro_config_prod_pertenece_id.val(entry['Formulas']['0']['pro_estruc_id']);
+                    $version.val(entry['Formulas']['0']['version']);
+                    
                     //$hrer_buscar_Productomaster.hide();
                     /* esto lo moente, por que no tengo los pasos ahorita*/
                     //$numero_pasos.val(entry['Formulas']['0']['numero_pasos']);
@@ -1162,11 +1204,13 @@ $(function() {
                     //Formulas_DatosMinigrid.
                     $.each(entry['Formulas_DatosMinigrid'],function(entryIndex,elemento){
                         
-                        $add_grid_componente_formulaciones(elemento['id'],elemento['inv_prod_id'],elemento['codigo'],elemento['descripcion'],elemento['cantidad'],elemento['elemento'] );
-                        sum_porciento += parseFloat(elemento['cantidad']);
+                        $add_grid_componente_formulaciones(elemento['id'],elemento['inv_prod_id'],elemento['codigo'],elemento['descripcion'],elemento['cantidad'],elemento['elemento']);
+                        
+                        sum_porciento = parseFloat(parseFloat(sum_porciento).toFixed(4)) + parseFloat(parseFloat(elemento['cantidad']).toFixed(4));
                         //Esto es para el numero de paso
                         $numero_pasos.val(elemento['nivel']);
                         $paso_actual.val(elemento['nivel']);
+                        
                     });
                     
                     $cantidad_calculo.val(sum_porciento);
@@ -1175,6 +1219,22 @@ $(function() {
                     $codigo_Productosaliente.val(entry['Formulas_DatosProductoSaliente']['0']['codigo']);
                     $descripcion_Productosaliente.val(entry['Formulas_DatosProductoSaliente']['0']['descripcion']);
                     //$hrer_buscar_Productosaliente.val();
+                    
+                    //tipo de producto que es la formula (prodTipos)
+                    $prod_tipo.children().remove();
+                    var prod_tipos_html = '';
+                    $.each(entry['prodTipos'],function(entryIndex,tipo){
+                        //alert(entry['Formulas']['0']['tipo_producto_id']+"   "+tipo['id']);
+                         if(tipo['id'] == entry['Formulas']['0']['tipo_producto_id']){
+                            prod_tipos_html += '<option value="' + tipo['id'] + '" selected="yes" >' + tipo['titulo'] + '</option>';
+                            
+                        }else{
+                            if(entry['Formulas']['0']['tipo_producto_id'] == 8){
+                                prod_tipos_html += '<option value="' + tipo['id'] + '" >' + tipo['titulo'] + '</option>';
+                            }
+                        }
+                    });
+                    $prod_tipo.append(prod_tipos_html);
                     
                 },"json");//termina llamada json
                 
