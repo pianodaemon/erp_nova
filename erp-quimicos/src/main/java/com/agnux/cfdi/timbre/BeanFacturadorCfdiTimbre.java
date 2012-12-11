@@ -272,8 +272,9 @@ public class BeanFacturadorCfdiTimbre {
                                 regimen_fiscal+"___"+
                                 metodo_pago+"___"+
                                 num_cuenta+"___"+
-                                lugar_de_expedicion+"___"+
-                                extra_data_array;
+                                lugar_de_expedicion;
+                        
+                        String retorno = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
                         
                         break;
                         
@@ -283,7 +284,7 @@ public class BeanFacturadorCfdiTimbre {
                         
                 }
             } else {
-                throw new Exception("Fallo al generar fichero xml: " + xml_file_name);
+                throw new Exception("Falló al generar fichero xml: " + xml_file_name);
             }
         } catch (Exception ex) {
             Logger.getLogger(BeanFacturadorCfdiTimbre.class.getName()).log(Level.SEVERE, null, ex);

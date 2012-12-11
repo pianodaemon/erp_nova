@@ -3214,7 +3214,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     +" WHERE erp_pagos.empresa_id=" +id_empresa + " "
                     + "AND erp_pagos_detalles.cancelacion=FALSE "+where
                     +" AND (to_char(erp_pagos.fecha_deposito,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
-                    +" ORDER BY erp_pagos.fecha_deposito;";
+                    +" ORDER BY cxc_clie.razon_social, erp_pagos.fecha_deposito;";
         
         System.out.println("getCobranzaDiaria:"+ sql_to_query);
         
