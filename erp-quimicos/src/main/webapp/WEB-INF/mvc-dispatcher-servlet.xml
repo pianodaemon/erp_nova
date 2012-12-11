@@ -126,7 +126,7 @@
         
         <bean name="beanFacturador" class="com.agnux.cfd.v2.BeanFacturador"></bean>
         <bean name="beanFacturadorCfdi" class="com.agnux.cfdi.BeanFacturadorCfdi"></bean>
-        <bean name="beanFacturadorCfdiTf" class="com.agnux.cfdi.BeanFacturadorCfdTf"></bean>
+        <bean name="beanFacturadorCfdiTf" class="com.agnux.cfdi.timbre.BeanFacturadorCfdiTimbre"></bean>
         <bean name="beanCancelaCfdi" class="com.agnux.cfdi.BeanCancelaCfdi"></bean>
         
         <!--
