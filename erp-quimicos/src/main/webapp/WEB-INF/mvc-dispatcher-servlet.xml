@@ -58,15 +58,6 @@
 	</bean>
         
         
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://localhost:5432/saar23112012" />
-	     <property name="username" value="ms" />
-	     <property name="password" value="ms" />
-	</bean>
-        -->
-        
         <!--Conexion a bd instance01 PRUEBA EN INTERNET es lo mismo para KATHION Y KEMIKAL-->
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -117,6 +108,15 @@
 	     <property name="url" value="jdbc:postgresql://localhost:5432/disnp" />
 	     <property name="username" value="disnp" />
 	     <property name="password" value="disnp" />
+	</bean>
+        -->
+        
+        <!--
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	     <property name="driverClassName" value="org.postgresql.Driver" />
+	     <property name="url" value="jdbc:postgresql://localhost:5432/tools" />
+	     <property name="username" value="tools" />
+	     <property name="password" value="tools" />
 	</bean>
         -->
         
