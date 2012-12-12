@@ -133,10 +133,10 @@ public class CfdiXmlBuilder {
         
 	public void configurarNodoConceptos(ArrayList<LinkedHashMap<String,String>> lista_de_conceptos) throws Exception {
 		Document tmp = this.getDoc();
-		Element element = tmp.createElement("Conceptos");
+		Element element = tmp.createElement("cfdi:Conceptos");
 		if (lista_de_conceptos.size() > 0){
 			for( LinkedHashMap<String,String> i : lista_de_conceptos ){
-				Element c = this.getDoc().createElement("Concepto");
+				Element c = this.getDoc().createElement("cfdi:Concepto");
 				@SuppressWarnings("rawtypes")
 				Iterator it = i.entrySet().iterator();
 				while (it.hasNext()) {
@@ -170,14 +170,14 @@ public class CfdiXmlBuilder {
         public void configurarImpuestos(ArrayList<LinkedHashMap<String,String>> lista_de_retenidos,ArrayList<LinkedHashMap<String,String>> lista_de_traslados){
 	//public void configurarImpuestos(String trans, String ret, String impuesto, String tasa){
 		Document tmp = this.getDoc();
-		Element root = tmp.createElement("Impuestos");
+		Element root = tmp.createElement("cfdi:Impuestos");
 		root.setAttribute("totalImpuestosRetenidos", "@SUMIMPUESTOS_RETENIDOS");
 		root.setAttribute("totalImpuestosTrasladados", "@SUMIMPUESTOS_TRASLADADOS" );
                 
-		Element child_1 = tmp.createElement("Retenciones");
+		Element child_1 = tmp.createElement("cfdi:Retenciones");
                 if (lista_de_retenidos.size() > 0){
                     for( LinkedHashMap<String,String> i : lista_de_retenidos ){
-                        Element child_1_1 = tmp.createElement("Retencion");
+                        Element child_1_1 = tmp.createElement("cfdi:Retencion");
                         
                         @SuppressWarnings("rawtypes")
 			Iterator it = i.entrySet().iterator();
@@ -196,10 +196,10 @@ public class CfdiXmlBuilder {
                 root.appendChild(child_1);
                 
                 
-		Element child_2 = tmp.createElement("Traslados");
+		Element child_2 = tmp.createElement("cfdi:Traslados");
                 if (lista_de_traslados.size() > 0){
                     for( LinkedHashMap<String,String> i : lista_de_traslados ){
-                        Element child_2_1 = tmp.createElement("Traslado");
+                        Element child_2_1 = tmp.createElement("cfdi:Traslado");
                         
                         @SuppressWarnings("rawtypes")
                         Iterator it = i.entrySet().iterator();

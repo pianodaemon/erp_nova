@@ -203,8 +203,8 @@ public class BeanFacturadorCfdiTimbre {
             
             String comprobante_firmado = this.generarComprobanteFirmado();
             
-            //hay que crear el parser
-            BeanFromCfdXml pop = new BeanFromCfdXml(comprobante_firmado.getBytes("UTF-8"));
+            //parser para el xml del cfdi
+            BeanFromCfdTimbreXml pop = new BeanFromCfdTimbreXml(comprobante_firmado.getBytes("UTF-8"));
             
             String xml_file_name = new String();
             String path_file = new String();
@@ -238,7 +238,16 @@ public class BeanFacturadorCfdiTimbre {
                 String lugar_de_expedicion = pop.getLugarExpedicion();
                 
                 String data_string="";
+                String no_aprobacion="";
+                String ano_aprobacion="";
                 
+                if(pop.getNoAprobacion()!=null ){
+                    no_aprobacion = pop.getNoAprobacion();
+                }
+                if(pop.getAnoAprobacion()!=null ){
+                    ano_aprobacion = pop.getAnoAprobacion();
+                }
+                        
                 switch (Proposito.valueOf(this.getProposito())) {
                     case FACTURA:
                         Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
@@ -253,7 +262,7 @@ public class BeanFacturadorCfdiTimbre {
                                 pop.getRfc_receptor()+"___"+
                                 pop.getSerie()+"___"+
                                 pop.getFolio()+"___"+
-                                pop.getNoAprobacion()+"___"+
+                                no_aprobacion+"___"+
                                 pop.getTotal()+"___"+
                                 pop.getTotalImpuestosTrasladados()+"___"+
                                 estado_comprobante+"___"+
@@ -262,7 +271,7 @@ public class BeanFacturadorCfdiTimbre {
                                 pop.getRazon_social_receptor()+"___"+
                                 pop.getTipoDeComprobante()+"___"+
                                 this.getProposito()+"___"+
-                                pop.getAnoAprobacion()+"___"+
+                                ano_aprobacion+"___"+
                                 cadena_conceptos+"___"+
                                 cadena_imp_trasladados+"___"+
                                 cadena_imp_retenidos+"___"+

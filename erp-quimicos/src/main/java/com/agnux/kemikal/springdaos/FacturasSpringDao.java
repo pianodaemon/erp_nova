@@ -1018,6 +1018,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + "erp_prefacturas_detalles.cantidad,"
                         + "erp_prefacturas_detalles.precio_unitario,"
                         + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
+                        + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) * valor_imp AS importe_impuesto, "
                         + "erp_prefacturas_detalles.valor_imp,"
                         + "erp_prefacturas.tasa_retencion_immex "
                 + "FROM erp_prefacturas "
