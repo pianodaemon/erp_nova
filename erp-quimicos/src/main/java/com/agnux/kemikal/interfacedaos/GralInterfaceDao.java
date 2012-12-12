@@ -20,6 +20,7 @@ public interface GralInterfaceDao {
     public String getCfdEmitidosDir();
     public String getCfdiSolicitudesDir();
     public String getXslDir();
+    public String getXsdDir();
     public String getTmpDir();
     public String getZebraDir();
     public String getZebraInDir();

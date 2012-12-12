@@ -55,12 +55,18 @@ public class GralSpringDao implements GralInterfaceDao{
         return ssldir;
     }
     
-    
     @Override
     public String getXslDir() {
-        String xsldir = System.getenv("HOME") + "/" + "resources" + "/"+"schemas" + "/";
+        String xsldir = System.getenv("HOME") + "/" + "resources" +"/"+"schemas" + "/"+"xsl" + "/";
         //System.out.println(xsldir);
         return xsldir;
+    }
+    
+    @Override
+    public String getXsdDir() {
+        String xsddir = System.getenv("HOME") + "/" + "resources" +"/"+"schemas" + "/"+"xsd" + "/";
+        //System.out.println(xsddir);
+        return xsddir;
     }
     
     @Override
@@ -185,7 +191,6 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     
     
-    
     @Override
     public String getPasswordLlavePrivada(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf.password_llave FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
@@ -193,6 +198,7 @@ public class GralSpringDao implements GralInterfaceDao{
         String password_llave_emisora = map_password_llave.get("password_llave").toString();
         return password_llave_emisora;
     }
+    
     
     @Override
     public String getFicheroXsl(Integer id_empresa, Integer id_sucursal) {

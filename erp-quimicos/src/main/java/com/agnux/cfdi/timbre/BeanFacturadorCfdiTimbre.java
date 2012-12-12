@@ -4,7 +4,6 @@
  */
 package com.agnux.cfdi.timbre;
 
-import com.agnux.cfd.v2.BeanFromCfdXml;
 import com.agnux.cfd.v2.CryptoEngine;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
@@ -197,7 +196,8 @@ public class BeanFacturadorCfdiTimbre {
     
     
     
-    public void start() {
+    public String start() {
+        String retorno="";
         
         try {
             
@@ -208,7 +208,7 @@ public class BeanFacturadorCfdiTimbre {
             
             String xml_file_name = new String();
             String path_file = new String();
-            
+            String ruta_fichero_schema="";
             //directorio para el fichero
             path_file = this.getGralDao().getCfdEmitidosDir() + this.getRfc_emisor();
             
@@ -218,86 +218,99 @@ public class BeanFacturadorCfdiTimbre {
             boolean fichero_xml_ok = FileHelper.createFileWithText(path_file, xml_file_name, comprobante_firmado);
             
             if (fichero_xml_ok) {
-                //Aqui va la rutina que mete los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
-                //De preferencia un store procedure....
                 
-                String cadena_conceptos = this.getFacdao().formar_cadena_conceptos(pop.getListaConceptos());
-                String cadena_imp_trasladados = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosTrasladados(),this.getTasaIva());
-                String cadena_imp_retenidos = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosRetenidos(),this.getTasaRetencion());
+                //Aquí inicia validación del xml con el Esquema(xsd)
+                validarXml validacion = new validarXml(path_file+"/"+xml_file_name, ruta_fichero_schema);
                 
-                Integer id_usuario = Integer.parseInt(this.getDatosExtras().get("usuario_id"));
-                String tipo_cambio = this.getTipoCambio();
-                String app_selected = this.getDatosExtras().get("app_selected");
-                String command_selected = this.getDatosExtras().get("command_selected");
-                String extra_data_array = this.getDatosExtras().get("extra_data_array");
-                
-                String estado_comprobante="1";
-                String regimen_fiscal = pop.getRegimenFiscalEmisor();
-                String metodo_pago = pop.getMetodoDePago();
-                String num_cuenta = pop.getNumeroCuenta();
-                String lugar_de_expedicion = pop.getLugarExpedicion();
-                
-                String data_string="";
-                String no_aprobacion="";
-                String ano_aprobacion="";
-                
-                if(pop.getNoAprobacion()!=null ){
-                    no_aprobacion = pop.getNoAprobacion();
-                }
-                if(pop.getAnoAprobacion()!=null ){
-                    ano_aprobacion = pop.getAnoAprobacion();
-                }
-                        
-                switch (Proposito.valueOf(this.getProposito())) {
-                    case FACTURA:
-                        Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
-                        String refacturar = this.getDatosExtras().get("refacturar");
-                        String id_moneda = this.getDatosExtras().get("moneda_id");
-                        
-                        data_string = 
-                                app_selected+"___"+
-                                command_selected+"___"+
-                                id_usuario+"___"+
-                                prefactura_id+"___"+
-                                pop.getRfc_receptor()+"___"+
-                                pop.getSerie()+"___"+
-                                pop.getFolio()+"___"+
-                                no_aprobacion+"___"+
-                                pop.getTotal()+"___"+
-                                pop.getTotalImpuestosTrasladados()+"___"+
-                                estado_comprobante+"___"+
-                                xml_file_name+"___"+
-                                pop.getFecha()+"___"+
-                                pop.getRazon_social_receptor()+"___"+
-                                pop.getTipoDeComprobante()+"___"+
-                                this.getProposito()+"___"+
-                                ano_aprobacion+"___"+
-                                cadena_conceptos+"___"+
-                                cadena_imp_trasladados+"___"+
-                                cadena_imp_retenidos+"___"+
-                                Integer.parseInt(id_moneda)+"___"+
-                                tipo_cambio+"___"+
-                                refacturar+"___"+
-                                regimen_fiscal+"___"+
-                                metodo_pago+"___"+
-                                num_cuenta+"___"+
-                                lugar_de_expedicion;
-                        
-                        String retorno = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
-                        
-                        break;
-                        
-                        
-                    case NOTA_CREDITO:
-                        break;
-                        
-                }
+                String success = validacion.validar();
+                    
+                    
+                    //Aqui va la rutina que mete los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
+                    //De preferencia un store procedure....
+                    
+                    String cadena_conceptos = this.getFacdao().formar_cadena_conceptos(pop.getListaConceptos());
+                    String cadena_imp_trasladados = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosTrasladados(),this.getTasaIva());
+                    String cadena_imp_retenidos = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosRetenidos(),this.getTasaRetencion());
+                    
+                    Integer id_usuario = Integer.parseInt(this.getDatosExtras().get("usuario_id"));
+                    String tipo_cambio = this.getTipoCambio();
+                    String app_selected = this.getDatosExtras().get("app_selected");
+                    String command_selected = this.getDatosExtras().get("command_selected");
+                    String extra_data_array = this.getDatosExtras().get("extra_data_array");
+                    
+                    String estado_comprobante="1";
+                    String regimen_fiscal = pop.getRegimenFiscalEmisor();
+                    String metodo_pago = pop.getMetodoDePago();
+                    String num_cuenta = pop.getNumeroCuenta();
+                    String lugar_de_expedicion = pop.getLugarExpedicion();
+                    
+                    String data_string="";
+                    String no_aprobacion="";
+                    String ano_aprobacion="";
+                    
+                    if(pop.getNoAprobacion()!=null ){
+                        no_aprobacion = pop.getNoAprobacion();
+                    }
+                    if(pop.getAnoAprobacion()!=null ){
+                        ano_aprobacion = pop.getAnoAprobacion();
+                    }
+                    
+                    switch (Proposito.valueOf(this.getProposito())) {
+                        case FACTURA:
+                            Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
+                            String refacturar = this.getDatosExtras().get("refacturar");
+                            String id_moneda = this.getDatosExtras().get("moneda_id");
+                            
+                            data_string = 
+                                    app_selected+"___"+
+                                    command_selected+"___"+
+                                    id_usuario+"___"+
+                                    prefactura_id+"___"+
+                                    pop.getRfc_receptor()+"___"+
+                                    pop.getSerie()+"___"+
+                                    pop.getFolio()+"___"+
+                                    no_aprobacion+"___"+
+                                    pop.getTotal()+"___"+
+                                    pop.getTotalImpuestosTrasladados()+"___"+
+                                    estado_comprobante+"___"+
+                                    xml_file_name+"___"+
+                                    pop.getFecha()+"___"+
+                                    pop.getRazon_social_receptor()+"___"+
+                                    pop.getTipoDeComprobante()+"___"+
+                                    this.getProposito()+"___"+
+                                    ano_aprobacion+"___"+
+                                    cadena_conceptos+"___"+
+                                    cadena_imp_trasladados+"___"+
+                                    cadena_imp_retenidos+"___"+
+                                    Integer.parseInt(id_moneda)+"___"+
+                                    tipo_cambio+"___"+
+                                    refacturar+"___"+
+                                    regimen_fiscal+"___"+
+                                    metodo_pago+"___"+
+                                    num_cuenta+"___"+
+                                    lugar_de_expedicion;
+                            
+                            String ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+                            
+                            break;
+                            
+                            
+                        case NOTA_CREDITO:
+                            break;
+                            
+                    }
+                    
+                    
             } else {
                 throw new Exception("Falló al generar fichero xml: " + xml_file_name);
             }
+            
+            
         } catch (Exception ex) {
             Logger.getLogger(BeanFacturadorCfdiTimbre.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        return retorno;
     }
     
     
