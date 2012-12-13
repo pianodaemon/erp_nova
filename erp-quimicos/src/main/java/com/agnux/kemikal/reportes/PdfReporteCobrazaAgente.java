@@ -276,7 +276,7 @@ public final class PdfReporteCobrazaAgente {
                                    cell.setBorder(0);
                                    tabla.addCell(cell);
 
-                                   cell= new PdfPCell(new Paragraph((String)registro.get("numero_dias"),smallFont));
+                                   cell= new PdfPCell(new Paragraph((String)registro.get("numero_dias_pago"),smallFont));
                                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
                                    cell.setBorder(0);
                                    tabla.addCell(cell);
@@ -334,7 +334,7 @@ public final class PdfReporteCobrazaAgente {
                                    cell.setBorder(0);
                                    tabla.addCell(cell);
                                    
-                                   cell= new PdfPCell(new Paragraph((String)registro.get("numero_dias"),smallFont));
+                                   cell= new PdfPCell(new Paragraph((String)registro.get("numero_dias_pago"),smallFont));
                                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
                                    cell.setBorder(0);
                                    tabla.addCell(cell);
@@ -477,7 +477,7 @@ public final class PdfReporteCobrazaAgente {
                               cell.setBorder(0);
                               tabla.addCell(cell);
                               
-                              cell= new PdfPCell(new Paragraph((String)registro.get("numero_dias"),smallFont));
+                              cell= new PdfPCell(new Paragraph((String)registro.get("numero_dias_pago"),smallFont));
                               cell.setHorizontalAlignment (Element.ALIGN_CENTER);
                               cell.setBorder(0);
                               tabla.addCell(cell);
