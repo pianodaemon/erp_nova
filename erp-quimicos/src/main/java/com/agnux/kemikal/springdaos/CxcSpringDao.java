@@ -1874,7 +1874,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                       +"JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id  "
                       +"WHERE erp_h_facturas.pagado=true "+where+" "
                       +"AND to_char(erp_h_facturas.fecha_ultimo_pago,'yyyymmdd')::integer between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer  "
-                      +"AND erp_h_facturas.empresa_id="+id_empresa+" order by nombre_agente asc,moneda_factura, serie_folio asc "//order by numero_agente,moneda_factura asc "
+                      +"AND erp_h_facturas.empresa_id="+id_empresa+" order by nombre_agente asc,moneda_factura, numero_dias_pago asc "//order by nombre_agente asc,moneda_factura, serie_folio asc
               +")AS sbt ";
         
         
