@@ -37,6 +37,7 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getSubProcesos(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getTiposEquipos(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getDocumentos(String cadena);
+    public ArrayList<HashMap<String, String>> getInstrumentos(Integer id_empresa);
     
     public ArrayList<HashMap<String, String>> getFormulasByProd(String id_prod,Integer emp_id);//add por paco
     

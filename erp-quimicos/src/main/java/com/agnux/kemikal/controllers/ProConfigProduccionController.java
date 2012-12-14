@@ -298,18 +298,6 @@ public class ProConfigProduccionController {
             datosSubProEspecificaciones = this.getProDao().getAllProSubprocesoEspecificaciones(id);
             //datosGrid = this.getInvDao().getEntradas_DatosGrid(id);
         }
-        //valorIva= this.getCdao().getValoriva();
-        
-        //monedas = this.getInvDao().getEntradas_Monedas();
-        //impuestos = this.getInvDao().getEntradas_Impuestos();
-        //tasaFletes = this.getInvDao().getEntradas_TasaFletes();
-        /*87
-        jsonretorno.put("datosGrid", datosGrid);
-        jsonretorno.put("datosEntrada", datosEntrada);
-        jsonretorno.put("datosProveedor", datosProveedor);
-        jsonretorno.put("Monedas", monedas);
-        jsonretorno.put("Impuestos", impuestos);
-        jsonretorno.put("tasaFletes", tasaFletes);*/
         
         Integer app_selected = 69;//para el biscador de formulas
         String descripcion = "%%";
@@ -326,6 +314,7 @@ public class ProConfigProduccionController {
         jsonretorno.put("datosSubProProd", datosSubProProd);
         jsonretorno.put("SubProcesos", this.getProDao().getSubProcesos(id_empresa));
         jsonretorno.put("Maquinas", this.getProDao().getTiposEquipos(id_empresa));
+        jsonretorno.put("Instrumentos", this.getProDao().getInstrumentos(id_empresa));
         
         return jsonretorno;
     }

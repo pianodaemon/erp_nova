@@ -240,7 +240,7 @@ public class ProOrdenProduccionController {
         jsonretorno.put("Orden", datosOrden);
         jsonretorno.put("OrdenDet", datosOrdenDet);
         jsonretorno.put("ordenTipos", this.getProDao().getProOrdenTipos(id_empresa));
-        
+        jsonretorno.put("Instrumentos", this.getProDao().getInstrumentos(id_empresa));
         return jsonretorno;
     }
     

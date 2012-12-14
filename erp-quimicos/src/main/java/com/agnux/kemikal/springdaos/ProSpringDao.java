@@ -1126,8 +1126,11 @@ public class ProSpringDao implements ProInterfaceDao{
         String sql_to_query = "select id,fineza_inicial,viscosidads_inicial,viscosidadku_inicial,viscosidadcps_inicial,densidad_inicial,volatiles_inicial,"
                 + "hidrogeno_inicial,cubriente_inicial,tono_inicial,brillo_inicial,dureza_inicial,adherencia_inicial,"
                 +" fineza_final,viscosidads_final,viscosidadku_final,viscosidadcps_final,densidad_final,volatiles_final,"
-                + "hidrogeno_final,cubriente_final,tono_final,brillo_final,dureza_final,adherencia_final,"
-                + "pro_subproceso_prod_id from pro_proc_esp where pro_proceso_id="+id;
+                + "hidrogeno_final,cubriente_final,tono_final,brillo_final,dureza_final,adherencia_final, "
+                + "pro_subproceso_prod_id,  pro_instrumentos_fineza, pro_instrumentos_viscosidad1, pro_instrumentos_viscosidad2,"
+                + "pro_instrumentos_viscosidad3, pro_instrumentos_densidad, pro_instrumentos_volatil, pro_instrumentos_cubriente,"
+                + "pro_instrumentos_tono, pro_instrumentos_brillo, pro_instrumentos_dureza, pro_instrumentos_adherencia, "
+                + "pro_instrumentos_hidrogeno from pro_proc_esp where pro_proceso_id="+id;
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1163,6 +1166,21 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("dureza_final",rs.getString("dureza_final"));
                     row.put("adherencia_final",String.valueOf(rs.getDouble("adherencia_final")));
                     row.put("pro_subproceso_prod_id",String.valueOf(rs.getInt("pro_subproceso_prod_id")));
+                    
+                    //put para los instrumentos
+                    row.put("pro_instrumentos_fineza",String.valueOf(rs.getInt("pro_instrumentos_fineza")));
+                    row.put("pro_instrumentos_viscosidad1",String.valueOf(rs.getInt("pro_instrumentos_viscosidad1")));
+                    row.put("pro_instrumentos_viscosidad2",String.valueOf(rs.getInt("pro_instrumentos_viscosidad2")));
+                    row.put("pro_instrumentos_viscosidad3",String.valueOf(rs.getInt("pro_instrumentos_viscosidad3")));
+                    row.put("pro_instrumentos_densidad",String.valueOf(rs.getInt("pro_instrumentos_densidad")));
+                    row.put("pro_instrumentos_volatil",String.valueOf(rs.getInt("pro_instrumentos_volatil")));
+                    row.put("pro_instrumentos_cubriente",String.valueOf(rs.getInt("pro_instrumentos_cubriente")));
+                    row.put("pro_instrumentos_tono",String.valueOf(rs.getInt("pro_instrumentos_tono")));
+                    row.put("pro_instrumentos_brillo",String.valueOf(rs.getInt("pro_instrumentos_brillo")));
+                    row.put("pro_instrumentos_dureza",String.valueOf(rs.getInt("pro_instrumentos_dureza")));
+                    row.put("pro_instrumentos_adherencia",String.valueOf(rs.getInt("pro_instrumentos_adherencia")));
+                    row.put("pro_instrumentos_hidrogeno",String.valueOf(rs.getInt("pro_instrumentos_hidrogeno")));
+                    
                     
                     return row;
                 }
@@ -1201,6 +1219,26 @@ public class ProSpringDao implements ProInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getSubProcesos(Integer id_empresa) {
 	String sql_query = "select id ,titulo from pro_subprocesos where gral_emp_id="+id_empresa+" AND borrado_logico=FALSE;";
+        ArrayList<HashMap<String, String>> hm_alm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm_alm;
+    }
+    
+    
+    //obtiene los instrumentos de medicion
+    @Override
+    public ArrayList<HashMap<String, String>> getInstrumentos(Integer id_empresa) {
+	String sql_query = "select id ,titulo from pro_instrumentos where gral_emp_id="+id_empresa+" and borrado_logico=FALSE;";
         ArrayList<HashMap<String, String>> hm_alm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -4032,22 +4070,8 @@ public class ProSpringDao implements ProInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getProOrden_EspecificacionesDetalle(Integer id) {
+        
         /*
-        String sql_to_query = "select tmp_det_orden.id,tmp_det_orden.pro_orden_prod_id, tmp_det_orden.cantidad, tmp_det_orden.num_lote, "
-                + "tmp_det_orden.pro_subprocesos_id,pro_subprocesos.titulo as subproceso, tmp_det_orden.inv_prod_id,inv_prod.sku, "
-                + "inv_prod.descripcion, esp.id as id_esp,esp.fineza_inicial, esp.viscosidads_inicial,esp.viscosidadku_inicial,"
-                + "esp.viscosidadcps_inicial,esp.densidad_inicial,esp.volatiles_inicial,esp.hidrogeno_inicial,esp.cubriente_inicial,"
-                + "esp.tono_inicial,esp.brillo_inicial,esp.dureza_inicial,esp.adherencia_inicial,esp.fineza_final,esp.viscosidads_final,"
-                + "esp.viscosidadku_final,esp.viscosidadcps_final,esp.densidad_final,esp.volatiles_final,esp.hidrogeno_final,"
-                + "esp.cubriente_final,esp.tono_final,esp.brillo_final,esp.dureza_final,esp.adherencia_final "
-                + "from ("
-                + "select id, pro_orden_prod_id,num_lote, cantidad,pro_subprocesos_id, inv_prod_id,gral_empleados_id, pro_equipos_id, "
-                + "pro_equipos_adic_id  from "
-                + "pro_orden_prod_det where pro_orden_prod_id="+id+" "
-                + ") as tmp_det_orden  left join pro_subprocesos on  pro_subprocesos.id=tmp_det_orden.pro_subprocesos_id "
-                + "left join inv_prod on inv_prod.id=tmp_det_orden.inv_prod_id "
-                + "left join pro_orden_prod_subp_esp as esp on esp.pro_orden_prod_det_id=tmp_det_orden.id;";
-        */
         String sql_to_query = "select tmp_det_orden.id,tmp_det_orden.pro_orden_prod_id, tmp_det_orden.cantidad, tmp_det_orden.num_lote,"
                 + "tmp_det_orden.pro_subprocesos_id,pro_subprocesos.titulo as subproceso, tmp_det_orden.inv_prod_id,inv_prod.sku, "
                 + "inv_prod.descripcion, esp.id as id_esp, "
@@ -4088,6 +4112,38 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "left join inv_prod on inv_prod.id=tmp_det_orden.inv_prod_id "
                 + "left JOIN inv_prod_unidades as inv_unid ON inv_unid.id=tmp_det_orden.unidad_id "
                 + "left join pro_orden_prod_subp_esp as esp on esp.pro_orden_prod_det_id=tmp_det_orden.id;";
+        */
+        
+        String sql_to_query = "select tmp_det_orden.id,tmp_det_orden.pro_orden_prod_id, tmp_det_orden.cantidad, tmp_det_orden.num_lote,"
+                + "tmp_det_orden.pro_subprocesos_id,pro_subprocesos.titulo as subproceso, tmp_det_orden.inv_prod_id,inv_prod.sku, "
+                + "inv_prod.descripcion, esp.id as id_esp, "
+                + "(CASE WHEN esp.fineza_inicial is null THEN -1 ELSE esp.fineza_inicial END) as fineza_inicial, "
+                + "(CASE WHEN esp.viscosidads_inicial is null THEN -1 ELSE esp.viscosidads_inicial END) as viscosidads_inicial, "
+                + "(CASE WHEN esp.viscosidadku_inicial is null THEN -1 ELSE esp.viscosidadku_inicial END) as viscosidadku_inicial, "
+                + "(CASE WHEN esp.viscosidadcps_inicial is null THEN -1 ELSE esp.viscosidadcps_inicial END) as viscosidadcps_inicial, "
+                + "(CASE WHEN esp.densidad_inicial is null THEN -1 ELSE esp.densidad_inicial END) as densidad_inicial,"
+                + "(CASE WHEN esp.volatiles_inicial is null THEN -1 ELSE esp.volatiles_inicial END) as volatiles_inicial, "
+                + "(CASE WHEN esp.hidrogeno_inicial is null THEN -1 ELSE esp.hidrogeno_inicial END) as hidrogeno_inicial, "
+                + "(CASE WHEN esp.cubriente_inicial is null THEN -1 ELSE esp.cubriente_inicial END) as cubriente_inicial, "
+                + "(CASE WHEN esp.tono_inicial is null THEN -1 ELSE esp.tono_inicial END) as tono_inicial, "
+                + "(CASE WHEN esp.brillo_inicial is null THEN -1 ELSE esp.brillo_inicial END) as brillo_inicial,"
+                + "(CASE WHEN esp.dureza_inicial is null THEN 'N.A.' ELSE esp.dureza_inicial END) as dureza_inicial, "
+                + "(CASE WHEN esp.adherencia_inicial is null THEN -1 ELSE esp.adherencia_inicial END) as adherencia_inicial, "
+                + "esp.pro_instrumentos_fineza,esp.pro_instrumentos_viscosidad1,esp.pro_instrumentos_viscosidad2,"
+                + "esp.pro_instrumentos_viscosidad3,esp.pro_instrumentos_densidad,esp.pro_instrumentos_volatil,"
+                + "esp.pro_instrumentos_cubriente,esp.pro_instrumentos_tono,esp.pro_instrumentos_brillo,esp.pro_instrumentos_dureza,"
+                + "esp.pro_instrumentos_adherencia,esp.pro_instrumentos_hidrogeno,"
+                + "inv_unid.titulo as unidad, tmp_det_orden.unidad_id, tmp_det_orden.densidad, "
+                + "(select count(inv_osal.id) as cantidad from ( select inv_osal_id from pro_ordenprod_invosal where pro_orden_prod_id="+id+" "
+                + ") as tmp_ord_prod join inv_osal on inv_osal.id=tmp_ord_prod.inv_osal_id "
+                + "where inv_osal.estatus=1 OR inv_osal.estatus=2) as cantidad_salida "
+                + "from (select id, pro_orden_prod_id,num_lote, cantidad,pro_subprocesos_id, inv_prod_id,gral_empleados_id, "
+                + "pro_equipos_id, pro_equipos_adic_id, unidad_id,densidad from pro_orden_prod_det where pro_orden_prod_id="+id+" "
+                + ") as tmp_det_orden "
+                + "left join pro_subprocesos on  pro_subprocesos.id=tmp_det_orden.pro_subprocesos_id "
+                + "left join inv_prod on inv_prod.id=tmp_det_orden.inv_prod_id "
+                + "left JOIN inv_prod_unidades as inv_unid ON inv_unid.id=tmp_det_orden.unidad_id "
+                + "left join pro_orden_prod_subp_esp as esp on esp.pro_orden_prod_det_id=tmp_det_orden.id;";
         
         System.out.println("Ejecutando query de: "+ sql_to_query);
         
@@ -4122,6 +4178,8 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("brillo_inicial",String.valueOf(rs.getDouble("brillo_inicial")));
                     row.put("dureza_inicial",rs.getString("dureza_inicial"));
                     row.put("adherencia_inicial",String.valueOf(rs.getDouble("adherencia_inicial")));
+                    
+                    /*
                     row.put("fineza_final",String.valueOf(rs.getInt("fineza_final")));
                     row.put("viscosidads_final",String.valueOf(rs.getInt("viscosidads_final")));
                     row.put("viscosidadku_final",String.valueOf(rs.getDouble("viscosidadku_final")));
@@ -4134,6 +4192,21 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("brillo_final",String.valueOf(rs.getDouble("brillo_final")));
                     row.put("dureza_final",rs.getString("dureza_final"));
                     row.put("adherencia_final",String.valueOf(rs.getDouble("adherencia_final")));
+                    */
+                    row.put("pro_instrumentos_fineza",String.valueOf(rs.getInt("pro_instrumentos_fineza")));
+                    row.put("pro_instrumentos_viscosidad1",String.valueOf(rs.getInt("pro_instrumentos_viscosidad1")));
+                    row.put("pro_instrumentos_viscosidad2",String.valueOf(rs.getInt("pro_instrumentos_viscosidad2")));
+                    row.put("pro_instrumentos_viscosidad3",String.valueOf(rs.getInt("pro_instrumentos_viscosidad3")));
+                    row.put("pro_instrumentos_densidad",String.valueOf(rs.getInt("pro_instrumentos_densidad")));
+                    row.put("pro_instrumentos_volatil",String.valueOf(rs.getInt("pro_instrumentos_volatil")));
+                    row.put("pro_instrumentos_cubriente",String.valueOf(rs.getInt("pro_instrumentos_cubriente")));
+                    row.put("pro_instrumentos_tono",String.valueOf(rs.getInt("pro_instrumentos_tono")));
+                    row.put("pro_instrumentos_brillo",String.valueOf(rs.getInt("pro_instrumentos_brillo")));
+                    row.put("pro_instrumentos_dureza",String.valueOf(rs.getInt("pro_instrumentos_dureza")));
+                    row.put("pro_instrumentos_adherencia",String.valueOf(rs.getInt("pro_instrumentos_adherencia")));
+                    row.put("pro_instrumentos_hidrogeno",String.valueOf(rs.getInt("pro_instrumentos_hidrogeno")));
+                    
+                    
                     row.put("cantidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad")),4));
                     row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")),4));
                     row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
