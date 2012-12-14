@@ -79,6 +79,7 @@ $(function() {
 	var array_subprocesos_disponibles = new Array(); //este arreglo carga los procesos disponibles
 	var array_subprocesos_seleccionados = new Array(); //este arreglo carga los procesos seleccionados
         var array_maquinas = new Array(); //este arreglo carga la maquinas
+        var array_instrumentos = new Array(); //este arreglo carga los procesos disponibles
         
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
@@ -1581,7 +1582,7 @@ $(function() {
             //var $dialogoc.prependTo('#forma-buscaproduct-window');
             $dialogoc.append($('div.panel_especificacoines').find('table.forma_especificacoines').clone());
             
-            $('#forma-especificaciones-window').css({"margin-left": -200, 	"margin-top": -100});
+            $('#forma-especificaciones-window').css({"margin-left": -250, 	"margin-top": -100});
             
             /*campos para las especificaciones*/
             var $campo_fineza = $('#forma-especificaciones-window').find('input[name=fineza]');
@@ -1609,6 +1610,21 @@ $(function() {
             var $campo_dureza1 = $('#forma-especificaciones-window').find('input[name=dureza1]');
             var $campo_adherencia1 = $('#forma-especificaciones-window').find('input[name=adherencia1]');
             var $campo_hidrogeno1 = $('#forma-especificaciones-window').find('input[name=hidrogeno1]');
+            
+            
+            var $select_inst_fineza = $('#forma-especificaciones-window').find('select[name=inst_fineza]');
+            var $select_inst_viscosidad1 = $('#forma-especificaciones-window').find('select[name=inst_viscosidad1]');
+            var $select_inst_viscosidad2 = $('#forma-especificaciones-window').find('select[name=inst_viscosidad2]');
+            var $select_inst_viscosidad3 = $('#forma-especificaciones-window').find('select[name=inst_viscosidad3]');
+            var $select_inst_densidad = $('#forma-especificaciones-window').find('select[name=inst_densidad]');
+            var $select_inst_volatil = $('#forma-especificaciones-window').find('select[name=inst_volatil]');
+            var $select_inst_cubriente = $('#forma-especificaciones-window').find('select[name=inst_cubriente]');
+            var $select_inst_tono = $('#forma-especificaciones-window').find('select[name=inst_tono]');
+            var $select_inst_brillo = $('#forma-especificaciones-window').find('select[name=inst_brillo]');
+            var $select_inst_dureza = $('#forma-especificaciones-window').find('select[name=inst_dureza]');
+            var $select_inst_adherencia = $('#forma-especificaciones-window').find('select[name=inst_adherencia]');
+            var $select_inst_hidrogeno = $('#forma-especificaciones-window').find('select[name=inst_hidrogeno]');
+            
             
             var $aceptar_acepta_especificacaiones = $('#forma-especificaciones-window').find('#acepta_especificacaiones');
             var $cancelar_cencela_especificacaiones = $('#forma-especificaciones-window').find('#cencela_especificacaiones');
@@ -1644,6 +1660,295 @@ $(function() {
                 $campo_adherencia1.val($convierte_numero_caracter($campos_espliteados[22]));
                 $campo_hidrogeno1.val($convierte_numero_caracter($campos_espliteados[23]));
                 
+                //alert($campos_espliteados[24]);
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_fineza.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == parseInt($campos_espliteados[24])){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'"  selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[-- --]</option>';
+                }
+                $select_inst_fineza.append($html_subprocesos);
+                
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_viscosidad1.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[25]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_viscosidad1.append($html_subprocesos);
+                
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_viscosidad2.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[26]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_viscosidad2.append($html_subprocesos);
+                
+                
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_viscosidad3.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[27]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_viscosidad3.append($html_subprocesos);
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_densidad.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[28]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_densidad.append($html_subprocesos);
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_volatil.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[29]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_volatil.append($html_subprocesos);
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_cubriente.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[30]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_cubriente.append($html_subprocesos);
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_tono.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[31]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_tono.append($html_subprocesos);
+                
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_brillo.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[32]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_brillo.append($html_subprocesos);
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_dureza.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[33]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_dureza.append($html_subprocesos);
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_adherencia.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[34]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_adherencia.append($html_subprocesos);
+                
+                
+                $html_subprocesos = "";
+                encontrado = 0;
+                $select_inst_hidrogeno.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    if(instrumento['id'] == $campos_espliteados[35]){
+                        encontrado = 1;
+                        $html_subprocesos += '<option value="'+instrumento['id']+'" selected="yes">'+instrumento['titulo']+'</option>';
+                    }else{
+                        $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                    }
+                });
+                if(encontrado == 0){
+                    $html_subprocesos += '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                }
+                $select_inst_hidrogeno.append($html_subprocesos);
+                
+                
+            }else{
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_fineza.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_fineza.append($html_subprocesos);
+                
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_viscosidad1.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_viscosidad1.append($html_subprocesos);
+                
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_viscosidad2.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_viscosidad2.append($html_subprocesos);
+                
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_viscosidad3.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_viscosidad3.append($html_subprocesos);
+                
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_densidad.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_densidad.append($html_subprocesos);
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_volatil.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_volatil.append($html_subprocesos);
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_cubriente.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_cubriente.append($html_subprocesos);
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_tono.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_tono.append($html_subprocesos);
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_brillo.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_brillo.append($html_subprocesos);
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_dureza.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_dureza.append($html_subprocesos);
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_adherencia.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_adherencia.append($html_subprocesos);
+                
+                $html_subprocesos = '<option value="0"  selected="yes">[--Instrumento--]</option>';
+                $select_inst_hidrogeno.children().remove();
+                $.each(array_instrumentos,function(entryIndex,instrumento){
+                    $html_subprocesos += '<option value="'+instrumento['id']+'">'+instrumento['titulo']+'</option>';
+                });
+                $select_inst_hidrogeno.append($html_subprocesos);
+                
             }
             
             $aceptar_acepta_especificacaiones.click(function(event){
@@ -1670,8 +1975,13 @@ $(function() {
                     
                     $cadeana_retorno += $convierte_caracter_numero($campo_fineza1.val())+"&&&"+$convierte_caracter_numero($campo_viscosidad11.val())+"&&&"+$convierte_caracter_numero($campo_viscosidad21.val())+"&&&";
                     $cadeana_retorno += $convierte_caracter_numero($campo_viscosidad31.val())+"&&&"+$convierte_caracter_numero($campo_densidad1.val())+"&&&"+$convierte_caracter_numero($campo_volatil1.val())+"&&&"+$convierte_caracter_numero($campo_cubriente1.val())+"&&&"+$convierte_caracter_numero($campo_tono1.val())+"&&&";
-                    $cadeana_retorno += $convierte_caracter_numero($campo_brillo1.val())+"&&&"+$campo_dureza1.val()+"&&&"+$convierte_caracter_numero($campo_adherencia1.val())+"&&&"+$convierte_caracter_numero($campo_hidrogeno1.val());
+                    $cadeana_retorno += $convierte_caracter_numero($campo_brillo1.val())+"&&&"+$campo_dureza1.val()+"&&&"+$convierte_caracter_numero($campo_adherencia1.val())+"&&&"+$convierte_caracter_numero($campo_hidrogeno1.val())+"&&&";
                     
+                    //for instruments (add instruments at the string)
+                    $cadeana_retorno += $select_inst_fineza.val()+"&&&"+$select_inst_viscosidad1.val()+"&&&"+$select_inst_viscosidad2.val()+"&&&";
+                    $cadeana_retorno += $select_inst_viscosidad3.val()+"&&&"+$select_inst_densidad.val()+"&&&"+$select_inst_volatil.val()+"&&&";
+                    $cadeana_retorno += $select_inst_cubriente.val()+"&&&"+$select_inst_tono.val()+"&&&"+$select_inst_brillo.val()+"&&&";
+                    $cadeana_retorno += $select_inst_dureza.val()+"&&&"+$select_inst_adherencia.val()+"&&&"+$select_inst_hidrogeno.val();
                     
                     var remove = function() {$(this).remove();};
                     $('#forma-especificaciones-overlay').fadeOut(remove);
@@ -2046,13 +2356,11 @@ $(function() {
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 					};
                 
-                
 		var $id_proceso = $('#forma-proconfigproduccion-window').find('input[name=id_proceso]');
 		var $titulo = $('#forma-proconfigproduccion-window').find('input[name=titulo]');
 		var $id_producto = $('#forma-proconfigproduccion-window').find('input[name=id_producto]');
 		var $sku = $('#forma-proconfigproduccion-window').find('input[name=sku]');
 		var $descripcion = $('#forma-proconfigproduccion-window').find('input[name=descripcion]');
-		
 		
 		//grids
 		var $sub_procesos = $('#forma-proconfigproduccion-window').find('#sub_procesos');
@@ -2152,6 +2460,7 @@ $(function() {
                     
                     array_subprocesos_disponibles = entry['SubProcesos'];
                     array_maquinas = entry['Maquinas'];
+                    array_instrumentos = entry['Instrumentos'];
                     array_subprocesos_seleccionados = null;
                     
                     $alimenta_grid_subprocesos();
@@ -2375,6 +2684,7 @@ $(function() {
                                     
                                     array_subprocesos_disponibles = entry['SubProcesos'];
                                     array_maquinas = entry['Maquinas'];
+                                    array_instrumentos = entry['Instrumentos'];
                                     array_subprocesos_seleccionados = null;
                                     
                                     $alimenta_grid_subprocesos();
@@ -2409,6 +2719,18 @@ $(function() {
                                                    $cadena_especificaciones += proEsp['fineza_final']+"&&&"+proEsp['viscosidads_final']+"&&&"+proEsp['viscosidadku_final']+"&&&";
                                                    $cadena_especificaciones += proEsp['viscosidadcps_final']+"&&&"+proEsp['densidad_final']+"&&&"+proEsp['volatiles_final']+"&&&"+proEsp['cubriente_final']+"&&&"+proEsp['tono_final']+"&&&";
                                                    $cadena_especificaciones += proEsp['brillo_final']+"&&&"+proEsp['dureza_final']+"&&&"+proEsp['adherencia_final']+"&&&"+proEsp['hidrogeno_final']+"&&&";
+                                                   
+                                                   
+                                                   //$cadena_especificaciones += proEsp['fineza_final']+"&&&"+proEsp['viscosidads_final']+"&&&"+proEsp['viscosidadku_final']+"&&&";
+                                                   //$cadena_especificaciones += proEsp['viscosidadcps_final']+"&&&"+proEsp['densidad_final']+"&&&"+proEsp['volatiles_final']+"&&&"+proEsp['cubriente_final']+"&&&"+proEsp['tono_final']+"&&&";
+                                                   //$cadena_especificaciones += proEsp['brillo_final']+"&&&"+proEsp['dureza_final']+"&&&"+proEsp['adherencia_final']+"&&&"+proEsp['hidrogeno_final']+"&&&";
+                                                   
+                                                   //for instruments (add instruments at the string)
+                                                   $cadena_especificaciones += proEsp['pro_instrumentos_fineza']+"&&&"+proEsp['pro_instrumentos_viscosidad1']+"&&&"+proEsp['pro_instrumentos_viscosidad2']+"&&&";
+                                                   $cadena_especificaciones += proEsp['pro_instrumentos_viscosidad3']+"&&&"+proEsp['pro_instrumentos_densidad']+"&&&"+proEsp['pro_instrumentos_volatil']+"&&&";
+                                                   $cadena_especificaciones += proEsp['pro_instrumentos_cubriente']+"&&&"+proEsp['pro_instrumentos_tono']+"&&&"+proEsp['pro_instrumentos_brillo']+"&&&";
+                                                   $cadena_especificaciones += proEsp['pro_instrumentos_dureza']+"&&&"+proEsp['pro_instrumentos_adherencia']+"&&&"+proEsp['pro_instrumentos_hidrogeno']+"&&&";
+                                                   
                                                }
                                                //pro_subproceso_prod_id
                                             });
