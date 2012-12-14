@@ -663,149 +663,196 @@
 				<div class="especificacoines_div_two">
 					<table width="100%" border="0">
 						<thead>
-							<tr>
-								<td colspan="8" height="50" valign="top"><div class="titulo_especificacoines" width="100%"><strong>Especificaciones</strong></div></td>
-							</tr>
+                                                    <tr>
+                                                        <td colspan="8" height="50" valign="top"><div class="titulo_especificacoines" width="100%"><strong>Especificaciones</strong></div></td>
+                                                    </tr>
 						</thead>
 						
 						<tbody>
 							<tr>
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff;"></td>
-								<td colspan="4" style="background:#ffffff;" width="660px">
+								<td colspan="4" style="background:#ffffff;" width="750px">
 									
 									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
 										<tr>
-                                                                                    <td colspan="6"  height="10"></td>
+                                                                                    <td colspan="9"  height="10"></td>
 										</tr>
 										<tr>
                                                                                     <td width="70">Fineza </td>
-                                                                                    <td  align="right" width="100px">
+                                                                                    <td  align="right" width="110px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="fineza" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="fineza1" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="110">Micras</td>
-                                                                                    <td width="160">Viscosidad </td>
+                                                                                    <td width="40">Micras</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_fineza" id="inst_fineza" style="width:100px;" ></select>
+                                                                                    </td>
+                                                                                    <td width="40">&nbsp;</td>
+                                                                                    <td width="90">Viscosidad </td>
                                                                                     <td  align="right"  width="100px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="viscosidad1" style="width:30px;"  value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="viscosidad11" style="width:30px;"  value="N.A.">
                                                                                     </td>
-                                                                                    <td width="90">Segundos</td>
+                                                                                    <td width="40">Segundos</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_viscosidad1" id="inst_viscosidad1" style="width:100px;" ></select>
+                                                                                    </td>
 										</tr>
                                                                                 <tr>
-                                                                                    <td colspan="6"  height="10"></td>
+                                                                                    <td colspan="9"  height="10"></td>
 										</tr>
 										<tr>
                                                                                     <td width="70">Viscosidad</td>
-                                                                                    <td  align="right" width="100px">
+                                                                                    <td  align="right" width="110px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="viscosidad2" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="viscosidad21" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="110">KU</td>
-                                                                                    <td width="160">Viscosidad</td>
+                                                                                    <td width="40">KU</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_viscosidad2" id="inst_viscosidad2" style="width:100px;" ></select>
+                                                                                    </td>
+                                                                                    <td width="40">&nbsp;</td>
+                                                                                    
+                                                                                    <td width="90">Viscosidad</td>
                                                                                     <td  align="right"  width="100px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="viscosidad3" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="viscosidad31" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="90">CPS</td>
+                                                                                    <td width="40">CPS</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_viscosidad3" id="inst_viscosidad3" style="width:100px;" ></select>
+                                                                                    </td>
 										</tr>
                                                                                 <tr>
-											<td colspan="6"  height="10"></td>
+											<td colspan="9"  height="10"></td>
 										</tr>
                                                                                 <tr>
                                                                                     <td width="70">Densidad</td>
-                                                                                    <td  align="right" width="100px">
+                                                                                    <td  align="right" width="110px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="densidad" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="densidad1" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="110">Kg/L</td>
-                                                                                    <td width="160">% No Vol&aacute;tiles</td>
+                                                                                    <td width="40">Kg/L</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_densidad" id="inst_densidad" style="width:100px;" ></select>
+                                                                                    </td>
+                                                                                    <td width="40">&nbsp;</td>
+                                                                                    
+                                                                                    <td width="90">% No Vol&aacute;tiles</td>
                                                                                     <td  align="right"  width="100px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="volatil" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="volatil1" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="90">%</td>
+                                                                                    <td width="40">%</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_volatil" id="inst_volatil" style="width:100px;" ></select>
+                                                                                    </td>
 										</tr>
                                                                                 <tr>
-											<td colspan="6"  height="10"></td>
+											<td colspan="9"  height="10"></td>
 										</tr>
                                                                                 <tr>
                                                                                     <td width="70">Cubriente  </td>
-                                                                                    <td  align="right" width="100px">
+                                                                                    <td  align="right" width="110px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="cubriente" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="cubriente1" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="110">%</td>
-                                                                                    <td width="160">Tono </td>
+                                                                                    <td width="40">%</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_cubriente" id="inst_cubriente" style="width:100px;" ></select>
+                                                                                    </td>
+                                                                                    <td width="40">&nbsp;</td>
+                                                                                    
+                                                                                    <td width="90">Tono </td>
                                                                                     <td  align="right"  width="100px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="tono" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="tono1" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="90">No aplica</td>
+                                                                                    <td width="40">No aplica</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_tono" id="inst_tono" style="width:100px;" ></select>
+                                                                                    </td>
 										</tr>
                                                                                  <tr>
-											<td colspan="6"  height="10"></td>
+											<td colspan="9"  height="10"></td>
 										</tr>
                                                                                 <tr>
                                                                                     <td width="70">Brillo</td>
-                                                                                    <td  align="right" width="100px">
+                                                                                    <td  align="right" width="110px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="brillo" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="brillo1" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="110">Unid. de brillo</td>
-                                                                                    <td width="160">Dureza</td>
+                                                                                    <td width="40">U. Brillo</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_brillo" id="inst_brillo" style="width:100px;" ></select>
+                                                                                    </td>
+                                                                                    <td width="40">&nbsp;</td>
+                                                                                    
+                                                                                    <td width="90">Dureza</td>
                                                                                     <td  align="right"  width="100px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="dureza" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="dureza1" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="90">Letras</td>
+                                                                                    <td width="40">Letras</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_dureza" id="inst_dureza" style="width:100px;" ></select>
+                                                                                    </td>
 										</tr>
                                                                                  <tr>
-											<td colspan="6"  height="10"></td>
+											<td colspan="9"  height="10"></td>
 										</tr>
                                                                                 <tr>
                                                                                     <td width="70">Adherencia</td>
-                                                                                    <td  align="right" width="100px">
+                                                                                    <td  align="right" width="110px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="adherencia" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="adherencia1" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="110">%</td>
-                                                                                    <td width="160">pH (potencial de Hidr&oacute;geno)</td>
+                                                                                    <td width="40">%</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_adherencia" id="inst_adherencia" style="width:100px;" ></select>
+                                                                                    </td>
+                                                                                    <td width="40">&nbsp;</td>
+                                                                                    
+                                                                                    <td width="90">pH</td>
                                                                                     <td  align="right"  width="100px">
                                                                                         de
                                                                                         <INPUT TYPE="text" name="hidrogeno" style="width:30px;" value="N.A.">
                                                                                         a
                                                                                         <INPUT TYPE="text" name="hidrogeno1" style="width:30px;" value="N.A.">
                                                                                     </td>
-                                                                                    <td width="90">Sin Unidades</td>
+                                                                                    <td width="40">&nbsp;</td>
+                                                                                    <td width="105">
+                                                                                        <select name="inst_hidrogeno" id="inst_hidrogeno" style="width:100px;" ></select>
+                                                                                    </td>
 										</tr>
                                                                                 <tr>
-                                                                                    <td colspan="6"  height="10"></td>
+                                                                                    <td colspan="9"  height="10"></td>
 										</tr>
                                                                                 <tr>
-                                                                                    <td colspan="6"  height="10"></td>
+                                                                                    <td colspan="9"  height="10"></td>
 										</tr>
 									</table>
 									
