@@ -199,7 +199,6 @@ public class GralSpringDao implements GralInterfaceDao{
         return password_llave_emisora;
     }
     
-    
     @Override
     public String getFicheroXsl(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf.archivo_xsl FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
@@ -207,6 +206,64 @@ public class GralSpringDao implements GralInterfaceDao{
         String fichero_xsl = map_certificado.get("archivo_xsl").toString();
         return fichero_xsl;
     }
+    
+    @Override
+    public String getFicheroXsdCfdi(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.archivo_xsd_cfdi FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("archivo_xsd_cfdi").toString();
+        return fichero;
+    }
+    
+    @Override
+    public String getFicheroXsdRefId(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.archivo_xsd_refid FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("archivo_xsd_refid").toString();
+        return fichero;
+    }
+    
+    @Override
+    public String getFicheroXsdRequestTimbraCfdi(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.archivo_xsd_request_timbra_cfdi FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("archivo_xsd_request_timbra_cfdi").toString();
+        return fichero;
+    }
+    
+    @Override
+    public String getFicheroXsdTimbradoCfd(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.archivo_xsd_timbrado_cfd FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("archivo_xsd_timbrado_cfd").toString();
+        return fichero;
+    }
+    
+    @Override
+    public String getFicheroWsdlTimbradoCfdi(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.archivo_wsdl_timbrado_cfdi FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("archivo_wsdl_timbrado_cfdi").toString();
+        return fichero;
+    }
+    
+    @Override
+    public String getFicheroXsdTimbreFiscalDigital(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.archivo_xsd_timbre_fiscal_digital FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("archivo_xsd_timbre_fiscal_digital").toString();
+        return fichero;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     @Override

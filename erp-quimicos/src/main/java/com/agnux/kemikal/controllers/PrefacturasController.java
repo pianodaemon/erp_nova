@@ -643,7 +643,8 @@ public class PrefacturasController {
                         this.getBfCfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
                         this.getBfCfdi().start();
                         
-                        this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
+                        //La siguiente línea se comento porque la actualizacion del folio se hace en el procedimiento.
+                        //this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
                         
                         jsonretorno.put("folio",Serie+Folio);
                     }
@@ -678,27 +679,32 @@ public class PrefacturasController {
                         this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
                         this.getBfCfdiTf().start();
                         
-                        //obtiene serie_folio de la factura que se acaba de guardar
-                        serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura);
-                        
-                        String cadena_original=this.getBfCfdiTf().getCadenaOriginal();
-                        //System.out.println("cadena_original:"+cadena_original);
-                        
-                        String sello_digital = this.getBfCfdiTf().getSelloDigital();
-                        //System.out.println("sello_digital:"+sello_digital);
-                        
-                        //conceptos para el pdfcfd
-                        listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
-                        
-                        //datos para el pdf
-                        datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital,id_sucursal);
-                        
-                        
-                        //pdf factura
-                        pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                        //pdfFactura.viewPDF();
-                        
-                        jsonretorno.put("folio",serieFolio);
+                        //aqui se checa si el xml fue validado correctamente
+                        //si fue correcto debe traer un valor "true", de otra manera trae un error y ppor lo tanto no se genera el pdf
+                            
+                            
+                            
+                            //obtiene serie_folio de la factura que se acaba de guardar
+                            serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura);
+                            
+                            String cadena_original=this.getBfCfdiTf().getCadenaOriginal();
+                            //System.out.println("cadena_original:"+cadena_original);
+                            
+                            String sello_digital = this.getBfCfdiTf().getSelloDigital();
+                            //System.out.println("sello_digital:"+sello_digital);
+                            
+                            //conceptos para el pdfcfd
+                            listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
+                            
+                            //datos para el pdf
+                            datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital,id_sucursal);
+                            
+                            
+                            //pdf factura
+                            pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                            //pdfFactura.viewPDF();
+                            
+                            jsonretorno.put("folio",serieFolio);
                     }
                     
                     
@@ -718,6 +724,7 @@ public class PrefacturasController {
              
             }
             */
+            
             System.out.println("Folio: "+ String.valueOf(jsonretorno.get("folio")));
             
         }else{

@@ -2092,7 +2092,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     @Override
-    public LinkedHashMap<String, String> getNotaCreditoCfd_DatosExtrasXml(Integer id_nota_credito, String tipo_cambio, String id_usuario, String moneda_id, Integer id_empresa, Integer app_selected, String command_selected, String extra_data_array, String fac_saldado) {
+    public LinkedHashMap<String, String> getNotaCreditoCfd_DatosExtrasXml(Integer id_nota_credito, String tipo_cambio,String id_usuario,String moneda_id, Integer id_empresa, Integer id_sucursal, Integer app_selected, String command_selected, String extra_data_array, String fac_saldado) {
         
         LinkedHashMap<String,String> datosExtras = new LinkedHashMap<String,String>();
         //estos son requeridos para cfd
@@ -2100,6 +2100,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         datosExtras.put("moneda_id", moneda_id);
         datosExtras.put("usuario_id", id_usuario);
         datosExtras.put("empresa_id", String.valueOf(id_empresa));
+        datosExtras.put("sucursal_id", String.valueOf(id_sucursal));
         datosExtras.put("id_nota_credito", String.valueOf(id_nota_credito));
         datosExtras.put("app_selected", String.valueOf(app_selected));
         datosExtras.put("command_selected", command_selected);

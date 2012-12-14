@@ -39,6 +39,13 @@ public interface GralInterfaceDao {
     public String getFicheroLlavePrivada(Integer id_empresa, Integer id_sucursal);
     public String getPasswordLlavePrivada(Integer id_empresa, Integer id_sucursal);
     public String getFicheroXsl(Integer id_empresa, Integer id_sucursal);
+    public String getFicheroXsdCfdi(Integer id_empresa, Integer id_sucursal);
+    public String getFicheroXsdRefId(Integer id_empresa, Integer id_sucursal);
+    public String getFicheroXsdRequestTimbraCfdi(Integer id_empresa, Integer id_sucursal);
+    public String getFicheroXsdTimbradoCfd(Integer id_empresa, Integer id_sucursal);
+    public String getFicheroWsdlTimbradoCfdi(Integer id_empresa, Integer id_sucursal);
+    public String getFicheroXsdTimbreFiscalDigital(Integer id_empresa, Integer id_sucursal);
+    
     public String getFolioFactura(Integer id_empresa, Integer id_sucursal);
     public String getFolioNotaCredito(Integer id_empresa, Integer id_sucursal);
     public String getFolioNotaCargo(Integer id_empresa, Integer id_sucursal);

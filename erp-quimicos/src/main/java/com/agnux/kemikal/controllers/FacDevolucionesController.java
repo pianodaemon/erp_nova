@@ -409,7 +409,7 @@ public class FacDevolucionesController {
                         
                         command_selected = "genera_nota_credito_cfd";
                         //extra_data_array = "'sin datos'";
-                        datosExtras = this.getFacdao().getNotaCreditoCfd_DatosExtrasXml(id_nota_credito,tipo_cambio_nota,String.valueOf(id_usuario),select_moneda,id_empresa,app_selected, command_selected, extra_data_array, fac_saldado);
+                        datosExtras = this.getFacdao().getNotaCreditoCfd_DatosExtrasXml(id_nota_credito,tipo_cambio_nota,String.valueOf(id_usuario),select_moneda,id_empresa, id_sucursal, app_selected, command_selected, extra_data_array, fac_saldado);
                         
                         
                         //xml nota de credito cfd

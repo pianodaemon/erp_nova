@@ -197,10 +197,9 @@ public class BeanFacturadorCfdiTimbre {
     
     
     public String start() {
-        String retorno="";
+        String retorno="true";
         
         try {
-            
             String comprobante_firmado = this.generarComprobanteFirmado();
             
             //parser para el xml del cfdi
@@ -208,9 +207,11 @@ public class BeanFacturadorCfdiTimbre {
             
             String xml_file_name = new String();
             String path_file = new String();
-            String ruta_fichero_schema="";
+            String ruta_fichero_schema = new String();
+            
             //directorio para el fichero
             path_file = this.getGralDao().getCfdEmitidosDir() + this.getRfc_emisor();
+            ruta_fichero_schema = this.getGralDao().getXsdDir() + this.getGralDao().getFicheroXsdCfdi(this.getId_empresa(), this.getId_sucursal());
             
             //nombre del fichero xml
             xml_file_name += pop.getSerie() + pop.getFolio()+".xml";
@@ -219,12 +220,14 @@ public class BeanFacturadorCfdiTimbre {
             
             if (fichero_xml_ok) {
                 
-                //Aquí inicia validación del xml con el Esquema(xsd)
-                validarXml validacion = new validarXml(path_file+"/"+xml_file_name, ruta_fichero_schema);
+                //Instancia del validador 
+                validarXml validacion = new validarXml( path_file+"/"+xml_file_name, ruta_fichero_schema);
                 
+                //Aquí se ejecuta la validación del xml contra el Esquema(xsd)
                 String success = validacion.validar();
-                    
-                    
+                
+                //si la validación es correcta
+                if(success.equals("true")){
                     //Aqui va la rutina que mete los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
                     //De preferencia un store procedure....
                     
@@ -251,6 +254,7 @@ public class BeanFacturadorCfdiTimbre {
                     if(pop.getNoAprobacion()!=null ){
                         no_aprobacion = pop.getNoAprobacion();
                     }
+                    
                     if(pop.getAnoAprobacion()!=null ){
                         ano_aprobacion = pop.getAnoAprobacion();
                     }
@@ -299,12 +303,14 @@ public class BeanFacturadorCfdiTimbre {
                             break;
                             
                     }
-                    
-                    
+                }else{
+                    //finalizar el programa y retornar el error de la validacion del xml.
+                    return retorno;
+                }
+                
             } else {
                 throw new Exception("Falló al generar fichero xml: " + xml_file_name);
             }
-            
             
         } catch (Exception ex) {
             Logger.getLogger(BeanFacturadorCfdiTimbre.class.getName()).log(Level.SEVERE, null, ex);
@@ -379,7 +385,8 @@ public class BeanFacturadorCfdiTimbre {
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieFactura(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionFactura(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionFactura(this.getId_empresa(), this.getId_sucursal()));
-                this.getGralDao().actualizarFolioFactura(this.getId_empresa(), this.getId_sucursal());
+                //La siguiente línea se comento porque la actualizacion del folio se hace en el procedimiento.
+                //this.getGralDao().actualizarFolioFactura(this.getId_empresa(), this.getId_sucursal());
                 break;
                 
             case NOTA_CREDITO:
@@ -388,7 +395,7 @@ public class BeanFacturadorCfdiTimbre {
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCredito(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCredito(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCredito(this.getId_empresa(), this.getId_sucursal()));
-                this.getGralDao().actualizarFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
+                //this.getGralDao().actualizarFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
                 break;
                 
             case NOTA_CARGO:
@@ -397,7 +404,7 @@ public class BeanFacturadorCfdiTimbre {
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCargo(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCargo(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCargo(this.getId_empresa(), this.getId_sucursal()));
-                this.getGralDao().actualizarFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
+                //this.getGralDao().actualizarFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
                 break;
         }
         

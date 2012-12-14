@@ -421,18 +421,19 @@ public class NotasCreditoController {
                     //tipo facturacion CFD
                     if(tipo_facturacion.equals("cfd")){
                         System.out.println("::::::::::::Tipo CFD:::::::::::::::::..");
-                        dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
                         listaConceptos = this.getFacdao().getNotaCreditoCfd_ListaConceptosXml(id_nota_credito);
                         impRetenidos = this.getFacdao().getNotaCreditoCfd_ImpuestosRetenidosXml();
                         impTrasladados = this.getFacdao().getNotaCreditoCfd_ImpuestosTrasladadosXml(id_sucursal);
+                        dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
+                        
                         
                         command_selected = "genera_nota_credito_cfd";
                         extra_data_array = "'sin datos'";
-                        datosExtras = this.getFacdao().getNotaCreditoCfd_DatosExtrasXml(id_nota_credito,tipo_cambio,String.valueOf(id_usuario),select_moneda,id_empresa,app_selected, command_selected, extra_data_array, fac_saldado);
+                        datosExtras = this.getFacdao().getNotaCreditoCfd_DatosExtrasXml(id_nota_credito,tipo_cambio,String.valueOf(id_usuario),select_moneda,id_empresa,id_sucursal,app_selected, command_selected, extra_data_array, fac_saldado);
                         
                         
                         //xml factura
-                        this.getBf().init(dataCliente, listaConceptos,impRetenidos,impTrasladados , proposito,datosExtras, id_empresa, id_sucursal);
+                        this.getBf().init(dataCliente, listaConceptos,impRetenidos,impTrasladados , proposito, datosExtras, id_empresa, id_sucursal);
                         this.getBf().start();
                         
                         //obtiene serie_folio de la Nota de Credito que se acaba de guardar

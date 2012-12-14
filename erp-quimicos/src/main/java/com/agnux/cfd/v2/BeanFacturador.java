@@ -171,6 +171,8 @@ public final class BeanFacturador {
                                 num_cuenta,
                                 lugar_de_expedicion
                         );
+                        
+                        this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
                         break;
                         
                     case NOTA_CREDITO:
@@ -205,9 +207,13 @@ public final class BeanFacturador {
                                 fac_saldado;
                                 
                                 String actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+                                this.getGralDao().actualizarFolioNotaCredito(id_empresa, id_sucursal);
                                 
                         break;
                         
+                        case NOTA_CARGO:
+                            this.getGralDao().actualizarFolioNotaCargo(id_empresa, id_sucursal);
+                            break;
                 }
                 
 
@@ -286,7 +292,7 @@ public final class BeanFacturador {
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieFactura(id_empresa, id_sucursal));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionFactura(id_empresa, id_sucursal));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionFactura(id_empresa, id_sucursal));
-                this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
+                //this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
                 break;
                 
             case NOTA_CREDITO:
@@ -295,7 +301,7 @@ public final class BeanFacturador {
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCredito(id_empresa, id_sucursal));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCredito(id_empresa, id_sucursal));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCredito(id_empresa, id_sucursal));
-                this.getGralDao().actualizarFolioNotaCredito(id_empresa, id_sucursal);
+                //this.getGralDao().actualizarFolioNotaCredito(id_empresa, id_sucursal);
                 break;
                 
             case NOTA_CARGO:
@@ -304,7 +310,7 @@ public final class BeanFacturador {
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCargo(id_empresa, id_sucursal));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCargo(id_empresa, id_sucursal));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCargo(id_empresa, id_sucursal));
-                this.getGralDao().actualizarFolioNotaCargo(id_empresa, id_sucursal);
+                //this.getGralDao().actualizarFolioNotaCargo(id_empresa, id_sucursal);
                 break;
         }
         
@@ -532,7 +538,7 @@ public final class BeanFacturador {
                             throw new Exception("El Atributo(Requerido) valorUnitario de un tag Concepto es incorrecto");
                         }
                     }
-
+                    
                     if (llave.equals("importe")) {
                         if (!this.getValedor().isMontoDelaOperacionCorrecto(valor)) {
                             throw new Exception("El Atributo(Requerido) importe de un tag Concepto es incorrecto");
@@ -540,7 +546,7 @@ public final class BeanFacturador {
                             sumImportes = sumImportes.add(new BigDecimal(valor));
                         }
                     }
-
+                    
                     ///validar informacion aduanera
                     if (llave.equals("numero_aduana")) {
                         if (valor.isEmpty()) {
@@ -811,10 +817,10 @@ public final class BeanFacturador {
                 }
 
             }
-
+            
             return valor_retorno;
         }
-
+        
         /**Verifica el momento de Expedicion del registro por renglon
          * @param cadena_a_validar
          * @return true si un momento valido, false si es un momento invalido.
@@ -822,7 +828,7 @@ public final class BeanFacturador {
         public boolean isMomentoExpedicionCorrecto(String cadena_a_validar) {
             return Pattern.compile("^[0-1][0-9]/[0-3][0-9]/[0-9]{4}\\ [0-9]{2}:[0-9]{2}:[0-9]{2}|[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$").matcher(cadena_a_validar).find();
         }
-
+        
         /**Verifica el monto de la operacion de el registro por renglon
          * @param cadena_a_validar
          * @return true si es un monto valido, false si es un monto invalido.
@@ -851,10 +857,10 @@ public final class BeanFacturador {
                 }
 
             }
-
+            
             return valor_retorno;
         }
-
+        
         /**Verifica el numero de serie del certificado de sello digital
          * que ampara al comprobante  fiscal
          * @param cadena_a_validar
@@ -863,7 +869,7 @@ public final class BeanFacturador {
         public boolean isNoCertificadoDelComprobanteFiscalCorrecto(String cadena_a_validar) {
             return Pattern.compile("^[0-9]{20}$").matcher(cadena_a_validar).find();
         }
-
+        
         /**Verifica la Fecha que se le pondra al comprobante fiscal
          * @param cadena_a_validar
          * @return true si es una fecha valida, false si la fecha es invalida.
@@ -872,11 +878,11 @@ public final class BeanFacturador {
             //System.out.println("cadena_a_validar: "+cadena_a_validar);
             return Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$").matcher(cadena_a_validar).find();
         }
-
+        
         public boolean isTipoDeComprobanteCorrecto(String cadena_a_validar) {
             return Pattern.compile("^(ingreso|egreso|traslado)$").matcher(cadena_a_validar).find();
         }
-
+        
         /**Verifica el folio de el registro por renglon
          * @param cadena_a_validar
          * @return true si una serie es valido, false si la serie es invalido.
@@ -889,11 +895,11 @@ public final class BeanFacturador {
             }
             return valor_retorno;
         }
-
+        
         private boolean isNumeroDelEsquemaCorrecto(String noEsquema) {
             throw new UnsupportedOperationException("Not yet implemented");
         }
-
+        
         /**Verifica el numero de Aprobacion de el registro por renglon
          * @param cadena_a_validar
          * @return true si es un numero valido, false si es un numero invalido.

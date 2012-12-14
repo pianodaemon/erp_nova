@@ -72,10 +72,10 @@ public class BeanFacturadorCfdi {
     private ArrayList<LinkedHashMap<String, String>> listaTraslados;
     private ArrayList<LinkedHashMap<String, String>> listaRetenidos;
     private ArrayList<String> leyendas;
-
-
-
-
+    
+    
+    
+    
     
     public void init(HashMap<String, String> data, ArrayList<LinkedHashMap<String, String>> conceptos, ArrayList<LinkedHashMap<String, String>> impuestos_retenidos, ArrayList<LinkedHashMap<String, String>> impuestos_trasladados, ArrayList<String> leyendas,  String propos, LinkedHashMap<String,String> extras, Integer id_empresa, Integer id_sucursal) {
         
