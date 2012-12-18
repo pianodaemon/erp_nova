@@ -37,67 +37,115 @@
                 <td>&nbsp;&nbsp;</td>
                 <td >
                     <div class="repventasnetasproductofactura" >
-                        <table id="fechas" border="0" style="background-color:#ffffff;" >
-                                <tr>
-                                            <td colspan="17" height="10"></td>
-                                </tr>
-                            <tr>
-                                <td width="10"> </td>
-                                <td width="20">Tipo de Reporte</td>
-                                <td width="20"></td>
-                                <td align="left">Cliente</td>
-                                <td width="20"></td>
-                                <td width="20"></td>
-                                <td width="20">Producto</td>
-                                <td width="20"></td>
-                                <td width="20"></td>
-                                <td width="20"colspan ="3" align="left">Fecha  de  ventas</td>
-                                <td width="20"></td>
-                                <td width="20"></td>
-                                <td width="20"></td>
-                                <td width="20"></td>
-                                <td width="10"> </td>
-                            </tr>
-                            
-                            
+                        
+                                <table id="fechas" border="0" style="background-color:#ffffff;" >
+                                     <tr><td colspan="16">&nbsp;</td></tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>Tipo&nbsp;de&nbsp;Reporte</td>
+                                        <td>&nbsp;</td>
+                                        <td>nombre&nbsp;del&nbsp;producto</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
 
-                            <tr>
-                                <td width="10"></td>
-                                <td width="20">
-                                    <SELECT NAME="ventas" style="width:100px;">
-                                        <option value="1" selected="yes">Por Cliente</option>
-                                        <option value="2" >Por  Producto</option>
-                                        <option value="3" > + Producto</option>
-                                        <option value="4" > + Cliente</option>
-                                    </SELECT>
-                                </td>
-                                <td width="20"></td>
-                                
-                                <td width="20"><INPUT TYPE="text" name="nombrecliente" style="width:200px;"></td>
-                                <td width="20"><a href="busca_cliente" style="font-size:13px;">(Buscar)</a></td>
-                                <td width="20"></td>
-                                <td width="20"><INPUT TYPE="text" name="nombreproducto" style="width:200px;"></td>
-                                <td width="20"><a href="busca_producto" style="font-size:13px;">(Buscar)</a></td>
-                                <td width="20"></td>
-                                <td width="20"><INPUT TYPE="text" name="fecha_inicial" style="width:70px;"></td>
-                                <td width="20" align ="center">Al: </td>
-                                <td width="20"><INPUT TYPE="text" name="fecha_final" style="width:70px;"></td>
-                                <td width="20"></td>
-                                <td width="20"><INPUT TYPE="button"  value="Buscar"></td>
-                                <td width="20"></td>
-                                <td width="20"><INPUT TYPE="button"  value="Generar_PDF"></td>
-                                <td width="10"> </td>
-                            </tr>
-                            <tr>
-                                <td colspan="17" height="10"></td>
-                            </tr>
+                                        <td colspan="3" align="center">Fecha&nbsp;de&nbsp;ventas</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <SELECT NAME="ventas" style="width:100px;">
+                                                <option value="1" selected="yes">Por Cliente</option>
+                                                <option value="2" >Por  Producto</option>
+                                                <option value="3" > + Producto</option>
+                                                <option value="4" > + Cliente</option>
+                                            </SELECT>
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>
+                                        <td><INPUT TYPE="text" name="nombreproducto" style="width:200px;"></td>
+                                        <td><a href="busca_producto" style="font-size:13px;">(Buscar)</a></td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>Linea&nbsp;</td>
+                                        <td>
+                                            <SELECT NAME="linea" style="width:100px;">
+                                                <option value="0" selected="yes">[--Seleccionar Linea--]</option>
+                                            </SELECT>
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>Marca&nbsp;</td>
+                                        <td>
+                                            <SELECT NAME="marca" style="width:100px;">
+                                              <option value="0" selected="yes">[--Seleccionar Marca--]</option>  
+                                            </SELECT> 
+                                        </td>
+
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td><INPUT TYPE="text" name="fecha_inicial" style="width:70px;"></td>
+                                        <td align=center> Al</td>
+                                        <td><INPUT TYPE="text" name="fecha_final" style="width:70px;"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>nombre&nbsp;de&nbsp;cliente</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td><INPUT TYPE="text" name="nombrecliente" style="width:200px;"></td>
+                                        <td><a href="busca_cliente" style="font-size:13px;">(Buscar)</a></td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>Familia&nbsp;</td>
+                                        <td>
+                                            <SELECT NAME="familia" style="width:100px;">
+                                                
+                                                <option value="0" selected="yes">[--Seleccionar Familia--]</option>  
+                                            </SELECT>
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>
+                                        <td>Subfamilia&nbsp;</td>
+                                        <td>
+                                           <SELECT NAME="subfamilia" style="width:100px;">
+                                                <option value="0" selected="yes">[--Seleccionar Subfamilia--]</option>  
+                                                
+                                            </SELECT> 
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td><INPUT TYPE="button"  value="Buscar"></td>
+                                        <td align=center>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td><INPUT TYPE="button"  value="Generar_PDF"></td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                    <tr><td colspan="16">&nbsp;</td></tr>
+                                </table>
                             
-                            
-                        </table>
                     </div>
                 </td>
             </tr>
+            
         </table>
+        
 	
         
         <table  width="1030px">
@@ -348,5 +396,4 @@
         
     </body>
 </html>	
-
 
