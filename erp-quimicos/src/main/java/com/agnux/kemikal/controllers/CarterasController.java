@@ -478,27 +478,27 @@ public class CarterasController {
             HashMap<String, String> succes = new HashMap<String, String>();
             
             String data_string = 
-                    app_selected+"___"+
-                    command_selected+"___"+
-                    id_usuario+"___"+
-                    cliente_id+"___"+
-                    deuda_pesos+"___"+
-                    deuda_usd+"___"+
-                    moneda+"___"+
-                    fecha+" "+hora+":"+minutos+":"+segundos+"___"+
-                    banco+"___"+
-                    observaciones.toUpperCase()+"___"+
-                    forma_pago+"___"+
-                    cheque+"___"+
-                    referencia+"___"+
-                    tarjeta+"___"+
-                    antipo+"___"+
-                    monto_pago+"___"+
-                    fecha_deposito+"___"+
-                    ficha_movimiento_deposito+"___"+
-                    ficha_cuenta_deposito+"___"+
-                    ficha_banco_kemikal+"___"+
-                    tipo_cambio+"___"+
+                    app_selected+"___"+                             //1
+                    command_selected+"___"+                         //2
+                    id_usuario+"___"+                               //3
+                    cliente_id+"___"+                               //4
+                    deuda_pesos+"___"+                              //5
+                    deuda_usd+"___"+                                //6
+                    moneda+"___"+                                   //7
+                    fecha+" "+hora+":"+minutos+":"+segundos+"___"+  //8
+                    banco+"___"+                                    //9
+                    observaciones.toUpperCase()+"___"+              //10
+                    forma_pago+"___"+                               //11
+                    cheque+"___"+                                   //12
+                    referencia+"___"+                               //13
+                    tarjeta+"___"+                                  //14
+                    antipo+"___"+                                   //15
+                    monto_pago+"___"+                               //16
+                    fecha_deposito+"___"+                           //17
+                    ficha_movimiento_deposito+"___"+                //18
+                    ficha_cuenta_deposito+"___"+                    //19
+                    ficha_banco_kemikal+"___"+                      //20
+                    tipo_cambio+"___"+                              //21
                     anticipo_gastado+"___"+
                     no_transaccion_anticipo+"___"+
                     saldo_a_favor;
