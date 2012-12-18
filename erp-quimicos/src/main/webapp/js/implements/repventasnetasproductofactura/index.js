@@ -15,6 +15,12 @@ $(function() {
                         var url = document.location.protocol + '//' + document.location.host + this.getController();
                         return url;
                     },
+                    getController: function(){
+                        return this.contextpath + "/controllers/repventasnetasproductofactura";
+                        //  return this.controller;
+                    },
+                    
+                    
 
                     getUserName: function(){
                         return this.userName;
@@ -33,13 +39,12 @@ $(function() {
                     
                     getTituloApp: function(){
                         return this.tituloApp;
-                    },
-
-
-                    getController: function(){
-                        return this.contextpath + "/controllers/repventasnetasproductofactura";
-                        //  return this.controller;
                     }
+
+
+                    
+                    
+                    
                 
         };
   
@@ -67,6 +72,76 @@ $(function() {
 
                     var $Nombre_Cliente= $('#lienzo_recalculable').find('div.repventasnetasproductofactura').find('table#fechas tr td').find('input[name=nombrecliente]');
                     var $Nombre_Producto= $('#lienzo_recalculable').find('div.repventasnetasproductofactura').find('table#fechas tr td').find('input[name=nombreproducto]');
+                    
+                    var $select_linea = $('#lienzo_recalculable').find('div.repventasnetasproductofactura').find('table#fechas tr td').find('select[name=linea]');
+                    var $select_marca = $('#lienzo_recalculable').find('div.repventasnetasproductofactura').find('table#fechas tr td').find('select[name=marca]');
+                    var $select_familia = $('#lienzo_recalculable').find('div.repventasnetasproductofactura').find('table#fechas tr td').find('select[name=familia]');
+                    var $select_subfamilia = $('#lienzo_recalculable').find('div.repventasnetasproductofactura').find('table#fechas tr td').find('select[name=subfamilia]');
+                    
+                    
+                    
+                   
+                    var restful_json_service = config.getUrlForGetAndPost() +'/get_cargando_filtros.json';
+                     arreglo_parametros ={ linea:$select_linea.val(),
+                                            marca:$select_marca.val(),
+                                            familia:$select_familia.val(),
+                                            subfamilia:$select_subfamilia.val(),
+                                            iu:config.getUi()
+                                         };
+                    //alert("Linea::"+$select_linea.val()+"Marca::"+$select_marca.val()+"Familia::"+$select_familia.val()+"Subfamilia::"+$select_subfamilia.val())
+                    $.post(restful_json_service,arreglo_parametros,function(data){
+                            //Llena el select lineas
+                            $select_linea.children().remove();
+                            
+                            var lineas_html = '<option value="0" selected="yes">[--Seleccionar Linea--]</option>';
+                            $.each(data['lineas'],function(entryIndex,pt){
+                                   lineas_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+                            });
+                            $select_linea.append(lineas_html);
+                            
+                           
+                            $select_marca.children().remove();
+                            var marcas_html = '<option value="0" selected="yes">[--Seleccionar Marca--]</option>';
+                            $.each(data['marcas'],function(entryIndex,pt){
+                                   marcas_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+                            });
+                            $select_marca.append(marcas_html);
+                            
+                            $select_familia.children().remove();
+                            var familias_html = '<option value="0" selected="yes">[--Seleccionar Familia--]</option>';
+                            $.each(data['familias'],function(entryIndex,pt){
+                                   familias_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+                            });
+                            $select_familia.append(familias_html);
+                            
+                            
+                            
+
+                    });
+                    
+                    $select_familia.change(function(){
+                        var id_familia = $(this).val();
+                        //alert("id_Familia::  "+id_familia);
+                        var restful_json_service = config.getUrlForGetAndPost() +'/get_cargando_filtros.json';
+                                  arreglo_parametros ={ linea:$select_linea.val(),
+                                            marca:$select_marca.val(),
+                                            familia:$select_familia.val(),
+                                            subfamilia:$select_subfamilia.val(),
+                                            iu:config.getUi()
+                                         };    
+                            
+                        $.post(restful_json_service,arreglo_parametros,function(data){
+                          $select_subfamilia.children().remove();
+                            var subfamilias_html = '<option value="0" selected="yes">[--Seleccionar Familia--]</option>';
+                            $.each(data['subfamilias'],function(entryIndex,pt){
+                                   subfamilias_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+                            });
+                            $select_subfamilia.append(subfamilias_html);
+                          
+                        }); 
+                    });
+                    
+                    
                     $fecha_inicial.attr({'readOnly':true});
                     $fecha_final.attr({'readOnly':true});
                     $Nombre_Cliente.attr({'readOnly':true});
@@ -515,7 +590,7 @@ $(function() {
                                     var usuario = config.getUi();
 
                                     if(fecha_inicial != "" && fecha_final != ""){ 
-                                        var arreglo_parametros = {tipo_reporte : $select_tipo_reporte.val() ,cliente : $Nombre_Cliente.val() , producto : $Nombre_Producto.val(), fecha_inicial : $fecha_inicial.val() , fecha_final : $fecha_final.val(), iu:config.getUi()};
+                                        var arreglo_parametros = {tipo_reporte : $select_tipo_reporte.val() ,cliente : $Nombre_Cliente.val() , producto : $Nombre_Producto.val(), fecha_inicial : $fecha_inicial.val() , fecha_final : $fecha_final.val(),linea:$select_linea.val(),marca:$select_marca.val(),familia:$select_familia.val(),subfamilia:$select_subfamilia.val(),iu:config.getUi()};
                                         var restful_json_service = config.getUrlForGetAndPost() + '/getVentasNetasProductoFactura/out.json';
                                         var cliente="";
                                         var producto="";
