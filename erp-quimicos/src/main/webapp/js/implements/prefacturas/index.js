@@ -617,6 +617,7 @@ $(function() {
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosRemision.json';
 		$arreglo = {'id_remision':id_remision };
 		
+		
 		$.post(input_json,$arreglo,function(entry){
 			var trCount = $("tr", $grid_productos).size();
 			var valor_orden_compra = $orden_compra.val();
@@ -730,7 +731,7 @@ $(function() {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
-		
+	
 	
 	//buscador de Remisiones  sin facturar del cliente seleccionado
 	$busca_remisiones = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_cliente, array_monedas, array_metodos_pago, $select_almacen, arrayAlmacenes ){
@@ -1919,7 +1920,6 @@ $(function() {
 							//$busca_sku.hide();
 							//$agregar_producto.hide();
 							$boton_facturar.hide();
-									
 						}
 						
 						
@@ -1956,6 +1956,7 @@ $(function() {
 								$boton_facturar.hide();
 								
 							}else{
+								
 								jAlert("La prefactura se guard&oacute; con &eacute;xito", 'Atencion!');
 							}
 							
