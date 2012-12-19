@@ -1618,7 +1618,7 @@ public class PdfProOrdenProduccion {
      /*Clase para agregar los resultados de analisis*/
      private class TablaPDF {
          public PdfPTable addResultadosAnalisis(ArrayList<HashMap<String, String>> especificaciones_produccion, String cadena) {
-             //System.out.println("TablaPDF addResultadosAnalisis:  ");
+             //System.out.println("Entro addResultadosAnalisis:  "+cadena);
              
             Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
             Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
@@ -1631,7 +1631,8 @@ public class PdfProOrdenProduccion {
             PdfPTable table = null;
             PdfPTable table2;
             PdfPCell cell;
-            //System.out.println("Entro addResultadosAnalisis:  ");
+            
+            //System.out.println("Entro addResultadosAnalisis:  "+cadena);
             String verifica_especificaicones = "0";
             int cantidad = 0;
             for (int l=0;l<especificaciones_produccion.size();l++){
@@ -1639,14 +1640,18 @@ public class PdfProOrdenProduccion {
                 verifica_especificaicones = registro1.get("id");
                 cantidad = l;
             }
-            //System.out.println("Entro addResultadosAnalisis:  for");
+            
+            
+            //System.out.println("Entro verifica_especificaicones:  for verifica_especificaicones:"+verifica_especificaicones +"   cantidad: "+cantidad );
+            
             if(!verifica_especificaicones.equals("0")){
                 //System.out.println("Entro addResultadosAnalisis:  verifica_especificaicones.equals");
                 float [] widths = new float[especificaciones_produccion.size()];// = {6,12,6};
                 //System.out.println("Entro addResultadosAnalisis:  widths");
                 for (int l=0;l<especificaciones_produccion.size();l++){
-                    //System.out.println("widths: "+cantidad);
+                    System.out.println("widths: "+cantidad);
                      widths[l] = (float) 1.0;
+                     
                 }
                 //System.out.println("Entro volatiles_inicial:  "+cantidad);
                 table = new PdfPTable(widths);
@@ -1843,7 +1848,21 @@ public class PdfProOrdenProduccion {
                     }
                     
                  }
-             }
+             }else{
+                float [] widths = {1.0f};
+                
+                table = new PdfPTable(widths);
+                table.setKeepTogether(false);
+                
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorderWidthBottom(0.1f);
+                cell.setBorderWidthTop(0.1f);
+                cell.setBorderWidthRight(0.1f);
+                cell.setBorderWidthLeft(0.1f);
+                table.addCell(cell);
+            }
             
             return table;
             
