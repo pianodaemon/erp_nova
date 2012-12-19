@@ -35,6 +35,7 @@ $(function() {
             }
         };
         
+        
         String.prototype.toCharCode = function(){
             var str = this.split(''), len = str.length, work = new Array(len);
             for (var i = 0; i < len; ++i){
