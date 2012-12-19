@@ -5,12 +5,18 @@
 
 package com.agnux.common.helpers;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
@@ -167,12 +173,43 @@ public class StringHelper {
         return cadena;
     }
     
+    
+    public static byte[] convByte(String path_fichero) {
+        byte[] cadByte=null;
+        
+        try {
+            String comprobante = new String();
+            
+            File file = new File(path_fichero);
+            
+            try { BufferedReader in = new BufferedReader(new FileReader(file));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    comprobante += str;
+                } in.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            
+            cadByte = comprobante.getBytes("UTF8");
+            
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(StringHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return cadByte;
+    }
+    
+    
+    
     //convierte una cadena a utf8
     public static String convUtf8(String cadutf8) throws UnsupportedEncodingException{
         byte[] utf8Cadena = cadutf8.getBytes("UTF8");
         cadutf8 = new String(utf8Cadena, "UTF8");
         return cadutf8;
     }
+    
     public static String generar_nombre_de_archivo_aleatorio(String path, String sufijo, String extension){
     	return new String(path + "/"+ sufijo + "____"+ decimal_random() + "." + extension);
     }
