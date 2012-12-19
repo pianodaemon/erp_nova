@@ -180,7 +180,7 @@ public class PdfProOrdenProduccion {
                     //celdaX.setColspan(2);
                     celdaX1.setBorderWidthLeft(0);
                     tablaX1.addCell(celdaX1);
-
+                    
                     //columna 2, 3 y 4 vacio fil2
                     celdaX1 = new PdfPCell(new Paragraph("",fuenteCont2));
                     celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -514,542 +514,627 @@ public class PdfProOrdenProduccion {
                     
                     reporte.add(tablaSubp);
                     
-                    
                     ArrayList<HashMap<String, String>> especificaciones_estandar = (ArrayList<HashMap<String, String>>)subproceso.get("especificaciones_estandar");
+                    ArrayList<HashMap<String, String>> especificaciones_produccion = (ArrayList<HashMap<String, String>>)subproceso.get("especificaciones_produccion");
+                    
                     /*Codigo para las especificaciones_estandar*/
                      String verifica_especificaicones = "0";
                      for (int l=0;l<especificaciones_estandar.size();l++){
                          HashMap<String,String> registro1 = especificaciones_estandar.get(l);
-                         verifica_especificaicones = registro1.get("id");
+                         verifica_especificaicones = String.valueOf(registro1.get("id"));
                      }
                      
                      if(!verifica_especificaicones.equals("0")){
-                         
-                        float [] tam_tablaxx = {2f,2.5f,2f,7f};
+                        float [] tam_tablaxx = {1.5f,2f,2f,4f,4f};
                         PdfPTable tablaXX = new PdfPTable(tam_tablaxx);
                         PdfPCell celdaXX;
                         tablaXX.setKeepTogether(false);
                         
                          String id_esp = "";
+                         
+                         //ArrayList<HashMap<String, String>> especificaciones_produccion = (ArrayList<HashMap<String, String>>)subproceso.get("especificaciones_produccion");
                          
                          ArrayList<HashMap<String, String>> listaesp = especificaciones_estandar;
                          for (int l=0;l<especificaciones_estandar.size();l++){
                              HashMap<String,String> registrotmp = listaesp.get(l);
                              
+                             String texto_especificacion = "";
+                             
                              if(!id_esp.equals(registrotmp.get("id"))){
                                  id_esp = registrotmp.get("id");
+                                 
                                  //colspan 5 fil1
                                 celdaXX = new PdfPCell(new Paragraph("",fuentenegrita));
                                 celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
                                 celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
                                 celdaXX.setBorderWidthBottom(0);
-                                celdaXX.setColspan(4);
+                                celdaXX.setColspan(5);
                                 celdaXX.setBorderWidthTop(0);
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
                                 
                                 
-                                //colspan 5 fil1
+                                //colspan 4 fil1
                                 celdaXX = new PdfPCell(new Paragraph("ESPECIFICACIONES ESTANDAR",fuentenegrita));
                                 celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
                                 celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
                                 celdaXX.setBorderWidthBottom(0);
-                                celdaXX.setColspan(4);
+                                celdaXX.setColspan(2);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                celdaXX = new PdfPCell(new Paragraph("INSTRUMENTOS",fuentenegrita));
+                                celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
+                                celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                                celdaXX.setBorderWidthBottom(0);
+                                //celdaXX.setColspan(2);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                celdaXX = new PdfPCell(new Paragraph("RESULTADOS DE ANALISIS",fuentenegrita));
+                                celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
+                                celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setColspan(2);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                texto_especificacion = "header";
+                             }//comentado por mi 17 dec 201
+                                
+                                //columna 1 fil1 para fineza
+                                celdaXX = new PdfPCell(new Paragraph("FINEZA: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //fineza
+                                String res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("fineza_inicial"), registrotmp.get("fineza_final"), "Micras");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
                                 
                                 
-                             }
-                             
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("FINEZA: ",smallFont));
-                            celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                            celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("fineza_inicial"))+" A "+convierte_cadena(registrotmp.get("fineza_final"))+" Micras",smallFont));
-                            celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                            celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 4 vacio fil1
-                            celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 5 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("viscosidads_inicial"))+" A "+convierte_cadena(registrotmp.get("viscosidads_final"))+" Segundos",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-
-                            /*fila 2*/
-                            //columna 1 fil1
-
-                            celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 2 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("viscosidadku_inicial"))+" A "+convierte_cadena(registrotmp.get("viscosidadku_final"))+" KU",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-                            //columna 4 vacio fil1
-                            celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 5 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("viscosidadcps_inicial"))+" A "+convierte_cadena(registrotmp.get("viscosidadcps_final"))+" CPS",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-
-                            /*fila 3*/
-                            //columna 1 fil1
-
-                            celdaXX = new PdfPCell(new Paragraph("DENSIDAD: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-                            //columna 2 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("densidad_inicial"))+" A "+convierte_cadena(registrotmp.get("densidad_final"))+" Kg\\/L",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 4 vacio fil1
-                            celdaXX = new PdfPCell(new Paragraph("% No VOLATILES: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("volatiles_inicial"))+" A "+convierte_cadena(registrotmp.get("volatiles_final"))+" %",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-                            /*fila 4*/
-
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("pH: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 2 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("hidrogeno_inicial"))+" A "+convierte_cadena(registrotmp.get("hidrogeno_final"))+" ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 4 vacio fil1
-                            celdaXX = new PdfPCell(new Paragraph("CUBRIENTE: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("cubriente_inicial"))+" A "+convierte_cadena(registrotmp.get("cubriente_final"))+" %",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            /*fila 5*/
-
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("TONO: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 2 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("tono_inicial"))+" A "+convierte_cadena(registrotmp.get("tono_final"))+" ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 3 fil1
-                            celdaXX = new PdfPCell(new Paragraph("BRILLO: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 5 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("brillo_inicial"))+" A "+convierte_cadena(registrotmp.get("brillo_final"))+" Unid. de brillo",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-                            
-                            /*fila 6*/
-
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DUREZA: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            celdaXX = new PdfPCell(new Paragraph("DE "+registrotmp.get("dureza_inicial").toString()+" A "+registrotmp.get("dureza_final").toString()+" Letras",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 3 fil1
-                            celdaXX = new PdfPCell(new Paragraph("ADHERENCIA: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-                            
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("adherencia_inicial"))+" A "+convierte_cadena(registrotmp.get("adherencia_final"))+" %",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-                            
-                         }
-                         
-                         reporte.add(tablaXX);
-                     }
-                    
-                    
-                    ArrayList<HashMap<String, String>> especificaciones_produccion = (ArrayList<HashMap<String, String>>)subproceso.get("especificaciones_produccion");
-                    verifica_especificaicones = "0";
-                    for (int l=0;l<especificaciones_produccion.size();l++){
-                         HashMap<String,String> registro1 = especificaciones_produccion.get(l);
-                         verifica_especificaicones = registro1.get("id");
-                     }
-                     
-                     if(!verifica_especificaicones.equals("0")){
-                         
-                        float [] tam_tablaxx = {2f,2.5f,2f,7f};
-                        PdfPTable tablaXX = new PdfPTable(tam_tablaxx);
-                        PdfPCell celdaXX;
-                        tablaXX.setKeepTogether(false);
-                        
-                         String id_esp = "";
-                         
-                         ArrayList<HashMap<String, String>> listaesp = especificaciones_produccion;
-                         for (int l=0;l<listaesp.size();l++){
-                             HashMap<String,String> registrotmp = listaesp.get(l);
-                             
-                             if(!id_esp.equals(registrotmp.get("id"))){
-                                 id_esp = registrotmp.get("id");
-                                 //colspan 5 fil1
+                                //fineza
+                                //System.out.println("inst_fineza:  "+registrotmp.get("inst_fineza"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_fineza")),smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //fineza
+                                TablaPDF tabla_tmp = new TablaPDF();
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "fineza1"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //fineza
                                 celdaXX = new PdfPCell(new Paragraph("",smallFont));
-                                celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                                celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
                                 celdaXX.setBorderWidthBottom(0);
-                                celdaXX.setColspan(4);
                                 celdaXX.setBorderWidthTop(0);
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
                                 
                                 
-                                //colspan 5 fil1
-                                celdaXX = new PdfPCell(new Paragraph("RESULTADO DE ANALISIS",fuentenegrita));
-                                celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                                celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                                
+                                //columna 1 fil1 para VISCOSIDAD
+                                celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
-                                celdaXX.setColspan(4);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("viscosidads_inicial"), registrotmp.get("viscosidads_final"), "Segundos");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD
+                                //System.out.println("inst_viscosidad1:  "+registrotmp.get("inst_viscosidad1"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_viscosidad1")),smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "viscosidad1"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //columna 1 fil1
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
                                 
                                 
-                             }
-                             
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("FINEZA: ",smallFont));
-                            celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                            celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("fineza_inicial"))+" A "+convierte_cadena(registrotmp.get("fineza_final"))+" Micras",smallFont));
-                            celdaXX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                            celdaXX.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 4 vacio fil1
-                            celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 5 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("viscosidads_inicial"))+" A "+convierte_cadena(registrotmp.get("viscosidads_final"))+" Segundos",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-
-                            /*fila 2*/
-                            //columna 1 fil1
-
-                            celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 2 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("viscosidadku_inicial"))+" A "+convierte_cadena(registrotmp.get("viscosidadku_final"))+" KU",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-                            //columna 4 vacio fil1
-                            celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 5 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("viscosidadcps_inicial"))+" A "+convierte_cadena(registrotmp.get("viscosidadcps_final"))+" CPS",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-
-                            /*fila 3*/
-                            //columna 1 fil1
-
-                            celdaXX = new PdfPCell(new Paragraph("DENSIDAD: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-                            //columna 2 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("densidad_inicial"))+" A "+convierte_cadena(registrotmp.get("densidad_final"))+" Kg\\/L",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 4 vacio fil1
-                            celdaXX = new PdfPCell(new Paragraph("% No VOLATILES: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("volatiles_inicial"))+" A "+convierte_cadena(registrotmp.get("volatiles_final"))+" %",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-
-                            /*fila 4*/
-
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("pH: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 2 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("hidrogeno_inicial"))+" A "+convierte_cadena(registrotmp.get("hidrogeno_final"))+" ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 4 vacio fil1
-                            celdaXX = new PdfPCell(new Paragraph("CUBRIENTE: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("cubriente_inicial"))+" A "+convierte_cadena(registrotmp.get("cubriente_final"))+" %",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            /*fila 5*/
-
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("TONO: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-                            
-                            //columna 2 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("tono_inicial"))+" A "+convierte_cadena(registrotmp.get("tono_final"))+" ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-                            
-                            //columna 3 fil1
-                            celdaXX = new PdfPCell(new Paragraph("BRILLO: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 5 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("brillo_inicial"))+" A "+convierte_cadena(registrotmp.get("brillo_final"))+" Unid. de brillo",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            /*fila 6*/
-
-                            //columna 1 fil1
-                            celdaXX = new PdfPCell(new Paragraph("DUREZA: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            celdaXX = new PdfPCell(new Paragraph("DE "+registrotmp.get("dureza_inicial").toString()+" A "+registrotmp.get("dureza_final").toString()+" Letras",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            //columna 3 fil1
-                            celdaXX = new PdfPCell(new Paragraph("ADHERENCIA: ",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
-
-                            celdaXX = new PdfPCell(new Paragraph("DE "+convierte_cadena(registrotmp.get("adherencia_inicial"))+" A "+convierte_cadena(registrotmp.get("adherencia_final"))+" %",smallFont));
-                            celdaXX.setBorderWidthBottom(0);
-                            celdaXX.setBorderWidthTop(0);
-                            celdaXX.setBorderWidthRight(0);
-                            celdaXX.setBorderWidthLeft(0);
-                            tablaXX.addCell(celdaXX);
+                                
+                                //columna 1 fil1 para VISCOSIDAD KU
+                                celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD KU
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("viscosidadku_inicial"), registrotmp.get("viscosidadku_final"), "KU");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD KU
+                                //System.out.println("inst_viscosidad2:  "+registrotmp.get("inst_viscosidad2"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_viscosidad2")),smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD KU
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "viscosidad2"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD KU
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                
+                                
+                                
+                                //columna 1 fil1 para VISCOSIDAD CPS
+                                celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD CPS
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("viscosidadcps_inicial"), registrotmp.get("viscosidadcps_final"), "CPS");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD CPS
+                                //System.out.println("inst_viscosidad3:  "+registrotmp.get("inst_viscosidad3"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_viscosidad3")),smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD CPS
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "viscosidad3"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //VISCOSIDAD CPS
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                
+                                
+                                //columna 1 fil1 para DENSIDAD
+                                celdaXX = new PdfPCell(new Paragraph("DENSIDAD: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //DENSIDAD
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("densidad_inicial"), registrotmp.get("densidad_final"), "Kg\\/L");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //DENSIDAD
+                                //System.out.println("inst_densidad:  "+registrotmp.get("inst_densidad"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_densidad")) ,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //DENSIDAD
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "densidad"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //DENSIDAD
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                
+                                //columna 1 fil1 para % No VOLATILES
+                                celdaXX = new PdfPCell(new Paragraph("% No VOLATILES: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //% No VOLATILES
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("volatiles_inicial"), registrotmp.get("volatiles_final"), "%");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //% No VOLATILES
+                                //registrotmp.get("inst_volatiles")
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_volatil")) ,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //% No VOLATILES
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "volatiles"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //% No VOLATILES
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                
+                                
+                                
+                                
+                                //columna 1 fil1 para pH
+                                celdaXX = new PdfPCell(new Paragraph("pH: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //pH
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("hidrogeno_inicial"), registrotmp.get("hidrogeno_final"), " ");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //pH
+                                //System.out.println("inst_hidrogeno:  "+registrotmp.get("inst_hidrogeno"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_hidrogeno")) ,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //pH
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "hidrogeno"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //pH
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                
+                                
+                                //columna 1 fil1 para CUBRIENTE
+                                celdaXX = new PdfPCell(new Paragraph("CUBRIENTE: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //CUBRIENTE
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("cubriente_inicial"), registrotmp.get("cubriente_final"), "%");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //CUBRIENTE
+                                //System.out.println("inst_cubriente:  "+registrotmp.get("inst_cubriente"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_cubriente")) ,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //CUBRIENTE
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "cubriente"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //CUBRIENTE
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                
+                                
+                                
+                                
+                                
+                                //columna 1 fil1 para TONO
+                                celdaXX = new PdfPCell(new Paragraph("TONO: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //TONO
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("tono_inicial"), registrotmp.get("tono_final"), "");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //TONO
+                                //System.out.println("inst_tono:  "+registrotmp.get("inst_tono"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_tono")),smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //TONO
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "tono"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //TONO
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                
+                                
+                                
+                                //columna 1 fil1 para BRILLO
+                                celdaXX = new PdfPCell(new Paragraph("BRILLO: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //BRILLO
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("brillo_inicial"), registrotmp.get("brillo_final"), "Unid. de brillo");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //BRILLO
+                                //System.out.println("Brillo:  "+registrotmp.get("inst_brillo"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_brillo")) ,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //BRILLO
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "brillo"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //BRILLO
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                
+                                
+                                
+                                
+                                
+                                //columna 1 fil1 para DUREZA
+                                celdaXX = new PdfPCell(new Paragraph("DUREZA: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //DUREZA
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("dureza_inicial"), registrotmp.get("dureza_final"), "Letras");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //DUREZA
+                                //System.out.println("DUREZA:  "+registrotmp.get("inst_dureza"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_dureza")),smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //DUREZA
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "dureza"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //DUREZA
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                
+                                
+                                
+                                
+                                //columna 1 fil1 para ADHERENCIA
+                                celdaXX = new PdfPCell(new Paragraph("ADHERENCIA: ",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //ADHERENCIA
+                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("adherencia_inicial"), registrotmp.get("adherencia_final"), "%");
+                                celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //ADHERENCIA
+                                //System.out.println("ADHERENCIA:  "+registrotmp.get("inst_adherencia"));
+                                celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_adherencia")) ,smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //ADHERENCIA
+                                celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "adherencia"));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                                //ADHERENCIA
+                                celdaXX = new PdfPCell(new Paragraph("",smallFont));
+                                celdaXX.setBorderWidthBottom(0);
+                                celdaXX.setBorderWidthTop(0);
+                                celdaXX.setBorderWidthRight(0);
+                                celdaXX.setBorderWidthLeft(0);
+                                tablaXX.addCell(celdaXX);
+                                
+                            //}
                             
                          }
                          
                          reporte.add(tablaXX);
                      }
-                    
                 }
-                
-                
-                /*
-                subprocesos
-                for (int k=0;k<registro.size();k++){
-                    
-                }
-                */
                 
                 
                 //procedimientos
@@ -1074,13 +1159,13 @@ public class PdfProOrdenProduccion {
                      PdfPCell celdaProc;
                      tablaProc.setKeepTogether(false);
                      tablaProc.setHeaderRows(2);
-
-
+                     
+                     
                      String id_proced = "";
                      ArrayList<HashMap<String, String>> listaproced = lista_procedimiento;
                      for (int l=0;l<listaproced.size();l++){
                          HashMap<String,String> registro_tmp = listaproced.get(l);
-
+                         
                         if(!id_proced.equals(registro_tmp.get("pro_subp_prod_id"))){
                             id_proced = registro_tmp.get("pro_subp_prod_id");
                              //colspan 4 fil1
@@ -1093,7 +1178,7 @@ public class PdfProOrdenProduccion {
                              celdaProc.setBorderWidthRight(0);
                              celdaProc.setBorderWidthLeft(0);
                              tablaProc.addCell(celdaProc);
-
+                             
                              //colspan 4 fil1
                              celdaProc = new PdfPCell(new Paragraph("PROCEDIMIENTO PARA : "+registro_tmp.get("titulo"),fuentenegrita));
                              celdaProc.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1104,7 +1189,7 @@ public class PdfProOrdenProduccion {
                              celdaProc.setBorderWidthRight(0);
                              celdaProc.setBorderWidthLeft(0);
                              tablaProc.addCell(celdaProc);
-
+                             
                              //1
                              celdaProc = new PdfPCell(new Paragraph("NUMERO",smallBoldFont));
                              celdaProc.setUseAscender(true);
@@ -1126,8 +1211,8 @@ public class PdfProOrdenProduccion {
                              celdaProc.setBackgroundColor(BaseColor.BLACK);
                              tablaProc.addCell(celdaProc);
                          }
-
-
+                        
+                        
                          celdaProc = new PdfPCell(new Paragraph(registro_tmp.get("posicion"),fuenteCont));
                          celdaProc.setUseAscender(true);
                          celdaProc.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1143,9 +1228,9 @@ public class PdfProOrdenProduccion {
                          celdaProc.setColspan(2);
                          celdaProc.setVerticalAlignment(Element.ALIGN_MIDDLE);     
                          tablaProc.addCell(celdaProc);
-
+                         
                      }
-
+                     
                      reporte.add(tablaProc);
                  }
                     
@@ -1153,7 +1238,7 @@ public class PdfProOrdenProduccion {
             }
             
             
-            float [] tam_tablay = {3.5f,2f,3f,2f,3.5f};
+            float [] tam_tablay = {3f,2f,4f,2f,3f};
             PdfPTable tablaAut = new PdfPTable(tam_tablay);
             PdfPCell celdaAut;
             tablaAut.setKeepTogether(false);
@@ -1166,11 +1251,95 @@ public class PdfProOrdenProduccion {
             celdaAut.setBorderWidthTop(0);
             celdaAut.setBorderWidthRight(0);
             celdaAut.setColspan(5);
+            celdaAut.setRowspan(2);
             celdaAut.setBorderWidthLeft(0);
             tablaAut.addCell(celdaAut);
             
+            
+            //columna 1 y 2 fil2
+            celdaAut = new PdfPCell(new Paragraph(" ",fuentenegrita));
+            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celdaAut.setBorderWidthBottom(0);
+            celdaAut.setBorderWidthTop(0);
+            celdaAut.setBorderWidthRight(0);
+            celdaAut.setColspan(2);
+            celdaAut.setBorderWidthLeft(0);
+            tablaAut.addCell(celdaAut);
+            
+            //columna 3 fil2
+            celdaAut = new PdfPCell(new Paragraph("________________________________",fuentenegrita));
+            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celdaAut.setBorderWidthBottom(0);
+            celdaAut.setBorderWidthTop(0);
+            celdaAut.setBorderWidthRight(0);
+            celdaAut.setBorderWidthLeft(0);
+            tablaAut.addCell(celdaAut);
+            
+            //columna 4 y 5 fil2
+            celdaAut = new PdfPCell(new Paragraph(" ",fuentenegrita));
+            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celdaAut.setBorderWidthBottom(0);
+            celdaAut.setBorderWidthTop(0);
+            celdaAut.setBorderWidthRight(0);
+            celdaAut.setColspan(2);
+            celdaAut.setBorderWidthLeft(0);
+            tablaAut.addCell(celdaAut);
+            
+            //texto ACEPTADO ASEG. DE CALIDAD
+            //columna 1 y 2 fil2
+            celdaAut = new PdfPCell(new Paragraph(" ",fuentenegrita));
+            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celdaAut.setBorderWidthBottom(0);
+            celdaAut.setBorderWidthTop(0);
+            celdaAut.setBorderWidthRight(0);
+            celdaAut.setColspan(2);
+            celdaAut.setBorderWidthLeft(0);
+            tablaAut.addCell(celdaAut);
+            
+            //columna 3 fil2
+            celdaAut = new PdfPCell(new Paragraph(" ACEPTADO, ASEG. DE CALIDAD ",fuentenegrita));
+            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celdaAut.setBorderWidthBottom(0);
+            celdaAut.setBorderWidthTop(0);
+            celdaAut.setBorderWidthRight(0);
+            celdaAut.setBorderWidthLeft(0);
+            tablaAut.addCell(celdaAut);
+            
+            //columna 4 y 5 fil2
+            celdaAut = new PdfPCell(new Paragraph(" ",fuentenegrita));
+            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celdaAut.setBorderWidthBottom(0);
+            celdaAut.setBorderWidthTop(0);
+            celdaAut.setBorderWidthRight(0);
+            celdaAut.setColspan(2);
+            celdaAut.setBorderWidthLeft(0);
+            tablaAut.addCell(celdaAut);
+            
+            
+            
+            
+            //2 filas en blanco
             //columna 1 a 6 fil2
             celdaAut = new PdfPCell(new Paragraph(" ",fuentenegrita));
+            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celdaAut.setBorderWidthBottom(0);
+            celdaAut.setBorderWidthTop(0);
+            celdaAut.setBorderWidthRight(0);
+            celdaAut.setColspan(5);
+            celdaAut.setRowspan(3);
+            celdaAut.setBorderWidthLeft(0);
+            tablaAut.addCell(celdaAut);
+            
+            //para el texto verifica y reviso formula
+            //columna 1 y 2 fil2
+            celdaAut = new PdfPCell(new Paragraph("__________________________________",fuentenegrita));
             celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celdaAut.setBorderWidthBottom(0);
@@ -1180,67 +1349,28 @@ public class PdfProOrdenProduccion {
             celdaAut.setBorderWidthLeft(0);
             tablaAut.addCell(celdaAut);
             
+            
+            //para el texto verifica y reviso formula
             //columna 1 y 2 fil2
-            celdaAut = new PdfPCell(new Paragraph(" ",fuentenegrita));
+            celdaAut = new PdfPCell(new Paragraph("  VERIFICA Y REVISO FORMULA",fuentenegrita));
             celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celdaAut.setBorderWidthBottom(0);
             celdaAut.setBorderWidthTop(0);
             celdaAut.setBorderWidthRight(0);
-            celdaAut.setColspan(2);
+            celdaAut.setColspan(5);
             celdaAut.setBorderWidthLeft(0);
             tablaAut.addCell(celdaAut);
             
-            //columna 3 fil2
-            celdaAut = new PdfPCell(new Paragraph("___________________",fuentenegrita));
-            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celdaAut.setBorderWidthBottom(0);
-            celdaAut.setBorderWidthTop(0);
-            celdaAut.setBorderWidthRight(0);
-            celdaAut.setBorderWidthLeft(0);
-            tablaAut.addCell(celdaAut);
-            
-            //columna 4 y 5 fil2
-            celdaAut = new PdfPCell(new Paragraph(" ",fuentenegrita));
-            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celdaAut.setBorderWidthBottom(0);
-            celdaAut.setBorderWidthTop(0);
-            celdaAut.setBorderWidthRight(0);
-            celdaAut.setColspan(2);
-            celdaAut.setBorderWidthLeft(0);
-            tablaAut.addCell(celdaAut);
-            
+            //para el texto verifica y reviso formula
             //columna 1 y 2 fil2
-            celdaAut = new PdfPCell(new Paragraph(" ",fuentenegrita));
+            celdaAut = new PdfPCell(new Paragraph("       ASEG. DE CALIDAD",fuentenegrita));
             celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celdaAut.setBorderWidthBottom(0);
             celdaAut.setBorderWidthTop(0);
             celdaAut.setBorderWidthRight(0);
-            celdaAut.setColspan(2);
-            celdaAut.setBorderWidthLeft(0);
-            tablaAut.addCell(celdaAut);
-            
-            //columna 3 fil2
-            celdaAut = new PdfPCell(new Paragraph(" VERIFICA Y RECIBE ",fuentenegrita));
-            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celdaAut.setBorderWidthBottom(0);
-            celdaAut.setBorderWidthTop(0);
-            celdaAut.setBorderWidthRight(0);
-            celdaAut.setBorderWidthLeft(0);
-            tablaAut.addCell(celdaAut);
-            
-            //columna 4 y 5 fil2
-            celdaAut = new PdfPCell(new Paragraph(" ",fuentenegrita));
-            celdaAut.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celdaAut.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celdaAut.setBorderWidthBottom(0);
-            celdaAut.setBorderWidthTop(0);
-            celdaAut.setBorderWidthRight(0);
-            celdaAut.setColspan(2);
+            celdaAut.setColspan(5);
             celdaAut.setBorderWidthLeft(0);
             tablaAut.addCell(celdaAut);
             
@@ -1253,6 +1383,29 @@ public class PdfProOrdenProduccion {
              }
         reporte.close();
     }
+    
+    
+    private String cadena_especificaciones(String cadena, String esp_inicial, String esp_final, String unidad_medida){
+        
+        String texto_especificacion = "";
+        
+        if(esp_inicial.equals("N.A.")){
+            esp_inicial="-1";
+        }
+        
+        if (!convierte_cadena(esp_inicial).equals("N.A.") ){
+            if(cadena.equals("header")){
+                texto_especificacion = "DE "+convierte_cadena(esp_inicial)+" A "+convierte_cadena(esp_final)+" "+unidad_medida;
+            }else{
+                texto_especificacion = convierte_cadena(esp_inicial)+" "+unidad_medida;
+            }
+        }else{
+            texto_especificacion = "";
+        }
+        
+        return texto_especificacion;
+    }
+    
     
     String calculaTotalComponenteFormula(String cantidad,String total){
         String retorno = "";
@@ -1461,5 +1614,240 @@ public class PdfProOrdenProduccion {
         }
    }//termina clase HeaderFooter
      
+     
+     /*Clase para agregar los resultados de analisis*/
+     private class TablaPDF {
+         public PdfPTable addResultadosAnalisis(ArrayList<HashMap<String, String>> especificaciones_produccion, String cadena) {
+             //System.out.println("TablaPDF addResultadosAnalisis:  ");
+             
+            Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
+            Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
+            
+            Font fuenteCont = new Font(Font.getFamily("ARIAL"),10,Font.NORMAL,BaseColor.BLACK);
+            Font fuentenegrita = new Font(Font.getFamily("ARIAL"),8,Font.BOLD,BaseColor.BLACK);
+            Font fuenteCont2 = new Font(Font.getFamily("ARIAL"),8,Font.NORMAL,BaseColor.BLACK);
+            Font headerFont = new Font(Font.getFamily("ARIAL"),8,Font.BOLD,BaseColor.WHITE);
+            
+            PdfPTable table = null;
+            PdfPTable table2;
+            PdfPCell cell;
+            //System.out.println("Entro addResultadosAnalisis:  ");
+            String verifica_especificaicones = "0";
+            int cantidad = 0;
+            for (int l=0;l<especificaciones_produccion.size();l++){
+                HashMap<String,String> registro1 = especificaciones_produccion.get(l);
+                verifica_especificaicones = registro1.get("id");
+                cantidad = l;
+            }
+            //System.out.println("Entro addResultadosAnalisis:  for");
+            if(!verifica_especificaicones.equals("0")){
+                //System.out.println("Entro addResultadosAnalisis:  verifica_especificaicones.equals");
+                float [] widths = new float[especificaciones_produccion.size()];// = {6,12,6};
+                //System.out.println("Entro addResultadosAnalisis:  widths");
+                for (int l=0;l<especificaciones_produccion.size();l++){
+                    //System.out.println("widths: "+cantidad);
+                     widths[l] = (float) 1.0;
+                }
+                //System.out.println("Entro volatiles_inicial:  "+cantidad);
+                table = new PdfPTable(widths);
+                table.setKeepTogether(false);
+                //System.out.println("Entro volatiles:  "+cantidad);
+                
+                 ArrayList<HashMap<String, String>> listaesp = especificaciones_produccion;
+                 String res_tmp = "";
+                 for (int l=0;l<listaesp.size();l++){
+                     //System.out.println("Entro volatiles:  "+cantidad);
+                     res_tmp = "";
+                    HashMap<String,String> registrotmp = listaesp.get(l);
+                    int td_encontrado = 0;
+                    if(cadena.equals("fineza1")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("fineza_inicial"), registrotmp.get("fineza_inicial"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("viscosidad1")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("viscosidads_inicial"), registrotmp.get("viscosidads_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("viscosidad2")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("viscosidadku_inicial"), registrotmp.get("viscosidadku_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("viscosidad3")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("viscosidadcps_inicial"), registrotmp.get("viscosidadcps_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("densidad")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("densidad_inicial"), registrotmp.get("densidad_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("volatiles")){
+                        //columna 1 fil1
+                        //System.out.println("enteio en volatiles_inicial:  "+registrotmp.get("volatiles_inicial"));
+                        res_tmp = cadena_especificaciones("", registrotmp.get("volatiles_inicial"), registrotmp.get("volatiles_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("hidrogeno")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("hidrogeno_inicial"), registrotmp.get("hidrogeno_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("cubriente")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("cubriente_inicial"), registrotmp.get("cubriente_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("tono")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("tono_inicial"), registrotmp.get("tono_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("brillo")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("brillo_inicial"), registrotmp.get("brillo_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("dureza")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("dureza_inicial"), registrotmp.get("dureza_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(cadena.equals("adherencia")){
+                        //columna 1 fil1
+                        res_tmp = cadena_especificaciones("", registrotmp.get("adherencia_inicial"), registrotmp.get("adherencia_final"), "");
+                        cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                    if(td_encontrado == 0){
+                        //columna 1 fil1
+                        cell = new PdfPCell(new Paragraph("",smallFont));
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setBorderWidthBottom(0.1f);
+                        cell.setBorderWidthTop(0.1f);
+                        cell.setBorderWidthRight(0.1f);
+                        cell.setBorderWidthLeft(0.1f);
+                        table.addCell(cell);
+                        td_encontrado = 1;
+                    }
+                    
+                 }
+             }
+            
+            return table;
+            
+        }
+    }
     
 }

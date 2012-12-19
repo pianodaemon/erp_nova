@@ -4493,12 +4493,24 @@ public class ProSpringDao implements ProInterfaceDao{
     
     //obtiene datos de los productos de la formula para produccion
     private ArrayList<HashMap<String, String>> getOrdenProdEspecificacoinesEstandarSubproceso(String producto_id,String id_subproceso,String id_empresa) {
-        String sql_to_query = "select pro_proc_esp.* from "
-                + "(select id from pro_procesos where gral_emp_id="+id_empresa+" and inv_prod_id="+producto_id+") as conf "
-                + "join pro_subproceso_prod as subp_conf on subp_conf.pro_procesos_id=conf.id "
-                + "join pro_proc_esp on pro_proc_esp.pro_subproceso_prod_id=subp_conf.id "
-                + "where subp_conf.pro_subprocesos_id="+id_subproceso;
         
+        String sql_to_query = "select pro_proc_esp.*, "
+                + "CASE WHEN pro_instrumentos_fineza < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_fineza) END as inst_fineza,"
+                + "CASE WHEN pro_instrumentos_viscosidad1 < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_viscosidad1) END as inst_viscosidad1,"
+                + "CASE WHEN pro_instrumentos_viscosidad2 < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_viscosidad2) END as inst_viscosidad2,"
+                + "CASE WHEN pro_instrumentos_viscosidad3 < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_viscosidad3) END as inst_viscosidad3,"
+                + "CASE WHEN pro_instrumentos_densidad < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_densidad) END as inst_densidad,"
+                + "CASE WHEN pro_instrumentos_volatil < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_volatil) END as inst_volatil,"
+                + "CASE WHEN pro_instrumentos_cubriente < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_cubriente) END as inst_cubriente,"
+                + "CASE WHEN pro_instrumentos_tono < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_tono) END as inst_tono,"
+                + "CASE WHEN pro_instrumentos_brillo < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_brillo) END as inst_brillo,"
+                + "CASE WHEN pro_instrumentos_dureza < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_dureza) END as inst_dureza,"
+                + "CASE WHEN pro_instrumentos_adherencia < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_adherencia) END as inst_adherencia,"
+                + "CASE WHEN pro_instrumentos_hidrogeno < 0 THEN '' ELSE (select titulo from pro_instrumentos where id=pro_instrumentos_hidrogeno) END as inst_hidrogeno "
+                + "from (select id from pro_procesos where gral_emp_id="+id_empresa+" and inv_prod_id="+producto_id+") as conf "
+                + "join pro_subproceso_prod as subp_conf on subp_conf.pro_procesos_id=conf.id join pro_proc_esp on pro_proc_esp.pro_subproceso_prod_id=subp_conf.id "
+                + "where subp_conf.pro_subprocesos_id="+id_subproceso;
+                
         System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
         ArrayList<HashMap<String, String>> hm_especificaciones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4532,6 +4544,21 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("brillo_final",String.valueOf(rs.getDouble("brillo_final")));
                     row.put("dureza_final",rs.getString("dureza_final"));
                     row.put("adherencia_final",String.valueOf(rs.getDouble("adherencia_final")));
+                    
+                    
+                    //put para los instrumentos
+                    row.put("inst_fineza",String.valueOf(rs.getString("inst_fineza")));
+                    row.put("inst_viscosidad1",String.valueOf(rs.getString("inst_viscosidad1")));
+                    row.put("inst_viscosidad2",String.valueOf(rs.getString("inst_viscosidad2")));
+                    row.put("inst_viscosidad3",String.valueOf(rs.getString("inst_viscosidad3")));
+                    row.put("inst_densidad",String.valueOf(rs.getString("inst_densidad")));
+                    row.put("inst_volatil",String.valueOf(rs.getString("inst_volatil")));
+                    row.put("inst_cubriente",String.valueOf(rs.getString("inst_cubriente")));
+                    row.put("inst_tono",String.valueOf(rs.getString("inst_tono")));
+                    row.put("inst_brillo",String.valueOf(rs.getString("inst_brillo")));
+                    row.put("inst_dureza",String.valueOf(rs.getString("inst_dureza")));
+                    row.put("inst_adherencia",String.valueOf(rs.getString("inst_adherencia")));
+                    row.put("inst_hidrogeno",String.valueOf(rs.getString("inst_hidrogeno")));
                     
                     return row;
                 }
