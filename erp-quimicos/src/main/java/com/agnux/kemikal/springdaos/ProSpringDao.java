@@ -64,11 +64,11 @@ public class ProSpringDao implements ProInterfaceDao{
         
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         String valor_retorno="";
-        /*
+        
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
         
         valor_retorno = update.get("pro_adm_procesos").toString();
-        */
+        
         return valor_retorno;
     }
     
