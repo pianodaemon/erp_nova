@@ -1251,7 +1251,7 @@ public class PdfProOrdenProduccion {
             celdaAut.setBorderWidthTop(0);
             celdaAut.setBorderWidthRight(0);
             celdaAut.setColspan(5);
-            celdaAut.setRowspan(2);
+            celdaAut.setRowspan(4);
             celdaAut.setBorderWidthLeft(0);
             tablaAut.addCell(celdaAut);
             
