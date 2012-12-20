@@ -438,8 +438,12 @@ $(function() {
                                     var producto=$Nombre_Producto.val();
                                     var fecha_inicial = $fecha_inicial.val();
                                     var fecha_final = $fecha_final.val();
+                                    var id_linea= $select_linea.val();
+                                    var id_marca= $select_marca.val();
+                                    var id_familia= $select_familia.val();
+                                    var id_subfamilia= $select_subfamilia.val();
                                     var usuario=config.getUi();
-                                    var cadena = tipo_reporte+"___"+cliente+"___"+producto+"___"+fecha_inicial+"___"+fecha_final+"___"+usuario
+                                    var cadena = tipo_reporte+"___"+cliente+"___"+producto+"___"+fecha_inicial+"___"+fecha_final+"___"+usuario+"___"+id_linea+"___"+id_marca+"___"+id_familia+"___"+id_subfamilia
 
                                     if(fecha_inicial != 0 && fecha_final !=0){
                                         var input_json = config.getUrlForGetAndPost() + '/getrepventasnetasproductofactura/'+cadena+'/out.json';
@@ -587,6 +591,10 @@ $(function() {
                                     var producto = $Nombre_Producto.val();
                                     var fecha_inicial = $fecha_inicial.val();
                                     var fecha_final = $fecha_final.val();
+                                    /*var linea=$select_linea.val();
+                                    var marca=$select_marca.val();
+                                    var familia=$select_familia.val();
+                                    var subfamilia=$select_subfamilia.val();*/
                                     var usuario = config.getUi();
 
                                     if(fecha_inicial != "" && fecha_final != ""){ 
@@ -814,10 +822,15 @@ $(function() {
 			var producto = $Nombre_Producto.val();
 			var fecha_inicial = $fecha_inicial.val();
 			var fecha_final = $fecha_final.val();
+                        var linea=$select_linea.val();
+                        var marca=$select_marca.val();
+                        var familia=$select_familia.val();
+                        var subfamilia=$select_subfamilia.val();
+                        
 			var usuario = config.getUi();
 			
 			if(fecha_inicial != "" && fecha_final != ""){ 
-				var arreglo_parametros = {tipo_reporte : $select_tipo_reporte.val() ,cliente : $Nombre_Cliente.val() , producto : $Nombre_Producto.val(), fecha_inicial : $fecha_inicial.val() , fecha_final : $fecha_final.val(), iu:config.getUi()};
+				var arreglo_parametros = {tipo_reporte : $select_tipo_reporte.val() ,cliente : $Nombre_Cliente.val() , producto : $Nombre_Producto.val(), fecha_inicial : $fecha_inicial.val() , fecha_final : $fecha_final.val(),linea:$select_linea.val(),marca:$select_marca.val(),familia:$select_familia.val(),subfamilia:$select_subfamilia.val(),iu:config.getUi()};
 				var restful_json_service = config.getUrlForGetAndPost() + '/getVentasNetasProductoFactura/out.json';
 				var cliente="";
 				var producto="";
@@ -1044,7 +1057,7 @@ $(function() {
                         var usuario = config.getUi();
 			
 			if(fecha_inicial != "" && fecha_final != ""){ 
-				var arreglo_parametros = {tipo_reporte : $select_tipo_reporte.val() ,cliente : $Nombre_Cliente.val() , producto : $Nombre_Producto.val(), fecha_inicial : $fecha_inicial.val() , fecha_final : $fecha_final.val(), iu:config.getUi()};
+				var arreglo_parametros = {tipo_reporte : $select_tipo_reporte.val() ,cliente : $Nombre_Cliente.val() , producto : $Nombre_Producto.val(), fecha_inicial : $fecha_inicial.val() , fecha_final : $fecha_final.val(),linea:$select_linea.val(),marca:$select_marca.val(),familia:$select_familia.val(),subfamilia:$select_subfamilia.val(),iu:config.getUi()};
 				var restful_json_service = config.getUrlForGetAndPost() + '/getVentasNetasProductoFactura/out.json';
 				var cliente="";
 				var producto="";
@@ -1229,7 +1242,8 @@ $(function() {
                             var usuario = config.getUi();
 
                             if(fecha_inicial != "" && fecha_final != ""){ 
-                                    var arreglo_parametros = {tipo_reporte : $select_tipo_reporte.val() ,cliente : $Nombre_Cliente.val() , producto : $Nombre_Producto.val(), fecha_inicial : $fecha_inicial.val() , fecha_final : $fecha_final.val(), iu:config.getUi()};
+                                   
+                                    var arreglo_parametros = {tipo_reporte : $select_tipo_reporte.val() ,cliente : $Nombre_Cliente.val() , producto : $Nombre_Producto.val(), fecha_inicial : $fecha_inicial.val() , fecha_final : $fecha_final.val(),linea:$select_linea.val(),marca:$select_marca.val(),familia:$select_familia.val(),subfamilia:$select_subfamilia.val(),iu:config.getUi()};
                                     var restful_json_service = config.getUrlForGetAndPost() + '/getVentasNetasProductoFactura/out.json';
                                     var cliente="";
                                     var producto="";
