@@ -2197,8 +2197,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
     
     //reporte de ventas netas
     @Override
-    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa) {
-    String sql_to_query = "select * from repventasnetasproductofactura("+tipo_reporte+",'"+cliente+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+") as foo( "
+    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa,Integer id_linea,Integer  id_marca, Integer id_familia,Integer id_subfamilia) {
+    String sql_to_query = "select * from repventasnetasproductofactura("+tipo_reporte+",'"+cliente+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+","+id_linea+","+id_marca+","+id_familia+","+id_subfamilia+") as foo( "
                                     + " numero_control character varying, "        
                                     + " razon_social character varying, "
                                     + " codigo character varying, "
@@ -2239,7 +2239,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm; 
     }
-
+    
+    
 
     //obtiene tipos de productos
     @Override
@@ -2260,6 +2261,102 @@ public class CxcSpringDao implements CxcInterfaceDao{
         
         return hm_tp;
     }
+    //obtiene las lineas de los  productos
+@Override
+public ArrayList<HashMap<String, String>> getLineas() {
+String sql_query = "SELECT DISTINCT id,titulo FROM inv_prod_lineas WHERE borrado_logico=false order by id;";
+ArrayList<HashMap<String, String>> lineas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+    sql_query,
+    new Object[]{}, new RowMapper() {
+        @Override
+        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+            HashMap<String, String> row = new HashMap<String, String>();
+            row.put("id",rs.getString("id"));
+            row.put("titulo",rs.getString("titulo"));
+            return row;
+        }
+    }
+);
+
+return lineas;
+}
+
+//obtiene las marcas de los  productos
+@Override
+public ArrayList<HashMap<String, String>> getMarcas() {
+String sql_query = "SELECT DISTINCT id,titulo FROM inv_mar WHERE borrado_logico=false order by id;";
+ArrayList<HashMap<String, String>> marcas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+    sql_query,
+    new Object[]{}, new RowMapper() {
+        @Override
+        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+            HashMap<String, String> row = new HashMap<String, String>();
+            row.put("id",rs.getString("id"));
+            row.put("titulo",rs.getString("titulo"));
+            return row;
+        }
+    }
+);
+
+return marcas;
+}
+
+
+//obtiene las familias de los produtos
+@Override
+public ArrayList<HashMap<String, String>> getFamilias() {
+String sql_query = "SELECT DISTINCT id,titulo FROM inv_prod_familias WHERE borrado_logico=false order by id;";
+ArrayList<HashMap<String, String>> familias = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+    sql_query,
+    new Object[]{}, new RowMapper() {
+        @Override
+        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+            HashMap<String, String> row = new HashMap<String, String>();
+            row.put("id",rs.getString("id"));
+            row.put("titulo",rs.getString("titulo"));
+            return row;
+        }
+    }
+);
+
+return familias;
+}
+
+
+
+//obtiene las subfamilias de los produtos
+@Override
+public ArrayList<HashMap<String, String>> getSubfamilias(Integer id_familia) {
+String sql_query = " select id,identificador_familia_padre,titulo from( "
+                        +"  select "
+                        +"  id, "
+                        +"  identificador_familia_padre, "
+                        +"  titulo, descripcion, "
+                        +"  borrado_logico "
+                        +"  from inv_prod_familias "
+                        +"  where  identificador_familia_padre="+id_familia 
+                +"  )as sbt "
+                +"  where  sbt.id  != sbt.identificador_familia_padre";
+    System.out.println("cargando subfamilias:   "+ sql_query);
+ArrayList<HashMap<String, String>> subfamilias = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+    sql_query,
+    new Object[]{}, new RowMapper() {
+        @Override
+        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+            HashMap<String, String> row = new HashMap<String, String>();
+            row.put("id",rs.getString("id"));
+            row.put("titulo",rs.getString("titulo"));
+            return row;
+        }
+    }
+);
+
+return subfamilias;
+}
+    
+    
+    
+    
     
     
     
