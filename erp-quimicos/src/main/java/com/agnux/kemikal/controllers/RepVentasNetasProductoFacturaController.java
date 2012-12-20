@@ -155,6 +155,45 @@ public class RepVentasNetasProductoFacturaController {
     
     
     
+    //cargando filtros
+    @RequestMapping(method = RequestMethod.POST, value="/get_cargando_filtros.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_cargando_filtrosJson(
+            @RequestParam(value="linea", required=true) Integer id_linea,
+            @RequestParam(value="marca", required=true) Integer id_marca,
+            @RequestParam(value="familia", required=true) Integer id__familia,
+            @RequestParam(value="subfamilia", required=true) Integer id_subfamilia,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        
+        ArrayList<HashMap<String, String>> arraylineas = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayMarcas = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayFamilia = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arraySubfamilia = new ArrayList<HashMap<String, String>>();
+        
+        if(id__familia != 0){
+          arraySubfamilia=this.getCxcDao().getSubfamilias(id__familia);  
+            
+        }
+        
+        
+        arraylineas=this.getCxcDao().getLineas();
+        arrayMarcas=this.getCxcDao().getMarcas();
+        arrayFamilia=this.getCxcDao().getFamilias();
+        
+        
+        
+        jsonretorno.put("lineas", arraylineas);
+        jsonretorno.put("marcas", arrayMarcas);
+        jsonretorno.put("familias", arrayFamilia);
+        jsonretorno.put("subfamilias", arraySubfamilia);
+        
+        return jsonretorno;
+    }
+    
+    
     //Buscador de productos
     @RequestMapping(method = RequestMethod.POST, value="/get_buscador_productos.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_buscador_productosJson(
@@ -192,6 +231,10 @@ public class RepVentasNetasProductoFacturaController {
             @RequestParam(value="producto", required=true) String producto,
             @RequestParam(value="fecha_inicial", required=true) String fecha_inicial, 
             @RequestParam(value="fecha_final", required=true) String fecha_final,
+            @RequestParam(value="linea", required=true) Integer id_linea,
+            @RequestParam(value="marca", required=true) Integer id_marca,
+            @RequestParam(value="familia", required=true) Integer id_familia,
+            @RequestParam(value="subfamilia", required=true) Integer id_subfamilia,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
             ) {
@@ -208,7 +251,7 @@ public class RepVentasNetasProductoFacturaController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        ArrayList<HashMap<String, String>> z = this.getCxcDao().getVentasNetasProductoFactura(tipo_reporte, cliente, producto, fecha_inicial, fecha_final, id_empresa);
+        ArrayList<HashMap<String, String>> z = this.getCxcDao().getVentasNetasProductoFactura(tipo_reporte, cliente, producto, fecha_inicial, fecha_final, id_empresa,id_linea, id_marca, id_familia, id_subfamilia);
         return z;    
     
     }
@@ -273,8 +316,8 @@ public class RepVentasNetasProductoFacturaController {
         ArrayList<HashMap<String, String>> lista_ventasporproducto = new ArrayList<HashMap<String, String>>();
         
         //obtiene los informacion de ventas  del periodo indicado
-        lista_ventasporproducto = this.getCxcDao().getVentasNetasProductoFactura(Integer.parseInt(arreglo[0]), arreglo[1],arreglo[2], arreglo[3], arreglo[4], id_empresa);
         
+        lista_ventasporproducto = this.getCxcDao().getVentasNetasProductoFactura(Integer.parseInt(arreglo[0]), arreglo[1],arreglo[2], arreglo[3], arreglo[4], id_empresa,Integer.parseInt(arreglo[6]),Integer.parseInt(arreglo[7]),Integer.parseInt(arreglo[8]),Integer.parseInt(arreglo[9]) );
         //[0]tipo_reporte+"___"+[1]cliente+"___"+[2]producto+"___"+[3]fecha_inicial+"___"+[4]fecha_final+"___"+[5]usuario
         if(Integer.parseInt(arreglo[0])==1){
             //instancia a la clase que construye el pdf  del reporte ventas netas por cliente
