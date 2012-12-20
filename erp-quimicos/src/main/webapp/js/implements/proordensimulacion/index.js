@@ -30,7 +30,7 @@ $(function() {
                 return this.tituloApp;
             },
             getController: function(){
-                return this.contextpath + "/controllers/proordenproduccion";
+                return this.contextpath + "/controllers/proordensimulacion";
                 //  return this.controller;
             }
         };
@@ -53,7 +53,7 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/proordenproduccion";
+	var controller = $contextpath.val()+"/controllers/proordensimulacion";
 	
         //Barra para las acciones
         $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -3873,11 +3873,11 @@ $(function() {
 	}//termina buscador de productos
         
 	$get_datos_grid = function(){
-            var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_all_ordenesproduccion.json';
+            var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_all_ordensimulacion.json';
             
             var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
             
-            $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':15,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/get_all_ordenesproduccion.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+            $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':15,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/get_all_ordensimulacion.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
             
             $.post(input_json,$arreglo,function(data){
                 //pinta_grid
