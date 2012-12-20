@@ -1049,7 +1049,12 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //DUREZA
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("dureza_inicial"), registrotmp.get("dureza_final"), "Letras");
+                                System.out.println("DUREZA:  "+registrotmp.get("inst_dureza"));
+                                if(registrotmp.get("dureza_inicial").equals("N.A.")){
+                                    res_tmp = "";
+                                }else{
+                                    texto_especificacion = "DE "+registrotmp.get("dureza_inicial")+" A "+registrotmp.get("dureza_final")+"Letras";
+                                }
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1058,7 +1063,7 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //DUREZA
-                                //System.out.println("DUREZA:  "+registrotmp.get("inst_dureza"));
+                                System.out.println("DUREZA:  "+registrotmp.get("inst_dureza"));
                                 celdaXX = new PdfPCell(new Paragraph(StringHelper.isNullString(registrotmp.get("inst_dureza")),smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1808,7 +1813,12 @@ public class PdfProOrdenProduccion {
                     
                     if(cadena.equals("dureza")){
                         //columna 1 fil1
-                        res_tmp = cadena_especificaciones("", registrotmp.get("dureza_inicial"), registrotmp.get("dureza_final"), "");
+                        if(registrotmp.get("dureza_inicial").equals("N.A.")){
+                            res_tmp = "";
+                        }else{
+                            res_tmp = registrotmp.get("dureza_inicial");
+                        }
+                        //res_tmp = cadena_especificaciones("", registrotmp.get("dureza_inicial"), registrotmp.get("dureza_final"), "");
                         cell = new PdfPCell(new Paragraph(res_tmp,smallFont));
                         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
