@@ -43,6 +43,12 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     
     @Override
+    public String getCfdiTimbreEmitidosDir() {
+        String cfditimbreemitidosdir = System.getenv("HOME") + "/" + "resources" + "/"+"cfdi" + "/"+"timbre" + "/" + "emitidos" + "/";
+        return cfditimbreemitidosdir;
+    }
+    
+    @Override
     public String getImagesDir() {
         String imagesdir = System.getenv("HOME") + "/" + "resources" + "/"+"images" + "/";
         return imagesdir;
