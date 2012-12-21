@@ -18,6 +18,7 @@ public interface GralInterfaceDao {
     public String getImagesDir();
     public String getSslDir();
     public String getCfdEmitidosDir();
+    public String getCfdiTimbreEmitidosDir();
     public String getCfdiSolicitudesDir();
     public String getXslDir();
     public String getXsdDir();
