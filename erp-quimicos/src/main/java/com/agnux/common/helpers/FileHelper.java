@@ -32,12 +32,12 @@ public class FileHelper {
         
     	File fichero = new File (dir_fichero,archivo);
         try {
-
+            
             if (fichero.createNewFile()){
-                System.out.println("Se ha creado el Fichero: " + dir_fichero  + archivo);
+                System.out.println("Se ha creado el Fichero: " + dir_fichero + "/" + archivo);
             }
             else{
-                System.out.println("No se ha creado el Fichero: " + dir_fichero  + archivo);
+                System.out.println("No se ha creado el Fichero: " + dir_fichero  + "/" + archivo);
             }
         } catch (IOException ioe) {
                 ioe.printStackTrace();
