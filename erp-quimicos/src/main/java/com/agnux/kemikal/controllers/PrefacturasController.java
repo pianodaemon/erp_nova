@@ -677,13 +677,11 @@ public class PrefacturasController {
                         
                         //genera xml factura
                         this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
-                        this.getBfCfdiTf().start();
+                        String timbrado_correcto = this.getBfCfdiTf().start();
                         
                         //aqui se checa si el xml fue validado correctamente
                         //si fue correcto debe traer un valor "true", de otra manera trae un error y ppor lo tanto no se genera el pdf
-                            
-                            
-                            
+                        if(timbrado_correcto.equals("true")){
                             //obtiene serie_folio de la factura que se acaba de guardar
                             serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura);
                             
@@ -705,6 +703,7 @@ public class PrefacturasController {
                             //pdfFactura.viewPDF();
                             
                             jsonretorno.put("folio",serieFolio);
+                        }
                     }
                     
                     
