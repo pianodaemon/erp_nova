@@ -264,8 +264,8 @@ public class BeanFacturadorCfdiTimbre {
                     try{
                         URL wsdlURL = null;
                         try{
-                            //wsdlURL = new URL("https://demotf.buzonfical.com/timbrado?wsdl");
-                            wsdlURL = new URL(ruta_fichero_wdsl);
+                            wsdlURL = new URL("https://demotf.buzonfiscal.com/timbrado?wsdl");
+                            //wsdlURL = new URL(ruta_fichero_wdsl);
                             
                         }catch (MalformedURLException ex) {
                             ex.printStackTrace();
