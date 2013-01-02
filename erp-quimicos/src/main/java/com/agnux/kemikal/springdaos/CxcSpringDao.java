@@ -3345,7 +3345,51 @@ return subfamilias;
 
     
     
- 
+    //reporte Anticipos no Autorizados
+    @Override
+    public ArrayList<HashMap<String, String>> getAnticiposnoAplicados(String fecha_inicial, String fecha_final, Integer cliente, Integer id_empresa) {
+        String where="";
+        
+        if(cliente!=0){
+            where = "  and cxc_ant.cliente_id=" +cliente;
+        }
+        
+        String sql_to_query = "select cxc_ant.cliente_id, "
+                + "to_char(cxc_ant.fecha_anticipo_usuario,'yyyy-mm-dd') as fecha_anticipo, "
+                + "cxc_clie.razon_social as cliente, "
+                + "cxc_ant.anticipo_inicial, "
+                + "cxc_ant.anticipo_actual, "
+                + "cxc_ant.observaciones "
+                + "from cxc_ant "
+                + "join cxc_clie on cxc_clie.id = cxc_ant.cliente_id "
+                + "where cxc_ant.empresa_id= "+id_empresa+" "
+                + ""+where+" "
+                + "and to_char(cxc_ant.fecha_anticipo_usuario,'yyyymmdd'):: integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer "
+                + "ORDER BY cxc_ant.fecha_anticipo_usuario ";
+        
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_to_query, 
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("fecha_anticipo",rs.getString("fecha_anticipo"));
+                    row.put("cliente_id",String.valueOf(rs.getInt("cliente_id")));
+                    row.put("cliente",rs.getString("cliente"));
+                   
+                    row.put("anticipo_inicial", StringHelper.roundDouble(rs.getString("anticipo_inicial"), 2));
+                   
+                    row.put("anticipo_actual", StringHelper.roundDouble(rs.getString("anticipo_actual"), 2));
+                    
+                    row.put("observaciones",rs.getString("observaciones"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
     
     
     
