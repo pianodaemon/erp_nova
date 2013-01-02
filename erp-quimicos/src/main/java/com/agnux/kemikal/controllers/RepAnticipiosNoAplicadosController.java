@@ -200,7 +200,7 @@ public class RepAnticipiosNoAplicadosController {
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(arreglo[3]));
-        Integer app_selected = 113;//Reporte Anticipos no Autorizados
+        Integer app_selected = 117;//Reporte Anticipos no Autorizados
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
