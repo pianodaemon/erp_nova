@@ -141,6 +141,7 @@ public interface CxcInterfaceDao {
     //reporte Cobranza Diaria
     public ArrayList<HashMap<String, String>> getCobranzaDiaria(String fecha_inicial, String fecha_final,Integer cliente, Integer id_empresa);
     
-    
+    //reporte Anticipos no Autorizados
+    public ArrayList<HashMap<String, String>> getAnticiposnoAplicados(String fecha_inicial, String fecha_final, Integer cliente, Integer id_empresa);
     
 }
