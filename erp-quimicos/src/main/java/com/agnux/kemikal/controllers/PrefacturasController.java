@@ -436,6 +436,7 @@ public class PrefacturasController {
             @RequestParam(value="select_tipo_documento", required=true) Integer select_tipo_documento,
             @RequestParam(value="id_cliente", required=true) String id_cliente,
             @RequestParam(value="moneda", required=true) String id_moneda,
+            @RequestParam(value="moneda_original", required=true) String id_moneda_original,
             @RequestParam(value="tipo_cambio", required=true) String tipo_cambio_vista,
             @RequestParam(value="observaciones", required=true) String observaciones,
             @RequestParam(value="total_tr", required=true) String total_tr,
@@ -484,8 +485,6 @@ public class PrefacturasController {
         ArrayList<HashMap<String, String>> listaConceptosPdfCfd = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> datosExtrasPdfCfd= new HashMap<String, String>();
         
-        
-        
         Integer app_selected = 13;
         String command_selected = "";
         String actualizo = "0";
@@ -520,7 +519,7 @@ public class PrefacturasController {
         }
         
         //System.out.println("data_string: "+data_string);
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original;
         //System.out.println("data_string: "+data_string);
         
         succes = this.getPdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
