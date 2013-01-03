@@ -1889,7 +1889,7 @@ $(function() {
 							//$busca_sku.hide();
 							//$agregar_producto.hide();
 							$boton_facturar.hide();
-
+							
 						}
 						
 						
@@ -2073,9 +2073,9 @@ $(function() {
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 							$moneda_original.val(moneda['id']);
 						}else{
-							//if(parseInt(flujo_proceso)==2){
-							//	moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-							//}
+							if(parseInt(flujo_proceso)==2){
+								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+							}
 						}
 					});
 					$select_moneda.append(moneda_hmtl);
