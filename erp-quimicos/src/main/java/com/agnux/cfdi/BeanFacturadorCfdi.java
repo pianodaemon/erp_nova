@@ -353,11 +353,12 @@ public class BeanFacturadorCfdi {
             String cadena_retorno = new String();
             
             String subtotalRetenidos = "0";
-            
-            for (HashMap<String, String> i : lista_retenidos){
+            for(int j=0; j<lista_retenidos.size();j++){
+                HashMap i = (HashMap) lista_retenidos.get(j);
+            //for (HashMap<String, String> i : lista_retenidos){
                 String template = "[Impuestos Retenidos]\nretenidoImpuesto|{0}\nretenidoImporte|{1}\nsubtotalRetenidos|{2}\n";
-                //cadena_retorno += MessageFormat.format(template, i.get("impuesto"),i.get("importe"), i.get("tasa"),subtotalTrasladados);
                 cadena_retorno += MessageFormat.format(template, i.get("impuesto"),i.get("importe"),i.get("importe"));
+            //}
             }
             
             return cadena_retorno;
