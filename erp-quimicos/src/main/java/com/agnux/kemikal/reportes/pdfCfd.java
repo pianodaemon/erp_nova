@@ -734,7 +734,7 @@ public final class pdfCfd {
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorder(0);
             cell.setColspan(6);
-            cell.setFixedHeight(15);
+            cell.setFixedHeight(10);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
@@ -744,7 +744,7 @@ public final class pdfCfd {
             //&&&&&&&&&&&&&&&&&&&&        TABLA DE  LOS CONCEPTOS        &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
             cell = new PdfPCell(cepdf.addContent());
             cell.setColspan(6);
-            cell.setFixedHeight(250);
+            cell.setFixedHeight(200);
             cell.setBorderWidthBottom(1);
             cell.setBorderWidthLeft(1);
             cell.setBorderWidthTop(1);
@@ -763,16 +763,26 @@ public final class pdfCfd {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
-                
-            cell = new PdfPCell(new Paragraph(this.getObservaciones()+"\nDEPOSITAR EN BANORTE (MN) Cta. 0587326205 CLABE 072580005873262052, (USD) Cta. 0557037045 CLABE 072580005570370454",smallFont));
+            
+            String cuentas="";
+            
+            if ( !this.getEmisora_rfc().equals("KCM081010I58") && !this.getEmisora_rfc().equals("KME010221CB4")){
+                cuentas="";
+            }else{
+                cuentas="\nDEPOSITAR EN BANORTE (MN) Cta. 0587326205 CLABE 072580005873262052, (USD) Cta. 0557037045 CLABE 072580005570370454";
+            }
+            
+            
+            cell = new PdfPCell(new Paragraph(this.getObservaciones()+cuentas,smallFont));
             cell.setBorder(0);
             cell.setColspan(6);
             cell.setBorderWidthTop(0);
             cell.setBorderWidthBottom(0);
-            cell.setFixedHeight(20);
+            cell.setFixedHeight(60);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell); 
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
+            table.addCell(cell);
 /*
             if(!this.getObservaciones().equals("LUGAR DE ENTREGA: ")){
                 cell = new PdfPCell(new Paragraph(this.getObservaciones(),smallFont));
@@ -1538,7 +1548,7 @@ public final class pdfCfd {
             cell.setBorderWidthTop(0);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("SELLO DIGITAL:",negrita_pequeña));
+            cell = new PdfPCell(new Paragraph("SELLO DIGITAL DEL EMISOR:",negrita_pequeña));
             cell.setColspan(5);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
