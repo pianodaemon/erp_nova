@@ -504,7 +504,7 @@ public class PrefacturasController {
         arreglo = new String[eliminado.length];
         
         for(int i=0; i<eliminado.length; i++) { 
-            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"'";
+            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"'";
             //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
             //System.out.println(arreglo[i]);
         }
@@ -571,6 +571,7 @@ public class PrefacturasController {
                         extra_data_array = "'sin datos'";
                         datosExtrasXmlFactura = this.getFacdao().getDatosExtrasFacturaXml(String.valueOf(id_prefactura),tipo_cambio_vista,String.valueOf(id_usuario),String.valueOf(id_moneda),id_empresa, id_sucursal, refacturar, app_selected, command_selected, extra_data_array);
                         
+                        
                         //xml factura
                         this.getBfCfd().init(dataFacturaCliente, conceptos,impRetenidos,impTrasladados , proposito,datosExtrasXmlFactura, id_empresa, id_sucursal);
                         this.getBfCfd().start();
@@ -584,12 +585,16 @@ public class PrefacturasController {
                         String sello_digital = this.getBfCfd().getSelloDigital();
                         //System.out.println("sello_digital:"+sello_digital);
                         
+                        //este es el timbre fiscal, solo es para cfdi con timbre fiscal. Aqui debe ir vacio
+                        String sello_digital_sat = "";
+                        
                         //conceptos para el pdfcfd
                         listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
                         
                         //datos para el pdf
-                        datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital,id_sucursal);
-                        
+                        datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original, sello_digital, id_sucursal);
+                        datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
+                        datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                         
                         //pdf factura
                         pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
@@ -690,12 +695,16 @@ public class PrefacturasController {
                             String sello_digital = this.getBfCfdiTf().getSelloDigital();
                             //System.out.println("sello_digital:"+sello_digital);
                             
+                            //este es el timbre fiscal, se debe extraer del xml que nos devuelve el web service del timbrado
+                            String sello_digital_sat = "";
+                            
                             //conceptos para el pdfcfd
                             listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
                             
                             //datos para el pdf
-                            datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital,id_sucursal);
-                            
+                            datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
+                            datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
+                            datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                             
                             //pdf factura
                             pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
