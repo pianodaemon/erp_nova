@@ -28,6 +28,7 @@ public final class pdfCfd {
         FACTURA, NOTA_CREDITO, NOTA_CARGO
     };
     
+    private String tipo_facturacion;
     private String imagen;
     private String imagen_cedula;
     private String empresa_emisora;
@@ -51,6 +52,7 @@ public final class pdfCfd {
     private String no_certificado;
     private String cadena_original;
     private String sello_digital;
+    private String sello_digital_sat;
     private String serie_folio;
     private String facha_comprobante;
     
@@ -107,9 +109,10 @@ public final class pdfCfd {
         this.setDatosExtras(extras);
         
         this.setGralDao(gDao);
+        this.setTipo_facturacion(extras.get("tipo_facturacion"));
+        this.setSello_digital_sat(extras.get("sello_sat"));
         
-        System.out.println("id_empresa::"+ id_empresa);
-        
+        //System.out.println("id_empresa::"+ id_empresa);
         System.out.println("Razon_soc: "+ this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa)  );
         
         this.setEmpresa_emisora( this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa) );
@@ -696,12 +699,10 @@ public final class pdfCfd {
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
             
-            
             cell = new PdfPCell(new Paragraph("SU PEDIDO: / YOUR ORDER",negrita_pequena));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
-            
             
             cell = new PdfPCell(new Paragraph("VENDEDOR: / SALESMAN:",negrita_pequena));
             cell.setColspan(4);
@@ -739,6 +740,7 @@ public final class pdfCfd {
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             table.addCell(cell);
+            
             
             
             //&&&&&&&&&&&&&&&&&&&&        TABLA DE  LOS CONCEPTOS        &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -859,14 +861,6 @@ public final class pdfCfd {
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
     public void setImagen(String imagen) {
     	this.imagen = imagen;
     }
@@ -875,7 +869,7 @@ public final class pdfCfd {
     	return imagen;
     }
     
-   
+    
     
     
     private class ImagenPDF {
@@ -885,7 +879,8 @@ public final class pdfCfd {
                 img = Image.getInstance(getImagen());
                 img.scaleAbsoluteHeight(100);
                 img.scaleAbsoluteWidth(145);
-                img.setAlignment(0);
+                //img.setAlignment(0);
+                img.setAlignment(Element.ALIGN_CENTER);
             }
             catch(Exception e){
                 System.out.println(e);
@@ -907,13 +902,16 @@ public final class pdfCfd {
     
     
     private class CedulaPDF {
-        public Image addContent() {
+        public Image addContent(int alto, int ancho) {
             Image img = null;
+            //alto=130  ancho=85
             try {
                 img = Image.getInstance(getImagen_cedula());
-                img.scaleAbsoluteHeight(130);
-                img.scaleAbsoluteWidth(85);
-                img.setAlignment(0);
+                img.scaleAbsoluteHeight(alto);
+                img.scaleAbsoluteWidth(ancho);
+                img.setAlignment(Element.ALIGN_CENTER);
+                img.setSpacingBefore(6);
+                //img.setAlignment(0);
             }
             catch(Exception e){
                 System.out.println(e);
@@ -1108,19 +1106,34 @@ public final class pdfCfd {
             
             
             float [] anchocolumnas = {4,8,4,0.7f,4};
-            String moneda="";
             PdfPTable table = new PdfPTable(anchocolumnas);
             PdfPCell cell;
-                        
-            cell = new PdfPCell(icedula.addContent());
-            cell.setRowspan(15);
-            cell.setUseAscender(true);
+            int alto=136,  ancho=85;
+            
+            if(getTipo_facturacion().equals("cfditf")){
+                alto=160; ancho=87;
+            }
+            
+            cell = new PdfPCell(icedula.addContent(alto,ancho));
+            
+            if(getTipo_facturacion().equals("cfd")){
+            //if(getTipo_facturacion().equals("cfditf")){
+                cell.setRowspan(15);
+            }
+            
+            if(getTipo_facturacion().equals("cfditf")){
+            //if(getTipo_facturacion().equals("cfd")){
+                cell.setRowspan(17);
+            }
+            
+            //cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
-            cell.setBorderWidthBottom(0);
-
+            cell.setBorderWidthBottom(1);
+            cell.setBorderWidthTop(1);
+            cell.setBorderWidthLeft(1);
+            cell.setBorderWidthRight(1);
             table.addCell(cell);
-            
             
             cell = new PdfPCell(new Paragraph("CANTIDAD CON LETRA:",negrita_pequeña));
             cell.setColspan(4);
@@ -1543,6 +1556,7 @@ public final class pdfCfd {
             cell = new PdfPCell(new Paragraph(  getCadena_original()  ,Fontssello__aviso));
             cell.setColspan(5);
             cell.setRowspan(2);
+            cell.setFixedHeight(35);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setBorderWidthTop(0);
@@ -1558,10 +1572,31 @@ public final class pdfCfd {
             
             cell = new PdfPCell(new Paragraph(  getSello_digital(),Fontssello__aviso));
             cell.setColspan(5);
+            cell.setFixedHeight(15);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setBorderWidthTop(0);
             table.addCell(cell);
+            
+            //if(getTipo_facturacion().equals("cfd")){
+            if(getTipo_facturacion().equals("cfditf")){
+                cell = new PdfPCell(new Paragraph("SELLO DIGITAL DEL SAT:",negrita_pequeña));
+                cell.setColspan(5);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph( getSello_digital_sat(),Fontssello__aviso));
+                cell.setColspan(5);
+                cell.setFixedHeight(15);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+            }
+            
             
             cell = new PdfPCell(new Paragraph("EFECTOS FISCALES AL PAGO. PAGO EN UNA SOLA EXHIBICION. ESTE DOCUMENTO ES UNA REPRESENTACION IMPRESA DE UN CFD",Fontssello__aviso));
             cell.setColspan(5);
@@ -2034,7 +2069,20 @@ public final class pdfCfd {
     public void setEtiqueta_tipo_doc(String etiqueta_tipo_doc) {
         this.etiqueta_tipo_doc = etiqueta_tipo_doc;
     }
-    
 
+    public String getTipo_facturacion() {
+        return tipo_facturacion;
+    }
+
+    public void setTipo_facturacion(String tipo_facturacion) {
+        this.tipo_facturacion = tipo_facturacion;
+    }
     
+    public String getSello_digital_sat() {
+        return sello_digital_sat;
+    }
+
+    public void setSello_digital_sat(String sello_digital_sat) {
+        this.sello_digital_sat = sello_digital_sat;
+    }
 }
