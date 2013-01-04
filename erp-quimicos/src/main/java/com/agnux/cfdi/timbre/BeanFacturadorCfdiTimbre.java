@@ -228,6 +228,7 @@ public class BeanFacturadorCfdiTimbre {
             //directorio de emitidos del fichero
             path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getRfc_emisor();
             ruta_fichero_schema = this.getGralDao().getXsdDir() + this.getGralDao().getFicheroXsdCfdi(this.getId_empresa(), this.getId_sucursal());
+            //ruta_fichero_wdsl = "file:"+this.getGralDao().getXsdDir() + this.getGralDao().getFicheroWsdlTimbradoCfdi(this.getId_empresa(), this.getId_sucursal());
             ruta_fichero_wdsl = "file:"+this.getGralDao().getXsdDir() + this.getGralDao().getFicheroWsdlTimbradoCfdi(this.getId_empresa(), this.getId_sucursal());
             
             System.out.println("ruta_fichero_wdsl: "+ruta_fichero_wdsl);
@@ -251,7 +252,6 @@ public class BeanFacturadorCfdiTimbre {
                 
                 //Aquí se ejecuta la validación del xml contra el Esquema(xsd)
                 String success = validacion.validar();
-                
                 //si la validación es correcta
                 if(success.equals("true")){
                     
@@ -259,7 +259,7 @@ public class BeanFacturadorCfdiTimbre {
                     //aqui inicia request al webservice
                     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                     
-                    TimbreFiscalDigital timbreFiscalDigital = null;
+                    TimbreFiscalDigital timbreFiscalDigital = new TimbreFiscalDigital();
                     
                     try{
                         URL wsdlURL = null;
@@ -271,21 +271,41 @@ public class BeanFacturadorCfdiTimbre {
                             ex.printStackTrace();
                         }
                         
-                        if(null != wsdlURL){
+                        if(wsdlURL != null){
                             
+                            path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getRfc_emisor();
+                            String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa())+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal()) ;
+                            
+                            System.out.println("ruta_fichero_llave_pfx:"+ruta_fichero_llave_pfx+
+                                    "    getJavaVmDir:"+this.getGralDao().getJavaVmDir(this.getId_empresa(), this.getId_sucursal())+
+                                            "    getPasswdFicheroPfxTimbradoCfdi:"+this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal())+"");
+                            
+                            System.setProperty("javax.net.ssl.keyStore", ruta_fichero_llave_pfx );
+                            System.setProperty("javax.net.ssl.keyStorePassword", this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal()));
+                            System.setProperty("javax.net.ssl.keyStoreType", "pkcs12");
+                            //System.setProperty("javax.net.ssl.trustStore", "/System/Library/Frameworks/JavaVM.framework/Resources/Deploy.bundle/Contents/Home/lib/security/cacerts");
+                            System.setProperty("javax.net.ssl.trustStore",this.getGralDao().getJavaVmDir(this.getId_empresa(), this.getId_sucursal()));
+                            System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+                            System.setProperty("sun.security.ssl.allowUnsafeRenegotiation","true");
+                            
+                            
+                            System.out.println("dentro de wsdlURL diferente null ");
                             TimbradoCFDI_Service service = new TimbradoCFDI_Service(wsdlURL, new QName("http://www.buzonfiscal.com/TimbradoCFDI/", "TimbradoCFDI"));
+                            System.out.println("dentro de new TimbradoCFDI_Service ");
                             TimbradoCFDI port = service.getTimbradoCFDISOAP();
                             
+                            System.out.println("dentro de wsdlURL diferente null ");
                              // TODO initialize WS operation arguments here
                             RequestTimbradoCFDType requestTimbradoCFD = new RequestTimbradoCFDType();
                             
+                            System.out.println("dentro de wsdlURL diferente null ");
                             DocumentoType tipoDocumento = new DocumentoType();
                             InfoBasicaType infBasica = new InfoBasicaType();
                             
                             String serie_folio = pop.getSerie() + pop.getFolio();
                             
                             byte[] encoded = StringHelper.convByte(path_file+"/"+xml_file_name); 
-                            
+                            System.out.println("Nombre de el archivo"+xml_file_name);
                             tipoDocumento.setNombreArchivo(xml_file_name);
                             tipoDocumento.setArchivo(encoded);
                             tipoDocumento.setTipo("XML");
@@ -312,6 +332,33 @@ public class BeanFacturadorCfdiTimbre {
                             timbreFiscalDigital = port.timbradoCFD(requestTimbradoCFD);
                             
                             System.out.println("termina REQUEST");
+                            
+                            String complemento = "</cfdi:Impuestos><cfdi:Complemento>";
+                                    complemento += "<tfd:TimbreFiscalDigital selloSAT=\""+timbreFiscalDigital.getSelloSAT()+"\" ";
+                                    complemento += " noCertificadoSAT=\""+timbreFiscalDigital.getNoCertificadoSAT()+"\" ";
+                                    complemento += " FechaTimbrado=\""+timbreFiscalDigital.getFechaTimbrado()+"\" ";
+                                    complemento += " UUID=\""+timbreFiscalDigital.getUUID()+"\" ";
+                                    complemento += " version=\""+timbreFiscalDigital.getVersion()+"\"  \\>";
+                                    complemento += " </cfdi:Complemento>";
+                            
+                            //add request to xml
+                            String xml_timbrado = FileHelper.stringFromFile(path_file+"/"+xml_file_name);
+                            
+                            xml_timbrado = xml_timbrado.replaceAll("</cfdi:Impuestos>", complemento);
+                            
+                            File file_xml_timbrado = new File(path_file+"/"+xml_file_name);
+                            
+                            if(file_xml_timbrado.exists()){
+                                //Si ya existe un fichero con el mismo nombre hay que eliminarlo
+                                FileHelper.delete(path_file+"/"+xml_file_name);
+                            }
+                            
+                            boolean fichero_xml_timbrado_ok = FileHelper.createFileWithText(path_file, xml_file_name, xml_timbrado);
+                            if(fichero_xml_timbrado_ok){
+                                System.out.println("xml timbrado: ");
+                            }else{
+                                System.out.println("xml No timbrado: ");
+                            }
                             
                             System.out.println("FechaTimbrado: "+timbreFiscalDigital.getFechaTimbrado());
                             System.out.println("SelloCFD "+timbreFiscalDigital.getSelloCFD());

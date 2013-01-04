@@ -254,6 +254,30 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     
     @Override
+    public String getFicheroPfxTimbradoCfdi(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.ws_pfx_cert FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("ws_pfx_cert").toString();
+        return fichero;
+    }
+    
+    @Override
+    public String getPasswdFicheroPfxTimbradoCfdi(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.passwd_ws_pfx FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("passwd_ws_pfx").toString();
+        return fichero;
+    }
+    
+    @Override
+    public String getJavaVmDir(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.javavm_dir FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("javavm_dir").toString();
+        return fichero;
+    }
+    
+    @Override
     public String getUrlFicheroWsdlTimbradoCfdi(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf.archivo_wsdl_timbrado_cfdi FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
