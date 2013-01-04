@@ -267,7 +267,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                         + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
                         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_prefacturas_detalles.presentacion_id "
-                        + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_prefacturas_detalles.presentacion_id "
+                        
                         + "WHERE erp_prefacturas.id="+id_prefactura;
                         
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
@@ -290,7 +290,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("moneda",rs.getString("moneda"));
                     row.put("tipo_impuesto_id",rs.getInt("tipo_impuesto_id"));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
-                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
+                    row.put("costo_prom","0" );
                     
                     /*
                     System.out.println(rs.getString("moneda")+"  "
