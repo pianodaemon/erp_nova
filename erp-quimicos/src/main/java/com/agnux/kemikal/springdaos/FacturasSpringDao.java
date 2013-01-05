@@ -1256,13 +1256,21 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         //obtener tipo de facturacion
         String tipo_facturacion = getTipoFacturacion();
-        if(tipo_facturacion.equals("cfdi")){
-            //para facturacion tipo CFDI Buzon Fiscal
-            sql_to_query = "SELECT serie_folio AS nombre_archivo FROM fac_docs WHERE id ="+id_factura+";";
-        }else{
+        if(tipo_facturacion.equals("cfd")){
             //para facturacion tipo CFD
             sql_to_query = "SELECT split_part(fac_cfds.nombre_archivo, '.', 1) AS nombre_archivo FROM fac_docs  JOIN erp_proceso ON erp_proceso.id=fac_docs.proceso_id JOIN  fac_cfds ON fac_cfds.proceso_id= erp_proceso.id WHERE fac_docs.id="+id_factura+" ORDER BY fac_cfds.id DESC LIMIT 1;";
         }
+        
+        if(tipo_facturacion.equals("cfdi")){
+            //para facturacion tipo CFDI Buzon Fiscal
+            sql_to_query = "SELECT serie_folio AS nombre_archivo FROM fac_docs WHERE id ="+id_factura+";";
+        }
+        
+        if(tipo_facturacion.equals("cfditf")){
+            //para facturacion tipo CFDI Buzon Fiscal
+            sql_to_query = "SELECT serie_folio AS nombre_archivo FROM fac_docs WHERE id ="+id_factura+";";
+        }
+
         
         //System.out.println(sql_to_query);
         Map<String, Object> map_iva = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -1283,7 +1291,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         if(tipo_facturacion.equals("cfd")){
             //para facturacion tipo CFD
             sql_to_query = "SELECT split_part(fac_cfds.nombre_archivo, '.', 1) AS serie_folio FROM erp_prefacturas  JOIN erp_proceso ON erp_proceso.id=erp_prefacturas.proceso_id JOIN  fac_cfds ON fac_cfds.proceso_id= erp_proceso.id WHERE erp_prefacturas.id="+id_prefactura+" ORDER BY fac_cfds.id DESC LIMIT 1;";
-        }else{
+        }
+        
+        if(tipo_facturacion.equals("cfdi")){
+            //para facturacion tipo CFDI Timbre Fiscal
+            sql_to_query = "SELECT fac_docs.serie_folio FROM erp_prefacturas  JOIN  fac_docs ON fac_docs.proceso_id=erp_prefacturas.proceso_id WHERE erp_prefacturas.id="+id_prefactura+" AND fac_docs.cancelado=false ORDER BY fac_docs.id DESC LIMIT 1;";
+        }
+        
+        if(tipo_facturacion.equals("cfditf")){
             //para facturacion tipo CFDI Timbre Fiscal
             sql_to_query = "SELECT fac_docs.serie_folio FROM erp_prefacturas  JOIN  fac_docs ON fac_docs.proceso_id=erp_prefacturas.proceso_id WHERE erp_prefacturas.id="+id_prefactura+" AND fac_docs.cancelado=false ORDER BY fac_docs.id DESC LIMIT 1;";
         }
