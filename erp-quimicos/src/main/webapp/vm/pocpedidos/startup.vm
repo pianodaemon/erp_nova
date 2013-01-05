@@ -33,6 +33,7 @@
         <input type="hidden" name="emp" value="$empresa">
         <input type="hidden" name="suc" value="$sucursal">
         
+        
         <!--Esta tabla va  en la barra de acciones -->
 		<table class="table_acciones" style="display:none" border="0">
 			<tr>
@@ -124,6 +125,7 @@
 				<input type="hidden" name="cta_mn">
                 <input type="hidden" name="cta_usd">
                 <input type="hidden" name="incluye_pro">
+                <input type="hidden" name="num_lista_precio">
 					
                     <div id="div_two" title="" class="pocpedidos_div_two">
                         <div class="columns on-2">
