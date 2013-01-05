@@ -371,9 +371,9 @@ $(function() {
 			//event.preventDefault();
 			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorClientes.json';
 			$arreglo = {	'cadena':$cadena_buscar.val(),
-							'filtro':$select_filtro_por.val(),
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-						}
+                                        'filtro':$select_filtro_por.val(),
+                                        'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+                        }
 			
 			var trr = '';
 			$tabla_resultados.children().remove();
@@ -392,6 +392,8 @@ $(function() {
 							trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
 							trr += '<input type="hidden" id="cta_mn" value="'+cliente['cta_pago_mn']+'">';
 							trr += '<input type="hidden" id="cta_usd" value="'+cliente['cta_pago_usd']+'">';
+                                                        trr +='<input  type="hidden" id="lista_precios" value="'+cliente['lista_precio']+'">';
+                                                        
 						trr += '</td>';
 						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
 						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
@@ -424,15 +426,36 @@ $(function() {
 					$('#forma-pocpedidos-window').find('input[name=empresa_immex]').val($(this).find('#emp_immex').val());
 					$('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]').val($(this).find('#tasa_immex').val());
 					$('#forma-pocpedidos-window').find('input[name=cta_mn]').val($(this).find('#cta_mn').val());
-					$('#forma-pocpedidos-window').find('input[name=cta_usd]').val($(this).find('#cta_usd').val());	
+					$('#forma-pocpedidos-window').find('input[name=cta_usd]').val($(this).find('#cta_usd').val());
+                                        $('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val($(this).find('#lista_precios').val());
 					var id_moneda=$(this).find('#id_moneda').val();
 					var id_termino=$(this).find('#terminos_id').val();
 					var id_vendedor=$(this).find('#vendedor_id').val();
-					
+                                        //almacena el valor de la lista
+                                        var $lista_precios=$(this).find('#lista_precios').val();
+                                        
+                                        
+					if($lista_precios>0){
+                                            var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaListaCliente.json';
+                                                $arreglo2 = {	
+                                                    'lista_precio':$lista_precios
+                                                }
+                                                $.post(input_json2,$arreglo2,function(moneda_lista){
+                                                    $.each(moneda_lista['listaprecio'],function(entryIndex ,monedalista){
+                                                        id_moneda = monedalista['moneda_id'];
+                                                        
+                                                    });
+                                                });
+
+                                        }
+   
+                                        
 					//carga el select de monedas  con la moneda del cliente seleccionada por default
+                                        
 					$select_moneda.children().remove();
 					var moneda_hmtl = '';
 					$.each(array_monedas ,function(entryIndex,moneda){
+                                            
 						if( parseInt(moneda['id']) == parseInt(id_moneda) ){
 							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
 						}else{
@@ -440,7 +463,7 @@ $(function() {
 						}
 					});
 					$select_moneda.append(moneda_hmtl);
-					
+				           
 					//carga select de condiciones con los dias de Credito default del Cliente
 					$select_condiciones.children().remove();
 					var hmtl_condiciones;
@@ -455,6 +478,7 @@ $(function() {
 					
 					
 					//carga select de vendedores
+                                       
 					$select_vendedor.children().remove();
 					var hmtl_vendedor;
 					$.each(array_vendedores,function(entryIndex,vendedor){
@@ -567,6 +591,7 @@ $(function() {
 						trr += '<td width="90">';
 							trr += '<span class="unidad_id" style="display:none;">'+producto['unidad_id']+'</span>';
 							trr += '<span class="utitulo">'+producto['unidad']+'</span>';
+                                                       
 						trr += '</td>';
 						trr += '<td width="90"><span class="tipo_prod_buscador">'+producto['tipo']+'</span></td>';
 					trr += '</tr>';
@@ -621,13 +646,15 @@ $(function() {
 	//buscador de presentaciones disponibles para un producto
 	$buscador_presentaciones_producto = function($id_cliente,nocliente, sku_producto,$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio){
 		//verifica si el campo rfc proveedor no esta vacio
+               var cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val();
 		if(nocliente != ''){
 			//verifica si el campo sku no esta vacio para realizar busqueda
 			if(sku_producto != ''){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
 				$arreglo = {'sku':sku_producto,
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							};
+                                            'lista_precios':cliente_listaprecio,
+                                            'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+                                };
 
 				var trr = '';
 				
@@ -657,15 +684,16 @@ $(function() {
 						$.each(entry['Presentaciones'],function(entryIndex,pres){
 							trr = '<tr>';
 								trr += '<td width="100">';
-									trr += '<span class="id_prod" style="display:none">'+pres['id']+'</span>';
-									trr += '<span class="sku">'+pres['sku']+'</span>';
+                                                                    trr += '<span class="id_prod" style="display:none">'+pres['id']+'</span>';
+                                                                    trr += '<span class="sku">'+pres['sku']+'</span>';
 								trr += '</td>';
 								trr += '<td width="250"><span class="titulo">'+pres['titulo']+'</span></td>';
 								trr += '<td width="80">';
-									trr += '<span class="unidad" style="display:none">'+pres['unidad']+'</span>';
-									trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
-									trr += '<span class="pres">'+pres['presentacion']+'</span>';
-									trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
+                                                                    trr += '<span class="unidad" style="display:none">'+pres['unidad']+'</span>';
+                                                                    trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
+                                                                    trr += '<span class="pres">'+pres['presentacion']+'</span>';
+                                                                    trr +='<span class="costo" style="display:none">'+pres['precio']+'</span>';
+                                                                    trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
 								trr += '</td>';
 							trr += '</tr>';
 							$tabla_resultados.append(trr);
@@ -697,7 +725,7 @@ $(function() {
 							var pres = $(this).find('span.pres').html();
 							var num_dec = $(this).find('span.dec').html();
 							
-							var prec_unitario=" ";
+							var prec_unitario= $(this).find('span.costo').html();
 							var id_moneda=0;
 							
 							//llamada a la funcion que agrega el producto al grid
@@ -857,19 +885,19 @@ $(function() {
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
 					trr += '<INPUT type="hidden"    name="id_presentacion"  	value="'+  id_pres +'" id="idpres">';
 					trr += '<INPUT type="hidden"    name="numero_decimales"     value="'+  num_dec +'" id="numdec">';
-					trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+					trr += '<INPUT TYPE="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<INPUT TYPE="text" 		name="cantidad" value=" " class="cantidad'+ tr +'" id="cant" style="width:76px;">';
+					trr += '<INPUT TYPE="text" name="cantidad" value=" " class="cantidad'+ tr +'" id="cant" style="width:76px;">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<INPUT TYPE="text" 		name="costo" 	value="'+ prec_unitario +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
+					trr += '<INPUT TYPE="text" name="costo" value="'+ prec_unitario +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<INPUT TYPE="text" 		name="importe'+ tr +'" 	value="" id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
-					trr += '<INPUT type="hidden"    name="id_imp_prod"    	value="'+  $id_impuesto.val() +'" id="idimppord">';
-					trr += '<INPUT type="hidden"    name="valor_imp"     	value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
-					trr += '<input type="hidden" 	name="totimpuesto'+ tr +'" id="totimp" value="0">';
+					trr += '<INPUT TYPE="text" name="importe'+ tr +'" value="" id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
+					trr += '<INPUT type="hidden" name="id_imp_prod"   value="'+  $id_impuesto.val() +'" id="idimppord">';
+					trr += '<INPUT type="hidden" name="valor_imp"     value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
+					trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="0">';
 				trr += '</td>';
 				
 				trr += '<td class="grid2" id="td_oculto'+ tr +'" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
@@ -1037,19 +1065,6 @@ $(function() {
 		}
 		
 	}//termina agregar producto al grid
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	//nuevo pedido
 	$new_pedido.click(function(event){
@@ -1784,8 +1799,8 @@ $(function() {
 					$observaciones.text(entry['datosPedido']['0']['observaciones']);
 					$observaciones_original.val(entry['datosPedido']['0']['observaciones']);
 					
-                    $orden_compra.val(entry['datosPedido']['0']['orden_compra']);
-                    $orden_compra_original.val(entry['datosPedido']['0']['orden_compra']);
+                                        $orden_compra.val(entry['datosPedido']['0']['orden_compra']);
+                                        $orden_compra_original.val(entry['datosPedido']['0']['orden_compra']);
                     
 					$transporte.val(entry['datosPedido']['0']['transporte']);
 					$transporte_original.val(entry['datosPedido']['0']['transporte']);
