@@ -284,12 +284,12 @@ public class BeanFacturadorCfdiTimbre {
                     
                     myInputStream= resultado.getInputStream();
                     
-
+                    
                     BufferedReader reader = new BufferedReader(new InputStreamReader(myInputStream));
                     StringBuilder sb = new StringBuilder();
                     String line = null;
                     while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
+                        sb.append(line);
                     }
                     myInputStream.close();
                     
@@ -303,31 +303,31 @@ public class BeanFacturadorCfdiTimbre {
                         String cadena_conceptos = this.getFacdao().formar_cadena_conceptos(pop.getListaConceptos());
                         String cadena_imp_trasladados = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosTrasladados(),this.getTasaIva());
                         String cadena_imp_retenidos = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosRetenidos(),this.getTasaRetencion());
-
+                        
                         Integer id_usuario = Integer.parseInt(this.getDatosExtras().get("usuario_id"));
                         String tipo_cambio = this.getTipoCambio();
                         String app_selected = this.getDatosExtras().get("app_selected");
                         String command_selected = this.getDatosExtras().get("command_selected");
                         String extra_data_array = this.getDatosExtras().get("extra_data_array");
-
+                        
                         String estado_comprobante="1";
                         String regimen_fiscal = pop.getRegimenFiscalEmisor();
                         String metodo_pago = pop.getMetodoDePago();
                         String num_cuenta = pop.getNumeroCuenta();
                         String lugar_de_expedicion = pop.getLugarExpedicion();
-
+                        
                         String data_string="";
                         String no_aprobacion="";
                         String ano_aprobacion="";
-
+                        
                         if(pop.getNoAprobacion()!=null ){
                             no_aprobacion = pop.getNoAprobacion();
                         }
-
+                        
                         if(pop.getAnoAprobacion()!=null ){
                             ano_aprobacion = pop.getAnoAprobacion();
                         }
-
+                        
                         switch (Proposito.valueOf(this.getProposito())) {
                             case FACTURA:
                                 Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
@@ -342,8 +342,8 @@ public class BeanFacturadorCfdiTimbre {
                                 retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
 
                                 break;
-
-
+                                
+                                
                             case NOTA_CREDITO:
                                 break;
 
