@@ -668,22 +668,33 @@ public class PocSpringDao implements PocInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku,String lista_precio, Integer id_empresa) {
-	String sql_query = "SELECT "
-                                +"inv_prod.id,"
-                                +"inv_prod.sku,"
-                                +"inv_prod.descripcion AS titulo,"
-                                +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
-                                +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
-                                +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
-                                +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales, "
-                                +"inv_pre.precio_"+lista_precio+" as precio "
-                        +"FROM inv_prod "
-                        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
-                        +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
-                        +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
-                        +"LEFT JOIN inv_pre on inv_pre.inv_prod_id = inv_prod.id "
-                        +"WHERE  empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
+        String sql_query = "";
+        String precio = "";
+            
+        if(lista_precio.equals("0")){
+            precio=" 0::double precision  AS precio ";
+        }else{
+            precio=" inv_pre.precio_"+lista_precio+" AS precio ";
+        }
         
+            sql_query = ""
+                + "SELECT "
+                        +"inv_prod.id,"
+                        +"inv_prod.sku,"
+                        +"inv_prod.descripcion AS titulo,"
+                        +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
+                        +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
+                        +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
+                        +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales, "
+                        +precio+" "
+                +"FROM inv_prod "
+                +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
+                +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
+                +"LEFT JOIN inv_pre on inv_pre.inv_prod_id = inv_prod.id "
+                +"WHERE  empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
+        System.out.println("getPresentacionesProducto: "+sql_query);
+            
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -697,7 +708,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("decimales",rs.getString("decimales"));
-                    row.put("precio",rs.getString("precio"));
+                    row.put("precio",StringHelper.roundDouble(rs.getString("precio"),2));
                     return row;
                 }
             }
