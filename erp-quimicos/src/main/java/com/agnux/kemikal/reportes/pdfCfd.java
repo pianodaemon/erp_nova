@@ -196,8 +196,15 @@ public final class pdfCfd {
         
         PdfPTable table;
         PdfPCell cell;
+        String fileout="";
         
-        String fileout = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa) + "/" + this.getSerie_folio() +".pdf";
+        if(this.getTipo_facturacion().equals("cfd")){
+            fileout = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa) + "/" + this.getSerie_folio() +".pdf";
+        }
+        
+        if(this.getTipo_facturacion().equals("cfditf")){
+            fileout = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa) + "/" + this.getSerie_folio() +".pdf";
+        }
         
         
         try {

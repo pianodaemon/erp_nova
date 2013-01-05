@@ -7,31 +7,29 @@ package com.agnux.cfdi.timbre;
 import com.agnux.cfd.v2.CryptoEngine;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
-import com.agnux.common.helpers.XmlHelper;
 
+import com.agnux.common.helpers.XmlHelper;
 import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
-import com.buzonfiscal.ns.xsd.bf.requesttimbracfdi.DocumentoType;
-import com.buzonfiscal.ns.xsd.bf.requesttimbracfdi.InfoBasicaType;
-import com.buzonfiscal.ns.xsd.bf.timbradocfd.RequestTimbradoCFDType;
-import com.buzonfiscal.timbradocfdi.TimbradoCFDI;
-import com.buzonfiscal.timbradocfdi.TimbradoCFDI_Service;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import java.util.HashMap;
-import javax.xml.namespace.QName;
-import mx.gob.sat.timbrefiscaldigital.TimbreFiscalDigital;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.logging.Level;
 import org.apache.commons.lang.StringUtils;
+
+import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 /**
@@ -205,16 +203,16 @@ public class BeanFacturadorCfdiTimbre {
     }
     
     
+
     /*aqui se crea el fichero xml
      * Se valida el xml contra el schema
      * Se envia peticion al webservice para timbrado
      * Y por ultimo se gusrdan datos en fac_docs y fac_cfds
      */
     
-    public String start() {
+    public String start() throws Exception {
         String retorno="false";
         
-        try {
             String comprobante_firmado = this.generarComprobanteFirmado();
             
             //parser para el xml del cfdi
@@ -223,15 +221,10 @@ public class BeanFacturadorCfdiTimbre {
             String xml_file_name = new String();
             String path_file = new String();
             String ruta_fichero_schema = new String();
-            String ruta_fichero_wdsl = new String();
             
             //directorio de emitidos del fichero
             path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getRfc_emisor();
             ruta_fichero_schema = this.getGralDao().getXsdDir() + this.getGralDao().getFicheroXsdCfdi(this.getId_empresa(), this.getId_sucursal());
-            //ruta_fichero_wdsl = "file:"+this.getGralDao().getXsdDir() + this.getGralDao().getFicheroWsdlTimbradoCfdi(this.getId_empresa(), this.getId_sucursal());
-            ruta_fichero_wdsl = "file:"+this.getGralDao().getXsdDir() + this.getGralDao().getFicheroWsdlTimbradoCfdi(this.getId_empresa(), this.getId_sucursal());
-            
-            System.out.println("ruta_fichero_wdsl: "+ruta_fichero_wdsl);
             
             //nombre del fichero xml
             xml_file_name += pop.getSerie() + pop.getFolio()+".xml";
@@ -258,171 +251,107 @@ public class BeanFacturadorCfdiTimbre {
                     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                     //aqui inicia request al webservice
                     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                    String ruta_jarWebService = this.getGralDao().getCfdiTimbreJarWsDir()+"wscli.jar";
+                    String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa())+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal()) ;
+                    String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal());
+                    String ruta_java_almacen_certificados = this.getGralDao().getJavaVmDir(this.getId_empresa(), this.getId_sucursal());
+                    String tipo="xml";
+                    String version="3.2";
+                    String serie_folio = pop.getSerie() + pop.getFolio();
+                    String refId=serie_folio;
                     
-                    TimbreFiscalDigital timbreFiscalDigital = new TimbreFiscalDigital();
+                    /*   
+                    //estos son los parametros que necesita el jar para establecer la conexion con el web service
+                    1 = FicheroPfxTimbradoCfdi
+                    2= PasswdFicheroPfxTimbradoCfdi
+                    3 = JavaVmDir
+                    4= path_file
+                    5 = xml_file_name
+                    6= tipo
+                    7 = version
+                    8 = getRfc_emisor
+                    9= getRfc_receptor
+                    10 = Serie
+                    11 = RefID
+                    */
                     
-                    try{
-                        URL wsdlURL = null;
-                        try{
-                            wsdlURL = new URL("https://demotf.buzonfiscal.com/timbrado?wsdl");
-                            //wsdlURL = new URL(ruta_fichero_wdsl);
-                            
-                        }catch (MalformedURLException ex) {
-                            ex.printStackTrace();
-                        }
-                        
-                        if(wsdlURL != null){
-                            
-                            path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getRfc_emisor();
-                            String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa())+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal()) ;
-                            
-                            System.out.println("ruta_fichero_llave_pfx:"+ruta_fichero_llave_pfx+
-                                    "    getJavaVmDir:"+this.getGralDao().getJavaVmDir(this.getId_empresa(), this.getId_sucursal())+
-                                            "    getPasswdFicheroPfxTimbradoCfdi:"+this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal())+"");
-                            
-                            System.setProperty("javax.net.ssl.keyStore", ruta_fichero_llave_pfx );
-                            System.setProperty("javax.net.ssl.keyStorePassword", this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal()));
-                            System.setProperty("javax.net.ssl.keyStoreType", "pkcs12");
-                            //System.setProperty("javax.net.ssl.trustStore", "/System/Library/Frameworks/JavaVM.framework/Resources/Deploy.bundle/Contents/Home/lib/security/cacerts");
-                            System.setProperty("javax.net.ssl.trustStore",this.getGralDao().getJavaVmDir(this.getId_empresa(), this.getId_sucursal()));
-                            System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
-                            System.setProperty("sun.security.ssl.allowUnsafeRenegotiation","true");
-                            
-                            
-                            System.out.println("dentro de wsdlURL diferente null ");
-                            TimbradoCFDI_Service service = new TimbradoCFDI_Service(wsdlURL, new QName("http://www.buzonfiscal.com/TimbradoCFDI/", "TimbradoCFDI"));
-                            System.out.println("dentro de new TimbradoCFDI_Service ");
-                            TimbradoCFDI port = service.getTimbradoCFDISOAP();
-                            
-                            System.out.println("dentro de wsdlURL diferente null ");
-                             // TODO initialize WS operation arguments here
-                            RequestTimbradoCFDType requestTimbradoCFD = new RequestTimbradoCFDType();
-                            
-                            System.out.println("dentro de wsdlURL diferente null ");
-                            DocumentoType tipoDocumento = new DocumentoType();
-                            InfoBasicaType infBasica = new InfoBasicaType();
-                            
-                            String serie_folio = pop.getSerie() + pop.getFolio();
-                            
-                            byte[] encoded = StringHelper.convByte(path_file+"/"+xml_file_name); 
-                            System.out.println("Nombre de el archivo"+xml_file_name);
-                            tipoDocumento.setNombreArchivo(xml_file_name);
-                            tipoDocumento.setArchivo(encoded);
-                            tipoDocumento.setTipo("XML");
-                            tipoDocumento.setVersion(pop.getVersion());
-                            
-                            infBasica.setRfcEmisor(this.getRfc_emisor());
-                            infBasica.setRfcReceptor(pop.getRfc_receptor());
-                            infBasica.setSerie(serie_folio);
-                            
-                            requestTimbradoCFD.setDocumento(tipoDocumento);
-                            requestTimbradoCFD.setInfoBasica(infBasica);
-                            requestTimbradoCFD.setRefID(serie_folio);
-                            
-                            System.out.println("getNombreArchivo: "+tipoDocumento.getNombreArchivo());
-                            System.out.println("getArchivo: "+tipoDocumento.getArchivo());
-                            System.out.println("getTipo: "+tipoDocumento.getTipo());
-                            System.out.println("getVersion: "+tipoDocumento.getVersion());
-                            System.out.println("getRfcEmisor: "+infBasica.getRfcEmisor());
-                            System.out.println("getRfcReceptor: "+infBasica.getRfcReceptor());
-                            System.out.println("getSerie: "+infBasica.getSerie());
-                            
-                            System.out.println("inicia REQUEST");
-                            
-                            timbreFiscalDigital = port.timbradoCFD(requestTimbradoCFD);
-                            
-                            System.out.println("termina REQUEST");
-                            
-                            String complemento = "</cfdi:Impuestos><cfdi:Complemento>";
-                                    complemento += "<tfd:TimbreFiscalDigital selloSAT=\""+timbreFiscalDigital.getSelloSAT()+"\" ";
-                                    complemento += " noCertificadoSAT=\""+timbreFiscalDigital.getNoCertificadoSAT()+"\" ";
-                                    complemento += " FechaTimbrado=\""+timbreFiscalDigital.getFechaTimbrado()+"\" ";
-                                    complemento += " UUID=\""+timbreFiscalDigital.getUUID()+"\" ";
-                                    complemento += " version=\""+timbreFiscalDigital.getVersion()+"\"  \\>";
-                                    complemento += " </cfdi:Complemento>";
-                            
-                            //add request to xml
-                            String xml_timbrado = FileHelper.stringFromFile(path_file+"/"+xml_file_name);
-                            
-                            xml_timbrado = xml_timbrado.replaceAll("</cfdi:Impuestos>", complemento);
-                            
-                            File file_xml_timbrado = new File(path_file+"/"+xml_file_name);
-                            
-                            if(file_xml_timbrado.exists()){
-                                //Si ya existe un fichero con el mismo nombre hay que eliminarlo
-                                FileHelper.delete(path_file+"/"+xml_file_name);
-                            }
-                            
-                            boolean fichero_xml_timbrado_ok = FileHelper.createFileWithText(path_file, xml_file_name, xml_timbrado);
-                            if(fichero_xml_timbrado_ok){
-                                System.out.println("xml timbrado: ");
-                            }else{
-                                System.out.println("xml No timbrado: ");
-                            }
-                            
-                            System.out.println("FechaTimbrado: "+timbreFiscalDigital.getFechaTimbrado());
-                            System.out.println("SelloCFD "+timbreFiscalDigital.getSelloCFD());
-                            System.out.println("getSelloSAT "+timbreFiscalDigital.getSelloSAT());
-                            System.out.println("getUUID "+timbreFiscalDigital.getUUID());
-                            System.out.println("getVersion "+timbreFiscalDigital.getVersion());
-                            
-                            //:::Si llegó aquí es que el request al webservice nos devolvio correctamente el timbre fiscal::::::::
-                            //:::Ahora procederemos a guardar los datos a la bd:::::::::::::::::::::::::::::::::::::::::::::::::::
-                            
-                            //Aqui va la rutina que guarda los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
-                            String cadena_conceptos = this.getFacdao().formar_cadena_conceptos(pop.getListaConceptos());
-                            String cadena_imp_trasladados = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosTrasladados(),this.getTasaIva());
-                            String cadena_imp_retenidos = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosRetenidos(),this.getTasaRetencion());
-                            
-                            Integer id_usuario = Integer.parseInt(this.getDatosExtras().get("usuario_id"));
-                            String tipo_cambio = this.getTipoCambio();
-                            String app_selected = this.getDatosExtras().get("app_selected");
-                            String command_selected = this.getDatosExtras().get("command_selected");
-                            String extra_data_array = this.getDatosExtras().get("extra_data_array");
-                            
-                            String estado_comprobante="1";
-                            String regimen_fiscal = pop.getRegimenFiscalEmisor();
-                            String metodo_pago = pop.getMetodoDePago();
-                            String num_cuenta = pop.getNumeroCuenta();
-                            String lugar_de_expedicion = pop.getLugarExpedicion();
-                            
-                            String data_string="";
-                            String no_aprobacion="";
-                            String ano_aprobacion="";
-                            
-                            if(pop.getNoAprobacion()!=null ){
-                                no_aprobacion = pop.getNoAprobacion();
-                            }
-                            
-                            if(pop.getAnoAprobacion()!=null ){
-                                ano_aprobacion = pop.getAnoAprobacion();
-                            }
-                            
-                            switch (Proposito.valueOf(this.getProposito())) {
-                                case FACTURA:
-                                    Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
-                                    String refacturar = this.getDatosExtras().get("refacturar");
-                                    String id_moneda = this.getDatosExtras().get("moneda_id");
-                                    
-                                    data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+pop.getSerie()+"___"+pop.getFolio()+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
-                                    
-                                    //llamada al procedimiento que guarda los datos de la factura
-                                    String ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
-                                    
-                                    retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
-                                    
-                                    break;
-                                    
-                                    
-                                case NOTA_CREDITO:
-                                    break;
-                                    
-                            }
-                        }
-                        
-                    }catch(Exception ex){
-                        ex.printStackTrace();
+                    //aqui se forma la cadena con los parametros que se le pasan a jar
+                    String str_execute="java -jar "+ruta_jarWebService+" "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+path_file+" "+xml_file_name+" "+tipo+" "+version+" "+this.getRfc_emisor()+" "+pop.getRfc_receptor()+" "+serie_folio+" "+refId;
+
+                    Process resultado = Runtime.getRuntime().exec(str_execute); 
+                    
+                    InputStream myInputStream=null;
+                    
+                    myInputStream= resultado.getInputStream();
+                    
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(myInputStream));
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
                     }
+                    myInputStream.close();
+                    
+                    System.out.println("Resultado: "+sb.toString());
+                    
+                    if(sb.toString().equals("true")){
+                        //:::Si llegó aquí es que el request al webservice nos devolvio correctamente el timbre fiscal::::::::
+                        //:::Ahora procederemos a guardar los datos a la bd:::::::::::::::::::::::::::::::::::::::::::::::::::
+                            
+                        //Aqui va la rutina que guarda los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
+                        String cadena_conceptos = this.getFacdao().formar_cadena_conceptos(pop.getListaConceptos());
+                        String cadena_imp_trasladados = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosTrasladados(),this.getTasaIva());
+                        String cadena_imp_retenidos = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosRetenidos(),this.getTasaRetencion());
+
+                        Integer id_usuario = Integer.parseInt(this.getDatosExtras().get("usuario_id"));
+                        String tipo_cambio = this.getTipoCambio();
+                        String app_selected = this.getDatosExtras().get("app_selected");
+                        String command_selected = this.getDatosExtras().get("command_selected");
+                        String extra_data_array = this.getDatosExtras().get("extra_data_array");
+
+                        String estado_comprobante="1";
+                        String regimen_fiscal = pop.getRegimenFiscalEmisor();
+                        String metodo_pago = pop.getMetodoDePago();
+                        String num_cuenta = pop.getNumeroCuenta();
+                        String lugar_de_expedicion = pop.getLugarExpedicion();
+
+                        String data_string="";
+                        String no_aprobacion="";
+                        String ano_aprobacion="";
+
+                        if(pop.getNoAprobacion()!=null ){
+                            no_aprobacion = pop.getNoAprobacion();
+                        }
+
+                        if(pop.getAnoAprobacion()!=null ){
+                            ano_aprobacion = pop.getAnoAprobacion();
+                        }
+
+                        switch (Proposito.valueOf(this.getProposito())) {
+                            case FACTURA:
+                                Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
+                                String refacturar = this.getDatosExtras().get("refacturar");
+                                String id_moneda = this.getDatosExtras().get("moneda_id");
+
+                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+pop.getSerie()+"___"+pop.getFolio()+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
+
+                                //llamada al procedimiento que guarda los datos de la factura
+                                String ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+
+                                retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
+
+                                break;
+
+
+                            case NOTA_CREDITO:
+                                break;
+
+                        }
+                    }
+                    
+                    //retorna el error o "true" si el timbrado tuvo exito
+                    retorno = sb.toString();
                     
                 }else{
                     //finalizar el programa y retornar el error de la validacion del xml.
@@ -433,10 +362,7 @@ public class BeanFacturadorCfdiTimbre {
                 throw new Exception("Falló al generar fichero xml: " + xml_file_name);
             }
             
-        } catch (Exception ex) {
-            Logger.getLogger(BeanFacturadorCfdiTimbre.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+            
         return retorno;
     }
     

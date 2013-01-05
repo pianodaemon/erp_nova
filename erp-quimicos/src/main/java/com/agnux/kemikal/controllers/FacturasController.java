@@ -573,21 +573,25 @@ public class FacturasController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         
-        
         //obtener tipo de facturacion
         String tipo_facturacion = this.getFacdao().getTipoFacturacion();
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-        }else{
+        }
+        
+        if(tipo_facturacion.equals("cfdi")){
             dirSalidas = this.getGralDao().getCfdiSolicitudesDir() + "out/";
+        }
+        
+        if(tipo_facturacion.equals("cfdtf")){
+            dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
         nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura);
         
         //ruta completa del archivo a descargar
         String fileout = dirSalidas + "/" + nombre_archivo +".xml";
-        
         
         
         System.out.println("Recuperando archivo: " + fileout);

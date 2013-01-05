@@ -461,7 +461,7 @@ public class PrefacturasController {
             @RequestParam(value="costo", required=false) String[] costo,
             @RequestParam(value="id_remision", required=false) String[] id_remision,
             @ModelAttribute("user") UserSessionData user
-        ) {
+        ) throws Exception {
         
         System.out.println("Guardar Prefactura");
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
