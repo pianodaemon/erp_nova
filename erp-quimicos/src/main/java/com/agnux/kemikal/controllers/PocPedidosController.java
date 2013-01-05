@@ -115,11 +115,6 @@ public class PocPedidosController {
         return x;
     }
     
-    
-    
-    
-    
-    
     @RequestMapping(value="/getAllPedidos.json", method = RequestMethod.POST)
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllPedidosJson(
            @RequestParam(value="orderby", required=true) String orderby,
@@ -167,16 +162,8 @@ public class PocPedidosController {
         
         return jsonretorno;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+    //Trae los datos del pedido
     @RequestMapping(method = RequestMethod.POST, value="/getPedido.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPedidoJson(
             @RequestParam(value="id_pedido", required=true) String id_pedido,
@@ -273,7 +260,20 @@ public class PocPedidosController {
         return jsonretorno;
     }
     
-    
+    //obtiene la moneda de la lista de precios por el cliente
+    @RequestMapping(method = RequestMethod.POST,value="/getMonedaListaCliente.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String,String>>>getMonedaListaClienteJson(
+            @RequestParam(value="lista_precio",required=true )Integer lista_precio,
+            Model model
+            ){
+            HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        
+        ArrayList<HashMap<String, String>> arraylistaprecio = new ArrayList<HashMap<String, String>>();
+        arraylistaprecio=this.getPocDao().getListaPrecio(lista_precio);
+        jsonretorno.put("listaprecio", arraylistaprecio);
+        
+        return jsonretorno;
+    }
     
     
     //obtiene los tipos de productos para el buscador de productos
@@ -324,6 +324,7 @@ public class PocPedidosController {
     @RequestMapping(method = RequestMethod.POST, value="/getPresentacionesProducto.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPresentacionesProductoJson(
             @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="lista_precios",required=true) String lista_precio,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
@@ -337,7 +338,7 @@ public class PocPedidosController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        jsonretorno.put("Presentaciones", this.getPocDao().getPresentacionesProducto(sku,id_empresa));
+        jsonretorno.put("Presentaciones", this.getPocDao().getPresentacionesProducto(sku,lista_precio,id_empresa));
         
         return jsonretorno;
     }
@@ -546,21 +547,5 @@ public class PocPedidosController {
         return null;
         
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+   
 }
