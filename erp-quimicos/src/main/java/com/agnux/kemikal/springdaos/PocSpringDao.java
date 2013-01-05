@@ -520,22 +520,26 @@ public class PocSpringDao implements PocInterfaceDao{
 		where=" AND cxc_clie.alias ilike '%"+cadena.toUpperCase()+"%'";
 	}
 	
+        
+        
 	String sql_query = "SELECT "
-                                    +"sbt.id,"
-                                    +"sbt.numero_control,"
-                                    +"sbt.rfc,"
-                                    +"sbt.razon_social,"
-                                    +"sbt.direccion,"
-                                    +"sbt.moneda_id,"
+                                    +"sbt.id, "
+                                    +"sbt.numero_control, "
+                                    +"sbt.rfc, "
+                                    +"sbt.razon_social, "
+                                    +"sbt.direccion, "
+                                    +"sbt.moneda_id, "
                                     +"gral_mon.descripcion as moneda, "
-                                    +"sbt.cxc_agen_id,"
+                                    +"sbt.cxc_agen_id, "
                                     +"sbt.terminos_id, "
                                     +"sbt.empresa_immex, "
                                     +"sbt.tasa_ret_immex, "
                                     +"sbt.cta_pago_mn, "
-                                    +"sbt.cta_pago_usd "
-                            +"FROM(SELECT cxc_clie.id,"
-                                            +"cxc_clie.numero_control,"
+                                    +"sbt.cta_pago_usd, "
+                                    +"sbt.lista_precio "
+                                    
+                            +"FROM(SELECT cxc_clie.id, "
+                                            +"cxc_clie.numero_control, "
                                             +"cxc_clie.rfc, "
                                             +"cxc_clie.razon_social,"
                                             +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
@@ -545,16 +549,21 @@ public class PocSpringDao implements PocInterfaceDao{
                                             +"cxc_clie.empresa_immex, "
                                             +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
                                             + "cxc_clie.cta_pago_mn,"
-                                            + "cxc_clie.cta_pago_usd  "
+                                            + "cxc_clie.cta_pago_usd,  "
+                                            + "cxc_clie.lista_precio "
+                                           
                                     +"FROM cxc_clie "
                                     + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
                                     + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
                                     + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                                    
                                     //+" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
                                     +" WHERE empresa_id ="+id_empresa+" "
                                     + " AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
-                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
+                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ";
+                            
+        System.out.println("Resultado del Query"+"___"+sql_query);
         
         ArrayList<HashMap<String, String>> hm_cli = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -575,6 +584,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("tasa_ret_immex",StringHelper.roundDouble(String.valueOf(rs.getDouble("tasa_ret_immex")),2));
                     row.put("cta_pago_mn",rs.getString("cta_pago_mn"));
                     row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
+                    row.put("lista_precio",rs.getString("lista_precio"));
                     return row;
                 }
             }
@@ -617,17 +627,19 @@ public class PocSpringDao implements PocInterfaceDao{
 	}
         
         String sql_to_query = ""
-                + "SELECT "
-				+"inv_prod.id,"
-				+"inv_prod.sku,"
-                                +"inv_prod.descripcion, "
-                                + "inv_prod.unidad_id, "
-                                + "inv_prod_unidades.titulo AS unidad, "
-				+"inv_prod_tipos.titulo AS tipo,"
-                                + "inv_prod_unidades.decimales "
+                         + "SELECT "
+                            +"inv_prod.id, "
+                            +"inv_prod.sku, "
+                            +"inv_prod.descripcion, "
+                            + "inv_prod.unidad_id, "
+                            + "inv_prod_unidades.titulo AS unidad, "
+                            +"inv_prod_tipos.titulo AS tipo, "
+                            + "inv_prod_unidades.decimales "
+                            
 		+"FROM inv_prod "
                 + "LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
                 + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                
                 + "WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
@@ -644,6 +656,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("tipo",rs.getString("tipo"));
                     row.put("decimales",String.valueOf(rs.getInt("decimales")));
+                    //row.put("precio",rs.getString("precio"));
                     return row;
                 }
             }
@@ -654,7 +667,7 @@ public class PocSpringDao implements PocInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku, Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku,String lista_precio, Integer id_empresa) {
 	String sql_query = "SELECT "
                                 +"inv_prod.id,"
                                 +"inv_prod.sku,"
@@ -662,11 +675,13 @@ public class PocSpringDao implements PocInterfaceDao{
                                 +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
                                 +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
                                 +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
-                                +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales "
+                                +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS  decimales, "
+                                +"inv_pre.precio_"+lista_precio+" as precio "
                         +"FROM inv_prod "
                         +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                         +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
                         +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
+                        +"LEFT JOIN inv_pre on inv_pre.inv_prod_id = inv_prod.id "
                         +"WHERE  empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -682,6 +697,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("decimales",rs.getString("decimales"));
+                    row.put("precio",rs.getString("precio"));
                     return row;
                 }
             }
@@ -1204,7 +1220,30 @@ public class PocSpringDao implements PocInterfaceDao{
         return hm; 
     }
     
-    
+    @Override
+    public ArrayList<HashMap<String, String>> getListaPrecio(Integer lista_precio) {
+        String sql_query="SELECT "  
+                        +"gral_mon_id_pre"+lista_precio+" as moneda_id "
+                        + "FROM inv_pre "
+                        
+                        + " LIMIT 1 ";
+                           
+        System.out.println("Resultado de la Moneda de lista"+"___"+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_query, 
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    
+                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
     
     
     
