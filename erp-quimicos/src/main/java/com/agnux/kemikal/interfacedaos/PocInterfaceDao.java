@@ -55,7 +55,8 @@ public interface PocInterfaceDao{
     //reporte de Articulos Reservados   pocDao(Proceso Comercial).
     public ArrayList<HashMap<String, String>> getReporteArticulosReservados( Integer id_empresa, Integer id_usuario,String codigo, String descripcion);
     
-    
+    //trae la lista de precios
+    public ArrayList<HashMap<String, String>> getListaPrecio(Integer lista_precio);
     
     
     
