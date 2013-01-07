@@ -251,10 +251,11 @@ public class BeanFacturadorCfdiTimbre {
                     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                     //aqui inicia request al webservice
                     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                    String ruta_ejecutable_java = this.getGralDao().getJavaVmDir(this.getId_empresa(), this.getId_sucursal());
                     String ruta_jarWebService = this.getGralDao().getCfdiTimbreJarWsDir()+"wscli.jar";
                     String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa())+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal()) ;
                     String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal());
-                    String ruta_java_almacen_certificados = this.getGralDao().getJavaVmDir(this.getId_empresa(), this.getId_sucursal());
+                    String ruta_java_almacen_certificados = this.getGralDao().getJavaRutaCacerts(this.getId_empresa(), this.getId_sucursal());
                     String tipo="xml";
                     String version="3.2";
                     String serie_folio = pop.getSerie() + pop.getFolio();
@@ -273,11 +274,12 @@ public class BeanFacturadorCfdiTimbre {
                     9= getRfc_receptor
                     10 = Serie
                     11 = RefID
+                    12= Ruta del ejecutable de java
                     */
-                    
+                    ///home/j2eeserver/jdk/bin/java
                     //aqui se forma la cadena con los parametros que se le pasan a jar
-                    String str_execute="java -jar "+ruta_jarWebService+" "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+path_file+" "+xml_file_name+" "+tipo+" "+version+" "+this.getRfc_emisor()+" "+pop.getRfc_receptor()+" "+serie_folio+" "+refId;
-
+                    String str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+path_file+" "+xml_file_name+" "+tipo+" "+version+" "+this.getRfc_emisor()+" "+pop.getRfc_receptor()+" "+serie_folio+" "+refId;
+                    
                     Process resultado = Runtime.getRuntime().exec(str_execute); 
                     
                     InputStream myInputStream=null;
