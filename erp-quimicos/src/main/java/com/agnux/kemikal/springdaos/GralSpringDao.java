@@ -284,6 +284,14 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     
     @Override
+    public String getJavaRutaCacerts(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.javavm_cacerts AS java_cacerts FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String fichero = map.get("java_cacerts").toString();
+        return fichero;
+    }
+    
+    @Override
     public String getUrlFicheroWsdlTimbradoCfdi(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf.archivo_wsdl_timbrado_cfdi FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
