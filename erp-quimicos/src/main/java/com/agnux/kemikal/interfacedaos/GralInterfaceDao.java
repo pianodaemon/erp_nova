@@ -51,6 +51,7 @@ public interface GralInterfaceDao {
     public String getPasswdFicheroPfxTimbradoCfdi(Integer id_empresa, Integer id_sucursal);
     public String getJavaVmDir(Integer id_empresa, Integer id_sucursal);
     public String getFicheroPfxTimbradoCfdi(Integer id_empresa, Integer id_sucursal);
+    public String getJavaRutaCacerts(Integer id_empresa, Integer id_sucursal);
     
     public String getFolioFactura(Integer id_empresa, Integer id_sucursal);
     public String getFolioNotaCredito(Integer id_empresa, Integer id_sucursal);
