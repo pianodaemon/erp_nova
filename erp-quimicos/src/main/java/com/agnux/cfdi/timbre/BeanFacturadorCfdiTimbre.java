@@ -303,8 +303,7 @@ public class BeanFacturadorCfdiTimbre {
                         //:::Si llegó aquí es que el request al webservice nos devolvio correctamente el timbre fiscal::::::::
                         //:::Ahora procederemos a guardar los datos a la bd:::::::::::::::::::::::::::::::::::::::::::::::::::
                         
-                        String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
-                        BeanFromCfdiXml pop2 = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
+                        BeanFromCfdiXml pop2 = new BeanFromCfdiXml(path_file+"/"+xml_file_name);
                         
                         this.setSelloDigital(pop2.getSelloCfd());
                         this.setSelloDigitalSat(pop2.getSelloSat());

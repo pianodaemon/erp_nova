@@ -1343,7 +1343,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             for (HashMap<String,String> concept : concepts ){
                 String precio_unitario = String.valueOf(concept.get("valorUnitario"));
                 String importe = String.valueOf(concept.get("importe") );
-                String concepto = concept.get("noIdentificacion") + "+&+" + concept.get("cantidad") + "+&+" + concept.get("descripcion") + "+&+" + precio_unitario + "+&+" + concept.get("unidad") + "+&+" + importe;
+                String concepto = concept.get("noIdentificacion") + "+&+" + concept.get("cantidad") + "+&+" + concept.get("descripcion").replace("'", "\"") + "+&+" + precio_unitario + "+&+" + concept.get("unidad") + "+&+" + importe;
                 valor_retorno += concepto + "$$$";
             }
             return valor_retorno.substring(0, valor_retorno.length() - 3);

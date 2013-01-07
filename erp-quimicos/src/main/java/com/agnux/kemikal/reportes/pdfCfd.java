@@ -195,6 +195,7 @@ public final class pdfCfd {
         this.setImagen_cedula( this.getGralDao().getImagesDir()+this.getEmisora_rfc()+"_cedula.png" );
         
         PdfPTable table;
+        PdfPTable table_totales;
         PdfPCell cell;
         String fileout="";
         
@@ -215,7 +216,6 @@ public final class pdfCfd {
             float [] widths = {4.5f,5.5f,4,3,4,4};
             table = new PdfPTable(widths);
             table.setKeepTogether(false);
-            
             
             cell = new PdfPCell(new Paragraph("",largeBoldFont));
             cell.setColspan(6);
@@ -736,8 +736,6 @@ public final class pdfCfd {
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
             
-            
-            
             ///&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorder(0);
@@ -749,11 +747,11 @@ public final class pdfCfd {
             table.addCell(cell);
             
             
-            
             //&&&&&&&&&&&&&&&&&&&&        TABLA DE  LOS CONCEPTOS        &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
             cell = new PdfPCell(cepdf.addContent());
             cell.setColspan(6);
-            cell.setFixedHeight(200);
+            
+            cell.setFixedHeight(210);
             cell.setBorderWidthBottom(1);
             cell.setBorderWidthLeft(1);
             cell.setBorderWidthTop(1);
@@ -781,17 +779,21 @@ public final class pdfCfd {
                 cuentas="\nDEPOSITAR EN BANORTE (MN) Cta. 0587326205 CLABE 072580005873262052, (USD) Cta. 0557037045 CLABE 072580005570370454";
             }
             
-            
+            System.out.println("table.size4: "+table.size());
+            System.out.println("table.getTotalHeight4: "+table.getTotalHeight());
             cell = new PdfPCell(new Paragraph(this.getObservaciones()+cuentas,smallFont));
             cell.setBorder(0);
             cell.setColspan(6);
             cell.setBorderWidthTop(0);
             cell.setBorderWidthBottom(0);
-            cell.setFixedHeight(60);
+            //cell.setFixedHeight(60);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             table.addCell(cell);
+            
+            System.out.println("table.size5: "+table.size());
+            System.out.println("table.getTotalHeight5: "+table.getTotalHeight());
 /*
             if(!this.getObservaciones().equals("LUGAR DE ENTREGA: ")){
                 cell = new PdfPCell(new Paragraph(this.getObservaciones(),smallFont));
@@ -823,21 +825,38 @@ public final class pdfCfd {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
-
-
-
+            
+            /*
             cell = new PdfPCell(cepdffother.addContent(this.getSubTotal(), this.getMontoImpuesto(), this.getMontoRetencion(), this.getMontoTotal()   ));
             cell.setColspan(6);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
-
-                
+            */
             
             document.add(table);
+            System.out.println("table.size6: "+table.size());
+            System.out.println("table.getTotalHeight6: "+table.getTotalHeight());
+            
+            //aqui comienza la tabla de totales
+            float [] widths_table_totales = {1};
+            table_totales = new PdfPTable(widths_table_totales);
+            table_totales.setKeepTogether(false);
+            
+            cell = new PdfPCell(cepdffother.addContent(this.getSubTotal(), this.getMontoImpuesto(), this.getMontoRetencion(), this.getMontoTotal()   ));
+            cell.setColspan(6);
+            cell.setUseAscender(true);
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table_totales.addCell(cell);
+            
+            table_totales.setSpacingBefore(dias);
+            table_totales.setSpacingBefore(1);
+            
+            document.add(table_totales);
             
             document.close();
-            
+            /*
             PdfReader reader = new PdfReader(fileout);
             PdfStamper stamper = new PdfStamper(reader,new FileOutputStream(fileout+".pdf"));
             PdfContentByte over;
@@ -855,9 +874,7 @@ public final class pdfCfd {
             }
             stamper.close();
             reader.close();
-            
-            
-            
+            */
         }
         catch (Exception e) {
                 e.printStackTrace();
@@ -944,7 +961,7 @@ public final class pdfCfd {
             PdfPTable table = new PdfPTable(anchocolumnas);
             table.setKeepTogether(true);
             
-            String[] columnas = {"CLAVE\nCODE","DESCRIPCION\nDESCRIPTION","No. LOTE\nLOT No.","TOTAL KGS\nTOTAL KGS"," ","PRECIO KG\nPRICE KG","MONEDA\nCURRENCY"," ","TOTAL\nEXTENDED VALUE"};
+            String[] columnas = {"CLAVE\nCODE","DESCRIPCION\nDESCRIPTION","No. LOTE\nLOT No.","CANTIDAD.\nQUANTITY"," ","PRECIO\nPRICE","MONEDA\nCURRENCY"," ","TOTAL\nEXTENDED VALUE"};
             List<String>  lista_columnas = (List<String>) Arrays.asList(columnas);
             Integer contador = 0;
            PdfPCell cellX;
@@ -972,12 +989,12 @@ public final class pdfCfd {
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_TOP);
                 }
-                if(columna_titulo.equals("TOTAL KGS\nTOTAL KGS")){
+                if(columna_titulo.equals("CANTIDAD.\nQUANTITY")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_TOP);
                 }                
                 
-                if(columna_titulo.equals("PRECIO KG\nPRICE KG")){
+                if(columna_titulo.equals("PRECIO\nPRICE")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_TOP);
                 }
