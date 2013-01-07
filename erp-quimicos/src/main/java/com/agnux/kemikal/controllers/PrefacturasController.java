@@ -696,7 +696,7 @@ public class PrefacturasController {
                             //System.out.println("sello_digital:"+sello_digital);
                             
                             //este es el timbre fiscal, se debe extraer del xml que nos devuelve el web service del timbrado
-                            String sello_digital_sat = "";
+                            String sello_digital_sat = this.getBfCfdiTf().getSelloDigitalSat();
                             
                             //conceptos para el pdfcfd
                             listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);

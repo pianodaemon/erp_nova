@@ -24,6 +24,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class BeanFromCfdiXml {
     private String uuid;
+    private String selloSat;
+    private String selloCfd;
     private String emisor_rfc;
     private String receptor_rfc;
     
@@ -80,6 +82,12 @@ public class BeanFromCfdiXml {
                     String valor=atts.getQName(i);
                     if (valor.equals("UUID")){
                         setUuid(atts.getValue(i));
+                    }
+                    if (valor.equals("selloSAT")){
+                        setSelloSat(atts.getValue(i));
+                    }
+                    if (valor.equals("selloCFD")){
+                        setSelloCfd(atts.getValue(i));
                     }
                 }
             }
@@ -138,4 +146,19 @@ public class BeanFromCfdiXml {
         this.uuid = uuid;
     }
     
+    public String getSelloSat() {
+        return selloSat;
+    }
+
+    public void setSelloSat(String selloSat) {
+        this.selloSat = selloSat;
+    }
+
+    public String getSelloCfd() {
+        return selloCfd;
+    }
+
+    public void setSelloCfd(String selloCfd) {
+        this.selloCfd = selloCfd;
+    }
 }

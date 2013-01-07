@@ -5,6 +5,7 @@
 package com.agnux.cfdi.timbre;
 
 import com.agnux.cfd.v2.CryptoEngine;
+import com.agnux.cfdi.BeanFromCfdiXml;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 
@@ -74,6 +75,7 @@ public class BeanFacturadorCfdiTimbre {
     private String metodoDePago;
     private String lugar_expedicion;
     private String numero_cuenta;
+    private String selloDigitalSat;
     
     // datos Emisor
     private String razon_social_emisor;
@@ -300,7 +302,14 @@ public class BeanFacturadorCfdiTimbre {
                     if(sb.toString().equals("true")){
                         //:::Si llegó aquí es que el request al webservice nos devolvio correctamente el timbre fiscal::::::::
                         //:::Ahora procederemos a guardar los datos a la bd:::::::::::::::::::::::::::::::::::::::::::::::::::
-                            
+                        
+                        String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
+                        BeanFromCfdiXml pop2 = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
+                        
+                        this.setSelloDigital(pop2.getSelloCfd());
+                        this.setSelloDigitalSat(pop2.getSelloSat());
+                        
+                        System.out.println("sello sat: "+this.getSelloDigitalSat());
                         //Aqui va la rutina que guarda los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
                         String cadena_conceptos = this.getFacdao().formar_cadena_conceptos(pop.getListaConceptos());
                         String cadena_imp_trasladados = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosTrasladados(),this.getTasaIva());
@@ -340,7 +349,7 @@ public class BeanFacturadorCfdiTimbre {
 
                                 //llamada al procedimiento que guarda los datos de la factura
                                 String ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
-
+                                
                                 retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
 
                                 break;
@@ -468,6 +477,8 @@ public class BeanFacturadorCfdiTimbre {
         valor_retorno = comprobante_sin_firmar.replaceAll("@SELLO_DIGITAL", sello);
         
         this.setSelloDigital(sello);
+        
+        System.out.println("sello emisor1: "+sello);
         //System.out.println("valor_retorno genera comrobante:"+valor_retorno);
         return valor_retorno;
     }
@@ -1480,4 +1491,12 @@ public class BeanFacturadorCfdiTimbre {
         return regimen_fiscal_emisor;
     }
 
+    public String getSelloDigitalSat() {
+        return selloDigitalSat;
+    }
+
+    public void setSelloDigitalSat(String selloDigitalSat) {
+        this.selloDigitalSat = selloDigitalSat;
+    }
+    
 }
