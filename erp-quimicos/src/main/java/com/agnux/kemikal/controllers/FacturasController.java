@@ -471,7 +471,7 @@ public class FacturasController {
             dirSalidas = this.getGralDao().getCfdiSolicitudesDir() + "out/";
         }
         
-        if(tipo_facturacion.equals("cfdtf")){
+        if(tipo_facturacion.equals("cfditf")){
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
@@ -523,8 +523,14 @@ public class FacturasController {
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-        }else{
+        }
+        
+        if(tipo_facturacion.equals("cfdi")){
             dirSalidas = this.getGralDao().getCfdiSolicitudesDir() + "out/";
+        }
+        
+        if(tipo_facturacion.equals("cfditf")){
+            dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
         nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura);
@@ -585,7 +591,7 @@ public class FacturasController {
             dirSalidas = this.getGralDao().getCfdiSolicitudesDir() + "out/";
         }
         
-        if(tipo_facturacion.equals("cfdtf")){
+        if(tipo_facturacion.equals("cfditf")){
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
