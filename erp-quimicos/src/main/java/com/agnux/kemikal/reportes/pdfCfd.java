@@ -961,7 +961,8 @@ public final class pdfCfd {
             PdfPTable table = new PdfPTable(anchocolumnas);
             table.setKeepTogether(true);
             
-            String[] columnas = {"CLAVE\nCODE","DESCRIPCION\nDESCRIPTION","No. LOTE\nLOT No.","CANTIDAD.\nQUANTITY"," ","PRECIO\nPRICE","MONEDA\nCURRENCY"," ","TOTAL\nEXTENDED VALUE"};
+            //String[] columnas = {"CLAVE\nCODE","DESCRIPCION\nDESCRIPTION","No. LOTE\nLOT No.","CANTIDAD.\nQUANTITY"," ","PRECIO\nPRICE","MONEDA\nCURRENCY"," ","TOTAL\nEXTENDED VALUE"};
+            String[] columnas = {"CLAVE\nCODE","DESCRIPCION\nDESCRIPTION","No. LOTE\nLOT No.","TOTAL KGS\nTOTAL KGS"," ","PRECIO KG\nPRICE KG","MONEDA\nCURRENCY"," ","TOTAL\nEXTENDED VALUE"};
             List<String>  lista_columnas = (List<String>) Arrays.asList(columnas);
             Integer contador = 0;
            PdfPCell cellX;
@@ -989,12 +990,14 @@ public final class pdfCfd {
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_TOP);
                 }
-                if(columna_titulo.equals("CANTIDAD.\nQUANTITY")){
+                //if(columna_titulo.equals("CANTIDAD.\nQUANTITY")){
+                if(columna_titulo.equals("TOTAL KGS\nTOTAL KGS")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_TOP);
                 }                
                 
-                if(columna_titulo.equals("PRECIO\nPRICE")){
+                //if(columna_titulo.equals("PRECIO\nPRICE")){
+                if(columna_titulo.equals("PRECIO KG\nPRICE KG")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX.setVerticalAlignment(Element.ALIGN_TOP);
                 }
