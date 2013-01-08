@@ -461,12 +461,10 @@
 												<td width="150"><SELECT NAME="select_dia_pago" style="width:150px;"></SELECT></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_diapago"></td>
 												<td width="5"></td>
-												<td width="75"></td>
+												<td width="75">Lista&nbsp;de&nbsp;Precio</td>
 												<td width="5"></td>
-												<td width="50"></td>
-												<td width="15"></td>
-												<td width="85"></td>
-												<td width="25"></td>
+												<td width="150" colspan="3"><SELECT NAME="select_lista_precio" style="width:150px;"></SELECT></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_lp"></td>
 											</tr>
 											
 											<tr>
