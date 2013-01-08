@@ -1,6 +1,6 @@
 $(function() {
 	
-    //arreglo para select Base Precio
+    //arreglo para select dias revision y dias pago
     var array_dias_semana = {
 				1:"Domingo", 
 				2:"Lunes", 
@@ -10,7 +10,21 @@ $(function() {
 				6:"Viernes",
 				7:"Sabado"
 			};
-	
+			
+    //arreglo para select listas de precio
+    var array_listas_precio = {
+				1:"Lista 1", 
+				2:"Lista 2", 
+				3:"Lista 3",
+				4:"Lista 4",
+				5:"Lista 5",
+				6:"Lista 6",
+				7:"Lista 7",
+				8:"Lista 8",
+				9:"Lista 9",
+				10:"Lista 10"
+			};
+			
 	
 	String.prototype.toCharCode = function(){
 	    var str = this.split(''), len = str.length, work = new Array(len);
@@ -282,6 +296,8 @@ $(function() {
 		}
 		$campo_select.append(select_html);
 	}
+	
+	
       
         
 	$permitir_solo_numeros = function($campo){
@@ -1093,6 +1109,7 @@ $(function() {
 		var $select_dia_pago = $('#forma-clients-window').find('select[name=select_dia_pago]');
 		var $cuenta_mn = $('#forma-clients-window').find('input[name=cuenta_mn]');
 		var $cuenta_usd = $('#forma-clients-window').find('input[name=cuenta_usd]');
+		var $select_lista_precio = $('#forma-clients-window').find('select[name=select_lista_precio]');
 		
 		//credito
 		var $campo_limite_credito = $('#forma-clients-window').find('input[name=limite_credito]');
@@ -1382,7 +1399,7 @@ $(function() {
 				});
 				
 			}
-		
+			
 			//Alimentando los campos select de las pais
 			$select_pais.children().remove();
 			var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
@@ -1542,6 +1559,12 @@ $(function() {
 			elemento_seleccionado = 0;
 			cadena_elemento_cero ="[--Seleccionar D&iacute;a--]";
 			$carga_campos_select($select_dia_pago, array_dias_semana,elemento_seleccionado, cadena_elemento_cero);
+			
+			//carga select con listas de precio
+			elemento_seleccionado = 1;
+			cadena_elemento_cero ="[--Seleccionar lista--]";
+			$carga_campos_select($select_lista_precio, array_listas_precio,elemento_seleccionado, cadena_elemento_cero);
+			
 			
 			
 			//carga select dias de credito
@@ -1941,6 +1964,7 @@ $(function() {
 				var $select_dia_pago = $('#forma-clients-window').find('select[name=select_dia_pago]');
 				var $cuenta_mn = $('#forma-clients-window').find('input[name=cuenta_mn]');
 				var $cuenta_usd = $('#forma-clients-window').find('input[name=cuenta_usd]');
+				var $select_lista_precio = $('#forma-clients-window').find('select[name=select_lista_precio]');
 				
 				//credito
 				var $campo_limite_credito = $('#forma-clients-window').find('input[name=limite_credito]');
@@ -2523,6 +2547,11 @@ $(function() {
 					elemento_seleccionado = entry['Cliente']['0']['dia_pago'];
 					cadena_elemento_cero ="[--Seleccionar D&iacute;a--]";
 					$carga_campos_select($select_dia_pago, array_dias_semana,elemento_seleccionado, cadena_elemento_cero);
+					
+					//cargar select_lista_precio con todas las listas
+					elemento_seleccionado = entry['Cliente']['0']['lista_precio'];
+					cadena_elemento_cero ="[--Seleccionar lista--]";
+					$carga_campos_select($select_lista_precio, array_listas_precio,elemento_seleccionado, cadena_elemento_cero);
 					
 					//carga select dias de credito
 					$select_dias_credito.children().remove();

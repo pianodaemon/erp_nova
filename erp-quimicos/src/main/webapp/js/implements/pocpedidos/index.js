@@ -662,88 +662,92 @@ $(function() {
 
 					//verifica si el arreglo  retorno datos
 					if (entry['Presentaciones'].length > 0){
-						$(this).modalPanel_Buscapresentacion();
-						var $dialogoc =  $('#forma-buscapresentacion-window');
-						$dialogoc.append($('div.buscador_presentaciones').find('table.formaBusqueda_presentaciones').clone());
-						$('#forma-buscapresentacion-window').css({"margin-left": -200, "margin-top": -180});
 						
-						var $tabla_resultados = $('#forma-buscapresentacion-window').find('#tabla_resultado');
-						//var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('a[href*=cencela]');
-						var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('#cencela');
-						$tabla_resultados.children().remove();
-						
-						
-						$cancelar_plugin_busca_lotes_producto.mouseover(function(){
-							$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
-						});
-						$cancelar_plugin_busca_lotes_producto.mouseout(function(){
-							$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
-						});
-						
-						//crea el tr con los datos del producto seleccionado
-						$.each(entry['Presentaciones'],function(entryIndex,pres){
-							trr = '<tr>';
-								trr += '<td width="100">';
-                                                                    trr += '<span class="id_prod" style="display:none">'+pres['id']+'</span>';
-                                                                    trr += '<span class="sku">'+pres['sku']+'</span>';
-								trr += '</td>';
-								trr += '<td width="250"><span class="titulo">'+pres['titulo']+'</span></td>';
-								trr += '<td width="80">';
-                                                                    trr += '<span class="unidad" style="display:none">'+pres['unidad']+'</span>';
-                                                                    trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
-                                                                    trr += '<span class="pres">'+pres['presentacion']+'</span>';
-                                                                    trr +='<span class="costo" style="display:none">'+pres['precio']+'</span>';
-                                                                    trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
-								trr += '</td>';
-							trr += '</tr>';
-							$tabla_resultados.append(trr);
-						});//termina llamada json
-						
-						$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
-						$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
-						
-						$('tr:odd' , $tabla_resultados).hover(function () {
-							$(this).find('td').css({background : '#FBD850'});
-						}, function() {
-								//$(this).find('td').css({'background-color':'#DDECFF'});
-							$(this).find('td').css({'background-color':'#e7e8ea'});
-						});
-						$('tr:even' , $tabla_resultados).hover(function () {
-							$(this).find('td').css({'background-color':'#FBD850'});
-						}, function() {
-							$(this).find('td').css({'background-color':'#FFFFFF'});
-						});
-						
-						//seleccionar un producto del grid de resultados
-						$tabla_resultados.find('tr').click(function(){
-							//llamada a la funcion que busca y agrega producto al grid, se le pasa como parametro el lote y el almacen
-							var id_prod = $(this).find('span.id_prod').html();
-							var sku = $(this).find('span.sku').html();
-							var titulo = $(this).find('span.titulo').html();
-							var unidad = $(this).find('span.unidad').html();
-							var id_pres = $(this).find('span.id_pres').html();
-							var pres = $(this).find('span.pres').html();
-							var num_dec = $(this).find('span.dec').html();
+						if (entry['Presentaciones'][0]['exis_prod_lp']=='1'){
+							$(this).modalPanel_Buscapresentacion();
+							var $dialogoc =  $('#forma-buscapresentacion-window');
+							$dialogoc.append($('div.buscador_presentaciones').find('table.formaBusqueda_presentaciones').clone());
+							$('#forma-buscapresentacion-window').css({"margin-left": -200, "margin-top": -180});
 							
-							var prec_unitario= $(this).find('span.costo').html();
-							var id_moneda=0;
+							var $tabla_resultados = $('#forma-buscapresentacion-window').find('#tabla_resultado');
+							//var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('a[href*=cencela]');
+							var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('#cencela');
+							$tabla_resultados.children().remove();
 							
-							//llamada a la funcion que agrega el producto al grid
-							$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec);
 							
-							$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
+							$cancelar_plugin_busca_lotes_producto.mouseover(function(){
+								$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+							});
+							$cancelar_plugin_busca_lotes_producto.mouseout(function(){
+								$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+							});
 							
-							//elimina la ventana de busqueda
-							var remove = function() {$(this).remove();};
-							$('#forma-buscapresentacion-overlay').fadeOut(remove);
-						});
-						
-						$cancelar_plugin_busca_lotes_producto.click(function(event){
-							//event.preventDefault();
-							var remove = function() {$(this).remove();};
-							$('#forma-buscapresentacion-overlay').fadeOut(remove);
-						});
-						
+							//crea el tr con los datos del producto seleccionado
+							$.each(entry['Presentaciones'],function(entryIndex,pres){
+								trr = '<tr>';
+									trr += '<td width="100">';
+										trr += '<span class="id_prod" style="display:none">'+pres['id']+'</span>';
+										trr += '<span class="sku">'+pres['sku']+'</span>';
+									trr += '</td>';
+									trr += '<td width="250"><span class="titulo">'+pres['titulo']+'</span></td>';
+									trr += '<td width="80">';
+										trr += '<span class="unidad" style="display:none">'+pres['unidad']+'</span>';
+										trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
+										trr += '<span class="pres">'+pres['presentacion']+'</span>';
+										trr +='<span class="costo" style="display:none">'+pres['precio']+'</span>';
+										trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
+									trr += '</td>';
+								trr += '</tr>';
+								$tabla_resultados.append(trr);
+							});//termina llamada json
+							
+							$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+							$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+							
+							$('tr:odd' , $tabla_resultados).hover(function () {
+								$(this).find('td').css({background : '#FBD850'});
+							}, function() {
+									//$(this).find('td').css({'background-color':'#DDECFF'});
+								$(this).find('td').css({'background-color':'#e7e8ea'});
+							});
+							$('tr:even' , $tabla_resultados).hover(function () {
+								$(this).find('td').css({'background-color':'#FBD850'});
+							}, function() {
+								$(this).find('td').css({'background-color':'#FFFFFF'});
+							});
+							
+							//seleccionar un producto del grid de resultados
+							$tabla_resultados.find('tr').click(function(){
+								//llamada a la funcion que busca y agrega producto al grid, se le pasa como parametro el lote y el almacen
+								var id_prod = $(this).find('span.id_prod').html();
+								var sku = $(this).find('span.sku').html();
+								var titulo = $(this).find('span.titulo').html();
+								var unidad = $(this).find('span.unidad').html();
+								var id_pres = $(this).find('span.id_pres').html();
+								var pres = $(this).find('span.pres').html();
+								var num_dec = $(this).find('span.dec').html();
+								
+								var prec_unitario= $(this).find('span.costo').html();
+								var id_moneda=0;
+								
+								//llamada a la funcion que agrega el producto al grid
+								$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec);
+								
+								$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
+								
+								//elimina la ventana de busqueda
+								var remove = function() {$(this).remove();};
+								$('#forma-buscapresentacion-overlay').fadeOut(remove);
+							});
+							
+							$cancelar_plugin_busca_lotes_producto.click(function(event){
+								//event.preventDefault();
+								var remove = function() {$(this).remove();};
+								$('#forma-buscapresentacion-overlay').fadeOut(remove);
+							});
+						}else{
+							jAlert(entry['Presentaciones'][0]['exis_prod_lp'],'! Atencion');
+						}
 					}else{
 						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
 						$('#forma-pocpedidos-window').find('input[name=titulo_producto]').val('');
