@@ -501,6 +501,7 @@ public class ClientsController {
             @RequestParam(value="select_dia_pago", required=true) String select_dia_pago,
             @RequestParam(value="cuenta_mn", required=true) String cuenta_mn,
             @RequestParam(value="cuenta_usd", required=true) String cuenta_usd,
+            @RequestParam(value="select_lista_precio", required=true) String select_lista_precio,
             @RequestParam(value="id_cta_activo", required=true) String id_cta_activo,
             @RequestParam(value="id_cta_ingreso", required=true) String id_cta_ingreso,
             @RequestParam(value="id_cta_ietu", required=true) String id_cta_ietu,
@@ -522,6 +523,7 @@ public class ClientsController {
                 
                 for(int i=0; i<dc_eliminado.length; i++) {
                     arreglo[i]= "'" + dc_calle[i].toUpperCase() +"___"+ dc_numero[i] +"___"+ dc_colonia[i].toUpperCase() +"___"+ dc_idpais[i] +"___"+ dc_identidad[i] +"___"+ dc_idlocalidad[i] +"___"+ dc_codigop[i] +"___"+ dc_localternativa[i]+"___"+ dirc_telefono[i] +"___"+ dc_numfax[i] +"'";
+                    System.out.println(arreglo[i]);
                 }
                 //serializar el arreglo
                 extra_data_array = StringUtils.join(arreglo, ",");
@@ -632,7 +634,8 @@ public class ClientsController {
             +"___"+id_cta_ingreso
             +"___"+id_cta_ietu
             +"___"+id_cta_complementaria
-            +"___"+id_cta_activo_complementaria;
+            +"___"+id_cta_activo_complementaria
+            +"___"+select_lista_precio;
             
             System.out.println("data_string: "+data_string);
             

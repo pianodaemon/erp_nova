@@ -408,7 +408,7 @@ public class PdfReporteAplicacionPago {
                 cell.setColspan(3);
                 table.addCell(cell);
                 
-                cell= new PdfPCell(new Paragraph(simbolo_moneda,smallBoldFont));
+                cell= new PdfPCell(new Paragraph(datos_header.get(0).get("simbolo_moneda_pago"),smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(0);
                 table.addCell(cell);

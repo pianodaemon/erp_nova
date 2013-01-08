@@ -57,7 +57,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
     @Override
     public String selectFunctionForThisApp(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from gral_adm_catalogos('"+campos_data+"',array["+extra_data_array+"]);";
-        
+        System.out.println(sql_to_query);
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
         valor_retorno = update.get("gral_adm_catalogos").toString();
@@ -218,7 +218,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     +"cxc_clie.dia_revision, "
                     +"cxc_clie.dia_pago, "
                     +"cxc_clie.cta_pago_mn, "
-                    +"cxc_clie.cta_pago_usd "
+                    +"cxc_clie.cta_pago_usd,"
+                    +"(CASE WHEN cxc_clie.lista_precio IS NULL THEN 0 ELSE cxc_clie.lista_precio END) AS lista_precio "
             +"FROM cxc_clie "
             +"WHERE cxc_clie.borrado_logico=false AND cxc_clie.id=?;";
         
@@ -311,6 +312,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("dia_pago",String.valueOf(rs.getInt("dia_pago")));
                     row.put("cta_pago_mn",rs.getString("cta_pago_mn"));
                     row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
+                    row.put("lista_precio",String.valueOf(rs.getInt("lista_precio")));
                     
                     return row;
                 }
@@ -1709,7 +1711,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     + "LEFT JOIN gral_mon ON gral_mon.id=erp_pagos.moneda_id  "
                     + "LEFT JOIN erp_pagos_formas ON erp_pagos_formas.id=erp_pagos.forma_pago_id  "
                     + "LEFT JOIN cxc_clie ON cxc_clie.id=erp_pagos.cliente_id  "
-                    + "LEFT JOIN tes_che ON tes_che.id=erp_pagos.bancokemikal_id::integer "
+                    + "LEFT JOIN tes_che ON tes_che.id=erp_pagos.numerocuenta_id "
                     + "WHERE erp_pagos.id="+ id_pago;
             
         //System.out.println("Buscando datos para reporte aplicacion de pago: "+sql_to_query);
