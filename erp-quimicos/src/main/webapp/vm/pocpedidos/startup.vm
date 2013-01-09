@@ -336,15 +336,16 @@
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Lugar&nbsp;Entrega</td>
-                                                                <td width="270" colspan="5">
-																	<input type="text" name="lugar_entrega" style="width:270px;">
+                                                                <td width="480" colspan="9">
+																	<input type="text" name="lugar_entrega" style="width:480px;">
 																	<input type="text" name="lugar_entrega_original" style="display:none">
                                                                 </td>
-                                                                <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_lugarentrega"></div></td>
+                                                                <!--<td width="30"></td>
 																<td width="75"></td>
 																<td>&nbsp;&nbsp;</td>
 																<td></td>
-                                                                <td width="30"></td>
+																-->
+                                                                <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_lugarentrega"></div></td>
 																<td width="90" colspan="2">Asignar&nbsp;a&nbsp;ruta</td>
 																<td>&nbsp;&nbsp;</td>
 																<td width="140"><input type="checkbox" name="check_ruta"></td>
