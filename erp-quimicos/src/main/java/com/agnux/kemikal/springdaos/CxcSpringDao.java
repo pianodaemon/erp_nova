@@ -1120,6 +1120,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
         String where="";
+        
 	if(filtro == 1){
 		where=" AND cxc_clie.numero_control ilike '%"+cadena+"%'";
 	}
@@ -1137,6 +1138,12 @@ public class CxcSpringDao implements CxcInterfaceDao{
 		where=" AND cxc_clie.alias ilike '%"+cadena+"%'";
 	}
 	
+        if(id_sucursal==0){
+            where="";
+        }else{
+            where =" AND sucursal_id="+id_sucursal;
+        }
+        
 	String sql_query = "SELECT "
                                     +"sbt.id,"
                                     +"sbt.numero_control,"
@@ -1155,7 +1162,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
                                     + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
                                     + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                                    +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
+                                    +" WHERE empresa_id ="+id_empresa+"  "
                                     +" AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
                             +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id;";
