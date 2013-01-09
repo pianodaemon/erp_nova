@@ -119,8 +119,10 @@ $(function() {
 		};
 	});
 	
+	
+	
+	
 	$tabs_li_funxionalidad = function(){
-		
 		$('#forma-clientsdf-window').find('#submit').mouseover(function(){
 			$('#forma-clientsdf-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
@@ -158,6 +160,132 @@ $(function() {
 		});
 	}
 	
+	
+
+
+	//buscador de clientes
+	$busca_clientes = function(razon_social_cliente){
+		$(this).modalPanel_Buscacliente();
+		var $dialogoc =  $('#forma-buscacliente-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
+		$('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -180});
+
+		var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
+		
+		var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
+		var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('#cencela');
+		
+		var $cadena_buscar = $('#forma-buscacliente-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscacliente-window').find('select[name=filtropor]');
+		
+		//funcionalidad botones
+		$busca_cliente_modalbox.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$busca_cliente_modalbox.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$cancelar_plugin_busca_cliente.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		
+		$cancelar_plugin_busca_cliente.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		var seleccionado='';
+		if(razon_social_cliente != ''){
+			//asignamos la Razon Social del Cliente al campo Nombre
+			$cadena_buscar.val(razon_social_cliente);
+			seleccionado='selected="yes"';
+		}
+		
+		var html = '';
+		$select_filtro_por.children().remove();
+		html='<option value="0">[-- Opcion busqueda --]</option>';
+		html+='<option value="1">No. de control</option>';
+		html+='<option value="2">RFC</option>';
+		html+='<option value="3" '+seleccionado+'>Razon social</option>';
+		html+='<option value="4">CURP</option>';
+		html+='<option value="5">Alias</option>';
+		$select_filtro_por.append(html);
+		
+		
+		
+		//click buscar clientes
+		$busca_cliente_modalbox.click(function(event){
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_clientes.json';
+			$arreglo = {'cadena':$cadena_buscar.val(),
+						 'filtro':$select_filtro_por.val(),
+						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+						}
+						
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Clientes'],function(entryIndex,cliente){
+					trr = '<tr>';
+						trr += '<td width="80">';
+							trr += '<input type="hidden" id="idclient" value="'+cliente['id']+'">';
+							trr += '<input type="hidden" id="direccion" value="'+cliente['direccion']+'">';
+							trr += '<input type="hidden" id="id_moneda" value="'+cliente['moneda_id']+'">';
+							trr += '<input type="hidden" id="moneda" value="'+cliente['moneda']+'">';
+							trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
+						trr += '</td>';
+						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
+						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+						//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//seleccionar un producto del grid de resultados
+				$tabla_resultados.find('tr').click(function(){
+					$('#forma-clientsdf-window').find('input[name=id_cliente]').val($(this).find('#idclient').val());
+					$('#forma-clientsdf-window').find('input[name=rfc]').val($(this).find('span.rfc').html());
+					$('#forma-clientsdf-window').find('input[name=cliente]').val($(this).find('span.razon').html());
+					$('#forma-clientsdf-window').find('input[name=nocontrol]').val($(this).find('span.no_control').html());
+					
+					//elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscacliente-overlay').fadeOut(remove);
+					//asignar el enfoque al campo sku del producto
+				});
+
+			});
+		});//termina llamada json
+		
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_buscar.val() != ''){
+			$busca_cliente_modalbox.trigger('click');
+		}
+		
+		$cancelar_plugin_busca_cliente.click(function(event){
+			var remove = function() {$(this).remove();};
+			$('#forma-buscacliente-overlay').fadeOut(remove);
+		});
+	}//termina buscador de clientes
+
+	
+	
 	//nuevo direcciones de proveedores
 	$new_clientsdf.click(function(event){
 		event.preventDefault();
@@ -169,40 +297,42 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-clientsdf-window').css({"margin-left": -250, 	"margin-top": -200});
+		$('#forma-clientsdf-window').css({"margin-left": -400, 	"margin-top": -290});
 		$forma_selected.prependTo('#forma-clientsdf-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();		
 		
-                var $busca_proveedor = $('#forma-clientsdf-window').find('a[href*=busca_cliente]');
-                var $id_proveedor = $('#forma-clientsdf-window').find('input[name=id_proveedor]');
-                var $campo_id = $('#forma-clientsdf-window').find('input[name=identificador]');
-		var $campo_proveedor = $('#forma-clientsdf-window').find('input[name=proveedor]');
-                $campo_proveedor .attr({'readOnly':true});                
-                var $campo_calle = $('#forma-clientsdf-window').find('input[name=calle]');
-                var $campo_entreCalles = $('#forma-clientsdf-window').find('input[name=entreCalles]');
-                var $campo_numeroInterior = $('#forma-clientsdf-window').find('input[name=numInterior]');
-                var $campo_numeroExterior = $('#forma-clientsdf-window').find('input[name=numExterior]');
-                var $campo_colonia = $('#forma-clientsdf-window').find('input[name=colonia]');
-                var $campo_select_pais = $('#forma-clientsdf-window').find('select[name=select_pais]');
-                var $campo_select_estado = $('#forma-clientsdf-window').find('select[name=select_estado]');
-                var $campo_select_municipio = $('#forma-clientsdf-window').find('select[name=select_municipio]');
-                var $campo_codigoPostal = $('#forma-clientsdf-window').find('input[name=codigoPostal]');
-                var $campo_telUno = $('#forma-clientsdf-window').find('input[name=telUno]');
-                var $campo_extUno = $('#forma-clientsdf-window').find('input[name=extUno]');
-                var $campo_telDos = $('#forma-clientsdf-window').find('input[name=telDos]');
-                var $campo_extDos = $('#forma-clientsdf-window').find('input[name=extDos]');                
+		var $identificador = $('#forma-clientsdf-window').find('input[name=identificador]');
+		var $busca_cliente = $('#forma-clientsdf-window').find('a[href*=busca_cliente]');
+		var $id_cliente = $('#forma-clientsdf-window').find('input[name=id_cliente]');
+		var $cliente = $('#forma-clientsdf-window').find('input[name=cliente]');
+		var $nocontrol = $('#forma-clientsdf-window').find('input[name=nocontrol]');
+		var $rfc = $('#forma-clientsdf-window').find('input[name=rfc]');
+		var $calle = $('#forma-clientsdf-window').find('input[name=calle]');
+		var $numero_int = $('#forma-clientsdf-window').find('input[name=numero_int]');
+		var $numero_ext = $('#forma-clientsdf-window').find('input[name=numero_ext]');
+		var $entrecalles = $('#forma-clientsdf-window').find('input[name=entrecalles]');
+		var $colonia = $('#forma-clientsdf-window').find('input[name=colonia]');
+		var $select_pais = $('#forma-clientsdf-window').find('select[name=select_pais]');
+		var $select_estado = $('#forma-clientsdf-window').find('select[name=select_estado]');
+		var $select_municipio = $('#forma-clientsdf-window').find('select[name=select_municipio]');
+		var $contacto = $('#forma-clientsdf-window').find('input[name=contacto]');
+		var $email = $('#forma-clientsdf-window').find('input[name=email]');
+		var $tel1 = $('#forma-clientsdf-window').find('input[name=tel1]');
+		var $ext1 = $('#forma-clientsdf-window').find('input[name=ext1]');
+		var $fax = $('#forma-clientsdf-window').find('input[name=fax]');
+		var $tel2 = $('#forma-clientsdf-window').find('input[name=tel2]');
+		var $ext2 = $('#forma-clientsdf-window').find('input[name=ext2]');
 		
 		var $cerrar_plugin = $('#forma-clientsdf-window').find('#close');
 		var $cancelar_plugin = $('#forma-clientsdf-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-clientsdf-window').find('#submit');
 		
                         
-		$campo_id.attr({'value' : 0});
-                $id_proveedor.attr({'value' : 0});
+		$identificador.attr({'value' : 0});
+		$id_cliente.attr({'value' : 0});
 		var respuestaProcesada = function(data){
-                    
-                        if ( data['success'] == "true" ){
+			if ( data['success'] == "true" ){
 				jAlert("La direccion fue dada de alta con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
 				$('#forma-clientsdf-overlay').fadeOut(remove);
@@ -214,17 +344,17 @@ $(function() {
 				
 				var valor = data['success'].split('___');
                                      
-                                //muestra las interrogaciones
+				//muestra las interrogaciones
 				for (var element in valor){
 					tmp = data['success'].split('___')[element];
-                                        longitud = tmp.split(':');
-                                        //telUno: Numero Telefonico no Valido___
-                                        if( longitud.length > 1 ){
-                                                $('#forma-clientsdf-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
-                                                .parent()
+					longitud = tmp.split(':');
+					//telUno: Numero Telefonico no Valido___
+					if( longitud.length > 1 ){
+						$('#forma-clientsdf-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
+						.parent()
 						.css({'display':'block'})
 						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-                                        }
+					}
 				}
 			}
 		}
@@ -235,23 +365,22 @@ $(function() {
 		$arreglo = {'id':id_to_show};
 		
 		$.post(input_json,$arreglo,function(entry){
-		
-                       $campo_select_pais.children().remove();
+		   $campo_select_pais.children().remove();
 			var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
 			$.each(entry['paises'],function(entryIndex,pais){
 				pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
 			});
 			$campo_select_pais.append(pais_hmtl);
                         
-                        var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar entidad--]</option>';
+			var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar entidad--]</option>';
 			$campo_select_estado.children().remove();
 			$campo_select_estado.append(entidad_hmtl);
                         
-                        var localidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar municipio-]</option>';
+			var localidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar municipio-]</option>';
 			$campo_select_municipio.children().remove();
 			$campo_select_municipio.append(localidad_hmtl);
                         
-                        //carga select estados al cambiar el pais
+			//carga select estados al cambiar el pais
 			$campo_select_pais.change(function(){
 				var valor_pais = $(this).val();
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
@@ -286,116 +415,11 @@ $(function() {
 				},"json");//termina llamada json
 			});
 		},"json");//termina llamada json
-                
-                //buscador de proveedores
-	$busca_proveedores = function(){
-		$(this).modalPanel_Buscaproveedor();
-		var $dialogoc =  $('#forma-buscaproveedor-window');
-		$dialogoc.append($('div.buscador_proveedores').find('table.formaBusqueda_proveedores').clone());
-		$('#forma-buscaproveedor-window').css({"margin-left": -200, 	"margin-top": -200});
-		
-		var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
-		var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
-		var $campo_email = $('#forma-buscaproveedor-window').find('input[name=campo_email]');
-		var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
-		
-		var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
-		var $cancelar_plugin_busca_proveedor = $('#forma-buscaproveedor-window').find('#cencela');
-			
-		$('#forma-provfacturas-window').find('input[name=tipo_proveedor]').val('');
-			
-		//funcionalidad botones
-		$buscar_plugin_proveedor.mouseover(function(){
-			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
-		});
-		$buscar_plugin_proveedor.mouseout(function(){
-			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
-		});
-		   
-		$cancelar_plugin_busca_proveedor.mouseover(function(){
-			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
-		});
-		$cancelar_plugin_busca_proveedor.mouseout(function(){
-			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
-		});
-	
-		
-		//click buscar proveedor
-		$buscar_plugin_proveedor.click(function(event){
-			//event.preventDefault();
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuacadorProveedores.json';
-			$arreglo = {'rfc':$campo_rfc.val(),
-							'email':$campo_email.val(),
-							'nombre':$campo_nombre.val(),
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-						}
-                                    
-			var trr = '';
-			$tabla_resultados.children().remove();
-			$.post(input_json,$arreglo,function(entry){
-				$.each(entry['proveedores'],function(entryIndex,proveedor){
-					
-					trr = '<tr>';
-						trr += '<td width="120">';
-							trr += '<input type="hidden" id="id_prov" value="'+proveedor['id']+'">';
-							trr += '<input type="hidden" id="tipo_prov" value="'+proveedor['proveedortipo_id']+'">';
-							trr += '<input type="hidden" id="dias_cred_id" value="'+proveedor['dias_credito_id']+'">';
-							trr += '<span class="rfc">'+proveedor['rfc']+'</span>';
-						trr += '</td>';
-						trr += '<td width="250"><span id="razon_social">'+proveedor['razon_social']+'</span></td>';
-						trr += '<td width="250"><span class="direccion">'+proveedor['direccion']+'</span></td>';
-					trr += '</tr>';
-					
-					$tabla_resultados.append(trr);
-				});
-				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
-				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
-
-				$('tr:odd' , $tabla_resultados).hover(function () {
-					$(this).find('td').css({background : '#FBD850'});
-				}, function() {
-					$(this).find('td').css({'background-color':'#e7e8ea'});
-				});
-				$('tr:even' , $tabla_resultados).hover(function () {
-					$(this).find('td').css({'background-color':'#FBD850'});
-				}, function() {
-					$(this).find('td').css({'background-color':'#FFFFFF'});
-				});
-				
-				//seleccionar un producto del grid de resultados
-				$tabla_resultados.find('tr').click(function(){
-					//asignar a los campos correspondientes el sku y y descripcion
-					$('#forma-provfacturas-window').find('input[name=id_proveedor]').val($(this).find('#id_prov').val());
-					$('#forma-provfacturas-window').find('input[name=tipo_proveedor]').val($(this).find('#tipo_prov').val());
-					$('#forma-provfacturas-window').find('input[name=rfcproveedor]').val($(this).find('span.rfc').html());
-					$('#forma-provfacturas-window').find('input[name=razon_proveedor]').val($(this).find('#razon_social').html());
-					//$('#forma-provfacturas-window').find('input[name=dir_proveedor]').val($(this).find('span.direccion').html());
-					$('#forma-provfacturas-window').find('select[name=tipo_factura]').find('option[value="'+$(this).find('#dias_cred_id').val()+'"]').attr('selected','selected');
-					
-                                        
-                                        $id_proveedor.val($(this).find('#id_prov').val());
-                                        $campo_proveedor.val($(this).find('#razon_social').html());
-                                        
-                                        
-                                        //elimina la ventana de busqueda
-					var remove = function() {$(this).remove();};
-					$('#forma-buscaproveedor-overlay').fadeOut(remove);
-				});
-			});
-		});
-		
-		$cancelar_plugin_busca_proveedor.click(function(event){
-			//event.preventDefault();
-			var remove = function() {$(this).remove();};
-			$('#forma-buscaproveedor-overlay').fadeOut(remove);
-		});
-	}//termina buscador de proveedores
-
         
-        //buscar proveedor
-        $busca_proveedor.click(function(event){
-                event.preventDefault();
-                $busca_proveedores();
+        //buscar cliente
+        $busca_cliente.click(function(event){
+			event.preventDefault();
+			$busca_clientes($cliente.val());
         });
         
         $cerrar_plugin.bind('click',function(){
@@ -410,14 +434,18 @@ $(function() {
 		});		
 	});
 	
+	
+	
+	
+	
 	var carga_formaDirecciones_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar una entrada
 		if(accion_mode == 'cancel'){
                      
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
 			$arreglo = {'id':id_to_show,
-                                    'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-                                    };
+						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+						};
 			jConfirm('Realmente desea eliminar la direci&oacute;n seleccionada', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
@@ -426,7 +454,7 @@ $(function() {
 							$get_datos_grid();
 						}
 						else{
-							jAlert("La direccion  no pudo ser eliminada", 'Atencion!');
+							jAlert("La direci&oacute;n no pudo ser eliminada", 'Atencion!');
 						}
 					},"json");
 				}
@@ -441,7 +469,7 @@ $(function() {
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
 			$(this).modalPanel_clientsdf();
-			$('#forma-clientsdf-window').css({"margin-left": -350, 	"margin-top": -200});
+			$('#forma-clientsdf-window').css({"margin-left": -400, 	"margin-top": -290});
 			
 			$forma_selected.prependTo('#forma-clientsdf-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});

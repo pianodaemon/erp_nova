@@ -1401,14 +1401,15 @@ $(function() {
 			var valor_metodo = $(this).val();
 			$no_cuenta.val('');
 			
+			//valor_metodo 2=Tarjeta Credito, 3=Tarjeta Debito
 			if(parseInt(valor_metodo)==2 || parseInt(valor_metodo)==3){
+				$no_cuenta.val('');
 				//si esta desahabilitado, hay que habilitarlo para permitir la captura de los digitos de la tarjeta.
 				if($no_cuenta.is(':disabled')) {
 					$no_cuenta.removeAttr('disabled');
 				}
 				//quitar propiedad de solo lectura
 				$no_cuenta.removeAttr('readonly');
-				
 				
 				//$no_cuenta.attr('readonly',true);
 				
@@ -1419,8 +1420,9 @@ $(function() {
 				$etiqueta_digit.val('Ingrese los ultimos 4 Digitos de la Tarjeta');
 			}
 			
-			
+			//valor_metodo 4=Cheque Nominativo, 5=Transferencia Electronica de Fondos
 			if(parseInt(valor_metodo)==4 || parseInt(valor_metodo)==5){
+				$no_cuenta.val('');
 				$no_cuenta.show();
 				//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
 				if($no_cuenta.is(':disabled')) {
@@ -1429,7 +1431,7 @@ $(function() {
 				
 				//fijar propiedad de solo lectura en verdadero
 				$no_cuenta.attr('readonly',true);
-
+				
 				if($etiqueta_digit.is(':disabled')) {
 					$etiqueta_digit.removeAttr('disabled');
 				}
@@ -1443,7 +1445,7 @@ $(function() {
 				}
 			}
 			
-			
+			//valor_metodo 1=Efectivo, 6=No Identificado
 			if(parseInt(valor_metodo)==1 || parseInt(valor_metodo)==6){
 				$no_cuenta.val('');
 				if(!$no_cuenta.is(':disabled')) {
@@ -1454,6 +1456,22 @@ $(function() {
 				}
 			}
 			
+			if(parseInt(valor_metodo)==7){
+				$no_cuenta.show();
+				$no_cuenta.val('NA');
+				//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
+				if($no_cuenta.is(':disabled')) {
+					$no_cuenta.removeAttr('disabled');
+				}
+				if($etiqueta_digit.is(':disabled')) {
+					$etiqueta_digit.removeAttr('disabled');
+				}
+				if(parseInt($select_moneda.val())==1){
+					$etiqueta_digit.val('Numero de Cuenta para pago en Pesos');
+				}else{
+					$etiqueta_digit.val('Numero de Cuenta en Dolares');
+				}
+			}
 			
 		});
 		
@@ -1944,7 +1962,9 @@ $(function() {
 						if($no_cuenta.is(':disabled')) {
 							$no_cuenta.removeAttr('disabled');
 						}
-						
+						if($etiqueta_digit.is(':disabled')) {
+							$etiqueta_digit.removeAttr('disabled');
+						}
 						//fijar propiedad de solo lectura en verdadero
 						$no_cuenta.attr('readonly',true);
 						
@@ -1955,6 +1975,24 @@ $(function() {
 						}
 					}
 					
+					//valor_metodo 7=NA
+					if(parseInt(valor_metodo)==7){
+						//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
+						if($no_cuenta.is(':disabled')) {
+							$no_cuenta.removeAttr('disabled');
+						}
+						if($etiqueta_digit.is(':disabled')) {
+							$etiqueta_digit.removeAttr('disabled');
+						}
+						//fijar propiedad de solo lectura en verdadero
+						$no_cuenta.attr('readonly',true);
+						
+						if(parseInt($select_moneda.val())==1){
+							$etiqueta_digit.val('Numero de Cuenta para pago en Pesos');
+						}else{
+							$etiqueta_digit.val('Numero de Cuenta en Dolares');
+						}
+					}
 					
 					
 					
@@ -2233,7 +2271,9 @@ $(function() {
 					var valor_metodo = $(this).val();
 					$no_cuenta.val('');
 					
+					//valor_metodo 2=Tarjeta Credito, 3=Tarjeta Debito
 					if(parseInt(valor_metodo)==2 || parseInt(valor_metodo)==3){
+						$no_cuenta.val('');
 						//si esta desahabilitado, hay que habilitarlo para permitir la captura de los digitos de la tarjeta.
 						if($no_cuenta.is(':disabled')) {
 							$no_cuenta.removeAttr('disabled');
@@ -2241,14 +2281,19 @@ $(function() {
 						//quitar propiedad de solo lectura
 						$no_cuenta.removeAttr('readonly');
 						
+						//$no_cuenta.attr('readonly',true);
+						
 						if($etiqueta_digit.is(':disabled')) {
 							$etiqueta_digit.removeAttr('disabled');
 						}
+						
 						$etiqueta_digit.val('Ingrese los ultimos 4 Digitos de la Tarjeta');
 					}
 					
-					
+					//valor_metodo 4=Cheque Nominativo, 5=Transferencia Electronica de Fondos
 					if(parseInt(valor_metodo)==4 || parseInt(valor_metodo)==5){
+						$no_cuenta.val('');
+						$no_cuenta.show();
 						//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
 						if($no_cuenta.is(':disabled')) {
 							$no_cuenta.removeAttr('disabled');
@@ -2270,6 +2315,7 @@ $(function() {
 						}
 					}
 					
+					//valor_metodo 1=Efectivo, 6=No Identificado
 					if(parseInt(valor_metodo)==1 || parseInt(valor_metodo)==6){
 						$no_cuenta.val('');
 						if(!$no_cuenta.is(':disabled')) {
@@ -2280,7 +2326,25 @@ $(function() {
 						}
 					}
 					
+					if(parseInt(valor_metodo)==7){
+						$no_cuenta.show();
+						$no_cuenta.val('NA');
+						//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
+						if($no_cuenta.is(':disabled')) {
+							$no_cuenta.removeAttr('disabled');
+						}
+						if($etiqueta_digit.is(':disabled')) {
+							$etiqueta_digit.removeAttr('disabled');
+						}
+						if(parseInt($select_moneda.val())==1){
+							$etiqueta_digit.val('Numero de Cuenta para pago en Pesos');
+						}else{
+							$etiqueta_digit.val('Numero de Cuenta en Dolares');
+						}
+					}
+					
 				});
+				
                 
                 
 				
