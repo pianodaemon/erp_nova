@@ -247,6 +247,11 @@ public class BeanFacturadorCfdiTimbre {
                 
                 //Aquí se ejecuta la validación del xml contra el Esquema(xsd)
                 String success = validacion.validar();
+                
+                System.out.println("success: "+success);
+                //error po numero de cuenta NA
+                //DOCUMENTO INVÁLIDO: org.xml.sax.SAXParseException; cvc-minLength-valid: El valor 'NA' con la longitud = '2' no es de faceta válida con respecto a minLength '4' para el tipo '#AnonType_NumCtaPagoComprobante'
+                
                 //si la validación es correcta
                 if(success.equals("true")){
                     
@@ -269,7 +274,7 @@ public class BeanFacturadorCfdiTimbre {
                         args[0] = tipo_peticion
                         args[1] = FicheroPfxTimbradoCfdi
                         args[2] = PasswdFicheroPfxTimbradoCfdi
-                        args[3] = JavaVmDir
+                        args[3] = JavaVmDirCerts
                         args[4] = path_file
                         args[5] = xml_file_name
                         args[6] = tipo
@@ -280,10 +285,23 @@ public class BeanFacturadorCfdiTimbre {
                         args[11] = RefID
                     12= Ruta del ejecutable de java
                     */
-                    ///home/j2eeserver/jdk/bin/java
-                    //aqui se forma la cadena con los parametros que se le pasan a jar
-                    String str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" timbrecfdi "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+path_file+" "+xml_file_name+" "+tipo+" "+version+" "+this.getRfc_emisor()+" "+pop.getRfc_receptor()+" "+serie_folio+" "+refId;
                     
+                    
+                    //aqui se forma la cadena con los parametros que se le pasan a jar
+                    String str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "
+                            + "timbrecfdi "+
+                            ruta_fichero_llave_pfx+" "+
+                            password_pfx+" "+
+                            ruta_java_almacen_certificados+" "+
+                            path_file+" "+
+                            xml_file_name+" "+
+                            tipo+" "+
+                            version+" "+
+                            this.getRfc_emisor()+" "+
+                            pop.getRfc_receptor()+" "+
+                            serie_folio+" "+
+                            refId;
+                    System.out.println("str_execute:"+str_execute);
                     Process resultado = Runtime.getRuntime().exec(str_execute); 
                     
                     InputStream myInputStream=null;

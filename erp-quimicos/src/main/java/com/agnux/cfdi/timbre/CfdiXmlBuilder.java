@@ -74,14 +74,13 @@ public class CfdiXmlBuilder {
             //tmp.getDocumentElement().setAttribute("formaDePago","PAGO EN UNA SOLA EXHIBICION");
             tmp.getDocumentElement().setAttribute("formaDePago",StringEscapeUtils.escapeHtml(formaDePago));
             tmp.getDocumentElement().setAttribute("metodoDePago",StringEscapeUtils.escapeHtml(metodoDePago));
+            if(!numTarjeta.equals("")){
+                tmp.getDocumentElement().setAttribute("NumCtaPago",numTarjeta);
+            }
             tmp.getDocumentElement().setAttribute("subTotal",subTotal);
             tmp.getDocumentElement().setAttribute("total",total);
             tmp.getDocumentElement().setAttribute("Moneda",moneda);
             tmp.getDocumentElement().setAttribute("TipoCambio",tipo_cambio);
-            
-            if(!numTarjeta.equals("")){
-                tmp.getDocumentElement().setAttribute("NumCtaPago",numTarjeta);
-            }
             
             this.setDoc(tmp);
 	}

@@ -545,7 +545,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         String sql_to_query = ""
                 + "SELECT erp_prefacturas.cliente_id, "
                         + "fac_metodos_pago.titulo AS metodo_pago, "
-                        + "erp_prefacturas.no_cuenta, "
+                        + "(CASE WHEN fac_metodos_pago.id=7 THEN 'NO APLICA' ELSE erp_prefacturas.no_cuenta END ) AS no_cuenta, "
                         + "cxc_clie_credias.descripcion AS condicion_pago,"
                         + "gral_mon.iso_4217 AS moneda, "
                         + "erp_prefacturas.tipo_cambio "

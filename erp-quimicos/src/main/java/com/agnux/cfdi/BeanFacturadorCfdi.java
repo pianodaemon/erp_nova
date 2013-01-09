@@ -255,9 +255,9 @@ public class BeanFacturadorCfdi {
             cadena_retorno += "reNoExterior|" + reNoExterior + "\n";
             cadena_retorno += "reNoInterior|" + reNoInterior + "\n";
             cadena_retorno += "reColonia|" + reColonia + "\n";
-            cadena_retorno += "reMunicipio|" + reMunicipio + "\n";
-            cadena_retorno += "reEstado|" + reEstado + "\n";
-            cadena_retorno += "rePais|" + rePais + "\n";
+            cadena_retorno += "reMunicipio|" + reMunicipio.toUpperCase() + "\n";
+            cadena_retorno += "reEstado|" + reEstado.toUpperCase() + "\n";
+            cadena_retorno += "rePais|" + rePais.toUpperCase() + "\n";
             cadena_retorno += "reCodigoPostal|" + reCodigoPostal + "\n";
             cadena_retorno += "reNoCliente|" + reNoCliente + "\n";
             
@@ -283,8 +283,9 @@ public class BeanFacturadorCfdi {
             String cadena_retorno = "[Datos Complementarios del Comprobante a nivel global]\n";
             
             if(numCtaPago.equals("")){
-                numCtaPago="No Identificado";
+                numCtaPago="NO IDENTIFICADO";
             }
+            
             
             cadena_retorno += "subtotalConceptos|" + subtotalConceptos + "\n";
             cadena_retorno += "totalConceptos|" + totalConceptos + "\n";

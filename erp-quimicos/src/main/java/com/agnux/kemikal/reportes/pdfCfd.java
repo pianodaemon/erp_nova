@@ -1456,7 +1456,7 @@ public final class pdfCfd {
 
             ////////Aqui va el metodo de pago
             if (getProposito().equals("FACTURA")){
-                cell = new PdfPCell(new Paragraph(  getMetodo_pago() +"  "+ getNo_cuenta(),smallFont));
+                cell = new PdfPCell(new Paragraph(  getMetodo_pago() +"   "+ getNo_cuenta(),smallFont));
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setBorderWidthTop(0);
