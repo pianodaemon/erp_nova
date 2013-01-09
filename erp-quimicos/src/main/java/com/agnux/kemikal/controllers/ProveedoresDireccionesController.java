@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @RequestMapping("/proveedoresdirecciones/")
 public class ProveedoresDireccionesController {
     ResourceProject resource = new ResourceProject();
-    private static final Logger log  = Logger.getLogger(com.agnux.kemikal.controllers.ProveedoresDireccionesController.class.getName());
+    private static final Logger log  = Logger.getLogger(ProveedoresDireccionesController.class.getName());
     
     
     @Autowired
@@ -78,7 +78,7 @@ public class ProveedoresDireccionesController {
             @ModelAttribute("user") UserSessionData user
             )throws ServletException, IOException {
         
-            log.log(Level.INFO, "Ejecutando starUp de {0}", com.agnux.kemikal.controllers.ProveedoresDireccionesController.class.getName());
+            log.log(Level.INFO, "Ejecutando starUp de {0}", ProveedoresDireccionesController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");

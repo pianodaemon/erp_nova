@@ -265,22 +265,24 @@ public class BeanFacturadorCfdiTimbre {
                     
                     /*   
                     //estos son los parametros que necesita el jar para establecer la conexion con el web service
-                    1 = FicheroPfxTimbradoCfdi
-                    2= PasswdFicheroPfxTimbradoCfdi
-                    3 = JavaVmDir
-                    4= path_file
-                    5 = xml_file_name
-                    6= tipo
-                    7 = version
-                    8 = getRfc_emisor
-                    9= getRfc_receptor
-                    10 = Serie
-                    11 = RefID
+                        //Datos para timbtado
+                        args[0] = tipo_peticion
+                        args[1] = FicheroPfxTimbradoCfdi
+                        args[2] = PasswdFicheroPfxTimbradoCfdi
+                        args[3] = JavaVmDir
+                        args[4] = path_file
+                        args[5] = xml_file_name
+                        args[6] = tipo
+                        args[7] = version
+                        args[8] = getRfc_emisor
+                        args[9] = getRfc_receptor
+                        args[10] = Serie
+                        args[11] = RefID
                     12= Ruta del ejecutable de java
                     */
                     ///home/j2eeserver/jdk/bin/java
                     //aqui se forma la cadena con los parametros que se le pasan a jar
-                    String str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+path_file+" "+xml_file_name+" "+tipo+" "+version+" "+this.getRfc_emisor()+" "+pop.getRfc_receptor()+" "+serie_folio+" "+refId;
+                    String str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" timbrecfdi "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+path_file+" "+xml_file_name+" "+tipo+" "+version+" "+this.getRfc_emisor()+" "+pop.getRfc_receptor()+" "+serie_folio+" "+refId;
                     
                     Process resultado = Runtime.getRuntime().exec(str_execute); 
                     

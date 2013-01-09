@@ -122,7 +122,6 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldos(Integer tipo, Integer id_cliente, Integer id_empresa);
     
     
-    
     public ArrayList<HashMap<String,String>> getEstadisticaVentas(Integer mes_in,Integer mes_fin,Integer id_empresa);
     
     //reporte de estadistico de ventas por producto
@@ -143,5 +142,8 @@ public interface CxcInterfaceDao {
     
     //reporte Anticipos no Autorizados
     public ArrayList<HashMap<String, String>> getAnticiposnoAplicados(String fecha_inicial, String fecha_final, Integer cliente, Integer id_empresa);
+    
+    //catalogo de direcciones fiscales de clientes
+    public ArrayList<HashMap<String, Object>> getClientsDf_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     
 }

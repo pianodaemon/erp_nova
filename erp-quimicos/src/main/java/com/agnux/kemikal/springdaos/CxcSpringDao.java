@@ -3394,6 +3394,64 @@ return subfamilias;
     }
     
     
+    //**********************************************************************************************************************
+    //METODOS PARA CATALOGO DE DIRECCIONES FISCALES DE CLIENTES
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsDf_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+                + "SELECT sbt1.id,"
+                    + "sbt1.cliente,"
+                    + "sbt1.rfc,"
+                    + "sbt1.calle||' '||sbt1.numero_interior||' '||sbt1.numero_exterior||', '||sbt1.colonia||', '||sbt1.municipio||', '||sbt1.estado||', '||sbt1.pais||', C.P.'||sbt1.cp AS direccion, "
+                    + "sbt1.tel "
+                + "FROM ("
+                    + "SELECT "
+                        + "cxc_clie_df.id, "
+                        + "cxc_clie.razon_social AS cliente, "
+                        + "cxc_clie.rfc,"
+                        + "(CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle,"
+                        + "(CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE 'NO.INT. '||cxc_clie_df.numero_interior END) AS numero_interior,"
+                        + "(CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE 'NO.EXT. '||cxc_clie_df.numero_exterior END) AS numero_exterior,"
+                        + "(CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,"
+                        + "(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,"
+                        + "(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,"
+                        + "(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,"
+                        + "(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp,"
+                        + "(CASE WHEN cxc_clie_df.telefono1 IS NULL OR cxc_clie_df.telefono1='' THEN cxc_clie_df.telefono2 ELSE cxc_clie_df.telefono1 END) AS tel "
+                    + "FROM cxc_clie_df "
+                    + "JOIN cxc_clie ON cxc_clie.id = cxc_clie_df.cxc_clie_id "
+                    + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id "
+                    + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id "
+                    + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id "
+                + ") as sbt1 "
+                +"JOIN ("+sql_busqueda+") as subt on subt.id=sbt1.id "
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("cliente",rs.getString("cliente"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("tel",rs.getString("tel"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
     
+    
+    //AQUI TERMINA METODOS PARA CATALOGO DE DIRECCIONES FISCALES DE CLIENTES
+    //**********************************************************************************************************************
     
 }
