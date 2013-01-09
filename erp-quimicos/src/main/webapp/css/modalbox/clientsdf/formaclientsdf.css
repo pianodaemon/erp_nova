@@ -94,11 +94,12 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 }
 
 
+
 .clientsdf_div_one{
     /*background-image:url('Imagen/ven1.png');
     background-repeat:no-repeat;*/
-	width:800px;
-    height:120px;
+	width:810px;
+    height:470px;
 	border-radius:10px;
 	background-color:#e9e9e9;
     border:3px solid #454442;
@@ -109,7 +110,8 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 
 .clientsdf_div_two{
 	/*font-family:tahoma;*/
-    width:800px;
+/*    width:670px;*/
+	width:810px;
     height:28px;
     background-color:#454442;
 	margin-top:0;
@@ -124,15 +126,17 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 .clientsdf_div_three{
 	/*font-family:tahoma;*/
 	font-size:11px;
-    width:750px;
-    height:400px;
+    /*width:659px;*/
+    width:800px;
+    
+    /*height:298px;
+    height:260px;*/
     background-color:#e9e9e9;
     margin-top:5px;
 	margin-right:10px;
 	margin-left:10px;
 	margin-bottom:10px;
 }
-
 
 #grid_productos td{
 	height:18px;
