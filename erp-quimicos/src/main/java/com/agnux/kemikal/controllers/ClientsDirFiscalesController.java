@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @RequestMapping("/clientsdf/")
 public class ClientsDirFiscalesController {
     
-    private static final Logger log  = Logger.getLogger(ClientsController.class.getName());
+    private static final Logger log  = Logger.getLogger(ClientsDirFiscalesController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
@@ -104,7 +104,7 @@ public class ClientsDirFiscalesController {
     
     //obtener todas las direcciones fiscales de los clientes
     @RequestMapping(value="/getAllClientsDf.json", method = RequestMethod.POST)
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllClientsDf(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllClientsDfJson(
            @RequestParam(value="orderby", required=true) String orderby,
            @RequestParam(value="desc", required=true) String desc,
            @RequestParam(value="items_por_pag", required=true) int items_por_pag,
@@ -149,7 +149,105 @@ public class ClientsDirFiscalesController {
         return jsonretorno;
     }
     
+    
+    
+    //Buscador de clientes
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorClientes.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorClientesJson(
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="filtro", required=true) Integer filtro,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        //System.out.println("id_usuario: "+id_usuario);
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = 0;//se le asigna cero para que no filtre por sucursal
+        
+        jsonretorno.put("Clientes", this.getCxcDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getclientsdf.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getclientsdfJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getclientsdfJson de {0}", ClientsDirFiscalesController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, Object>> paises = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> estados = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> municipios = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
 
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        if( id != 0  ){
+            datos = this.getCxcDao().getCliente_Datos(id);
+            estados = this.getCxcDao().getEntidadesForThisPais(datos.get(0).get("pais_id").toString());
+            municipios = this.getCxcDao().getLocalidadesForThisEntidad(datos.get(0).get("pais_id").toString(), datos.get(0).get("estado_id").toString());
+        }
+        
+        paises = this.getCxcDao().getPaises();
+        
+        jsonretorno.put("Datos", datos);
+        jsonretorno.put("Paises", paises);
+        jsonretorno.put("Estados", estados);
+        jsonretorno.put("Municipios", municipios);
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    
+    //obtiene el las Municipios de un Estado
+    @RequestMapping(method = RequestMethod.POST, value="/getMunicipios.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getMunicipiosJson(
+            @RequestParam(value="id_pais", required=true) String id_pais,
+            @RequestParam(value="id_entidad", required=true) String id_entidad,
+            Model model
+            ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        
+        jsonretorno.put("Municipios", this.getCxcDao().getLocalidadesForThisEntidad(id_pais, id_entidad));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //obtiene el las Estados de un Pais
+    @RequestMapping(method = RequestMethod.POST, value="/getEstados.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getEstadosJson(
+            @RequestParam(value="id_pais", required=true) String id_pais,
+            Model model
+            ) {
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        jsonretorno.put("Estados", this.getCxcDao().getEntidadesForThisPais(id_pais));
+        
+        return jsonretorno;
+    }
+    
     
     
     
