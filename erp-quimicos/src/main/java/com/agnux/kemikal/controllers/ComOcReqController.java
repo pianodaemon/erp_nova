@@ -90,11 +90,13 @@ public class ComOcReqController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", ComOcReqController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("folio", "Orden Compra:100");
+        infoConstruccionTabla.put("folio", "Folio:100");
         infoConstruccionTabla.put("proveedor", "Proveedor:300");
-        infoConstruccionTabla.put("total", "Monto:100");
-        infoConstruccionTabla.put("denominacion", "Moneda:70");
-        infoConstruccionTabla.put("estado", "Estado:150");
+        infoConstruccionTabla.put("denominacion", "Denominacion:100");
+        infoConstruccionTabla.put("estado", "Estado:100");
+        infoConstruccionTabla.put("momento_creacion", "Momento Creacion:100");
+        infoConstruccionTabla.put("total", "Total:100");
+        
         
         
         ModelAndView x = new ModelAndView("com_oc_req/startup", "title", "Requisici&ocute;n Orden de compra");
@@ -454,7 +456,8 @@ public class ComOcReqController {
             arreglo = new String[eliminado.length];
             
             for(int i=0; i<eliminado.length; i++) {
-                arreglo[i]= "'"+eliminado[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] +"'";
+                //arreglo[i]= "'"+eliminado[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] +"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + idproducto[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] +"'";
                 //System.out.println(arreglo[i]);
             }
             
