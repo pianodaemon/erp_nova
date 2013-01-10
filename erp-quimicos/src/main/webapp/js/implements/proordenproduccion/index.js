@@ -1218,7 +1218,7 @@ $(function() {
                 
                 //llena los selects para los instrumentos
                 $html_subprocesos = "";
-                encontrado = 0;
+                encontrado = 0; 
                 $select_inst_fineza.children().remove();
                 $.each(array_instrumentos,function(entryIndex,instrumento){
                     if(instrumento['id'] == parseInt($campos_espliteados[12])){
@@ -1429,6 +1429,7 @@ $(function() {
                 $campo_dureza.val('N.A.');
                 $campo_adherencia.val('N.A.');
                 $campo_hidrogeno.val('N.A.');
+                
                 /*
                 $campo_fineza1.val('N.A.');
                 $campo_viscosidad11.val('N.A.');
