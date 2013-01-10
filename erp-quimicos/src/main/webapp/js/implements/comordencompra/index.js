@@ -734,6 +734,7 @@ $(function() {
 	
 	//calcula totales(subtotal, impuesto, total)
 	$calcula_totales = function(){
+           
 		var $campo_subtotal = $('#forma-comordencompra-window').find('input[name=subtotal]');
 		var $campo_impuesto = $('#forma-comordencompra-window').find('input[name=impuesto]');
 		//var $campo_impuesto_retenido = $('#forma-comordencompra-window').find('input[name=impuesto_retenido]');
@@ -756,7 +757,6 @@ $(function() {
 		
 		$grid_productos.find('tr').each(function (index){
 			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
-				//alert($(this).find('#cost').val());
 				//acumula los importes en la variable subtotal
 				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
 				//alert($(this).find('#import').val());
@@ -791,6 +791,7 @@ $(function() {
 	
 	//agregar producto al grid
 	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec){
+            
 		var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
@@ -846,7 +847,7 @@ $(function() {
 					trr += '<INPUT TYPE="text"      name="importe'+ tr +'" 	 value="" id="import" readOnly="true" style="width:86px; text-align:right;">';
 					trr += '<INPUT type="hidden"    name="id_imp_prod"    	 value="'+  $id_impuesto.val()    +'" id="idimppord">';
 					trr += '<INPUT type="hidden"    name="valor_imp"     	 value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
-					trr += '<input type="hidden" 	name="totimpuesto'+ tr +'" id="totimp" value="0">';
+					trr += '<input type="hidden" 	name="totimpuesto'+ tr +'"        id="totimp" value="0">';
 				trr += '</td>';
 			trr += '</tr>';
             
@@ -861,9 +862,11 @@ $(function() {
 			
 			//recalcula importe al perder enfoque el campo cantidad
 			$grid_productos.find('#cant').blur(function(){
+                            
 				if ($(this).val() == ''){
 					$(this).val(' ');
 				}
+                                
 				if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
 				{	//calcula el importe
 					$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
@@ -872,6 +875,7 @@ $(function() {
 					$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2) );
 					
 					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
+                                        
 					$(this).parent().parent().find('#totimp').val( parseFloat( $(this).parent().parent().find('#import').val() ) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
 				}else{
 					$(this).parent().parent().find('#import').val('');
@@ -915,30 +919,37 @@ $(function() {
 			
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 			$grid_productos.find('#cost').focus(function(e){
+                        
 				if($(this).val() == ' '){
 					$(this).val('');
 				}
 			});
-            
+                        
 			//recalcula importe al perder enfoque el campo costo
 			$grid_productos.find('#cost').blur(function(){
+                        
+                            
 				if ($(this).val() == ''){
 					$(this).val(' ');
 				}
 				
 				if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
 				{	//calcula el importe
+                                        
 					$(this).parent().parent().find('#import').val( parseFloat($(this).val()) * parseFloat( $(this).parent().parent().find('#cant').val()) );
 					//redondea el importe en dos decimales
 					//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
 					$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
 					
 					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
+                                        
 					$(this).parent().parent().find('#totimp').val( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
+                                        
 				}else{
 					$(this).parent().parent().find('#import').val('');
 					$(this).parent().parent().find('#totimp').val('');
 				}
+                                
 				$calcula_totales();//llamada a la funcion que calcula totales
 			});
 			
@@ -1372,7 +1383,9 @@ $(function() {
 			var $nombre_producto = $('#forma-comordencompra-window').find('input[name=nombre_producto]');
 			
                         
-                       
+                        var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
+                        var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
+
 			//buscar producto
 			var $busca_sku = $('#forma-comordencompra-window').find('a[href*=busca_sku]');
 			//href para agregar producto al grid
@@ -1506,6 +1519,8 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+                                        $id_impuesto.val(entry['iva']['0']['id_impuesto']);
+                                        $valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
 					//$tasa_ret_immex.val(entry['datosOrdenCompra']['0']['tasa_retencion_immex']);
 					$id_orden_compra.val(entry['datosOrdenCompra']['0']['id']);
 					$folio.val(entry['datosOrdenCompra']['0']['folio']);
@@ -1646,6 +1661,7 @@ $(function() {
 									$(this).parent().parent().find('#import').val('');
 									$(this).parent().parent().find('#totimp').val('');
 								}
+                                                                alert("Llamando a la funcion que me calcula los totales cuando se modifica la cantidad");
 								$calcula_totales();//llamada a la funcion que calcula totales
 							});
 							
@@ -1674,6 +1690,7 @@ $(function() {
 									$(this).parent().parent().find('#import').val('');
 									$(this).parent().parent().find('#totimp').val('');
 								}
+                                                                alert("Llamando a la funcion que me calcula los totales cuando se modifica el costo");
 								$calcula_totales();//llamada a la funcion que calcula totales
 							});
 							
@@ -1735,8 +1752,7 @@ $(function() {
 						$impuesto.attr('disabled','-1'); //deshabilitar
 						$total.attr('disabled','-1'); //deshabilitar
 			
-                                        }
-                                        else{ 
+                                        }else{ 
                                                 $('#forma-comordencompra-window').find('a[href*=busca_sku]').show();
                                                 $('#forma-comordencompra-window').find('a[href*=agregar_producto]').show();
                                                 $('#forma-comordencompra-window').find('#submit').show();
