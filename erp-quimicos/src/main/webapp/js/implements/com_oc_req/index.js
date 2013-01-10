@@ -743,7 +743,7 @@ $(function() {
 				via_embarque_hmtl += '<option value="' + via_envarque['id'] + '"  >' + via_envarque['tipo_embarque'] + '</option>';
 			});
 			$select_via_embarque.append(via_embarque_hmtl);
-                                                $.each(entry['datosGrid'],function(entryIndex,prod){				
+                                                $.each(entry['requisiciones'],function(entryIndex,prod){				
 							//obtiene numero de trs
 							var tr = $("tr", $grid_productos).size();
 							tr++;
@@ -785,7 +785,7 @@ $(function() {
 							trr += '</td>';
 							trr += '</tr>';
 							$grid_productos.append(trr);
-                            
+                          //  alert("Esto es lo del grid queno semuestra::  "+$grid_productos.append(trr));
 							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 							$grid_productos.find('#cant').focus(function(e){
 								if($(this).val() == ' '){
