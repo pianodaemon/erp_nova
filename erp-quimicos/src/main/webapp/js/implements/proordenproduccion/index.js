@@ -2042,7 +2042,7 @@ $(function() {
                                                                     $tabla_productos_preorden.find('input[name=cantidad]').css({'background' : '#ffffff'});
                                                                     */
                                                                     
-                                                                    $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'548px'});//con errores
+                                                                    $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'578px'});//con errores
                                                                     $('#forma-proordenproduccion-window').find('#div_warning_grid').css({'display':'none'});
                                                                     $('#forma-proordenproduccion-window').find('#div_warning_grid').find('#grid_warning').children().remove();
                                                                     
@@ -2684,7 +2684,7 @@ $(function() {
             $pdf_orden.hide();
             $pdf_requisicion.hide();
             
-            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'445px'});
+            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'475px'});
             if(estatus == "1"){
                 $submit_actualizar.show();
                 $confirmar_programacion.show();
@@ -2699,7 +2699,7 @@ $(function() {
                     $buscar_producto.hide();
                     $cancelar_proceso.hide();
                     
-                    $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'445px'});
+                    $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'475px'});
                 }
                 
                 if($tipo == 2){
@@ -2974,25 +2974,25 @@ $(function() {
                         if(tipo_preorden == 0){
                             $preorden_tipo_pedido.hide();
                             tipo_stock_laboratorio.hide();
-                            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'420px'});
+                            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'450px'});
                         }
                         
                         if(tipo_preorden == 1){
                             $preorden_tipo_pedido.hide();
                             tipo_stock_laboratorio.hide();
-                            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'535px'});
+                            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'565px'});
                         }
                         
                         if(tipo_preorden == 2){
                             $preorden_tipo_pedido.hide();
                             tipo_stock_laboratorio.show();
-                            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'450px'});
+                            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'480px'});
                         }
                         
                         if(tipo_preorden == 3){
                             $preorden_tipo_pedido.hide();
                             tipo_stock_laboratorio.show();
-                            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'450px'});
+                            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'480px'});
                         }
                         
                         
@@ -3117,7 +3117,8 @@ $(function() {
                                 var $select_tipoorden = $('#forma-proordenproduccion-window').find('select[name=tipoorden]');
                                 var $fecha_elavorar = $('#forma-proordenproduccion-window').find('input[name=fecha_elavorar]');
                                 var $observaciones = $('#forma-proordenproduccion-window').find('textarea[name=observaciones]');
-                                
+                                var $folio_op = $('#forma-proordenproduccion-window').find('input[name=folio_op]');
+                                var $lote_pop = $('#forma-proordenproduccion-window').find('input[name=lote_pop]');
                                 
                                 //
                                 var $titprod_tmp = $('#forma-proordenproduccion-window').find('input[name=titprod_tmp]');
@@ -3190,7 +3191,7 @@ $(function() {
 						$tabla_productos_preorden.find('input[name=eq_adicional]').css({'background' : '#ffffff'});
                                                 $tabla_productos_preorden.find('input[name=cantidad]').css({'background' : '#ffffff'});
                                                 
-                                                $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'548px'});//con errores
+                                                $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'578px'});//con errores
 						$('#forma-proordenproduccion-window').find('#div_warning_grid').css({'display':'none'});
 						$('#forma-proordenproduccion-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 						
@@ -3265,6 +3266,9 @@ $(function() {
                                     $observaciones.val( entry['Orden']['0']['observaciones']);
                                     $fecha_elavorar.attr({'value': entry['Orden']['0']['fecha_elavorar']});
                                     $proceso_flujo_id.attr({'value': entry['Orden']['0']['pro_proceso_flujo_id']});
+                                    $folio_op.attr({'value': entry['Orden']['0']['folio']});
+                                    $lote_pop.attr({'value': entry['Orden']['0']['lote']});
+                                    
                                     
                                     array_instrumentos = entry['Instrumentos'];
                                     
@@ -3811,7 +3815,7 @@ $(function() {
                                                 $get_datos_grid();
                                             }else{
                                                 
-                                                $('#forma-requisicionop-window').find('.proordenproduccion_div_one').css({'height':'548px'});//con errores
+                                                $('#forma-requisicionop-window').find('.proordenproduccion_div_one').css({'height':'578px'});//con errores
                                                 $('#forma-requisicionop-window').find('#div_warning_grid').css({'display':'none'});
                                                 $('#forma-requisicionop-window').find('#div_warning_grid').find('#grid_warning').children().remove();
                                                 
