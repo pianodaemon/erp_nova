@@ -99,7 +99,7 @@ public class ProOrdenProduccionController {
         infoConstruccionTabla.put("sku", "Codigo:100");
         infoConstruccionTabla.put("accesor_tipo", "Tipo de Orden:150");
         infoConstruccionTabla.put("fecha_elavorar", "Fecha:150");
-        infoConstruccionTabla.put("folio", "Folio:100");
+        infoConstruccionTabla.put("lote", "Lote:110");
         infoConstruccionTabla.put("proceso", "Estatus:100");
         
         ModelAndView x = new ModelAndView("proordenproduccion/startup", "title", "Orden de Produccion");
@@ -954,6 +954,7 @@ public class ProOrdenProduccionController {
         datos.put("fecha_elavorar", datos_orden.get(0).get("fecha_elavorar"));
         datos.put("flujo", datos_orden.get(0).get("flujo"));
         datos.put("observaciones", datos_orden.get(0).get("observaciones"));
+        datos.put("lote", datos_orden.get(0).get("lote"));
         
         //obtiene las facturas del periodo indicado
         productos = this.getProDao().getPro_DatosOrdenProduccionPdf(id_orden, String.valueOf(datos_orden.get(0).get("pro_proceso_id")));
@@ -1033,6 +1034,7 @@ public class ProOrdenProduccionController {
         datos.put("fecha_elavorar", datos_orden.get(0).get("fecha_elavorar"));
         datos.put("flujo", datos_orden.get(0).get("flujo"));
         datos.put("observaciones", datos_orden.get(0).get("observaciones"));
+        datos.put("lote", datos_orden.get(0).get("lote"));
         
         //obtiene las facturas del periodo indicado
         productos = this.getProDao().getPro_DatosOrdenProduccionPdf(id_orden, String.valueOf(datos_orden.get(0).get("pro_proceso_id")));
@@ -1106,6 +1108,7 @@ public class ProOrdenProduccionController {
         datos.put("fecha", TimeHelper.getFechaActualYMDH());
         
         datos.put("folio", datos_orden.get(0).get("folio"));
+        datos.put("lote", datos_orden.get(0).get("lote"));
         datos.put("fecha_elavorar", datos_orden.get(0).get("fecha_elavorar"));
         datos.put("flujo", datos_orden.get(0).get("flujo"));
         datos.put("observaciones", datos_orden.get(0).get("observaciones"));

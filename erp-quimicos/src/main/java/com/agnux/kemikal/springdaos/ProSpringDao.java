@@ -3951,7 +3951,7 @@ public class ProSpringDao implements ProInterfaceDao{
     public ArrayList<HashMap<String, Object>> getProOrden_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos('"+data_string+"') AS foo (id integer)";
         
-	String sql_to_query = "select pro_orden_prod.id, pro_orden_prod.folio, pro_orden_prod.pro_orden_tipos_id, "
+	String sql_to_query = "select pro_orden_prod.id, pro_orden_prod.folio,pro_orden_prod.lote, pro_orden_prod.pro_orden_tipos_id, "
                 + "pro_orden_prod.fecha_elavorar,pro_orden_tipos.titulo as accesor_tipo, pro_proceso_flujo.titulo as proceso, "
                 + "(select inv_prod.sku from pro_orden_prod_det join inv_prod on pro_orden_prod_det.inv_prod_id=inv_prod.id "
                 + "where pro_orden_prod_det.pro_orden_prod_id=pro_orden_prod.id limit 1) as sku "
@@ -3974,7 +3974,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("accesor_tipo",rs.getString("accesor_tipo"));
                     row.put("folio",rs.getString("folio"));
                     row.put("fecha_elavorar",String.valueOf(rs.getString("fecha_elavorar")));
-                    row.put("folio",rs.getString("folio"));
+                    row.put("lote",rs.getString("lote"));
                     row.put("proceso",rs.getString("proceso"));
                     row.put("sku",rs.getString("sku"));
                     return row;
@@ -4004,6 +4004,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("pro_orden_tipos_id",String.valueOf(rs.getInt("pro_orden_tipos_id")));
                     row.put("fecha_elavorar",StringHelper.isNullString(String.valueOf(rs.getString("fecha_elavorar"))));
                     row.put("folio",rs.getString("folio"));
+                    row.put("lote",rs.getString("lote"));
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("flujo",rs.getString("flujo"));
                     row.put("pro_proceso_flujo_id",String.valueOf(rs.getInt("pro_proceso_flujo_id")));

@@ -169,20 +169,22 @@ public class PdfProOrdenProduccion {
                 celdaX1.setBorderWidthLeft(0);
                 tablaX1.addCell(celdaX1);
                 
+                //Para el lote de el producto
+                //columna 1 fil2
+                celdaX1 = new PdfPCell(new Paragraph("Lote Producto : ",fuenteCont2));
+                celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
+                celdaX1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                celdaX1.setBorderWidthBottom(0);
+                celdaX1.setBorderWidthTop(0);
+                celdaX1.setBorderWidthRight(0);
+                //celdaX.setColspan(2);
+                celdaX1.setBorderWidthLeft(0);
+                tablaX1.addCell(celdaX1);
+                
                 if(String.valueOf(registro.get("lote")).equals("")){
                     //columna 1 fil2
-                    celdaX1 = new PdfPCell(new Paragraph("",fuenteCont2));
-                    celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    celdaX1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    celdaX1.setBorderWidthBottom(0);
-                    celdaX1.setBorderWidthTop(0);
-                    celdaX1.setBorderWidthRight(0);
-                    //celdaX.setColspan(2);
-                    celdaX1.setBorderWidthLeft(0);
-                    tablaX1.addCell(celdaX1);
-                    
                     //columna 2, 3 y 4 vacio fil2
-                    celdaX1 = new PdfPCell(new Paragraph("",fuenteCont2));
+                    celdaX1 = new PdfPCell(new Paragraph(String.valueOf(datos.get("lote")),fuenteCont2));
                     celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
                     celdaX1.setBorderWidthBottom(0);
                     celdaX1.setBorderWidthTop(0);
@@ -192,18 +194,7 @@ public class PdfProOrdenProduccion {
                     tablaX1.addCell(celdaX1);
 
                 }else{
-                    //Para el lote de el producto
-                    //columna 1 fil2
-                    celdaX1 = new PdfPCell(new Paragraph("Lote Producto : ",fuenteCont2));
-                    celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    celdaX1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    celdaX1.setBorderWidthBottom(0);
-                    celdaX1.setBorderWidthTop(0);
-                    celdaX1.setBorderWidthRight(0);
-                    //celdaX.setColspan(2);
-                    celdaX1.setBorderWidthLeft(0);
-                    tablaX1.addCell(celdaX1);
-
+                    
                     //columna 2, 3 y 4 vacio fil2
                     celdaX1 = new PdfPCell(new Paragraph(String.valueOf(registro.get("lote")),fuenteCont2));
                     celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
