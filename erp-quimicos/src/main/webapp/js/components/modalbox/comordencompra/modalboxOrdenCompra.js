@@ -2,7 +2,7 @@
 	$.fn.extend({
 		modalPanel_orden_compra: function() {
                         
-                        /*
+                        
                         //Our function for hiding the modalbox
 			function modalHide() {
 				$(document).unbind("keydown", handleEscape);
@@ -19,7 +19,7 @@
 					modalHide();
 				}
 			}
-			*/
+			
                         
 			//Create our overlay object
 			var overlay = $("<div id='forma-comordencompra-overlay'></div>");
@@ -35,7 +35,7 @@
 					}
 					
 					//Append the overlay to the document body
-//					$("body").append(overlay.click(function() { modalHide(); }));
+                                        //$("body").append(overlay.click(function() { modalHide(); }));
 					
 
 					$("body").append(overlay);
@@ -51,7 +51,7 @@
 					//e.preventDefault();
 					
 					//Activate a listener 
-					//$(document).keydown(handleEscape);	
+					$(document).keydown(handleEscape);	
 
 					//modalWindow.css({
 					//		"margin-left": -400,
