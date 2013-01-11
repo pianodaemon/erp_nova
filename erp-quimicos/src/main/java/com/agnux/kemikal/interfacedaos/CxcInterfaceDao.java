@@ -57,7 +57,7 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, String>> getCartera_FacturasCancelar(String num_transaccion,String factura, Integer id_cliente);
     public ArrayList<HashMap<String, Object>> getCartera_FacturasTransaccion(String num_transaccion);
     public ArrayList<HashMap<String, String>> getCartera_NumerosDeTransaccionCliente(Integer id_cliente);
-    public ArrayList<HashMap<String, String>> getCartera_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCartera_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte, Integer id_empresa, Integer id_agente);
     public ArrayList<HashMap<String, String>> getCartera_DatosReporteDepositos(String fecha_inicial, String fecha_final, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCartera_PagosAplicados(Integer id_pago, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCartera_PagosDatosHeader(Integer id_pago, Integer id_empresa);
