@@ -418,44 +418,7 @@
 									
 									
 									
-									<li class="accessible">
-										<a href="http://jdsharp.us" class="accessible" id="mod_contable">Contabilidad &raquo;</a>
-										<ul>
-											<li>
-												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
-												<ul>
-													<li><a href="../cuentasmayor/startup.agnux">Clasificaci&oacute;n de Cuentas</a></li>
-													<li><a href="../cuentascontables/startup.agnux">Cuentas Contables</a></li>
-													<li><a href="../centrocostos/startup.agnux">Centros de Costos</a></li>
-													<li><a href="../conceptoscontables/startup.agnux">Conceptos Contables</a></li>
-													<li><a href="../tipopolizas/startup.agnux">Tipos de P&oacute;liza</a></li>
-												</ul>
-											</li>
-											<!--
-											<li>
-												<a href="#" class="sub">Generaci&oacute;n P&oacute;lizas Contables &raquo;</a>
-												<ul>
-													<li><a href="#">Ventas</a></li>
-													<li><a href="#">Compras</a></li>
-													<li><a href="#">Inventarios</a></li>
-												</ul>
-											</li>
-											<li>
-												<a href="#" class="sub">Reportes &raquo;</a>
-												<ul>
-													<li><a href="#">Auxiliar de Cuentas</a></li>
-													<li><a href="#">Balance General</a></li>
-													<li><a href="#">Balanza de Comprobaci&oacute;n</a></li>
-													<li><a href="#">Estado de Resultados</a></li>
-													<li><a href="#">P&oacute;lizas Contables</a></li>
-													<li><a href="#">Estado de Resultados/Proforma IETU</a></li>
-												</ul>
-											</li>
-												-->
-										</ul>
-									</li>
-									
-									
+
 									
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Rutas &raquo;</a>
@@ -487,47 +450,6 @@
 									
 									
 									
-									
-									
-									<li class="accessible">
-										<a href="http://jdsharp.us" class="accessible">Producci&oacute;n &raquo;</a>
-										<ul>
-											
-											<li>
-												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
-												<ul>
-													<li><a href="../protipoequipo/startup.agnux">Tipos de Equipo</a></li>
-													<li><a href="../proinstrumentosmedicion/startup.agnux">Instrumentos de Medici&oacute;n</a></li>
-												</ul>
-											</li>
-											
-											<li>
-												<a href="#" class="sub">Procesos &raquo;</a>
-												<ul>
-													<li class="topline"><a href="../proconfigproduccion/startup.agnux">Configuraci&oacute;n</a></li>
-													<li class="topline"><a href="../propreordenproduccion/startup.agnux">Preorden Producci&oacute;n</a></li>
-													<li class="topline"><a href="../proordenproduccion/startup.agnux">Orden Producci&oacute;n</a></li>
-													<li class="topline"><a href="../proformulasdesarrollo/startup.agnux">Formulas en Desarrollo</a></li>
-													
-													<!--
-													<li class="topline"><a href="#">Cancelaci&oacute;n</a></li>
-													<li class="topline"><a href="#">Nota Cargo/Cr&eacute;dito</a></li>
-													<li class="topline"><a href="#">Consulta Cancelaci&oacute;n/Devoluci&oacute;n</a></li>
-													<li class="topline"><a href="#">Recepci&oacute;n Documentos XML</a></li>
-													-->
-												</ul>
-											</li>
-											
-											<!--
-											<li>
-												<a href="#" class="sub">Reportes&raquo;</a>
-												<ul>
-													<li class="topline"><a href="#">F&oacute;rmulas</a></li>
-												</ul>
-											</li>
-											-->
-										</ul>
-									</li>
 									
 									
 									

@@ -317,115 +317,116 @@
         
         #include("${layoutfooter}")
         
-<div class="buscador_proveedores" style="display:none;">	
-	<table width="100%" border="0" class="formaBusqueda_proveedores">
-		<tr>
-			<td>
-				<div class="div_dos_proveedores">
-					<table border="0">
-						<thead>
-							<tr>
-								<td colspan="7" height="50" valign="top"><div class="titulo_proveedores" width="100%"><strong>Buscador de proveedores</strong></div></td>
-							</tr>
-						</thead>
-						
-						<tbody>
-							<tr style="font-size:13px;">
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff;"></td>
-								<td colspan="3" style="background:#ffffff;" width="650">
-									
-									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
-										<tr>
-											<td colspan="11">&nbsp;</td>
-										</tr>
-										<tr>
-											<td width="10"></td>
-											<td width="45">RFC</td>
-											<td width="150"><INPUT TYPE="text" name="campo_rfc" style="width:150px;"></td>
-											<td width="25"></td>
-											<td width="45">E-mail</td>
-											<td width="200"><INPUT TYPE="text" name="campo_email" style="width:200px;"></td>
-											<td width="120"></td>
-											<td></td>
-										</tr>
-										<tr>
-											<td colspan="11">&nbsp;</td>
-										</tr>
-										<tr>
-											<td width="10"></td>
-											<td width="45">Nombre</td>
-											<td colspan="4"><INPUT TYPE="text" name="campo_nombre" style="width:420px;"></td>
-											<td width="120"></td>
-											<td>
-												<INPUT TYPE="button" id="busca_proveedor_modalbox" class="onmouseOutBuscar">
-											</td>
-										</tr>
-									</table>
-									
-									
-								</td>
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr style="font-size:13px;">
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-								
-								<td width="120" style="background:#A8A9AB;">RFC</td>
-								<td width="250" style="background:#A8A9AB;">Razon social</td>
-								<td width="250" style="background:#A8A9AB;">Direccion</td>
-								
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							
-							<tr>
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-								<td style="background:#ffffff; border: solid 1px #313E74;" colspan="3" width="650">
-									<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:650px; height:120px; align=top;">
-										<table  border="0" id="tabla_resultado" width="650">
-											<!--aqui van los resultados de la busqueda-->
-										
-										</table>
-									</div>
-								</td>
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr>
-								<td width="10"></td>
-								<td width="10" colspan="5" height="4" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr>
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-								
-								<td width="120"  style="background:#ffffff"></td>
-								<td width="250" style="background:#ffffff"></td>
-								<td width="250" style="background:#ffffff" align="right">
-									<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
-								</td>
-								
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr>
-								<td width="10"></td>
-								<td width="10" colspan="5" height="6" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-						</tbody>
-						
-					</table>
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
 
+		<!--Aqui comienza el formulario para el buscador de Clientes-->
+		<div class="buscador_clientes" style="display:none;">	
+			<table width="100%" border="0" class="formaBusqueda_clientes">
+				<tr>
+					
+					<td>
+						
+						<div class="div_dos_clientes">
+							
+							<table width="100%" border="0">
+								<thead>
+									<tr>
+										<td colspan="8" height="50" valign="top"><div class="titulo_clientes" width="100%"><strong>Buscador de clientes</strong></div></td>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff;"></td>
+										<td colspan="3" style="background:#ffffff;" width="600">
+											
+											<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+												<tr>
+													<td colspan="7" width="600" height="10"></td>
+												</tr>
+												
+												<tr>
+													<td width="50">Buscar</td>
+													<td width="245"><INPUT TYPE="text" name="cadena_buscar" style="width:245px;"></td>
+													<td width="25"></td>
+													<td width="60">Filtro por</td>
+													<td width="150"><SELECT NAME="filtropor" style="width:150px;"></SELECT></td>
+													<td width="70" align="right">
+														<INPUT TYPE="button" id="busca_cliente_modalbox" class="onmouseOutBuscar">
+													</td>
+												</tr>
+												
+											</table>
+											
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									
+									<tr style="font-size:13px;">
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="80"  style="background:#A8A9AB;">No.&nbsp;control</td>
+										<td width="140"  style="background:#A8A9AB;">RFC</td>
+										<td width="380"  style="background:#A8A9AB;">Razon&nbsp;social</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									
+									
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td style="background:#ffffff; border: solid 1px #454442;" colspan="3" width="600">
+											<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+												<table  border="0" id="tabla_resultado" width="580">
+													<!--aqui van los resultados de la busqueda-->
+													<!--
+														<tr>
+															<td width="80">No. control</td>
+															<td width="145">RFC</td>
+															<td width="375">Razon social</td>
+														</tr>
+													-->
+												</table>
+											</div>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="5" height="3" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="80" style="background:#ffffff"></td>
+										<td width="140" style="background:#ffffff"></td>
+										<td width="380" style="background:#ffffff" align="right">
+											<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+										</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="5" height="6" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+								</tbody>
+								
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
 
     </body>
 </html>	
