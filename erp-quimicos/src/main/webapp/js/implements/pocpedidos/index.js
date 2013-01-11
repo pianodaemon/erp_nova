@@ -646,7 +646,7 @@ $(function() {
 	//buscador de presentaciones disponibles para un producto
 	$buscador_presentaciones_producto = function($id_cliente,nocliente, sku_producto,$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio){
 		//verifica si el campo rfc proveedor no esta vacio
-               var cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val();
+		var cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val();
 		if(nocliente != ''){
 			//verifica si el campo sku no esta vacio para realizar busqueda
 			if(sku_producto != ''){
@@ -1596,6 +1596,7 @@ $(function() {
 			var $dir_cliente = $('#forma-pocpedidos-window').find('input[name=dircliente]');
 			var $empresa_immex = $('#forma-pocpedidos-window').find('input[name=empresa_immex]');
 			var $tasa_ret_immex = $('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]');
+			var $cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]');
 			
 			var $select_moneda = $('#forma-pocpedidos-window').find('select[name=select_moneda]');
 			var $select_moneda_original = $('#forma-pocpedidos-window').find('input[name=select_moneda_original]');
@@ -1817,6 +1818,7 @@ $(function() {
 					$nocliente.val(entry['datosPedido']['0']['numero_control']);
 					$razon_cliente.val(entry['datosPedido']['0']['razon_social']);
 					$dir_cliente.val(entry['datosPedido']['0']['direccion']);
+					$cliente_listaprecio.val(entry['datosPedido']['0']['lista_precio']);
 					
 					$observaciones.text(entry['datosPedido']['0']['observaciones']);
 					$observaciones_original.val(entry['datosPedido']['0']['observaciones']);
