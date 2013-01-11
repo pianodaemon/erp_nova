@@ -1130,7 +1130,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
 	if(filtro == 3){
 		where=" AND cxc_clie.razon_social ilike '%"+cadena+"%'";
 	}
-
+        
 	if(filtro == 4){
 		where=" AND cxc_clie.curp ilike '%"+cadena+"%'";
 	}
@@ -1139,9 +1139,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
 	}
 	
         if(id_sucursal==0){
-            where="";
+            where +="";
         }else{
-            where =" AND sucursal_id="+id_sucursal;
+            where +=" AND sucursal_id="+id_sucursal;
         }
         
 	String sql_query = "SELECT "

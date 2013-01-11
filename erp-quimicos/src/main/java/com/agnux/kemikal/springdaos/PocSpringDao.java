@@ -155,7 +155,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "poc_pedidos.no_cuenta, "
                 + "poc_pedidos.enviar_ruta, "
                 + "cxc_clie.cta_pago_mn, "
-                + "cxc_clie.cta_pago_usd "
+                + "cxc_clie.cta_pago_usd,"
+                + "cxc_clie.lista_precio "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
         + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
@@ -199,6 +200,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("enviar_ruta",String.valueOf(rs.getBoolean("enviar_ruta")));
                     row.put("cta_pago_mn",rs.getString("cta_pago_mn"));
                     row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
+                    row.put("lista_precio",rs.getString("lista_precio"));
                     return row;
                 }
             }
