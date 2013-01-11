@@ -2608,7 +2608,7 @@ $(function() {
                    
 					//Alimentando los campos select de las pais  del contacto compras
 					$select_comp_pais.children().remove();
-					var compras_pais_hmtl = "";
+					var compras_pais_hmtl = '<option value="00">[-Seleccionar Pais-]</option>';
 					$.each(entry['Paises'],function(entryIndex,pais){
 						if(pais['cve_pais'] == entry['Cliente']['0']['contacto_compras_pais_id']){
 							compras_pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
@@ -2621,7 +2621,7 @@ $(function() {
 					
 					//Alimentando los campos select de estados del contacto compras
 					$select_comp_estado.children().remove();
-					var compras_entidad_hmtl = "";
+					var compras_entidad_hmtl = '<option value="00" >[-Seleccionar Estado-]</option>';
 					$.each(entry['Entidades'],function(entryIndex,entidad){
 						if(entidad['cve_ent'] == entry['Cliente']['0']['contacto_compras_estado_id']){
 							compras_entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
@@ -2634,7 +2634,7 @@ $(function() {
 					
 					//Alimentando los campos select de los municipios
 					$select_comp_localidad.children().remove();
-					var compras_localidad_hmtl = "";
+					var compras_localidad_hmtl = '<option value="00">[-Seleccionar Municipio-]</option>';
 					$.each(entry['Localidades'],function(entryIndex,mun){
 						if(mun['cve_mun'] == entry['Cliente']['0']['contacto_compras_municipio_id']){
 							compras_localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
@@ -2649,7 +2649,7 @@ $(function() {
 
 					//Alimentando los campos select de las pais  del contacto pagos
 					$select_pag_pais.children().remove();
-					var pagos_pais_hmtl = "";
+					var pagos_pais_hmtl = '<option value="00"  >[-Seleccionar Pais-]</option>';
 					$.each(entry['Paises'],function(entryIndex,pais){
 						if(pais['cve_pais'] == entry['Cliente']['0']['contacto_pagos_pais_id']){
 							pagos_pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
@@ -2662,7 +2662,7 @@ $(function() {
 					
 					//Alimentando los campos select de estados del contacto pagos
 					$select_pag_estado.children().remove();
-					var pagos_entidad_hmtl = "";
+					var pagos_entidad_hmtl = '<option value="00">[-Seleccionar Estado-]</option>';
 					$.each(entry['Entidades'],function(entryIndex,entidad){
 						if(entidad['cve_ent'] == entry['Cliente']['0']['contacto_pagos_estado_id']){
 							pagos_entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
@@ -2675,7 +2675,7 @@ $(function() {
 					
 					//Alimentando los campos select de los municipios del contacto pagos
 					$select_pag_localidad.children().remove();
-					var pagos_localidad_hmtl = "";
+					var pagos_localidad_hmtl = '<option value="00">[-Seleccionar Municipio-]</option>';
 					$.each(entry['Localidades'],function(entryIndex,mun){
 						if(mun['cve_mun'] == entry['Cliente']['0']['contacto_pagos_municipio_id']){
 							pagos_localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
@@ -2695,7 +2695,7 @@ $(function() {
 						$arreglo = {'id_pais':valor_pais};
 						$.post(input_json,$arreglo,function(entry){
 							$select_entidad.children().remove();
-							var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
+							var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar Estado-]</option>'
 							$.each(entry['Entidades'],function(entryIndex,entidad){
 								entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
 							});
@@ -2731,7 +2731,7 @@ $(function() {
 						$arreglo = {'id_pais':valor_pais};
 						$.post(input_json,$arreglo,function(entry){
 							$select_comp_estado.children().remove();
-							var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar estado-]</option>'
+							var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar Estado-]</option>'
 							$.each(entry['Entidades'],function(entryIndex,entidad){
 								entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
 							});
@@ -2751,7 +2751,7 @@ $(function() {
 						$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
 						$.post(input_json,$arreglo,function(entry){
 							$select_comp_localidad.children().remove();
-							var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar municipio-]</option>'
+							var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar Municipio-]</option>'
 							$.each(entry['Localidades'],function(entryIndex,mun){
 								trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
 							});
@@ -2767,7 +2767,7 @@ $(function() {
 						$arreglo = {'id_pais':valor_pais};
 						$.post(input_json,$arreglo,function(entry){
 							$select_pag_estado.children().remove();
-							var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar estado-]</option>'
+							var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar Estado-]</option>'
 							$.each(entry['Entidades'],function(entryIndex,entidad){
 								entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
 							});
@@ -2787,7 +2787,7 @@ $(function() {
 						$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
 						$.post(input_json,$arreglo,function(entry){
 							$select_pag_localidad.children().remove();
-							var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar municipio-]</option>'
+							var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar Municipio-]</option>'
 							$.each(entry['Localidades'],function(entryIndex,mun){
 								trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
 							});

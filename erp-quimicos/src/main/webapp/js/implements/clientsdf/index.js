@@ -170,7 +170,7 @@ $(function() {
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
 		$dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
 		$('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -180});
-
+		
 		var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
 		
 		var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
@@ -216,7 +216,7 @@ $(function() {
 		
 		//click buscar clientes
 		$busca_cliente_modalbox.click(function(event){
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_clientes.json';
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorClientes.json';
 			$arreglo = {'cadena':$cadena_buscar.val(),
 						 'filtro':$select_filtro_por.val(),
 						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
@@ -297,7 +297,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-clientsdf-window').css({"margin-left": -400, 	"margin-top": -290});
+		$('#forma-clientsdf-window').css({"margin-left": -400, 	"margin-top": -265});
 		$forma_selected.prependTo('#forma-clientsdf-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();		
@@ -328,12 +328,13 @@ $(function() {
 		var $cancelar_plugin = $('#forma-clientsdf-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-clientsdf-window').find('#submit');
 		
-                        
+		$nocontrol.css({'background' : '#DDDDDD'});
+		$rfc.css({'background' : '#DDDDDD'});
 		$identificador.attr({'value' : 0});
 		$id_cliente.attr({'value' : 0});
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
-				jAlert("La direccion fue dada de alta con &eacute;xito", 'Atencion!');
+				jAlert("La direcci&oacute;n fue dada de alta con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
 				$('#forma-clientsdf-overlay').fadeOut(remove);
 				//refresh_table();
@@ -362,56 +363,58 @@ $(function() {
 		$forma_selected.ajaxForm(options);
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getclientsdf.json';
-		$arreglo = {'id':id_to_show};
+		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
-		   $campo_select_pais.children().remove();
-			var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
-			$.each(entry['paises'],function(entryIndex,pais){
+			//Alimentando los campos select de las pais
+			$select_pais.children().remove();
+			var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar Pais-]</option>';
+			$.each(entry['Paises'],function(entryIndex,pais){
 				pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
 			});
-			$campo_select_pais.append(pais_hmtl);
-                        
-			var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar entidad--]</option>';
-			$campo_select_estado.children().remove();
-			$campo_select_estado.append(entidad_hmtl);
-                        
-			var localidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar municipio-]</option>';
-			$campo_select_municipio.children().remove();
-			$campo_select_municipio.append(localidad_hmtl);
-                        
+			$select_pais.append(pais_hmtl);
+			
+			var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>';
+			$select_estado.children().remove();
+			$select_estado.append(entidad_hmtl);
+			
+			var localidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
+			$select_municipio.children().remove();
+			$select_municipio.append(localidad_hmtl);
+			
+			
 			//carga select estados al cambiar el pais
-			$campo_select_pais.change(function(){
+			$select_pais.change(function(){
 				var valor_pais = $(this).val();
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEstados.json';
 				$arreglo = {'id_pais':valor_pais};
 				$.post(input_json,$arreglo,function(entry){
-					$campo_select_estado.children().remove();
-					var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
-					$.each(entry['Entidades'],function(entryIndex,entidad){
+					$select_estado.children().remove();
+					var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>'
+					$.each(entry['Estados'],function(entryIndex,entidad){
 						entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
 					});
-					$campo_select_estado.append(entidad_hmtl);
-					var trama_hmtl_localidades = '<option value="' + '000' + '" >' + 'Localidad alternativa' + '</option>';
-					$campo_select_municipio.children().remove();
-					$campo_select_municipio.append(trama_hmtl_localidades);
+					$select_estado.append(entidad_hmtl);
+					var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
+					$select_municipio.children().remove();
+					$select_municipio.append(trama_hmtl_localidades);
 				},"json");//termina llamada json
 			});
 			
 			//carga select municipios al cambiar el estado
-			$campo_select_estado.change(function(){
+			$select_estado.change(function(){
 				var valor_entidad = $(this).val();
-				var valor_pais = $campo_select_pais.val();
+				var valor_pais = $select_pais.val();
 				
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getLocalidades.json';
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMunicipios.json';
 				$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
 				$.post(input_json,$arreglo,function(entry){
-					$campo_select_municipio.children().remove();
-					var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar municipio-]</option>'
-					$.each(entry['Localidades'],function(entryIndex,mun){
+					$select_municipio.children().remove();
+					var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>'
+					$.each(entry['Municipios'],function(entryIndex,mun){
 						trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
 					});
-					$campo_select_municipio.append(trama_hmtl_localidades);
+					$select_municipio.append(trama_hmtl_localidades);
 				},"json");//termina llamada json
 			});
 		},"json");//termina llamada json
@@ -450,7 +453,7 @@ $(function() {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("La direccion  fue eliminada exitosamente", 'Atencion!');
+							jAlert("La direcci&oacute;n  fue eliminada exitosamente", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
@@ -469,58 +472,69 @@ $(function() {
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
 			$(this).modalPanel_clientsdf();
-			$('#forma-clientsdf-window').css({"margin-left": -400, 	"margin-top": -290});
+			$('#forma-clientsdf-window').css({"margin-left": -400, 	"margin-top": -265});
 			
 			$forma_selected.prependTo('#forma-clientsdf-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
                         
-			var $id_proveedor = $('#forma-clientsdf-window').find('input[name=id_proveedor]');
-                        var $campo_id = $('#forma-clientsdf-window').find('input[name=identificador]');
-                        var $campo_proveedor = $('#forma-clientsdf-window').find('input[name=proveedor]');
-                        //var $campo_id_proveedor = $('#forma-clientsdf-window').find('input[name=id_proveedor]');
-                        var $campo_calle = $('#forma-clientsdf-window').find('input[name=calle]');
-                        var $campo_entreCalles = $('#forma-clientsdf-window').find('input[name=entreCalles]');
-                        var $campo_numeroInterior = $('#forma-clientsdf-window').find('input[name=numInterior]');
-                        var $campo_numeroExterior = $('#forma-clientsdf-window').find('input[name=numExterior]');
-                        var $campo_colonia = $('#forma-clientsdf-window').find('input[name=colonia]');
-                        var $campo_select_pais = $('#forma-clientsdf-window').find('select[name=select_pais]');
-                        var $campo_select_estado = $('#forma-clientsdf-window').find('select[name=select_estado]');
-                        var $campo_select_municipio = $('#forma-clientsdf-window').find('select[name=select_municipio]');
-                        var $campo_codigoPostal = $('#forma-clientsdf-window').find('input[name=codigoPostal]');
-                        var $campo_telUno = $('#forma-clientsdf-window').find('input[name=telUno]');
-                        var $campo_extUno = $('#forma-clientsdf-window').find('input[name=extUno]');
-                        var $campo_telDos = $('#forma-clientsdf-window').find('input[name=telDos]');
-                        var $campo_extDos = $('#forma-clientsdf-window').find('input[name=extDos]');   
+			var $identificador = $('#forma-clientsdf-window').find('input[name=identificador]');
+			var $busca_cliente = $('#forma-clientsdf-window').find('a[href*=busca_cliente]');
+			var $id_cliente = $('#forma-clientsdf-window').find('input[name=id_cliente]');
+			var $cliente = $('#forma-clientsdf-window').find('input[name=cliente]');
+			var $nocontrol = $('#forma-clientsdf-window').find('input[name=nocontrol]');
+			var $rfc = $('#forma-clientsdf-window').find('input[name=rfc]');
+			var $calle = $('#forma-clientsdf-window').find('input[name=calle]');
+			var $numero_int = $('#forma-clientsdf-window').find('input[name=numero_int]');
+			var $numero_ext = $('#forma-clientsdf-window').find('input[name=numero_ext]');
+			var $entrecalles = $('#forma-clientsdf-window').find('input[name=entrecalles]');
+			var $colonia = $('#forma-clientsdf-window').find('input[name=colonia]');
+			var $cp = $('#forma-clientsdf-window').find('input[name=cp]');
+			var $select_pais = $('#forma-clientsdf-window').find('select[name=select_pais]');
+			var $select_estado = $('#forma-clientsdf-window').find('select[name=select_estado]');
+			var $select_municipio = $('#forma-clientsdf-window').find('select[name=select_municipio]');
+			var $contacto = $('#forma-clientsdf-window').find('input[name=contacto]');
+			var $email = $('#forma-clientsdf-window').find('input[name=email]');
+			var $tel1 = $('#forma-clientsdf-window').find('input[name=tel1]');
+			var $ext1 = $('#forma-clientsdf-window').find('input[name=ext1]');
+			var $fax = $('#forma-clientsdf-window').find('input[name=fax]');
+			var $tel2 = $('#forma-clientsdf-window').find('input[name=tel2]');
+			var $ext2 = $('#forma-clientsdf-window').find('input[name=ext2]');
                         
 			var $cerrar_plugin = $('#forma-clientsdf-window').find('#close');
 			var $cancelar_plugin = $('#forma-clientsdf-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-clientsdf-window').find('#submit');
-		
+			
+			$nocontrol.css({'background' : '#DDDDDD'});
+			$rfc.css({'background' : '#DDDDDD'});
+			$busca_cliente.hide();
+			
 			if(accion_mode == 'edit'){
                                 
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getclientsdf.json';
-				$arreglo = {'id':id_to_show};
+				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var respuestaProcesada = function(data){
-					if ( data['success'] == 'true' ){
+					if ( data['success'] == "true" ){
+						jAlert("La direcci&oacute;n fue dada de alta con &eacute;xito", 'Atencion!');
 						var remove = function() {$(this).remove();};
 						$('#forma-clientsdf-overlay').fadeOut(remove);
-						jAlert("La direccion del proveedor se Actiualizo correctamente.", 'Atencion!');
+						//refresh_table();
 						$get_datos_grid();
-					}
-					else{
+					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-clientsdf-window').find('div.interrogacion').css({'display':'none'});
 						
 						var valor = data['success'].split('___');
+											 
 						//muestra las interrogaciones
-                                                for (var element in valor){
+						for (var element in valor){
 							tmp = data['success'].split('___')[element];
 							longitud = tmp.split(':');
-							if( longitud.length > 2 ){
-								$('#forma-clientsdf-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+							//telUno: Numero Telefonico no Valido___
+							if( longitud.length > 1 ){
+								$('#forma-clientsdf-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -531,95 +545,107 @@ $(function() {
 				
 				var options = {dataType :  'json', success : respuestaProcesada};
 				$forma_selected.ajaxForm(options);
-                                var hmtl_paises = ''; 
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$campo_proveedor.attr({'value' : entry['Direcciones']['0']['razon_social']});
-                                        $id_proveedor.attr({'value' : entry['Direcciones']['0']['proveedor_id']});
-                                        $campo_id.attr({'value' : entry['Direcciones']['0']['id']});
-                                        $campo_calle.attr({'value' : entry['Direcciones']['0']['calle']});
-                                        $campo_entreCalles.attr({'value' : entry['Direcciones']['0']['entre_calles']});
-                                        $campo_numeroInterior.attr({'value' : entry['Direcciones']['0']['numero_interior']});
-                                        $campo_numeroExterior.attr({'value' : entry['Direcciones']['0']['numero_exterior']});
-                                        $campo_colonia.attr({'value' : entry['Direcciones']['0']['colonia']});
-                                        $campo_codigoPostal.attr({'value' : entry['Direcciones']['0']['cp']});
-                                        $campo_telUno.attr({'value' : entry['Direcciones']['0']['telefono1']});
-                                        $campo_extUno.attr({'value' : entry['Direcciones']['0']['extension1']});
-                                        $campo_telDos.attr({'value' : entry['Direcciones']['0']['telefono2']});
-                                        $campo_extDos.attr({'value' : entry['Direcciones']['0']['extension2']});                                      
-                        
-                                        //carga select estados al cambiar el pais
-                                        $campo_select_pais.change(function(){
-                                                var valor_pais = $(this).val();
-                                                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
-                                                $arreglo = {'id_pais':valor_pais};
-                                                $.post(input_json,$arreglo,function(entry){
-                                                        $campo_select_estado.children().remove();
-                                                        var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
-                                                        $.each(entry['Entidades'],function(entryIndex,entidad){
-                                                            entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-                                                        });
-                                                        
-                                                        $campo_select_estado.append(entidad_hmtl);
-                                                        
-                                                        var trama_hmtl_localidades = '<option value="' + '000' + '" >' + 'Localidad alternativa' + '</option>';$campo_select_municipio.children().remove();
-                                                        $campo_select_municipio.append(trama_hmtl_localidades);
-                                                },"json");//termina llamada json
-                                        });                                        
-                                        
-                                        $campo_select_pais.children().remove();
-					var pais_hmtl = "";
-					$.each(entry['paises'],function(entryIndex,pais){
-						if(pais['cve_pais'] == entry['Direcciones']['0']['pais_id']){
+					$identificador.attr({'value' : entry['Datos']['0']['identificador']});
+					$id_cliente.attr({'value' : entry['Datos']['0']['id_cliente']});
+					$cliente.attr({'value' : entry['Datos']['0']['cliente']});
+					$nocontrol.attr({'value' : entry['Datos']['0']['numero_control']});
+					$rfc.attr({'value' : entry['Datos']['0']['rfc']});
+					$calle.attr({'value' : entry['Datos']['0']['calle']});
+					$numero_int.attr({'value' : entry['Datos']['0']['numero_interior']});
+					$numero_ext.attr({'value' : entry['Datos']['0']['numero_exterior']});
+					$entrecalles.attr({'value' : entry['Datos']['0']['entre_calles']});
+					$colonia.attr({'value' : entry['Datos']['0']['colonia']});
+					$cp.attr({'value' : entry['Datos']['0']['cp']});
+					$contacto.attr({'value' : entry['Datos']['0']['contacto']});
+					$email.attr({'value' : entry['Datos']['0']['email']});
+					$tel1.attr({'value' : entry['Datos']['0']['telefono1']});
+					$ext1.attr({'value' : entry['Datos']['0']['extension1']});
+					$fax.attr({'value' : entry['Datos']['0']['fax']});
+					$tel2.attr({'value' : entry['Datos']['0']['telefono2']});
+					$ext2.attr({'value' : entry['Datos']['0']['extension2']});
+					
+					$select_pais = $('#forma-clientsdf-window').find('select[name=select_pais]');
+					$select_estado = $('#forma-clientsdf-window').find('select[name=select_estado]');
+					$select_municipio = $('#forma-clientsdf-window').find('select[name=select_municipio]');
+					
+					
+					//Alimentando los campos select de las pais
+					$select_pais.children().remove();
+					var pais_hmtl = '<option value="0" >[-Seleccionar Pais-]</option>';
+					$.each(entry['Paises'],function(entryIndex,pais){
+						if(pais['cve_pais'] == entry['Datos']['0']['pais_id']){
 							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
 						}else{
 							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
 						}
 					});
-                                        
-                                          $campo_select_pais.append(pais_hmtl);
-                                          
-                                        //carga select municipios al cambiar el estado
-                                        $campo_select_estado.change(function(){
-                                                var valor_entidad = $(this).val();
-                                                var valor_pais = $campo_select_pais.val();
-                                                //alert("Pais: "+valor_pais+"    Entidad:"+valor_entidad);
-                                                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getLocalidades.json';
-                                                $arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
-                                                $.post(input_json,$arreglo,function(entry){
-                                                        $campo_select_municipio.children().remove();
-                                                        var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar municipio-]</option>'
-                                                        $.each(entry['Localidades'],function(entryIndex,mun){
-                                                                trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-                                                        });
-                                                        $campo_select_municipio.append(trama_hmtl_localidades);
-                                                },"json");//termina llamada json
-                                        })
-                                        
-                                         //cargar estado
-                                      $campo_select_estado.children().remove();
-					var estado_hmtl = "";
-					$.each(entry['estados'],function(entryIndex,estado){
-						if(estado['cve_ent'] == entry['Direcciones']['0']['estado_id']){
-							estado_hmtl += '<option value="' + estado['cve_ent'] + '"  selected="yes">' + estado['nom_ent'] + '</option>';
+					$select_pais.append(pais_hmtl);
+					
+					
+					
+					//Alimentando los campos select del estado
+					$select_estado.children().remove();
+					var entidad_hmtl = '<option value="00"  >[-Seleccionar Estado--]</option>';
+					$.each(entry['Estados'],function(entryIndex,entidad){
+						if(entidad['cve_ent'] == entry['Datos']['0']['estado_id']){
+							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
 						}else{
-							estado_hmtl += '<option value="' + estado['cve_ent'] + '"  >' + estado['nom_ent'] + '</option>';
+							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
 						}
 					});
-                                        $campo_select_estado.append(estado_hmtl);                                        
-                                        
-                                         //cargar municipio
-                                      $campo_select_municipio.children().remove();
-					var municipio_hmtl = "";
-					$.each(entry['municipios'],function(entryIndex,municipio){
-						if(municipio['cve_mun'] == entry['Direcciones']['0']['municipio_id']){
-							municipio_hmtl += '<option value="' + municipio['cve_mun'] + '"  selected="yes">' + municipio['nom_mun'] + '</option>';
+					$select_estado.append(entidad_hmtl);
+					
+					
+					//Alimentando los campos select de los municipios
+					$select_municipio.children().remove();
+					var localidad_hmtl = '<option value="00" >[-Seleccionar Municipio-]</option>';
+					$.each(entry['Municipios'],function(entryIndex,mun){
+						if(mun['cve_mun'] == entry['Datos']['0']['municipio_id']){
+							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
 						}else{
-							municipio_hmtl += '<option value="' + municipio['cve_mun'] + '"  >' + municipio['nom_mun'] + '</option>';
+							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
 						}
 					});
-                                        $campo_select_municipio.append(municipio_hmtl);
+					$select_municipio.append(localidad_hmtl);
+					
+					
+					//carga select estados al cambiar el pais
+					$select_pais.change(function(){
+						var valor_pais = $(this).val();
+						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEstados.json';
+						$arreglo = {'id_pais':valor_pais};
+						$.post(input_json,$arreglo,function(entry){
+							$select_estado.children().remove();
+							var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>'
+							$.each(entry['Estados'],function(entryIndex,entidad){
+								entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
+							});
+							$select_estado.append(entidad_hmtl);
+							var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
+							$select_municipio.children().remove();
+							$select_municipio.append(trama_hmtl_localidades);
+						},"json");//termina llamada json
+					});
+					
+					//carga select municipios al cambiar el estado
+					$select_estado.change(function(){
+						var valor_entidad = $(this).val();
+						var valor_pais = $select_pais.val();
+						
+						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMunicipios.json';
+						$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
+						$.post(input_json,$arreglo,function(entry){
+							$select_municipio.children().remove();
+							var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>'
+							$.each(entry['Municipios'],function(entryIndex,mun){
+								trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
+							});
+							$select_municipio.append(trama_hmtl_localidades);
+						},"json");//termina llamada json
+					});
 					
 				},"json");//termina llamada json
                                 
