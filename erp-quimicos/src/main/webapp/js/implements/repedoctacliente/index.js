@@ -51,6 +51,7 @@ $(function() {
 	
 	
 	var $select_tipo_reporte = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=tipo_reporte]');
+        var $select_agentes = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=agentes]');
 	var $fecha_corte = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=fecha_corte]');
 	var $id_cliente_edo_cta = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=id_cliente_edo_cta]');
 	var $razon_cli = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=razon_cli]');
@@ -67,8 +68,12 @@ $(function() {
 	$select_tipo_reporte.children().remove();
 	html='<option value="0">General</option>';
 	html+='<option value="1">Por cliente</option>';
+        html+='<option value="2">Por agente</option>';
 	$select_tipo_reporte.append(html);
-		
+        
+        $select_agentes.children().remove();
+        option='<option value="0">[----------------------------------]</option>';
+	$select_agentes.append(option);	
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada
 	function mayor(fecha, fecha2){
@@ -117,7 +122,7 @@ $(function() {
 	$fecha_corte.val(mostrarFecha());
 	$fecha_corte.click(function (s){
 		var a=$('div.datepicker');
-		a.css({'z-index':100,});
+		a.css({'z-index':100});
 	});
 	$fecha_corte.DatePicker({
 		format:'Y-m-d',
@@ -148,16 +153,61 @@ $(function() {
 	
 	
 	$select_tipo_reporte.change(function(){
+            
 		if(parseInt($(this).val())==0){
+                        $div_reporte_estados_de_cuenta.children().remove();
 			$razon_cli.css({'background' : '#DDDDDD'});
 			$razon_cli.attr('readonly',true);
 			$busca_cliente.hide();
 			$razon_cli.val('');
 			$id_cliente_edo_cta.val(0);
-		}else{
+                        
+                        //$select_agentes.hide(); 
+                        $select_agentes.children().remove();
+                        option='<option value="0">[----------------------------------]</option>';
+                        $select_agentes.append(option);	
+                    
+                    
+		}
+                if(parseInt($(this).val())==1){
+                        $div_reporte_estados_de_cuenta.children().remove();
+                        //$select_agentes.hide(); 
+                        $select_agentes.children().remove();
+                        option='<option value="0">[----------------------------------]</option>';
+                        $select_agentes.append(option);
+                        
 			$razon_cli.css({'background' : '#ffffff'});
 			$busca_cliente.show();
 		}
+                
+                if(parseInt($(this).val())==2){
+                        $div_reporte_estados_de_cuenta.children().remove();
+                        $razon_cli.css({'background' : '#DDDDDD'});
+			$razon_cli.attr('readonly',true);
+			$busca_cliente.hide();
+			$razon_cli.val('');
+			$id_cliente_edo_cta.val(0);
+                    
+                    
+                        
+                        
+                        
+                        var arreglo_parametros = {	iu:config.getUi()
+						};
+			var restful_json_service = config.getUrlForGetAndPost() + '/get_cargando_agentes.json'
+			//alert(restful_json_service);
+			
+			$.post(restful_json_service,arreglo_parametros,function(entry){
+                            $select_agentes.children().remove();
+                            var agente_html = '<option value="0" selected="yes">[--Seleccionar Agente--]</option>';
+                            $.each(entry['Agentes'],function(entryIndex,agente){
+                                agente_html += '<option value="' + agente['id'] + '"  >' + agente['nombre_agente'] + '</option>';
+                            });
+                            $select_agentes.append(agente_html);
+                        });
+                 }
+                
+                
 	});
 	
 	
@@ -258,8 +308,8 @@ $(function() {
 					var remove = function() {$(this).remove();};
 					$('#forma-buscacliente-overlay').fadeOut(remove);
 				});
-			});
-		});//termina llamada json
+			});//termina llamada json
+		});
 		
 		$cancelar_plugin_busca_cliente.click(function(event){
 			//event.preventDefault();
@@ -288,10 +338,10 @@ $(function() {
 		event.preventDefault();
 		var fecha = $fecha_corte.val();
 		var id_cliente=$id_cliente_edo_cta.val();
-		
+		var id_agente=$select_agentes.val()
 		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 		
-		var input_json = config.getUrlForGetAndPost() + '/get_genera_pdf_estado_cuenta_cliente/'+$select_tipo_reporte.val()+'/'+id_cliente+'/'+fecha+'/'+iu+'/out.json'
+		var input_json = config.getUrlForGetAndPost() + '/get_genera_pdf_estado_cuenta_cliente/'+$select_tipo_reporte.val()+'/'+id_agente+'/'+id_cliente+'/'+fecha+'/'+iu+'/out.json'
 		
 		//var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_pdf_estado_cuenta_cliente/'+$select_tipo_reporte.val()+'/'+id_cliente+'/'+fecha+'/'+iu+'/out.json';
 		window.location.href=input_json;
@@ -299,16 +349,18 @@ $(function() {
 	});//termina llamada json
 	
 	
-	
-	$busqueda_reporte_edocta.click(function(event){
-		event.preventDefault();
-		$div_reporte_estados_de_cuenta.children().remove();
-			
+        
+        
+        
+        
+        reporte_edocta=function(){
+            $div_reporte_estados_de_cuenta.children().remove();
 			var arreglo_parametros = {	tipo_reporte: $select_tipo_reporte.val(),
-										id_cliente: $id_cliente_edo_cta.val(),
-										fecha_corte: $fecha_corte.val(),
-										iu:config.getUi()
-									};
+                                                        id_cliente: $id_cliente_edo_cta.val(),
+                                                        fecha_corte: $fecha_corte.val(),
+                                                        iu:config.getUi(),
+                                                        agente:$select_agentes.val()
+                                                 };
 			
 			var restful_json_service = config.getUrlForGetAndPost() + '/getReporteEdoCtaClientes.json'
 			var cliente="";
@@ -317,11 +369,11 @@ $(function() {
 				var body_tablausd = entry['Facturasusd'];
 				var footer_tabla = entry['Totales'];
 				var header_tabla = {
-					serie_folio			:'Factura',
+					serie_folio		:'Factura',
 					fecha_facturacion	:'Fecha',
 					orden_compra		:'O. Compra',
 					moneda_total		:'',
-					monto_total			:'Monto Facturado',
+					monto_total		:'Monto Facturado',
 					moneda_pagado		:'',
 					importe_pagado  	:'Monto Pagado',
 					ultimo_pago    		:'Ultimo Pago',
@@ -329,7 +381,7 @@ $(function() {
 					saldo_factura    	:'Saldo Pendiente'
 				};
 				
-				var html_reporte = '<table id="edocta">';
+				var html_reporte = '<table id="edocta" width="100%">';
 				var html_fila_vacia='';
 				var html_footer = '';
 				
@@ -337,7 +389,7 @@ $(function() {
 				for(var key in header_tabla){
 					var attrValue = header_tabla[key];
 					if(attrValue == "Factura"){
-						html_reporte +='<td width="100px" align="left">'+attrValue+'</td>'; 
+						html_reporte +='<td width="90px" align="left">'+attrValue+'</td>'; 
 					}
 					
 					if(attrValue == "Fecha"){
@@ -365,7 +417,7 @@ $(function() {
 					}
 					
 					if(attrValue == "Saldo Pendiente"){
-						html_reporte +='<td width="120px" align="left" id="monto">'+attrValue+'</td>'; 
+						html_reporte +='<td width="90px" align="left" id="monto">'+attrValue+'</td>'; 
 					}
 
 				}
@@ -430,8 +482,8 @@ $(function() {
 							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
 							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tabla[i]["importe_pagado"]).toFixed(2))+'</td>';
 							html_reporte +='<td align="center" >'+body_tabla[i]["ultimo_pago"]+'</td>';
-							html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
-							html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tabla[i]["saldo_factura"]).toFixed(2))+'</td>';
+							html_reporte +='<td  align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>';
+							html_reporte +='<td width="100px" align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tabla[i]["saldo_factura"]).toFixed(2))+'</td>';
 							html_reporte +='</tr>';
 							
 							suma_monto_total_cliente=parseFloat(suma_monto_total_cliente) + parseFloat(body_tabla[i]["monto_total"]);
@@ -676,8 +728,33 @@ $(function() {
 				var pix_alto=alto+'px';
 				$('#edocta').tableScroll({height:parseInt(pix_alto)});
 			});
-             
-	});
+            
+        }
+        
+        
+	
+	$busqueda_reporte_edocta.click(function(event){
+		event.preventDefault();
+                if($select_tipo_reporte.val() == 0){
+                    reporte_edocta();
+                }
+                if($select_tipo_reporte.val() == 1){
+                    if($razon_cli.val()!= ''){
+                        reporte_edocta();
+                    }else{
+                        jAlert("Debe de Asignar un cliente");
+                    }
+                    
+                }
+                if($select_tipo_reporte.val() == 2){
+                    if($select_agentes.val()!= 0){
+                        reporte_edocta();
+                    }else{
+                        jAlert("Debe de Elegir un Agente");
+                    }
+                    
+                }
+         });
 	
 });   
         
