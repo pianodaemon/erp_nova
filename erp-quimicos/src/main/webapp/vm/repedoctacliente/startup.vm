@@ -30,9 +30,9 @@
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td style="background-color:#ffffff;" >
-					<table id="busqueda" border="0" align="left" width="900">
+					<table id="busqueda" border="0" align="left" width="1100">
 						<tr>
-							<td colspan="12" height="8"></td>
+							<td colspan="13" height="8"></td>
 						</tr>
 						<tr>
 							<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -43,7 +43,8 @@
 							<td width="20" class="cliente"></td>
 							<td width="300" class="cliente">Cliente</td>
 							<td width="90" class="cliente"></td>
-							<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td width="90">&nbsp;Agente&nbsp;</td>
+                                                        <td width="60">&nbsp;</td>
 							<td width="60"></td>
 							<td width="25"></td>
 							<td width="95"></td>
@@ -61,7 +62,8 @@
 								<input type="hidden" name="id_cliente_edo_cta" value="0">
 							</td>
 							<td width="90" class="cliente"><a href="busca_cliente" style="font-size:13px;">(Buscar)</a></td>
-							<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td width="90"><SELECT NAME="agentes" style="width:270px;" title="Filtros para los agentes"></SELECT></td>
+                                                        <td width="60">&nbsp;</td>
 							<td width="60"><INPUT TYPE="button"  value="Buscar" style="width:60px;"></td>
 							<td width="25"></td>
 							<td width="95"><INPUT TYPE="button"  value="Generar_PDF"></td>
