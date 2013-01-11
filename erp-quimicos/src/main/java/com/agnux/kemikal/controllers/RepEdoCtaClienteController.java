@@ -107,8 +107,33 @@ public class RepEdoCtaClienteController {
         return x;
     }
     
-    
-    
+
+    //Buscador de clientes
+    @RequestMapping(method = RequestMethod.POST, value="/get_cargando_agentes.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_cargando_agentesJson(
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        //System.out.println("id_usuario: "+id_usuario);
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Agentes", this.getCxcDao().getAgentes(id_empresa));
+        
+        return jsonretorno;
+    }
+            
+            
+            
     //Buscador de clientes
     @RequestMapping(method = RequestMethod.POST, value="/get_buscador_clientes.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> get_buscador_clientesJson(
@@ -145,6 +170,7 @@ public class RepEdoCtaClienteController {
             @RequestParam("id_cliente") String id_cliente,
             @RequestParam("fecha_corte") String fecha_corte,
             @RequestParam(value="iu", required=true) String id_user,
+            @RequestParam(value="agente", required=true) String id_agente,
             Model model
             ) {
         
@@ -163,9 +189,9 @@ public class RepEdoCtaClienteController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         //obtiene facturas en pesos. Moneda 1
-        facturasMN = this.getCxcDao().getCartera_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_cliente), 1, fecha_corte,id_empresa);
+        facturasMN = this.getCxcDao().getCartera_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_cliente), 1, fecha_corte,id_empresa,Integer.parseInt(id_agente));
         //obtiene facturas en dolares. Moneda 2
-        facturasUSD = this.getCxcDao().getCartera_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_cliente), 2, fecha_corte, id_empresa);
+        facturasUSD = this.getCxcDao().getCartera_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_cliente), 2, fecha_corte, id_empresa,Integer.parseInt(id_agente));
         
         jsonretorno.put("Facturasmn", facturasMN);
         jsonretorno.put("Facturasusd", facturasUSD);
@@ -181,12 +207,13 @@ public class RepEdoCtaClienteController {
     
     
     //Genera pdf de estados de cuenta
-    @RequestMapping(value = "/get_genera_pdf_estado_cuenta_cliente/{tipo_reporte}/{id_cliente}/{fecha_corte}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/get_genera_pdf_estado_cuenta_cliente/{tipo_reporte}/{id_agente}/{id_cliente}/{fecha_corte}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView get_genera_pdf_edoctaJson(
                 @PathVariable("tipo_reporte") Integer tipo_reporte,
                 @PathVariable("id_cliente") Integer id_cliente,
                 @PathVariable("fecha_corte") String fecha_corte, 
                 @PathVariable("iu") String id_user_cod,
+                @RequestParam(value="id_agente", required=true) String id_agente,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
                 Model model)
@@ -228,9 +255,9 @@ public class RepEdoCtaClienteController {
         ArrayList<HashMap<String, String>> facturasUSD = new ArrayList<HashMap<String, String>>();
         
         //obtiene facturas en pesos. Moneda 1
-        facturasMN = this.getCxcDao().getCartera_DatosReporteEdoCta(tipo_reporte,id_cliente, 1, fecha_corte,id_empresa);
+        facturasMN = this.getCxcDao().getCartera_DatosReporteEdoCta(tipo_reporte,id_cliente, 1, fecha_corte,id_empresa,Integer.parseInt(id_agente));
         //obtiene facturas en dolares. Moneda 2
-        facturasUSD = this.getCxcDao().getCartera_DatosReporteEdoCta(tipo_reporte,id_cliente, 2, fecha_corte, id_empresa);
+        facturasUSD = this.getCxcDao().getCartera_DatosReporteEdoCta(tipo_reporte,id_cliente, 2, fecha_corte, id_empresa,Integer.parseInt(id_agente));
         
         //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
         PdfEdoCtaCliente x = new PdfEdoCtaCliente( fileout,ruta_imagen,razon_social_empresa,fecha_corte,facturasMN,facturasUSD);
