@@ -201,7 +201,7 @@ public class ClientsDirFiscalesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         if( id != 0  ){
-            datos = this.getCxcDao().getCliente_Datos(id);
+            datos = this.getCxcDao().getClientsDf_Datos(id);
             estados = this.getCxcDao().getEntidadesForThisPais(datos.get(0).get("pais_id").toString());
             municipios = this.getCxcDao().getLocalidadesForThisEntidad(datos.get(0).get("pais_id").toString(), datos.get(0).get("estado_id").toString());
         }
@@ -251,8 +251,112 @@ public class ClientsDirFiscalesController {
     
     
     
+    //crear y editar un cliente
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+        @RequestParam(value="identificador", required=true) String identificador,
+        @RequestParam(value="id_cliente", required=true) String id_cliente,
+        @RequestParam(value="calle", required=true) String calle,
+        @RequestParam(value="numero_int", required=true) String numero_int,
+        @RequestParam(value="numero_ext", required=true) String numero_ext,
+        @RequestParam(value="colonia", required=true) String colonia,
+        @RequestParam(value="cp", required=true) String cp,
+        @RequestParam(value="select_pais", required=true) String select_pais,
+        @RequestParam(value="select_estado", required=true) String select_estado,
+        @RequestParam(value="select_municipio", required=true) String select_municipio,
+        @RequestParam(value="entrecalles", required=true) String entrecalles,
+        @RequestParam(value="tel1", required=true) String tel1,
+        @RequestParam(value="ext1", required=true) String ext1,
+        @RequestParam(value="fax", required=true) String fax,
+        @RequestParam(value="tel2", required=true) String tel2,
+        @RequestParam(value="ext2", required=true) String ext2,
+        @RequestParam(value="email", required=true) String email,
+        @RequestParam(value="contacto", required=true) String contacto,
+        Model model,@ModelAttribute("user") UserSessionData user
+        ) {
+        
+        Integer app_selected = 118;//Catalogo de Direcciones Fiscales de Clientes
+        String command_selected = "new";
+        Integer id_usuario= user.getUserId();//variable para el id  del usuario
+        String arreglo[];
+        String extra_data_array = "'sin datos'";
+        String actualizo = "0";
+        
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        
+        HashMap<String, String> succes = new HashMap<String, String>();
+        
+        if( identificador.equals("0") ){
+            command_selected = "new";
+        }else{
+            command_selected = "edit";
+        }
+        
+        String data_string = 
+        app_selected
+        +"___"+command_selected
+        +"___"+id_usuario
+        +"___"+identificador
+        +"___"+id_cliente
+        +"___"+calle
+        +"___"+numero_int
+        +"___"+numero_ext
+        +"___"+colonia
+        +"___"+cp
+        +"___"+select_pais
+        +"___"+select_estado
+        +"___"+select_municipio
+        +"___"+entrecalles
+        +"___"+tel1
+        +"___"+ext1
+        +"___"+fax
+        +"___"+tel2
+        +"___"+ext2
+        +"___"+email
+        +"___"+contacto;
+        
+        System.out.println("data_string: "+data_string);
+        
+        succes = this.getCxcDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        if( String.valueOf(succes.get("success")).equals("true") ){
+            actualizo = this.getCxcDao().selectFunctionForThisApp(data_string, extra_data_array);
+        }
+        
+        jsonretorno.put("success",String.valueOf(succes.get("success")));
+        
+        log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
     
     
+    
+    //cambiar a borrado logico un registro
+    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
+    public @ResponseBody HashMap<String, String> logicDeleteJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        System.out.println("Borrado logico de Direccion Fiscal");
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        Integer app_selected = 118;
+        String command_selected = "delete";
+        String extra_data_array = "'sin datos'";
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        
+        jsonretorno.put("success",String.valueOf( this.getCxcDao().selectFunctionForThisApp(data_string,extra_data_array)) );
+        
+        return jsonretorno;
+    }
     
     
     
