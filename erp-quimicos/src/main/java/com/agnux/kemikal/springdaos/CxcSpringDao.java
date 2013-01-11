@@ -1538,11 +1538,14 @@ public class CxcSpringDao implements CxcInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getCartera_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte,Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getCartera_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte,Integer id_empresa,Integer id_agente) {
         
-        String where_cliente="";
+        String cadena_where="";
         if(tipo_reporte==1){
-            where_cliente=" AND erp_h_facturas.cliente_id = "+id_cliente;
+            cadena_where=" AND erp_h_facturas.cliente_id = "+id_cliente;
+        }
+        if(tipo_reporte==2){
+            cadena_where=" AND erp_h_facturas.cxc_agen_id = "+id_agente;
         }
         
         String sql_to_query = ""
@@ -1569,7 +1572,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                         + "JOIN cxc_clie ON cxc_clie.id = erp_h_facturas.cliente_id "
                         + "JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id "
                         + "WHERE erp_h_facturas.pagado=FALSE  "
-                        + "AND erp_h_facturas.cancelacion=FALSE   "+ where_cliente +" "
+                        + "AND erp_h_facturas.cancelacion=FALSE   "+ cadena_where +" "
                         + "AND erp_h_facturas.empresa_id="+ id_empresa + " "
                         + "AND erp_h_facturas.moneda_id ="+ id_moneda
         + ") as sbt  "
@@ -1578,7 +1581,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
         
         
         
-        System.out.println("getCartera_DatosReporteEdoCta: "+sql_to_query);
+        System.out.println("getCartera_DatosReporteEdoCta  : "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1600,7 +1603,6 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_facturas;
     }
-    
     
     
     
