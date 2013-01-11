@@ -3458,7 +3458,75 @@ return subfamilias;
     }
     
     
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsDf_Datos(Integer id) {
+        String sql_query = ""
+                + "SELECT "
+                    + "cxc_clie_df.id AS identificador,"
+                    + "cxc_clie_df.cxc_clie_id AS id_cliente,"
+                    + "cxc_clie.rfc,"
+                    + "cxc_clie.numero_control,"
+                    + "cxc_clie.razon_social AS cliente,"
+                    + "cxc_clie_df.calle,"
+                    + "cxc_clie_df.numero_interior,"
+                    + "cxc_clie_df.numero_exterior,"
+                    + "cxc_clie_df.entre_calles,"
+                    + "cxc_clie_df.colonia,"
+                    + "cxc_clie_df.cp,"
+                    + "cxc_clie_df.gral_pais_id AS pais_id,"
+                    + "cxc_clie_df.gral_edo_id AS estado_id,"
+                    + "cxc_clie_df.gral_mun_id AS municipio_id,"
+                    + "cxc_clie_df.telefono1,"
+                    + "cxc_clie_df.extension1,"
+                    + "cxc_clie_df.telefono2,"
+                    + "cxc_clie_df.extension2,"
+                    + "cxc_clie_df.fax,"
+                    + "cxc_clie_df.email,"
+                    + "cxc_clie_df.contacto "
+                + "FROM cxc_clie_df "
+                + "JOIN cxc_clie ON cxc_clie.id=cxc_clie_df.cxc_clie_id "
+                + "WHERE cxc_clie_df.id=? AND cxc_clie_df.borrado_logico=false;";
+        
+        System.out.println("Ejecutando getClientsDf_Datos:"+ sql_query);
+        System.out.println("identificador: "+id);
+        
+        ArrayList<HashMap<String, Object>> df = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("identificador",rs.getInt("identificador"));
+                    row.put("id_cliente",rs.getInt("id_cliente"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("cliente",rs.getString("cliente"));
+                    row.put("calle",rs.getString("calle"));
+                    row.put("numero_interior",rs.getString("numero_interior"));
+                    row.put("numero_exterior",rs.getString("numero_exterior"));
+                    row.put("entre_calles",rs.getString("entre_calles"));
+                    row.put("colonia",rs.getString("colonia"));
+                    row.put("cp",rs.getString("cp"));
+                    row.put("pais_id",rs.getString("pais_id"));
+                    row.put("estado_id",rs.getString("estado_id"));
+                    row.put("municipio_id",rs.getString("municipio_id"));
+                    row.put("telefono1",rs.getString("telefono1"));
+                    row.put("extension1",rs.getString("extension1"));
+                    row.put("fax",rs.getString("fax"));
+                    row.put("telefono2",rs.getString("telefono2"));
+                    row.put("extension2",rs.getString("extension2"));
+                    row.put("email",rs.getString("email"));
+                    row.put("contacto",rs.getString("contacto"));
+                    return row;
+                }
+            }
+        );
+        return df;
+    }
+    
     //AQUI TERMINA METODOS PARA CATALOGO DE DIRECCIONES FISCALES DE CLIENTES
     //**********************************************************************************************************************
+
+
     
 }

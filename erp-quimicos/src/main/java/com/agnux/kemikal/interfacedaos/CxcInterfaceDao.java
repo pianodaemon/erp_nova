@@ -145,5 +145,5 @@ public interface CxcInterfaceDao {
     
     //catalogo de direcciones fiscales de clientes
     public ArrayList<HashMap<String, Object>> getClientsDf_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
-    
+    public ArrayList<HashMap<String, Object>> getClientsDf_Datos(Integer id);
 }
