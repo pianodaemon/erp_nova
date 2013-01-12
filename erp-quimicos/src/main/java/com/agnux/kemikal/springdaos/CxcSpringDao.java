@@ -219,7 +219,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     +"cxc_clie.dia_pago, "
                     +"cxc_clie.cta_pago_mn, "
                     +"cxc_clie.cta_pago_usd,"
-                    +"(CASE WHEN cxc_clie.lista_precio IS NULL THEN 0 ELSE cxc_clie.lista_precio END) AS lista_precio "
+                    +"(CASE WHEN cxc_clie.lista_precio IS NULL THEN 0 ELSE cxc_clie.lista_precio END) AS lista_precio,"
+                    +"cxc_clie.fac_metodos_pago_id "
             +"FROM cxc_clie "
             +"WHERE cxc_clie.borrado_logico=false AND cxc_clie.id=?;";
         
@@ -313,6 +314,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("cta_pago_mn",rs.getString("cta_pago_mn"));
                     row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
                     row.put("lista_precio",String.valueOf(rs.getInt("lista_precio")));
+                    row.put("metodo_pago_id",String.valueOf(rs.getInt("fac_metodos_pago_id")));
                     
                     return row;
                 }
@@ -826,6 +828,27 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getMetodosPago() {
+        String sql_to_query = "SELECT id, titulo FROM fac_metodos_pago WHERE borrado_logico=false;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id"))  );
                     row.put("titulo",rs.getString("titulo"));
                     return row;
                 }

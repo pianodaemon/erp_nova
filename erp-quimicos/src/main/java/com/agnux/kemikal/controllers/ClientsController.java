@@ -188,6 +188,7 @@ public class ClientsController {
         ArrayList<HashMap<String, Object>> tiposEmbarque = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> municipios_contacto_compras = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> municipios_contacto_pagos = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> metodos_pago = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> cuentasMayor = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> contab = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
@@ -231,6 +232,7 @@ public class ClientsController {
         iniciosCredito = this.getCxcDao().getCliente_InicioCredito();
         tiposEmbarque = this.getCxcDao().getCliente_TiposEmbarque();
         cuentasMayor = this.getCxcDao().getCliente_CuentasMayor(id_empresa);
+        metodos_pago = this.getCxcDao().getMetodosPago();
         
         jsonretorno.put("Cliente", datoscliente);
         jsonretorno.put("Tiposclient", tiposclient);
@@ -251,6 +253,7 @@ public class ClientsController {
         jsonretorno.put("TiposEmbarque", tiposEmbarque);
         jsonretorno.put("Comprasmunicipios", municipios_contacto_compras);
         jsonretorno.put("Pagosmunicipios", municipios_contacto_pagos);
+        jsonretorno.put("MetodosPago", metodos_pago);
         jsonretorno.put("Extras", arrayExtra);
         jsonretorno.put("CtaMay", cuentasMayor);
         jsonretorno.put("Contab", contab);
