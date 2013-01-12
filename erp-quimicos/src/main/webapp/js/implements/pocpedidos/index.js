@@ -1319,11 +1319,11 @@ $(function() {
 			$select_metodo_pago.children().remove();
 			var hmtl_metodo;
 			$.each(entry['MetodosPago'],function(entryIndex,metodo){
-				if ( parseInt(metodo['id']) == 6 ){
-					hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes">' + metodo['titulo'] + '</option>';
-				}else{
+				//if ( parseInt(metodo['id']) == 6 ){
+				//	hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes">' + metodo['titulo'] + '</option>';
+				//}else{
 					hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
-				}
+				//}
 			});
 			$select_metodo_pago.append(hmtl_metodo);
 			

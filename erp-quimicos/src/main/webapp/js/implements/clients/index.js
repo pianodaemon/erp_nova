@@ -1110,6 +1110,7 @@ $(function() {
 		var $cuenta_mn = $('#forma-clients-window').find('input[name=cuenta_mn]');
 		var $cuenta_usd = $('#forma-clients-window').find('input[name=cuenta_usd]');
 		var $select_lista_precio = $('#forma-clients-window').find('select[name=select_lista_precio]');
+		var $select_metodo_pago = $('#forma-clients-window').find('select[name=select_metodo_pago]');
 		
 		//credito
 		var $campo_limite_credito = $('#forma-clients-window').find('input[name=limite_credito]');
@@ -1566,6 +1567,14 @@ $(function() {
 			$carga_campos_select($select_lista_precio, array_listas_precio,elemento_seleccionado, cadena_elemento_cero);
 			
 			
+			//carga select de metodos de pago
+			$select_metodo_pago.children().remove();
+			var hmtl_metodo='<option value="0" selected="yes">[-- Seleccionar M&eacute;todo  --]</option>';
+			$.each(entry['MetodosPago'],function(entryIndex,metodo){
+				hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
+			});
+			$select_metodo_pago.append(hmtl_metodo);
+			
 			
 			//carga select dias de credito
 			$select_dias_credito.children().remove();
@@ -1965,6 +1974,7 @@ $(function() {
 				var $cuenta_mn = $('#forma-clients-window').find('input[name=cuenta_mn]');
 				var $cuenta_usd = $('#forma-clients-window').find('input[name=cuenta_usd]');
 				var $select_lista_precio = $('#forma-clients-window').find('select[name=select_lista_precio]');
+				var $select_metodo_pago = $('#forma-clients-window').find('select[name=select_metodo_pago]');
 				
 				//credito
 				var $campo_limite_credito = $('#forma-clients-window').find('input[name=limite_credito]');
@@ -2552,6 +2562,20 @@ $(function() {
 					elemento_seleccionado = entry['Cliente']['0']['lista_precio'];
 					cadena_elemento_cero ="[--Seleccionar lista--]";
 					$carga_campos_select($select_lista_precio, array_listas_precio,elemento_seleccionado, cadena_elemento_cero);
+					
+					
+					//carga select de metodos de pago
+					$select_metodo_pago.children().remove();
+					var hmtl_metodo;
+					$.each(entry['MetodosPago'],function(entryIndex,metodo){
+						if(entry['Cliente']['0']['metodo_pago_id'] == metodo['id']){
+							hmtl_metodo += '<option value="' + metodo['id'] + '"  selected="yes">' + metodo['titulo'] + '</option>';
+						}else{
+							hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
+						}
+					});
+					$select_metodo_pago.append(hmtl_metodo);
+							
 					
 					//carga select dias de credito
 					$select_dias_credito.children().remove();
