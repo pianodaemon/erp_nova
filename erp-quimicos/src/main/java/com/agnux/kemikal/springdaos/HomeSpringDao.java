@@ -41,7 +41,8 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                 +"gral_emp.incluye_contabilidad, "
                 +"gral_emp.nivel_cta, "
                 +"gral_usr_suc.gral_suc_id AS sucursal_id, "
-                +"gral_suc.titulo AS sucursal "
+                +"gral_suc.titulo AS sucursal,"
+                +"gral_usr.gral_empleados_id "
         +"FROM gral_usr  "
         +"JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=gral_usr.id "
         +"JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
@@ -65,6 +66,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                     row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
                     row.put("sucursal_id",String.valueOf(rs.getInt("sucursal_id")));
                     row.put("sucursal",String.valueOf(rs.getString("sucursal")));
+                    row.put("empleado_id",String.valueOf(rs.getInt("gral_empleados_id")));
                     return row;
                 }
             }
@@ -90,7 +92,8 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                                 + "gral_emp.incluye_contabilidad, "
                                 + "gral_emp.nivel_cta, "
                                 + "gral_usr_suc.gral_suc_id AS sucursal_id, "
-                                + "gral_suc.titulo AS sucursal "
+                                + "gral_suc.titulo AS sucursal, "
+                                +"gral_usr.gral_empleados_id "
                             + "FROM gral_usr "
                             + "JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id = gral_usr.id "
                             + "JOIN gral_suc ON gral_suc.id = gral_usr_suc.gral_suc_id "
@@ -114,6 +117,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                     row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
                     row.put("sucursal_id",String.valueOf(rs.getInt("sucursal_id")));
                     row.put("sucursal",String.valueOf(rs.getString("sucursal")));
+                    row.put("empleado_id",String.valueOf(rs.getInt("gral_empleados_id")));
                     return row;
                 }
             }
