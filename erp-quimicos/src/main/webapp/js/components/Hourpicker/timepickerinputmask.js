@@ -18,7 +18,7 @@
 
        //Default options.
         var options = $.extend({
-            seconds:	true,
+           // seconds:	true,
             spinners:	false,
             separator:	':',
             currentHour:	null,
@@ -28,13 +28,13 @@
 
         //Global vars for the time.
         var hours	= 0,
-         minutes = 0,
-         seconds	= 0;
+         minutes = 0
+        // seconds	= 0;
 
         //Control position vars, flag of focus and spinnerSeparator.
         var counter	= 2,
          currentPosition = 0,
-         lastPosition = ((options.seconds) ? 2 : 1),
+        // lastPosition = ((options.seconds) ? 2 : 1),
          isActive = false,
          spinnerSeparator	= options.separator;
  
@@ -71,7 +71,7 @@ methods.parseValue(options.currentHour);
 var date	= new Date();
 hours	= date.getHours();
 minutes	= date.getMinutes();
-seconds	= date.getSeconds();
+//seconds	= date.getSeconds();
 }
 }
 
@@ -165,7 +165,7 @@ var hourParts = value.split(options.separator);
 
 hours	= parseInt(hourParts[0], 10);
 minutes = parseInt(hourParts[1], 10);
-seconds = (hourParts[2] != undefined) ? parseInt(hourParts[2], 10) : seconds;
+//seconds = (hourParts[2] != undefined) ? parseInt(hourParts[2], 10) : seconds;
 }
 },
 //Show the time in format hh[separator]mm[separator]ss always show in both input if we used spinners.
@@ -176,10 +176,10 @@ var time = [
 ((minutes < 10)	? '0' + minutes	: minutes)
 ];
 
-if (options.seconds) {
+/*if (options.seconds) {
 time[2] = ((seconds < 10) ? '0' + seconds : seconds);
 }
-
+*/
 if (options.spinners) {
 $spinnerElement.val(time.join(spinnerSeparator));
 }
@@ -208,8 +208,8 @@ $currentElement.get(0).selectionEnd	= end;
 //Select the current position.
 setPosition:	function (position) {
 var step	= (options.spinners) ? spinnerSeparator.length : options.separator.length,
-positionMinutes	= (2 + step),
-positionSeconds = positionMinutes + (2 + step);
+positionMinutes	= (2 + step);
+//positionSeconds = positionMinutes + (2 + step);
 
 switch (position) {
 case 0:
@@ -223,7 +223,7 @@ methods.selectText(positionMinutes, positionMinutes + 2);
 break;
 case 2:
 currentPosition = position;
-methods.selectText(positionSeconds, positionSeconds + 2);
+//methods.selectText(positionSeconds, positionSeconds + 2);
 break;
 }
 },	
@@ -244,7 +244,7 @@ var valueToPrint	= methods.showValue(true, true),
 partsValue	= valueToPrint.split(spinnerSeparator),
 hoursPos	= methods.getTextWidth(partsValue[0]),
 minutesPos	= hoursPos + methods.getTextWidth(spinnerSeparator + partsValue[1]),
-secondsPos	= minutesPos + methods.getTextWidth(spinnerSeparator + partsValue[2]),
+//secondsPos	= minutesPos + methods.getTextWidth(spinnerSeparator + partsValue[2]),
 separatorSize	= methods.getTextWidth(spinnerSeparator),
 borderTop	= parseInt($element.css('border-top-width').replace('px', ''), 10),
 borderLeft	= parseInt($element.css('border-left-width').replace('px', ''), 10);
@@ -316,7 +316,7 @@ left:	arrowLeft
 }).bind('click', methods.events.clickSpinner);
 
 //Seconds spinner container if options.seconds is true.
-if (options.seconds) {
+/*if (options.seconds) {
 var $secondsContainer = $(arrowsContainer).appendTo($spinnersContent).css({
 left:	secondsPos
 }).addClass('seconds');
@@ -348,7 +348,7 @@ seconds = (op == 'up') ? ++seconds : --seconds;
 seconds = (seconds >= 60) ? 0 : ((seconds < 0) ? 59 : seconds);
 break;
 }
-
+*/
 methods.showValue();
 methods.setPosition(currentPosition);
 },
