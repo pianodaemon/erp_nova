@@ -477,6 +477,121 @@
 
 
 
+<!-- Buscador de contactos -->
+<div class="buscador_contactos" style="display:none;">	
+	<table width="100%" border="0" class="formaBusqueda_contactos">
+		<tr>
+			<td>
+				<div class="div_dos_buscacontactos">
+					<table width="100%" border="0">
+						<thead>
+							<tr>
+								<td colspan="7" height="50" valign="top"><div class="titulo_buscacontactos" width="100%"><strong>Buscador de contactos</strong></div></td>
+							</tr>
+						</thead>
+						
+						<tbody>
+							<tr>
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff;"></td>
+								<td colspan="3" style="background:#ffffff;" width="500">
+									
+									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+										<tr>
+											<td colspan="7" width="500" height="10"></td>
+										</tr>
+										<tr>
+											<td width="110">Nombre</td>
+											<td width="120"><INPUT TYPE="text" name="buscador_nombre" style="width:120px;"></td>
+											<td width="25"></td>
+											<td width="100">Apellido Paterno</td>
+											<td width="120"><INPUT TYPE="text" name="buscador_apellidop" style="width:120px;"></td>
+											<td width="70"></td>
+											<td width="25"></td>
+										</tr>
+										<tr>
+											<td colspan="7" width="500" height="10"></td>
+										</tr>
+										<tr>
+											<td width="110">Apellido Materno</td>
+											<td width="120"><INPUT TYPE="text" name="buscador_apellidom" style="width:120px;"></td>
+											<td width="25"></td>
+											<td width="120">Tipo Contacto</td>
+											<td colspan="4">
+												<SELECT NAME="buscador_tipo_contacto" style="width:180px;">
+													<OPTION value="1" selected="yes">Cliente</OPTION>
+													<OPTION value="2">Prospecto</OPTION>
+												</SELECT>
+											</td>
+											<td width="70" align="right">
+												<INPUT TYPE="button" id="busca_contacto_modalbox" class="onmouseOutBuscar">
+											</td>
+											<td width="25"></td>
+										</tr>
+										<tr>
+											<td colspan="7" width="500" height="10"></td>
+										</tr>
+									</table>
+									
+								</td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr style="font-size:13px;">
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff"></td>
+								
+								<td width="280" style="background:#A8A9AB;">Contacto</td>
+								<td width="210" style="background:#A8A9AB;">Empresa</td>
+								<td width="110" style="background:#A8A9AB;">RFC</td>
+								
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr>
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff"></td>
+								<td style="background:#ffffff; border: solid 1px #313E74;" colspan="3" width="600">
+									<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+										<table  border="0" id="tabla_resultado" width="600" style="font-size:12px;">
+											<!--aqui van los resultados de la busqueda-->
+										</table>
+									</div>
+								</td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr>
+								<td width="10"></td>
+								<td width="10" colspan="5" height="4" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr>
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="280"  style="background:#ffffff"></td>
+								<td width="210" style="background:#ffffff"></td>
+								<td width="110" style="background:#ffffff" align="right">
+									<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+								</td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr>
+								<td width="10"></td>
+								<td width="10" colspan="5" height="6" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+						</tbody>
+						
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+
+
 
 
 
