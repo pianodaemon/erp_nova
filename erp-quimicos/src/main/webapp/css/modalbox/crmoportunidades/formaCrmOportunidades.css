@@ -8,6 +8,7 @@
 /*background: #000;*/
 	display: none;
 }
+
 #forma-crmoportunidades-window {
 	position: fixed;
 	z-index: 101;
@@ -34,7 +35,6 @@
 	list-style-type: none !important;
 }
 
-
 div.interrogacion{
 	display : none;
 }
@@ -52,15 +52,15 @@ ul.pestanas{
 }
 
 ul.pestanas li{
-	width:130px;
-	float: left;
+    width:130px;
+    float: left;
     margin: 0;
     padding: 0;
     height: 26px;
     line-height: 25px;
     border-bottom: 1px solid white;
     border-left: none;
-	margin-top:2px;
+    margin-top:2px;
     margin-bottom: 0px;
     background: #A8A9AB;
     overflow: hidden;
@@ -69,7 +69,7 @@ ul.pestanas li{
 }
 
 ul.pestanas li a{
-text-align:center;
+    text-align:center;
     text-decoration: none;
     color:#4C6088;
     display: block;
@@ -97,50 +97,50 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 .crmoportunidades_div_one{
     /*background-image:url('Imagen/ven1.png');
     background-repeat:no-repeat;*/
-	width:810px;
-    height:370px;
-	border-radius:10px;
-	background-color:#e9e9e9;
+    width:810px;
+    height:340px;
+    border-radius:10px;
+    background-color:#e9e9e9;
     border:3px solid #454442;
-	z-index:2;
-	box-shadow: 3px 5px 10px -3px;
+    z-index:2;
+    box-shadow: 3px 5px 10px -3px;
 }
 
 
 .crmoportunidades_div_two{
-	/*font-family:tahoma;*/
-/*    width:670px;*/
-	width:810px;
+    /*font-family:tahoma;*/
+    /*    width:670px;*/
+    width:810px;
     height:28px;
     background-color:#454442;
-	margin-top:0;
+    margin-top:0;
     color:white;
-	padding-top:10px;
-	padding-left:10px;
-	border-radius:5px 5px 0px 0px;
-	font-size: 14px;
-	z-index:1;	
+    padding-top:10px;
+    padding-left:10px;
+    border-radius:5px 5px 0px 0px;
+    font-size: 14px;
+    z-index:1;	
 }
 
 .crmoportunidades_div_three{
-	/*font-family:tahoma;*/
-	font-size:11px;
+    /*font-family:tahoma;*/
+    font-size:11px;
     /*width:659px;*/
     width:800px;
-    
+
     /*height:298px;
     height:260px;*/
     background-color:#e9e9e9;
     margin-top:5px;
-	margin-right:10px;
-	margin-left:10px;
-	margin-bottom:10px;
+    margin-right:10px;
+    margin-left:10px;
+    margin-bottom:10px;
 }
 
 
 #grid_productos td{
-	height:18px;
-	text-align:center;
+    height:18px;
+    text-align:center;
 }
 
 #grid_productos input{
