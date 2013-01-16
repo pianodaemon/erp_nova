@@ -767,6 +767,7 @@ $(function() {
 				//href para agregar producto al grid
 				//var $agregar_producto = $('#forma-facturas-window').find('a[href*=agregar_producto]');
 				
+				var $reconstruir_pdf = $('#forma-facturas-window').find('#reconstruir_pdf');
 				var $boton_descargarpdf = $('#forma-facturas-window').find('#descargarpdf');
 				var $boton_cancelarfactura = $('#forma-facturas-window').find('#cancelarfactura');
 				var $boton_descargarxml = $('#forma-facturas-window').find('#descargarxml');
@@ -787,6 +788,7 @@ $(function() {
 				var $submit_actualizar = $('#forma-facturas-window').find('#submit');
 				
 				//ocultar boton descargar y facturar. Despues de facturar debe mostrarse
+				//$reconstruir_pdf.hide();
 				$boton_descargarpdf.hide();
 				$boton_cancelarfactura.hide();
 				$submit_actualizar.hide();
@@ -1069,6 +1071,20 @@ $(function() {
 						$boton_descargarxml.hide();
 					}
 				});//termina llamada json
+                
+                
+                
+                
+				//Volver a generar el pdf para CFD y CFDI con Timbrado Fiscal
+				$reconstruir_pdf.click(function(event){
+					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getReconstruirPdfFactura.json';
+					$arreglo = {'id_factura':$id_factura.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
+					
+					$.post(input_json,$arreglo,function(entry){
+						var generado  = entry['generado'];
+						alert(generado);
+					});//termina llamada json
+				});
                 
                 
 				//descargar pdf de factura

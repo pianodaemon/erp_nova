@@ -1571,7 +1571,11 @@ $(function() {
 			$select_metodo_pago.children().remove();
 			var hmtl_metodo='<option value="0" selected="yes">[-- Seleccionar M&eacute;todo  --]</option>';
 			$.each(entry['MetodosPago'],function(entryIndex,metodo){
-				hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
+				if(metodo['id']=='6'){
+					hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes">' + metodo['titulo'] + '</option>';
+				}else{
+					hmtl_metodo += '<option value="' + metodo['id'] + '" >' + metodo['titulo'] + '</option>';
+				}
 			});
 			$select_metodo_pago.append(hmtl_metodo);
 			
@@ -2566,7 +2570,7 @@ $(function() {
 					
 					//carga select de metodos de pago
 					$select_metodo_pago.children().remove();
-					var hmtl_metodo;
+					var hmtl_metodo='<option value="0">[-- Seleccionar M&eacute;todo  --]</option>';
 					$.each(entry['MetodosPago'],function(entryIndex,metodo){
 						if(entry['Cliente']['0']['metodo_pago_id'] == metodo['id']){
 							hmtl_metodo += '<option value="' + metodo['id'] + '"  selected="yes">' + metodo['titulo'] + '</option>';
@@ -2579,7 +2583,7 @@ $(function() {
 					
 					//carga select dias de credito
 					$select_dias_credito.children().remove();
-					var hmtl_condiciones = '<option value="0">[-- Dias de credito --]</option>';
+					var hmtl_condiciones = '<option value="0">[-- D&iacute;as de Cr&eacute;dito --]</option>';
 					$.each(entry['Condiciones'],function(entryIndex,condicion){
 						if(entry['Cliente']['0']['dias_credito_id'] == condicion['id']){
 							hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes" >' + condicion['descripcion'] + '</option>';
