@@ -326,9 +326,7 @@ $(function() {
 		
 		var $fecha = $('#forma-crmregistrovisitas-window').find('input[name=fecha]');
 		var $hora_visita = $('#forma-crmregistrovisitas-window').find('input[name=hora_visita]');
-		var $min_visita = $('#forma-crmregistrovisitas-window').find('input[name=min_visita]');
 		var $hora_duracion = $('#forma-crmregistrovisitas-window').find('input[name=hora_duracion]');
-		var $min_duracion = $('#forma-crmregistrovisitas-window').find('input[name=min_duracion]');
 		
 		var $select_motivo_visita = $('#forma-crmregistrovisitas-window').find('select[name=select_motivo_visita]');
 		var $select_calif_visita = $('#forma-crmregistrovisitas-window').find('select[name=select_calif_visita]');
@@ -341,7 +339,6 @@ $(function() {
 		
 		var $fecha_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=fecha_proxima_visita]');
 		var $hora_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=hora_proxima_visita]');
-		var $min_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=min_proxima_visita]');
 		var $comentarios_proxima_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=comentarios_proxima_visita]');
 		
 		var $cerrar_plugin = $('#forma-crmregistrovisitas-window').find('#close');
@@ -386,15 +383,7 @@ $(function() {
 		
 		$.post(input_json,$arreglo,function(entry){
 			
-			$.each(entry['Agentes'],function(entryIndex,agente){
-				if(parseInt(agente['id'])==parseInt(entry['Extra'][0]['id_agente'])){
-					$id_agente.val(agente['id']);
-					$agente.val(agente['nombre_agente']);
-				}
-			});
-			
-			$select_agente
-			//Alimentando los campos select de las pais
+			//Alimentando los campos select_agente
 			$select_agente.children().remove();
 			var agente_hmtl = '';
 			if(parseInt(entry['Extra'][0]['exis_rol_admin']) > 0){
@@ -476,6 +465,15 @@ $(function() {
 			});
 			*/
 		},"json");//termina llamada json
+        
+        
+		//$hora_visita
+		//$hora_duracion
+        //$('.input1').TimepickerInputMask();
+        
+        $hora_visita.TimepickerInputMask();
+		$hora_duracion.TimepickerInputMask();
+        $hora_proxima_visita.TimepickerInputMask();
         
         //buscar contacto
         $busca_contacto.click(function(event){
