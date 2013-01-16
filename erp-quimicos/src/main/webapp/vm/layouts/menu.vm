@@ -53,7 +53,6 @@
 													<li class="topline"><a href="../reppedidos/startup.agnux">Pedidos</a></li>
 													<li class="topline"><a href="../reparticulosreservados/startup.agnux">Art&iacute;culos Reservados</a></li>
 													<!--<li class="topline"><a href="#">Estadístico de Pedidos por Artículo</a></li>-->
-													
 												</ul>
 											</li>
 											
@@ -279,7 +278,6 @@
 													<li class="topline"><a href="../invunidades/startup.agnux">Unidades</a></li>
 													<li class="topline"><a href="../invpresentaciones/startup.agnux">Presentaciones</a></li>
 													
-													
 													<!--
 													<li class="topline"><a href="../invformulas/startup.agnux">F&oacute;rmulas</a></li>//esto se fue al menu produccion
 													<li class="topline"><a href="#">Impuestos</a></li>
@@ -323,21 +321,14 @@
 													<!--
 													<li class="topline"><a href="../invordendev/startup.agnux">Orden de Devoluci&oacute;n</a></li>
 													-->
-													
-													
 													<!--
 													esto solo es para kemika y kathion
 													-->
 													<li class="topline"><a href="../invordpresuben/startup.agnux">Orden de Producci&oacute;n</a></li>
 													<li class="topline"><a href="../invordsubensamble/startup.agnux">Producci&oacute;n de Subensamble</a></li>
-													
-													
-													
 													<!--
 													<li class="topline"><a href="#">Actualizar Precios</a></li>
 													<li class="topline"><a href="#">Existencias F&iacute;sicas</a></li>
-													
-													
 													<li class="topline"><a href="#">Orden Devoluci&oacute;n</a></li>
 													<li class="topline"><a href="#">Orden Trapaso</a></li>
 													-->
@@ -436,24 +427,45 @@
 													<li class="topline"><a href="../logasignarutas/startup.agnux">Asignaci&oacute;n</a></li>
 												</ul>
 											</li>
-											<!--
-											<li>
-												<a href="#" class="sub">Reportes&raquo;</a>
-												<ul>
-													<li class="topline"><a href="#">F&oacute;rmulas</a></li>
-												</ul>
-											</li>
-											-->
 										</ul>
 									</li>
 									
 									
+									<li class="accessible">
+										<a href="http://jdsharp.us" class="accessible">Contabilidad &raquo;</a>
+										<ul>
+											<li>
+												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
+												<ul>
+													<li><a href="../cuentasmayor/startup.agnux">Clasificaci&oacute;n de Cuentas</a></li>
+													<li><a href="../cuentascontables/startup.agnux">Cuentas Contables</a></li>
+													<li><a href="../centrocostos/startup.agnux">Centros de Costos</a></li>
+													<li><a href="../conceptoscontables/startup.agnux">Conceptos Contables</a></li>
+													<li><a href="../tipopolizas/startup.agnux">Tipos de P&oacute;liza</a></li>
+												</ul>
+											</li>
+										</ul>
+									</li>
 									
 									
-									
-									
-									
-									
+									<li class="accessible" >
+										<a href="http://jdsharp.us" class="accessible">CRM &raquo;</a>
+										<ul>
+											<li><a href="#" class="sub">Catalogos &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../crmmotivosvisitas/startup.agnux">Motivo&nbsp;de&nbsp;Visita.</a></li>
+													<li class="topline"><a href="../crmformascontacto/startup.agnux">Formas&nbsp;de&nbsp;Contacto.</a></li>
+													<li class="topline"><a href="../crmmotivosllamadas/startup.agnux">Motivos&nbsp;de&nbsp;Llamadas.</a></li>
+												</ul>
+											</li>
+											<li>
+												<a href="#" class="sub">Procesos &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../crmregistrovisitas/startup.agnux">Registro de Visitas</a></li>
+												</ul>
+											</li>
+										</ul>
+									</li>
 									
 									
 									<li class="accessible">
@@ -474,7 +486,6 @@
 												</ul>
 											</li>
 											
-											
 											<li>
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
@@ -482,36 +493,11 @@
 												</ul>
 											</li>
 											
-											<!--
-											<li>
-												<a href="#" class="sub">Reportes&raquo;</a>
-												<ul>
-													<li class="topline"><a href="#">F&oacute;rmulas</a></li>
-												</ul>
-											</li>
-											-->
-											
 										</ul>
 									</li>
 									
 									
-									<!--
 									
-									<li class="accessible" >
-										<a href="http://jdsharp.us" class="accessible">CRM &raquo;</a>
-										<ul>
-											<li><a href="#" class="sub">Catalogos &raquo;</a>
-												<ul>
-													<li class="topline"><a href="../crmmotivosvisitas/startup.agnux">Motivo&nbsp;de&nbsp;Visita.</a></li>
-													<li class="topline"><a href="../crmformascontacto/startup.agnux">Formas&nbsp;de&nbsp;Contacto.</a></li>
-													<li class="topline"><a href="../crmmotivosllamadas/startup.agnux">Motivos&nbsp;de&nbsp;Llamadas.</a></li>
-												</ul>
-											</li>
-											
-										</ul>
-									</li>
-									
-									-->
 									
 									
 									
