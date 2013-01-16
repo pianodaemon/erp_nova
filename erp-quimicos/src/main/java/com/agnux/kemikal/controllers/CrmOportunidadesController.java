@@ -46,7 +46,6 @@ public class CrmOportunidadesController {
     @Qualifier("daoHome")   //permite controlar usuarios que entren
     private HomeInterfaceDao HomeDao;
     
-    
     public CrmInterfaceDao getCrmDao() {
         return CrmlDao;
     }
@@ -54,7 +53,6 @@ public class CrmOportunidadesController {
     public HomeInterfaceDao getHomeDao() {
         return HomeDao;
     }
-    
     
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
@@ -64,11 +62,12 @@ public class CrmOportunidadesController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", CrmOportunidadesController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("accesor_empleado", "Titulo:250");
-        infoConstruccionTabla.put("fecha_oportunidad", "Titulo:100");
-        infoConstruccionTabla.put("accesos_etapa", "Titulo:150");
-        infoConstruccionTabla.put("monto", "Titulo:100");
-        infoConstruccionTabla.put("estatus", "Titulo:100");
+        infoConstruccionTabla.put("accesor_empleado", "Agente:250");
+        infoConstruccionTabla.put("accesor_contacto", "Contacto:250");
+        infoConstruccionTabla.put("fecha_oportunidad", "Fecha Oportunidad:120");
+        infoConstruccionTabla.put("accesos_etapa", "Etapa:150");
+        infoConstruccionTabla.put("monto", "Monto:100");
+        infoConstruccionTabla.put("estatus", "Estatus:100");
         
         /*
         gral_emp_id
@@ -116,11 +115,11 @@ public class CrmOportunidadesController {
         
        // Integer id = Integer.parseInt(userDat.get("id"));
        
-        System.out.println("Esto es trae la ID ----->"+id);
+        //System.out.println("Esto es trae la ID ----->"+id);
         if( id != 0 ){
             datosOportunidad = this.getCrmDao().getOportunidad_Datos(id);
             dataEmpleado.add(0, this.getHomeDao().getUserById(Integer.parseInt(datosOportunidad.get(0).get("gral_empleados_id"))));
-            System.out.println("Esto es lo que estoy mostrando:"+"___"+datosOportunidad);
+            //System.out.println("Esto es lo que estoy mostrando:"+"___"+datosOportunidad);
         }else{
             dataEmpleado.add(0, this.getHomeDao().getUserById(id_usuario));
         }
@@ -161,15 +160,18 @@ public class CrmOportunidadesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         //variables para el buscador
-        String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
+        String buscador_contacto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("buscador_contacto")))+"%";
+        String buscador_etapa_venta = has_busqueda.get("buscador_etapa_venta");
+        String buscador_tipo_oportunidad = has_busqueda.get("buscador_tipo_oportunidad");
+        String buscador_agente = has_busqueda.get("buscador_agente");
         
-        String data_string = app_selected+"___"+id_usuario+"___"+descripcion;
+        String data_string = app_selected+"___"+id_usuario+"___"+buscador_contacto+"___"+buscador_etapa_venta
+                +"___"+buscador_tipo_oportunidad+"___"+buscador_agente;
         
-        System.out.println("Esto es lo que busca "+"---->"+data_string);
+        //System.out.println("Esto es lo que busca "+"---->"+data_string);
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCrmDao().countAll(data_string);              
-                
         
         //calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
@@ -181,7 +183,7 @@ public class CrmOportunidadesController {
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getCrmDao().getOportunidades_PaginaGrid(data_string, offset, items_por_pag, orderby, desc,id_empresa));
-        System.out.println("Me imprime ---->"+jsonretorno);   
+        //System.out.println("Me imprime ---->"+jsonretorno);   
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
@@ -200,7 +202,6 @@ public class CrmOportunidadesController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", ProOrdenProduccionController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> contactos = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -222,18 +223,82 @@ public class CrmOportunidadesController {
     }
     
     
+    /*jsonretorno.put("Agentes", this.getCrmDao().getAgentes(Integer.parseInt(userDat.get("empresa_id"))));
+    jsonretorno.put (
+
+    "EtapasVenta", this.getCrmDao().getEtapasVenta());
+       jsonretorno.put (
+
+    "TiposOportunidad", this.getCrmDao().getTiposOportunidad());
+       */
+    //obtiene los roles de EtapasVenta
+    @RequestMapping(method=RequestMethod.POST,value="/getTiposOportunidad.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String,String>>>getTiposOportunidadJson(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
+        HashMap<String,ArrayList<HashMap<String,String>>>jsonretorno= new HashMap<String,ArrayList<HashMap<String,String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        jsonretorno.put("TiposOportunidad",this.getCrmDao().getTiposOportunidad());
+        
+        return jsonretorno;
+    }
+    
+    
+    //obtiene los roles de EtapasVenta
+    @RequestMapping(method=RequestMethod.POST,value="/getEtapasVenta.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String,String>>>getEtapasVentaJson(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
+        HashMap<String,ArrayList<HashMap<String,String>>>jsonretorno= new HashMap<String,ArrayList<HashMap<String,String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        jsonretorno.put("EtapasVenta",this.getCrmDao().getEtapasVenta());
+        
+        return jsonretorno;
+    }
+    
+    //obtiene los roles de getAgentes
+    @RequestMapping(method=RequestMethod.POST,value="/getAgentes.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String,String>>>getAgentesJson(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
+        HashMap<String,ArrayList<HashMap<String,String>>>jsonretorno= new HashMap<String,ArrayList<HashMap<String,String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        jsonretorno.put("Agentes",this.getCrmDao().getAgentes(Integer.parseInt(userDat.get("empresa_id"))));
+        
+        return jsonretorno;
+    }
+    
     //crear y editar un motivo de visitas
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) Integer id,
-            @RequestParam(value="descripcion", required=true) String descripcion,
+            @RequestParam(value="contacto_id", required=true) String contacto_id,
+            @RequestParam(value="fecha_oportunidad", required=true) String fecha_oportunidad,
+            @RequestParam(value="fecha_cotizacion", required=true) String fecha_cotizacion,
+            @RequestParam(value="fecha_cierre", required=true) String fecha_cierre,
+            @RequestParam(value="monto", required=true) String monto,
+            //select
+            @RequestParam(value="empleado", required=true) String empleado,
+            @RequestParam(value="tipo_oportunidad", required=true) String tipo_oportunidad,
+            @RequestParam(value="etapa_venta", required=true) String etapa_venta,
+            @RequestParam(value="estatus", required=true) String estatus,
+            @RequestParam(value="cierre_oportunidad", required=true) String cierre_oportunidad,
             @ModelAttribute("user") UserSessionData user,
             Model model
             ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
-        Integer app_selected = 109;//catalogo de motivos de visita
+        Integer app_selected = 120;//catalogo de oportunidades
         String command_selected = "new";
         //decodificar id de usuario
         Integer id_usuario = user.getUserId();
@@ -241,7 +306,7 @@ public class CrmOportunidadesController {
         String extra_data_array = "'sin datos'";
         String actualizo = "0";
         
-        System.out.println("Me imprime esto ----->"+id);
+        //System.out.println("Me imprime esto ----->"+id);
         if(id==0){
             command_selected="new";
         }else{
@@ -249,9 +314,10 @@ public class CrmOportunidadesController {
         }
         
        
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+descripcion.toUpperCase();//6
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+contacto_id+"___"+fecha_oportunidad+"___"+fecha_cotizacion
+                +"___"+fecha_cierre+"___"+monto+"___"+empleado+"___"+tipo_oportunidad+"___"+etapa_venta+"___"+estatus+"___"+cierre_oportunidad;//6
         
-        System.out.println("La cadena que se envia:"+"___"+data_string);
+        //System.out.println("La cadena que se envia:"+"___"+data_string);
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
@@ -264,8 +330,8 @@ public class CrmOportunidadesController {
         log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
         return jsonretorno;
     }
-     
-    //cambia el estatus del borrado logico
+        
+        //cambia el estatus del borrado logico
         @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
         public @ResponseBody HashMap<String, String> logicDeleteJson(
                 @RequestParam(value="id", required=true) Integer id,
@@ -277,7 +343,7 @@ public class CrmOportunidadesController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
-        Integer app_selected = 109;
+        Integer app_selected = 120;//catalogo de oportunidades
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
