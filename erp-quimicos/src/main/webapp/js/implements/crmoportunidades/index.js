@@ -20,6 +20,7 @@ $(function() {
 	    return work.join(',');
 	};
 	
+        
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
         var $username = $('#header').find('#header1').find('span.username');
@@ -27,7 +28,7 @@ $(function() {
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
 	var controller = $contextpath.val()+"/controllers/crmoportunidades";
-    
+        
         //Barra para las acciones
         $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
         $('#barra_acciones').find('.table_acciones').css({'display':'block'});
@@ -40,55 +41,88 @@ $(function() {
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-    
+        
 	var $cadena_busqueda = "";
 	var $campo_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=cadena_buscar]');
-	var $select_filtro_por = $('#barra_buscador').find('.tabla_buscador').find('select[name=filtropor]');
+	var $select_buscador_etapa_venta = $('#barra_buscador').find('.tabla_buscador').find('select[name=buscador_etapa_venta]');
+        var $select_buscador_tipo_oportunidad = $('#barra_buscador').find('.tabla_buscador').find('select[name=buscador_tipo_oportunidad]');
+        var $select_buscador_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=buscador_agente]');
 	
+        
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	
-	var html = '';
-	$select_filtro_por.children().remove();
-	html='<option value="0">[-- Opcion busqueda --]</option>';
-	html+='<option value="1">No.de Empleado</option>';
-	html+='<option value="2">Nombre Empleado</option>';
-	html+='<option value="3">CURP</option>';
-        html+='<option value="4">Puesto</option>';
-	$select_filtro_por.append(html);
 	
-	//alert($select_filtro_por.val());
+	$buscar.click(function(event){
+            event.preventDefault();
+            cadena = to_make_one_search_string();
+            $cadena_busqueda = cadena.toCharCode();
+            $get_datos_grid();
+	});
 	
+	
+	$limpiar.click(function(event){
+            event.preventDefault();
+            $campo_busqueda.val('');
+            $select_buscador_etapa_venta.find('option[index=0]').attr('selected','selected');
+            $select_buscador_tipo_oportunidad.find('option[index=0]').attr('selected','selected');
+            $select_buscador_agente.find('option[index=0]').attr('selected','selected');
+            $get_datos_grid();
+	});
+	
+	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTiposOportunidad.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+            //Llena el select tipos de productos en el buscador
+            $select_buscador_tipo_oportunidad.children().remove();
+            var html_tipo_op = '<option value="0" selected="yes">[-- Seleccione un tipo --]</option>';
+            $.each(data['TiposOportunidad'], function(entryIndex,item){
+                html_tipo_op += '<option value="' + item['id'] + '"  >' + item['descripcion'] + '</option>';
+            });
+            $select_buscador_tipo_oportunidad.append(html_tipo_op);
+	});
+        
+        var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEtapasVenta.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+            //Llena el select tipos de productos en el buscador
+            $select_buscador_etapa_venta.children().remove();
+            var html_etapa_venta = '<option value="0" selected="yes">[--Seleccione una etapa --]</option>';
+            $.each(data['EtapasVenta'], function(entryIndex,item){
+                html_etapa_venta += '<option value="' + item['id'] + '"  >' + item['descripcion'] + '</option>';
+             });
+            $select_buscador_etapa_venta.append(html_etapa_venta);
+	});
+        
+        var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentes.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+            //Llena el select tipos de productos en el buscador
+            $select_buscador_agente.children().remove();
+            var html_agente = '<option value="0" selected="yes">[--Seleccione un agente --]</option>';
+            $.each(data['Agentes'], function(entryIndex,item){
+                html_agente += '<option value="' + item['id'] + '"  >' + item['nombre_agente'] + '</option>';
+             });
+            $select_buscador_agente.append(html_agente);
+	});
+        
+        
+        
 	var to_make_one_search_string = function(){
-		var valor_retorno = "";
-		var signo_separador = "=";
-		valor_retorno += "cadena_busqueda" + signo_separador + $campo_busqueda.val() + "|";
-		valor_retorno += "filtro_por" + signo_separador + $select_filtro_por.val() + "|";
-		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
-		return valor_retorno;
+            var valor_retorno = "";
+            var signo_separador = "=";
+            valor_retorno += "buscador_contacto" + signo_separador + $campo_busqueda.val() + "|";
+            valor_retorno += "buscador_etapa_venta" + signo_separador + $select_buscador_etapa_venta.val() + "|";
+            valor_retorno += "buscador_tipo_oportunidad" + signo_separador + $select_buscador_tipo_oportunidad.val() + "|";
+            valor_retorno += "buscador_agente" + signo_separador + $select_buscador_agente.val() + "|";
+            valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
+            return valor_retorno;
 	};
 	
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
+        
 	//$cadena_busqueda = cadena;
-	
-	$buscar.click(function(event){
-		event.preventDefault();
-		cadena = to_make_one_search_string();
-		$cadena_busqueda = cadena.toCharCode();
-		$get_datos_grid();
-	});
-	
-	
-	
-	$limpiar.click(function(event){
-		event.preventDefault();
-		$campo_busqueda.val('');
-		$select_filtro_por.find('option[index=0]').attr('selected','selected');
-                $get_datos_grid();
-	});
-	
-	
 	/*
 	//visualizar  la barra del buscador
 	$visualiza_buscador.click(function(event){
@@ -100,32 +134,32 @@ $(function() {
 	TriggerClickVisializaBuscador = 0;
 	//visualizar  la barra del buscador
 	$visualiza_buscador.click(function(event){
-		event.preventDefault();
-		
-		var alto=0;
-		if(TriggerClickVisializaBuscador==0){
-			 TriggerClickVisializaBuscador=1;
-			 var height2 = $('#cuerpo').css('height');
-			 //alert('height2: '+height2);
-			 
-			 alto = parseInt(height2)-220;
-			 var pix_alto=alto+'px';
-			 //alert('pix_alto: '+pix_alto);
-			 
-			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-			 $('#barra_buscador').animate({height: '60px'}, 500);
-			 $('#cuerpo').css({'height': pix_alto});
-			 
-			 //alert($('#cuerpo').css('height'));
-		}else{
-			 TriggerClickVisializaBuscador=0;
-			 var height2 = $('#cuerpo').css('height');
-			 alto = parseInt(height2)+220;
-			 var pix_alto=alto+'px';
-			 
-			 $('#barra_buscador').animate({height:'0px'}, 500);
-			 $('#cuerpo').css({'height': pix_alto});
-		};
+            event.preventDefault();
+
+            var alto=0;
+            if(TriggerClickVisializaBuscador==0){
+                TriggerClickVisializaBuscador=1;
+                var height2 = $('#cuerpo').css('height');
+                //alert('height2: '+height2);
+
+                alto = parseInt(height2)-220;
+                var pix_alto=alto+'px';
+                //alert('pix_alto: '+pix_alto);
+
+                $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
+                $('#barra_buscador').animate({height: '60px'}, 500);
+                $('#cuerpo').css({'height': pix_alto});
+
+                //alert($('#cuerpo').css('height'));
+            }else{
+                TriggerClickVisializaBuscador=0;
+                var height2 = $('#cuerpo').css('height');
+                alto = parseInt(height2)+220;
+                var pix_alto=alto+'px';
+
+                $('#barra_buscador').animate({height:'0px'}, 500);
+                $('#cuerpo').css({'height': pix_alto});
+            };
 	});
 	
 	
@@ -191,51 +225,7 @@ $(function() {
                             }
 				
 			}
-			if(activeTab == '#tabx-2'){
-				$('#forma-crmoportunidades-window').find('.empleados_div_one').css({'height':'290px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_three').css({'height':'270px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_one').css({'width':'810px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_two').css({'width':'810px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_three').css({'width':'800px'});
-				$('#forma-crmoportunidades-window').find('#cierra').css({'width':'765px'});
-				$('#forma-crmoportunidades-window').find('#botones').css({'width':'790px'});
-			}
-			if(activeTab == '#tabx-3'){
-				$('#forma-crmoportunidades-window').find('.empleados_div_one').css({'height':'240px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_three').css({'height':'220px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_one').css({'width':'810px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_two').css({'width':'810px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_three').css({'width':'800px'});
-				$('#forma-crmoportunidades-window').find('#cierra').css({'width':'765px'});
-				$('#forma-crmoportunidades-window').find('#botones').css({'width':'790px'});
-			}
-			if(activeTab == '#tabx-4'){
-				$('#forma-crmoportunidades-window').find('.empleados_div_one').css({'height':'460px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_three').css({'height':'320px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_one').css({'width':'810px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_two').css({'width':'810px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_three').css({'width':'800px'});
-				$('#forma-crmoportunidades-window').find('#cierra').css({'width':'765px'});
-				$('#forma-crmoportunidades-window').find('#botones').css({'width':'790px'});
-			}
-			if(activeTab == '#tabx-5'){
-				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'130px'});
-				$('#forma-empleados-window').find('.empleados_div_three').css({'height':'270px'});
-				$('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
-				$('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
-				$('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
-				$('#forma-empleados-window').find('#cierra').css({'width':'765px'});
-				$('#forma-empleados-window').find('#botones').css({'width':'790px'});
-			}
-                        if(activeTab == '#tabx-6'){
-				$('#forma-crmoportunidades-window').find('.empleados_div_one').css({'height':'200px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_three').css({'height':'225px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_one').css({'width':'810px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_two').css({'width':'810px'});
-				$('#forma-crmoportunidades-window').find('.empleados_div_three').css({'width':'800px'});
-				$('#forma-crmoportunidades-window').find('#cierra').css({'width':'765px'});
-				$('#forma-crmoportunidades-window').find('#botones').css({'width':'790px'});
-			}
+			
 			return false;
 		});
 
@@ -538,7 +528,7 @@ $(function() {
                             
                             //seleccionar un producto del grid de resultados
                             $tabla_resultados.find('tr').click(function(){
-                                var id_contacto=$(this).find('#contacto_buscador').val();
+                                var id_contacto=$(this).find('#id_contacto_buscador').val();
                                 var contacto_buscador=$(this).find('span.contacto_buscador').html();
                                 var razon_social_buscador=$(this).find('span.razon_social_buscador').html();
                                 var rfc_buscador=$(this).find('span.rfc_buscador').html();
@@ -559,7 +549,7 @@ $(function() {
                     $buscar_plugin_contacto.trigger('click');
 		}
                 
-		$cancelar_plugin_busca_producto.click(function(event){
+		$cancelar_plugin_busca_contacto.click(function(event){
                     //event.preventDefault();
                     var remove = function() {$(this).remove();};
                     $('#forma-buscacontactos-overlay').fadeOut(remove);
@@ -674,7 +664,7 @@ $(function() {
                     
                     var html_agente = '';
                     if(id_user == 0){
-                        var html_agente = '<option value="true"  selected="yes">[-Seleccione un Agente-]</option>';
+                        var html_agente = '<option value="0"  selected="yes">[-Seleccione un Agente-]</option>';
                         $.each(entry['Agentes'], function(entryIndex,item){
                             html_agente += '<option value="' + item['id'] + '"  >' + item['nombre_agente'] + '</option>';
                          });
@@ -729,11 +719,10 @@ $(function() {
                     event.preventDefault();
                     $busca_contactos($campo_prospecto.val());
 		});
-                                  
+                /*                
+                
                 $submit_actualizar.bind('click',function(){
                     var selec=0;
-                    
-                    $total_tr.val(selec);
                     
                     if(parseInt($total_tr.val()) > 0){
                         return true;
@@ -742,7 +731,7 @@ $(function() {
                         return false;
                     }
                 });
-                
+                */
                 
 		$cerrar_plugin.bind('click',function(){
                     var remove = function() { $(this).remove(); };
@@ -756,69 +745,40 @@ $(function() {
 		});
         });
         
-        var seleccionar_roles_check = function($tabla){
-            $tabla.find('input[name=micheck]').each(function(){
-                
-                $(this).click(function(event){
-
-                        if(this.checked){
-                            $(this).parent().find('input[name=seleccionado]').val("1");					
-                            //alert("seleccionado");
-                        }else{
-                            //$(this).parent().find('input[name=micheck]').removeAttr('checked');
-                            $(this).parent().find('input[name=seleccionado]').val("0");
-                            //alert("no seleccionado");
-                        }
-                });
-            });
-        }
-        
-	var contar_seleccionados= function($tabla_roles){
-            var seleccionados=0;
-            
-            $tabla_roles.find('input[name=micheck]').each(function(){
-            if(this.checked){
-                seleccionados = parseInt(seleccionados) + 1;
-            }
-            });
-            return seleccionados;
-        }
-       
-       
         
 	var carga_formaOpotunidades00_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar una entrada
 		if(accion_mode == 'cancel'){
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
 			$arreglo = {'id':id_to_show,
-						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-						};
-			jConfirm('Realmente desea eliminar el Empleado seleccionado', 'Dialogo de confirmacion', function(r) {
-				if (r){
-					$.post(input_json,$arreglo,function(entry){
-						if ( entry['success'] == '1' ){
-							jAlert("El Empleado fue eliminado exitosamente", 'Atencion!');
-							$get_datos_grid();
-						}
-						else{
-							jAlert("El Empleado no pudo ser eliminada", 'Atencion!');
-						}
-					},"json");
-				}
+                                    'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+                                    };
+			jConfirm('Realmente desea eliminar la oportunidad seleccionado', 'Dialogo de confirmacion', function(r) {
+                            if (r){
+                                $.post(input_json,$arreglo,function(entry){
+                                    if ( entry['success'] == '1' ){
+                                        jAlert("La oportunidad fue eliminada exitosamente", 'Atencion!');
+                                        $get_datos_grid();
+                                    }
+                                    else{
+                                        jAlert("La oportunidad no pudo ser eliminada", 'Atencion!');
+                                    }
+                                },"json");
+                            }
 			});  
 		}else{
 			//aqui  entra para editar un registro
-			var form_to_show = 'formaEmpleados00';
+			var form_to_show = 'formaCrmOportunidades00';
 			
 			$('#' + form_to_show).each (function(){   this.reset(); });
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({ id : form_to_show + id_to_show });
 			//var accion = "get_cliente";
 			
-			$(this).modalPanel();
-			$('#forma-empleados-window').css({ "margin-left": -400, 	"margin-top": -290 });
+			$(this).modalPanelCrmOportunidades();
+			$('#forma-crmoportunidades-window').css({ "margin-left": -400, 	"margin-top": -290 });
 			
-			$forma_selected.prependTo('#forma-empleados-window');
+			$forma_selected.prependTo('#forma-crmoportunidades-window');
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
@@ -835,92 +795,41 @@ $(function() {
                                 };
 						
 				//tab 1 Datos personales
-                            var $total_tr = $('#forma-empleados-window').find('input[name=total_tr]');
-                            var $campo_empleado_id = $('#forma-empleados-window').find('input[name=identificador_empleado]');
-                            var $identificador=$('#forma-empleados-window').find('input[name=identificador]');
-                            var $campo_num_empleado=$('#forma-empleados-window').find('input=[name=empleado_id]');
-                            var $campo_nombre = $('#forma-empleados-window').find('input[name=nombre]');
-                            var $campo_appaterno= $('#forma-empleados-window').find('input[name=appaterno]');
-                            var $campo_apmaterno = $('#forma-empleados-window').find('input[name=apmaterno]');
-                            var $campo_imss = $('#forma-empleados-window').find('input[name=imss]');
-                            var $clave_infonavit = $('#forma-empleados-window').find('input[name=infonavit]');
-                            var $campo_curp = $('#forma-empleados-window').find('input[name=curp]');
-                            var $campo_rfc= $('#forma-empleados-window').find('input[name=rfc]');
-                            var $campo_fecha_nacimiento = $('#forma-empleados-window').find('input[name=f_nacimiento]');
-                            var $campo_fecha_ingreso = $('#forma-empleados-window').find('input[name=f_ingreso]');
-                            var $select_escolaridad= $('#forma-empleados-window').find('select[name=escolaridad]');
-                            var $select_genero_sexo= $('#forma-empleados-window').find('select[name=sexo]');
-                            var $select_edo_civil = $('#forma-empleados-window').find('select[name=edocivil]');
-                            var $select_religion = $('#forma-empleados-window').find('select[name=religion]');
-
-
-
-                            // tab 2 Direccion y contacto
-                            var $campo_telefono = $('#forma-empleados-window').find('input[name=telefono]');
-                            var $campo_movil = $('#forma-empleados-window').find('input[name=movil]');
-                            var $campo_correo_personal = $('#forma-empleados-window').find('input[name=correo_personal]');
-                            var $select_pais = $('#forma-empleados-window').find('select[name=pais]');
-                            var $select_entidad = $('#forma-empleados-window').find('select[name=estado]');
-                            var $select_localidad = $('#forma-empleados-window').find('select[name=municipio]');
-                            var $campo_comp_calle = $('#forma-empleados-window').find('input[name=calle]');
-                            var $campo_comp_numcalle = $('#forma-empleados-window').find('input[name=numero]');
-                            var $campo_comp_colonia = $('#forma-empleados-window').find('input[name=colonia]');
-                            var $campo_comp_cp = $('#forma-empleados-window').find('input[name=cp]');
-
-                            //tab4 Salud y Enfermedades
-                            var $campo_contacto = $('#forma-empleados-window').find('input[name=contacto]');
-                            var $campo_tel_contacto = $('#forma-empleados-window').find('input[name=telcontacto]');
-                            var $select_tipo_sangre = $('#forma-empleados-window').find('select[name=tipo_sangre]');
-                            var $txtarea_enfermedades = $('#forma-empleados-window').find('textarea[name=enfermedades]');
-                            var $txtarea_alergias= $('#forma-empleados-window').find('textarea[name=alergias]');
-
-                            //tab4 organizacion
-
-                            var $select_sucursal = $('#forma-empleados-window').find('select[name=sucursal]');
-                            var $select_puesto = $('#forma-empleados-window').find('select[name=puesto]');
-                            var $select_categoria_puesto = $('#forma-empleados-window').find('select[name=categoria]');
-                            var $campo_comentarios =$('#forma-empleados-window').find('textarea[name=cometarios]');
-                            //tab5 Roles
-
-                            var $campo_nom_usuario = $('#forma-empleados-window').find('input[name=email_usr]');
-                            var $campo_password = $('#forma-empleados-window').find('input[name=password]');
-                            var $campo_verifica_password = $('#forma-empleados-window').find('input[name=verifica_pass]');
-                            var $div_roles=$('#forma-empleados-window').find('#rol_empleado tr td').find('#roles');
-                            var $select_rols_acceso=$('#forma-empleados-window').find('select[name=permite]');
- 
-                            //tab 6 Agentes
-                            var $campo_comision=$('#forma-empleados-window').find('input[name=comision]');
-                            var $select_region=$('#forma-empleados-window').find('select[name=region]');
-                            var $campo_comision2=$('#forma-empleados-window').find('input[name=comision2]'); 
-                            var $campo_comision3=$('#forma-empleados-window').find('input[name=comision3]');
-                            var $campo_comision4=$('#forma-empleados-window').find('input[name=comision4]');
-                            var $campo_diascomision=$('#forma-empleados-window').find('input[name=dias_comision]');
-                            var $campo_diascomision2=$('#forma-empleados-window').find('input[name=dias_comision2]');
-                            var $campo_diascomision3=$('#forma-empleados-window').find('input[name=dias_comision3]');
-                            
-                            var $tabla_roles = $('#forma-empleados-window').find('#rol_empleado');
-                            var $cerrar_plugin = $('#forma-empleados-window').find('#close');
-                            var $cancelar_plugin = $('#forma-empleados-window').find('#boton_cancelar');
-                            var $submit_actualizar = $('#forma-empleados-window').find('#submit');
-                            var $txt_roles =$('#forma-empleados-windows').find('textarea[name=roles');
-
-				
-				//$campo_titulo.attr({ 'readOnly':true });
-				$campo_num_empleado.attr('disabled','-1'); //deshabilitar
-				$campo_num_empleado.css({'background' : '#DDDDDD'});
-				
-				
-				
+                                var $identificador=$('#forma-crmoportunidades-window').find('input[name=identificador]');
+                                var $campo_prospecto = $('#forma-crmoportunidades-window').find('input[name=prospecto]');
+                                var $campo_contacto_id=$('#forma-crmoportunidades-window').find('input=[name=contacto_id]');
+                                var $campo_contacto = $('#forma-crmoportunidades-window').find('input[name=contacto]');
+                                var $campo_fecha_oportunidad= $('#forma-crmoportunidades-window').find('input[name=fecha_oportunidad]');
+                                var $campo_fecha_cotizacion = $('#forma-crmoportunidades-window').find('input[name=fecha_cotizacion]');
+                                var $campo_fecha_cierre = $('#forma-crmoportunidades-window').find('input[name=fecha_cierre]');
+                                var $campo_monto = $('#forma-crmoportunidades-window').find('input[name=monto]');
+                                
+                                
+                                var $select_empleado= $('#forma-crmoportunidades-window').find('select[name=empleado]');
+                                var $select_tipo_oportunidad= $('#forma-crmoportunidades-window').find('select[name=tipo_oportunidad]');
+                                var $select_etapa_venta = $('#forma-crmoportunidades-window').find('select[name=etapa_venta]');
+                                var $select_estatus = $('#forma-crmoportunidades-window').find('select[name=estatus]');
+                                var $select_cierre_oportunidad = $('#forma-crmoportunidades-window').find('select[name=cierre_oportunidad]');
+                                
+                                var $buscador_contactos = $('#forma-crmoportunidades-window').find('a[href*=buscador_contactos]');
+                                
+                                var $cerrar_plugin = $('#forma-crmoportunidades-window').find('#close');
+                                var $cancelar_plugin = $('#forma-crmoportunidades-window').find('#boton_cancelar');
+                                var $submit_actualizar = $('#forma-crmoportunidades-window').find('#submit');
+                                
+                                
+				$buscador_contactos.hide();
+                                
 				var respuestaProcesada = function(data){
 					if ( data['success'] == 'true' ){
 						var remove = function() { $(this).remove(); };
-						$('#forma-empleados-overlay').fadeOut(remove);
-						jAlert("Los datos del empleado se han actualizado.", 'Atencion!');
+						$('#forma-crmoportunidades-overlay').fadeOut(remove);
+						jAlert("Los datos de la oportunidad se han actualizado.", 'Atencion!');
 						$get_datos_grid();
 					}
 					else{
 						// Desaparece todas las interrogaciones si es que existen
-						$('#forma-empleados-window').find('div.interrogacion').css({'display':'none'});
+						$('#forma-crmoportunidades-window').find('div.interrogacion').css({'display':'none'});
 
 						//alert(data['success']);
 
@@ -944,354 +853,115 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$campo_empleado_id.attr({ 'value' : entry['Empleados']['0']['empleado_id'] });
-					$campo_num_empleado.attr({ 'value' : entry['Empleados']['0']['clave'] });
-					$campo_nombre.attr({ 'value' : entry['Empleados']['0']['nombre_pila'] });
-					$campo_appaterno.attr({ 'value' : entry['Empleados']['0']['apellido_paterno'] });
-					$campo_apmaterno.attr({ 'value' : entry['Empleados']['0']['apellido_materno'] });
-					$campo_imss.attr({ 'value' : entry['Empleados']['0']['imss'] });
-					$clave_infonavit.attr({ 'value' : entry['Empleados']['0']['infonavit'] });
-					$campo_curp.attr({ 'value' : entry['Empleados']['0']['curp'] });
-					$campo_rfc.attr({ 'value' : entry['Empleados']['0']['rfc'] });
-					$campo_fecha_nacimiento.attr({ 'value' : entry['Empleados']['0']['fecha_nacimiento'] });
-					$campo_fecha_ingreso.attr({ 'value' : entry['Empleados']['0']['fecha_ingreso'] });
-					$campo_telefono.attr({ 'value' : entry['Empleados']['0']['telefono'] });
-					$campo_movil.attr({ 'value' : entry['Empleados']['0']['telefono_movil'] });
-					$campo_correo_personal.attr({ 'value' : entry['Empleados']['0']['correo_personal'] });
-					$campo_comp_calle.attr({ 'value' : entry['Empleados']['0']['calle'] });
-					$campo_comp_numcalle.attr({ 'value' : entry['Empleados']['0']['numero'] });
-					$campo_comp_colonia.attr({ 'value' : entry['Empleados']['0']['colonia'] });
-					$campo_comp_cp.attr({ 'value' : entry['Empleados']['0']['cp'] });
-					$campo_contacto.attr({ 'value' : entry['Empleados']['0']['contacto_emergencia'] });
-					$campo_tel_contacto.attr({'value': entry['Empleados']['0']['telefono_emergencia']});
-                                        $campo_nom_usuario.attr({'value': entry['Empleados']['0']['username']});
-                                        $campo_password.attr({'value':entry['Empleados']['0']['password']});
-                                        $campo_verifica_password.attr({'value':entry['Empleados']['0']['password']});
-                                        $campo_comentarios.text(entry['Empleados']['0']['comentarios']);
-					$txtarea_enfermedades.text(entry['Empleados']['0']['enfermedades']);
-					$txtarea_alergias.text(entry['Empleados']['0']['alergias']);
-                                        $campo_comision.attr({'value':entry['Empleados']['0']['comision_agen']});
-                                        $campo_comision2.attr({'value':entry['Empleados']['0']['comision2_agen']});
-                                        $campo_comision3.attr({'value':entry['Empleados']['0']['comision3_agen']});
-                                        $campo_comision4.attr({'value':entry['Empleados']['0']['comision4_agen']});
-                                        $campo_diascomision.attr({'value':entry['Empleados']['0']['dias_tope_comision']});
-                                        $campo_diascomision2.attr({'value':entry['Empleados']['0']['dias_tope_comision2']});
-                                        $campo_diascomision3.attr({'value':entry['Empleados']['0']['dias_tope_comision3']});
-                                        
-					
-					
-					//Alimentando los campos select de las pais
-					$select_pais.children().remove();
-					var pais_hmtl = "";
-					$.each(entry['Paises'],function(entryIndex,pais){
-						if(pais['cve_pais'] == entry['Empleados']['0']['gral_pais_id']){
-							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
-						}else{
-							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
-						}
-					});
-					$select_pais.append(pais_hmtl);
-
-					
-					//Alimentando los campos select del estado
-					$select_entidad.children().remove();
-					var entidad_hmtl = "";
-					$.each(entry['Entidades'],function(entryIndex,entidad){
-						if(entidad['cve_ent'] == entry['Empleados']['0']['gral_edo_id']){
-							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
-						}else{
-							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-						}
-					});
-					$select_entidad.append(entidad_hmtl);
-					
-					
-					//Alimentando los campos select de los municipios
-					$select_localidad.children().remove();
-					var localidad_hmtl = "";
-					$.each(entry['Localidades'],function(entryIndex,mun){
-						if(mun['cve_mun'] == entry['Empleados']['0']['gral_mun_id']){
-							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
-						}else{
-							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-						}
-					});
-					$select_localidad.append(localidad_hmtl);
-				
-					
-					//carga select estados al cambiar el pais
-					$select_pais.change(function(){
-						var valor_pais = $(this).val();
-						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
-						$arreglo = {'id_pais':valor_pais};
-						$.post(input_json,$arreglo,function(entry){
-							$select_entidad.children().remove();
-							var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
-							$.each(entry['Entidades'],function(entryIndex,entidad){
-								entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-							});
-							$select_entidad.append(entidad_hmtl);
-							var trama_hmtl_localidades = '<option value="' + '000' + '" >' + 'Localidad alternativa' + '</option>';
-							$select_localidad.children().remove();
-							$select_localidad.append(trama_hmtl_localidades);
-						},"json");//termina llamada json
-					});
-					
-					
-					//carga select municipios al cambiar el estado
-					$select_entidad.change(function(){
-						var valor_entidad = $(this).val();
-						var valor_pais = $select_pais.val();
-						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getLocalidades.json';
-						$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
-						$.post(input_json,$arreglo,function(entry){
-							$select_localidad.children().remove();
-							var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar municipio-]</option>'
-							$.each(entry['Localidades'],function(entryIndex,mun){
-								trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-							});
-							$select_localidad.append(trama_hmtl_localidades);
-						},"json");//termina llamada json
-					});
-                                        
-                                        //alimenta el select de escolaridad
-                                        $select_escolaridad.children().remove();
-
-                                        var escolaridad_hmtl ="";
-                                        // '<option value="0"  selected="yes">[-Seleccionar Escolaridad-]</option>'
-                                        
-                                        $.each(entry['Escolaridad'],function(entryIndex,escolaridad){
-                                                if(escolaridad['id']== entry['Empleados']['0']['gral_escolaridad_id']){
-                                                    escolaridad_hmtl += '<option value="' + escolaridad['id'] + '"selected="yes" >' + escolaridad['titulo'] + '</option>';
-                                                }else{
-                                                    escolaridad_hmtl += '<option value="' + escolaridad['id'] + '"  >' + escolaridad['titulo'] + '</option>';
-
-                                                }
-                                        });
-                                        $select_escolaridad.append(escolaridad_hmtl);
-
-
-                                        //alimenta el select de genero sexual
-                                        $select_genero_sexo.children().remove();
-
-                                        var genero_hmtl = "";//'<option value="0"  selected="yes">[-Seleccionar Genero-]</option>'
-                                        $.each(entry['Genero'],function(entryIndex,genero){
-                                            if(genero['id']==entry['Empleados']['0']['gral_sexo_id']){
-                                                genero_hmtl += '<option value="' + genero['id'] + '"selected="yes">' + genero['titulo'] + '</option>';
-                                                
-                                            }else{
-                                               genero_hmtl += '<option value="' + genero['id'] + '"  >' + genero['titulo'] + '</option>';
-
-                                            }
-                                        });
-                                        $select_genero_sexo.append(genero_hmtl);
-
-                                        //alimenta el select de edocivil
-
-                                        $select_edo_civil.children().remove();
-                                        var civils_hmtl =""; 
-                                        $.each(entry['EdoCivil'],function(entryIndex,civil){
-                                            if(civil['id']==entry['Empleados']['0']['gral_edo_id']){
-                                                civils_hmtl += '<option value="' + civil['id'] + '"selected="yes">' + civil['titulo'] + '</option>';
-                                            }else{
-                                                 civils_hmtl += '<option value="' + civil['id'] + '"  >' + civil['titulo'] + '</option>';
-                                            }
-                                               
-                                        });
-                                        $select_edo_civil.append(civils_hmtl);
-
-
-                                    //alimenta select de religion
-
-                                        $select_religion.children().remove();
-                                        var religion_hmtl =""; 
-                                        $.each(entry['Religion'],function(entryIndex,religion){
-                                            if(religion['id']==entry['Empleados']['0']['gral_religion_id']){
-                                                religion_hmtl += '<option value="' + religion['id'] + '"selected="yes">' + religion['titulo'] + '</option>';
-                                            }else{
-                                                 religion_hmtl += '<option value="' + religion['id'] + '"  >' + religion['titulo'] + '</option>';
-
-                                            }
-                                        });
-                                        $select_religion.append(religion_hmtl);
-
-                                        //alimenta select de tipo sangre
-
-                                        $select_tipo_sangre.children().remove();
-                                        var tipo_sangre_hmtl = "";
-                                        $.each(entry['Sangre'],function(entryIndex,sangre){
-                                            if(sangre['id']==entry['Empleados']['0']['gral_sangretipo_id']){
-                                                tipo_sangre_hmtl += '<option value="' + sangre['id'] + '"selected="yes">' + sangre['titulo'] + '</option>';
-
-                                            }else{
-                                                tipo_sangre_hmtl += '<option value="' + sangre['id'] + '"  >' + sangre['titulo'] + '</option>';
-                                            }
-                                        });
-                                        $select_tipo_sangre.append(tipo_sangre_hmtl);
-                                        
-                                        //alimenta select de puestos
-                                        
-                                        $select_puesto.children().remove();
-                                        var puesto_hmtl ="";
-                                        $.each(entry['Puesto'],function(entryIndex,puestos){
-                                            if(puestos['id']==entry['Empleados']['0']['gral_puesto_id']){
-                                                puesto_hmtl += '<option value="' + puestos['id'] + '"selected="yes">' + puestos['titulo'] + '</option>';
-
-                                            }else{
-                                                puesto_hmtl += '<option value="' + puestos['id'] + '"  >' + puestos['titulo'] + '</option>';
-
-                                            }
-                                        });
-                                        $select_puesto.append(puesto_hmtl);
-                                        
-                                        $select_categoria_puesto.children().remove();
-                                        var categoria_hmtl ="";
-                                        $.each(entry['Categoria'],function(entryIndex,categoria){
-                                            if(categoria['id']==entry['Empleados']['0']['gral_categ_id']){
-                                                categoria_hmtl += '<option value="' + categoria['id'] + '"selected="yes">' + categoria['titulo'] + '</option>';
-
-                                            }else{
-                                                categoria_hmtl += '<option value="' + categoria['id'] + '"  >' + categoria['titulo'] + '</option>';
-
-                                            }
-                                        });
-                                        
-                                        $select_categoria_puesto.append(categoria_hmtl);
-
-                                        //carga select categorias al cambiar el puesto
-                                        $select_puesto.change(function(){
-                                            var valor_puesto = $(this).val();
-                                            var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCategorias.json';
-                                            $arreglo = {'id_puesto':valor_puesto};
-                                            $.post(input_json,$arreglo,function(entry){
-                                                    $select_categoria_puesto.children().remove();
-                                                    var categoria_hmtl = '<option value="0"  selected="yes">[-Seleccionar Categoria-]</option>'
-                                                    $.each(entry['Categoria'],function(entryIndex,categoria){
-                                                            categoria_hmtl += '<option value="' + categoria['id'] + '"  >' + categoria['titulo'] + '</option>';
-                                                    });
-                                                    $select_categoria_puesto.append(categoria_hmtl);
-
-
-                                            },"json");//termina llamada json
-                                        });
-
-                                        //alimentando el select de sucursal
-                                        $select_sucursal.children().remove();
-                                        var sucursal_hmtl='<option value="0" selected="yes">[-Seleccione Sucursal-]</option>'
-                                        $.each(entry['Sucursal'],function(entryIndex,sucursales){
-                                            if(sucursales['id']==entry['Empleados']['0']['gral_suc_id_empleado']){
-                                                sucursal_hmtl +='<option value="'+sucursales['id']+'"selected="yes">'+sucursales['titulo']+'</option>';
-                                            }else{
-                                                sucursal_hmtl +='<option value="'+sucursales['id']+'" >'+sucursales['titulo']+'</option>';
-                                            }
-                                        });
-                                        $select_sucursal.append(sucursal_hmtl);
-                                        
-                                        //carga select de permiso de sistema
-                                        
-                                        var html = '';
-                                        $select_rols_acceso.children().remove();
-                                            if(entry['Empleados']['0']['enabled']=="true"){
-                                                html+='<option value="true" selected="yes">SI</option>';
-                                                html+='<option value="false">NO</option>'; 
-                                            }else{
-                                                html+='<option value="true" >SI</option>';
-                                                html+='<option value="false" selected="yes">NO</option>'; 
-                                            }    
-                                        $select_rols_acceso.append(html);
-                        
-                                        //carga los checks de roles
-                                       
-                                        var $div_roles=$('#forma-empleados-window').find('#rol_empleado tr td').find('div#roles');//.find('table #rols');
-                                        var html="";
-                                        $total_tr=0;
-                                        html+='<table border="0" whidth="100%" id="rols">';
-                                        $.each(entry['RolsEdit'],function(entryIndex,rols){ 
-                                            html+='<tr>';
-                                                html+='<td class="grid" style=font-size: 11px;  width="40">';
-                                                    html+='<input type="checkbox" name="micheck" '+rols['checkeado']+'>';
-                                                    html+='<input type="hidden" name="seleccionado" value="'+rols['seleccionado']+'" >';
-                                                html+='</td>';
-                                                html+='<td class="grid" style="font-size: 11px; width="20"><input type="hidden" name="id_rol" value="'+rols['id']+'">&nbsp;&nbsp;</td>';
-                                                html+='<td class="grid" style="font-size: 11px; width="350px">'+rols['titulo']+'</td>';
-
-                                            html+='</tr>';
-
-                                        $total_tr=$total_tr+1;
-                                        });
-                                        html+='</table>';
-                                        $div_roles.append(html);    
-                                        seleccionar_roles_check($div_roles.find('#rols'));
-                                        
-                                        //carga las regiones de los agentes
-                                        $select_region.children().remove();
-                                        var region_hmtl = "";
-                                        $.each(entry['Region'],function(entryIndex,region){
-                                            if(region['id']==entry['Empleados']['0']['region_id_agen']){
-                                                region_hmtl += '<option value="' + region['id'] + '"selected="yes"  >' + region['titulo'] + '</option>';
-                                            }else{
-                                                region_hmtl += '<option value="' + region['id'] + '"  >' + region['titulo'] + '</option>';
-                                            }
-                                                
-                                        });
-                                        $select_region.append(region_hmtl);
- 
-                                        $submit_actualizar.bind('click',function(){
-                                            var $total_tr = $('#forma-empleados-window').find('input[name=total_tr]');
-                                            var selec=0;
-                                            //checa facturas a revision seleccionadas
-                                            selec = contar_seleccionados($tabla_roles);
-
-                                            $total_tr.val(selec);
-
-                                            if(parseInt($total_tr.val()) > 0){
-                                                return true;
-                                            }else{
-                                                jAlert("No hay roles seleccionadas para actualizar", 'Atencion!');
-                                                return false;
-                                            }
-                                        });
-
-
-                                        //Ligamos el boton cancelar al evento click para eliminar la forma
-                                        $cancelar_plugin.bind('click',function(){
-                                                var remove = function() { $(this).remove(); };
-                                                $('#forma-empleados-overlay').fadeOut(remove);
-                                        });
-
-                                        $cerrar_plugin.bind('click',function(){
-                                                var remove = function() { $(this).remove(); };
-                                                $('#forma-empleados-overlay').fadeOut(remove);
-                                                $buscar.trigger('click');
-                                        });
-                                });
-                                
-                                var seleccionar_roles_check = function($tabla){
-                                    $tabla.find('input[name=micheck]').each(function(){
-                                        $(this).click(function(event){
-                                            if(this.checked){
-                                                $(this).parent().find('input[name=seleccionado]').val("1");					
-                                                //alert("seleccionado");
-                                            }else{
-                                                //$(this).parent().find('input[name=micheck]').removeAttr('checked');
-                                                $(this).parent().find('input[name=seleccionado]').val("0");
-                                                //alert("no seleccionado");
-                                            }
-                                        });
+                                    
+                                    $identificador.attr({ 'value' : entry['Oportunidad']['0']['id'] });
+                                    $campo_prospecto.attr({ 'value' : entry['Oportunidad']['0']['prospecto'] });
+                                    $campo_contacto_id.attr({ 'value' : entry['Oportunidad']['0']['crm_contactos_id'] });
+                                    $campo_contacto.attr({ 'value' : entry['Oportunidad']['0']['contacto'] });
+                                    
+                                    $campo_fecha_oportunidad.attr({ 'value' : entry['Oportunidad']['0']['fecha_oportunidad'] });
+                                    $campo_fecha_cotizacion.attr({ 'value' : entry['Oportunidad']['0']['fecha_cotizar'] });
+                                    $campo_fecha_cierre.attr({ 'value' : entry['Oportunidad']['0']['fecha_cierre'] });
+                                    $campo_monto.attr({ 'value' : entry['Oportunidad']['0']['monto'] });
+                                    
+                                    $permitir_solo_numeros($campo_monto);
+                                    $add_calendar($campo_fecha_oportunidad, entry['Oportunidad']['0']['fecha_oportunidad'], ">=");
+                                    $add_calendar($campo_fecha_cotizacion,entry['Oportunidad']['0']['fecha_cotizar'], ">=");
+                                    $add_calendar($campo_fecha_cierre, entry['Oportunidad']['0']['fecha_cierre'], ">=");
+                                    
+                                    var html_agente = '';
+                                    $.each(entry['Agentes'], function(entryIndex,item){
+                                        if(entry['Oportunidad']['0']['gral_empleados_id'] == item['id']){
+                                            html_agente += '<option value="' + item['id'] + '" selected="yes">' + item['nombre_agente'] + '</option>';
+                                        }
+                                     });
+                                    $select_empleado.append(html_agente);
+                                    
+                                    //alimenta el select de $select_tipo_oportunidad
+                                    var html_tipo_op = '<option value="0" >[-Seleccionar Tipo Oportunidad-]</option>';
+                                    $.each(entry['TiposOportunidad'], function(entryIndex,item){
+                                        if(item['id'] == entry['Oportunidad']['0']['crm_tipos_oportunidad_id']){
+                                            html_tipo_op += '<option value="' + item['id'] + '"  selected="yes">' + item['descripcion'] + '</option>';
+                                        }else{
+                                            html_tipo_op += '<option value="' + item['id'] + '"  >' + item['descripcion'] + '</option>';
+                                        }
                                     });
-                                }
-
-                                var contar_seleccionados= function($tabla_roles){
-                                    var seleccionados=0;
-                                    $tabla_roles.find('input[name=micheck]').each(function(){
-                                        if(this.checked){
-                                            seleccionados = parseInt(seleccionados) + 1;
+                                    $select_tipo_oportunidad.append(html_tipo_op);
+                                    
+                                    //alimenta el select de $select_etapa_venta
+                                    var html_etapa_venta = '<option value="0"  >[-Seleccionar Etapa Venta-]</option>';
+                                    $.each(entry['EtapasVenta'], function(entryIndex,item){
+                                        if(item['id'] >= entry['Oportunidad']['0']['crm_etapas_venta_id']){
+                                            if(item['id'] == entry['Oportunidad']['0']['crm_etapas_venta_id']){
+                                                html_etapa_venta += '<option value="' + item['id'] + '"  selected="yes">' + item['descripcion'] + '</option>';
+                                            }else{
+                                                html_etapa_venta += '<option value="' + item['id'] + '"  >' + item['descripcion'] + '</option>';
+                                            }
+                                        }
+                                    });
+                                    $select_etapa_venta.append(html_etapa_venta);
+                                    
+                                    //alimenta el select de $select_estatus
+                                    var html_estatus = '';
+                                    if(entry['Oportunidad']['0']['estatus'] == 'true'){
+                                        html_estatus = '<option value="true"  selected="yes">Vigente</option>';
+                                        html_estatus += '<option value="true" >Cancelado</option>';
+                                    }else{
+                                        var html_estatus = '<option value="true" >Vigente</option>';
+                                        html_estatus += '<option value="true" selected="yes">Cancelado</option>';
+                                    }
+                                    $select_estatus.append(html_estatus);
+                                    
+                                    
+                                    //alimenta el select de $select_cierre_oportunidad
+                                    var html_cierreop = '';
+                                    if(entry['Oportunidad']['0']['cierre_oportunidad'] == 0){
+                                        html_cierreop = '<option value="0"  selected="yes">Sin cerrar</option>';
+                                        html_cierreop += '<option value="1">Ganada</option>';
+                                        html_cierreop += '<option value="2">Perdida</option>';
+                                    }else{
+                                        if(entry['Oportunidad']['0']['cierre_oportunidad'] == 1){
+                                            html_cierreop = '<option value="0" >Sin cerrar</option>';
+                                            html_cierreop += '<option value="1" selected="yes">Ganada</option>';
+                                            html_cierreop += '<option value="2">Perdida</option>';
+                                        }else{
+                                            html_cierreop = '<option value="0" >Sin cerrar</option>';
+                                            html_cierreop += '<option value="1">Ganada</option>';
+                                            html_cierreop += '<option value="2" selected="yes">Perdida</option>';
+                                        }
+                                    }
+                                    $select_cierre_oportunidad.append(html_cierreop);
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    $submit_actualizar.bind('click',function(){
+                                       
+                                        var selec=1;
+                                        
+                                        if(selec > 0){
+                                            return true;
+                                        }else{
+                                            jAlert("No se puede actualizar", 'Atencion!');
+                                            return false;
                                         }
                                     });
 
-                                    return seleccionados;
-                                }
-				
+
+                                    //Ligamos el boton cancelar al evento click para eliminar la forma
+                                    $cancelar_plugin.bind('click',function(){
+                                            var remove = function() { $(this).remove(); };
+                                            $('#forma-crmoportunidades-overlay').fadeOut(remove);
+                                    });
+
+                                    $cerrar_plugin.bind('click',function(){
+                                            var remove = function() { $(this).remove(); };
+                                            $('#forma-crmoportunidades-overlay').fadeOut(remove);
+                                            $buscar.trigger('click');
+                                    });
+                                });
+                                
 			}
 		}
 	}
