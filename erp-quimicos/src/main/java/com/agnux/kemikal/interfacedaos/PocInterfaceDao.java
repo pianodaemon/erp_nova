@@ -31,6 +31,7 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getPocPedido_Datos(Integer id_pedido);
     public ArrayList<HashMap<String, String>> getPocPedido_DatosGrid(Integer id_pedido);
     public ArrayList<HashMap<String, String>> getPocPedido_Almacenes(Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getPocPedido_DireccionesFiscalesCliente(Integer id_cliente);
     public HashMap<String, String> getDatosPDF(Integer id_pedido);
     
     //metodos para aplicativo Remisiones de CLientes

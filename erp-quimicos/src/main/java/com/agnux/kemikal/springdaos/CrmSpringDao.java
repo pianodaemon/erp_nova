@@ -219,6 +219,182 @@ public class CrmSpringDao implements CrmInterfaceDao{
         );
         return hm; 
     }
-
    //----------------------------------------------fin de catalogo de motivos de llamada--------------------------------------------------
+    
+    
+    //----------------------------------------------catalogo de Registro de Visitas-------------------------------------------------------------
+    @Override
+    public ArrayList<HashMap<String, Object>> getCrmRegistroVisitas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+                + "SELECT "
+                    + "crm_registro_visitas.id,"
+                    + "crm_registro_visitas.folio, "
+                    + "cxc_agen.nombre AS agente, "
+                    + "crm_motivos_visita.descripcion AS motivo, "
+                    + "crm_calificaciones_visita.titulo AS calif, "
+                    + "crm_tipos_seguimiento_visita.titulo AS tipo_seg "
+                + "FROM crm_registro_visitas "
+                + "JOIN cxc_agen ON cxc_agen.id=crm_registro_visitas.gral_empleado_id "
+                + "LEFT JOIN crm_motivos_visita ON crm_motivos_visita.id=crm_registro_visitas.crm_motivos_visita_id "
+                + "LEFT JOIN crm_calificaciones_visita ON crm_calificaciones_visita.id=crm_registro_visitas.crm_calificacion_visita_id "
+                + "LEFT JOIN crm_tipos_seguimiento_visita ON crm_tipos_seguimiento_visita.id=crm_registro_visitas.crm_tipos_seguimiento_visita_id "
+                + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = crm_registro_visitas.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("agente",rs.getString("agente"));
+                    row.put("motivo",rs.getString("motivo"));
+                    row.put("calif",rs.getString("calif"));
+                    row.put("tipo_seg",rs.getString("tipo_seg"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Datos(Integer id) {
+        String sql_to_query = "SELECT id,folio_mll,descripcion FROM crm_motivos_llamada WHERE id="+id;
+        ArrayList<HashMap<String, String>> dato_datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio_mll",rs.getString("folio_mll"));
+                    row.put("descripcion",rs.getString("descripcion")); 
+                    
+                    return row;
+                }
+            }
+        );
+        return dato_datos;
+    }
+    
+    
+    
+    
+    //obtiene todos los agentes de la empresa
+    @Override
+    public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa) {
+        String sql_to_query = "SELECT cxc_agen.id,  "
+                                        +"cxc_agen.nombre AS nombre_agente "
+                                +"FROM cxc_agen "
+                                +"JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id "
+                                +"JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
+                                +"WHERE gral_suc.empresa_id="+id_empresa+" ORDER BY cxc_agen.id;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id")  );
+                    row.put("nombre_agente",rs.getString("nombre_agente"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public HashMap<String, String> getUserRol(Integer id_user) {
+        HashMap<String, String> data = new HashMap<String, String>();
+        
+        //verificar si el usuario tiene  rol de ADMINISTTRADOR
+        //si exis es mayor que cero, el usuario si es ADMINISTRADOR
+        String sql_to_query = "SELECT count(gral_usr_id) AS exis_rol_admin FROM gral_usr_rol WHERE gral_usr_id="+id_user+" AND gral_rol_id=1;";
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        
+        data.put("exis_rol_admin",map.get("exis_rol_admin").toString().toUpperCase());
+        
+        return data;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Motivos(Integer id_empresa) {
+        String sql_to_query = "SELECT id, descripcion FROM crm_motivos_visita WHERE gral_emp_id="+id_empresa+" AND borrado_logico=false ORDER BY descripcion;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id")  );
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Calificaciones(Integer id_empresa) {
+        String sql_to_query = "SELECT id, titulo FROM crm_calificaciones_visita WHERE gral_emp_id="+id_empresa+" AND borrado_logico=false ORDER BY id;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id")  );
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Seguimientos(Integer id_empresa) {
+        String sql_to_query = "SELECT id, titulo FROM crm_tipos_seguimiento_visita WHERE gral_emp_id="+id_empresa+" AND borrado_logico=false ORDER BY id;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id")  );
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+   //----------------------------------------------fin de Catalogo de Registro de Visitas--------------------------------------------------
+    
+    
+    
 }

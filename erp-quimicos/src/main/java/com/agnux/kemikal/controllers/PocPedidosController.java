@@ -260,6 +260,23 @@ public class PocPedidosController {
         return jsonretorno;
     }
     
+    
+    //obtiene las Direcciones Fiscales del Cliente
+    //esta busqueda solo es cuando el cliente tiene mas de una Dirección Fiscal
+    @RequestMapping(method = RequestMethod.POST,value="/getDireccionesFiscalesCliente.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String,String>>>getDireccionesFiscalesClienteJson(
+            @RequestParam(value="id_cliente",required=true )Integer id_cliente,
+            Model model
+        ){
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        
+        ArrayList<HashMap<String, String>> direcciones_fiscales = new ArrayList<HashMap<String, String>>();
+        direcciones_fiscales=this.getPocDao().getPocPedido_DireccionesFiscalesCliente(id_cliente);
+        jsonretorno.put("DirFiscal", direcciones_fiscales);
+        
+        return jsonretorno;
+    }
+    
     //obtiene la moneda de la lista de precios por el cliente
     @RequestMapping(method = RequestMethod.POST,value="/getMonedaListaCliente.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String,String>>>getMonedaListaClienteJson(
@@ -366,6 +383,7 @@ public class PocPedidosController {
             @RequestParam(value="no_cuenta", required=false) String no_cuenta,
             @RequestParam(value="check_ruta", required=false) String check_ruta,
             @RequestParam(value="select_almacen", required=false) String select_almacen,
+            @RequestParam(value="id_df", required=true) String id_df,
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="idproducto", required=false) String[] idproducto,
@@ -377,7 +395,7 @@ public class PocPedidosController {
             @RequestParam(value="noTr", required=false) String[] noTr,
             @RequestParam(value="seleccionado", required=false) String[] seleccionado,
             @ModelAttribute("user") UserSessionData user
-            ) {
+        ) {
             
             System.out.println("Guardar del Pedido");
             HashMap<String, String> jsonretorno = new HashMap<String, String>();
@@ -434,7 +452,8 @@ public class PocPedidosController {
                     select_metodo_pago+"___"+
                     no_cuenta+"___"+
                     check_ruta+"___"+
-                    select_almacen;
+                    select_almacen+"___"+
+                    id_df;
             //System.out.println("data_string: "+data_string);
             
             succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);

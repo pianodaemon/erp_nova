@@ -500,6 +500,7 @@ public class ClientsController {
             @RequestParam(value="dc_numfax", required=false) String[] dc_numfax,
             @RequestParam(value="select_immex", required=true) String select_immex,
             @RequestParam(value="retencion_immex", required=false) String retencion_immex,
+            @RequestParam(value="select_metodo_pago", required=true) String select_metodo_pago,
             @RequestParam(value="select_dia_revision", required=true) String select_dia_revision,
             @RequestParam(value="select_dia_pago", required=true) String select_dia_pago,
             @RequestParam(value="cuenta_mn", required=true) String cuenta_mn,
@@ -638,7 +639,8 @@ public class ClientsController {
             +"___"+id_cta_ietu
             +"___"+id_cta_complementaria
             +"___"+id_cta_activo_complementaria
-            +"___"+select_lista_precio;
+            +"___"+select_lista_precio
+            +"___"+select_metodo_pago;
             
             System.out.println("data_string: "+data_string);
             

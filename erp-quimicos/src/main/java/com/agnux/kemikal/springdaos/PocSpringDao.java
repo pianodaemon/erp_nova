@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 /**
  *
  * @author Noé Martinez
@@ -391,7 +392,65 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_monedas;
     }
-   
+    
+    
+    //obtiene direcciones fiscales del cliente, esta dirección es la que se utilizará para facturar el pedido
+    //si el cliente no tiene Direcciones Fisacles registradas en la tabla cxc_cliedf, 
+    //nunca ejecutará esta busqueda porque tomará por default la dirección que está en cxc_clie
+    @Override
+    public ArrayList<HashMap<String, String>> getPocPedido_DireccionesFiscalesCliente(Integer id_cliente) {
+        String sql_to_query = ""
+                + "SELECT  "
+                    + "sbt1.tipo_dir, "
+                    + "sbt1.id_cliente, "
+                    + "sbt1.id_df, "
+                    + "sbt1.calle||' '||sbt1.numero_interior||' '||sbt1.numero_exterior||', '||sbt1.colonia||', '||sbt1.municipio||', '||sbt1.estado||', '||sbt1.pais||', C.P.'||sbt1.cp AS direccion_fiscal "
+                + "FROM ( "
+                    + "SELECT "
+                    + "sbt_dir.tipo_dir, "
+                    + "sbt_dir.id_cliente, "
+                    + "sbt_dir.id_df, "
+                    + "(CASE WHEN sbt_dir.calle IS NULL THEN '' ELSE sbt_dir.calle END) AS calle, "
+                    + "(CASE WHEN sbt_dir.numero_interior IS NULL THEN '' ELSE (CASE WHEN sbt_dir.numero_interior IS NULL OR sbt_dir.numero_interior='' THEN '' ELSE 'NO.INT.'||sbt_dir.numero_interior END)  END) AS numero_interior, "
+                    + "(CASE WHEN sbt_dir.numero_exterior IS NULL THEN '' ELSE (CASE WHEN sbt_dir.numero_exterior IS NULL OR sbt_dir.numero_exterior='' THEN '' ELSE 'NO.EXT.'||sbt_dir.numero_exterior END )  END) AS numero_exterior, "
+                    + "(CASE WHEN sbt_dir.colonia IS NULL THEN '' ELSE sbt_dir.colonia END) AS colonia, "
+                    + "(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio, "
+                    + "(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado, "
+                    + "(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais, "
+                    + "(CASE WHEN sbt_dir.cp IS NULL THEN '' ELSE sbt_dir.cp END) AS cp "
+                    + "FROM ( "
+                        + "SELECT  'DEFAULT'::character varying AS tipo_dir, cxc_clie.id AS id_cliente, 0::integer AS id_df, cxc_clie.calle, cxc_clie.numero AS numero_interior, cxc_clie.numero_exterior, cxc_clie.colonia, cxc_clie.cp AS cp, cxc_clie.pais_id, cxc_clie.estado_id, cxc_clie.municipio_id "
+                        + "FROM cxc_clie  WHERE cxc_clie.id=? "
+                        
+                        + "UNION "
+                        
+                        + "SELECT 'DIRFISCAL'::character varying AS tipo_dir, cxc_clie_df.cxc_clie_id AS id_cliente, cxc_clie_df.id AS id_df,  cxc_clie_df.calle, cxc_clie_df.numero_interior, cxc_clie_df.numero_exterior, cxc_clie_df.colonia, cxc_clie_df.cp AS cp, cxc_clie_df.gral_pais_id AS pais_id, cxc_clie_df.gral_edo_id AS estado_id, cxc_clie_df.gral_mun_id AS municipio_id FROM cxc_clie_df  "
+                        + "WHERE cxc_clie_df.borrado_logico=false AND cxc_clie_df.cxc_clie_id=? "
+                    + ")AS sbt_dir "
+                    + "LEFT JOIN gral_pais ON gral_pais.id = sbt_dir.pais_id  "
+                    + "LEFT JOIN gral_edo ON gral_edo.id = sbt_dir.estado_id  "
+                    + "LEFT JOIN gral_mun ON gral_mun.id = sbt_dir.municipio_id "
+                + ") AS sbt1 "
+                + "ORDER BY sbt1.tipo_dir;";
+        
+        System.out.println("DireccionesFiscalesCliente: "+sql_to_query);
+        
+        ArrayList<HashMap<String, String>> dir = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_cliente), new Integer(id_cliente)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("tipo_dir",rs.getString("tipo_dir"));
+                    row.put("id_cliente",String.valueOf(rs.getInt("id_cliente")));
+                    row.put("id_df",String.valueOf(rs.getInt("id_df")));
+                    row.put("direccion_fiscal",rs.getString("direccion_fiscal"));
+                    return row;
+                }
+            }
+        );
+        return dir;
+    }
    
     
     
@@ -506,24 +565,22 @@ public class PocSpringDao implements PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
         String where="";
 	if(filtro == 1){
-		where=" AND cxc_clie.numero_control ilike '%"+cadena.toUpperCase()+"%'";
+            where=" AND cxc_clie.numero_control ilike '%"+cadena.toUpperCase()+"%'";
 	}
 	if(filtro == 2){
-		where=" AND cxc_clie.rfc ilike '%"+cadena.toUpperCase()+"%'";
+            where=" AND cxc_clie.rfc ilike '%"+cadena.toUpperCase()+"%'";
 	}
 	if(filtro == 3){
-		where=" AND cxc_clie.razon_social ilike '%"+cadena.toUpperCase()+"%'";
+            where=" AND cxc_clie.razon_social ilike '%"+cadena.toUpperCase()+"%'";
 	}
 
 	if(filtro == 4){
-		where=" AND cxc_clie.curp ilike '%"+cadena.toUpperCase()+"%'";
+            where=" AND cxc_clie.curp ilike '%"+cadena.toUpperCase()+"%'";
 	}
 	if(filtro == 5){
-		where=" AND cxc_clie.alias ilike '%"+cadena.toUpperCase()+"%'";
+            where=" AND cxc_clie.alias ilike '%"+cadena.toUpperCase()+"%'";
 	}
 	
-        
-        
 	String sql_query = "SELECT "
                                     +"sbt.id, "
                                     +"sbt.numero_control, "
@@ -538,8 +595,9 @@ public class PocSpringDao implements PocInterfaceDao{
                                     +"sbt.tasa_ret_immex, "
                                     +"sbt.cta_pago_mn, "
                                     +"sbt.cta_pago_usd, "
-                                    +"sbt.lista_precio "
-                                    
+                                    +"sbt.lista_precio, "
+                                    +"sbt.metodo_pago_id, "
+                                    +"tiene_dir_fiscal "
                             +"FROM(SELECT cxc_clie.id, "
                                             +"cxc_clie.numero_control, "
                                             +"cxc_clie.rfc, "
@@ -552,20 +610,21 @@ public class PocSpringDao implements PocInterfaceDao{
                                             +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
                                             + "cxc_clie.cta_pago_mn,"
                                             + "cxc_clie.cta_pago_usd,  "
-                                            + "cxc_clie.lista_precio "
-                                           
+                                            + "cxc_clie.lista_precio, "
+                                            + "cxc_clie.fac_metodos_pago_id AS metodo_pago_id, "
+                                            + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal "
                                     +"FROM cxc_clie "
+                                    + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
                                     + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
                                     + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
                                     + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                                    
                                     //+" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
                                     +" WHERE empresa_id ="+id_empresa+" "
                                     + " AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
                             +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ";
                             
-        System.out.println("Resultado del Query"+"___"+sql_query);
+        System.out.println("BuscadorClientes: "+sql_query);
         
         ArrayList<HashMap<String, String>> hm_cli = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -587,6 +646,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("cta_pago_mn",rs.getString("cta_pago_mn"));
                     row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
                     row.put("lista_precio",rs.getString("lista_precio"));
+                    row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
+                    row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
                     return row;
                 }
             }

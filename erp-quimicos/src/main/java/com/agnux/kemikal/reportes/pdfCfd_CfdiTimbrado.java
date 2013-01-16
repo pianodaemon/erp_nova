@@ -1,6 +1,6 @@
- /* 
- * @author Noe Mtz
- * gpmarsan@gmail.com
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 package com.agnux.kemikal.reportes;
 
@@ -19,8 +19,13 @@ import java.math.BigInteger;
 import java.util.List;
 
 
-
-public final class pdfCfd {
+/**
+ *
+ * @author Noe Martinez
+ * gpmarsan@gmail.com
+ * 15/enero/2013
+ */
+public final class pdfCfd_CfdiTimbrado {
    //--variables para pdf--
     private  GralInterfaceDao gralDao;
     
@@ -97,7 +102,7 @@ public final class pdfCfd {
     
     //----------------------
     
-   public pdfCfd(GralInterfaceDao gDao,HashMap<String, String> datosCliente, ArrayList<HashMap<String, String>> listaConceptos, HashMap<String, String> extras, Integer id_empresa, Integer id_sucursal) {
+   public pdfCfd_CfdiTimbrado(GralInterfaceDao gDao,HashMap<String, String> datosCliente, ArrayList<HashMap<String, String>> listaConceptos, HashMap<String, String> extras, Integer id_empresa, Integer id_sucursal) {
         Font negrita_pequena= new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
         Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
@@ -191,8 +196,6 @@ public final class pdfCfd {
         this.setReceptor_pais(datosCliente.get("comprobante_receptor_domicilio_attr_pais"));
         this.setReceptor_telefono("");
         
-        
-        
         this.setImagen( this.getGralDao().getImagesDir()+this.getEmisora_rfc()+"_logo.png" );
         this.setImagen_cedula( this.getGralDao().getImagesDir()+this.getEmisora_rfc()+"_cedula.png" );
         
@@ -208,7 +211,6 @@ public final class pdfCfd {
         if(this.getTipo_facturacion().equals("cfditf")){
             fileout = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa) + "/" + this.getSerie_folio() +".pdf";
         }
-        
         
         try {
             Document document = new Document(PageSize.LETTER, -50, -50, 20, 30);
@@ -753,7 +755,7 @@ public final class pdfCfd {
             cell = new PdfPCell(cepdf.addContent());
             cell.setColspan(6);
             
-            cell.setFixedHeight(210);
+            //cell.setFixedHeight(210);
             cell.setBorderWidthBottom(1);
             cell.setBorderWidthLeft(1);
             cell.setBorderWidthTop(1);
@@ -839,6 +841,8 @@ public final class pdfCfd {
             document.add(table);
             System.out.println("table.size6: "+table.size());
             System.out.println("table.getTotalHeight6: "+table.getTotalHeight());
+            
+            document.newPage();
             
             //aqui comienza la tabla de totales
             float [] widths_table_totales = {1};
@@ -1604,7 +1608,7 @@ public final class pdfCfd {
             cell = new PdfPCell(new Paragraph(  getCadena_original()  ,Fontssello__aviso));
             cell.setColspan(5);
             cell.setRowspan(2);
-            cell.setFixedHeight(35);
+            //cell.setFixedHeight(35);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setBorderWidthTop(0);
@@ -1645,8 +1649,16 @@ public final class pdfCfd {
                 table.addCell(cell);
             }
             
+            String tipo_fac="";
             
-            cell = new PdfPCell(new Paragraph("EFECTOS FISCALES AL PAGO. PAGO EN UNA SOLA EXHIBICION. ESTE DOCUMENTO ES UNA REPRESENTACION IMPRESA DE UN CFD",Fontssello__aviso));
+            if(getTipo_facturacion().equals("cfditf")){
+                tipo_fac="CFDI";
+            }else{
+                tipo_fac="CFD";
+            }
+                
+            
+            cell = new PdfPCell(new Paragraph("EFECTOS FISCALES AL PAGO. PAGO EN UNA SOLA EXHIBICION. ESTE DOCUMENTO ES UNA REPRESENTACION IMPRESA DE UN "+tipo_fac,Fontssello__aviso));
             cell.setColspan(5);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -2121,7 +2133,7 @@ public final class pdfCfd {
     public String getTipo_facturacion() {
         return tipo_facturacion;
     }
-
+    
     public void setTipo_facturacion(String tipo_facturacion) {
         this.tipo_facturacion = tipo_facturacion;
     }
@@ -2129,11 +2141,12 @@ public final class pdfCfd {
     public String getSello_digital_sat() {
         return sello_digital_sat;
     }
-
+    
     public void setSello_digital_sat(String sello_digital_sat) {
         this.sello_digital_sat = sello_digital_sat;
     }
     
+
     public String getUuid() {
         return uuid;
     }

@@ -1310,6 +1310,21 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     
+    
+    @Override
+    public Integer getIdPrefacturaByIdFactura(Integer id_factura) {
+        String sql_to_query="";
+        
+        sql_to_query = "SELECT erp_prefacturas.id AS id_prefactura FROM fac_docs JOIN erp_prefacturas ON erp_prefacturas.proceso_id=fac_docs.proceso_id WHERE fac_docs.id="+id_factura+" LIMIT 1;";
+        
+        //System.out.println(sql_to_query);
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        Integer id_prefactura = Integer.parseInt(map.get("id_prefactura").toString());
+        return id_prefactura;
+    }
+    
+    
+    
     @Override
     public ArrayList<HashMap<String, String>> getTiposCancelacion() {
         String sql_to_query = "SELECT id, titulo FROM fac_docs_tipos_cancelacion WHERE borrado_logico=false ORDER BY id;";

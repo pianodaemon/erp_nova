@@ -28,6 +28,7 @@ public interface FacturasInterfaceDao {
     
     public String getSerieFolioFactura(Integer id_factura);
     public String getSerieFolioFacturaByIdPrefactura(Integer id_prefactura);
+    public Integer getIdPrefacturaByIdFactura(Integer id_factura);
     
     public Double getTipoCambioActual();
     public ArrayList<HashMap<String, Object>> getValoriva(Integer id_sucursal);

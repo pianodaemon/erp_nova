@@ -6,20 +6,24 @@ package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.ArchivoInformeMensual;
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.cfd.v2.CryptoEngine;
 import com.agnux.cfdi.BeanCancelaCfdi;
 import com.agnux.cfdi.BeanFromCfdiXml;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
+import com.agnux.common.helpers.XmlHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
+import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -626,5 +630,178 @@ public class FacturasController {
     
     
     
+    
+    
+    //Reconstruir el pdf de la factura para CFD y CFDI con Tiembrado Fiscal
+    @RequestMapping(method = RequestMethod.POST, value="/getReconstruirPdfFactura.json")
+    public @ResponseBody HashMap<String,String> getReconstruirPdfFacturaJson(
+            @RequestParam(value="id_factura", required=true) Integer id_factura,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getReconstruirPdfFacturaJson de {0}", FacturasController.class.getName());
+        HashMap<String, String> jsonretorno = new HashMap<String,String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<LinkedHashMap<String,String>> conceptos = new ArrayList<LinkedHashMap<String,String>>();
+        HashMap<String,String> dataFacturaCliente = new HashMap<String,String>();
+        ArrayList<HashMap<String, String>> listaConceptosPdfCfd = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> datosExtrasPdfCfd= new HashMap<String, String>();
+        String generado ="false";
+        String dirSalidas = "";
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        //obtener tipo de facturacion
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura);
+        Integer id_prefactura = this.getFacdao().getIdPrefacturaByIdFactura(id_factura);
+        
+        String proposito = "FACTURA";
+        String fileout="";
+        File file;
+        
+        if(tipo_facturacion.equals("cfd")){
+            dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+            fileout = dirSalidas +"/"+ serieFolio +".pdf";
+            System.out.println("Ruta: " + fileout);
+            file = new File(fileout);
+            if (file.exists()){
+                file.delete();
+            }
+            
+            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ serieFolio +".xml");
+            System.out.println("cadena_xml: "+cadena_xml);
+            try {
+                
+                String cadena_original = this.cadenaOriginal(cadena_xml, id_empresa, id_sucursal);
+                System.out.println("cadena_original: "+cadena_original);
+                
+                String ruta_fichero_llave = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
+                System.out.println("ruta_fichero_llave: "+ruta_fichero_llave);
+                
+                String sello_digital_emisor = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal), cadena_original);
+                System.out.println("sello_digital_emisor: "+sello_digital_emisor);
+                
+                
+                
+                //este es el timbre fiscal, solo es para cfdi con timbre fiscal. Aqui debe ir vacio
+                String sello_digital_sat = "";
+                
+                String uuid = "";
+                
+                conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
+                dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
+                
+                //conceptos para el pdfcfd
+                listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
+                
+                //datos para el pdf
+                datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original, sello_digital_emisor, id_sucursal);
+                datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
+                datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
+                datosExtrasPdfCfd.put("uuid", uuid);
+                
+                //pdf factura
+                pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                
+                generado ="true";
+            } catch (Exception ex) {
+                Logger.getLogger(FacturasController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            
+        }
+        
+        
+        if(tipo_facturacion.equals("cfditf")){
+            dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+            fileout = dirSalidas +"/"+ serieFolio +".pdf";
+            file = new File(fileout);
+            if (file.exists()){
+                file.delete();
+            }
+            
+            
+            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ serieFolio +".xml");
+            System.out.println("cadena_xml: "+cadena_xml);
+            
+            try {
+                
+                String cadena_original = this.cadenaOriginal(cadena_xml, id_empresa, id_sucursal);
+                System.out.println("cadena_original: "+cadena_original);
+                
+                String ruta_fichero_llave = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
+                System.out.println("ruta_fichero_llave: "+ruta_fichero_llave);
+                
+                String sello_digital_emisor = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal), cadena_original);
+                System.out.println("sello_digital_emisor: "+sello_digital_emisor);
+                /*
+                String cadena_original ="";
+                String sello_digital_emisor="";
+                */
+                BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+serieFolio +".xml");
+                
+                //este es el timbre fiscal, solo es para cfdi con timbre fiscal.
+                String sello_digital_sat = pop2.getSelloSat();
+                System.out.println("sello_digital_sat: "+sello_digital_sat);
+                
+                String uuid = pop2.getUuid();
+                System.out.println("uuid: "+uuid);
+                
+                conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
+                dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
+                
+                //conceptos para el pdfcfd
+                listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
+                
+                //datos para el pdf
+                datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original, sello_digital_emisor, id_sucursal);
+                datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
+                datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
+                datosExtrasPdfCfd.put("uuid", uuid);
+                
+                //pdf factura
+                pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                generado ="true";
+                
+            } catch (Exception ex) {
+                Logger.getLogger(FacturasController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            
+        }
+        
+        
+        
+        
+        if(tipo_facturacion.equals("cfdi")){
+            dirSalidas = this.getGralDao().getCfdiSolicitudesDir() + "out/";
+        }
+        
+
+        
+        
+
+        jsonretorno.put("generado", generado);
+        
+        return jsonretorno;
+    }
+        
+    
+    
+    private String cadenaOriginal(String comprobante_sin_firmar, Integer id_empresa, Integer id_sucursal) throws Exception {
+        String valor_retorno = new String();
+        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
+        valor_retorno = XmlHelper.transformar(comprobante_sin_firmar, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
+        
+        return valor_retorno;
+    }
     
 }
