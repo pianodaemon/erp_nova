@@ -217,15 +217,19 @@
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="70">Hora</td>
-                                                                <td width="20"><input type="text" name="hora_visita" style="width:20px;"></td>
+                                                                <td width="40" colspan="3"><input type="text" name="hora_visita" style="width:45px;" value="00:00"></td>
+                                                                <!--
                                                                 <td width="5" align="center">:</td>
                                                                 <td width="20"><input type="text" name="min_visita" style="width:20px;"></td>
+                                                                -->
                                                                 <td width="55">(HH:MM)</td>
                                                                 <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_horavisita"></div></td>
                                                                 <td width="60">Duraci&oacute;n</td>
-                                                                <td width="20"><input type="text" name="hora_duracion" style="width:20px;"></td>
+                                                                <td width="45" colspan="3"><input type="text" name="hora_duracion" style="width:45px;" value="00:00"></td>
+                                                                <!--
                                                                 <td width="5" align="center">:</td>
                                                                 <td width="20"><input type="text" name="min_duracion" style="width:20px;"></td>
+                                                                -->
                                                                 <td width="50">(HH:MM)</td>
                                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_duracionvisita"></div></td>
                                                                 <!--<td width="30"></td>-->
@@ -404,9 +408,11 @@
 																	</tr>
 																	<tr>
 																		<td width="50">Hora</td>
-																		<td width="20"><input type="text" name="hora_proxima_visita" style="width:20px;"></td>
+																		<td width="45" colspan="3" ><input type="text" name="hora_proxima_visita" style="width:45px;" value="00:00"></td>
+																		<!--
 																		<td width="5" align="center">:</td>
 																		<td width="20"><input type="text" name="min_proxima_visita" style="width:20px;"></td>
+																		-->
 																		<td width="55">(HH:MM)</td>
 																		<td width="30"></td>
 																		<td width="60"></td>
