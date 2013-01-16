@@ -14,6 +14,10 @@ public interface CrmInterfaceDao {
     public int countAll(String data_string);
     public HashMap<String, String> selectFunctionValidateAaplicativo(String data, Integer idApp, String extra_data_array);
     public String selectFunctionForThisApp(String campos_data, String extra_data_array);
+    public String selectFunctionForCrmAdmProcesos(String campos_data, String extra_data_array);
+    
+    /*Buscador de contactos*/
+    public ArrayList<HashMap<String, String>> getBuscadorContactos(String nombre, String apellidop, String apellidom, String tipo_contacto, Integer id_empresa);
     
     //metodos para aplicativo de Motivos de Visita
     public ArrayList<HashMap<String, String>> getMotivoVisita_Datos(Integer id);
@@ -35,5 +39,13 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Motivos(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Calificaciones(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Seguimientos(Integer id_empresa);
+    
+    
+    //metodos para aplicativo de Oportunidades
+    public ArrayList<HashMap<String, Object>> getOportunidades_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc,Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getOportunidad_Datos(Integer id);
+    public ArrayList<HashMap<String, String>> getTiposOportunidad();
+    public ArrayList<HashMap<String, String>> getEtapasVenta();
+
     
 }

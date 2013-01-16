@@ -161,7 +161,7 @@ public class CrmRegistroVisitasController {
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getclientsdfJson de {0}", ClientsDirFiscalesController.class.getName());
+        log.log(Level.INFO, "Ejecutando getRegistroVisitaJson de {0}", CrmRegistroVisitasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
@@ -204,37 +204,141 @@ public class CrmRegistroVisitasController {
     
     
     
-    
-    /*
-    public void genera_pdf(Integer id_empresa) {
-        HashMap<String,String> dataFacturaCliente = new HashMap<String,String>();
-        Integer id_prefactura=0;
-        Integer id_emp=0;
-        Integer id_suc=0;
-        //obtiene serie_folio de la factura que se acaba de guardar
-        String serieFolio = "P38";
+    //obtiene los Contactos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_buscador_contactos.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorContactoJson(
+            @RequestParam(value="buscador_nombre", required=true) String nombre,
+            @RequestParam(value="buscador_apellidop", required=true) String apellidop,
+            @RequestParam(value="buscador_apellidom", required=true) String apellidom,
+            @RequestParam(value="buscador_tipo_contacto", required=true) String tipo_contacto,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
         
-        String cadena_original=this.getBfCfdiTf().getCadenaOriginal();
+        log.log(Level.INFO, "Ejecutando getBuscadorContactoJson de {0}", CrmRegistroVisitasController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> contactos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
         
-        String sello_digital = this.getBfCfdiTf().getSelloDigital();
-        //System.out.println("sello_digital:"+sello_digital);
+        //decodificar id de usuario
+        userDat = this.getHomeDao().getUserById(Integer.parseInt(Base64Coder.decodeString(id_user)));
         
-        //este es el timbre fiscal, se debe extraer del xml que nos devuelve el web service del timbrado
-        String sello_digital_sat = this.getBfCfdiTf().getSelloDigitalSat();
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        //conceptos para el pdfcfd
-        listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
+        nombre = "%"+StringHelper.isNullString(String.valueOf(nombre))+"%";
+        apellidop = "%"+StringHelper.isNullString(String.valueOf(apellidop))+"%";
+        apellidom = "%"+StringHelper.isNullString(String.valueOf(apellidom))+"%";
         
-        //datos para el pdf
-        datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
-        datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
-        datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
+        contactos = this.getCrmDao().getBuscadorContactos(nombre, apellidop, apellidom,tipo_contacto, id_empresa);
         
-        //pdf factura
-        pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                      
+        jsonretorno.put("contactos", contactos);
+        
+        return jsonretorno;
     }
-    */
+    
+    
+    
+    //crear y editar un cliente
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+        @RequestParam(value="identificador", required=true) String identificador,
+        @RequestParam(value="select_agente", required=true) String select_agente,
+        @RequestParam(value="id_contacto", required=true) String id_contacto,
+        @RequestParam(value="fecha", required=true) String fecha,
+        @RequestParam(value="hora_visita", required=true) String hora_visita,
+        @RequestParam(value="hora_duracion", required=true) String hora_duracion,
+        @RequestParam(value="select_motivo_visita", required=true) String select_motivo_visita,
+        @RequestParam(value="select_calif_visita", required=true) String select_calif_visita,
+        @RequestParam(value="select_tipo_seguimiento", required=true) String select_tipo_seguimiento,
+        @RequestParam(value="select_oportunidad", required=true) String select_oportunidad,
+        @RequestParam(value="recusrsos_visita", required=true) String recusrsos_visita,
+        @RequestParam(value="resultado_visita", required=true) String resultado_visita,
+        @RequestParam(value="observaciones_visita", required=true) String observaciones_visita,
+        @RequestParam(value="fecha_proxima_visita", required=true) String fecha_proxima_visita,
+        @RequestParam(value="hora_proxima_visita", required=true) String hora_proxima_visita,
+        @RequestParam(value="comentarios_proxima_visita", required=true) String comentarios_proxima_visita,
+        Model model,@ModelAttribute("user") UserSessionData user
+        ) {
+        Integer app_selected = 115;//Aplicativo de Registro de Visitas
+        String command_selected = "new";
+        Integer id_usuario= user.getUserId();//variable para el id  del usuario
+        String arreglo[];
+        String extra_data_array = "'sin datos'";
+        String actualizo = "0";
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        
+        HashMap<String, String> succes = new HashMap<String, String>();
+        
+        if( identificador.equals("0") ){
+            command_selected = "new";
+        }else{
+            command_selected = "edit";
+        }
+        
+        String data_string = 
+        app_selected
+        +"___"+command_selected
+        +"___"+id_usuario
+        +"___"+identificador
+        +"___"+select_agente
+        +"___"+id_contacto
+        +"___"+fecha
+        +"___"+hora_visita
+        +"___"+hora_duracion
+        +"___"+select_motivo_visita
+        +"___"+select_calif_visita
+        +"___"+select_tipo_seguimiento
+        +"___"+select_oportunidad
+        +"___"+recusrsos_visita
+        +"___"+resultado_visita
+        +"___"+observaciones_visita
+        +"___"+fecha_proxima_visita
+        +"___"+hora_proxima_visita
+        +"___"+comentarios_proxima_visita;
+        
+        System.out.println("data_string: "+data_string);
+        
+        succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        if( String.valueOf(succes.get("success")).equals("true") ){
+            actualizo = this.getCrmDao().selectFunctionForCrmAdmProcesos(data_string, extra_data_array);
+        }
+        
+        jsonretorno.put("success",String.valueOf(succes.get("success")));
+        
+        log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
+    
+    
+    
+    //cambiar a borrado logico un registro
+    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
+    public @ResponseBody HashMap<String, String> logicDeleteJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        System.out.println("Borrado logico de Registro de Visita");
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        Integer app_selected = 115;//Aplicativo de Registro de Visitas
+        String command_selected = "delete";
+        String extra_data_array = "'sin datos'";
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        
+        jsonretorno.put("success",String.valueOf( this.getCrmDao().selectFunctionForCrmAdmProcesos(data_string,extra_data_array)) );
+        
+        return jsonretorno;
+    }
+    
     
     
     

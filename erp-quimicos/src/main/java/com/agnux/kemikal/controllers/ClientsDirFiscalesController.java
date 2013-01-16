@@ -250,7 +250,7 @@ public class ClientsDirFiscalesController {
     
     
     
-    //crear y editar un cliente
+    //crear y editar la Direccion Fiscal de un cliente
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
         @RequestParam(value="identificador", required=true) String identificador,
