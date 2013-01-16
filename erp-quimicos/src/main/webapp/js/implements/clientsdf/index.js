@@ -567,11 +567,6 @@ $(function() {
 					$tel2.attr({'value' : entry['Datos']['0']['telefono2']});
 					$ext2.attr({'value' : entry['Datos']['0']['extension2']});
 					
-					$select_pais = $('#forma-clientsdf-window').find('select[name=select_pais]');
-					$select_estado = $('#forma-clientsdf-window').find('select[name=select_estado]');
-					$select_municipio = $('#forma-clientsdf-window').find('select[name=select_municipio]');
-					
-					
 					//Alimentando los campos select de las pais
 					$select_pais.children().remove();
 					var pais_hmtl = '<option value="0" >[-Seleccionar Pais-]</option>';
@@ -583,8 +578,6 @@ $(function() {
 						}
 					});
 					$select_pais.append(pais_hmtl);
-					
-					
 					
 					//Alimentando los campos select del estado
 					$select_estado.children().remove();

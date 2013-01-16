@@ -297,129 +297,118 @@ $(function() {
 	}
 	
 	
+	/*funcion para colorear la fila en la que pasa el puntero*/
+	$colorea_tr_grid = function($tabla){
+		$tabla.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+		$tabla.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+		
+		$('tr:odd' , $tabla).hover(function () {
+			$(this).find('td').css({background : '#FBD850'});
+		}, function() {
+			$(this).find('td').css({'background-color':'#e7e8ea'});
+		});
+		$('tr:even' , $tabla).hover(function () {
+			$(this).find('td').css({'background-color':'#FBD850'});
+		}, function() {
+			$(this).find('td').css({'background-color':'#FFFFFF'});
+		});
+	};
+        
 	
-	
-	//buscador de clientes
-	$busca_clientes = function(razon_social_cliente){
-		$(this).modalPanel_Buscacliente();
-		var $dialogoc =  $('#forma-buscacliente-window');
+	//buscador de Contactos
+	$busca_contactos = function(busqueda_inicial ){
+		//limpiar_campos_grids();
+		$(this).modalPanel_BuscaContacto();
+		var $dialogoc =  $('#forma-buscacontactos-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
-		$dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
-		$('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -180});
+		$dialogoc.append($('div.buscador_contactos').find('table.formaBusqueda_contactos').clone());
 		
-		var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
+		$('#forma-buscacontactos-window').css({"margin-left": -180, 	"margin-top": -180});
 		
-		var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
-		var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('#cencela');
+		var $tabla_resultados = $('#forma-buscacontactos-window').find('#tabla_resultado');
 		
-		var $cadena_buscar = $('#forma-buscacliente-window').find('input[name=cadena_buscar]');
-		var $select_filtro_por = $('#forma-buscacliente-window').find('select[name=filtropor]');
+		var $campo_buscador_nombre = $('#forma-buscacontactos-window').find('input[name=buscador_nombre]');
+		var $campo_buscador_apellidop = $('#forma-buscacontactos-window').find('input[name=buscador_apellidop]');
+		var $campo_buscador_apellidom = $('#forma-buscacontactos-window').find('input[name=buscador_apellidom]');
+		var $select_buscador_tipo_contacto = $('#forma-buscacontactos-window').find('select[name=buscador_tipo_contacto]');
+		
+		var $buscar_plugin_contacto = $('#forma-buscacontactos-window').find('#busca_contacto_modalbox');
+		var $cancelar_plugin_busca_contacto = $('#forma-buscacontactos-window').find('#cencela');
 		
 		//funcionalidad botones
-		$busca_cliente_modalbox.mouseover(function(){
+		$buscar_plugin_contacto.mouseover(function(){
 			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
 		});
-		$busca_cliente_modalbox.mouseout(function(){
+		$buscar_plugin_contacto.mouseout(function(){
 			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
 		});
-		
-		$cancelar_plugin_busca_cliente.mouseover(function(){
+		   
+		$cancelar_plugin_busca_contacto.mouseover(function(){
 			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
 		});
-		
-		$cancelar_plugin_busca_cliente.mouseout(function(){
+		$cancelar_plugin_busca_contacto.mouseout(function(){
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
-		var seleccionado='';
-		if(razon_social_cliente != ''){
-			//asignamos la Razon Social del Cliente al campo Nombre
-			$cadena_buscar.val(razon_social_cliente);
-			seleccionado='selected="yes"';
-		}
+		$campo_buscador_nombre.val(busqueda_inicial);
 		
-		var html = '';
-		$select_filtro_por.children().remove();
-		html='<option value="0">[-- Opcion busqueda --]</option>';
-		html+='<option value="1">No. de control</option>';
-		html+='<option value="2">RFC</option>';
-		html+='<option value="3" '+seleccionado+'>Razon social</option>';
-		html+='<option value="4">CURP</option>';
-		html+='<option value="5">Alias</option>';
-		$select_filtro_por.append(html);
-		
-		
-		
-		//click buscar clientes
-		$busca_cliente_modalbox.click(function(event){
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorClientes.json';
-			$arreglo = {'cadena':$cadena_buscar.val(),
-						 'filtro':$select_filtro_por.val(),
-						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-						}
-						
+		//click buscar productos
+		$buscar_plugin_contacto.click(function(event){
+                    
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_contactos.json';
+			$arreglo = {'buscador_nombre':$campo_buscador_nombre.val(),'buscador_apellidop':$campo_buscador_apellidop.val(),
+			'buscador_apellidom':$campo_buscador_apellidom.val(),'buscador_tipo_contacto':$select_buscador_tipo_contacto.val(),'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+			
 			var trr = '';
 			$tabla_resultados.children().remove();
 			$.post(input_json,$arreglo,function(entry){
-				$.each(entry['Clientes'],function(entryIndex,cliente){
+				
+				$.each(entry['contactos'],function(entryIndex,prospecto){
 					trr = '<tr>';
-						trr += '<td width="80">';
-							trr += '<input type="hidden" id="idclient" value="'+cliente['id']+'">';
-							trr += '<input type="hidden" id="direccion" value="'+cliente['direccion']+'">';
-							trr += '<input type="hidden" id="id_moneda" value="'+cliente['moneda_id']+'">';
-							trr += '<input type="hidden" id="moneda" value="'+cliente['moneda']+'">';
-							trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
+						trr += '<td width="280px">';
+							trr += '<span class="contacto_buscador">'+prospecto['contacto']+'</span>';
+							trr += '<input type="hidden" id="id_contacto_buscador" value="'+prospecto['id']+'">';
 						trr += '</td>';
-						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
-						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
+						trr += '<td width="210px"><span class="razon_social_buscador">'+prospecto['razon_social']+'</span></td>';
+						trr += '<td width="110px"><span class="rfc_buscador">'+prospecto['rfc']+'</span></td>';
 					trr += '</tr>';
-					
 					$tabla_resultados.append(trr);
 				});
 				
-				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
-				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
-
-				$('tr:odd' , $tabla_resultados).hover(function () {
-					$(this).find('td').css({background : '#FBD850'});
-				}, function() {
-						//$(this).find('td').css({'background-color':'#DDECFF'});
-					$(this).find('td').css({'background-color':'#e7e8ea'});
-				});
-				$('tr:even' , $tabla_resultados).hover(function () {
-					$(this).find('td').css({'background-color':'#FBD850'});
-				}, function() {
-					$(this).find('td').css({'background-color':'#FFFFFF'});
-				});
+				$colorea_tr_grid($tabla_resultados);
 				
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
-					$('#forma-crmregistrovisitas-window').find('input[name=id_cliente]').val($(this).find('#idclient').val());
-					$('#forma-crmregistrovisitas-window').find('input[name=rfc]').val($(this).find('span.rfc').html());
-					$('#forma-crmregistrovisitas-window').find('input[name=cliente]').val($(this).find('span.razon').html());
-					$('#forma-crmregistrovisitas-window').find('input[name=nocontrol]').val($(this).find('span.no_control').html());
+					var id_contacto=$(this).find('#id_contacto_buscador').val();
+					var contacto_buscador=$(this).find('span.contacto_buscador').html();
+					var razon_social_buscador=$(this).find('span.razon_social_buscador').html();
+					var rfc_buscador=$(this).find('span.rfc_buscador').html();
 					
-					//elimina la ventana de busqueda
+					$('#forma-crmregistrovisitas-window').find('input[name=id_contacto]').val(id_contacto);
+					$('#forma-crmregistrovisitas-window').find('input[name=contacto]').val(contacto_buscador);
+					
+					//oculta la ventana de busqueda
 					var remove = function() {$(this).remove();};
-					$('#forma-buscacliente-overlay').fadeOut(remove);
-					//asignar el enfoque al campo sku del producto
+					$('#forma-buscacontactos-overlay').fadeOut(remove);
 				});
-
 			});
-		});//termina llamada json
-		
-		
-		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
-		if($cadena_buscar.val() != ''){
-			$busca_cliente_modalbox.trigger('click');
+		});
+	
+		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
+		if(busqueda_inicial != ''){
+			$buscar_plugin_contacto.trigger('click');
 		}
 		
-		$cancelar_plugin_busca_cliente.click(function(event){
+		$cancelar_plugin_busca_contacto.click(function(event){
+			//event.preventDefault();
 			var remove = function() {$(this).remove();};
-			$('#forma-buscacliente-overlay').fadeOut(remove);
+			$('#forma-buscacontactos-overlay').fadeOut(remove);
 		});
-	}//termina buscador de clientes
-
+                
+	}//termina buscador de Contactos
+	
+	
+	
 	
 	
 	//nuevo
@@ -550,65 +539,10 @@ $(function() {
 			
 			//Alimentando los campos select de oportunidad
 			$select_oportunidad.children().remove();
-			var oportunidad_hmtl = '<option value="1">Si</option>';
+			var oportunidad_hmtl = '<option value="1" selected="yes">Si</option>';
 			oportunidad_hmtl += '<option value="0">No</option>';
 			$select_oportunidad.append(oportunidad_hmtl);
 			
-																				
-																		
-			/*
-			//Alimentando los campos select de las pais
-			$select_pais.children().remove();
-			var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar Pais-]</option>';
-			$.each(entry['Paises'],function(entryIndex,pais){
-				pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
-			});
-			$select_pais.append(pais_hmtl);
-			
-			var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>';
-			$select_estado.children().remove();
-			$select_estado.append(entidad_hmtl);
-			
-			var localidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
-			$select_municipio.children().remove();
-			$select_municipio.append(localidad_hmtl);
-			
-			
-			//carga select estados al cambiar el pais
-			$select_pais.change(function(){
-				var valor_pais = $(this).val();
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEstados.json';
-				$arreglo = {'id_pais':valor_pais};
-				$.post(input_json,$arreglo,function(entry){
-					$select_estado.children().remove();
-					var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>'
-					$.each(entry['Estados'],function(entryIndex,entidad){
-						entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-					});
-					$select_estado.append(entidad_hmtl);
-					var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
-					$select_municipio.children().remove();
-					$select_municipio.append(trama_hmtl_localidades);
-				},"json");//termina llamada json
-			});
-			
-			//carga select municipios al cambiar el estado
-			$select_estado.change(function(){
-				var valor_entidad = $(this).val();
-				var valor_pais = $select_pais.val();
-				
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMunicipios.json';
-				$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
-				$.post(input_json,$arreglo,function(entry){
-					$select_municipio.children().remove();
-					var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>'
-					$.each(entry['Municipios'],function(entryIndex,mun){
-						trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-					});
-					$select_municipio.append(trama_hmtl_localidades);
-				},"json");//termina llamada json
-			});
-			*/
 		},"json");//termina llamada json
         
         //$('.input1').TimepickerInputMask();
@@ -693,16 +627,11 @@ $(function() {
         
         
         
-        
         //buscar contacto
         $busca_contacto.click(function(event){
 			event.preventDefault();
-			$busca_clientes($cliente.val());
+			$busca_contactos($contacto.val());
         });
-        
-        
-        
-        
         
         
         
@@ -761,35 +690,35 @@ $(function() {
 			$tabs_li_funxionalidad();
                         
 			var $identificador = $('#forma-crmregistrovisitas-window').find('input[name=identificador]');
-			var $busca_cliente = $('#forma-crmregistrovisitas-window').find('a[href*=busca_cliente]');
-			var $id_cliente = $('#forma-crmregistrovisitas-window').find('input[name=id_cliente]');
-			var $cliente = $('#forma-crmregistrovisitas-window').find('input[name=cliente]');
-			var $nocontrol = $('#forma-crmregistrovisitas-window').find('input[name=nocontrol]');
-			var $rfc = $('#forma-crmregistrovisitas-window').find('input[name=rfc]');
-			var $calle = $('#forma-crmregistrovisitas-window').find('input[name=calle]');
-			var $numero_int = $('#forma-crmregistrovisitas-window').find('input[name=numero_int]');
-			var $numero_ext = $('#forma-crmregistrovisitas-window').find('input[name=numero_ext]');
-			var $entrecalles = $('#forma-crmregistrovisitas-window').find('input[name=entrecalles]');
-			var $colonia = $('#forma-crmregistrovisitas-window').find('input[name=colonia]');
-			var $cp = $('#forma-crmregistrovisitas-window').find('input[name=cp]');
-			var $select_pais = $('#forma-crmregistrovisitas-window').find('select[name=select_pais]');
-			var $select_estado = $('#forma-crmregistrovisitas-window').find('select[name=select_estado]');
-			var $select_municipio = $('#forma-crmregistrovisitas-window').find('select[name=select_municipio]');
+			var $folio = $('#forma-crmregistrovisitas-window').find('input[name=folio]');
+			var $select_agente = $('#forma-crmregistrovisitas-window').find('select[name=select_agente]');
+			var $id_contacto = $('#forma-crmregistrovisitas-window').find('input[name=id_contacto]');
 			var $contacto = $('#forma-crmregistrovisitas-window').find('input[name=contacto]');
-			var $email = $('#forma-crmregistrovisitas-window').find('input[name=email]');
-			var $tel1 = $('#forma-crmregistrovisitas-window').find('input[name=tel1]');
-			var $ext1 = $('#forma-crmregistrovisitas-window').find('input[name=ext1]');
-			var $fax = $('#forma-crmregistrovisitas-window').find('input[name=fax]');
-			var $tel2 = $('#forma-crmregistrovisitas-window').find('input[name=tel2]');
-			var $ext2 = $('#forma-crmregistrovisitas-window').find('input[name=ext2]');
+			var $busca_contacto = $('#forma-crmregistrovisitas-window').find('#busca_contacto');
+			
+			var $fecha = $('#forma-crmregistrovisitas-window').find('input[name=fecha]');
+			var $hora_visita = $('#forma-crmregistrovisitas-window').find('input[name=hora_visita]');
+			var $hora_duracion = $('#forma-crmregistrovisitas-window').find('input[name=hora_duracion]');
+			
+			var $select_motivo_visita = $('#forma-crmregistrovisitas-window').find('select[name=select_motivo_visita]');
+			var $select_calif_visita = $('#forma-crmregistrovisitas-window').find('select[name=select_calif_visita]');
+			var $select_tipo_seguimiento = $('#forma-crmregistrovisitas-window').find('select[name=select_tipo_seguimiento]');
+			var $select_oportunidad = $('#forma-crmregistrovisitas-window').find('select[name=select_oportunidad]');
+			
+			var $recusrsos_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=recusrsos_visita]');
+			var $resultado_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=resultado_visita]');
+			var $observaciones_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=observaciones_visita]');
+			
+			var $fecha_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=fecha_proxima_visita]');
+			var $hora_proxima_visita = $('#forma-crmregistrovisitas-window').find('input[name=hora_proxima_visita]');
+			var $comentarios_proxima_visita = $('#forma-crmregistrovisitas-window').find('textarea[name=comentarios_proxima_visita]');
                         
 			var $cerrar_plugin = $('#forma-crmregistrovisitas-window').find('#close');
 			var $cancelar_plugin = $('#forma-crmregistrovisitas-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-crmregistrovisitas-window').find('#submit');
 			
-			$nocontrol.css({'background' : '#DDDDDD'});
-			$rfc.css({'background' : '#DDDDDD'});
-			$busca_cliente.hide();
+			$folio.css({'background' : '#DDDDDD'});
+			$busca_contacto.hide();
 			
 			if(accion_mode == 'edit'){
                                 
@@ -798,7 +727,7 @@ $(function() {
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
-						jAlert("La direcci&oacute;n fue dada de alta con &eacute;xito", 'Atencion!');
+						jAlert("El registro se actualiz&oacute; con &eacute;xito", 'Atencion!');
 						var remove = function() {$(this).remove();};
 						$('#forma-crmregistrovisitas-overlay').fadeOut(remove);
 						//refresh_table();
@@ -829,107 +758,86 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$identificador.attr({'value' : entry['Datos']['0']['identificador']});
-					$id_cliente.attr({'value' : entry['Datos']['0']['id_cliente']});
-					$cliente.attr({'value' : entry['Datos']['0']['cliente']});
-					$nocontrol.attr({'value' : entry['Datos']['0']['numero_control']});
-					$rfc.attr({'value' : entry['Datos']['0']['rfc']});
-					$calle.attr({'value' : entry['Datos']['0']['calle']});
-					$numero_int.attr({'value' : entry['Datos']['0']['numero_interior']});
-					$numero_ext.attr({'value' : entry['Datos']['0']['numero_exterior']});
-					$entrecalles.attr({'value' : entry['Datos']['0']['entre_calles']});
-					$colonia.attr({'value' : entry['Datos']['0']['colonia']});
-					$cp.attr({'value' : entry['Datos']['0']['cp']});
-					$contacto.attr({'value' : entry['Datos']['0']['contacto']});
-					$email.attr({'value' : entry['Datos']['0']['email']});
-					$tel1.attr({'value' : entry['Datos']['0']['telefono1']});
-					$ext1.attr({'value' : entry['Datos']['0']['extension1']});
-					$fax.attr({'value' : entry['Datos']['0']['fax']});
-					$tel2.attr({'value' : entry['Datos']['0']['telefono2']});
-					$ext2.attr({'value' : entry['Datos']['0']['extension2']});
+					$identificador.attr({'value' : entry['Datos']['0']['id']});
+					$folio.attr({'value' : entry['Datos']['0']['folio']});
 					
-					$select_pais = $('#forma-crmregistrovisitas-window').find('select[name=select_pais]');
-					$select_estado = $('#forma-crmregistrovisitas-window').find('select[name=select_estado]');
-					$select_municipio = $('#forma-crmregistrovisitas-window').find('select[name=select_municipio]');
+					$id_contacto.attr({'value' : entry['Datos']['0']['contacto_id']});
+					$contacto.attr({'value' : entry['Datos']['0']['nombre_contacto']});
+
+					$fecha.attr({'value' : entry['Datos']['0']['fecha']});
+					$hora_visita.attr({'value' : entry['Datos']['0']['hora']});
+					$hora_duracion.attr({'value' : entry['Datos']['0']['duracion']});
+
+					$recusrsos_visita.text(entry['Datos']['0']['recursos_utilizados']);
+					$resultado_visita.text(entry['Datos']['0']['resultado']);
+					$observaciones_visita.text(entry['Datos']['0']['observaciones']);
 					
+					$fecha_proxima_visita.attr({'value' : entry['Datos']['0']['fecha_sig_visita']});
+					$hora_proxima_visita.attr({'value' : entry['Datos']['0']['hora_sig_visita']});
+					$comentarios_proxima_visita.text(entry['Datos']['0']['comentarios_sig_visita']);
 					
-					//Alimentando los campos select de las pais
-					$select_pais.children().remove();
-					var pais_hmtl = '<option value="0" >[-Seleccionar Pais-]</option>';
-					$.each(entry['Paises'],function(entryIndex,pais){
-						if(pais['cve_pais'] == entry['Datos']['0']['pais_id']){
-							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
+					//Alimentando los campos select_agente
+					$select_agente.children().remove();
+					var agente_hmtl='';
+					$.each(entry['Agentes'],function(entryIndex,agente){
+						if(parseInt(agente['id'])==parseInt(entry['Datos'][0]['empleado_id'])){
+							agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
 						}else{
-							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
+							agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
 						}
 					});
-					$select_pais.append(pais_hmtl);
+					$select_agente.append(agente_hmtl);
 					
-					
-					
-					//Alimentando los campos select del estado
-					$select_estado.children().remove();
-					var entidad_hmtl = '<option value="00"  >[-Seleccionar Estado--]</option>';
-					$.each(entry['Estados'],function(entryIndex,entidad){
-						if(entidad['cve_ent'] == entry['Datos']['0']['estado_id']){
-							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
+					//Alimentando los campos select de Motivos
+					$select_motivo_visita.children().remove();
+					var motivo_hmtl = '';
+					$.each(entry['Motivos'],function(entryIndex,motivo){
+						if(parseInt(motivo['id'])==parseInt(entry['Datos'][0]['motivo_id'])){
+							motivo_hmtl += '<option value="' + motivo['id'] + '" selected="yes">' + motivo['descripcion'] + '</option>';
 						}else{
-							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
+							//motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['descripcion'] + '</option>';
 						}
 					});
-					$select_estado.append(entidad_hmtl);
+					$select_motivo_visita.append(motivo_hmtl);
 					
-					
-					//Alimentando los campos select de los municipios
-					$select_municipio.children().remove();
-					var localidad_hmtl = '<option value="00" >[-Seleccionar Municipio-]</option>';
-					$.each(entry['Municipios'],function(entryIndex,mun){
-						if(mun['cve_mun'] == entry['Datos']['0']['municipio_id']){
-							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
+					//Alimentando los campos select de Calificaciones de Visita
+					$select_calif_visita.children().remove();
+					var calif_hmtl = '';
+					$.each(entry['Calificaciones'],function(entryIndex,calif){
+						if(parseInt(calif['id'])==parseInt(entry['Datos'][0]['calificacion_id'])){
+							calif_hmtl += '<option value="' + calif['id'] + '" selected="yes">' + calif['titulo'] + '</option>';
 						}else{
-							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
+							//calif_hmtl += '<option value="' + calif['id'] + '"  >' + calif['titulo'] + '</option>';
 						}
 					});
-					$select_municipio.append(localidad_hmtl);
+					$select_calif_visita.append(calif_hmtl);
 					
-					
-					//carga select estados al cambiar el pais
-					$select_pais.change(function(){
-						var valor_pais = $(this).val();
-						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEstados.json';
-						$arreglo = {'id_pais':valor_pais};
-						$.post(input_json,$arreglo,function(entry){
-							$select_estado.children().remove();
-							var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>'
-							$.each(entry['Estados'],function(entryIndex,entidad){
-								entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-							});
-							$select_estado.append(entidad_hmtl);
-							var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
-							$select_municipio.children().remove();
-							$select_municipio.append(trama_hmtl_localidades);
-						},"json");//termina llamada json
+					//Alimentando los campos select de Seguimiento
+					$select_tipo_seguimiento.children().remove();
+					var seguimiento_hmtl = '';
+					$.each(entry['Seguimientos'],function(entryIndex,seg){
+						if(parseInt(seg['id'])==parseInt(entry['Datos'][0]['seguimiento_id'])){
+							seguimiento_hmtl += '<option value="' + seg['id'] + '" selected="yes">' + seg['titulo'] + '</option>';
+						}else{
+							//seguimiento_hmtl += '<option value="' + seg['id'] + '"  >' + seg['titulo'] + '</option>';
+						}
 					});
+					$select_tipo_seguimiento.append(seguimiento_hmtl);
 					
-					//carga select municipios al cambiar el estado
-					$select_estado.change(function(){
-						var valor_entidad = $(this).val();
-						var valor_pais = $select_pais.val();
-						
-						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMunicipios.json';
-						$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
-						$.post(input_json,$arreglo,function(entry){
-							$select_municipio.children().remove();
-							var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>'
-							$.each(entry['Municipios'],function(entryIndex,mun){
-								trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-							});
-							$select_municipio.append(trama_hmtl_localidades);
-						},"json");//termina llamada json
-					});
+					//Alimentando los campos select de oportunidad
+					$select_oportunidad.children().remove();
+					var oportunidad_hmtl ='';
+					if(parseInt(entry['Datos'][0]['deteccion_oportunidad']) == 1){
+						oportunidad_hmtl= '<option value="1" selected="yes">Si</option>';
+						oportunidad_hmtl += '<option value="0">No</option>';
+					}else{
+						oportunidad_hmtl= '<option value="1">Si</option>';
+						oportunidad_hmtl += '<option value="0" selected="yes">No</option>';
+					}
+					$select_oportunidad.append(oportunidad_hmtl);
 					
 				},"json");//termina llamada json
-                                
+				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};

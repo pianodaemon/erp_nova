@@ -1989,8 +1989,8 @@ $(function() {
 					$observaciones.text(entry['datosPedido']['0']['observaciones']);
 					$observaciones_original.val(entry['datosPedido']['0']['observaciones']);
 					
-                                        $orden_compra.val(entry['datosPedido']['0']['orden_compra']);
-                                        $orden_compra_original.val(entry['datosPedido']['0']['orden_compra']);
+					$orden_compra.val(entry['datosPedido']['0']['orden_compra']);
+					$orden_compra_original.val(entry['datosPedido']['0']['orden_compra']);
                     
 					$transporte.val(entry['datosPedido']['0']['transporte']);
 					$transporte_original.val(entry['datosPedido']['0']['transporte']);
