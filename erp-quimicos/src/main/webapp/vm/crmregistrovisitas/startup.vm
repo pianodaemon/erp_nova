@@ -7,10 +7,12 @@
 		
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/crmregistrovisitas/formaCrmRegistroVisitas.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/crmregistrovisitas/formaBuscaContactos.css" type="text/css" />
         
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/crmregistrovisitas/modalboxCrmRegistroVisitas.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/crmregistrovisitas/modalboxBuscaContactos.js"></script>
         
         <script type="text/javascript" src="../../js/implements/crmregistrovisitas/index.js" ></script>
         
