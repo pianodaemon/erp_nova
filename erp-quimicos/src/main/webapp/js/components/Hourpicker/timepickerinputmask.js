@@ -21,7 +21,7 @@
            // seconds:	true,
             spinners:	false,
             separator:	':',
-            currentHour:	null,
+            currentHour:	true,
             bgcolor:	'#fff',
             arrowColor:	'#000'
         }, options);

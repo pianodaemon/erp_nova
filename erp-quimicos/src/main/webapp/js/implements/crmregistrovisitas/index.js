@@ -458,6 +458,9 @@ $(function() {
 		$folio.css({'background' : '#DDDDDD'});
 		$identificador.attr({'value' : 0});
 		$id_contacto.attr({'value' : 0});
+		$hora_visita.attr({'value' : '00:00'});
+		$hora_duracion.attr({'value' : '00:00'});
+		$hora_proxima_visita.attr({'value' : '00:00'});
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("La visita se registr&oacute; con &eacute;xito", 'Atencion!');
@@ -717,8 +720,12 @@ $(function() {
 			var $cancelar_plugin = $('#forma-crmregistrovisitas-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-crmregistrovisitas-window').find('#submit');
 			
+			
 			$folio.css({'background' : '#DDDDDD'});
-			$busca_contacto.hide();
+			$hora_visita.attr({'value' : '00:00'});
+			$hora_duracion.attr({'value' : '00:00'});
+			$hora_proxima_visita.attr({'value' : '00:00'});
+			//$busca_contacto.hide();
 			
 			if(accion_mode == 'edit'){
                                 
@@ -766,14 +773,17 @@ $(function() {
 
 					$fecha.attr({'value' : entry['Datos']['0']['fecha']});
 					$hora_visita.attr({'value' : entry['Datos']['0']['hora']});
+					$hora_visita.TimepickerInputMask();
 					$hora_duracion.attr({'value' : entry['Datos']['0']['duracion']});
-
+					$hora_duracion.TimepickerInputMask();
+				
 					$recusrsos_visita.text(entry['Datos']['0']['recursos_utilizados']);
 					$resultado_visita.text(entry['Datos']['0']['resultado']);
 					$observaciones_visita.text(entry['Datos']['0']['observaciones']);
 					
 					$fecha_proxima_visita.attr({'value' : entry['Datos']['0']['fecha_sig_visita']});
 					$hora_proxima_visita.attr({'value' : entry['Datos']['0']['hora_sig_visita']});
+					$hora_proxima_visita.TimepickerInputMask();
 					$comentarios_proxima_visita.text(entry['Datos']['0']['comentarios_sig_visita']);
 					
 					//Alimentando los campos select_agente
@@ -795,7 +805,7 @@ $(function() {
 						if(parseInt(motivo['id'])==parseInt(entry['Datos'][0]['motivo_id'])){
 							motivo_hmtl += '<option value="' + motivo['id'] + '" selected="yes">' + motivo['descripcion'] + '</option>';
 						}else{
-							//motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['descripcion'] + '</option>';
+							motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['descripcion'] + '</option>';
 						}
 					});
 					$select_motivo_visita.append(motivo_hmtl);
@@ -807,7 +817,7 @@ $(function() {
 						if(parseInt(calif['id'])==parseInt(entry['Datos'][0]['calificacion_id'])){
 							calif_hmtl += '<option value="' + calif['id'] + '" selected="yes">' + calif['titulo'] + '</option>';
 						}else{
-							//calif_hmtl += '<option value="' + calif['id'] + '"  >' + calif['titulo'] + '</option>';
+							calif_hmtl += '<option value="' + calif['id'] + '"  >' + calif['titulo'] + '</option>';
 						}
 					});
 					$select_calif_visita.append(calif_hmtl);
@@ -819,7 +829,7 @@ $(function() {
 						if(parseInt(seg['id'])==parseInt(entry['Datos'][0]['seguimiento_id'])){
 							seguimiento_hmtl += '<option value="' + seg['id'] + '" selected="yes">' + seg['titulo'] + '</option>';
 						}else{
-							//seguimiento_hmtl += '<option value="' + seg['id'] + '"  >' + seg['titulo'] + '</option>';
+							seguimiento_hmtl += '<option value="' + seg['id'] + '"  >' + seg['titulo'] + '</option>';
 						}
 					});
 					$select_tipo_seguimiento.append(seguimiento_hmtl);
@@ -837,6 +847,89 @@ $(function() {
 					$select_oportunidad.append(oportunidad_hmtl);
 					
 				},"json");//termina llamada json
+				
+				
+				//buscar contacto
+				$busca_contacto.click(function(event){
+					event.preventDefault();
+					$busca_contactos($contacto.val());
+				});
+				
+				
+				//fecha de la visita
+				$fecha.click(function (s){
+					var a=$('div.datepicker');
+					a.css({'z-index':100});
+				});
+					
+				$fecha.DatePicker({
+					format:'Y-m-d',
+					date: $fecha.val(),
+					current: $fecha.val(),
+					starts: 1,
+					position: 'bottom',
+					locale: {
+						days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+						daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+						daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+						months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+						monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+						weekMin: 'se'
+					},
+					onChange: function(formated, dates){
+						var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+						$fecha.val(formated);
+						if (formated.match(patron) ){
+							var valida_fecha=mayor($fecha.val(),mostrarFecha());
+							
+							if (valida_fecha==true){
+								jAlert("Fecha no valida",'! Atencion');
+								$fecha.val(mostrarFecha());
+							}else{
+								$fecha.DatePickerHide();	
+							}
+						}
+					}
+				});
+				
+					
+				
+				//fecha para la proxima visita
+				$fecha_proxima_visita.click(function (s){
+					var a=$('div.datepicker');
+					a.css({'z-index':100});
+				});
+				
+				$fecha_proxima_visita.DatePicker({
+					format:'Y-m-d',
+					date: $fecha_proxima_visita.val(),
+					current: $fecha_proxima_visita.val(),
+					starts: 1,
+					position: 'bottom',
+					locale: {
+						days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+						daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+						daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+						months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+						monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+						weekMin: 'se'
+					},
+					onChange: function(formated, dates){
+						var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+						$fecha_proxima_visita.val(formated);
+						if (formated.match(patron) ){
+							var valida_fecha=mayor($fecha_proxima_visita.val(),mostrarFecha());
+							
+							if (valida_fecha==true){
+								$fecha_proxima_visita.DatePickerHide();	
+							}else{
+								jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+								$fecha_proxima_visita.val(mostrarFecha());
+							}
+						}
+					}
+				});
+				
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
