@@ -517,7 +517,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
                 
         
-        System.out.println("sql_to_query: "+sql_to_query);
+        //System.out.println("sql_to_query: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -530,11 +530,12 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("fecha_cotizar",rs.getString("fecha_cotizar")); 
                     row.put("fecha_cierre",rs.getString("fecha_cierre")); 
                     row.put("monto",StringHelper.roundDouble(String.valueOf(rs.getDouble("monto")), 2));
-                    row.put("estatus",String.valueOf(rs.getBoolean("estatus")));
-                    row.put("cierre_oportunidad",String.valueOf(rs.getBoolean("cierre_oportunidad")));
+                    row.put("estatus",String.valueOf(rs.getBoolean("estatus")).equals("true") ? "Vigente" : "Cancelado" );
+                    row.put("cierre_oportunidad",String.valueOf(rs.getInt("cierre_oportunidad")));
                     row.put("accesor_tipo_oportunidad",rs.getString("accesor_tipo_oportunidad"));
                     row.put("accesor_empleado",rs.getString("accesor_empleado"));
                     row.put("accesor_contacto",rs.getString("accesor_contacto"));
+                    row.put("accesos_etapa",rs.getString("accesos_etapa"));
                     
                     return row;
                 }
@@ -547,7 +548,23 @@ public class CrmSpringDao implements CrmInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getOportunidad_Datos(Integer id) {
-        String sql_to_query = "SELECT * FROM crm_oportunidades WHERE id="+id;
+        String sql_to_query = "select tmp_op.*, crm_contactos.nombre||' '||crm_contactos.apellido_paterno||' '||crm_contactos.apellido_materno as contacto, "
+                + "(CASE WHEN crm_contactos.tipo_contacto=1 THEN ( "
+                + "select cxc_clie.razon_social||' RFC:'||cxc_clie.rfc from "
+                + "(select cxc_clie_id from crm_contacto_cli where crm_contactos_id=tmp_op.crm_contactos_id) as con_cli_tmp "
+                + "JOIN "
+                + "cxc_clie on cxc_clie.id=con_cli_tmp.cxc_clie_id limit 1 "
+                + ") ELSE ( "
+                + "select crm_prospectos.razon_social||' RFC:'||crm_prospectos.rfc from "
+                + "(select crm_prospectos_id from crm_contacto_pro where crm_contactos_id=tmp_op.crm_contactos_id) as con_pro_tmp "
+                + "JOIN "
+                + "crm_prospectos on crm_prospectos.id=con_pro_tmp.crm_prospectos_id limit 1 "
+                + ") END) as prospecto "
+                + " from ( "
+                + "SELECT * FROM crm_oportunidades  WHERE id="+id+" "
+                + ") tmp_op "
+                + "join crm_contactos ON crm_contactos.id=tmp_op.crm_contactos_id ";
+        
         ArrayList<HashMap<String, String>> dato_datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -564,7 +581,9 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("fecha_cierre",rs.getString("fecha_cierre")); 
                     row.put("monto",StringHelper.roundDouble(String.valueOf(rs.getDouble("monto")), 2));
                     row.put("estatus",String.valueOf(rs.getBoolean("estatus")));
-                    row.put("cierre_oportunidad",String.valueOf(rs.getBoolean("cierre_oportunidad")));
+                    row.put("cierre_oportunidad",String.valueOf(rs.getInt("cierre_oportunidad")));
+                    row.put("prospecto",rs.getString("prospecto"));
+                    row.put("contacto",rs.getString("contacto"));
                     
                     return row;
                 }
