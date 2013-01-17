@@ -46,6 +46,20 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, String>> getOportunidad_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getTiposOportunidad();
     public ArrayList<HashMap<String, String>> getEtapasVenta();
-
+    
+    //metodos para Catalogo de Registro de prospectos
+    public ArrayList<HashMap<String, Object>> getPaises();
+    public ArrayList<HashMap<String, Object>> getProspecto_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getEntidadesForThisPais(String id_pais);
+    public ArrayList<HashMap<String, Object>> getLocalidadesForThisEntidad(String id_pais,String id_entidad);
+    public ArrayList<HashMap<String, Object>> getProspectos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, Object>> gettipo_prospecto(String id_prospecto);
+    public ArrayList<HashMap<String, Object>> getTipo_Prospecto();
+    public ArrayList<HashMap<String, Object>> getEtapas_venta();
+    public ArrayList<HashMap<String, Object>> getClasificacion_prospecto();
+    public ArrayList<HashMap<String, Object>> getTipo_industria();
+    
+    
+    
     
 }
