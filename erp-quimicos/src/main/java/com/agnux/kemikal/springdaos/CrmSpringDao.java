@@ -636,5 +636,319 @@ public class CrmSpringDao implements CrmInterfaceDao{
     
     //----------------------------------------------fin de catalogo de crm_oportunidades--------------------------------------------------
     
+
+//Termina Metodos Catalogo de Prospectos(CRM)
+	@Override
+    public ArrayList<HashMap<String, Object>> getPaises() {
+        //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
+        String sql_to_query = "SELECT DISTINCT id as cve_pais, titulo as pais_ent FROM gral_pais;";
+        
+        ArrayList<HashMap<String, Object>> pais = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cve_pais",rs.getString("cve_pais"));
+                    row.put("pais_ent",rs.getString("pais_ent"));
+                    return row;
+                }
+            }
+        );
+        return pais;
+    }
     
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getEntidadesForThisPais(String id_pais) {
+        //String sql_to_query = "SELECT DISTINCT cve_ent ,nom_ent FROM municipios where cve_pais='"+id_pais+"' order by nom_ent;";
+        String sql_to_query = "SELECT id as cve_ent, titulo as nom_ent FROM gral_edo WHERE pais_id="+id_pais+" order by nom_ent;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cve_ent",rs.getString("cve_ent"));
+                    row.put("nom_ent",rs.getString("nom_ent"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getLocalidadesForThisEntidad(String id_pais, String id_entidad) {
+        //String sql_to_query = "SELECT DISTINCT cve_mun ,nom_mun FROM municipios where cve_ent='"+id_entidad+"' and cve_pais='"+id_pais+"' order by nom_mun;";
+        String sql_to_query = "SELECT id as cve_mun, titulo as nom_mun FROM gral_mun WHERE estado_id="+id_entidad+" and pais_id="+id_pais+" order by nom_mun;";
+        
+        //System.out.println("Ejecutando query loc_for_this_entidad: "+sql_to_query);
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cve_mun",rs.getString("cve_mun"));
+                    row.put("nom_mun",rs.getString("nom_mun"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getProspecto_Datos(Integer id) {
+        
+        String sql_query = ""
+                + "SELECT "
+                    
+                    +"crm_prospectos.id as id_prospecto, "
+                    +"crm_prospectos.razon_social , "
+                    +"crm_prospectos.numero_control, "
+                    +"crm_prospectos.estatus, "
+                    +"crm_prospectos.crm_etapas_venta_id, "
+                    +"crm_prospectos.tipo_prospecto_id, "
+                    +"crm_tipo_prospecto.tipo_prospecto, "
+                    +"crm_prospectos.rfc, "
+                    //+"crm_prospectos.curp, "
+                    +"crm_prospectos.razon_social, "
+                    //+"cxc_clie.clave_comercial, "
+                    +"crm_prospectos.calle, "
+                    +"crm_prospectos.numero, "
+                    +"crm_prospectos.entre_calles, "
+                    +"crm_prospectos.numero_exterior, "
+                    +"crm_prospectos.colonia, "
+                    +"crm_prospectos.cp, "
+                    +"crm_prospectos.pais_id, "
+                    +"crm_prospectos.estado_id, "
+                    +"crm_prospectos.municipio_id, "
+                    +"crm_prospectos.localidad_alternativa, "
+                    +"crm_prospectos.telefono1, "
+                    +"crm_prospectos.extension1, "
+                    +"crm_prospectos.fax, "
+                    +"crm_prospectos.telefono2, "
+                    +"crm_prospectos.extension2, "
+                    +"crm_prospectos.email, "
+                    +"crm_prospectos.contacto ,"
+                
+                +"crm_prospectos.clasificacion_id, "
+                +"crm_prospectos.tipo_industria_id, "
+                +"crm_prospectos.observaciones "
+           
+                
+                
+            +"FROM crm_prospectos "
+            +" JOIN crm_tipo_prospecto on crm_tipo_prospecto.id=  crm_prospectos.tipo_prospecto_id    "
+            +"WHERE  crm_prospectos.borrado_logico=false AND crm_prospectos.id = ?";
+        
+        System.out.println("Ejecutando getProspecto_Datos:"+ sql_query);
+        System.out.println("IdProspecto "+id);
+        
+        ArrayList<HashMap<String, Object>> prospecto = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id_prospecto",rs.getInt("id_prospecto"));
+                    row.put("prospecto",rs.getString("razon_social"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("estatus",rs.getString("estatus"));
+                    row.put("etapas_deventa_id",rs.getString("crm_etapas_venta_id"));
+                    row.put("tipo_prospecto_id",rs.getString("tipo_prospecto_id"));
+                    row.put("tipo_prospecto",rs.getString("tipo_prospecto"));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    
+                    
+                    row.put("rfc",rs.getString("rfc"));
+                    
+                    row.put("razon_social",rs.getString("razon_social"));
+                    
+                    row.put("calle",rs.getString("calle"));
+                    row.put("numero",rs.getString("numero"));
+                    row.put("entre_calles",rs.getString("entre_calles"));
+                    row.put("numero_exterior",rs.getString("numero_exterior"));
+                    row.put("colonia",rs.getString("colonia"));
+                    row.put("cp",rs.getString("cp"));
+                    row.put("pais_id",rs.getString("pais_id"));
+                    row.put("estado_id",rs.getString("estado_id"));
+                    row.put("municipio_id",rs.getString("municipio_id"));
+                    row.put("localidad_alternativa",rs.getString("localidad_alternativa"));
+                    row.put("telefono1",rs.getString("telefono1"));
+                    row.put("extension1",rs.getString("extension1"));
+                    row.put("fax",rs.getString("fax"));
+                    row.put("telefono2",rs.getString("telefono2"));
+                    row.put("extension2",rs.getString("extension2"));
+                    row.put("email",rs.getString("email"));
+                    
+                    row.put("contacto",rs.getString("contacto"));
+                    row.put("clasificacion_id",rs.getString("clasificacion_id")); 
+                    row.put("tipo_industria_id",rs.getString("tipo_industria_id")); 
+                    row.put("observaciones",rs.getString("observaciones")); 
+  
+                    
+                    return row;
+                }
+            }
+        );
+        return prospecto;
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getProspectos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT "
+				+"crm_prospectos.id, "
+				+"crm_prospectos.numero_control, "
+				+"crm_prospectos.razon_social, "
+				+"crm_prospectos.rfc, "
+				//+"cxc_clie_clases.titulo AS tipo_cliente, "
+                                +"(CASE WHEN crm_prospectos.telefono1='' OR crm_prospectos.telefono1 IS NULL THEN crm_prospectos.telefono2 ELSE crm_prospectos.telefono1 END) AS tel "
+			+"FROM crm_prospectos "
+			//+"LEFT JOIN cxc_clie_clases ON cxc_clie_clases.id = cxc_clie.clienttipo_id "
+                        +"JOIN ("+sql_busqueda+") as subt on subt.id=crm_prospectos.id "
+                        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("rfc",rs.getString("rfc"));
+                    //row.put("tipo_cliente",rs.getString("tipo_cliente"));
+                    row.put("tel",rs.getString("tel"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> gettipo_prospecto(String id_prospecto) {
+        //String sql_to_query = "SELECT DISTINCT cve_ent ,nom_ent FROM municipios where cve_pais='"+id_pais+"' order by nom_ent;";
+        String sql_to_query = "select id,tipo_prospecto from crm_tipo_prospecto WHERE crm_tipo_prospecto.id="+id_prospecto+" order by tipo_prospecto;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("tipo_prospecto",rs.getString("tipo_prospecto"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getTipo_Prospecto() {
+        //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
+        String sql_to_query = "select id,tipo_prospecto from crm_tipo_prospecto order by tipo_prospecto;";
+        
+        ArrayList<HashMap<String, Object>> Tipo_Prospecto = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("tipo_prospecto",rs.getString("tipo_prospecto"));
+                    return row;
+                }
+            }
+        );
+        return Tipo_Prospecto;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getEtapas_venta() {
+        //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
+        String sql_to_query = "select id, etapa from crm_etapas_venta order by id;";
+        
+        ArrayList<HashMap<String, Object>> Etapa_ventas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("etapa",rs.getString("etapa"));
+                    return row;
+                }
+            }
+        );
+        return Etapa_ventas;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getClasificacion_prospecto() {
+        //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
+        String sql_to_query = "select id, clasificacion ,clasificacion_abr from crm_clasificacion_prospecto order by clasificacion_abr;";
+        
+        ArrayList<HashMap<String, Object>> clasifficacion_prosp = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("clasificacion",rs.getString("clasificacion"));
+                    row.put("clasificacion_abr",rs.getString("clasificacion_abr"));
+                    return row;
+                }
+            }
+        );
+        return clasifficacion_prosp;
+    }
+    
+    
+     @Override
+    public ArrayList<HashMap<String, Object>> getTipo_industria() {
+        //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
+        String sql_to_query = "select id, tipo_industria from crm_tipo_industria order by tipo_industria;";
+        
+        ArrayList<HashMap<String, Object>> Tipo_industria = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("tipo_industria",rs.getString("tipo_industria"));
+                  
+                    return row;
+                }
+            }
+        );
+        return Tipo_industria;
+    }
+    //Termina Metodos Catalogo de Prospectos(CRM)
+     
 }
