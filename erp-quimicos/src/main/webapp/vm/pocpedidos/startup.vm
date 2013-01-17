@@ -206,12 +206,14 @@
                                                         <table border="0">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330">Observaciones</td>
+                                                                <td width="122">Observaciones</td>
+                                                                <td width="190">Enviar&nbsp;las&nbsp;observaciones&nbsp;a&nbsp;la&nbsp;factura</td>
+                                                                <td width="18"><input type="checkbox" name="check_enviar_obser"></td>
                                                                 <td width="10"></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330">
+                                                                <td width="330" colspan="3">
 																	<textarea name="observaciones" rows="2" cols="60" style="width:330px; resize: none;"></textarea>
 																	<textarea name="observaciones_original" rows="2" cols="60" style="display:none;"></textarea>
                                                                 </td>
