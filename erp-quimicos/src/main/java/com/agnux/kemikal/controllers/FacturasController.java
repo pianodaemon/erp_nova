@@ -20,10 +20,12 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -293,6 +295,7 @@ public class FacturasController {
             Model model
             ) {
         
+        HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> validacion = new HashMap<String, String>();
         Integer id_usuario=0;//aqui va el id del usuario
@@ -300,6 +303,10 @@ public class FacturasController {
         //decodificar id de usuario
         id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         //System.out.println("id_usuario: "+id_usuario);
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
         
         //aplicativo prefacturas
         Integer app_selected = 36;
@@ -314,16 +321,18 @@ public class FacturasController {
         
         validacion = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         if(validacion.get("success").equals("true")){
-            succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
             
-            //obtener tipo de facturacion
             tipo_facturacion = this.getFacdao().getTipoFacturacion();
             
             System.out.println("tipo_facturacion:::"+tipo_facturacion);
             
-            //tipo facturacion CFDI. Generar txt para buzon fiscal
-            if(tipo_facturacion.equals("cfdi")){
+            if(tipo_facturacion.equals("cfdi") || tipo_facturacion.equals("cfd") ){
+                succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+            }
+            
+            if(tipo_facturacion.equals("cfdi") ){
                 
+                //tipo facturacion CFDI. Generar txt para buzon fiscal
                 if(succcess.split(":")[1].equals("true")){
                     
                     HashMap<String, String> data = new HashMap<String, String>();
@@ -343,12 +352,89 @@ public class FacturasController {
                     
                     System.out.println("serie_folio:"+serie_folio + "    Cancelado:"+succcess.split(":")[1]);
                 }
-                
                 jsonretorno.put("success", succcess);
             }else{
-                
-                jsonretorno.put("success", succcess);
+                if(tipo_facturacion.equals("cfditf") ){
+                    try {
+                        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                        //aqui inicia request al webservice
+                        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                        String ruta_ejecutable_java = this.getGralDao().getJavaVmDir(id_empresa, id_sucursal);
+                        String ruta_jarWebService = this.getGralDao().getCfdiTimbreJarWsDir()+"wscli.jar";
+                        String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(id_empresa,id_sucursal) ;
+                        String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(id_empresa, id_sucursal);
+                        String ruta_java_almacen_certificados = this.getGralDao().getJavaRutaCacerts(id_empresa, id_sucursal);
+                        
+                        
+                        
+                        String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
+                        BeanFromCfdiXml pop = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
+                        
+                        String uuid = pop.getUuid();
+                        String emisor_rfc = pop.getEmisor_rfc();
+                        String receptor_rfc = pop.getReceptor_rfc();
+                        
+                        //Cancelacion timbrado diverza
+                        String str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" cancelacfdi "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+emisor_rfc+" "+receptor_rfc+" "+uuid;
+                        
+                        Process resultado = null; 
+                        
+                        resultado = Runtime.getRuntime().exec(str_execute);
+                        
+                        
+                        InputStream myInputStream=null;
+                        
+                        myInputStream= resultado.getInputStream();
+                        
+                        
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(myInputStream));
+                        StringBuilder sb = new StringBuilder();
+                        String line = null;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        myInputStream.close();
+                        
+                        System.out.println("Resultado: "+sb.toString());
+                        
+                        String result = "Error diverza";
+                        Integer errorcode = Integer.parseInt(sb.toString());
+                        switch(errorcode){
+                            case 0:
+                                result = "Proceso realizado con exito.";
+                                break;
+                            case 18:
+                                result = "No encontro el CFD a cancelar.";
+                                break;
+                            case 19:
+                                result = "El CFD ya fue cancelado, previamente.";
+                                break;
+                            default:
+                                result = "Error diverza";
+                                break;
+                        }
+                        
+                        if(sb.toString().equals("0")){
+                            succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+                            //tipo facturacion CFDI. Generar txt para buzon fiscal
+                            if(succcess.split(":")[1].equals("true")){
+                                
+                                HashMap<String, String> data = new HashMap<String, String>();
+                                serie_folio = succcess.split(":")[0];
+                                
+                                System.out.println("serie_folio:"+serie_folio + "    Cancelado:"+succcess.split(":")[1]);
+                            }
+                        }
+                        jsonretorno.put("success", succcess);
+                    } catch (IOException ex) {
+                        Logger.getLogger(FacturasController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }else{
+                    jsonretorno.put("success", succcess);
+                }
             }
+            
+            
         }else{
             jsonretorno.put("success", validacion.get("success"));
         }
@@ -357,6 +443,7 @@ public class FacturasController {
         
         return jsonretorno;
     }
+    
     
     
     
