@@ -685,12 +685,10 @@ public class PdfReportePocAutorizacionPedido {
                 cell.setBorder(0);
                 //cell.setBorder(11);
                 //cell.setBorder(12);
-                cell.setFixedHeight(10);
+                //cell.setFixedHeight(10);
                 cell.setColspan(8);
                 tabla_conceptos.addCell(cell);
             }else{
-                
-                
                 cell = new PdfPCell(new Paragraph("OBSERVACIONES: "+Datos_Pedido.get("observaciones"), smallFont));
                 cell.setBorder(0);
                 //cell.setBorder(11);
@@ -762,8 +760,8 @@ public class PdfReportePocAutorizacionPedido {
             cell.setBorder(1);
             tabla_conceptos.addCell(cell);
             //
-
-
+            
+            
             cell = new PdfPCell(new Paragraph("Vendedor:", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
@@ -772,8 +770,7 @@ public class PdfReportePocAutorizacionPedido {
             cell.setBorder(0);
             cell.setColspan(3);
             tabla_conceptos.addCell(cell);
-
-
+            
             cell = new PdfPCell(new Paragraph("Fecha compromiso :", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
@@ -781,34 +778,29 @@ public class PdfReportePocAutorizacionPedido {
             cell = new PdfPCell(new Paragraph(Datos_Pedido.get("fecha_compromiso"), smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
-
-
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
-
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
-
+            
             //
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(1);
             cell.setColspan(3);
             tabla_conceptos.addCell(cell);
-
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
-
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(1);
             tabla_conceptos.addCell(cell);
@@ -821,67 +813,55 @@ public class PdfReportePocAutorizacionPedido {
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
             //
-
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             cell.setColspan(8);
             cell.setFixedHeight(25);
             tabla_conceptos.addCell(cell);
-
-
-
+            
             cell = new PdfPCell(new Paragraph("Nombre y Firma de Autorización por credito y cobranza:", smallFont));
             cell.setBorder(0);
             cell.setColspan(3);
             tabla_conceptos.addCell(cell);
-
+            
             cell = new PdfPCell(new Paragraph(Datos_Pedido.get("nombre_autorizo_pedido"), smallFont));
             cell.setBorder(0);
             cell.setColspan(3);
             tabla_conceptos.addCell(cell);
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
-
-
-
-
-
-
+            
             //
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             cell.setColspan(3);
             tabla_conceptos.addCell(cell);
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(1);
             cell.setColspan(3);
             tabla_conceptos.addCell(cell);
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
-
+            
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
             //
-
-
+            
+            
             document.add(tabla_conceptos);
             
             
-            
-            
-            
-           
             document.close();
             
             
@@ -906,28 +886,14 @@ public class PdfReportePocAutorizacionPedido {
             reader.close();
             
             
-            
-            
         }
         catch (Exception e) {
                 e.printStackTrace();
         }
         
         
-        
-        
-        
-        
-    }//termina pdfCotizacion
+    }//termina pdf del Pedido
 
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -938,8 +904,6 @@ public class PdfReportePocAutorizacionPedido {
     public String getImagen() {
     	return imagen;
     }
-    
-   
     
     
     private class ImagenPDF {
@@ -1103,14 +1067,6 @@ public class PdfReportePocAutorizacionPedido {
     
     
      
-     
-     
-     
-     
-     
-     
-     
-     
      static class HeaderFooter extends PdfPageEventHelper {
         protected PdfTemplate total;       
         protected BaseFont helv;  
@@ -1134,19 +1090,19 @@ public class PdfReportePocAutorizacionPedido {
         public void setCodigo1(String codigo1) {
             this.codigo1 = codigo1;
         }
-
+        
         public String getCodigo2() {
             return codigo2;
         }
-
+        
         public void setCodigo2(String codigo2) {
             this.codigo2 = codigo2;
         }
-
+        
         public String getTitulo_reporte() {
             return titulo_reporte;
         }
-
+        
         public void setTitulo_reporte(String titulo_reporte) {
             this.titulo_reporte = titulo_reporte;
         }
@@ -1158,11 +1114,11 @@ public class PdfReportePocAutorizacionPedido {
         public void setEmpresa(String empresa) {
             this.empresa = empresa;
         }
-
+        
         public String getPeriodo() {
             return periodo;
         }
-
+        
         public void setPeriodo(String periodo) {
             this.periodo = periodo;
         }
