@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -289,7 +290,7 @@ public class PocPedidosAutorizaController {
             @PathVariable("iu") String id_user_cod,
             HttpServletRequest request, 
             HttpServletResponse response, 
-            Model model)throws ServletException, IOException, URISyntaxException, DocumentException {
+            Model model)throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
 
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
@@ -369,7 +370,9 @@ public class PocPedidosAutorizaController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());          
         response.flushBuffer();
-
+        
+        FileHelper.delete(fileout);
+        
         return null;
 
     }
