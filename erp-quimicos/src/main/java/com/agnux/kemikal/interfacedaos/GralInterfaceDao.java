@@ -171,7 +171,9 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String, String>> getTitulo_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getCodigos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc,Integer id_empresa);
 
-
-
+    
+    
+    public ArrayList<HashMap<String, String>> getTiposdeCambio();
+                                              
     
 }
