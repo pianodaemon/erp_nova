@@ -695,13 +695,18 @@ public class PdfReportePocAutorizacionPedido {
                 cell.setBorder(0);
                 //cell.setBorder(11);
                 //cell.setBorder(12);
-                cell.setFixedHeight(30);
+                //cell.setFixedHeight(30);
                 cell.setColspan(8);
                 
                 tabla_conceptos.addCell(cell); 
             }
             
             
+            cell = new PdfPCell(new Paragraph("", smallFont));
+            cell.setBorder(0);
+            cell.setColspan(8);
+            cell.setFixedHeight(18);
+            tabla_conceptos.addCell(cell);
 
 
             cell = new PdfPCell(new Paragraph("Orden de Compra :", smallFont));
@@ -769,7 +774,7 @@ public class PdfReportePocAutorizacionPedido {
             tabla_conceptos.addCell(cell);
 
 
-            cell = new PdfPCell(new Paragraph("Fecha_compromiso :", smallFont));
+            cell = new PdfPCell(new Paragraph("Fecha compromiso :", smallFont));
             cell.setBorder(0);
             tabla_conceptos.addCell(cell);
 
@@ -826,7 +831,7 @@ public class PdfReportePocAutorizacionPedido {
 
 
 
-            cell = new PdfPCell(new Paragraph("Nombre y Firma de Autorizacion por credito y cobranza:", smallFont));
+            cell = new PdfPCell(new Paragraph("Nombre y Firma de Autorización por credito y cobranza:", smallFont));
             cell.setBorder(0);
             cell.setColspan(3);
             tabla_conceptos.addCell(cell);

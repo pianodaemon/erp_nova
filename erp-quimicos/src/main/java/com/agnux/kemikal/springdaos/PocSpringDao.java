@@ -172,7 +172,7 @@ public class PocSpringDao implements PocInterfaceDao{
         + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
         + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
         + "LEFT JOIN cxc_clie_df ON cxc_clie_df.id = poc_pedidos.cxc_clie_df_id "
-        + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle,(CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE 'NO.INT. '||cxc_clie_df.numero_interior END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE 'NO.EXT. '||cxc_clie_df.numero_exterior END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = poc_pedidos.cxc_clie_df_id "
+        + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = poc_pedidos.cxc_clie_df_id "
         + "WHERE poc_pedidos.id="+id_pedido;
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -294,13 +294,13 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "cxc_clie.id as cliente_id,"
                 + "cxc_clie.numero_control,"
                 + "cxc_clie.razon_social,"
-                + "cxc_clie.calle, "
-                + "cxc_clie.numero, "
-                + "cxc_clie.colonia, "
-                + "gral_mun.titulo AS municipio, "
-                + "gral_edo.titulo  AS Estado, "
-                + "gral_pais.titulo AS pais, "
-                + "cxc_clie.cp AS cp,"
+                + "(CASE WHEN poc_pedidos.cxc_clie_df_id > 1 THEN sbtdf.calle ELSE cxc_clie.calle END ) AS calle,"
+                + "(CASE WHEN poc_pedidos.cxc_clie_df_id > 1 THEN (sbtdf.numero_interior||' '||sbtdf.numero_exterior) ELSE cxc_clie.numero END ) AS numero,"
+                + "(CASE WHEN poc_pedidos.cxc_clie_df_id > 1 THEN sbtdf.colonia ELSE cxc_clie.colonia END ) AS colonia,"
+                + "(CASE WHEN poc_pedidos.cxc_clie_df_id > 1 THEN sbtdf.municipio ELSE gral_mun.titulo END ) AS municipio,"
+                + "(CASE WHEN poc_pedidos.cxc_clie_df_id > 1 THEN sbtdf.estado ELSE gral_edo.titulo END ) AS Estado,"
+                + "(CASE WHEN poc_pedidos.cxc_clie_df_id > 1 THEN sbtdf.pais ELSE gral_pais.titulo END ) AS pais,"
+                + "(CASE WHEN poc_pedidos.cxc_clie_df_id > 1 THEN sbtdf.cp ELSE cxc_clie.cp END ) AS cp,"
                 + "cxc_clie.rfc AS rfc,"
                 + "cxc_clie.telefono1 AS telefono, "
                 + "poc_pedidos.subtotal, "
@@ -311,13 +311,13 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "poc_pedidos.cxc_agen_id,"
                 + "poc_pedidos.cxp_prov_credias_id,"
                 + "poc_pedidos.orden_compra, "
-                + "poc_pedidos.fecha_compromiso, "
+                + "to_char(poc_pedidos.fecha_compromiso::timestamp with time zone,'dd/mm/yyyy') AS fecha_compromiso, "
                 + "poc_pedidos.lugar_entrega, "
                 + "poc_pedidos.transporte, "
                 + "poc_pedidos.cancelado, "
                 + "poc_pedidos.tasa_retencion_immex, "
                 + "poc_pedidos.observaciones,"
-                + "to_char(poc_pedidos.momento_creacion,'dd-mm-yyyy HH24:MI')as fecha_expedicion, "
+                + "to_char(poc_pedidos.momento_creacion,'dd/mm/yyyy HH24:MI') AS fecha_expedicion, "
                 + "poc_pedidos.gral_usr_id_autoriza, "
                 + "(CASE WHEN poc_pedidos.gral_usr_id_autoriza=0 THEN '' ELSE gral_empleados.nombre_pila||' ' ||gral_empleados.apellido_paterno||' ' ||gral_empleados.apellido_materno END) AS nombre_autorizo_pedido,  "
                 + "(case when cxc_agen.nombre is null then '' else cxc_agen.nombre  end) AS nombre_agente,  "
@@ -331,10 +331,11 @@ public class PocSpringDao implements PocInterfaceDao{
         + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
         + "LEFT JOIN gral_usr ON gral_usr.id = poc_pedidos.gral_usr_id_autoriza "
         + "LEFT JOIN gral_empleados ON gral_empleados.id = gral_usr.gral_empleados_id  "
-        + "LEFT JOIN cxc_agen ON cxc_agen.id = poc_pedidos.cxc_agen_id "        
+        + "LEFT JOIN cxc_agen ON cxc_agen.id = poc_pedidos.cxc_agen_id "  
+        + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = poc_pedidos.cxc_clie_df_id "
         + "WHERE poc_pedidos.id="+id_pedido;
         
-        System.out.println("DATOS PARA EL PDF:"+sql_query);
+        System.out.println("DatosPdfPedido:"+sql_query);
         Map<String, Object> mapdatosquery = this.getJdbcTemplate().queryForMap(sql_query);
         
         mappdf.put("pedido_id", mapdatosquery.get("id").toString());
@@ -363,10 +364,10 @@ public class PocSpringDao implements PocInterfaceDao{
         mappdf.put("nombre_agente", mapdatosquery.get("nombre_agente").toString() );
         
         //mappdf.put("direccion", mapdatosquery.get("direccion").toString() );
-        mappdf.put("subtotal", mapdatosquery.get("subtotal").toString() );
-        mappdf.put("impuesto", mapdatosquery.get("impuesto").toString() );
-        mappdf.put("total", mapdatosquery.get("total").toString() );
-        mappdf.put("tipo_cambio", mapdatosquery.get("tipo_cambio").toString() );
+        mappdf.put("subtotal", StringHelper.roundDouble(mapdatosquery.get("subtotal").toString(),2) );
+        mappdf.put("impuesto", StringHelper.roundDouble(mapdatosquery.get("impuesto").toString(),2) );
+        mappdf.put("total", StringHelper.roundDouble(mapdatosquery.get("total").toString(),2) );
+        mappdf.put("tipo_cambio", StringHelper.roundDouble(mapdatosquery.get("tipo_cambio").toString(),2) );
         mappdf.put("cxc_agen_id", mapdatosquery.get("cxc_agen_id").toString() ); 
         mappdf.put("cxp_prov_credias_id", mapdatosquery.get("cxp_prov_credias_id").toString() ); 
         mappdf.put("orden_compra", mapdatosquery.get("orden_compra").toString() ); 
