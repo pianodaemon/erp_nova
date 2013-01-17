@@ -10,7 +10,6 @@ import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CrmInterfaceDao;
-import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -290,12 +289,12 @@ public class CrmRegistroVisitasController {
         +"___"+select_calif_visita
         +"___"+select_tipo_seguimiento
         +"___"+select_oportunidad
-        +"___"+recusrsos_visita
-        +"___"+resultado_visita
-        +"___"+observaciones_visita
+        +"___"+recusrsos_visita.toUpperCase()
+        +"___"+resultado_visita.toUpperCase()
+        +"___"+observaciones_visita.toUpperCase()
         +"___"+fecha_proxima_visita
         +"___"+hora_proxima_visita
-        +"___"+comentarios_proxima_visita;
+        +"___"+comentarios_proxima_visita.toUpperCase();
         
         System.out.println("data_string: "+data_string);
         

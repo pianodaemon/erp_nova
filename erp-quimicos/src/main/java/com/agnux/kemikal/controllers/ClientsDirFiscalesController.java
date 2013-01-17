@@ -298,22 +298,22 @@ public class ClientsDirFiscalesController {
         +"___"+id_usuario
         +"___"+identificador
         +"___"+id_cliente
-        +"___"+calle
+        +"___"+calle.toUpperCase()
         +"___"+numero_int
         +"___"+numero_ext
-        +"___"+colonia
+        +"___"+colonia.toUpperCase()
         +"___"+cp
         +"___"+select_pais
         +"___"+select_estado
         +"___"+select_municipio
-        +"___"+entrecalles
+        +"___"+entrecalles.toUpperCase()
         +"___"+tel1
         +"___"+ext1
         +"___"+fax
         +"___"+tel2
         +"___"+ext2
         +"___"+email
-        +"___"+contacto;
+        +"___"+contacto.toUpperCase();
         
         System.out.println("data_string: "+data_string);
         

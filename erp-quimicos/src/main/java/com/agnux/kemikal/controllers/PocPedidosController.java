@@ -384,6 +384,7 @@ public class PocPedidosController {
             @RequestParam(value="check_ruta", required=false) String check_ruta,
             @RequestParam(value="select_almacen", required=false) String select_almacen,
             @RequestParam(value="id_df", required=true) String id_df,
+            @RequestParam(value="check_enviar_obser", required=false) String check_enviar_obser,
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="idproducto", required=false) String[] idproducto,
@@ -432,6 +433,10 @@ public class PocPedidosController {
             }
             
             check_ruta = StringHelper.verificarCheckBox(check_ruta);
+            check_enviar_obser = StringHelper.verificarCheckBox(check_enviar_obser);
+            if (id_df.equals("0")){
+                id_df="1";//si viene cero, le asignamos uno para indicar que debe tomar la direccion de la tabla cxc_clie.
+            }
             
             String data_string = 
                     app_selected+"___"+
@@ -453,7 +458,8 @@ public class PocPedidosController {
                     no_cuenta+"___"+
                     check_ruta+"___"+
                     select_almacen+"___"+
-                    id_df;
+                    id_df+"___"+
+                    check_enviar_obser;
             //System.out.println("data_string: "+data_string);
             
             succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
