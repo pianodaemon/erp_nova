@@ -330,6 +330,8 @@ public class CrmSpringDao implements CrmInterfaceDao{
     
     
     
+
+    
     @Override
     public ArrayList<HashMap<String, String>> getCrmRegistroVisitas_Datos(Integer id) {
         String sql_to_query = ""
@@ -337,8 +339,8 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     + "crm_registro_visitas.id ,"
                     + "crm_registro_visitas.folio,"
                     + "crm_registro_visitas.fecha,"
-                    + "crm_registro_visitas.hora,"
-                    + "crm_registro_visitas.duracion,"
+                    + "(CASE WHEN EXTRACT(HOUR FROM crm_registro_visitas.hora)=0 AND EXTRACT(MINUTE FROM crm_registro_visitas.hora)=0 THEN '00:00' ELSE (lpad(EXTRACT(HOUR FROM crm_registro_visitas.hora)::character varying, 2, '0')||':'||lpad(EXTRACT(MINUTE FROM crm_registro_visitas.hora)::character varying, 2, '0'))END) AS hora, "
+                    + "(CASE WHEN EXTRACT(HOUR FROM crm_registro_visitas.duracion)=0 AND EXTRACT(MINUTE FROM crm_registro_visitas.duracion)=0 THEN '00:00' ELSE (lpad(EXTRACT(HOUR FROM crm_registro_visitas.duracion)::character varying, 2, '0')||':'||lpad(EXTRACT(MINUTE FROM crm_registro_visitas.duracion)::character varying, 2, '0'))END) AS duracion, "
                     + "crm_registro_visitas.gral_empleado_id,"
                     + "crm_registro_visitas.crm_contacto_id,"
                     + "crm_contactos.nombre||' '||(CASE WHEN crm_contactos.apellido_paterno IS NULL THEN '' ELSE crm_contactos.apellido_paterno END) ||' '||(CASE WHEN crm_contactos.apellido_paterno IS NULL THEN '' ELSE crm_contactos.apellido_paterno END) AS  nombre_contacto, "
@@ -349,8 +351,8 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     + "crm_registro_visitas.recursos_utilizados,"
                     + "crm_registro_visitas.resultado,"
                     + "crm_registro_visitas.observaciones,"
-                    + "crm_registro_visitas.fecha_sig_visita,"
-                    + "crm_registro_visitas.hora_sig_visita,"
+                    + "(CASE WHEN crm_registro_visitas.fecha_sig_visita::character varying='2999-12-31' THEN '' ELSE crm_registro_visitas.fecha_sig_visita::character varying END) AS fecha_sig_visita,"
+                    + "(CASE WHEN EXTRACT(HOUR FROM crm_registro_visitas.hora_sig_visita)=0 AND EXTRACT(MINUTE FROM crm_registro_visitas.hora_sig_visita)=0 THEN '00:00' ELSE (lpad(EXTRACT(HOUR FROM crm_registro_visitas.hora_sig_visita)::character varying, 2, '0')||':'||lpad(EXTRACT(MINUTE FROM crm_registro_visitas.hora_sig_visita)::character varying, 2, '0'))END) AS hora_sig_visita, "
                     + "crm_registro_visitas.comentarios_sig_visita "
                 + "FROM crm_registro_visitas "
                 + "LEFT JOIN crm_contactos ON crm_contactos.id=crm_registro_visitas.crm_contacto_id "
