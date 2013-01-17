@@ -662,15 +662,15 @@ $(function() {
 			$arreglo = {'id':id_to_show,
 						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
-			jConfirm('Realmente desea eliminar la direci&oacute;n seleccionada', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar la Visita seleccionada', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("La direcci&oacute;n  fue eliminada exitosamente", 'Atencion!');
+							jAlert("La Visita fue eliminada exitosamente", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
-							jAlert("La direci&oacute;n no pudo ser eliminada", 'Atencion!');
+							jAlert("La Visita no pudo ser eliminada", 'Atencion!');
 						}
 					},"json");
 				}
