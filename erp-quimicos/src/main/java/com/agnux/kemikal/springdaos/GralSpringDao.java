@@ -1227,7 +1227,7 @@ public class GralSpringDao implements GralInterfaceDao{
                                 + "join gral_puestos on gral_puestos.id=gral_categ.gral_puesto_id "
                                 + "WHERE gral_categ.gral_puesto_id ="+id_puesto+" "
                                 + "ORDER BY titulo";
-
+        System.out.println("sql_to_query: "+sql_to_query);
         ArrayList<HashMap<String, Object>> categoria = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
