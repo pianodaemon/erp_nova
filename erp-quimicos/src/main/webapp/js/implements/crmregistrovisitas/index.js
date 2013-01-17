@@ -37,7 +37,7 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Direcciones Fiscales de Clientes');
+	$('#barra_titulo').find('#td_titulo').append('Registro de Visitas');
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
