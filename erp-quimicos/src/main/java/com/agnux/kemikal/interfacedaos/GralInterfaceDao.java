@@ -15,6 +15,8 @@ import java.util.HashMap;
  */
 public interface GralInterfaceDao {
     
+    public String getJvmTmpDir();
+    
     public String getImagesDir();
     public String getSslDir();
     public String getCfdEmitidosDir();
