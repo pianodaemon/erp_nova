@@ -65,6 +65,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/crmformascontacto/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CATALOGO_FORMAS_CONTACTO" />
         <intercept-url pattern="/controllers/crmmotivosllamadas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CATALOGO_MOTIVOS_LLAMADA" />
         <intercept-url pattern="/controllers/crmmotivosvisitas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CATALOGO_MOTIVOS_VISITA" />
+        <!--Vale-->
+        <intercept-url pattern="/controllers/crmprospectos/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CATALOGO_PROSPECTOS" />
         
         
         <intercept-url pattern="/controllers/repinvexis/startup.agnux" access="ROLE_ADMIN,ROLE_CONSULTAS_ALMACEN" />
