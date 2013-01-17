@@ -1272,6 +1272,7 @@ $(function() {
 		var $id_cliente = $('#forma-pocpedidos-window').find('input[name=id_cliente]');
 		var $nocliente = $('#forma-pocpedidos-window').find('input[name=nocliente]');
 		var $razon_cliente = $('#forma-pocpedidos-window').find('input[name=razoncliente]');
+		var $id_df = $('#forma-pocpedidos-window').find('input[name=id_df]');
 		var $dir_cliente = $('#forma-pocpedidos-window').find('input[name=dircliente]');
 		var $empresa_immex = $('#forma-pocpedidos-window').find('input[name=empresa_immex]');
 		var $tasa_ret_immex = $('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]');
@@ -1281,6 +1282,7 @@ $(function() {
 		var $tipo_cambio = $('#forma-pocpedidos-window').find('input[name=tipo_cambio]');
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
+		var $check_enviar_obser = $('#forma-pocpedidos-window').find('input[name=check_enviar_obser]');
 		var $observaciones = $('#forma-pocpedidos-window').find('textarea[name=observaciones]');
 		
 		var $select_condiciones = $('#forma-pocpedidos-window').find('select[name=select_condiciones]');
@@ -1759,6 +1761,7 @@ $(function() {
 			var $id_cliente = $('#forma-pocpedidos-window').find('input[name=id_cliente]');
 			var $nocliente = $('#forma-pocpedidos-window').find('input[name=nocliente]');
 			var $razon_cliente = $('#forma-pocpedidos-window').find('input[name=razoncliente]');
+			var $id_df = $('#forma-pocpedidos-window').find('input[name=id_df]');
 			var $dir_cliente = $('#forma-pocpedidos-window').find('input[name=dircliente]');
 			var $empresa_immex = $('#forma-pocpedidos-window').find('input[name=empresa_immex]');
 			var $tasa_ret_immex = $('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]');
@@ -1774,6 +1777,7 @@ $(function() {
 			var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 			var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 			
+			var $check_enviar_obser = $('#forma-pocpedidos-window').find('input[name=check_enviar_obser]');
 			var $observaciones = $('#forma-pocpedidos-window').find('textarea[name=observaciones]');
 			var $observaciones_original = $('#forma-pocpedidos-window').find('textarea[name=observaciones_original]');
 			
@@ -1977,15 +1981,19 @@ $(function() {
 						$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').hide();
 					}
 					
+					
+					
 					$tasa_ret_immex.val(entry['datosPedido']['0']['tasa_retencion_immex']);
 					$id_pedido.val(entry['datosPedido']['0']['id']);
 					$folio.val(entry['datosPedido']['0']['folio']);
 					$id_cliente.val(entry['datosPedido']['0']['cliente_id']);
 					$nocliente.val(entry['datosPedido']['0']['numero_control']);
 					$razon_cliente.val(entry['datosPedido']['0']['razon_social']);
+					$id_df.val(entry['datosPedido']['0']['df_id']);
 					$dir_cliente.val(entry['datosPedido']['0']['direccion']);
 					$cliente_listaprecio.val(entry['datosPedido']['0']['lista_precio']);
 					
+					$check_enviar_obser.attr('checked',  (entry['datosPedido']['0']['enviar_obser'] == 'true')? true:false );
 					$observaciones.text(entry['datosPedido']['0']['observaciones']);
 					$observaciones_original.val(entry['datosPedido']['0']['observaciones']);
 					
@@ -2340,7 +2348,7 @@ $(function() {
 						$cancelado.show();
 						$folio.attr('disabled','-1'); //deshabilitar
 						$check_ruta.attr('disabled','-1'); //deshabilitar
-						
+						$check_enviar_obser.attr('disabled','-1'); //deshabilitar
 						$sku_producto.attr('disabled','-1'); //deshabilitar
 						$nombre_producto.attr('disabled','-1'); //deshabilitar
 						$nocliente.attr('disabled','-1'); //deshabilitar
@@ -2371,7 +2379,7 @@ $(function() {
 						$submit_actualizar.hide();
 						$busca_sku.hide();
 						$agregar_producto.hide();
-						
+						$check_enviar_obser.attr('disabled','-1'); //deshabilitar
 						$check_ruta.attr('disabled','-1'); //deshabilitar
 						$sku_producto.attr('disabled','-1'); //deshabilitar
 						$nombre_producto.attr('disabled','-1'); //deshabilitar
