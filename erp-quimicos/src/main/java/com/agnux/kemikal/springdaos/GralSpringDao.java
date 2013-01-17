@@ -112,8 +112,11 @@ public class GralSpringDao implements GralInterfaceDao{
         return zebradir;
     }
     
-    
-    
+    @Override
+    public String getJvmTmpDir() {
+        String jvmtmpdir = System.getProperty("java.io.tmpdir");
+        return jvmtmpdir;
+    }
     
     @Override
     public String getEmpresa_IncluyeModContable(Integer id_empresa){
