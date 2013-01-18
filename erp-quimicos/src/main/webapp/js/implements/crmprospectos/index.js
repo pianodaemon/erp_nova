@@ -399,7 +399,7 @@ $(function() {
                     //alimentando $select_estatus_prospecto
                      $select_estatus_prospecto.children().remove();
                     var estatusprospecto = '<option value="0" selected="yes">[-Seleccionar etapa-]</option>';
-                    $.each(entry['Etapa_venta'],function(entryIndex,etapa){
+                    $.each(entry['Etapa_prospecto'],function(entryIndex,etapa){
                             estatusprospecto += '<option value="' + etapa['id'] + '"  >' + etapa['etapa'] + '</option>';
                     });
                     $select_estatus_prospecto.append(estatusprospecto);
@@ -683,11 +683,11 @@ $(function() {
                                     //carga el select_estatus_prospecto                  
                                    $select_estatus_prospecto.children().remove();
                                     var etapa = '<option value="0">[- Selecciiona una etapa de venta-]</option>';
-                                    $.each(entry['Etapa_venta'],function(entryIndex,etapaventa){
-                                            if(etapaventa['id'] == entry['Prospecto']['0']['etapas_deventa_id']){
-                                                    etapa += '<option value="' + etapaventa['id'] + '"  selected="yes">' + etapaventa['etapa'] + '</option>';
+                                    $.each(entry['Etapa_prospecto'],function(entryIndex,etapaprosp){
+                                            if(etapaprosp['id'] == entry['Prospecto']['0']['etapas_prospecto_id']){
+                                                    etapa += '<option value="' + etapaprosp['id'] + '"  selected="yes">' + etapaprosp['etapa'] + '</option>';
                                             }else{
-                                                    etapa += '<option value="' + etapaventa['id'] + '"  >' + etapaventa['etapa'] + '</option>';
+                                                    etapa += '<option value="' + etapaprosp['id'] + '"  >' + etapaprosp['etapa'] + '</option>';
                                             }
                                     });
                                     $select_estatus_prospecto.append(etapa); 
