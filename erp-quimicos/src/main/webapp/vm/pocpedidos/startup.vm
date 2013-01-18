@@ -175,7 +175,7 @@
                                                                 <td width="90" align="right"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
                                                                 <td width="15"></td>
                                                                 <td width="90"><span>Folio&nbsp;del&nbsp;Pedido</span></td>
-                                                                <td width="75"><input type="text" name="folio" style="width:75px;" ></td>
+                                                                <td width="75"><input type="text" name="folio" style="width:75px;" readOnly="true"></td>
                                                                 <td width="15"></td>
                                                             </tr>
                                                             

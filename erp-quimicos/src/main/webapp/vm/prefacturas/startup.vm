@@ -198,6 +198,12 @@
 															<td width="10"></td>
 															<td width="80">Razon&nbsp;Social</td>
 															<td colspan="8" width="405"><INPUT TYPE="text" name="razoncliente" style="width:420px;" readOnly="true"></td>
+														<tr><td colspan="10" height="5"></td></tr>
+														<tr>
+															<td width="10"></td>
+															<td width="80">Direcci&oacute;n</td>
+															<td colspan="8" width="405"><INPUT TYPE="text" name="dircliente" style="width:420px;" readOnly="true"></td>
+														</tr>
 														</tr>
 													</table>
 													
@@ -207,7 +213,8 @@
 												<td width="10"></td>
 												<!--<td width="60"></td>-->
 												
-												<td width="350" colspan="2" valign="top" style="border: solid 1px #454442;">
+												<!--<td width="350" colspan="2" valign="top" style="border: solid 1px #454442;">-->
+												<td width="350" colspan="2" valign="top">
 													<table border="0">
 														<tr>
 															<td width="10"></td>
@@ -217,7 +224,7 @@
 														<tr>
 															<td width="10"></td>
 															<td width="330">
-																<textarea name="observaciones" rows="2" cols="60" style="width:330px; resize: none;"></textarea>
+																<textarea name="observaciones" rows="4" cols="60" style="width:330px; resize: none;"></textarea>
 																<textarea name="observaciones_original" rows="2" cols="60" style="display:none;"></textarea>
 															</td>
 															<td width="10"></td>
@@ -322,7 +329,7 @@
 											
 											<tr>
 												<td colspan="4">
-													<table border="1" class="gral">
+													<table border="0" class="gral">
 														<!--
 														<tr><td colspan="11" height="8"></td></tr>
 														-->
