@@ -55,9 +55,12 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, Object>> getProspectos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> gettipo_prospecto(String id_prospecto);
     public ArrayList<HashMap<String, Object>> getTipo_Prospecto();
-    public ArrayList<HashMap<String, Object>> getEtapas_venta();
+    //public ArrayList<HashMap<String, Object>> getEtapas_venta();
     public ArrayList<HashMap<String, Object>> getClasificacion_prospecto();
     public ArrayList<HashMap<String, Object>> getTipo_industria();
+    
+    public ArrayList<HashMap<String, Object>> getEtapas_prospecto();
+    
     
     
     
