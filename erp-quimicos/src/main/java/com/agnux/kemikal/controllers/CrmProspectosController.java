@@ -153,7 +153,7 @@ public class CrmProspectosController {
             
             //ArrayList<HashMap<String, Object>> Tipo_prospecto = new ArrayList<HashMap<String, Object>>();
             ArrayList<HashMap<String, Object>> tipo_prospectos = new ArrayList<HashMap<String, Object>>();
-            ArrayList<HashMap<String, Object>> Etapa_venta = new ArrayList<HashMap<String, Object>>();
+            ArrayList<HashMap<String, Object>> Etapa_prospecto = new ArrayList<HashMap<String, Object>>();
             ArrayList<HashMap<String, Object>> Clasificacion_prospecto = new ArrayList<HashMap<String, Object>>();
             ArrayList<HashMap<String, Object>> Tipo_industria = new ArrayList<HashMap<String, Object>>();
             
@@ -175,7 +175,7 @@ public class CrmProspectosController {
             tipo_prospectos = this.getCrmDao().getTipo_Prospecto();
             
             
-            Etapa_venta= this.getCrmDao().getEtapas_venta();
+            Etapa_prospecto= this.getCrmDao().getEtapas_prospecto();
             Clasificacion_prospecto= this.getCrmDao().getClasificacion_prospecto();
             Tipo_industria= this.getCrmDao().getTipo_industria();
             
@@ -186,7 +186,7 @@ public class CrmProspectosController {
             
             //jsonretorno.put("Tipo_prospecto", Tipo_prospecto);
             jsonretorno.put("Tipo_prospectos", tipo_prospectos);
-            jsonretorno.put("Etapa_venta", Etapa_venta);
+            jsonretorno.put("Etapa_prospecto", Etapa_prospecto);
             
             jsonretorno.put("Clasificacion", Clasificacion_prospecto);
             jsonretorno.put("Tipo_industria", Tipo_industria);
