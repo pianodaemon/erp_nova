@@ -153,6 +153,39 @@ public class CrmRegistroVisitasController {
     
     
     
+    
+    //obtiene los Agentes para el Buscador pricipal del Aplicativo
+    @RequestMapping(method = RequestMethod.POST, value="/getAgentesParaBuscador.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getAgentesParaBuscador(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_agente = Integer.parseInt(userDat.get("empleado_id"));
+        
+        extra = this.getCrmDao().getUserRol(id_usuario);
+        extra.put("id_agente", String.valueOf(id_agente));
+        arrayExtra.add(0,extra);
+        
+        agentes = this.getCrmDao().getAgentes(id_empresa);
+        
+        jsonretorno.put("Extra", arrayExtra);
+        jsonretorno.put("Agentes", agentes);
+        return jsonretorno;
+    }
+    
+    
+    
     @RequestMapping(method = RequestMethod.POST, value="/getRegistroVisita.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getRegistroVisitaJson(
             @RequestParam(value="id", required=true) Integer id,
