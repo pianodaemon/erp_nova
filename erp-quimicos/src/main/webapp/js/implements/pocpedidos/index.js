@@ -1267,6 +1267,7 @@ $(function() {
 					};
         
 		var $id_pedido = $('#forma-pocpedidos-window').find('input[name=id_pedido]');
+		var $folio = $('#forma-pocpedidos-window').find('input[name=folio]');
 		var $total_tr = $('#forma-pocpedidos-window').find('input[name=total_tr]');
 		var $busca_cliente = $('#forma-pocpedidos-window').find('a[href*=busca_cliente]');
 		var $id_cliente = $('#forma-pocpedidos-window').find('input[name=id_cliente]');
@@ -1340,6 +1341,9 @@ $(function() {
 		$permitir_solo_numeros($no_cuenta);
 		$no_cuenta.attr('disabled','-1');
 		$etiqueta_digit.attr('disabled','-1');
+		$folio.css({'background' : '#F0F0F0'});
+		$nocliente.css({'background' : '#F0F0F0'});
+		$dir_cliente.css({'background' : '#F0F0F0'});
 		
 		//quitar enter a todos los campos input
 		$('#forma-pocpedidos-window').find('input').keypress(function(e){
@@ -1845,6 +1849,9 @@ $(function() {
 			$permitir_solo_numeros($no_cuenta);
 			$no_cuenta.attr('disabled','-1');
 			$etiqueta_digit.attr('disabled','-1');
+			$folio.css({'background' : '#F0F0F0'});
+			$nocliente.css({'background' : '#F0F0F0'});
+			$dir_cliente.css({'background' : '#F0F0F0'});
 			
 			//quitar enter a todos los campos input
 			$('#forma-pocpedidos-window').find('input').keypress(function(e){

@@ -1390,13 +1390,11 @@ $(function() {
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 					};
         
+        var $folio_pedido = $('#forma-prefacturas-window').find('input[name=folio_pedido]');
         var $select_tipo_documento = $('#forma-prefacturas-window').find('select[name=select_tipo_documento]');
 		var $id_prefactura = $('#forma-prefacturas-window').find('input[name=id_prefactura]');
 		var $refacturar = $('#forma-prefacturas-window').find('input[name=refacturar]');
-		var $accion = $('#forma-prefacturas-window').find('input[name=accion]');
-		
-		var $folio_pedido = $('#forma-prefacturas-window').find('input[name=folio_pedido]');
-		
+		var $accion = $('#forma-prefacturas-window').find('input[name=accion]');		
 		var $total_tr = $('#forma-prefacturas-window').find('input[name=total_tr]');
 		
 		var $busca_cliente = $('#forma-prefacturas-window').find('a[href*=busca_cliente]');
@@ -1482,8 +1480,12 @@ $(function() {
 		//$boton_descargarxml.hide();
 		$refacturar.val('false');
 		$accion.val('new');
-		
 		$etiqueta_digit.attr('disabled','-1');
+		$folio_pedido.css({'background' : '#F0F0F0'});
+		$no_cliente.css({'background' : '#F0F0F0'});
+		$razon_cliente.css({'background' : '#F0F0F0'});
+		$dir_cliente.css({'background' : '#F0F0F0'});
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("La prefactura se guard&oacute; con &eacute;xito", 'Atencion!');
@@ -1493,7 +1495,7 @@ $(function() {
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				//$('#forma-prefacturas-window').find('.div_one').css({'height':'545px'});//sin errores
-				$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'548px'});//con errores
+				$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'578px'});//con errores
 				$('#forma-prefacturas-window').find('div.interrogacion').css({'display':'none'});
 
 				$grid_productos.find('#cant').css({'background' : '#ffffff'});
@@ -1520,7 +1522,7 @@ $(function() {
 							for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
 								if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
 									//alert(tmp.split(':')[0]);
-									$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'548px'});
+									$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'578px'});
 									//$('#forma-prefacturas-window').find('.div_three').css({'height':'910px'});
 									
 									$('#forma-prefacturas-window').find('#div_warning_grid').css({'display':'block'});
@@ -1789,6 +1791,7 @@ $(function() {
 				var $id_cliente = $('#forma-prefacturas-window').find('input[name=id_cliente]');
 				var $no_cliente = $('#forma-prefacturas-window').find('input[name=nocliente]');
 				var $razon_cliente = $('#forma-prefacturas-window').find('input[name=razoncliente]');
+				var $dir_cliente = $('#forma-prefacturas-window').find('input[name=dircliente]');
 				var $tasa_ret_immex = $('#forma-prefacturas-window').find('input[name=tasa_ret_immex]');
 				var $empresa_immex = $('#forma-prefacturas-window').find('input[name=empresa_immex]');
 				
@@ -1858,6 +1861,11 @@ $(function() {
 				$refacturar.val('');
 				$boton_facturar.hide();
 				$accion.val('actualizar');
+				
+				$folio_pedido.css({'background' : '#F0F0F0'});
+				$no_cliente.css({'background' : '#F0F0F0'});
+				$razon_cliente.css({'background' : '#F0F0F0'});
+				$dir_cliente.css({'background' : '#F0F0F0'});
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -1971,8 +1979,8 @@ $(function() {
 						
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
-						//$('#forma-prefacturas-window').find('.div_one').css({'height':'545px'});//sin errores
-						$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'548px'});//con errores
+						//$('#forma-prefacturas-window').find('.div_one').css({'height':'550px'});//sin errores
+						$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'578px'});//con errores
 						$('#forma-prefacturas-window').find('div.interrogacion').css({'display':'none'});
 						
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
@@ -1998,7 +2006,7 @@ $(function() {
 								if(parseInt($("tr", $grid_productos).size())>0){
 									for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
 										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
-											$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'548px'});
+											$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'578px'});
 											$('#forma-prefacturas-window').find('#div_warning_grid').css({'display':'block'});
 											
 											if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
