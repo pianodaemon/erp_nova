@@ -89,25 +89,46 @@ $(function() {
 	
 	$limpiar.click(function(event){
 		event.preventDefault();
-		/*
-		var html_tipo = '';
-		$busqueda_tipo_visita.children().remove();
-		html_tipo='<option value="0">[-- Todos --]</option>';
-		html_tipo+='<option value="1">Cliente</option>';
-		html_tipo+='<option value="2">Prospecto</option>';
-		$busqueda_tipo_visita.append(html_tipo);
-		*/
 		$busqueda_folio.val('');
 		$busqueda_contacto.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
-		$busqueda_tipo_visita.find('option[index=0]').attr('selected','selected');
 		$busqueda_agente.find('option[index=0]').attr('selected','selected');
+		
+		$busqueda_tipo_visita.children().remove();
+		var tipos_hmtl = '<option value="0" selected="yes">[-- Todos --]</option>';
+		tipos_hmtl += '<option value="1">Cliente</option>';
+		tipos_hmtl += '<option value="2">Prospecto</option>';
+		$busqueda_tipo_visita.append(tipos_hmtl);
+		
+		//esto se hace para reinicar los valores del select de agentes
+		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+		$arreglo2 = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json2,$arreglo2,function(data){
+			//Alimentando los campos select_agente
+			$busqueda_agente.children().remove();
+			var agente_hmtl = '';
+			if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+				agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+			}
+			
+			$.each(data['Agentes'],function(entryIndex,agente){
+				if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+					agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+				}else{
+					//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+					if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+						agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+					}
+				}
+			});
+			$busqueda_agente.append(agente_hmtl);
+		});
+		
 	});
 	
 	
 	TriggerClickVisializaBuscador = 0;
-
 	$visualiza_buscador.click(function(event){
 		event.preventDefault();
 		
@@ -115,14 +136,13 @@ $(function() {
 		if(TriggerClickVisializaBuscador==0){
 			 TriggerClickVisializaBuscador=1;
 			 var height2 = $('#cuerpo').css('height');
-
+			 
 			 alto = parseInt(height2)-220;
 			 var pix_alto=alto+'px';
 			 
 			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 			 $('#barra_buscador').animate({height: '60px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
-				
 		}else{
 			 TriggerClickVisializaBuscador=0;
 			 var height2 = $('#cuerpo').css('height');
@@ -134,6 +154,30 @@ $(function() {
 		};
 	});
 	
+	
+	
+	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+		//Alimentando los campos select_agente
+		$busqueda_agente.children().remove();
+		var agente_hmtl = '';
+		if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+			agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+		}
+		
+		$.each(data['Agentes'],function(entryIndex,agente){
+			if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+				agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+			}else{
+				//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+				if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+					agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+				}
+			}
+		});
+		$busqueda_agente.append(agente_hmtl);
+	});
 	
 	
 
