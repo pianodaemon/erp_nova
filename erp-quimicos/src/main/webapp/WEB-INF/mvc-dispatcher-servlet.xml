@@ -38,6 +38,11 @@
             </property>
         </bean>
         
+        <!-- conf para archivos   --> 
+        <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+            <property name="maxUploadSize" value="9242880"/>
+        </bean>
+        
         <!--  Finaliza  nuevo   -->
         <bean id="jdbcTemplateSpring" class="org.springframework.jdbc.core.JdbcTemplate">
 	     <constructor-arg>
