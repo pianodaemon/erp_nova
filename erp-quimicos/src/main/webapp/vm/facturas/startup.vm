@@ -380,7 +380,7 @@
                                                 
                                                 <tr>
                                                     <td colspan="4">
-                                                        <table border="1" class="gral">
+                                                        <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80"></td>
