@@ -718,7 +718,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     +"crm_prospectos.razon_social , "
                     +"crm_prospectos.numero_control, "
                     +"crm_prospectos.estatus, "
-                    +"crm_prospectos.crm_etapas_venta_id, "
+                    +"crm_prospectos.crm_etapas_prospecto_id, "
                     +"crm_prospectos.tipo_prospecto_id, "
                     +"crm_tipo_prospecto.tipo_prospecto, "
                     +"crm_prospectos.rfc, "
@@ -766,7 +766,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("prospecto",rs.getString("razon_social"));
                     row.put("numero_control",rs.getString("numero_control"));
                     row.put("estatus",rs.getString("estatus"));
-                    row.put("etapas_deventa_id",rs.getString("crm_etapas_venta_id"));
+                    row.put("etapas_deventa_id",rs.getString("crm_etapas_prospecto_id"));
                     row.put("tipo_prospecto_id",rs.getString("tipo_prospecto_id"));
                     row.put("tipo_prospecto",rs.getString("tipo_prospecto"));
                     row.put("observaciones",rs.getString("observaciones"));
@@ -887,9 +887,10 @@ public class CrmSpringDao implements CrmInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, Object>> getEtapas_venta() {
+    
+        public ArrayList<HashMap<String, Object>> getEtapas_prospecto() {
         //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
-        String sql_to_query = "select id, etapa from crm_etapas_venta order by id;";
+        String sql_to_query = "select id, descripcion from crm_etapas_prospecto order by id;";
         
         ArrayList<HashMap<String, Object>> Etapa_ventas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -898,7 +899,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getString("id"));
-                    row.put("etapa",rs.getString("etapa"));
+                    row.put("etapa",rs.getString("descripcion"));
                     return row;
                 }
             }
@@ -950,5 +951,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
         return Tipo_industria;
     }
     //Termina Metodos Catalogo de Prospectos(CRM)
+
+    
      
 }
