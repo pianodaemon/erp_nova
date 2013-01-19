@@ -207,7 +207,12 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 +"cxc_clie.id as cliente_id,  "
                 +"cxc_clie.rfc,  "
                 +"cxc_clie.razon_social,  "
-                +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp AS direccion,  "
+                + "fac_docs.cxc_clie_df_id, "
+                + "(CASE WHEN fac_docs.cxc_clie_df_id > 1 THEN "
+                    + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
+                + "ELSE "
+                    + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
+                + "END ) AS direccion,"
                 +"fac_docs.subtotal,"
                 +"fac_docs.impuesto,"
                 +"fac_docs.total,"
@@ -228,6 +233,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         +"LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
         +"LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
         +"LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+        +"LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_docs.cxc_clie_df_id "
         +"WHERE fac_docs.id=? ";
         
         
@@ -245,6 +251,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("cliente_id",rs.getString("cliente_id"));
                     row.put("rfc",rs.getString("rfc"));
                     row.put("razon_social",rs.getString("razon_social"));
+                    row.put("df_id",rs.getInt("cxc_clie_df_id"));
                     row.put("direccion",rs.getString("direccion"));
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
@@ -548,14 +555,30 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + "(CASE WHEN fac_metodos_pago.id=7 THEN 'NO APLICA' ELSE erp_prefacturas.no_cuenta END ) AS no_cuenta, "
                         + "cxc_clie_credias.descripcion AS condicion_pago,"
                         + "gral_mon.iso_4217 AS moneda, "
-                        + "erp_prefacturas.tipo_cambio "
+                        + "erp_prefacturas.tipo_cambio, "
+                        + "cxc_clie.numero_control, "
+                        + "cxc_clie.razon_social, "
+                        + "cxc_clie.rfc, "
+                        + "(CASE WHEN cxc_clie.localidad_alternativa IS NULL THEN '' ELSE cxc_clie.localidad_alternativa END) AS localidad_alternativa, "
+                        + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.calle ELSE cxc_clie.calle END ) AS calle,"
+                        + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.numero_interior ELSE (CASE WHEN cxc_clie.numero='' OR IS NULL THEN cxc_clie.numero_exterior ELSE cxc_clie.numero END)  END ) AS numero_interior,"
+                        + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.numero_exterior ELSE (CASE WHEN cxc_clie.numero_exterior='' OR cxc_clie.numero_exterior IS NULL THEN cxc_clie.numero ELSE cxc_clie.numero_exterior END) END ) AS numero_exterior,"
+                        + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.colonia ELSE cxc_clie.colonia END ) AS colonia,"
+                        + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.municipio ELSE gral_mun.titulo END ) AS municipio,"
+                        + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.estado ELSE gral_edo.titulo END ) AS estado,"
+                        + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.pais ELSE gral_pais.titulo END ) AS pais,"
+                        + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.cp ELSE cxc_clie.cp END ) AS cp "
                 + "FROM erp_prefacturas  "
+                + "LEFT JOIN cxc_clie ON cxc_clie.id=erp_prefacturas.cliente_id "
                 + "LEFT JOIN fac_metodos_pago ON fac_metodos_pago.id=erp_prefacturas.fac_metodos_pago_id "
                 + "LEFT JOIN cxc_clie_credias ON cxc_clie_credias.id=erp_prefacturas.terminos_id "
                 + "LEFT JOIN gral_mon ON gral_mon.id=erp_prefacturas.moneda_id "
+                + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = erp_prefacturas.cxc_clie_df_id "
                 + "WHERE erp_prefacturas.id="+id_prefactura;
                 
-        
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         
         int id_cliente = Integer.parseInt(map.get("cliente_id").toString());
@@ -581,44 +604,61 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         }
         data.put("comprobante_attr_numerocuenta",no_cta);
         
+        
+        /*
         //System.out.println("Obteniendo datos del cliente:"+ id_cliente);
         //obtener datos del cliente
-	String sql_query_cliente = "SELECT  cxc_clie.numero_control, "
-                            + "cxc_clie.razon_social, "
-                            + "cxc_clie.rfc, "
-                            + "cxc_clie.calle, "
-                            + "cxc_clie.numero, "
-                            + "cxc_clie.colonia, "
-                            + "(CASE WHEN cxc_clie.localidad_alternativa IS NULL THEN '' ELSE cxc_clie.localidad_alternativa END) AS localidad_alternativa, "
-                            + "gral_mun.titulo as municipio, "
-                            + "gral_edo.titulo as estado, "
-                            + "gral_pais.titulo as pais, "
-                            + "cxc_clie.cp "
-                    + "FROM cxc_clie " 
-                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                    + "WHERE cxc_clie.borrado_logico=false AND cxc_clie.id = "+ id_cliente +" limit 1";
+	String sql_query_cliente = ""
+                + "SELECT  cxc_clie.numero_control, "
+                        + "cxc_clie.razon_social, "
+                        + "cxc_clie.rfc, "
+                        + "(CASE WHEN cxc_clie.localidad_alternativa IS NULL THEN '' ELSE cxc_clie.localidad_alternativa END) AS localidad_alternativa, "
+                        + "cxc_clie.calle, "
+                        + "cxc_clie.numero, "
+                        + "cxc_clie.colonia, "
+                        + "gral_mun.titulo as municipio, "
+                        + "gral_edo.titulo as estado, "
+                        + "gral_pais.titulo as pais, "
+                        + "cxc_clie.cp "
+                + "FROM cxc_clie " 
+                + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                + "WHERE cxc_clie.borrado_logico=false AND cxc_clie.id = "+ id_cliente +" limit 1";
         
         Map<String, Object> map_client = this.getJdbcTemplate().queryForMap(sql_query_cliente);
+        */
+        
+        String numero_ext="";
+        if(map.get("numero_exterior").toString().equals("'")){
+            numero_ext = "";
+        }else{
+            numero_ext = map.get("numero_exterior").toString();
+        }
+        
+        String numero_int="";
+        if(map.get("numero_interior").toString().equals("'")){
+            numero_int = "";
+        }else{
+            numero_int = map.get("numero_interior").toString();
+        }
         
         //datos del cliente
-        data.put("comprobante_receptor_attr_nombre",map_client.get("razon_social").toString());
-        data.put("comprobante_receptor_attr_rfc",map_client.get("rfc").toString());
-        data.put("comprobante_receptor_domicilio_attr_pais",map_client.get("pais").toString());
-        
-        data.put("comprobante_receptor_domicilio_attr_calle",map_client.get("calle").toString());
-        data.put("comprobante_receptor_domicilio_attr_noexterior",map_client.get("numero").toString());
-        data.put("comprobante_receptor_domicilio_attr_nointerior","");
-        data.put("comprobante_receptor_domicilio_attr_colonia",map_client.get("colonia").toString());
-        data.put("comprobante_receptor_domicilio_attr_localidad",map_client.get("localidad_alternativa").toString());
+        data.put("comprobante_receptor_attr_nombre",map.get("razon_social").toString());
+        data.put("comprobante_receptor_attr_rfc",map.get("rfc").toString());
+        data.put("comprobante_receptor_domicilio_attr_calle",map.get("calle").toString());
+        data.put("comprobante_receptor_domicilio_attr_noexterior",numero_ext);
+        data.put("comprobante_receptor_domicilio_attr_nointerior",numero_int);
+        data.put("comprobante_receptor_domicilio_attr_colonia",map.get("colonia").toString());
+        data.put("comprobante_receptor_domicilio_attr_localidad",map.get("localidad_alternativa").toString());
         data.put("comprobante_receptor_domicilio_attr_referencia","");
-        data.put("comprobante_receptor_domicilio_attr_municipio",map_client.get("municipio").toString());
-        data.put("comprobante_receptor_domicilio_attr_estado",map_client.get("estado").toString());
-        data.put("comprobante_receptor_domicilio_attr_codigopostal",map_client.get("cp").toString());
+        data.put("comprobante_receptor_domicilio_attr_municipio",map.get("municipio").toString());
+        data.put("comprobante_receptor_domicilio_attr_estado",map.get("estado").toString());
+        data.put("comprobante_receptor_domicilio_attr_pais",map.get("pais").toString());
+        data.put("comprobante_receptor_domicilio_attr_codigopostal",map.get("cp").toString());
         
         //este solo se utiliza en el pdfcfd y cfdi
-        data.put("numero_control",map_client.get("numero_control").toString());
+        data.put("numero_control",map.get("numero_control").toString());
         
         return data;
     }
@@ -1758,6 +1798,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "fac_nota_credito.cxc_clie_id,"
                     + "cxc_clie.numero_control AS no_cliente,"
                     + "cxc_clie.razon_social,"
+                    + "fac_nota_credito.cxc_clie_df_id,"
                     + "cxc_clie.empresa_immex,"
                     + "fac_nota_credito.cxc_agen_id,"
                     + "fac_nota_credito.moneda_id,"
@@ -1791,6 +1832,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
                     row.put("no_cliente",rs.getString("no_cliente"));
                     row.put("razon_social",rs.getString("razon_social"));
+                    row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));
                     row.put("concepto",rs.getString("concepto"));
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("cancelado",String.valueOf(rs.getBoolean("cancelado")));
@@ -2048,13 +2090,30 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "'No Identificado'::character varying AS metodo_pago, "
                     + "''::character varying AS no_cuenta, "
                     + "'No aplica'::character varying AS condicion_pago, "
-                    + "fac_nota_credito.subtotal "
+                    + "fac_nota_credito.subtotal, "
+                    + "cxc_clie.numero_control, "
+                    + "cxc_clie.razon_social, "
+                    + "cxc_clie.rfc, "
+                    + "(CASE WHEN cxc_clie.localidad_alternativa IS NULL THEN '' ELSE cxc_clie.localidad_alternativa END) AS localidad_alternativa, "
+                    + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.calle ELSE cxc_clie.calle END ) AS calle,"
+                    + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.numero_interior ELSE (CASE WHEN cxc_clie.numero='' OR IS NULL THEN cxc_clie.numero_exterior ELSE cxc_clie.numero END)  END ) AS numero_interior,"
+                    + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.numero_exterior ELSE (CASE WHEN cxc_clie.numero_exterior='' OR cxc_clie.numero_exterior IS NULL THEN cxc_clie.numero ELSE cxc_clie.numero_exterior END) END ) AS numero_exterior,"
+                    + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.colonia ELSE cxc_clie.colonia END ) AS colonia,"
+                    + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.municipio ELSE gral_mun.titulo END ) AS municipio,"
+                    + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.estado ELSE gral_edo.titulo END ) AS estado,"
+                    + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.pais ELSE gral_pais.titulo END ) AS pais,"
+                    + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.cp ELSE cxc_clie.cp END ) AS cp "
                 + "FROM fac_nota_credito  "
+                + "LEFT JOIN cxc_clie ON cxc_clie.id=fac_nota_credito.cxc_clie_id "
+                + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_nota_credito.cxc_clie_df_id "
                 + "WHERE fac_nota_credito.id="+id_nota_credito;
         
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         
-        int id_cliente = Integer.parseInt(map.get("cxc_clie_id").toString());
+        //int id_cliente = Integer.parseInt(map.get("cxc_clie_id").toString());
         
         String fecha = TimeHelper.getFechaActualYMDH();
         String[] fecha_hora = fecha.split(" ");
@@ -2076,6 +2135,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         }
         data.put("comprobante_attr_numerocuenta",no_cta);
         
+        /*
         //System.out.println("Obteniendo datos del cliente:"+ id_cliente);
         //obtener datos del cliente
 	String sql_query_cliente = "SELECT  cxc_clie.numero_control, "
@@ -2097,23 +2157,38 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         //System.out.println("sql_query_cliente: "+sql_query_cliente);
         Map<String, Object> map_client = this.getJdbcTemplate().queryForMap(sql_query_cliente);
+        */
+        String no_ext="";
+        String no_int="";
+        
+        if(map.get("numero_exterior").toString().equals("'")){
+            no_ext="";
+        }else{
+            no_ext=map.get("numero_exterior").toString();
+        }
+        
+        if(map.get("numero_interior").toString().equals("'")){
+            no_int="";
+        }else{
+            no_int=map.get("numero_interior").toString();
+        }
         
         //datos del cliente
-        data.put("comprobante_receptor_attr_nombre",map_client.get("razon_social").toString());
-        data.put("comprobante_receptor_attr_rfc",map_client.get("rfc").toString());
-        data.put("comprobante_receptor_domicilio_attr_pais",map_client.get("pais").toString());
-        data.put("comprobante_receptor_domicilio_attr_calle",map_client.get("calle").toString());
-        data.put("comprobante_receptor_domicilio_attr_noexterior",map_client.get("numero").toString());
-        data.put("comprobante_receptor_domicilio_attr_nointerior","");
-        data.put("comprobante_receptor_domicilio_attr_colonia",map_client.get("colonia").toString());
-        data.put("comprobante_receptor_domicilio_attr_localidad",map_client.get("localidad_alternativa").toString());
+        data.put("comprobante_receptor_attr_nombre",map.get("razon_social").toString());
+        data.put("comprobante_receptor_attr_rfc",map.get("rfc").toString());
+        data.put("comprobante_receptor_domicilio_attr_pais",map.get("pais").toString());
+        data.put("comprobante_receptor_domicilio_attr_calle",map.get("calle").toString());
+        data.put("comprobante_receptor_domicilio_attr_noexterior",no_ext);
+        data.put("comprobante_receptor_domicilio_attr_nointerior",no_int);
+        data.put("comprobante_receptor_domicilio_attr_colonia",map.get("colonia").toString());
+        data.put("comprobante_receptor_domicilio_attr_localidad",map.get("localidad_alternativa").toString());
         data.put("comprobante_receptor_domicilio_attr_referencia","");
-        data.put("comprobante_receptor_domicilio_attr_municipio",map_client.get("municipio").toString());
-        data.put("comprobante_receptor_domicilio_attr_estado",map_client.get("estado").toString());
-        data.put("comprobante_receptor_domicilio_attr_codigopostal",map_client.get("cp").toString());
+        data.put("comprobante_receptor_domicilio_attr_municipio",map.get("municipio").toString());
+        data.put("comprobante_receptor_domicilio_attr_estado",map.get("estado").toString());
+        data.put("comprobante_receptor_domicilio_attr_codigopostal",map.get("cp").toString());
         
         //este solo se utiliza en el pdfcfd y cfdi
-        data.put("numero_control",map_client.get("numero_control").toString());
+        data.put("numero_control",map.get("numero_control").toString());
         
         return data;
     }

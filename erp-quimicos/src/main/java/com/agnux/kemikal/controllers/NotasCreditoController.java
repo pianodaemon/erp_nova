@@ -327,7 +327,7 @@ public class NotasCreditoController {
             @RequestParam(value="generar", required=true) String generar,
             @RequestParam(value="fac_saldado", required=true) String fac_saldado,
             @ModelAttribute("user") UserSessionData user
-            ) {
+        ) {
             
             System.out.println("Guardar del Nota de Credito");
             HashMap<String, String> jsonretorno = new HashMap<String, String>();

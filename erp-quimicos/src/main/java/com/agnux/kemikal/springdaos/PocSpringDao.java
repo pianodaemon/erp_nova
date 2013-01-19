@@ -171,7 +171,6 @@ public class PocSpringDao implements PocInterfaceDao{
         + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
         + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
         + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-        + "LEFT JOIN cxc_clie_df ON cxc_clie_df.id = poc_pedidos.cxc_clie_df_id "
         + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = poc_pedidos.cxc_clie_df_id "
         + "WHERE poc_pedidos.id="+id_pedido;
         
@@ -1009,13 +1008,13 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "cxc_clie_credias.dias AS dias_credito,"
                         + "cxc_clie.razon_social AS cliente,"
                         + "cxc_clie.rfc AS cliente_rfc, "
-                        + "cxc_clie.calle AS cliente_calle,"
-                        + "cxc_clie.numero AS cliente_numero,"
-                        + "cxc_clie.colonia AS cliente_colonia,"
-                        + "gral_mun.titulo AS cliente_municipio,"
-                        + "gral_edo.titulo AS cliente_estado,"
-                        + "gral_pais.titulo AS cliente_pais,"
-                        + "cxc_clie.cp AS cliente_cp,"
+                        + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN sbtdf.calle ELSE cxc_clie.calle END ) AS cliente_calle,"
+                        + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN (sbtdf.numero_interior||' '||sbtdf.numero_exterior) ELSE cxc_clie.numero END ) AS cliente_numero,"
+                        + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN sbtdf.colonia ELSE cxc_clie.colonia END ) AS cliente_colonia,"
+                        + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN sbtdf.municipio ELSE gral_mun.titulo END ) AS cliente_municipio,"
+                        + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN sbtdf.estado ELSE gral_edo.titulo END ) AS cliente_estado,"
+                        + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN sbtdf.pais ELSE gral_pais.titulo END ) AS cliente_pais,"
+                        + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN sbtdf.cp ELSE cxc_clie.cp END ) AS cliente_cp,"
                         + "cxc_clie.telefono1 AS cliente_telefono,"
                         + "cxc_agen.nombre AS vendedor, "
                         + "(CASE WHEN fac_rems.cancelado=TRUE THEN 'REMISION CANCELADA' ELSE 'NO' END) AS cancelado "
@@ -1027,6 +1026,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
                 + "JOIN cxc_clie_credias ON cxc_clie_credias.id = fac_rems.cxc_clie_credias_id "
                 + "JOIN cxc_agen ON cxc_agen.id=fac_rems.cxc_agen_id "
+                + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_rems.cxc_clie_df_id "
                 + "WHERE fac_rems.id="+id_remision;
         
         Map<String, Object> hm = this.getJdbcTemplate().queryForMap(sql_to_query);

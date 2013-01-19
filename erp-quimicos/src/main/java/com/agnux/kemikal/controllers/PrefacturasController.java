@@ -20,6 +20,7 @@ import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd;
+import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -460,6 +461,7 @@ public class PrefacturasController {
             @RequestParam(value="costo_promedio", required=false) String[] costo_promedio,
             @RequestParam(value="costo", required=false) String[] costo,
             @RequestParam(value="id_remision", required=false) String[] id_remision,
+            @RequestParam(value="id_df", required=false) String id_df,
             @ModelAttribute("user") UserSessionData user
         ) throws Exception {
         
@@ -518,8 +520,12 @@ public class PrefacturasController {
             no_cuenta="";
         }
         
+        if(id_df.equals("0")){
+            id_df="1";
+        }
+        
         //System.out.println("data_string: "+data_string);
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df;
         //System.out.println("data_string: "+data_string);
         
         succes = this.getPdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
@@ -597,7 +603,7 @@ public class PrefacturasController {
                         datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                         
                         //pdf factura
-                        pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                        pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
                         //pdfFactura.viewPDF();
                         
                         jsonretorno.put("folio",serieFolio);
@@ -707,7 +713,7 @@ public class PrefacturasController {
                             datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                             
                             //pdf factura
-                            pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                            pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
                             //pdfFactura.viewPDF();
                             
                             jsonretorno.put("folio",serieFolio);

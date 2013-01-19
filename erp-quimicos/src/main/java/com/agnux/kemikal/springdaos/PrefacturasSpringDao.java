@@ -176,7 +176,12 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 + "cxc_clie.numero_control, "
                                 + "cxc_clie.razon_social, "
                                 + "cxc_clie.empresa_immex, "
-                                + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp AS direccion, "
+                                + "erp_prefacturas.cxc_clie_df_id, "
+                                + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN "
+                                    + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
+                                + "ELSE "
+                                    + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
+                                + "END ) AS direccion,"
                                 + "cxc_clie.cta_pago_mn, "
                                 + "cxc_clie.cta_pago_usd, "
                                 + "erp_prefacturas.subtotal, "
@@ -199,6 +204,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                             + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id  "
                             + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id  "
                             + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id  "
+                            + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = erp_prefacturas.cxc_clie_df_id "
                             + "WHERE erp_prefacturas.id=? "; 
                             
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -216,6 +222,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("cliente_id",rs.getString("cliente_id"));
                     row.put("numero_control",rs.getString("numero_control"));
                     row.put("razon_social",rs.getString("razon_social"));
+                    row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));
                     row.put("direccion",rs.getString("direccion"));
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
@@ -784,6 +791,12 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     + "fac_rems.folio_pedido,"
                     + "fac_rems.orden_compra,"
                     + "fac_rems.fac_metodos_pago_id,"
+                    + "fac_rems.cxc_clie_df_id,"
+                    + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN "
+                        + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
+                    + "ELSE "
+                        + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
+                    + "END ) AS direccion,"
                     + "(CASE WHEN fac_rems.fac_metodos_pago_id=2 OR fac_rems.fac_metodos_pago_id=3 THEN "
                                 + "fac_rems.no_cuenta "
                         + "ELSE "
@@ -794,8 +807,12 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     + "END) AS no_cuenta "
                 + "FROM fac_rems "
                 + "JOIN cxc_clie ON cxc_clie.id = fac_rems.cxc_clie_id "
+                + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_rems.cxc_clie_df_id "
                 + "WHERE fac_rems.id="+id_remision;
-                
+        
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -805,6 +822,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("folio_remision",rs.getString("folio_remision"));
                     row.put("folio_pedido",rs.getString("folio_pedido"));
                     row.put("orden_compra",rs.getString("orden_compra"));
+                    row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));
+                    row.put("direccion",rs.getString("direccion"));
                     row.put("fac_metodos_pago_id",String.valueOf(rs.getInt("fac_metodos_pago_id")));
                     row.put("no_cuenta",rs.getString("no_cuenta"));
                     return row;
