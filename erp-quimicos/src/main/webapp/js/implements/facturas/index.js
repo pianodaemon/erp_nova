@@ -788,7 +788,7 @@ $(function() {
 				var $submit_actualizar = $('#forma-facturas-window').find('#submit');
 				
 				//ocultar boton descargar y facturar. Despues de facturar debe mostrarse
-				$reconstruir_pdf.hide();
+				//$reconstruir_pdf.hide();
 				$boton_descargarpdf.hide();
 				$boton_cancelarfactura.hide();
 				$submit_actualizar.hide();
