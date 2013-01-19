@@ -548,6 +548,7 @@ $(function() {
 				var $id_cliente = $('#forma-facdevoluciones-window').find('input[name=id_cliente]');
 				var $rfc_cliente = $('#forma-facdevoluciones-window').find('input[name=rfccliente]');
 				var $razon_cliente = $('#forma-facdevoluciones-window').find('input[name=razoncliente]');
+				var $id_df = $('#forma-facdevoluciones-window').find('input[name=id_df]');
 				var $dir_cliente = $('#forma-facdevoluciones-window').find('input[name=dircliente]');
 				
 				var $serie_folio = $('#forma-facdevoluciones-window').find('input[name=serie_folio]');
@@ -679,6 +680,7 @@ $(function() {
 					$id_cliente.val(entry['datosFactura']['0']['cliente_id']);
 					$rfc_cliente.val(entry['datosFactura']['0']['rfc']);
 					$razon_cliente.val(entry['datosFactura']['0']['razon_social']);
+					$id_df.val(entry['datosFactura']['0']['df_id']);
 					$dir_cliente.val(entry['datosFactura']['0']['direccion']);
 					$serie_folio.val(entry['datosFactura']['0']['serie_folio']);
 					//$concepto.text(entry['datosFactura']['0']['observaciones']);

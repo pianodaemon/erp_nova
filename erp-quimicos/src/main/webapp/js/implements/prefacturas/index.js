@@ -441,7 +441,7 @@ $(function() {
 						
 						//carga select de condiciones con los dias de Credito default del Cliente
 						$select_condiciones.children().remove();
-						var hmtl_condiciones;
+						var hmtl_condiciones= '';
 						$.each(array_condiciones, function(entryIndex,condicion){
 							if( parseInt(condicion['id']) == parseInt(id_termino) ){
 								hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes">' + condicion['descripcion'] + '</option>';
@@ -449,11 +449,14 @@ $(function() {
 								//hmtl_condiciones += '<option value="' + condicion['id'] + '" >' + condicion['descripcion'] + '</option>';
 							}
 						});
+						if(hmtl_condiciones == ''){
+							hmtl_condiciones = '<option value="0">[-Seleccionar Termino-]</option>';
+						}
 						$select_condiciones.append(hmtl_condiciones);
 						
 						//carga select de vendedores
 						$select_vendedor.children().remove();
-						var hmtl_vendedor;
+						var hmtl_vendedor= '';
 						$.each(array_vendedores,function(entryIndex,vendedor){
 							if( parseInt(vendedor['id']) == parseInt(id_vendedor) ){
 								hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_vendedor'] + '</option>';
@@ -461,6 +464,9 @@ $(function() {
 								//hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
 							}
 						});
+						if(hmtl_vendedor == ''){
+							hmtl_vendedor = '<option value="0">[-Seleccionar Agente-]</option>';
+						}
 						$select_vendedor.append(hmtl_vendedor);
 						
                         
@@ -611,120 +617,143 @@ $(function() {
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Carga datos de la remision seleccionada al Grid de Productos de la factura
+	//Carga datos de la remision seleccionada al Grid de Productos de la factura
+	//Las remisiones a facturar deben tener la misma direccion fiscal, de otra manera no se permite agregar junto con otra remision
 	$agrega_productos_remision_al_grid = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_remision, id_moneda_remision,  array_monedas, array_metodos_pago, id_alm){
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosRemision.json';
 		$arreglo = {'id_remision':id_remision };
-		
 		
 		$.post(input_json,$arreglo,function(entry){
 			var trCount = $("tr", $grid_productos).size();
 			var valor_orden_compra = $orden_compra.val();
 			var valor_folio_pedido = $folio_pedido.val();
 			var valor_folio_remision = entry['Datos']['0']['folio_remision'];
+			var id_dir_fiscal = entry['Datos']['0']['df_id'];
+			var dir_fiscal = entry['Datos']['0']['direccion'];
+			var cargar_datos=false;
 			
-			if(parseInt(trCount) <= 0){
-				//carga select denominacion con con la moneda de la primera remision seleccionada
-				$select_moneda.children().remove();
-				var moneda_hmtl = '';
-				$.each(array_monedas,function(entryIndex,moneda){
-					if(parseInt(moneda['id']) == parseInt(id_moneda_remision)){
-						moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
-					}else{
-						//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-					}
-				});
-				$select_moneda.append(moneda_hmtl);
-				
-				
-				//carga select de metodos de pago
-				$select_metodo_pago.children().remove();
-				var hmtl_metodo;
-				$.each(array_metodos_pago,function(entryIndex,metodo){
-					if(parseInt(metodo['id']) == parseInt(entry['Datos']['0']['fac_metodos_pago_id'])){
-						hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes">' + metodo['titulo'] + '</option>';
-					}else{
-						//hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
-					}
-				});
-				$select_metodo_pago.append(hmtl_metodo);
-				$no_cuenta.val(entry['Datos']['0']['no_cuenta']);
-				
+			//verificar si el id de la direccion fiscal es igual a cero o  es igual a 1. Cualquiera de estos dos valosres significa que es la primera remision
+			if( parseInt($('#forma-prefacturas-window').find('input[name=id_df]').val())==0 || parseInt($('#forma-prefacturas-window').find('input[name=id_df]').val())==1){
+				cargar_datos=true;
+				//solo se debe tomar la direccion fiscal de la primera remision
+				//los siguientes ya no porque todos deben tener la misma direccion
+				$('#forma-prefacturas-window').find('input[name=id_df]').val(id_dir_fiscal);
+				$('#forma-prefacturas-window').find('input[name=dircliente]').val(dir_fiscal);
 			}
 			
-			if( valor_orden_compra != null && valor_orden_compra != '' ){
-				if( entry['Datos']['0']['orden_compra'] != null && entry['Datos']['0']['orden_compra'] !='' ){
-					$orden_compra.val( valor_orden_compra + "," + entry['Datos']['0']['orden_compra']);
-				}
+			if( parseInt($('#forma-prefacturas-window').find('input[name=id_df]').val()) == parseInt(id_dir_fiscal) ){
+				cargar_datos=true;
 			}else{
-				$orden_compra.val(entry['Datos']['0']['orden_compra']);
+				cargar_datos=false;
 			}
 			
 			
-			if( valor_folio_pedido != null && valor_folio_pedido != '' ){
-				if( entry['Datos']['0']['folio_pedido'] != null && entry['Datos']['0']['folio_pedido'] !='' ){
-					$folio_pedido.val( valor_folio_pedido + "," + entry['Datos']['0']['folio_pedido']);
-				}
-			}else{
-				$folio_pedido.val(entry['Datos']['0']['folio_pedido']);
-			}
-			
-			
-			
-			if(entry['Conceptos'] != null){
-				$.each(entry['Conceptos'],function(entryIndex,prod){
-					//obtiene numero de trs
-					var tr = $("tr", $grid_productos).size();
-					tr++;
+			if(cargar_datos){
+				
+				if(parseInt(trCount) <= 0){
+					//carga select denominacion con con la moneda de la primera remision seleccionada
+					$select_moneda.children().remove();
+					var moneda_hmtl = '';
+					$.each(array_monedas,function(entryIndex,moneda){
+						if(parseInt(moneda['id']) == parseInt(id_moneda_remision)){
+							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
+						}else{
+							//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+						}
+					});
+					$select_moneda.append(moneda_hmtl);
 					
-					var trr = '';
-					trr = '<tr>';
-					trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-							trr += '<a href="elimina_producto" id="delete'+ tr +'"></a>';
-							trr += '<input type="hidden" name="id_almacen" id="id_alm" value="'+id_alm+'">';//id del almacen de donde se saco el producto remisionado
-							trr += '<input type="hidden" name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
-							trr += '<input type="hidden" name="iddetalle" id="idd" value="'+ prod['id_detalle'] +'">';//este es el id del registro que ocupa el producto en la tabla prefacturas_detalles
-							trr += '<input type="hidden" name="id_remision" id="id_rem" value="'+ prod['id_remision'] +'">';//id de la  remision seleccionada
-							trr += '<input type="text" 	name="remision" value="'+ valor_folio_remision +'" 	id="id_rem" class="borde_oculto" readOnly="true" style="width:60px;">';
-							trr += '<input type="hidden" name="id_mon_rem" id="id_mon" value="'+ id_moneda_remision +'">';//id de la moneda de la remision
-							trr += '<input type="hidden" name="costo_promedio" id="costprom" value="'+ prod['costo_prom'] +'">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
-							trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['producto_id'] +'">';
-							trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['codigo'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
-						trr += '<INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-						trr += '<INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-							trr += '<INPUT type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
-							trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
-					trr += '</td>';
-					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-						trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
-					trr += '</td>';
-					trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-						trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
-						trr += '<INPUT type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
-					trr += '</td>';
-					trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-						trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
-						trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['valor_imp'])+'">';
-						trr += '<INPUT type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" id="idimppord">';
-						trr += '<INPUT type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
-					trr += '</td>';
-					trr += '</tr>';
-					$grid_productos.append(trr);
-					$grid_productos.find('a').hide();//ocultar
-				   
-				});
+					
+					//carga select de metodos de pago
+					$select_metodo_pago.children().remove();
+					var hmtl_metodo="";
+					$.each(array_metodos_pago,function(entryIndex,metodo){
+						if(parseInt(metodo['id']) == parseInt(entry['Datos']['0']['fac_metodos_pago_id'])){
+							hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes">' + metodo['titulo'] + '</option>';
+						}else{
+							//hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
+						}
+					});
+					$select_metodo_pago.append(hmtl_metodo);
+					$no_cuenta.val(entry['Datos']['0']['no_cuenta']);
+					
+				}
+				
+				if( valor_orden_compra != null && valor_orden_compra != '' ){
+					if( entry['Datos']['0']['orden_compra'] != null && entry['Datos']['0']['orden_compra'] !='' ){
+						$orden_compra.val( valor_orden_compra + "," + entry['Datos']['0']['orden_compra']);
+					}
+				}else{
+					$orden_compra.val(entry['Datos']['0']['orden_compra']);
+				}
+				
+				if( valor_folio_pedido != null && valor_folio_pedido != '' ){
+					if( entry['Datos']['0']['folio_pedido'] != null && entry['Datos']['0']['folio_pedido'] !='' ){
+						$folio_pedido.val( valor_folio_pedido + "," + entry['Datos']['0']['folio_pedido']);
+					}
+				}else{
+					$folio_pedido.val(entry['Datos']['0']['folio_pedido']);
+				}
+				
+				if(entry['Conceptos'] != null){
+					$.each(entry['Conceptos'],function(entryIndex,prod){
+						//obtiene numero de trs
+						var tr = $("tr", $grid_productos).size();
+						tr++;
+						
+						var trr = '';
+						trr = '<tr>';
+						trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
+								trr += '<a href="elimina_producto" id="delete'+ tr +'"></a>';
+								trr += '<input type="hidden" name="id_almacen" id="id_alm" value="'+id_alm+'">';//id del almacen de donde se saco el producto remisionado
+								trr += '<input type="hidden" name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
+								trr += '<input type="hidden" name="iddetalle" id="idd" value="'+ prod['id_detalle'] +'">';//este es el id del registro que ocupa el producto en la tabla prefacturas_detalles
+								trr += '<input type="hidden" name="id_remision" id="id_rem" value="'+ prod['id_remision'] +'">';//id de la  remision seleccionada
+								trr += '<input type="text" 	name="remision" value="'+ valor_folio_remision +'" 	id="id_rem" class="borde_oculto" readOnly="true" style="width:60px;">';
+								trr += '<input type="hidden" name="id_mon_rem" id="id_mon" value="'+ id_moneda_remision +'">';//id de la moneda de la remision
+								trr += '<input type="hidden" name="costo_promedio" id="costprom" value="'+ prod['costo_prom'] +'">';
+						trr += '</td>';
+						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
+								trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['producto_id'] +'">';
+								trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['codigo'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
+						trr += '</td>';
+						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
+							trr += '<INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
+						trr += '</td>';
+						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+							trr += '<INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+						trr += '</td>';
+						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+								trr += '<INPUT type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
+								trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+						trr += '</td>';
+						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+							trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
+						trr += '</td>';
+						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+							trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
+							trr += '<INPUT type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
+						trr += '</td>';
+						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+							trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
+							trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['valor_imp'])+'">';
+							trr += '<INPUT type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" id="idimppord">';
+							trr += '<INPUT type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
+						trr += '</td>';
+						trr += '</tr>';
+						$grid_productos.append(trr);
+						$grid_productos.find('a').hide();//ocultar
+					   
+					});
+				}
+				
+				$calcula_totales();//llamada a la funcion que calcula totales 
+				
+			}else{
+				jAlert("Las remisiones deben tener la misma direcci&oacute;n fiscal.\nLa remisi&oacute;n "+valor_folio_remision+" tiene direcci&oacute;n fiscal diferente a la primera remisi&oacute;n seleccionada.", 'Atencion!');
 			}
 			
-			$calcula_totales();//llamada a la funcion que calcula totales 
 		});
 		
 	}
@@ -1401,6 +1430,7 @@ $(function() {
 		var $id_cliente = $('#forma-prefacturas-window').find('input[name=id_cliente]');
 		var $no_cliente = $('#forma-prefacturas-window').find('input[name=nocliente]');
 		var $razon_cliente = $('#forma-prefacturas-window').find('input[name=razoncliente]');
+		var $id_df = $('#forma-prefacturas-window').find('input[name=id_df]');
 		var $dir_cliente = $('#forma-prefacturas-window').find('input[name=dircliente]');
 		var $select_moneda = $('#forma-prefacturas-window').find('select[name=moneda]');
 		var $moneda_original = $('#forma-prefacturas-window').find('input[name=moneda_original]');
@@ -1410,7 +1440,6 @@ $(function() {
 		
 		var $id_impuesto = $('#forma-prefacturas-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-prefacturas-window').find('input[name=valorimpuesto]');
-		
 		var $observaciones = $('#forma-prefacturas-window').find('textarea[name=observaciones]');
 		
 		var $select_condiciones = $('#forma-prefacturas-window').find('select[name=condiciones]');
@@ -1425,24 +1454,18 @@ $(function() {
 		var $cta_usd = $('#forma-prefacturas-window').find('input[name=cta_usd]');
 		var $select_almacen = $('#forma-prefacturas-window').find('select[name=select_almacen]');
 		
-		
-		
-		
 		//var $sku_producto = $('#forma-prefacturas-window').find('input[name=sku_producto]');
 		//var $nombre_producto = $('#forma-prefacturas-window').find('input[name=nombre_producto]');
-		
 		
 		//buscar producto
 		//var $busca_sku = $('#forma-prefacturas-window').find('a[href*=busca_sku]');
 		//href para agregar producto al grid
 		//var $agregar_producto = $('#forma-prefacturas-window').find('a[href*=agregar_producto]');
 		
-		
 		var $boton_facturar = $('#forma-prefacturas-window').find('#facturar');
 		//var $boton_descargarpdf = $('#forma-prefacturas-window').find('#descargarpdf');
 		//var $boton_cancelarfactura = $('#forma-prefacturas-window').find('#cancelarfactura');
 		//var $boton_descargarxml = $('#forma-prefacturas-window').find('#descargarxml');
-		
 		
 		//busca remisiones para agregar y facturar
 		var $agregar_remision = $('#forma-prefacturas-window').find('a[href*=agregar_remision]');
@@ -1452,11 +1475,8 @@ $(function() {
 		var $titulo_delete = $('#forma-prefacturas-window').find('.titulo_delete');
 		var $titulo_remision = $('#forma-prefacturas-window').find('#titulo_remision');
 		
-		
-		
 		//grid de errores
 		var $grid_warning = $('#forma-prefacturas-window').find('#div_warning_grid').find('#grid_warning');
-		
 		
 		//var $flete = $('#forma-prefacturas-window').find('input[name=flete]');
 		var $subtotal = $('#forma-prefacturas-window').find('input[name=subtotal]');
@@ -1467,9 +1487,8 @@ $(function() {
 		var $cancelar_plugin = $('#forma-prefacturas-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-prefacturas-window').find('#submit');
 		
-		
 		$id_prefactura.val(0);//para nueva cotizacion el folio es 0
-		
+		$id_df.val(1);
 		//$campo_factura.css({'background' : '#ffffff'});
 		
 		//ocultar boton de facturar y descargar pdf. Solo debe estar activo en editar
@@ -1497,13 +1516,13 @@ $(function() {
 				//$('#forma-prefacturas-window').find('.div_one').css({'height':'545px'});//sin errores
 				$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'578px'});//con errores
 				$('#forma-prefacturas-window').find('div.interrogacion').css({'display':'none'});
-
+				
 				$grid_productos.find('#cant').css({'background' : '#ffffff'});
 				$grid_productos.find('#cost').css({'background' : '#ffffff'});
-
+				
 				$('#forma-prefacturas-window').find('#div_warning_grid').css({'display':'none'});
 				$('#forma-prefacturas-window').find('#div_warning_grid').find('#grid_warning').children().remove();
-
+				
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
 				for (var element in valor){
@@ -1537,7 +1556,7 @@ $(function() {
 									
 									//$grid_productos.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
 									//$grid_productos.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-
+									
 									var tr_warning = '<tr>';
 										tr_warning += '<td width="20"><div><IMG SRC="../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
 										tr_warning += '<td width="120">';
@@ -1572,11 +1591,9 @@ $(function() {
 			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
 			$tipo_cambio.val(entry['Tc']['0']['tipo_cambio']);
 			
-                    
 			//cargar select de tipos de movimiento
 			var elemento_seleccionado = 3;//Facturacion de Remisiones
 			$carga_select_con_arreglo_fijo($select_tipo_documento, array_select_documento, elemento_seleccionado);
-			
 			
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
@@ -1586,7 +1603,6 @@ $(function() {
 			});
 			$select_moneda.append(moneda_hmtl);
 			
-			
 			//carga select de vendedores
 			$select_vendedor.children().remove();
 			var hmtl_vendedor='';
@@ -1594,7 +1610,6 @@ $(function() {
 				hmtl_vendedor += '<option value="' + vendedor['id'] + '"  >' + vendedor['nombre_vendedor'] + '</option>';
 			});
 			$select_vendedor.append(hmtl_vendedor);
-			
 			
 			//carga select de terminos
 			$select_condiciones.children().remove();
@@ -1612,7 +1627,6 @@ $(function() {
 			});
 			$select_metodo_pago.append(hmtl_metodo);
 			
-			
 			//carga select de almacen de la venta
 			$select_almacen.children().remove();
 			var hmtl_alm='';
@@ -1621,13 +1635,11 @@ $(function() {
 			});
 			$select_almacen.append(hmtl_alm);
 			
-			
 			//buscador de clientes
 			$busca_cliente.click(function(event){
 				event.preventDefault();
 				$busca_clientes( $select_moneda,$select_condiciones,$select_vendedor, entry['Monedas'], entry['Condiciones'],entry['Vendedores'] );
 			});
-			
 			
 			//buscador de remisiones para agregar al grid
 			$agregar_remision.click(function(event){
@@ -1639,7 +1651,6 @@ $(function() {
 					jAlert("Es necesario seleccionar un Cliente", 'Atencion!');
 				}
 			});
-			
 			
 		},"json");//termina llamada json
 		
@@ -1679,9 +1690,6 @@ $(function() {
 			
 		});
 		
-		
-		
-		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$sku_producto.keypress(function(e){
 			if(e.which == 13){
@@ -1718,14 +1726,6 @@ $(function() {
 		});
 		
 	});//termina nueva prefactura
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -1791,6 +1791,7 @@ $(function() {
 				var $id_cliente = $('#forma-prefacturas-window').find('input[name=id_cliente]');
 				var $no_cliente = $('#forma-prefacturas-window').find('input[name=nocliente]');
 				var $razon_cliente = $('#forma-prefacturas-window').find('input[name=razoncliente]');
+				var $id_df = $('#forma-prefacturas-window').find('input[name=id_df]');
 				var $dir_cliente = $('#forma-prefacturas-window').find('input[name=dircliente]');
 				var $tasa_ret_immex = $('#forma-prefacturas-window').find('input[name=tasa_ret_immex]');
 				var $empresa_immex = $('#forma-prefacturas-window').find('input[name=empresa_immex]');
@@ -1967,15 +1968,11 @@ $(function() {
 								
 								jAlert("La prefactura se guard&oacute; con &eacute;xito", 'Atencion!');
 							}
-							
-							
 						}
 						
 						$get_datos_grid();
 						var remove = function() {$(this).remove();};
 						$('#forma-prefacturas-overlay').fadeOut(remove);
-						
-						
 						
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
@@ -2055,6 +2052,8 @@ $(function() {
 					$id_cliente.val(entry['datosPrefactura']['0']['cliente_id']);
 					$no_cliente.val(entry['datosPrefactura']['0']['numero_control']);
 					$razon_cliente.val(entry['datosPrefactura']['0']['razon_social']);
+					$id_df.val(entry['datosPrefactura']['0']['df_id']);
+					$dir_cliente.val(entry['datosPrefactura']['0']['direccion']);
 					$observaciones.text(entry['datosPrefactura']['0']['observaciones']);
 					$observaciones_original.val(entry['datosPrefactura']['0']['observaciones']);
                     $orden_compra.val(entry['datosPrefactura']['0']['orden_compra']);
@@ -2131,7 +2130,6 @@ $(function() {
 					$select_condiciones.append(hmtl_condiciones);
 					$select_condiciones.find('option').clone().appendTo($select_condiciones_original);
 					
-					
 					var valor_metodo = entry['datosPrefactura']['0']['fac_metodos_pago_id'];
 					
 					//carga select de metodos de pago
@@ -2151,7 +2149,6 @@ $(function() {
 					$select_metodo_pago.append(hmtl_metodo);
 					$select_metodo_pago.find('option').clone().appendTo($select_metodo_pago_original);
 					
-					
 					var valor_id_almacen = entry['datosPrefactura']['0']['id_almacen'];
 					
 					//carga select de almacen de la venta
@@ -2163,7 +2160,6 @@ $(function() {
 						}
 					});
 					$select_almacen.append(hmtl_alm);
-					
 					
 					//metodo pago 2=Tarjeta de credito, 3=tarjeta de debito
 					if(parseInt(valor_metodo)==2 || parseInt(valor_metodo)==3){
