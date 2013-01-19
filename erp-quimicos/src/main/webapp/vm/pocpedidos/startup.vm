@@ -168,7 +168,7 @@
                                                                 <td width="80">No.&nbsp;Cliente</td>
                                                                 <td width="120">
                                                                     <input type="hidden" name="id_cliente" value="">
-                                                                    <input type="hidden" name="id_df" value="">
+                                                                    <input type="hidden" name="id_df" value="1">
                                                                     <input type="text" name="nocliente" style="width:120px;" readOnly="true">
                                                                 </td>
                                                                 <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocliente"></div></td>

@@ -183,6 +183,7 @@
 															<td width="80">No.&nbsp;Cliente</td>
 															<td width="120">
 																<input type="hidden" name="id_cliente" value="0">
+																<input type="hidden" name="id_df" value="1">
 																<INPUT TYPE="text" name="nocliente" style="width:120px;" readOnly="true">
 															</td>
 															<td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfccliente"></div></td>
@@ -294,7 +295,7 @@
 																<SELECT NAME="vendedor" style="width:180px"></SELECT>
 																<SELECT NAME="vendedor_original" style="display:none"></SELECT>
 															</td>
-															<td width="25"></td>
+															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_agente"></div></td>
 														</tr>
 														
 														<tr><td colspan="17" height="5"></td></tr>
@@ -321,7 +322,7 @@
 																<SELECT NAME="condiciones" style="width:140px" title="Terminos de pago"></SELECT>
 																<SELECT NAME="condiciones_original" style="display:none"></SELECT>
 															</td>
-															<td width="25"></td>
+															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_terminos"></div></td>
 														</tr>
 													</table>
 												</td>
