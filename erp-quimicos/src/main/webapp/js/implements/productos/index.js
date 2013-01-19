@@ -166,9 +166,12 @@ $(function() {
 			}
 			
 			if(activeTab == '#tabx-3'){
-				$('#forma-product-window').find('.product_div_one').css({'height':'225px'});
+				$('#forma-product-window').find('.product_div_one').css({'height':'220px'});
 			}
 			
+                        if(activeTab == '#tabx-4'){
+				$('#forma-product-window').find('.product_div_one').css({'height':'470px'});
+			}
 			//$finction_redimensiona_divs($('#forma-product-window'));
 			return false;
 		});
@@ -919,6 +922,9 @@ $(function() {
 		var $limpiar_gasto = $('#forma-product-window').find('a[href=limpiar_gasto]');
 		var $limpiar_costvent = $('#forma-product-window').find('a[href=limpiar_costvent]');
 		var $limpiar_vent = $('#forma-product-window').find('a[href=limpiar_vent]');
+                
+                var $nameimg = $('#forma-product-window').find('input[name=nameimg]');
+                var $namepdf = $('#forma-product-window').find('input[name=namepdf]');
 		
 		var $cerrar_plugin = $('#forma-product-window').find('#close');
 		var $cancelar_plugin = $('#forma-product-window').find('#boton_cancelar');
@@ -951,6 +957,55 @@ $(function() {
 		$vent_ssscuenta.hide();
 		$vent_sssscuenta.hide();
 		
+                /*Codigo para subir la imagen*/
+                var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
+                var button_img = $('#forma-product-window').find('#upload_button_img'), interval;
+                new AjaxUpload(button_img,{
+                    action: input_json_upload, 
+                    name: 'file',
+                    onSubmit : function(file , ext){
+                        if (! (ext && /^(png*|jpg*)$/.test(ext))){
+                            jAlert("El formato de la imagen debe de ser .png", 'Atencion!');
+                            return false;
+                        } else {
+                            button_img.text('Cargando..');
+                            this.disable();
+                        }
+                    },
+                    onComplete: function(file, response){
+                        button_img.text('Cambiar Imagen');
+                        window.clearInterval(interval);
+                        this.enable();
+                        $nameimg.val(file);
+                        var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/0/'+file+'/out.json';
+                        $('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
+                    }
+                });
+                
+                /*Codigo para subir la pdf*/
+                var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
+                var button_pdf = $('#forma-product-window').find('#upload_button_pdf'), interval;
+                new AjaxUpload(button_pdf,{
+                    action: input_json_upload, 
+                    name: 'file',
+                    onSubmit : function(file , ext){
+                        if (! (ext && /^(pdf)$/.test(ext))){
+                            jAlert("El formato del archivo, puede ser .pdf", 'Atencion!');
+                            return false;
+                        } else {
+                            button_pdf.text('Cargando..');
+                            this.disable();
+                        }
+                    },
+                    onComplete: function(file, response){
+                        button_pdf.text('Cambiar PDF');
+                        window.clearInterval(interval);
+                        this.enable();
+                        $namepdf.val(file);
+                        $('#forma-product-window').find('#contenidofile_pdf').text(file);
+                    }
+                });
+                
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("Producto dado de alta", 'Atencion!');
@@ -1704,7 +1759,7 @@ $(function() {
 				var $submit_actualizar = $('#forma-product-window').find('#submit');
 				$total_porcentaje.val(0);
 				
-				$codigo.attr({'readOnly':true});
+				//$codigo.attr({'readOnly':true});
 				//$codigo.css({'background' : '#DDDDDD'});
 				$proveedor.attr({'readOnly':true});
 				$busca_proveedor.hide();
