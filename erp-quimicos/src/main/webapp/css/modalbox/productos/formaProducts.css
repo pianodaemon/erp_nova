@@ -190,3 +190,31 @@ table tr td.grid2 {
 	text-align: right;
 	vertical-align: top;
 }
+
+/*Boton para subir imagenes*/
+#upload_button_img {
+    width:150px;
+    height:20px;
+    text-align:center;
+    background-color:#999999;
+    /*background-image:url(../../../img/modalbox/botonUpload.png);*/
+    color:#FFFFFF;
+    font-weight:bold;
+    padding-top:5px;
+    margin:auto;
+    cursor:pointer;
+}
+
+/*Boton para subir imagenes*/
+#upload_button_pdf {
+    width:150px;
+    height:20px;
+    text-align:center;
+    background-color:#999999;
+    /*background-image:url(../../../img/modalbox/botonUpload.png);*/
+    color:#FFFFFF;
+    font-weight:bold;
+    padding-top:5px;
+    margin:auto;
+    cursor:pointer;
+}
