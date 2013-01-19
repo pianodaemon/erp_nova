@@ -200,6 +200,7 @@ public final class pdfCfd_CfdiTimbrado {
         this.setImagen_cedula( this.getGralDao().getImagesDir()+this.getEmisora_rfc()+"_cedula.png" );
         
         PdfPTable table;
+        PdfPTable table_observ;
         PdfPTable table_totales;
         PdfPCell cell;
         String fileout="";
@@ -213,8 +214,11 @@ public final class pdfCfd_CfdiTimbrado {
         }
         
         try {
+            HeaderFooter event = new HeaderFooter();
             Document document = new Document(PageSize.LETTER, -50, -50, 20, 30);
+            document.addCreator("gpmarsan@gmail.com");
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileout));
+            writer.setPageEvent(event);
             document.open();
             
             float [] widths = {4.5f,5.5f,4,3,4,4};
@@ -407,28 +411,33 @@ public final class pdfCfd_CfdiTimbrado {
             table.addCell(cell);
             /////////////////////////////////////////////////////////////////////
             
+            String etiqueta_folio_fiscal="";
+            String folio_fiscal="";
             
-            cell = new PdfPCell(new Paragraph("",largeBoldFont));
+            if(this.getTipo_facturacion().equals("cfditf")){
+                etiqueta_folio_fiscal="FOLIO FISCAL:";
+                folio_fiscal=this.getUuid();
+            }
+            
+            cell = new PdfPCell(new Paragraph(etiqueta_folio_fiscal,negrita_pequena));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(cell);
             
-            
-            
-            //cell = new PdfPCell(new Paragraph("FACTURA No / INVOICE No.",negrita_pequena));
-            cell = new PdfPCell(new Paragraph(this.getEtiqueta_tipo_doc(),negrita_pequena));
+            cell = new PdfPCell(new Paragraph(folio_fiscal,smallFont));
+            cell.setBorder(0);
+            cell.setColspan(2);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table.addCell(cell);
+            /*
+            cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(this.getSerie_folio(),smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
-            
+            */
             
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             
@@ -455,15 +464,15 @@ public final class pdfCfd_CfdiTimbrado {
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("FECHA: / DATE:",negrita_pequena));
+            //cell = new PdfPCell(new Paragraph("FACTURA No / INVOICE No.",negrita_pequena));
+            cell = new PdfPCell(new Paragraph(this.getEtiqueta_tipo_doc(),negrita_pequena));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
             
-            String fecha[] = this.getFacha_comprobante().split("-");
-            
-            cell = new PdfPCell(new Paragraph(fecha[2]+"/"+fecha[1]+"/"+fecha[0],smallFont));
+            //Serie_folio de la factura o Nota de Credito
+            cell = new PdfPCell(new Paragraph(this.getSerie_folio(),smallFont));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -488,14 +497,16 @@ public final class pdfCfd_CfdiTimbrado {
             table.addCell(cell);
             
             
-            cell = new PdfPCell(new Paragraph("HORA:/HOUR:",negrita_pequena));
+            cell = new PdfPCell(new Paragraph("FECHA: / DATE:",negrita_pequena));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
             
-            //hora
-            cell = new PdfPCell(new Paragraph("",smallFont));
+            String fecha[] = this.getFacha_comprobante().split("-");
+            
+            //fecha
+            cell = new PdfPCell(new Paragraph(fecha[2]+"/"+fecha[1]+"/"+fecha[0],smallFont));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -529,13 +540,13 @@ public final class pdfCfd_CfdiTimbrado {
             
             
             
-            cell = new PdfPCell(new Paragraph("",largeBoldFont));
+            cell = new PdfPCell(new Paragraph("HORA:/HOUR:",largeBoldFont));
             cell.setBorder(0);
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
             
-            
+            //aqui debe ir la hora
             cell = new PdfPCell(new Paragraph("",largeBoldFont));
             cell.setBorder(0);
             cell.setUseAscender(true);
@@ -655,23 +666,42 @@ public final class pdfCfd_CfdiTimbrado {
             table.addCell(cell);
             /////////////////////////////////////////////////////////
             
-            cell = new PdfPCell(new Paragraph("NO. Y AÑO DE APROBACION :",negrita_pequena));
-            cell.setBorder(0);
-            cell.setBorderWidthRight(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setVerticalAlignment(Element.ALIGN_CENTER);
-            table.addCell(cell);
             
-            
-            cell = new PdfPCell(new Paragraph(this.getNo_aprobacion() + "   "+this.getAno_aprobacion(),smallFont));
-            cell.setBorder(0);
-            cell.setBorderWidthLeft(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setVerticalAlignment(Element.ALIGN_CENTER);
-            table.addCell(cell);
-            
+            if(this.getTipo_facturacion().equals("cfd")){
+                cell = new PdfPCell(new Paragraph("NO. Y AÑO DE APROBACION :",negrita_pequena));
+                cell.setBorder(0);
+                cell.setBorderWidthRight(0);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(this.getNo_aprobacion() + "   "+this.getAno_aprobacion(),smallFont));
+                cell.setBorder(0);
+                cell.setBorderWidthLeft(0);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cell);
+            }
+
+            if(this.getTipo_facturacion().equals("cfditf")){
+                cell = new PdfPCell(new Paragraph("",negrita_pequena));
+                cell.setBorder(0);
+                cell.setBorderWidthRight(0);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setBorder(0);
+                cell.setBorderWidthLeft(0);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cell);
+            }
             
             cell = new PdfPCell(new Paragraph("NO. CERTIFICADO :",negrita_pequena));
             cell.setBorder(0);
@@ -750,11 +780,17 @@ public final class pdfCfd_CfdiTimbrado {
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             table.addCell(cell);
             
+            document.add(table);
+            System.out.println("table.size6: "+table.size());
+            System.out.println("table.getTotalHeight6: "+table.getTotalHeight());
             
             //&&&&&&&&&&&&&&&&&&&&        TABLA DE  LOS CONCEPTOS        &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            
+            document.add(cepdf.addContent());
+            
+            /*
             cell = new PdfPCell(cepdf.addContent());
             cell.setColspan(6);
-            
             //cell.setFixedHeight(210);
             cell.setBorderWidthBottom(1);
             cell.setBorderWidthLeft(1);
@@ -764,16 +800,21 @@ public final class pdfCfd_CfdiTimbrado {
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             table.addCell(cell);
+             */
             //&&&&&&&&&&&&&&&&&&&&&&&&&    FIN DE LA TABLE DE CONCEPTOS  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&6666
             
+            //aqui comienza la tabla de totales
+            float [] widths_table_observ = {1};
+            table_observ = new PdfPTable(widths_table_observ);
+            table_observ.setKeepTogether(false);
             
-            cell = new PdfPCell(new Paragraph("OBSERVACIONES:",negrita_pequena));
+            cell = new PdfPCell(new Paragraph("\nOBSERVACIONES:",negrita_pequena));
             cell.setBorder(0);
-            cell.setColspan(6);
-            cell.setBorderWidthBottom(0);
             cell.setUseAscender(true);
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
+            table_observ.addCell(cell);
+            
             
             String cuentas="";
             
@@ -783,65 +824,29 @@ public final class pdfCfd_CfdiTimbrado {
                 cuentas="\nDEPOSITAR EN BANORTE (MN) Cta. 0587326205 CLABE 072580005873262052, (USD) Cta. 0557037045 CLABE 072580005570370454";
             }
             
-            System.out.println("table.size4: "+table.size());
-            System.out.println("table.getTotalHeight4: "+table.getTotalHeight());
             cell = new PdfPCell(new Paragraph(this.getObservaciones()+cuentas,smallFont));
-            cell.setBorder(0);
-            cell.setColspan(6);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(0);
-            //cell.setFixedHeight(60);
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorder(0);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
-            table.addCell(cell);
-            
-            System.out.println("table.size5: "+table.size());
-            System.out.println("table.getTotalHeight5: "+table.getTotalHeight());
-/*
-            if(!this.getObservaciones().equals("LUGAR DE ENTREGA: ")){
-                cell = new PdfPCell(new Paragraph(this.getObservaciones(),smallFont));
-                cell.setBorder(0);
-                cell.setColspan(6);
-                cell.setBorderWidthTop(0);
-                cell.setBorderWidthBottom(0);
-                cell.setFixedHeight(20);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                table.addCell(cell); 
-            }else{
-                cell = new PdfPCell(new Paragraph("",smallFont));
-                cell.setBorder(0);
-                cell.setColspan(6);
-                cell.setBorderWidthTop(0);
-                cell.setBorderWidthBottom(0);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                table.addCell(cell); 
-            }
-*/
-            cell = new PdfPCell(new Paragraph("",smallFont));
-            cell.setBorder(0);
-            cell.setColspan(6);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(0);
-            cell.setFixedHeight(10);
-            cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
+            table_observ.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setBorder(0);
+            cell.setFixedHeight(8);
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table_observ.addCell(cell);
+            
+            document.add(table_observ);
+            
             
             /*
-            cell = new PdfPCell(cepdffother.addContent(this.getSubTotal(), this.getMontoImpuesto(), this.getMontoRetencion(), this.getMontoTotal()   ));
-            cell.setColspan(6);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
-            */
-            
             document.add(table);
             System.out.println("table.size6: "+table.size());
             System.out.println("table.getTotalHeight6: "+table.getTotalHeight());
-            
+            */
             document.newPage();
             
             //aqui comienza la tabla de totales
@@ -965,7 +970,9 @@ public final class pdfCfd_CfdiTimbrado {
             float [] anchocolumnas = {1f, 2.3f, 1f, 1f, 0.5f,1f,1f, 0.5f,1.5f};
             String moneda="";
             PdfPTable table = new PdfPTable(anchocolumnas);
-            table.setKeepTogether(true);
+            table.setKeepTogether(false);
+            table.setHeaderRows(1);
+            
             String[] columnas;
             String[] columnas1 = {"CLAVE\nCODE","DESCRIPCION\nDESCRIPTION","No. LOTE\nLOT No.","TOTAL KGS\nTOTAL KGS"," ","PRECIO KG\nPRICE KG","MONEDA\nCURRENCY"," ","TOTAL\nEXTENDED VALUE"};
             String[] columnas2 = {"CLAVE\nCODE","DESCRIPCION\nDESCRIPTION","No. LOTE\nLOT No.","CANTIDAD.\nQUANTITY"," ","PRECIO\nPRICE","MONEDA\nCURRENCY"," ","TOTAL\nEXTENDED VALUE"};
@@ -1055,7 +1062,11 @@ public final class pdfCfd_CfdiTimbrado {
                             celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
                             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                             celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(1);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
                             table.addCell(celda);
                         }
                         
@@ -1064,7 +1075,11 @@ public final class pdfCfd_CfdiTimbrado {
                             //celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                             celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
                             table.addCell(celda);
                         }
                         
@@ -1073,7 +1088,11 @@ public final class pdfCfd_CfdiTimbrado {
                             celda= new PdfPCell(new Paragraph(registro.get(omega).toString(),smallFont));
                             celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                             celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
                             table.addCell(celda);
                         }
                         
@@ -1082,17 +1101,23 @@ public final class pdfCfd_CfdiTimbrado {
                             celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                             celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                             celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
                             table.addCell(celda);
                         }
                         if (omega.equals("denominacion")){
-                           
                                 celda = new PdfPCell(new Paragraph( "$",smallFont));
                                 celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                                 celda.setVerticalAlignment(Element.ALIGN_TOP);
-                                celda.setBorder(0);
+                                //celda.setBorder(0);
+                                celda.setBorderWidthBottom(0);
+                                celda.setBorderWidthLeft(0);
+                                celda.setBorderWidthRight(0);
+                                celda.setBorderWidthTop(0);
                                 table.addCell(celda);
-                            
                         }
                         
                         
@@ -1101,7 +1126,11 @@ public final class pdfCfd_CfdiTimbrado {
                             celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                             celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                             celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
                             table.addCell(celda);
                         }
                         
@@ -1109,7 +1138,11 @@ public final class pdfCfd_CfdiTimbrado {
                             celda = new PdfPCell(new Paragraph(registro.get(omega).toUpperCase(),smallFont));
                             celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                             celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
                             table.addCell(celda);
                          }
                         
@@ -1119,7 +1152,11 @@ public final class pdfCfd_CfdiTimbrado {
                             celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                             celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                             celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(1);
+                            celda.setBorderWidthTop(0);
                             table.addCell(celda);
                          }
                          
@@ -1129,7 +1166,17 @@ public final class pdfCfd_CfdiTimbrado {
                 contador++;
                 
             }
-           
+
+           cellX = new PdfPCell(new Paragraph("",smallFont));
+            cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellX.setVerticalAlignment(Element.ALIGN_TOP);
+            //celda.setBorder(0);
+            cellX.setColspan(9);
+            cellX.setBorderWidthBottom(0);
+            cellX.setBorderWidthLeft(0);
+            cellX.setBorderWidthRight(0);
+            cellX.setBorderWidthTop(1);
+            table.addCell(cellX);
            
             return table;
         }
@@ -2154,4 +2201,94 @@ public final class pdfCfd_CfdiTimbrado {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
+    
+    
+    
+    
+    static class HeaderFooter extends PdfPageEventHelper {
+        public Image headerImage;
+        protected PdfTemplate total;       
+        protected BaseFont helv;  
+        protected PdfContentByte cb;  
+        Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
+        Font largeFont = new Font(Font.FontFamily.HELVETICA,10,Font.NORMAL,BaseColor.BLACK);
+        Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
+        
+        
+        /*Añadimos una tabla con  una imagen del logo de megestiono y creamos la fuente para el documento, la imagen esta escalada para que no se muestre pixelada*/   
+        @Override
+        public void onOpenDocument(PdfWriter writer, Document document) {
+            try {
+                total = writer.getDirectContent().createTemplate(100, 100);  
+                //public Rectangle(int x, int y, int width, int height)
+                total.setBoundingBox(new Rectangle(-20, -20, 100, 100));
+                total.fill();
+                helv = BaseFont.createFont("Helvetica", BaseFont.WINANSI, false); 
+            }
+            catch(Exception e) {
+                throw new ExceptionConverter(e);
+            }
+        }
+        
+        /*añadimos pie de página, borde y más propiedades*/
+        @Override
+        public void onEndPage(PdfWriter writer, Document document) {
+            //PdfContentByte cb = writer.getDirectContent();
+            //ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase(this.getEmpresa(),largeBoldFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop() -25, 0);
+            //ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase("Depositos en Bancos",largeBoldFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop()-38, 0);
+            //ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase(this.getPeriodo(),largeFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop()-50, 0);
+            
+            
+            cb = writer.getDirectContent();
+            float textBase = document.bottom() - 20;
+            
+            //texto inferior izquieda pie de pagina
+            String text_left ="";
+            float text_left_Size = helv.getWidthPoint(text_left, 7);
+            cb.beginText();
+            cb.setFontAndSize(helv, 7);  
+            cb.setTextMatrix(document.left()+85, textBase );  //definir la posicion de text
+            cb.showText(text_left);
+            cb.endText();
+            
+            
+            //texto centro pie de pagina
+            String text_center ="Hoja " + writer.getPageNumber() + " de ";
+            float text_center_Size = helv.getWidthPoint(text_center, 7);
+            float pos_text_center = (document.getPageSize().getWidth()/2)-(text_center_Size/2);
+            float adjust = text_center_Size + 3; 
+            cb.beginText();  
+            cb.setFontAndSize(helv, 7);  
+            cb.setTextMatrix(pos_text_center, textBase );  //definir la posicion de text
+            cb.showText(text_center);
+            cb.endText();
+            cb.addTemplate(total, pos_text_center + adjust, textBase);
+            
+            
+            //texto inferior derecha pie de pagina
+            String text_right = "";
+            float textRightSize = helv.getWidthPoint(text_right, 7);
+            float pos_text_right = document.getPageSize().getWidth()-textRightSize - 40;
+            cb.beginText();
+            cb.setFontAndSize(helv, 7);
+            cb.setTextMatrix(pos_text_right, textBase);
+            cb.showText(text_right);
+            cb.endText();
+            //cb.restoreState(); 
+            
+        }
+        
+        
+        /*aqui escrimos ls paginas totales, para que nos salga de pie de pagina Pagina x de y*/
+        @Override
+        public void onCloseDocument(PdfWriter writer, Document document) {
+          total.beginText();  
+          total.setFontAndSize(helv, 7);  
+          total.setTextMatrix(0,0);                                           
+          total.showText(String.valueOf(writer.getPageNumber() -1));  
+          total.endText();  
+        }    
+   }
+
+    
 }
