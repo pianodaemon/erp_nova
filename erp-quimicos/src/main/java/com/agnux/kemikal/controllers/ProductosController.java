@@ -5,12 +5,15 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
+import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -30,8 +34,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 
 
@@ -56,6 +62,13 @@ public class ProductosController {
     @Qualifier("daoHome")
     private HomeInterfaceDao HomeDao;
     
+    @Autowired
+    @Qualifier("daoGral")
+    private GralInterfaceDao gralDao;
+    
+    public GralInterfaceDao getGralDao() {
+        return gralDao;
+    }
     
     public InvInterfaceDao getInvDao() {
         return invDao;
@@ -533,6 +546,10 @@ public class ProductosController {
             @RequestParam(value="id_cta_gasto", required=true) String id_cta_gasto,
             @RequestParam(value="id_cta_costvent", required=true) String id_cta_costoventa,
             @RequestParam(value="id_cta_vent", required=true) String id_cta_venta,
+            @RequestParam(value="nameimg", required=true) String nameimg,
+            @RequestParam(value="namepdf", required=true) String namepdf,
+            @RequestParam(value="descripcion_corta", required=true) String descripcion_corta,
+            @RequestParam(value="descripcion_larga", required=true) String descripcion_larga,
             Model model,@ModelAttribute("user") UserSessionData user
         ) {
             
@@ -575,6 +592,11 @@ public class ProductosController {
                     extra_data_array = "'sin datos'";
                 }
             }
+            
+            //quitar las comillas simples de la cadena
+            descripcion = descripcion.replaceAll("'", "\"");
+            descripcion_larga = descripcion_larga.replaceAll("'", "\"");
+            descripcion_corta = descripcion_corta.replaceAll("'", "\"");
             
             //si los campos select vienen null les asigna un 0(cero)
             tentrega = StringHelper.verificarSelect(tentrega);
@@ -648,7 +670,11 @@ public class ProductosController {
                     punto_reorden+"___"+//34
                     id_cta_gasto+"___"+//35
                     id_cta_costoventa+"___"+//36
-                    id_cta_venta;//37
+                    id_cta_venta+"___"+
+                    nameimg+"___"+//37
+                    namepdf+"___"+//38
+                    descripcion_corta+"___"+//39
+                    descripcion_larga;//40
             
             succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             
@@ -692,4 +718,112 @@ public class ProductosController {
         
         return jsonretorno;
     }
+    
+    
+    //para subir el archivo a la carpeta temporal de java
+    @RequestMapping(method = RequestMethod.POST, value="/fileUpload.json")
+    public @ResponseBody HashMap<String, String> fileUploadJson(
+            @RequestParam(value="file", required=true) MultipartFile uploadImg,
+            Model model
+            ) throws IOException {
+        
+        //System.out.println("fileUpload:");
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        
+        if (!uploadImg.isEmpty()) {
+            byte[] bytes = uploadImg.getBytes();
+            
+            System.out.println("FileHelper:");
+            jsonretorno.put("success",FileHelper.saveByteFile(bytes, this.getGralDao().getJvmTmpDir()+"/"+uploadImg.getOriginalFilename()));
+            //jsonretorno.put("success",FileHelper.saveByteFile(bytes, uploadImg.getOriginalFilename()));
+            
+            //log.log(Level.INFO, "Test upload {0}", uploadImg.getOriginalFilename());
+            //String ul_img = FileHelper.saveByteFile(bytes, "/tmp/"+uploadImg.getOriginalFilename());
+            String ul_img = uploadImg.getOriginalFilename();
+            //System.out.println("getJvmTmpDir:"+this.getGralDao().getJvmTmpDir());
+            
+            /*
+            ImgHelper img = new ImgHelper();
+            img.procesaImg(ul_img, uploadImg.getOriginalFilename(),osv.getTmpDirOs());
+            */
+            //img.procesaImg(ul_img, uploadImg.getOriginalFilename(),"/tmp/");
+            
+            jsonretorno.put("url",ul_img);
+            
+            jsonretorno.put("success","true");
+            
+        } else {
+            log.log(Level.INFO, "Test upload {0}", "uploadFailure");
+            jsonretorno.put("url","no");
+            jsonretorno.put("success","false");
+        }
+        
+        return jsonretorno;
+    }
+    
+    //descargtar imagen
+    @RequestMapping(method = RequestMethod.GET, value="/imgDownloadImg/{id}/{name_img}/out.json")
+    public @ResponseBody HashMap<String, String> imgDownloadImgJson(@PathVariable("name_img") String name_img,
+        @PathVariable("id") String id,
+        HttpServletResponse response, 
+        Model model) throws IOException {
+        ServletOutputStream out;
+        
+        String varDir = "";
+        if(id.equals("0")){
+            varDir = this.getGralDao().getJvmTmpDir();
+        }else{
+            varDir = this.getGralDao().getJvmTmpDir();
+        }
+        
+        File file = new File(varDir+"/"+name_img);
+        
+        byte[] fichero = FileHelper.BytesFromFile(file);
+        response.setContentType ("application/png");
+        response.setHeader ( "Content-disposition", "inline; filename=" + name_img );
+        response.setHeader ( "Cache-Control", "max-age=30" );
+        response.setHeader ( "Pragma", "No-cache" );
+        response.setDateHeader ("Expires", 0);
+        response.setContentLength (fichero.length);
+        out = response.getOutputStream ();
+        out.write (fichero, 0, fichero.length);
+        out.flush ();
+        out.close ();
+        
+        return null;
+    }
+    
+    //descargtar pdf
+    @RequestMapping(method = RequestMethod.GET, value="/imgDownloadPdf/{id}/{name_img}/out.json")
+    public @ResponseBody HashMap<String, String> imgDownloadPdfJson(@PathVariable("name_img") String name_img,
+        @PathVariable("id") String id,
+        HttpServletResponse response, 
+        Model model) throws IOException {
+        ServletOutputStream out;
+        
+        String varDir = "";
+        if(id.equals("0")){
+            varDir = this.getGralDao().getJvmTmpDir();
+        }else{
+            varDir = this.getGralDao().getJvmTmpDir();
+        }
+        
+        File file = new File(varDir+"/"+name_img);
+        
+        byte[] fichero = FileHelper.BytesFromFile(file);
+        response.setContentType ("application/pdf");
+        response.setHeader ( "Content-disposition", "inline; filename=" + name_img );
+        response.setHeader ( "Cache-Control", "max-age=30" );
+        response.setHeader ( "Pragma", "No-cache" );
+        response.setDateHeader ("Expires", 0);
+        response.setContentLength (fichero.length);
+        out = response.getOutputStream ();
+        out.write (fichero, 0, fichero.length);
+        out.flush ();
+        out.close ();
+        
+        return null;
+    }
+    
 }

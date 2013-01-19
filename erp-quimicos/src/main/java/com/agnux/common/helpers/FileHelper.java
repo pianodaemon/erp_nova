@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -272,7 +273,17 @@ public class FileHelper {
         return valor_retorno;
     }
 
-    
+    public static  String saveByteFile(byte[] file, String dir) throws IOException {
+        final String nombreArch = dir;
+	final File arch = new File(nombreArch);
+	final OutputStream aSalida = new FileOutputStream(arch);
+        
+	aSalida.write(file);
+	aSalida.flush();
+	aSalida.close();
+        
+	return nombreArch;
+    }
     
     
     
