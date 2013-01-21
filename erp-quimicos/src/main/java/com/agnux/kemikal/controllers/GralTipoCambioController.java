@@ -116,11 +116,11 @@ public class GralTipoCambioController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
-        String zona = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("zona")))+"%";
-        String estatus = StringHelper.isNullString(String.valueOf(has_busqueda.get("estatus")));
+        String fecha = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha")))+"";
+        String moneda_id = StringHelper.isNullString(String.valueOf(has_busqueda.get("moneda")));
        
         
-        String data_string = app_selected+"___"+id_usuario+"___"+zona+"___"+estatus;
+        String data_string = app_selected+"___"+id_usuario+"___"+fecha+"___"+moneda_id;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getGralDao().countAll(data_string);              
