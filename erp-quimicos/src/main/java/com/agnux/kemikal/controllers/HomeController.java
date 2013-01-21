@@ -271,7 +271,9 @@ public class HomeController {
     public String jobTiposMoneda(String data_string, String extra_data_array){
         
         String actualizo = "0";
-        actualizo = this.getGralDao().selectFunctionForThisApp(data_string, extra_data_array);
+        if(!this.getDescription().equals(null) && !this.getDescription().equals("")){
+            actualizo = this.getGralDao().selectFunctionForThisApp(data_string, extra_data_array);
+        }
         //actualizo = this.getGralDao().selectFunctionForThisApp(data_string, extra_data_array);
         
         return actualizo;
