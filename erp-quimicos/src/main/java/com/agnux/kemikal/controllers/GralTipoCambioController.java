@@ -62,9 +62,10 @@ public class GralTipoCambioController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("zona", "Zona:130");
-        infoConstruccionTabla.put("descripcion", "Descripcion:130");
-        infoConstruccionTabla.put("estatus", "Estatus:130");
+        infoConstruccionTabla.put("valor", "valor:130");
+        infoConstruccionTabla.put("momento_creacion", "fecha:130");
+        infoConstruccionTabla.put("descripcion_abr", "Moneda:130");
+        infoConstruccionTabla.put("version", "Version:130");
         
         
         ModelAndView x = new ModelAndView("graltipocambio/startup", "title", "Actualizador de Tipo de Cambio");
@@ -134,7 +135,7 @@ public class GralTipoCambioController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        //jsonretorno.put("Data", this.getGralDao().getZonas_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getGralDao().getTipocambio_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
@@ -149,11 +150,11 @@ public class GralTipoCambioController {
             Model model
             ){
         
-        log.log(Level.INFO, "Ejecutando getZonasjson de {0}", InvZonasController.class.getName());
+        log.log(Level.INFO, "Ejecutando getTipocambio de {0}", GralTipoCambioController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
        
-        //ArrayList<HashMap<String, String>> datosZonas = new ArrayList<HashMap<String, String>>(); 
+        ArrayList<HashMap<String, String>> datosTipoCambio = new ArrayList<HashMap<String, String>>(); 
         ArrayList<HashMap<String, String>> Monedas = new ArrayList<HashMap<String, String>>(); 
        
         //decodificar id de usuario
@@ -163,13 +164,14 @@ public class GralTipoCambioController {
        // Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
        
         
-        if( id != 0  ){
-            //datosZonas = this.getGralDao().getZonas_Datos(id);
+        if( id != 0  ){                                                                 //.get("pais_id").toString());
+            //datosTipoCambio = this.getGralDao().gettipoCambio_Datos(Monedas.get(0).get("id").toString());
+            datosTipoCambio = this.getGralDao().gettipoCambio_Datos(id.toString());
           
         }
         Monedas= this.getGralDao().getTiposdeCambio();
        //datos zonas es lo que me trajo de la consulta y los pone en el json
-       //jsonretorno.put("Zonas", datosZonas);
+       jsonretorno.put("DatosTC", datosTipoCambio);
        jsonretorno.put("monedas", Monedas);
        
         return jsonretorno;
@@ -179,10 +181,12 @@ public class GralTipoCambioController {
       //crear y editar una marca
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
-            @RequestParam(value="identificador", required=true) Integer id,
-            @RequestParam(value="descripcion", required=true) String descripcion,
-            @RequestParam(value="zona", required=true) String zona,
-            @RequestParam(value="select_estatus", required=true) String estatus,
+            @RequestParam(value="identificador", required=true) Integer id,          // id =            4
+            @RequestParam(value="select_monedas", required=true) String moneda_id,   //select_monedas	3  
+            @RequestParam(value="fecha", required=true) String fecha,                //fecha	        2013-01-18
+            @RequestParam(value="tipocambio", required=true) String tipo_cambio,     //tipocambio	555 
+            @RequestParam(value="fecha_de_hoy", required=true) String fecha_de_hoy,     //tipocambio	555 
+            
             Model model,@ModelAttribute("user") UserSessionData user
             ) {
         
@@ -200,8 +204,9 @@ public class GralTipoCambioController {
         }
         
 
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+descripcion.toUpperCase()+"___"+estatus+"___"+zona.toUpperCase();
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+moneda_id+"___"+fecha+"___"+tipo_cambio+"___"+fecha_de_hoy;
         
+        System.out.println("Cadena que se esta enviando::  "+data_string);
         succes = this.getGralDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
@@ -232,7 +237,7 @@ public class GralTipoCambioController {
         String extra_data_array = "'sin datos'";
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
         
-        System.out.println("Ejecutando borrado logico invetarios Zonas");
+        System.out.println("Ejecutando borrado logico Gral Tipo de Cambio");
         jsonretorno.put("success",String.valueOf( this.getGralDao().selectFunctionForThisApp(data_string,extra_data_array)) );
         
         return jsonretorno;
