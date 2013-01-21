@@ -44,7 +44,7 @@
                                         <td>&nbsp;</td>
                                         <td>Tipo&nbsp;de&nbsp;Reporte</td>
                                         <td>&nbsp;</td>
-                                        <td>nombre&nbsp;del&nbsp;producto</td>
+                                        <td>Nombre&nbsp;del&nbsp;producto</td>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
@@ -87,7 +87,7 @@
 
                                         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                         <td><INPUT TYPE="text" name="fecha_inicial" style="width:70px;"></td>
-                                        <td align=center> Al</td>
+                                        <td align="center"> Al</td>
                                         <td><INPUT TYPE="text" name="fecha_final" style="width:70px;"></td>
                                         <td></td>
                                     </tr>
@@ -95,7 +95,7 @@
                                         <td></td>
                                         <td>&nbsp;&nbsp;</td>
                                         <td>&nbsp;</td>
-                                        <td>nombre&nbsp;de&nbsp;cliente</td>
+                                        <td>Nombre&nbsp;de&nbsp;cliente</td>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
                                         <td>&nbsp;</td>
