@@ -191,8 +191,48 @@ $(function() {
 
 	}
 	
-	
-	
+	var mostrarFecha = function mostrarFecha(){
+                    var ahora = new Date();
+                    var anoActual = ahora.getFullYear();
+                    var mesActual = ahora.getMonth();
+                    mesActual = mesActual+1;
+                    mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+                    var diaActual = ahora.getDate();
+                    diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+                    var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
+                    return Fecha;
+          }
+          
+           //valida la fecha seleccionada
+          function mayor(fecha, fecha2){
+                    var xMes=fecha.substring(5, 7);
+                    var xDia=fecha.substring(8, 10);
+                    var xAnio=fecha.substring(0,4);
+                    var yMes=fecha2.substring(5, 7);
+                    var yDia=fecha2.substring(8, 10);
+                    var yAnio=fecha2.substring(0,4);
+
+                    if (xAnio > yAnio){
+                              return(true);
+                    }else{
+                              if (xAnio == yAnio){
+                                   if (xMes > yMes){
+                                             return(true);
+                                   }
+                                   if (xMes == yMes){
+                                             if (xDia > yDia){
+                                                  return(true);
+                                             }else{
+                                                  return(false);
+                                             }
+                                   }else{
+                                             return(false);
+                                   }
+                              }else{
+                                   return(false);
+                              }
+                    }
+          }
 	
 	
 	//nuevas tipocambio
@@ -212,9 +252,11 @@ $(function() {
 		$tabs_li_funxionalidad();
 		
 		var $campo_id = $('#forma-tipocambio-window').find('input[name=identificador]');                
-		var $descripcion = $('#forma-tipocambio-window').find('input[name=descripcion]');
-                var $zona = $('#forma-tipocambio-window').find('input[name=zona]');
-		var $select_monedas = $('#forma-tipocambio-window').find('select[name=select_monedas]');
+                var $select_monedas = $('#forma-tipocambio-window').find('select[name=select_monedas]');
+		var $fecha= $('#forma-tipocambio-window').find('input[name=fecha]');
+                var $tipocambio = $('#forma-tipocambio-window').find('input[name=tipocambio]');
+                var $fecha_de_hoy = $('#forma-tipocambio-window').find('input[name=fecha_de_hoy]');                
+                
 			
 		//botones		
 		var $cerrar_plugin = $('#forma-tipocambio-window').find('#close');
@@ -222,6 +264,93 @@ $(function() {
 		var $submit_actualizar = $('#forma-tipocambio-window').find('#submit');
 		
 		$campo_id.attr({'value' : 0});
+                $fecha_de_hoy.attr({'value' : ""});
+                $fecha.attr({'readOnly':true});
+          
+          
+             /*      
+          //valida la fecha seleccionada
+          function mayor(fecha, fecha2){
+                    var xMes=fecha.substring(5, 7);
+                    var xDia=fecha.substring(8, 10);
+                    var xAnio=fecha.substring(0,4);
+                    var yMes=fecha2.substring(5, 7);
+                    var yDia=fecha2.substring(8, 10);
+                    var yAnio=fecha2.substring(0,4);
+
+                    if (xAnio > yAnio){
+                              return(true);
+                    }else{
+                              if (xAnio == yAnio){
+                                   if (xMes > yMes){
+                                             return(true);
+                                   }
+                                   if (xMes == yMes){
+                                             if (xDia > yDia){
+                                                  return(true);
+                                             }else{
+                                                  return(false);
+                                             }
+                                   }else{
+                                             return(false);
+                                   }
+                              }else{
+                                   return(false);
+                              }
+                    }
+          }*/
+	
+          //muestra la fecha actual
+         /* var mostrarFecha = function mostrarFecha(){
+                    var ahora = new Date();
+                    var anoActual = ahora.getFullYear();
+                    var mesActual = ahora.getMonth();
+                    mesActual = mesActual+1;
+                    mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+                    var diaActual = ahora.getDate();
+                    diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+                    var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
+                    return Fecha;
+          }*/
+          //----------------------------------------------------------------
+        /*
+          $fecha.DatePicker({
+                    format:'Y-m-d',
+                    date: $(this).val(),
+                    current: $(this).val(),
+                    starts: 1,
+                    position: 'bottom',
+                    locale: {
+                         days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+                         daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+                         daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+                         months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+                         monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+                         weekMin: 'se'
+                    },
+                    onChange: function(formated, dates){
+                         var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+                         $fecha.val(formated);
+                         if (formated.match(patron) ){
+                                   var valida_fecha=mayor($fecha.val(),mostrarFecha());
+
+                                   if (valida_fecha==true){
+                                        jAlert("Fecha no valida",'! Atencion');
+                                        $fecha.val(mostrarFecha());
+                                   }else{
+                                        $fecha.DatePickerHide();	
+                                   }
+                         }
+                    }
+          });
+        
+    
+          $fecha.click(function (s){
+				var a=$('div.datepicker');
+				a.css({'z-index':100});
+          });*/
+
+          $fecha.val(mostrarFecha());
        
        
       
@@ -255,14 +384,19 @@ $(function() {
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTipocambio.json';
 		$arreglo = {'id':id_to_show,
-					'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-					};
+		             'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+			   };
 		
 		$.post(input_json,$arreglo,function(entry){
+                    
+                    
+                    
+                    
                    
 			
 			$select_monedas.children().remove();
-			var moneda_hmtl = '<option value="0" selected="yes">[--Seleccionar Moneda--]</option>';
+			//var moneda_hmtl = '<option value="0" selected="yes">[--Seleccionar Moneda--]</option>';
+                        var moneda_hmtl = '';
 			$.each(entry['monedas'],function(entryIndex,moneda){
 				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 			});
@@ -343,18 +477,28 @@ $(function() {
 			
 			$tabs_li_funxionalidad();
 			
-			var $campo_id = $('#forma-tipocambio-window').find('input[name=identificador]');
-                        var $descripcion = $('#forma-tipocambio-window').find('input[name=descripcion]');
-                        var $zona = $('#forma-tipocambio-window').find('input[name=zona]');
-                        var $select_estatus = $('#forma-tipocambio-window').find('select[name=select_estatus]'); 
-                
+			var $campo_id = $('#forma-tipocambio-window').find('input[name=identificador]');                
+                        var $select_monedas = $('#forma-tipocambio-window').find('select[name=select_monedas]');
+                        var $fecha= $('#forma-tipocambio-window').find('input[name=fecha]');
+                        var $tipocambio = $('#forma-tipocambio-window').find('input[name=tipocambio]');
+                        var $fecha_de_hoy = $('#forma-tipocambio-window').find('input[name=fecha_de_hoy]');                
+               
 			var $cerrar_plugin = $('#forma-tipocambio-window').find('#close');
 			var $cancelar_plugin = $('#forma-tipocambio-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-tipocambio-window').find('#submit');
+                        
+                        $fecha.attr({'readOnly':true});
+          
+          
+                   
+          
+       
 			
 			if(accion_mode == 'edit'){
                             
-                            //aqui es el post que envia los datos a getZonas.json  cuando se va a editar
+                   
+                            
+                            
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTipocambio.json';
 				$arreglo = {'id':id_to_show,
 							'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
@@ -391,36 +535,90 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-//					$campo_id.attr({ 'value' : entry['Marca']['0']['id'] });
-//					$nombre.attr({ 'value' : entry['Marca']['0']['nombre'] });
-					$descripcion.attr({'value' : entry['Zonas']['0']['descripcion']});			
-                                        $campo_id.attr({'value' : entry['Zonas']['0']['id']});
-                                         $zona.attr({'value' : entry['Zonas']['0']['titulo']});
+                                    var fecha_hoy=mostrarFecha();
+                                      //  alert("HOY ES::"+fecha_hoy);
+                                        
+                                    if(fecha_hoy==entry['DatosTC']['0']['fecha']){
+                                       //alert("La fecha que trae es igual a la fecha de Hoy");
+                                       /* $fecha.click(function (s){
+                                                var a=$('div.datepicker');
+                                                a.css({'z-index':100});
+                                        });
+
+                                        $fecha.DatePicker({
+
+                                                format:'Y-m-d',
+                                                date: $fecha.val(),
+                                                current: $fecha.val(),
+                                                starts: 1,
+                                                position: 'bottom',
+                                                locale: {
+                                                        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+                                                        daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+                                                        daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+                                                        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+                                                        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+                                                        weekMin: 'se'
+                                                },
+                                                onChange: function(formated, dates){
+                                                        var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+                                                        $fecha.val(formated);
+                                                        if (formated.match(patron) ){
+                                                                var valida_fecha=mayor($fecha.val(),mostrarFecha());
+                                                              
+                                                               // if (valida_fecha==true){
+                                                                //	jAlert("Fecha no valida",'! Atencion');
+                                                                //	$fecha.val(mostrarFecha());
+                                                               // }else{
+                                                                    //    $fecha.DatePickerHide();	
+                                                               // }
+                                                               // alert("Entra aqui");
+                                                        }
+                                                }
+                                        });*/
+                                        
+                                        
+                                        //$select_monedas.children().remove();
+                                        /*var moneda = '<option value="0">[- Seleccion una Moneda-]</option>';
+                                        $.each(entry['monedas'],function(entryIndex,clasif){
+                                                if(clasif['id'] == entry['DatosTC']['0']['moneda_id']){
+                                                        moneda += '<option value="' + clasif['id'] + '"  selected="yes">' + clasif['descripcion'] + '</option>';
+                                                }else{
+                                                        moneda += '<option value="' + clasif['id'] + '"  >' + clasif['descripcion'] + '</option>';
+                                                }
+                                        });
+                                        $select_monedas.append(moneda); */
                                        
+                                       var moneda = '';
+                                       moneda += '<option value="' + entry['DatosTC']['0']['moneda_id'] + '"  selected="yes">' + entry['DatosTC']['0']['descripcion_abr'] + '</option>';
+                                       $select_monedas.append(moneda); 
+                                       $fecha.attr({ 'value' : entry['DatosTC']['0']['fecha'] });              
+                                       $tipocambio.attr({ 'value' : entry['DatosTC']['0']['valor'] });
                                        
-                                       //estatus
-					var sel_activo='';
-					var sel_inactivo='';
-					if(entry['Zonas']['0']['estatus']=='true'){
-						sel_activo='selected="yes"';
-					}else{
-						sel_inactivo='selected="yes"';
-					}
-                                        
-                                        $select_estatus.children().remove();
-                                        var status_html = '<option value="false" '+sel_activo+'>Inactivo</option>';
-                                        status_html += '<option value="true" '+sel_inactivo+'>Activo</option>';
-                                        $select_estatus.append(status_html);
-                                        
-                                        
+                                       $fecha.attr({'readOnly':true});
+                                    }else{
+                                        //alert("La fecha es diferente a a la de hoy,,,NO SE PERMITE  MODIFICAR");
+                                       $submit_actualizar.hide();
+                                       moneda += '<option value="' + entry['DatosTC']['0']['moneda_id'] + '"  selected="yes">' + entry['DatosTC']['0']['descripcion_abr'] + '</option>';
+                                       $select_monedas.append(moneda); 
+                                       $fecha.attr({ 'value' : entry['DatosTC']['0']['fecha'] });              
+                                       $tipocambio.attr({ 'value' : entry['DatosTC']['0']['valor'] });
                                        
-                                        
-                                        
-                                        
-                                        
+                                       $fecha.attr({'readOnly':true});
+                                       $tipocambio.attr({'readOnly':true});
+                                    }
+                                    //$submit_actualizar.hide();
+                                    $campo_id.attr({ 'value' : entry['DatosTC']['0']['id'] });               
+                                    $fecha_de_hoy.attr({ 'value' :fecha_hoy  });               
+                                    
+                                    
+                                     
 					
 				},"json");//termina llamada json
+                               
+                                //
 				
+	
 				
 				//validar campo comision, solo acepte numeros y punto
 				
