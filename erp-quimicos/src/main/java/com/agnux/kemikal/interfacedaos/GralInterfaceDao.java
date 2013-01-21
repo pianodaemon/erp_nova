@@ -175,7 +175,11 @@ public interface GralInterfaceDao {
 
     
     
+    //Actualizador de Tipos de Cambio.
     public ArrayList<HashMap<String, String>> getTiposdeCambio();
+    public ArrayList<HashMap<String, Object>> getTipocambio_PaginaGrid(String data_string, int offset, int items_por_pag, String orderby, String desc);
+    public ArrayList<HashMap<String, String>> gettipoCambio_Datos(String erpmonedavers_id);                                         
+
                                               
     
 }
