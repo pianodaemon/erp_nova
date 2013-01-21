@@ -925,7 +925,11 @@ $(function() {
                 
                 var $nameimg = $('#forma-product-window').find('input[name=nameimg]');
                 var $namepdf = $('#forma-product-window').find('input[name=namepdf]');
-		
+		var $descripcion_corta = $('#forma-product-window').find('textarea[name=descripcion_corta]');
+                var $descripcion_larga = $('#forma-product-window').find('textarea[name=descripcion_larga]');
+                var $edito_pdf = $('#forma-product-window').find('input[name=edito_pdf]');
+                var $edito_imagen = $('#forma-product-window').find('input[name=edito_imagen]');
+                
 		var $cerrar_plugin = $('#forma-product-window').find('#close');
 		var $cancelar_plugin = $('#forma-product-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-product-window').find('#submit');
@@ -977,7 +981,9 @@ $(function() {
                         window.clearInterval(interval);
                         this.enable();
                         $nameimg.val(file);
-                        var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/0/'+file+'/out.json';
+                        $edito_imagen.val(1);
+                        var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+                        var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/'+file+'/0/'+iu+'/out.json';
                         $('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
                     }
                 });
@@ -1002,6 +1008,7 @@ $(function() {
                         window.clearInterval(interval);
                         this.enable();
                         $namepdf.val(file);
+                        $edito_pdf.val(1);
                         $('#forma-product-window').find('#contenidofile_pdf').text(file);
                     }
                 });
@@ -1702,6 +1709,15 @@ $(function() {
 				var $check_ventaext = $('#forma-product-window').find('input[name=check_ventaext]');
 				var $check_compraext = $('#forma-product-window').find('input[name=check_compraext]');
 				
+                                //variables para controlar las imagenes y el pdf
+                                var $nameimg = $('#forma-product-window').find('input[name=nameimg]');
+                                var $namepdf = $('#forma-product-window').find('input[name=namepdf]');
+                                var $descripcion_corta = $('#forma-product-window').find('textarea[name=descripcion_corta]');
+                                var $descripcion_larga = $('#forma-product-window').find('textarea[name=descripcion_larga]');
+                                var $edito_pdf = $('#forma-product-window').find('input[name=edito_pdf]');
+                                var $edito_imagen = $('#forma-product-window').find('input[name=edito_imagen]');
+                                
+                                
 				//presentaciones seleccionados y disponibles
 				var $select_disponibles= $('#forma-product-window').find('select[name=disponibles]');
 				var $select_seleccionados = $('#forma-product-window').find('select[name=seleccionados]');
@@ -1782,6 +1798,59 @@ $(function() {
 				$vent_ssscuenta.hide();
 				$vent_sssscuenta.hide();
 				
+                                /*Codigo para subir la imagen*/
+                                var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
+                                var button_img = $('#forma-product-window').find('#upload_button_img'), interval;
+                                new AjaxUpload(button_img,{
+                                    action: input_json_upload, 
+                                    name: 'file',
+                                    onSubmit : function(file , ext){
+                                        if (! (ext && /^(png*|jpg*)$/.test(ext))){
+                                            jAlert("El formato de la imagen debe de ser .png", 'Atencion!');
+                                            return false;
+                                        } else {
+                                            button_img.text('Cargando..');
+                                            this.disable();
+                                        }
+                                    },
+                                    onComplete: function(file, response){
+                                        button_img.text('Cambiar Imagen');
+                                        window.clearInterval(interval);
+                                        this.enable();
+                                        $nameimg.val(file);
+                                        $edito_imagen.val(1);
+                                        var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+                                        var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/'+file+'/0/'+iu+'/out.json';
+                                        
+                                        $('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
+                                    }
+                                });
+                                
+                                /*Codigo para subir la pdf*/
+                                var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
+                                var button_pdf = $('#forma-product-window').find('#upload_button_pdf'), interval;
+                                new AjaxUpload(button_pdf,{
+                                    action: input_json_upload, 
+                                    name: 'file',
+                                    onSubmit : function(file , ext){
+                                        if (! (ext && /^(pdf)$/.test(ext))){
+                                            jAlert("El formato del archivo, puede ser .pdf", 'Atencion!');
+                                            return false;
+                                        } else {
+                                            button_pdf.text('Cargando..');
+                                            this.disable();
+                                        }
+                                    },
+                                    onComplete: function(file, response){
+                                        button_pdf.text('Cambiar PDF');
+                                        window.clearInterval(interval);
+                                        this.enable();
+                                        $namepdf.val(file);
+                                        $edito_pdf.val(1);
+                                        $('#forma-product-window').find('#contenidofile_pdf').text(file);
+                                    }
+                                });
+                                
 				var respuestaProcesada = function(data){
 					if ( data['success'] == 'true' ){
 						var remove = function() {$(this).remove();};
@@ -1922,15 +1991,37 @@ $(function() {
 					$check_ventaext.attr('checked', (entry['Producto'][0]['venta_moneda_extranjera'] == 'true')? true:false );
 					$check_compraext.attr('checked', (entry['Producto'][0]['compra_moneda_extranjera'] == 'true')? true:false );
 					
+                                        $nameimg.attr('value', entry['Producto'][0]['archivo_img']);
+                                        $namepdf.attr('value', entry['Producto'][0]['archivo_pdf']);
+                                        $descripcion_corta.text(entry['Producto'][0]['descripcion_corta']);
+                                        $descripcion_larga.text(entry['Producto'][0]['descripcion_larga']);
+                                        
+                                        
+                                        if(entry['Producto'][0]['archivo_img'] != ""){
+                                            button_img.text('Cambiar Imagen');
+                                            $nameimg.val(entry['Producto'][0]['archivo_img']);
+                                            $edito_imagen.val(0);
+                                            var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+                                            var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/'+entry['Producto'][0]['archivo_img']+'/'+entry['Producto'][0]['id']+'/'+iu+'/out.json';
+                                            $('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
+                                        }
+                                        
+                                        if(entry['Producto'][0]['archivo_pdf'] != ""){
+                                            button_pdf.text('Cambiar PDF');
+                                            $namepdf.val(entry['Producto'][0]['archivo_pdf']);
+                                            $edito_pdf.val(0);
+                                            $('#forma-product-window').find('#contenidofile_pdf').text(entry['Producto'][0]['archivo_pdf']);
+                                        }
+                                        
 					//estatus
 					$select_estatus.children().remove();
 					var status_html = '';		
 					if( entry['Producto'][0]['cxp_prov_id']=='true'){
-						status_html = '<option value="true" selected="yes">Activo</option>';
-						status_html += '<option value="false">Inactivo</option>';
+                                            status_html = '<option value="true" selected="yes">Activo</option>';
+                                            status_html += '<option value="false">Inactivo</option>';
 					}else{
-						status_html = '<option value="true">Activo</option>';
-						status_html += '<option value="false" selected="yes">Inactivo</option>';	
+                                            status_html = '<option value="true">Activo</option>';
+                                            status_html += '<option value="false" selected="yes">Inactivo</option>';	
 					}
 					$select_estatus.append(status_html);
 					
