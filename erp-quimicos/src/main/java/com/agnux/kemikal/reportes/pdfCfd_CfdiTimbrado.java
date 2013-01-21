@@ -106,9 +106,14 @@ public final class pdfCfd_CfdiTimbrado {
         Font negrita_pequena= new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
         Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
+        Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
+        Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 6, Font.BOLD, BaseColor.WHITE);
+             
         ImagenPDF ipdf = new ImagenPDF();
-        CeldaPDF cepdf = new CeldaPDF();
+        //CeldaPDF cepdf = new CeldaPDF();
         CeldaFother cepdffother = new CeldaFother();
+        TablaTotales tablaTotales = new TablaTotales();//esta es la nueva tabla totales
+        TablaInformacionFiscal tablaFiscal = new TablaInformacionFiscal();//tabla para la informacion fiscal
         
         this.setRows(listaConceptos);
         this.setDatosCliente(datosCliente);
@@ -201,7 +206,7 @@ public final class pdfCfd_CfdiTimbrado {
         
         PdfPTable table;
         PdfPTable table_observ;
-        PdfPTable table_totales;
+        PdfPTable table_vacia;
         PdfPCell cell;
         String fileout="";
         
@@ -540,7 +545,7 @@ public final class pdfCfd_CfdiTimbrado {
             
             
             
-            cell = new PdfPCell(new Paragraph("HORA:/HOUR:",largeBoldFont));
+            cell = new PdfPCell(new Paragraph("HORA:/HOUR:",negrita_pequena));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -711,7 +716,6 @@ public final class pdfCfd_CfdiTimbrado {
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             table.addCell(cell);
             
-            
             cell = new PdfPCell(new Paragraph(this.getNo_certificado(),smallFont));
             cell.setBorder(0);
             cell.setBorderWidthLeft(0);
@@ -722,7 +726,6 @@ public final class pdfCfd_CfdiTimbrado {
             table.addCell(cell);
             /////////////////////////////////////////////////////////
             
-            
             //fila vacia
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorder(0);
@@ -731,93 +734,293 @@ public final class pdfCfd_CfdiTimbrado {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
-            /////////////////////////////////////////////////////////
+            
+            document.add(table);//agregamos la tabla al documento
             
             
+            //&&&&&&&&&&&&&&&&&&&& INICIA TABLA DE DATOS NO. CLIENTE, PEDIDO Y VENDEDOR &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            float [] anchocolumnas1 = {1.2f,1,4};
+            PdfPTable table1 = new PdfPTable(anchocolumnas1);
+            table1.setKeepTogether(false);
+            PdfPCell cell1;
             
-            cell = new PdfPCell(new Paragraph("CLIENTE NO.:/ CUSTOMER NO.:",negrita_pequena));
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
+            cell1 = new PdfPCell(new Paragraph("CLIENTE NO.:/ CUSTOMER NO.:",negrita_pequena));
+            cell1.setUseAscender(true);
+            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table1.addCell(cell1);
             
-            cell = new PdfPCell(new Paragraph("SU PEDIDO: / YOUR ORDER",negrita_pequena));
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
+            cell1 = new PdfPCell(new Paragraph("SU PEDIDO: / YOUR ORDER",negrita_pequena));
+            cell1.setUseAscender(true);
+            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table1.addCell(cell1);
             
-            cell = new PdfPCell(new Paragraph("VENDEDOR: / SALESMAN:",negrita_pequena));
-            cell.setColspan(4);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
+            cell1 = new PdfPCell(new Paragraph("VENDEDOR: / SALESMAN:",negrita_pequena));
+            cell1.setUseAscender(true);
+            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table1.addCell(cell1);
             ////////////////////////////////////////////////////////////////////
             
             
-            cell = new PdfPCell(new Paragraph(this.getReceptor_no_control(),smallFont));
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(cell);
+            cell1 = new PdfPCell(new Paragraph(this.getReceptor_no_control(),smallFont));
+            cell1.setUseAscender(true);
+            cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table1.addCell(cell1);
             
             
-            cell = new PdfPCell(new Paragraph( this.getFolioPedido(),smallFont));
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(cell);
+            cell1 = new PdfPCell(new Paragraph( this.getFolioPedido(),smallFont));
+            cell1.setUseAscender(true);
+            cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table1.addCell(cell1);
             
-            cell = new PdfPCell(new Paragraph(this.getVendedor(),smallFont));
-            cell.setColspan(4);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            table.addCell(cell);
+            cell1 = new PdfPCell(new Paragraph(this.getVendedor(),smallFont));
+            cell1.setUseAscender(true);
+            cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table1.addCell(cell1);
             
+            cell1 = new PdfPCell(new Paragraph("",smallFont));
+            cell1.setBorder(0);
+            cell1.setColspan(3);
+            cell1.setFixedHeight(10);
+            cell1.setUseAscender(true);
+            cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell1.setVerticalAlignment(Element.ALIGN_CENTER);
+            table1.addCell(cell1);
+            
+            document.add(table1);
             ///&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-            cell = new PdfPCell(new Paragraph("",smallFont));
-            cell.setBorder(0);
-            cell.setColspan(6);
-            cell.setFixedHeight(10);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_CENTER);
-            table.addCell(cell);
             
-            document.add(table);
-            System.out.println("table.size6: "+table.size());
-            System.out.println("table.getTotalHeight6: "+table.getTotalHeight());
             
-            //&&&&&&&&&&&&&&&&&&&&        TABLA DE  LOS CONCEPTOS        &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            //&&&&&&&&&&&&&&&&&&&& AQUI INICIA LA CONSTRUCCION DE LA TABLA DE  LOS CONCEPTOS AL DOCUMENTO &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            float [] anchocolumnas2 = {1f, 2.3f, 1f, 1f, 0.5f,1f,1f, 0.5f,1.5f};
+            PdfPTable tableConceptos = new PdfPTable(anchocolumnas2);
+            tableConceptos.setKeepTogether(false);
+            tableConceptos.setHeaderRows(1);
             
-            document.add(cepdf.addContent());
+            String[] columnas;
+            String[] columnas1 = {"CLAVE\nCODE","DESCRIPCION\nDESCRIPTION","No. LOTE\nLOT No.","TOTAL KGS\nTOTAL KGS"," ","PRECIO KG\nPRICE KG","MONEDA\nCURRENCY"," ","TOTAL\nEXTENDED VALUE"};
+            String[] columnas2 = {"CLAVE\nCODE","DESCRIPCION\nDESCRIPTION","No. LOTE\nLOT No.","CANTIDAD.\nQUANTITY"," ","PRECIO\nPRICE","MONEDA\nCURRENCY"," ","TOTAL\nEXTENDED VALUE"};
             
-            /*
-            cell = new PdfPCell(cepdf.addContent());
-            cell.setColspan(6);
-            //cell.setFixedHeight(210);
-            cell.setBorderWidthBottom(1);
-            cell.setBorderWidthLeft(1);
-            cell.setBorderWidthTop(1);
-            cell.setBorderWidthRight(1);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            table.addCell(cell);
-             */
-            //&&&&&&&&&&&&&&&&&&&&&&&&&    FIN DE LA TABLE DE CONCEPTOS  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&6666
+            if(getTipo_facturacion().equals("cfd")){
+                columnas = columnas1;
+            }else{
+                columnas = columnas2;
+            }
             
-            //aqui comienza la tabla de totales
+            List<String>  lista_columnas = (List<String>) Arrays.asList(columnas);
+            Integer contador = 0;
+            PdfPCell cellX;
+
+            for ( String columna_titulo : lista_columnas){
+                    
+                cellX = new PdfPCell(new Paragraph(columna_titulo,smallBoldFont));
+
+                cellX.setUseAscender(true);
+                cellX.setUseDescender(true);
+                cellX.setBackgroundColor(BaseColor.BLACK);
+                //cellX.setBorder(1);
+                cellX.setFixedHeight(16);
+                //cellX.setBorder(11);
+                //cellX.setBorder(12);
+                if(columna_titulo.equals("CLAVE\nCODE")){
+                    cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                }
+                if(columna_titulo.equals("DESCRIPCION\nDESCRIPTION")){
+                    cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                }
+                if(columna_titulo.equals("No. LOTE\nLOT No.")){
+                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                }
+                
+                if(getTipo_facturacion().equals("cfd")){
+                    if(columna_titulo.equals("TOTAL KGS\nTOTAL KGS")){
+                        cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                    }                
+                    
+                    if(columna_titulo.equals("PRECIO KG\nPRICE KG")){
+                        cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                    }
+                }else{
+                    if(columna_titulo.equals("CANTIDAD.\nQUANTITY")){
+                        cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                    }                
+
+                    if(columna_titulo.equals("PRECIO\nPRICE")){
+                        cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                    }
+                }
+
+                
+                if(columna_titulo.equals("MONEDA\nCURRENCY")){
+                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                }
+                
+                if(columna_titulo.equals("TOTAL\nEXTENDED VALUE")){
+                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                }
+
+                tableConceptos.addCell(cellX);
+            }
+           
+           for (HashMap<String, String> registro : getRows()){
+            
+                    //Indices del HashMap que representa el row
+                    String[] wordList = {"sku","titulo","numero_lote","cantidad","denominacion","precio_unitario","moneda","denominacion","importe"};
+                   
+                    List<String>  indices = (List<String>) Arrays.asList(wordList);
+                    
+                    for (String omega : indices){
+                        PdfPCell celda;
+                        
+                        if (omega.equals("sku")){
+                            celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            celda.setVerticalAlignment(Element.ALIGN_TOP);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(1);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
+                            tableConceptos.addCell(celda);
+                        }
+                        
+                        if (omega.equals("titulo")){
+                            celda = new PdfPCell(new Paragraph(registro.get(omega).toUpperCase(),smallFont));
+                            //celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            celda.setVerticalAlignment(Element.ALIGN_TOP);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
+                            tableConceptos.addCell(celda);
+                        }
+                        
+                        if (omega.equals("numero_lote")){
+                            //celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                            celda= new PdfPCell(new Paragraph(registro.get(omega).toString(),smallFont));
+                            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            celda.setVerticalAlignment(Element.ALIGN_TOP);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
+                            tableConceptos.addCell(celda);
+                        }
+                        
+                        if (omega.equals("cantidad")){
+                            //celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                            celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                            celda.setVerticalAlignment(Element.ALIGN_TOP);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
+                            tableConceptos.addCell(celda);
+                        }
+                        
+                        if (omega.equals("denominacion")){
+                                celda = new PdfPCell(new Paragraph( "$",smallFont));
+                                celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                                celda.setVerticalAlignment(Element.ALIGN_TOP);
+                                //celda.setBorder(0);
+                                celda.setBorderWidthBottom(0);
+                                celda.setBorderWidthLeft(0);
+                                celda.setBorderWidthRight(0);
+                                celda.setBorderWidthTop(0);
+                                tableConceptos.addCell(celda);
+                        }
+                        
+                        if (omega.equals("precio_unitario")){
+                            //celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                            celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                            celda.setVerticalAlignment(Element.ALIGN_TOP);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
+                            tableConceptos.addCell(celda);
+                        }
+                        
+                        if (omega.equals("moneda")){
+                            celda = new PdfPCell(new Paragraph(registro.get(omega).toUpperCase(),smallFont));
+                            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            celda.setVerticalAlignment(Element.ALIGN_TOP);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(0);
+                            celda.setBorderWidthTop(0);
+                            tableConceptos.addCell(celda);
+                         }
+                        
+                        if (omega.equals("importe")){
+                            celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                            celda.setVerticalAlignment(Element.ALIGN_TOP);
+                            //celda.setBorder(0);
+                            celda.setBorderWidthBottom(0);
+                            celda.setBorderWidthLeft(0);
+                            celda.setBorderWidthRight(1);
+                            celda.setBorderWidthTop(0);
+                            tableConceptos.addCell(celda);
+                         }
+                         
+                    
+                }
+                
+                contador++;
+                
+            }
+
+            cellX = new PdfPCell(new Paragraph("",smallFont));
+            cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellX.setVerticalAlignment(Element.ALIGN_TOP);
+            //celda.setBorder(0);
+            cellX.setColspan(9);
+            cellX.setBorderWidthBottom(0);
+            cellX.setBorderWidthLeft(0);
+            cellX.setBorderWidthRight(0);
+            cellX.setBorderWidthTop(1);
+            tableConceptos.addCell(cellX);
+            
+            document.add(tableConceptos);
+            //&&&&&&&&&&&&&&&&&&&&&&&&&    FIN DE LA TABLE DE CONCEPTOS  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            //System.out.println("tableConceptos.size: "+tableConceptos.size());
+            //System.out.println("tableConceptos.getTotalHeight: "+tableConceptos.getTotalHeight());
+            
+            Boolean salto=false;
+            if((tableConceptos.getTotalHeight())>490 && ( tableConceptos.getTotalHeight()) < 492){
+                document.newPage();
+                salto=true;
+            }
+            
+            //aqui comienza la tabla de para las OBSERVACIONES
             float [] widths_table_observ = {1};
             table_observ = new PdfPTable(widths_table_observ);
             table_observ.setKeepTogether(false);
             
             cell = new PdfPCell(new Paragraph("\nOBSERVACIONES:",negrita_pequena));
             cell.setBorder(0);
-            cell.setUseAscender(true);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table_observ.addCell(cell);
             
-            
             String cuentas="";
-            
             if ( !this.getEmisora_rfc().equals("KCM081010I58") && !this.getEmisora_rfc().equals("KME010221CB4")){
                 cuentas="";
             }else{
@@ -825,67 +1028,72 @@ public final class pdfCfd_CfdiTimbrado {
             }
             
             cell = new PdfPCell(new Paragraph(this.getObservaciones()+cuentas,smallFont));
-            cell.setUseAscender(true);
             cell.setBorder(0);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table_observ.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("",smallFont));
-            cell.setUseAscender(true);
             cell.setBorder(0);
-            cell.setFixedHeight(8);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table_observ.addCell(cell);
             
             document.add(table_observ);
-            
-            
             /*
-            document.add(table);
-            System.out.println("table.size6: "+table.size());
-            System.out.println("table.getTotalHeight6: "+table.getTotalHeight());
+            System.out.println("table_observ.size6: "+table_observ.size());
+            System.out.println("table_observ.getTotalHeight: "+table_observ.getTotalHeight());
+            System.out.println("ALTURA: "+(table_observ.getTotalHeight() + tableConceptos.getTotalHeight()));
             */
-            document.newPage();
             
-            //aqui comienza la tabla de totales
-            float [] widths_table_totales = {1};
-            table_totales = new PdfPTable(widths_table_totales);
-            table_totales.setKeepTogether(false);
+            //aqui comienza la tabla VACIA
+            float [] widths_table_vacia = {1};
+            table_vacia = new PdfPTable(widths_table_vacia);
+            table_vacia.setKeepTogether(false);
             
-            cell = new PdfPCell(cepdffother.addContent(this.getSubTotal(), this.getMontoImpuesto(), this.getMontoRetencion(), this.getMontoTotal()   ));
-            cell.setColspan(6);
-            cell.setUseAscender(true);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table_totales.addCell(cell);
+            float  altura = (table_observ.getTotalHeight() + tableConceptos.getTotalHeight());
+            if(this.getTipo_facturacion().equals("cfditf")){
+                altura+=8;
+            }
             
-            table_totales.setSpacingBefore(dias);
-            table_totales.setSpacingBefore(1);
+            int cont=0;
+            while (altura < 276){
+                cell = new PdfPCell(new Paragraph(" ",smallFont));
+                cell.setBorder(0);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                table_vacia.addCell(cell);
+                altura +=10;
+                cont+=1;
+            }
+            document.add(table_vacia);
+            //FIN de la tabla VACIA
             
-            document.add(table_totales);
+            //aqui se decide si se debe brincar la cadena original a una nueva pagina
+            if((table_observ.getTotalHeight() + tableConceptos.getTotalHeight())>380 && (table_observ.getTotalHeight() + tableConceptos.getTotalHeight()) <492){
+                if(salto!=true){
+                    document.newPage();
+                    salto=true;
+                }
+            }
+            
+            //&&&&&&&&&&&&&&&&&&&& AQUI SE AGREGA TABLA DE  LOS TOTALES Y LA CEDULA AL DOCUMENTO &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            document.add(tablaTotales.addContent(this.getSubTotal(), this.getMontoImpuesto(), this.getMontoRetencion(), this.getMontoTotal()  ));
+            //&&&&&&&&&&&&&&&&&&&&&&&&&    FIN DE LA TOTALES Y LA CEDULA  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            
+            //aqui se decide si se debe brincar la cadena original a una nueva pagina
+            if((table_observ.getTotalHeight() + tableConceptos.getTotalHeight())>276 && (table_observ.getTotalHeight() + tableConceptos.getTotalHeight()) <380){
+                if(salto!=true){
+                    document.newPage();
+                    salto=true;
+                }
+            }
+            
+            //&&&&&&&&&&&&&&&&&&&& AQUI SE AGREGA TABLA DE LA INFORMACION FISCAL &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            document.add(tablaFiscal.addContent());
+            //&&&&&&&&&&&&&&&&&&&&&&&&&    FIN DE LA INFORMACION FISCAL  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
             
             document.close();
-            /*
-            PdfReader reader = new PdfReader(fileout);
-            PdfStamper stamper = new PdfStamper(reader,new FileOutputStream(fileout+".pdf"));
-            PdfContentByte over;
-           
-            int total = reader.getNumberOfPages() + 1;
-            for (int i=1; i<total; i++) {
-                over = stamper.getOverContent(i);
-                PdfTemplate f = over.createAppearance(500,200);
-                f.setBoundingBox(table.getDefaultCell());
-                over.addTemplate(f, 70,770);
-                over.beginText();
-                over.setFontAndSize(BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED), 7);
-                over.showTextAligned(PdfContentByte.ALIGN_CENTER, "PAG. " + i + " DE " + (total-1), 570, 773, 0);
-                over.endText();
-            }
-            stamper.close();
-            reader.close();
-            */
         }
         catch (Exception e) {
                 e.printStackTrace();
@@ -945,7 +1153,7 @@ public final class pdfCfd_CfdiTimbrado {
                 img.scaleAbsoluteHeight(alto);
                 img.scaleAbsoluteWidth(ancho);
                 img.setAlignment(Element.ALIGN_CENTER);
-                img.setSpacingBefore(6);
+                //img.setSpacingBefore(6);
                 //img.setAlignment(0);
             }
             catch(Exception e){
@@ -956,10 +1164,11 @@ public final class pdfCfd_CfdiTimbrado {
     }
     
     
-    
+    /*
     
     private class CeldaPDF {
        public PdfPTable addContent() {
+           
             Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
             Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
             
@@ -1180,8 +1389,551 @@ public final class pdfCfd_CfdiTimbrado {
            
             return table;
         }
+       
     }
     
+    */
+    
+    
+    ///Aqui creamos nueva tabla para los totales
+    //aqui se construye la tabla para los totales y la imagen de la cedula
+    private class TablaTotales {
+       public PdfPTable addContent(String SubTotal, String MontoImpuesto, String MontoRetencion, String MontoTotal) {
+            Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
+            
+            Font negrita_pequeña= new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
+            
+            CedulaPDF icedula = new CedulaPDF();
+            
+            float [] anchocolumnas = {2,8,4,0.7f,4};
+            PdfPTable table = new PdfPTable(anchocolumnas);
+            table.setKeepTogether(false);
+            PdfPCell cell;
+            
+            int alto=100,  ancho=60;
+            
+            //FILA 1 //////////////////////////////////////
+            cell = new PdfPCell(icedula.addContent(alto,ancho));
+            cell.setRowspan(11);
+            //cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthLeft(1);
+            cell.setBorderWidthRight(1);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("CANTIDAD CON LETRA:",negrita_pequeña));
+            cell.setColspan(4);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(1);
+            table.addCell(cell);
+            
+            BigInteger num = new BigInteger(MontoTotal.split("\\.")[0]);
+            n2t cal = new n2t();
+            String centavos = MontoTotal.substring(MontoTotal.indexOf(".")+1);
+            String numero = cal.convertirLetras(num);
+            
+            //convertir a mayuscula la primera letra de la cadena
+            String numeroMay = numero.substring(0, 1).toUpperCase() + numero.substring(1, numero.length());
+            
+            String denom = "";
+            String denominacion="";
+            denominacion = getTitulo_moneda();
+            denom = getMoneda_abr();
+
+            if(centavos.equals(num.toString())){
+                centavos="00";
+            }
+            
+            //FILA 2 //////////////////////////////////////
+            cell = new PdfPCell(new Paragraph(numeroMay.toUpperCase() + " " + denominacion.toUpperCase() + " " +centavos+"/100 "+ denom.toUpperCase(), smallFont));
+            cell.setColspan(4);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            System.out.println("Se ha agregado importe con letras al pdf de factura");
+            
+            
+            //FILA 3 //////////////////////////////////////
+            if (getProposito().equals("FACTURA")){
+                cell = new PdfPCell(new Paragraph("FECHA DE PAGO / PAYMENT DUE",negrita_pequeña));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }else{
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthRight(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthLeft(0);
+            table.addCell(cell);
+            
+   
+            //FILA 4 //////////////////////////////////////
+            //Aqui agregamos la fecha de pago
+            if (getProposito().equals("FACTURA")){
+                cell = new PdfPCell(new Paragraph(getFecha_pago(),smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+            }else{
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }
+            cell = new PdfPCell(new Paragraph("SUBTOTAL:",negrita_pequeña));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("$",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);//cell.setBorder(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthRight(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble( getSubTotal() ,2)),smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthLeft(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            
+            //FILA 5 //////////////////////////////////////
+            if (getProposito().equals("FACTURA")){
+                cell = new PdfPCell(new Paragraph("TERMINOS DE PAGO / PAYMENT TERMS",negrita_pequeña));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }else{
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthRight(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthLeft(0);
+            table.addCell(cell);
+            
+            
+            //FILA 6 //////////////////////////////////////
+            ////////Aqui van los terminos de pago
+            if (getProposito().equals("FACTURA")){
+                cell = new PdfPCell(new Paragraph( getTerminos() ,smallFont ));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }else{
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }
+            
+            cell = new PdfPCell(new Paragraph("IVA / V.A.T:",negrita_pequeña));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("$",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthRight(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble( getMontoImpuesto() ,2))   ,smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthLeft(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            
+            //FILA 7 //////////////////////////////////////
+            if (getProposito().equals("FACTURA")){
+                cell = new PdfPCell(new Paragraph("METODO DE PAGO:  /  No. CUENTA",negrita_pequeña));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(1);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }else{
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }
+            
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthRight(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthLeft(0);
+            table.addCell(cell);
+            
+            
+            //FILA 8 //////////////////////////////////////
+            ////////Aqui va el metodo de pago
+            if (getProposito().equals("FACTURA")){
+                cell = new PdfPCell(new Paragraph(  getMetodo_pago() +"   "+ getNo_cuenta(),smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(1);
+                table.addCell(cell);
+            }else{
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                table.addCell(cell);
+            }
+            
+            cell = new PdfPCell(new Paragraph("IVA RETENIDO:",negrita_pequeña));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("$",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthRight(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble( getMontoRetencion() ,2))  ,smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthLeft(0);
+            table.addCell(cell);
+            
+            
+           //FILA 9 //////////////////////////////////////
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthRight(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthLeft(0);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            ////////////////////////////////////////////////
+            
+            //FILA 10 //////////////////////////////////////
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("TOTAL:",negrita_pequeña));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("$",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthRight(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble( getMontoTotal() ,2)) ,smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthLeft(0);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            
+           //FILA 11 //////////////////////////////////////
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthBottom(1);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(1);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthBottom(1);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthRight(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorderWidthLeft(0);
+            cell.setBorderWidthBottom(1);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            ////////////////////////////////////////////////
+            
+            return table;
+        }
+    }    
+    //aqui termina nueva tabla para los totales
+    
+    
+    
+    
+    
+    //tabla para Informacion Fiscal
+    private class TablaInformacionFiscal {
+       public PdfPTable addContent() {
+            Font negrita_pequeña= new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
+            Font Fontssello__aviso = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
+            
+            float [] anchocolumnas = {1};
+            PdfPTable table = new PdfPTable(anchocolumnas);
+            table.setKeepTogether(false);
+            PdfPCell cell;
+            
+            //FILA 1 //////////////////////////////////////
+            cell = new PdfPCell(new Paragraph("CADENA ORIGINAL:",negrita_pequeña));
+            //cell.setColspan(5);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthBottom(0);
+            //cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            //FILA 2 //////////////////////////////////////
+            cell = new PdfPCell(new Paragraph(  getCadena_original()  ,Fontssello__aviso));
+            //cell.setColspan(5);
+            //cell.setFixedHeight(15);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            
+            //FILA 3 //////////////////////////////////////
+            cell = new PdfPCell(new Paragraph("SELLO DIGITAL DEL EMISOR:",negrita_pequeña));
+            //cell.setColspan(5);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            
+            //FILA 4 //////////////////////////////////////
+            cell = new PdfPCell(new Paragraph(  getSello_digital(),Fontssello__aviso));
+            //cell.setColspan(5);
+            //cell.setFixedHeight(15);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            
+            
+            //if(getTipo_facturacion().equals("cfd")){
+            if(getTipo_facturacion().equals("cfditf")){
+				//FILA 5 //////////////////////////////////////
+                cell = new PdfPCell(new Paragraph("SELLO DIGITAL DEL SAT:",negrita_pequeña));
+                //cell.setColspan(5);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+                
+                //FILA 6 //////////////////////////////////////
+                cell = new PdfPCell(new Paragraph( getSello_digital_sat(),Fontssello__aviso));
+                //cell.setColspan(5);
+                //cell.setFixedHeight(15);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+            }
+            
+            /*
+            //if(getTipo_facturacion().equals("cfd")){
+            if(getTipo_facturacion().equals("cfditf")){
+                cell = new PdfPCell(new Paragraph("SELLO DIGITAL DEL SAT:",negrita_pequeña));
+                cell.setColspan(5);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph( getSello_digital_sat(),Fontssello__aviso));
+                cell.setColspan(5);
+                cell.setFixedHeight(15);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+            }*/
+            
+            String tipo_fac="";
+            
+            if(getTipo_facturacion().equals("cfditf")){
+                tipo_fac="CFDI";
+            }else{
+                tipo_fac="CFD";
+            }
+                
+            
+            cell = new PdfPCell(new Paragraph("EFECTOS FISCALES AL PAGO. PAGO EN UNA SOLA EXHIBICION. ESTE DOCUMENTO ES UNA REPRESENTACION IMPRESA DE UN "+tipo_fac,Fontssello__aviso));
+            //cell.setColspan(5);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("AVISO DE PRIVACIDAD",Fontssello__aviso));
+            //cell.setColspan(5);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthBottom(0);
+            table.addCell(cell);
+            
+            //cell = new PdfPCell(new Paragraph("Los datos personales que proporciona a "+ getEmpresa_emisora()+" Nombre,Domicilio,Registro Federal de Contrubuyentes,Correo Electronico son unica y exclusivamente para uso de facturacion, y no seran usados con fines de divulgacion o utilizacion comercial "+datos_encabezado.get("razon_social_expide_remision")+" Domicilio: "+datos_encabezado.get("calle")+" "+datos_encabezado.get("numero")+" "+datos_encabezado.get("colonia") +" "+datos_encabezado.get("municipio") +" "+datos_encabezado.get("Estado")+"  Lo anterior en los terminos del Articulo 2 Fraccion II de la ley Federal de Proteccion de Datos Personales",Fontssello__aviso));
+            cell = new PdfPCell(new Paragraph("Los datos personales que proporciona a "+ getEmpresa_emisora()+" Nombre,Domicilio,Registro Federal de Contrubuyentes,Correo Electronico son unica y exclusivamente para uso de facturacion, y no seran usados con fines de divulgacion o utilizacion comercial.   Lo anterior en los terminos del Articulo 2 Fraccion II de la ley Federal de Proteccion de Datos Personales.",Fontssello__aviso));
+            //cell.setColspan(5);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderWidthTop(0);
+            table.addCell(cell);
+            
+            
+            return table;
+        }
+    }    
+    //Termina la tabla para Informacion Fiscal
     
     
     
@@ -1206,6 +1958,7 @@ public final class pdfCfd_CfdiTimbrado {
             
             float [] anchocolumnas = {4,8,4,0.7f,4};
             PdfPTable table = new PdfPTable(anchocolumnas);
+            table.setKeepTogether(false);
             PdfPCell cell;
             int alto=136,  ancho=85;
             
