@@ -259,7 +259,11 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "inv_prod.densidad, "
                         + "inv_prod.valor_maximo, "
                         + "inv_prod.valor_minimo, "
-                        + "inv_prod.punto_reorden "
+                        + "inv_prod.punto_reorden, "
+                        + "inv_prod.descripcion_corta, "
+                        + "inv_prod.descripcion_larga, "
+                        + "inv_prod.archivo_img, "
+                        + "inv_prod.archivo_pdf "
                 + "FROM inv_prod  "
                 + "LEFT JOIN cxp_prov ON cxp_prov.id=inv_prod.cxp_prov_id "
                 + "WHERE inv_prod.id=?";
@@ -303,6 +307,10 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("valor_maximo",StringHelper.roundDouble(rs.getDouble("valor_maximo"),2));
                     row.put("valor_minimo",StringHelper.roundDouble(rs.getDouble("valor_minimo"),2));
                     row.put("punto_reorden",StringHelper.roundDouble(rs.getDouble("punto_reorden"),2));
+                    row.put("descripcion_corta",rs.getString("descripcion_corta"));
+                    row.put("descripcion_larga",rs.getString("descripcion_larga"));
+                    row.put("archivo_img",rs.getString("archivo_img"));
+                    row.put("archivo_pdf",rs.getString("archivo_pdf"));
                     return row;
                 }
             }
