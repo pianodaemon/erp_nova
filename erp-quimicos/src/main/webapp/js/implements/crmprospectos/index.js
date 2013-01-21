@@ -695,7 +695,7 @@ $(function() {
                                     
                                         //carga el $select_clasificacion                  
                                    $select_clasificacion.children().remove();
-                                    var etapa = '<option value="0">[- Selecciiona una etapa de venta-]</option>';
+                                    var etapa = '<option value="0">[- Seleccion una etapa de venta-]</option>';
                                     $.each(entry['Clasificacion'],function(entryIndex,clasif){
                                             if(clasif['id'] == entry['Prospecto']['0']['clasificacion_id']){
                                                     etapa += '<option value="' + clasif['id'] + '"  selected="yes">' + clasif['clasificacion_abr'] + '</option>';
