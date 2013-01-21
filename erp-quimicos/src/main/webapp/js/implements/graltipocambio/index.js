@@ -42,29 +42,127 @@ $(function() {
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
+        
     
     
 	
 	var $cadena_busqueda = "";
-	var $busqueda_zona = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_zona]');
-        var $select_estatusBuscador = $('#barra_buscador').find('.tabla_buscador').find('select[name=select_estatusBuscador]');
+	var $busqueda_fecha = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha]');
+        var $select_monedaBuscador = $('#barra_buscador').find('.tabla_buscador').find('select[name=select_monedaBuscador]');
         
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');	
+        
+        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTipocambio.json';
+		$arreglo = {'id':0,
+		             'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+			   };
+		
+		$.post(input_json,$arreglo,function(entry){
+                    $select_monedaBuscador.children().remove();
+			var moneda_hmtl = '<option value="0" selected="yes">[--Seleccionar Moneda--]</option>';
+                        
+			$.each(entry['monedas'],function(entryIndex,moneda){
+				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+			});
+			$select_monedaBuscador.append(moneda_hmtl);
+			
+			
+		},"json");//termina llamada json
+             
+             
+          //valida la fecha seleccionada
+          function mayor(fecha, fecha2){
+                    var xMes=fecha.substring(5, 7);
+                    var xDia=fecha.substring(8, 10);
+                    var xAnio=fecha.substring(0,4);
+                    var yMes=fecha2.substring(5, 7);
+                    var yDia=fecha2.substring(8, 10);
+                    var yAnio=fecha2.substring(0,4);
+
+                    if (xAnio > yAnio){
+                              return(true);
+                    }else{
+                              if (xAnio == yAnio){
+                                   if (xMes > yMes){
+                                             return(true);
+                                   }
+                                   if (xMes == yMes){
+                                             if (xDia > yDia){
+                                                  return(true);
+                                             }else{
+                                                  return(false);
+                                             }
+                                   }else{
+                                             return(false);
+                                   }
+                              }else{
+                                   return(false);
+                              }
+                    }
+          }
 	
+          //muestra la fecha actual
+         var mostrarFecha = function mostrarFecha(){
+                    var ahora = new Date();
+                    var anoActual = ahora.getFullYear();
+                    var mesActual = ahora.getMonth();
+                    mesActual = mesActual+1;
+                    mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+                    var diaActual = ahora.getDate();
+                    diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+                    var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
+                    return Fecha;
+          }
+          //----------------------------------------------------------------
+        
+          $busqueda_fecha.DatePicker({
+                    format:'Y-m-d',
+                    date: $(this).val(),
+                    current: $(this).val(),
+                    starts: 1,
+                    position: 'bottom',
+                    locale: {
+                         days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+                         daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+                         daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+                         months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+                         monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+                         weekMin: 'se'
+                    },
+                    onChange: function(formated, dates){
+                         var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+                         $busqueda_fecha.val(formated);
+                         if (formated.match(patron) ){
+                                   var valida_fecha=mayor($busqueda_fecha.val(),mostrarFecha());
+
+                                   if (valida_fecha==true){
+                                        jAlert("Fecha no valida",'! Atencion');
+                                        $busqueda_fecha.val(mostrarFecha());
+                                   }else{
+                                        $busqueda_fecha.DatePickerHide();	
+                                   }
+                         }
+                    }
+          });
+        
+    
+          $busqueda_fecha.click(function (s){
+				var a=$('div.datepicker');
+				a.css({'z-index':100});
+          });
+
+          //$busqueda_fecha.val(mostrarFecha());
+	$busqueda_fecha.val();
 	
 	var to_make_one_search_string = function(){
             
         
-         var variable = $select_estatusBuscador.val();
-         if (variable == 1){
-             variable =  'sinestatus';
-         }
-           
+        
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "zona" + signo_separador + $busqueda_zona.val() + "|";
-                valor_retorno += "estatus" + signo_separador + variable + "|";
+		valor_retorno += "fecha" + signo_separador + $busqueda_fecha.val() + "|";
+                valor_retorno += "moneda" + signo_separador + $select_monedaBuscador.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		
                 return valor_retorno;
@@ -89,15 +187,11 @@ $(function() {
 	
 	$limpiar.click(function(event){
 		event.preventDefault();
-                $busqueda_zona.val('');
+                $busqueda_fecha.val('');
                 
               
-                $select_estatusBuscador.children().remove();
-                var option="";
-                option+="<option value='0' selected='yes'> </option> ";
-                option+="<option value='true'>Activo</option> ";
-                option+="<option value='false' >Inactivo</option> ";
-                $select_estatusBuscador.append(option);
+              
+               
               
                 
 	});
@@ -109,6 +203,11 @@ $(function() {
 	$visualiza_buscador.click(function(event){
 		event.preventDefault();
 		
+                
+                
+                
+                
+                
 		var alto=0;
 		if(TriggerClickVisializaBuscador==0){
 			 TriggerClickVisializaBuscador=1;
