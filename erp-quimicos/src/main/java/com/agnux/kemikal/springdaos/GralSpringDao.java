@@ -1934,13 +1934,12 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     //TERMINA ACTUALIZADOR CODIGOS ISO
     
-    
-    
-     @Override
+    //ACTUALIZADOR DE TIPOS DE CAMBIO
+    @Override
     public ArrayList<HashMap<String, String>> getTiposdeCambio() {
-        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE  ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE  and descripcion != 'Pesos' ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+        ArrayList<HashMap<String, String>> TiposdeCambio = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
                 @Override
@@ -1952,11 +1951,86 @@ public class GralSpringDao implements GralInterfaceDao{
                 }
             }
         );
-        return hm_monedas;
+        return TiposdeCambio;
+    }
+    
+    @Override                                                      
+    
+    public ArrayList<HashMap<String, Object>> getTipocambio_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {        
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT erp_monedavers.id, "
+                                +" erp_monedavers.valor, "
+                                +" to_char(erp_monedavers.momento_creacion,'yyyy-mm-dd')as momento_creacion , "
+                                +" erp_monedavers.moneda_id, "
+                                +" erp_monedavers.version, "
+                                +" gral_mon.descripcion_abr,gral_mon.descripcion,gral_mon.simbolo "                              
+                                +" FROM erp_monedavers "                        
+                                +" JOIN ("+sql_busqueda+") AS sbt ON sbt.id = erp_monedavers.id "
+                                +" JOIN gral_mon on gral_mon.id = erp_monedavers.moneda_id  "
+                                +" WHERE gral_mon.borrado_logico=false "
+                                +" order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        System.out.println("esto es el query  :  "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("valor",rs.getString("valor"));                    
+                    row.put("momento_creacion",rs.getString("momento_creacion"));                    
+                    row.put("moneda_id",rs.getString("moneda_id"));                    
+                    row.put("version",rs.getString("version"));                    
+                    row.put("descripcion_abr",rs.getString("descripcion_abr")); 
+                    row.put("descripcion",rs.getString("descripcion")); 
+                    row.put("simbolo",rs.getString("simbolo")); 
+                    return row;
+                }
+            }
+        );
+        return hm; 
     }
     
     
     
+    @Override
+    public ArrayList<HashMap<String, String>> gettipoCambio_Datos(String erp_monedavers_id) {
+        String sql_to_query = "SELECT erp_monedavers.id, "
+                                +" erp_monedavers.valor, "
+                                +" to_char(erp_monedavers.momento_creacion,'yyyy-mm-dd')as momento_creacion , "
+                                +" erp_monedavers.moneda_id, "
+                                +" erp_monedavers.version, "
+                                +" gral_mon.descripcion_abr,gral_mon.descripcion,gral_mon.simbolo "                              
+                                +" FROM erp_monedavers  "
+                               +" JOIN gral_mon ON gral_mon.id = erp_monedavers.moneda_id " 
+                              + " WHERE erp_monedavers.id ="+erp_monedavers_id;
+        System.out.println("Id de la tabla erp_Monedavers:  "+erp_monedavers_id);
+        ArrayList<HashMap<String, String>> datos_tc = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                     row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("valor",rs.getString("valor"));                    
+                    row.put("fecha",rs.getString("momento_creacion"));                    
+                    row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("descripcion_abr",rs.getString("descripcion_abr"));
+                    row.put("version",rs.getString("version"));
+                    
+                    
+                    
+                    return row;
+                }
+            }
+        );
+        return datos_tc;
+    }
+    
+    //TERMINA ACTUALIZADOR DE TIPOS DE CAMBIO
     
     
     
