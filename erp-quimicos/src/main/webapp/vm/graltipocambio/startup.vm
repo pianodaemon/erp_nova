@@ -39,18 +39,16 @@
 
                             <tr>
                                 <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <td>zona</td>
+                                <td>Fecha</td>
                                 <td width="10">&nbsp;&nbsp;</td>
-                                <td><INPUT TYPE="text" name="busqueda_zona" style="width:150px;"></td>
+                                <td><INPUT TYPE="text" name="busqueda_fecha" style="width:150px;"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td> 
-                                <td>estatus</td>
+                                <td>Moneda</td>
                                 <td width="10">&nbsp;&nbsp;</td>
                                 <td width="170" >
-                                        <SELECT NAME="select_estatusBuscador" style="width:140px;">
-                                                <option value="1" selected> </option>
-                                                <option value="true">Activo</option>
-                                                <option value="false" >Inactivo</option>
-                                        </SELECT>
+                                        <SELECT NAME="select_monedaBuscador" style="width:140px;">
+                                        <option value="0" selected="yes">[--Seleccionar Moneda--]</option
+                                            </SELECT>
                                 </td> 
                                 <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>                              
                                 <td><INPUT TYPE="button" value="Buscar"></td>
@@ -96,7 +94,7 @@
 					
                     <div id="div_two" title="" class="tipocambio_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:530px; padding-left:6px;"><strong>Actualizador de Tipo de Cambio </strong></div>
+                            <div class="fixed column" id="cierra" style="width:260px; padding-left:6px;"><strong>Actualizador de Tipo de Cambio </strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -117,36 +115,45 @@
                                 <div class="fixed column" class="content_x" >
 									
                                     <div id="tabx-1" class="contenidoPes" >
-                                        <table border="2">
+                                        <table border="0">
                                             <tr>
-                                                    <td width="9">&nbsp;</td>
+                                                    <td width="5">&nbsp;</td>
                                             </tr>
                                             
                                             <tr>
-                                                    <td width="5"></td>
-                                                    <td width="70">moneda</td>
-                                                    <td width="450">
+                                                    <td width="5">&nbsp;</td>
+                                                    <td width="70">Moneda</td>
+                                                    <td width="5">&nbsp;</td>           
+                                                    <td width="100">
                                                             <SELECT NAME="select_monedas" style="width:140px;">
                                                                    <!-- <option value="true">Activo</option>
                                                                     <option value="false" >Inactivo</option>-->
                                                             </SELECT>
                                                     </td>
                                                     <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda"></div></td>
-                                                    <td width="5">&nbsp;Fecha</td>
-                                                    <td width="450"><INPUT TYPE="text" name="fecha" style="width:100px;"></td>
+                                           </tr>  
+                                           <tr>
+                                                    <td width="5">&nbsp;</td>
+                                            </tr>
+                                           <tr>
+                                                    <td width="5">&nbsp;</td>
+                                                    <td width="5">Fecha</td>
+                                                    <td width="5">&nbsp;</td>
+                                                    <td width="100"><INPUT TYPE="text" name="fecha" style="width:100px;"></td>
                                                     <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha"></div></td>
-                                                    <td width="5">Tipo&nbsp;Cambio</td>
-                                                    <td width="450"><INPUT TYPE="text" name="tipocambio" style="width:100px;"></td>
-                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipocambio"></div></td>
                                                     
-                                                    </td>
-                                                    
-                                                    
+                                            </tr> 
+                                            <tr>
+                                                    <td width="5">&nbsp;</td>
                                             </tr>
                                             <tr>
-                                                    <td width="9">&nbsp;</td>
+                                                    <td width="5">&nbsp;</td>
+                                                    <td width="5">Tipo&nbsp;Cambio</td>
+                                                    <td width="5">&nbsp;</td>
+                                                    <td width="100"><INPUT TYPE="text" name="tipocambio" style="width:100px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipocambio"></div></td>
                                             </tr>
-                                            
+                                           
 											
                                         </table>
                                     </div>
@@ -155,7 +162,7 @@
                             </div>
 
 
-                            <div class="fixed column" id="botones" style="width:559px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:250px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr><td colspan="4" height="7"></td></tr>
 									<tr>
