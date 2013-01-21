@@ -92,6 +92,7 @@
                 <div id="div_one" class="panelcito_modal tipocambio_div_one"  style="display:none;" title="">
                 
                 <input type="hidden" name="identificador">
+                <input type="hidden" name="fecha_de_hoy">
 					
                     <div id="div_two" title="" class="tipocambio_div_two">
                         <div class="columns on-2">
@@ -130,12 +131,13 @@
                                                                     <option value="false" >Inactivo</option>-->
                                                             </SELECT>
                                                     </td>
-                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_zona"></div></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda"></div></td>
                                                     <td width="5">&nbsp;Fecha</td>
                                                     <td width="450"><INPUT TYPE="text" name="fecha" style="width:100px;"></td>
-                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_zona"></div></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha"></div></td>
                                                     <td width="5">Tipo&nbsp;Cambio</td>
                                                     <td width="450"><INPUT TYPE="text" name="tipocambio" style="width:100px;"></td>
+                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipocambio"></div></td>
                                                     
                                                     </td>
                                                     
