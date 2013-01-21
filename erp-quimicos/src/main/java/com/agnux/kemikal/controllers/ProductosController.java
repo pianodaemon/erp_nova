@@ -550,6 +550,8 @@ public class ProductosController {
             @RequestParam(value="namepdf", required=true) String namepdf,
             @RequestParam(value="descripcion_corta", required=true) String descripcion_corta,
             @RequestParam(value="descripcion_larga", required=true) String descripcion_larga,
+            @RequestParam(value="edito_pdf", required=true) String edito_pdf,
+            @RequestParam(value="edito_imagen", required=true) String edito_imagen,
             Model model,@ModelAttribute("user") UserSessionData user
         ) {
             
@@ -567,6 +569,7 @@ public class ProductosController {
             
             userDat = this.getHomeDao().getUserById(id_usuario);
             incluye_mod_prod = userDat.get("incluye_produccion");
+            Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
             
             //tipos 2=Subensamble, 3=Kit
             if(incluye_mod_prod.equals("true")){
@@ -670,19 +673,39 @@ public class ProductosController {
                     punto_reorden+"___"+//34
                     id_cta_gasto+"___"+//35
                     id_cta_costoventa+"___"+//36
-                    id_cta_venta+"___"+
-                    nameimg+"___"+//37
-                    namepdf+"___"+//38
-                    descripcion_corta+"___"+//39
-                    descripcion_larga;//40
+                    id_cta_venta+"___"+//37
+                    nameimg+"___"+//38
+                    namepdf+"___"+//39
+                    descripcion_corta+"___"+//40
+                    descripcion_larga;//41
             
             succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             
-            log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
             String actualizo = "0";
             
             if( String.valueOf(succes.get("success")).equals("true") ){
                 actualizo = this.getInvDao().selectFunctionForThisApp(data_string, extra_data_array);
+                
+                //mover los archivos de tmp a resources
+                if(edito_imagen.equals("1")){
+                    try {
+                        FileHelper.move(this.getGralDao().getJvmTmpDir()+"/"+nameimg, this.getGralDao().getProdImgDir()+this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/" +nameimg);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ProductosController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(ProductosController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                
+                if(edito_pdf.equals("1")){
+                    try {
+                        FileHelper.move(this.getGralDao().getJvmTmpDir()+"/"+namepdf, this.getGralDao().getProdPdfDir()+this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/" +namepdf);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ProductosController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(ProductosController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
             
             jsonretorno.put("success",String.valueOf(succes.get("success")));
@@ -763,18 +786,27 @@ public class ProductosController {
     }
     
     //descargtar imagen
-    @RequestMapping(method = RequestMethod.GET, value="/imgDownloadImg/{id}/{name_img}/out.json")
+    @RequestMapping(method = RequestMethod.GET, value="/imgDownloadImg/{name_img}/{id}/{iu}/out.json")
     public @ResponseBody HashMap<String, String> imgDownloadImgJson(@PathVariable("name_img") String name_img,
         @PathVariable("id") String id,
+        @PathVariable("iu") String id_user,
         HttpServletResponse response, 
         Model model) throws IOException {
         ServletOutputStream out;
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
         String varDir = "";
         if(id.equals("0")){
             varDir = this.getGralDao().getJvmTmpDir();
         }else{
-            varDir = this.getGralDao().getJvmTmpDir();
+            varDir = this.getGralDao().getProdImgDir()+rfc_empresa;
         }
         
         File file = new File(varDir+"/"+name_img);

@@ -152,7 +152,7 @@ public class FacturasController {
            @RequestParam(value="input_json", required=true) String input_json,
            @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
            @RequestParam(value="iu", required=true) String id_user_cod,
-           Model modcel) {
+       Model modcel) {
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
@@ -197,7 +197,7 @@ public class FacturasController {
             @RequestParam(value="id_factura", required=true) String id_factura,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getFacturaJson de {0}", FacturasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
@@ -265,7 +265,7 @@ public class FacturasController {
     @RequestMapping(method = RequestMethod.POST, value="/getTiposCancelacion.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getTiposCancelacionJson(
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getTiposCancelacionJson de {0}", FacturasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
@@ -293,7 +293,7 @@ public class FacturasController {
             @RequestParam(value="motivo", required=true) String motivo_cancelacion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
@@ -306,7 +306,6 @@ public class FacturasController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
-        
         
         //aplicativo prefacturas
         Integer app_selected = 36;
@@ -323,36 +322,47 @@ public class FacturasController {
         if(validacion.get("success").equals("true")){
             
             tipo_facturacion = this.getFacdao().getTipoFacturacion();
-            
             System.out.println("tipo_facturacion:::"+tipo_facturacion);
             
-            if(tipo_facturacion.equals("cfdi") || tipo_facturacion.equals("cfd") ){
-                succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+            if(tipo_facturacion.equals("cfd") ){
+                succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);//llamada al procedimiento para cancelacion
             }
             
             if(tipo_facturacion.equals("cfdi") ){
+                String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura);
                 
-                //tipo facturacion CFDI. Generar txt para buzon fiscal
-                if(succcess.split(":")[1].equals("true")){
+                File toFile = new File(this.getGralDao().getCfdiSolicitudesDir() + "out/"+serieFolio+".xml");
+                System.out.println("FicheroXML: "+this.getGralDao().getCfdiSolicitudesDir() + "out/"+serieFolio+".xml");
+                
+                if (toFile.exists()) {
+                    //si el existe el xml, se procede a la cancelacion
+                    succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
                     
-                    HashMap<String, String> data = new HashMap<String, String>();
-                    serie_folio = succcess.split(":")[0];
+                    //tipo facturacion CFDI. Generar txt para buzon fiscal
+                    if(succcess.split(":")[1].equals("true")){
+                        
+                        HashMap<String, String> data = new HashMap<String, String>();
+                        serie_folio = succcess.split(":")[0];
+                        
+                        String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
+                        BeanFromCfdiXml pop = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
+                        
+                        data.put("uuid", pop.getUuid());
+                        data.put("emisor_rfc", pop.getEmisor_rfc());
+                        data.put("receptor_rfc", pop.getReceptor_rfc());
+                        
+                        //generar archivo de texto para cfdi
+                        this.getBcancelafdi().init(data, serie_folio);
+                        this.getBcancelafdi().start();
+                        
+                        System.out.println("serie_folio:"+serie_folio + "    Cancelado:"+succcess.split(":")[1]);
+                    }
+                    jsonretorno.put("success", succcess);
                     
-                    String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
-                    BeanFromCfdiXml pop = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
-                    
-                    data.put("uuid", pop.getUuid());
-                    data.put("emisor_rfc", pop.getEmisor_rfc());
-                    data.put("receptor_rfc", pop.getReceptor_rfc());
-                    
-                    
-                    //generar archivo de texto para cfdi
-                    this.getBcancelafdi().init(data, serie_folio);
-                    this.getBcancelafdi().start();
-                    
-                    System.out.println("serie_folio:"+serie_folio + "    Cancelado:"+succcess.split(":")[1]);
+                }else{
+                    jsonretorno.put("success", "false:No fue posible cancelar la Factura. No se encuentra el archivo XML.");
                 }
-                jsonretorno.put("success", succcess);
+                
             }else{
                 if(tipo_facturacion.equals("cfditf") ){
                     try {
@@ -364,8 +374,6 @@ public class FacturasController {
                         String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(id_empresa,id_sucursal) ;
                         String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(id_empresa, id_sucursal);
                         String ruta_java_almacen_certificados = this.getGralDao().getJavaRutaCacerts(id_empresa, id_sucursal);
-                        
-                        
                         
                         String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
                         BeanFromCfdiXml pop = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
