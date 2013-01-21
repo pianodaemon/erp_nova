@@ -16,6 +16,8 @@ import java.util.HashMap;
 public interface GralInterfaceDao {
     
     public String getJvmTmpDir();
+    public String getProdImgDir();
+    public String getProdPdfDir();
     
     public String getImagesDir();
     public String getSslDir();
@@ -181,5 +183,7 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String, String>> gettipoCambio_Datos(String erpmonedavers_id);                                         
 
                                               
-    
+    /*Descarga de ficha tecnica*/
+    public ArrayList<HashMap<String, Object>> getFichaTecnica_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc,Integer id_empresa);
+    public String getCodigoProductoById(String id_producto);
 }

@@ -43,6 +43,24 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     
     @Override
+    public String getJvmTmpDir() {
+        String jvmtmpdir = System.getProperty("java.io.tmpdir");
+        return jvmtmpdir;
+    }
+    
+    @Override
+    public String getProdImgDir() {
+        String xsldir = System.getenv("HOME") + "/resources/productos/img/";
+        return xsldir;
+    }
+    
+    @Override
+    public String getProdPdfDir() {
+        String xsldir = System.getenv("HOME") + "/resources/productos/pdf/";
+        return xsldir;
+    }
+    
+    @Override
     public String getCfdiTimbreEmitidosDir() {
         String cfditimbreemitidosdir = System.getenv("HOME") + "/" + "resources" + "/"+"cfdi" + "/"+"timbre" + "/" + "emitidos" + "/";
         return cfditimbreemitidosdir;
@@ -110,12 +128,6 @@ public class GralSpringDao implements GralInterfaceDao{
     public String getZebraProcessingDir() {
         String zebradir = this.getZebraDir()+ "/"+"processing";
         return zebradir;
-    }
-    
-    @Override
-    public String getJvmTmpDir() {
-        String jvmtmpdir = System.getProperty("java.io.tmpdir");
-        return jvmtmpdir;
     }
     
     @Override
@@ -2034,6 +2046,51 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     
+    //Descarga de ficha tecnica
+    //------------------------------------------Aplicativo de descarga de ficha tecnica---------------------------------------
+    @Override
+    public ArrayList<HashMap<String, Object>> getFichaTecnica_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc,Integer id_empresa) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT inv_prod.id, inv_prod.sku, inv_prod.descripcion, inv_prod.archivo_pdf as accesor_descarga "                              
+                                +"FROM inv_prod "                        
+                                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_prod.id "
+                                +"WHERE inv_prod.empresa_id="+id_empresa
+                                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        //System.out.println("esto es el query  :  "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("accesor_descarga",rs.getString("accesor_descarga"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    @Override
+    public String getCodigoProductoById(String id_producto) {
+        String sql_to_query = "select archivo_pdf from inv_prod where id="+id_producto+" limit 1";
+        
+        System.out.println("Ejacutando Guardar:"+sql_to_query);
+        
+        String valor_retorno="";
+        Map<String, Object> select = this.getJdbcTemplate().queryForMap(sql_to_query);
+        
+        valor_retorno = select.get("archivo_pdf").toString();
+        
+        return valor_retorno;
+    }
     
     
 }
