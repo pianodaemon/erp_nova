@@ -529,7 +529,7 @@
 												<td width="110">Permitir&nbsp;Stock</td>
 												<td width="5"></td>
 												<td width="50"><input type="checkbox" name="check_stock"></td>
-					Contabilidad							<td width="50">&nbsp;Densidad</td>
+												<td width="50">&nbsp;Densidad</td>
 												<td width="60"><input type="text" name="densidad" value="1" style="width:60px;" maxlength="8"></td>
 												<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_densidad"></div></td>
 												<td width="50"></td>
