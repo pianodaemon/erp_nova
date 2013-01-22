@@ -323,16 +323,16 @@ public class FacturasController {
             
             tipo_facturacion = this.getFacdao().getTipoFacturacion();
             System.out.println("tipo_facturacion:::"+tipo_facturacion);
+            serie_folio = this.getFacdao().getSerieFolioFactura(id_factura);
             
             if(tipo_facturacion.equals("cfd") ){
                 succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);//llamada al procedimiento para cancelacion
             }
             
             if(tipo_facturacion.equals("cfdi") ){
-                String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura);
                 
-                File toFile = new File(this.getGralDao().getCfdiSolicitudesDir() + "out/"+serieFolio+".xml");
-                System.out.println("FicheroXML: "+this.getGralDao().getCfdiSolicitudesDir() + "out/"+serieFolio+".xml");
+                File toFile = new File(this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
+                System.out.println("FicheroXML: "+this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
                 
                 if (toFile.exists()) {
                     //si el existe el xml, se procede a la cancelacion
@@ -369,14 +369,15 @@ public class FacturasController {
                         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                         //aqui inicia request al webservice
                         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                        String rfcEmpresaEmisora = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                         String ruta_ejecutable_java = this.getGralDao().getJavaVmDir(id_empresa, id_sucursal);
                         String ruta_jarWebService = this.getGralDao().getCfdiTimbreJarWsDir()+"wscli.jar";
-                        String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(id_empresa,id_sucursal) ;
+                        String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + rfcEmpresaEmisora+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(id_empresa,id_sucursal) ;
                         String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(id_empresa, id_sucursal);
                         String ruta_java_almacen_certificados = this.getGralDao().getJavaRutaCacerts(id_empresa, id_sucursal);
                         
-                        String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
-                        BeanFromCfdiXml pop = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
+                        String RutaficheroXml = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresaEmisora +"/"+ serie_folio+".xml";
+                        BeanFromCfdiXml pop = new BeanFromCfdiXml(RutaficheroXml);
                         
                         String uuid = pop.getUuid();
                         String emisor_rfc = pop.getEmisor_rfc();
@@ -393,7 +394,6 @@ public class FacturasController {
                         InputStream myInputStream=null;
                         
                         myInputStream= resultado.getInputStream();
-                        
                         
                         BufferedReader reader = new BufferedReader(new InputStreamReader(myInputStream));
                         StringBuilder sb = new StringBuilder();
@@ -421,6 +421,8 @@ public class FacturasController {
                                 result = "Error diverza";
                                 break;
                         }
+                        
+                        System.out.println("result: "+result);
                         
                         if(sb.toString().equals("0")){
                             succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
