@@ -1066,6 +1066,7 @@ $(function() {
 
 					//si el estado del comprobante es 0, esta cancelado
 					if(entry['datosFactura']['0']['estado']=='CANCELADO'){
+						$reconstruir_pdf.hide();
 						$boton_descargarpdf.hide();
 						$boton_cancelarfactura.hide();
 						$boton_descargarxml.hide();
@@ -1193,6 +1194,7 @@ $(function() {
 									if(cad[1]=='false'){
 										jAlert("La factura "+$serie_folio.val()+" tiene pagos aplicados. Es necesario cancelar primeramente los pagos y despues cancelar la factura.", 'Atencion!');
 									}else{
+										$reconstruir_pdf.hide();
 										$boton_descargarpdf.hide();
 										$boton_cancelarfactura.hide();
 										$boton_descargarxml.hide();
