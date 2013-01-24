@@ -169,13 +169,13 @@
 													<table border="0" class="gral">
 														<tr>
 															<td width="10"></td>
-															<td width="80">Familia</td>
-															<td width="200"><select name="select_familia" style="width:200px;"></select></td>
-															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_familia"></div></td>
+															<td width="80">Tipo&nbsp;producto</td>
+															<td width="200"><select name="select_tipo_prod" style="width:200px;"></select></td>
+															<td width="25"></td>
 															<td width="40"></td>
-															<td width="80">SubFamilia</td>
-															<td width="200" colspan="2"><select name="select_subfamilia" style="width:200px;"></select></td>
-															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_subfamilia"></div></td>
+															<td width="80">Marca</td>
+															<td width="200" colspan="3"><select name="select_marca" style="width:200px;"></select></td>
+															<td width="25"></td>
 														</tr>
 														<tr>
 															<td width="10" height="10"></td>
@@ -184,19 +184,20 @@
 															<td width="25"></td>
 															<td width="40"></td>
 															<td width="80"></td>
-															<td width="100"></td>
+															<td width="75"></td>
+															<td width="25"></td>
 															<td width="100"></td>
 															<td width="25"></td>
 														</tr>
 														<tr>
 															<td width="10"></td>
-															<td width="80">Marca</td>
-															<td width="200"><select name="select_marca" style="width:200px;"></select></td>
-															<td width="25"></td>
+															<td width="80">Familia</td>
+															<td width="200"><select name="select_familia" style="width:200px;"></select></td>
+															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_familia"></div></td>
 															<td width="40"></td>
-															<td width="80">Tipo&nbsp;producto</td>
-															<td width="200" colspan="2"><select name="select_tipo_prod" style="width:200px;"></select></td>
-															<td width="25"></td>
+															<td width="80">SubFamilia</td>
+															<td width="200" colspan="3"><select name="select_subfamilia" style="width:200px;"></select></td>
+															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_subfamilia"></div></td>
 														</tr>
 														
 														<tr>
@@ -206,7 +207,8 @@
 															<td width="25"></td>
 															<td width="40"></td>
 															<td width="80"></td>
-															<td width="100"></td>
+															<td width="75"></td>
+															<td width="25"></td>
 															<td width="100"></td>
 															<td width="25"></td>
 														</tr>
@@ -219,7 +221,8 @@
 															<td width="40"></td>
 															<td width="80"></td>
 															-->
-															<td width="100"><a  href="busca_producto" id="buscar_producto">&nbsp;(Buscar)</a></td>
+															<td width="75"><a  href="busca_producto" id="buscar_producto">&nbsp;(Buscar)</a></td>
+															<td width="25"></td>
 															<td width="100"></td>
 															<td width="25"></td>
 														</tr>
@@ -231,7 +234,8 @@
 															<td width="25"></td>
 															<td width="40"></td>
 															<td width="80"></td>
-															<td width="100"></td>
+															<td width="75"></td>
+															<td width="25"></td>
 															<td width="100"></td>
 															<td width="25"></td>
 														</tr>
@@ -246,10 +250,16 @@
 																		<table border="0">
 																			<tr>
 																				<td width="70">&Uacute;ltimo&nbsp;Costo</td>
-																				<td width="25"><input type="checkbox" name="check_costo_ultimo"></td>
+																				<td width="25">
+																					<input type="radio" name="radio" value="1" class="radio_costo_ultimo">
+																					<!--<input type="checkbox" name="check_costo_ultimo" class="tipo_costo" >-->
+																				</td>
 																				<td width="40"></td>
 																				<td width="80">Costo&nbsp;Promedio</td>
-																				<td width="25"><input type="checkbox" name="check_costo_promedio"></td>
+																				<td width="25">
+																					<input type="radio" name="radio" value="2" class="radio_costo_promedio">
+																					<!--<input type="checkbox" name="check_costo_promedio" class="tipo_costo">-->
+																				</td>
 																			</tr>
 																			
 																		</table>
@@ -263,7 +273,7 @@
 															-->
 															<td width="40"></td>
 															<td width="80">Presentaci&oacute;n</td>
-															<td width="200" colspan="2"><select name="select_presentacion" style="width:200px;"></select></td>
+															<td width="200" colspan="3"><select name="select_presentacion" style="width:200px;"></select></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
 														</tr>
 														<tr>
@@ -275,7 +285,8 @@
 															-->
 															<td width="40"></td>
 															<td width="80"></td>
-															<td width="100"></td>
+															<td width="75"></td>
+															<td width="25"></td>
 															<td width="100"></td>
 															<td width="25"></td>
 														</tr>
@@ -288,8 +299,10 @@
 															-->
 															<td width="40"></td>
 															<td width="80">Tipo&nbsp;de&nbsp;Cambio</td>
-															<td width="100"><input type="text" name="tipo_cambio" style="width:100px;"></td>
+															<td width="75"><input type="text" name="tipo_cambio" style="width:75px;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipocambio"></div></td>
+															<td width="100"><input type="button" id="busqueda" value="Busqueda" style="width:100px; font-weight: bold;"></td>
+															<td width="25"></td>
 														</tr>
 														<tr>
 															<td width="10" height="10"></td>
@@ -300,7 +313,8 @@
 															-->
 															<td width="40"></td>
 															<td width="80"></td>
-															<td width="100"></td>
+															<td width="75"></td>
+															<td width="25"></td>
 															<td width="100"></td>
 															<td width="25"></td>
 														</tr>
