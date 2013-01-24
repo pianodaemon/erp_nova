@@ -186,7 +186,7 @@ public class InvControlCostosController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getProductoJson de {0}", ProductosController.class.getName());
+        log.log(Level.INFO, "Ejecutando getDatosCalculoCostoJson de {0}", InvControlCostosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
@@ -239,9 +239,9 @@ public class InvControlCostosController {
             @RequestParam(value="fam", required=true) String familia_id,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ) {
+        ) {
         
-        log.log(Level.INFO, "Ejecutando getSubFamiliasByFamProdJson de {0}", ProductosController.class.getName());
+        log.log(Level.INFO, "Ejecutando getSubFamiliasByFamProdJson de {0}", InvControlCostosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> subfamilias = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -264,9 +264,9 @@ public class InvControlCostosController {
             @RequestParam(value="tipo_prod", required=true) String tipo_prod,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ) {
+        ) {
         
-        log.log(Level.INFO, "Ejecutando getFamiliasByTipoProdJson de {0}", ProductosController.class.getName());
+        log.log(Level.INFO, "Ejecutando getFamiliasByTipoProdJson de {0}", InvControlCostosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> familias = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -279,6 +279,71 @@ public class InvControlCostosController {
         familias = this.getInvDao().getInvProdSubFamiliasByTipoProd(id_empresa, tipo_prod);
         
         jsonretorno.put("Familias", familias);
+        
+        return jsonretorno;
+    }
+    
+    
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorProductos.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorProductosJson(
+            @RequestParam(value="marca", required=true) String marca,
+            @RequestParam(value="familia", required=true) String familia,
+            @RequestParam(value="subfamilia", required=true) String subfamilia,
+            @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="tipo", required=true) String tipo,
+            @RequestParam(value="descripcion", required=true) String descripcion,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getBuscadorProductosJson de {0}", InvControlCostosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        productos = this.getInvDao().getBuscadorProductosParaControlCostos(marca, familia, subfamilia, sku, tipo, descripcion, id_empresa);
+        
+        jsonretorno.put("productos", productos);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    //obtiene Productos para el Grid
+    @RequestMapping(method = RequestMethod.POST, value="/getBusquedaProductos.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBusquedaProductosJson(
+            @RequestParam(value="tipo_prod", required=true) String tipo_prod,
+            @RequestParam(value="mar", required=true) String mar,
+            @RequestParam(value="fam", required=true) String fam,
+            @RequestParam(value="subfam", required=true) String subfam,
+            @RequestParam(value="producto", required=true) String producto,
+            @RequestParam(value="pres", required=true) String pres,
+            @RequestParam(value="tipo_costo", required=true) String tipo_costo,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getBusquedaProductosJson de {0}", InvControlCostosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        productos = this.getInvDao().getInvProdSubFamiliasByTipoProd(id_empresa, tipo_prod);
+        
+        jsonretorno.put("Grid", productos);
         
         return jsonretorno;
     }

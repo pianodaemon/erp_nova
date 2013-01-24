@@ -300,4 +300,11 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getInvoOrdenTras_GridLotes(Integer id);
     public HashMap<String, String> getInvOrdenTras_DatosPDF(Integer id);
     
+    
+    //Metodos para Aplicativo de Control de Costos
+    public ArrayList<HashMap<String, String>> getBuscadorProductosParaControlCostos(String marca, String familia, String subfamilia, String sku, String tipo, String descripcion,Integer id_empresa);
+    
+    
+    
+    
 }
