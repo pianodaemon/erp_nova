@@ -390,14 +390,14 @@ $(function() {
 				});
 				
 			});
-		})
+		});
 		
 		
 		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
 		if($campo_sku.val() != ''){
 			$buscar_plugin_producto.trigger('click');
 		}
-
+		
 		$cancelar_plugin_busca_producto.click(function(event){
 			//event.preventDefault();
 			var remove = function() { $(this).remove(); };

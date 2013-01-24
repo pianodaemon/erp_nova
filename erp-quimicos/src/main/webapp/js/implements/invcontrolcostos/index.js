@@ -389,6 +389,135 @@ $(function() {
 	}
 	
 	
+	
+	
+	
+	//buscador de productos
+	$busca_productos = function(producto, tipo_prod, marca, familia, subfamilia ){
+		//limpiar_campos_grids();
+		$(this).modalPanel_Buscaproducto();
+		var $dialogoc =  $('#forma-buscaproducto-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_productos').find('table.formaBusqueda_productos').clone());
+		
+		$('#forma-buscaproducto-window').css({ "margin-left": -200, 	"margin-top": -200  });
+		
+		var $tabla_resultados = $('#forma-buscaproducto-window').find('#tabla_resultado');
+		
+		var $campo_sku = $('#forma-buscaproducto-window').find('input[name=campo_sku]');
+		var $select_tipo_producto = $('#forma-buscaproducto-window').find('select[name=tipo_producto]');
+		var $campo_descripcion = $('#forma-buscaproducto-window').find('input[name=campo_descripcion]');
+		
+		var $buscar_plugin_producto = $('#forma-buscaproducto-window').find('#busca_producto_modalbox');
+		var $cancelar_plugin_busca_producto = $('#forma-buscaproducto-window').find('#cencela');
+		
+		//funcionalidad botones
+		$buscar_plugin_producto.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$buscar_plugin_producto.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$cancelar_plugin_busca_producto.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		$cancelar_plugin_busca_producto.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		$select_tipo_producto.hide();
+		
+		/*
+		//buscar todos los tipos de productos
+		var input_json_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_tipos,$arreglo,function(data){
+			//Llena el select tipos de productos en el buscador
+			$select_tipo_producto.children().remove();
+			var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
+			$.each(data['prodTipos'],function(entryIndex,pt){
+				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+			});
+			$select_tipo_producto.append(prod_tipos_html);
+		});
+		* */
+		
+		$campo_descripcion.val(producto);
+		
+		//click buscar productos
+		$buscar_plugin_producto.click(function(event){
+			//event.preventDefault();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorProductos.json';
+			$arreglo = {    'tipo':tipo_prod,
+							'marca':marca,
+							'familia':familia,
+							'subfamilia':subfamilia,
+							'sku':$campo_sku.val(),
+							'descripcion':$campo_descripcion.val(),
+							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+						}
+			
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['productos'],function(entryIndex,producto){
+					trr = '<tr>';
+						trr += '<td width="110">';
+							trr += '<span class="sku_prod_buscador">'+producto['sku']+'</span>';
+							trr += '<input type="hidden" id="id_prod_buscador" value="'+producto['id']+'">';
+						trr += '</td>';
+						trr += '<td width="280"><span class="titulo_prod_buscador">'+producto['descripcion']+'</span></td>';
+						trr += '<td width="90"><span class="unidad_prod_buscador">'+producto['unidad']+'</span></td>';
+						trr += '<td width="100"><span class="tipo_prod_buscador">'+producto['tipo']+'</span></td>';
+					trr += '</tr>';
+					$tabla_resultados.append(trr);
+				});
+				$tabla_resultados.find('tr:odd').find('td').css({ 'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({ 'background-color' : '#FFFFFF'});
+				
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({ background : '#FBD850'});
+				}, function() {
+					//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//seleccionar un producto del grid de resultados
+				$tabla_resultados.find('tr').click(function(){
+					//asignar a los campos correspondientes el sku y y descripcion
+					$('#forma-invcontrolcostos-window').find('input[name=id_producto]').val($(this).find('#id_prod_buscador').val());
+					$('#forma-invcontrolcostos-window').find('input[name=producto]').val($(this).find('span.titulo_prod_buscador').html());
+					//elimina la ventana de busqueda
+					var remove = function() { $(this).remove(); };
+					$('#forma-buscaproducto-overlay').fadeOut(remove);
+					//asignar el enfoque al campo sku del producto
+					$('#forma-invcontrolcostos-window').find('input[name=producto]').focus();
+				});
+			});
+		});
+		
+		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
+		if($campo_descripcion.val() != ''){
+			$buscar_plugin_producto.trigger('click');
+		}
+		
+		$cancelar_plugin_busca_producto.click(function(event){
+			//event.preventDefault();
+			var remove = function() { $(this).remove(); };
+			$('#forma-buscaproducto-overlay').fadeOut(remove);
+		});
+	}//termina buscador de productos
+
+	
+	
+	
+	
 	//buscador de de Datos del Lote
 	$obtiene_datos_lote = function($tr_padre){
 		var numero_lote = $tr_padre.find('input[name=lote_int]').val();
@@ -598,6 +727,7 @@ $(function() {
 		
 		var $identificador = $('#forma-invcontrolcostos-window').find('input[name=identificador]');
 		var $folio = $('#forma-invcontrolcostos-window').find('input[name=folio]');
+		var $id_producto = $('#forma-invcontrolcostos-window').find('input[name=id_producto]');
 		var $producto = $('#forma-invcontrolcostos-window').find('input[name=producto]');
 		var $buscar_producto = $('#forma-invcontrolcostos-window').find('#buscar_producto');
 		
@@ -792,14 +922,68 @@ $(function() {
 			
 			
 			
-			
-			
 		},"json");//termina llamada json
+		
+		
+		//buscar producto
+		$buscar_producto.click(function(event){
+			event.preventDefault();
+			$busca_productos($producto.val(), $select_tipo_prod.val(), $select_marca.val(), $select_familia.val(), $select_subfamilia.val() );
+		});
+		
 		
 		
 		
 		$busqueda.click(function(event){
-			alert("HJola");
+			var tipo_costo=0;
+			if($radio_costo_ultimo.is(':checked')){
+				tipo_costo=1;
+			}
+			
+			if($radio_costo_promedio.is(':checked')){
+				tipo_costo=2;
+			}
+
+			/*
+			$id_producto
+			$select_tipo_prod
+			$select_marca
+			$select_familia
+			$select_subfamilia
+			$select_presentacion
+			$tipo_cambio
+			$radio_costo_ultimo
+			$radio_costo_promedio
+			*/
+			
+			
+			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBusquedaProductos.json';
+			$arreglo2 = {
+							'tipo_prod':$select_tipo_prod.val(),
+							'mar':$select_marca.val(),
+							'fam':$select_familia.val(),
+							'subfam':$select_subfamilia.val(),
+							'tipo_costo':tipo_costo,
+							'producto':$id_producto.val(),
+							'pres':$select_presentacion.val(),
+							'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+						}
+			
+			$.post(input_json2,$arreglo2,function(data){
+				
+				
+				
+				/*
+				//Alimentando select de Subfamilias
+				$select_subfamilia.children().remove();
+				var subfamilia_hmtl = '<option value="0">[--Seleccionar Subfmilia--]</option>';
+				$.each(data['SubFamilias'],function(dataIndex,subfam){
+					subfamilia_hmtl += '<option value="' + subfam['id'] + '"  >' + subfam['titulo'] + '</option>';
+				});
+				$select_subfamilia.append(subfamilia_hmtl);
+				*/
+			});
+			
 		});
 		
 		
