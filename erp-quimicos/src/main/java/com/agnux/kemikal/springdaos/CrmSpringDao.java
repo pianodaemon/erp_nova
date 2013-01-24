@@ -952,6 +952,284 @@ public class CrmSpringDao implements CrmInterfaceDao{
     }
     //Termina Metodos Catalogo de Prospectos(CRM)
 
+    //+++++++++++++++++++++++++++++++++++Metodos Registro de Metas+++++++++++++++++++++++++++++++++
+    @Override
+    public ArrayList<HashMap<String, String>> getCrmRegistoMetas_Datos(Integer id) {
+        String sql_to_query = ""
+                +"SELECT "
+                    + "crm_metas.id,  "
+                    +"crm_metas.folio,"
+                    +"crm_metas.gral_empleado_id, " 
+                    +"crm_metas.ano, "
+                    + "crm_metas.mes, "
+                    
+                            
+                        +"crm_metas.cantidad_visitas, " 
+                        +"crm_metas.cantidad_llamadas, " 
+                        +"crm_metas.cantidad_prospectos, " 
+                        +"crm_metas.cantidad_cotizaciones, " 
+                        +"crm_metas.cantidad_oportunidades, " 
+                        +"crm_metas.monto_cotizaciones, " 
+                        +"crm_metas.monto_oportunidades, " 
+                        +"crm_metas.ventas_prospectos, " 
+                        +"crm_metas.cantidad_cotizaciones2, " 
+                        +"crm_metas.cantidad_oportunidades2, " 
+                        +"crm_metas.monto_cotizaciones2, " 
+                        +"crm_metas.monto_oportunidades2, " 
+                        +"crm_metas.ventas_clientes, " 
+                        +"crm_metas.ventas_oportunidades_clientes, " 
+                        +"crm_metas.gral_empleado_id "
+                +"FROM crm_metas "                     
+                +"WHERE crm_metas.id=? ";
+        
+        ArrayList<HashMap<String, String>> datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("ano",String.valueOf(rs.getInt("ano")));
+                    row.put("mes",String.valueOf(rs.getInt("mes")));
+                    row.put("cantidad_visitas",String.valueOf(rs.getInt("cantidad_visitas")));
+                    row.put("cantidad_llamadas",String.valueOf(rs.getInt("cantidad_llamadas")));
+                    row.put("cantidad_prospectos",String.valueOf(rs.getInt("cantidad_prospectos")));
+                    row.put("cantidad_cotizaciones",String.valueOf(rs.getInt("cantidad_cotizaciones")));
+                    row.put("cantidad_oportunidades",String.valueOf(rs.getInt("cantidad_oportunidades")));
+                    row.put("empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
+                    row.put("empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
+                    row.put("monto_cotizaciones",StringHelper.roundDouble(rs.getDouble("monto_cotizaciones"),2));
+                    row.put("monto_oportunidades",StringHelper.roundDouble(rs.getDouble("monto_oportunidades"),2));
+                    row.put("ventas_prospectos",String.valueOf(rs.getInt("ventas_prospectos")));
+                    row.put("cantidad_cotizaciones2",String.valueOf(rs.getInt("cantidad_cotizaciones2")));
+                    row.put("cantidad_oportunidades2",String.valueOf(rs.getInt("cantidad_oportunidades2")));
+                    row.put("monto_cotizaciones2",StringHelper.roundDouble(rs.getDouble("monto_cotizaciones2"),2));
+                    row.put("monto_oportunidades2",StringHelper.roundDouble(rs.getDouble("monto_oportunidades2"),2));
+                    row.put("ventas_clientes",String.valueOf(rs.getInt("ventas_clientes")));
+                    row.put("ventas_oportunidades_clientes",String.valueOf(rs.getInt("ventas_oportunidades_clientes")));
+                    
+                    return row;
+                }
+            }
+        );
+        return datos;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getRegistroMetas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT crm_metas.id, " 
+                                +" crm_metas.folio, " 
+                                +"gral_empleados.nombre_pila ||' '|| apellido_paterno ||' '|| apellido_materno as agente,"
+                                + "(case when mes =1 then 'Enero' "
+                                        +"when mes =2 then 'Febrero' "
+                                        +"when mes =3 then 'Marzo' "
+                                        +"when mes =4 then 'Abril' "
+                                        +"when mes =5 then 'Mayo' "
+                                        +"when mes =6 then 'Junio' "
+                                        +"when mes =7 then 'Julio' "
+                                        +"when mes =8 then 'Agosto' "
+                                        +"when mes =9 then 'Septiembre' "
+                                        +"when mes =10 then 'Octubre' "
+                                        +"when mes =11 then 'Noviembre' "
+                                        +"when mes =12 then 'Diciembre' "
+                                    +"else 'Fin del Mundo' end ) as mes "
+                                +"FROM " 
+                                +"crm_metas "
+                                + "join gral_empleados on gral_empleados.id = crm_metas.gral_empleado_id "
+                                + "join ("+sql_busqueda+") AS sbt ON sbt.id = crm_metas.id "
+                                + "order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        System.out.println("Esto es lo que me trae:"+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("agente",rs.getString("agente"));
+                    row.put("mes",rs.getString("mes"));
+                    
+                    
+                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+     //+++++++++++++++++++++++++++++++++++FIN  de Registro de Metas+++++++++++++++++++++++++++++++++
     
+     ///------------------------------------------------Aplicativo de Registro de Llamadas-------------------------------------------
+    @Override
+    public ArrayList<HashMap<String, String>> getMotivos_Llamadas(Integer id_empresa) {
+        String sql_to_query = "SELECT id,descripcion FROM crm_motivos_llamada WHERE gral_emp_id="+id_empresa+" AND borrado_logico=false ORDER BY descripcion;";
+        
+        System.out.println("Query motivos llamadas::::....."+sql_to_query);
+        ArrayList<HashMap<String, String>> dato_datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("descripcion",rs.getString("descripcion"));
+             
+                    return row;
+                }
+            }
+        );
+        return dato_datos;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getCalificacion_Llamadas(Integer id_empresa) {
+        String sql_to_query = "select id,titulo from crm_calificaciones_llamadas where gral_emp_id="+id_empresa+" AND borrado_logico=false ORDER BY id;";
+        
+        System.out.println("Query Calificaciones::::....."+sql_to_query);
+        
+        ArrayList<HashMap<String, String>> dato_datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+             
+                    return row;
+                }
+            }
+        );
+        return dato_datos; 
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getRegistroLlamadas_Seguimiento(Integer id_empresa) {
+       String sql_to_query = "select id,titulo from crm_tipos_seguimiento_llamadas  where gral_emp_id="+id_empresa+" AND borrado_logico=false ORDER BY id; ";
+        
+       System.out.println("Query Seguimientos::::....."+sql_to_query);
+       ArrayList<HashMap<String, String>> dato_datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+             
+                    return row;
+                }
+            }
+        
+        );
+        return dato_datos; 
+        
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getCrmRegistroLlamadas_Datos(Integer id) {
+        String sql_to_query = ""
+                + "SELECT "
+                    +"crm_registro_llamadas.id , "
+                    +"crm_registro_llamadas.folio, "
+                    +"crm_registro_llamadas.fecha, "
+                    +"(CASE WHEN EXTRACT(HOUR FROM crm_registro_llamadas.hora)=0 AND EXTRACT(MINUTE FROM crm_registro_llamadas.hora)=0 THEN '00:00' ELSE (lpad(EXTRACT(HOUR FROM crm_registro_llamadas.hora)::character varying, 2, '0')||':'||lpad(EXTRACT(MINUTE FROM crm_registro_llamadas.hora)::character varying, 2, '0'))END) AS hora, "
+                    +"(CASE WHEN EXTRACT(HOUR FROM crm_registro_llamadas.duracion)=0 AND EXTRACT(MINUTE FROM crm_registro_llamadas.duracion)=0 THEN '00:00' ELSE (lpad(EXTRACT(HOUR FROM crm_registro_llamadas.duracion)::character varying, 2, '0')||':'||lpad(EXTRACT(MINUTE FROM crm_registro_llamadas.duracion)::character varying, 2, '0'))END) AS duracion, "
+                    +"crm_registro_llamadas.gral_empleado_id, "
+                    +"crm_registro_llamadas.crm_contacto_id, "
+                    +"crm_contactos.nombre||' '||(CASE WHEN crm_contactos.apellido_paterno IS NULL THEN '' ELSE crm_contactos.apellido_paterno END) ||' '||(CASE WHEN crm_contactos.apellido_paterno IS NULL THEN '' ELSE crm_contactos.apellido_paterno END) AS  nombre_contacto, "
+                    +"crm_registro_llamadas.crm_motivos_llamda_id, "
+                    +"crm_registro_llamadas.crm_calificacion_llamada_id, "
+                    +"crm_registro_llamadas.crm_tipos_seguimiento_llamada_id, "
+                    +"crm_registro_llamadas.deteccion_oportunidad, "
+                    +"crm_registro_llamadas.llamada_planeada, "
+                    +"crm_registro_llamadas.resultado, "
+                    +"crm_registro_llamadas.observaciones, "
+                    +"(CASE WHEN crm_registro_llamadas.fecha_sig_llamada::character varying='2999-12-31' THEN '' ELSE crm_registro_llamadas.fecha_sig_llamada::character varying END) AS fecha_sig_llamada, "
+                    +"(CASE WHEN EXTRACT(HOUR FROM crm_registro_llamadas.hora_sig_llamada)=0 AND EXTRACT(MINUTE FROM crm_registro_llamadas.hora_sig_llamada)=0 THEN '00:00' ELSE (lpad(EXTRACT(HOUR FROM crm_registro_llamadas.hora_sig_llamada)::character varying, 2, '0')||':'||lpad(EXTRACT(MINUTE FROM crm_registro_llamadas.hora_sig_llamada)::character varying, 2, '0'))END) AS hora_sig_llamada, "
+                    +"crm_registro_llamadas.comentarios_sig_llamada "
+                +"FROM crm_registro_llamadas "
+                +"LEFT JOIN crm_contactos ON crm_contactos.id=crm_registro_llamadas.crm_contacto_id "
+                +"WHERE crm_registro_llamadas.id=? ";
+        System.out.println("Datos de Llamadas"+sql_to_query);
+        ArrayList<HashMap<String, String>> datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("hora",rs.getString("hora"));
+                    row.put("duracion",rs.getString("duracion"));
+                    row.put("empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
+                    row.put("contacto_id",String.valueOf(rs.getInt("crm_contacto_id")));
+                    row.put("nombre_contacto",rs.getString("nombre_contacto"));
+                    row.put("crm_motivos_llamda_id",String.valueOf(rs.getInt("crm_motivos_llamda_id")));
+                    row.put("calificacion_id",String.valueOf(rs.getInt("crm_calificacion_llamada_id")));
+                    row.put("seguimiento_id",String.valueOf(rs.getInt("crm_tipos_seguimiento_llamada_id")));
+                    row.put("deteccion_oportunidad",String.valueOf(rs.getInt("deteccion_oportunidad")));
+                    
+                    row.put("resultado",rs.getString("resultado"));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("fecha_sig_llamada",rs.getString("fecha_sig_llamada"));
+                    row.put("hora_sig_llamada",rs.getString("hora_sig_llamada"));
+                    row.put("comentarios_sig_llamada",rs.getString("comentarios_sig_llamada"));
+                    row.put("llamada_planeada",String.valueOf(rs.getInt("llamada_planeada")));
+                    return row;
+                }
+            }
+        );
+        return datos;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getRegistroLlamadas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = " "
+                + "SELECT "
+                   +" crm_registro_llamadas.id, "
+                    +"crm_registro_llamadas.folio, " 
+                    +"cxc_agen.nombre AS agente, "
+                    +"crm_motivos_llamada.descripcion AS motivo, "
+                    +"crm_calificaciones_visita.titulo AS calif, "
+                    +"crm_tipos_seguimiento_visita.titulo AS tipo_seg "
+                +"FROM crm_registro_llamadas "
+                +"JOIN cxc_agen ON cxc_agen.id=crm_registro_llamadas.gral_empleado_id "
+                +"LEFT JOIN crm_motivos_llamada ON crm_motivos_llamada.id=crm_registro_llamadas.crm_motivos_llamda_id "
+                +"LEFT JOIN crm_calificaciones_visita ON crm_calificaciones_visita.id=crm_registro_llamadas.crm_calificacion_llamada_id "
+                +"LEFT JOIN crm_tipos_seguimiento_visita ON crm_tipos_seguimiento_visita.id=crm_registro_llamadas.crm_tipos_seguimiento_llamada_id "
+                + "join ("+sql_busqueda+") AS sbt ON sbt.id = crm_registro_llamadas.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        System.out.println("Devuelve la consulta"+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("agente",rs.getString("agente"));
+                    row.put("motivo",rs.getString("motivo"));
+                    row.put("calif",rs.getString("calif"));
+                    row.put("tipo_seg",rs.getString("tipo_seg"));
+                    
+                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    //----------------------------------------------Termina aplicativo de registro de llamadas----------------------------------------
+
      
 }
