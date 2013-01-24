@@ -563,7 +563,9 @@ $(function() {
 		});
 	}
 	
+	//p36
 	
+	//2
 	
 	
 	
@@ -589,9 +591,8 @@ $(function() {
 		
 		$tabs_li_funxionalidad();
 		
-		//var json_string = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + accion + '/' + id_to_show + '/out.json';
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPedido.json';
-		$arreglo = {'id_pedido':id_to_show,
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosCalculoCosto.json';
+		$arreglo = {'identificador':id_to_show,
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 					};
 		
@@ -600,20 +601,24 @@ $(function() {
 		var $producto = $('#forma-invcontrolcostos-window').find('input[name=producto]');
 		var $buscar_producto = $('#forma-invcontrolcostos-window').find('#buscar_producto');
 		
+		var $select_tipo_prod = $('#forma-invcontrolcostos-window').find('select[name=select_tipo_prod]');
+		var $select_marca = $('#forma-invcontrolcostos-window').find('select[name=select_marca]');
 		var $select_familia = $('#forma-invcontrolcostos-window').find('select[name=select_familia]');
 		var $select_subfamilia = $('#forma-invcontrolcostos-window').find('select[name=select_subfamilia]');
-		var $select_marca = $('#forma-invcontrolcostos-window').find('select[name=select_marca]');
-		var $select_tipo_prod = $('#forma-invcontrolcostos-window').find('select[name=select_tipo_prod]');
 		var $select_presentacion = $('#forma-invcontrolcostos-window').find('select[name=select_presentacion]');
 		var $tipo_cambio = $('#forma-invcontrolcostos-window').find('input[name=tipo_cambio]');
 		
-		var $check_costo_ultimo = $('#forma-invcontrolcostos-window').find('input[name=check_costo_ultimo]');
-		var $check_costo_promedio = $('#forma-invcontrolcostos-window').find('input[name=check_costo_promedio]');
+		//var $check_costo_ultimo = $('#forma-invcontrolcostos-window').find('input[name=check_costo_ultimo]');
+		//var $check_costo_promedio = $('#forma-invcontrolcostos-window').find('input[name=check_costo_promedio]');
+		var $radio_costo_ultimo = $('#forma-invcontrolcostos-window').find('.radio_costo_ultimo');
+		var $radio_costo_promedio = $('#forma-invcontrolcostos-window').find('.radio_costo_promedio');
 		
 		var $costo_importacion = $('#forma-invcontrolcostos-window').find('input[name=costo_importacion]');
 		var $costo_directo = $('#forma-invcontrolcostos-window').find('input[name=costo_directo]');
 		var $precio_minimo = $('#forma-invcontrolcostos-window').find('input[name=precio_minimo]');
 		var $check_simulacion = $('#forma-invcontrolcostos-window').find('input[name=check_simulacion]');
+		
+		var $busqueda = $('#forma-invcontrolcostos-window').find('#busqueda');
 		
 		var $cerrar_plugin = $('#forma-invcontrolcostos-window').find('#close');
 		var $cancelar_plugin = $('#forma-invcontrolcostos-window').find('#boton_cancelar');
@@ -626,6 +631,8 @@ $(function() {
 				return false;
 			}
 		});
+		
+		$radio_costo_ultimo.attr('checked',  true );
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -696,60 +703,104 @@ $(function() {
 		
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
-			$incluye_produccion.val(entry['Extras']['0']['mod_produccion']);
+			/*
+			$check_costo_ultimo
+			$check_costo_promedio
+			$check_simulacion
+			*/
+			//$tipo_cambio.val(entry['Tc']['0']['tipo_cambio']);
 			
-			//$campo_tc.val(entry['tc']['tipo_cambio']);
-			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
-			$tipo_cambio.val(entry['Tc']['0']['tipo_cambio']);
 			
-			//carga select denominacion con todas las monedas
-			$select_moneda.children().remove();
-			var moneda_hmtl = '';
-			$.each(entry['Monedas'],function(entryIndex,moneda){
-				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+			
+			//carga select de tipos de producto
+			$select_tipo_prod.children().remove();
+			//var prodtipos_hmtl = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
+			var prodtipos_hmtl = '';
+			$.each(entry['ProdTipos'],function(entryIndex,tp){
+				if(parseInt(tp['id'])==1){
+					prodtipos_hmtl += '<option value="' + tp['id'] + '" selected="yes">' + tp['titulo'] + '</option>';
+				}else{
+					prodtipos_hmtl += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
+				}
 			});
-			$select_moneda.append(moneda_hmtl);
+			$select_tipo_prod.append(prodtipos_hmtl);
 			
-			//carga select de vendedores
-			$select_vendedor.children().remove();
-			var hmtl_vendedor;
-			$.each(entry['Vendedores'],function(entryIndex,vendedor){
-				hmtl_vendedor += '<option value="' + vendedor['id'] + '"  >' + vendedor['nombre_agente'] + '</option>';
+			
+			//carga select de Marcas
+			$select_marca.children().remove();
+			var marca_hmtl = '<option value="0" selected="yes">[--Seleccionar Marca--]</option>';
+			$.each(entry['Marcas'],function(entryIndex,mar){
+				marca_hmtl += '<option value="' + mar['id'] + '"  >' + mar['titulo'] + '</option>';
 			});
-			$select_vendedor.append(hmtl_vendedor);
+			$select_marca.append(marca_hmtl);
 			
 			
-			//carga select de terminos
-			$select_condiciones.children().remove();
-			var hmtl_condiciones;
-			$.each(entry['Condiciones'],function(entryIndex,condicion){
-				hmtl_condiciones += '<option value="' + condicion['id'] + '"  >' + condicion['descripcion'] + '</option>';
+			//carga select de familas
+			$select_familia.children().remove();
+			var familia_hmtl = '<option value="0">[--Seleccionar Familia--]</option>';
+			$.each(entry['Familias'],function(entryIndex,fam){
+				familia_hmtl += '<option value="' + fam['id'] + '"  >' + fam['titulo'] + '</option>';
 			});
-			$select_condiciones.append(hmtl_condiciones);
+			$select_familia.append(familia_hmtl);
 			
 			
-			//carga select de metodos de pago
-			$select_metodo_pago.children().remove();
-			var hmtl_metodo;
-			$.each(entry['MetodosPago'],function(entryIndex,metodo){
-				hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
+			//Alimentando select de SubFamilias
+			$select_subfamilia.children().remove();
+			var subfamilia_hmtl = '<option value="0">[--Seleccionar SubFamilia--]</option>';
+			$select_subfamilia.append(subfamilia_hmtl);
+			
+			
+			//carga select de Presentaciones
+			$select_presentacion.children().remove();
+			var presentacion_hmtl = '<option value="0">[--Seleccionar Presentaci&oacute;n--]</option>';
+			$.each(entry['Presentaciones'],function(entryIndex,pres){
+				presentacion_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
 			});
-			$select_metodo_pago.append(hmtl_metodo);
+			$select_presentacion.append(presentacion_hmtl);
 			
 			
-			//carga select de almacenes
-			$select_almacen.children().remove();
-			var hmtl_alm;
-			$.each(entry['Almacenes'],function(entryIndex,alm){
-				hmtl_alm += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
+			$select_tipo_prod.change(function(){
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFamiliasByTipoProd.json';
+				$arreglo = {	'tipo_prod':$select_tipo_prod.val(),
+								'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+							};
+				$.post(input_json,$arreglo,function(data){
+					$select_familia.children().remove();
+					familia_hmtl = '<option value="0">[--Seleccionar Familia--]</option>';
+					$.each(data['Familias'],function(entryIndex,fam){
+						familia_hmtl += '<option value="' + fam['id'] + '"  >' + fam['titulo'] + '</option>';
+					});
+					$select_familia.append(familia_hmtl);
+				});
 			});
-			$select_almacen.append(hmtl_alm);
+			
+			$select_familia.change(function(){
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getSubFamiliasByFamProd.json';
+				$arreglo = {'fam':$select_familia.val(),
+								'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+							}
+				$.post(input_json,$arreglo,function(data){
+					//Alimentando select de Subfamilias
+					$select_subfamilia.children().remove();
+					var subfamilia_hmtl = '<option value="0">[--Seleccionar Subfmilia--]</option>';
+					$.each(data['SubFamilias'],function(dataIndex,subfam){
+						subfamilia_hmtl += '<option value="' + subfam['id'] + '"  >' + subfam['titulo'] + '</option>';
+					});
+					$select_subfamilia.append(subfamilia_hmtl);
+				});
+			});
+			
+			
 			
 			
 			
 		},"json");//termina llamada json
 		
+		
+		
+		$busqueda.click(function(event){
+			alert("HJola");
+		});
 		
 		
 		

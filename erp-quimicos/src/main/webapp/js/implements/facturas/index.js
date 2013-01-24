@@ -1085,7 +1085,7 @@ $(function() {
 						var generado  = entry['generado'];
 						if(generado=='true'){
 							jAlert("El PDF de la Factura "+$serie_folio.val()+" se gener&oacute; con &eacute;xito.", 'Atencion!');
-						}{
+						}else{
 							jAlert("Error al generar el pdf.", 'Atencion!');
 						}
 					});//termina llamada json
