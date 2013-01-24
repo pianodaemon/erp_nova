@@ -7,12 +7,13 @@
         
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/invcontrolcostos/formaInvControlCosto.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/invcontrolcostos/formaBuscaproducto.css" type="text/css" />
         
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/invcontrolcostos/modalboxInvControlCosto.js"></script>
-        
+        <script type="text/javascript" src="../../js/components/modalbox/invcontrolcostos/modalboxBuscaproducto.js"></script>
         <script type="text/javascript" src="../../js/implements/invcontrolcostos/index.js" ></script>
 		
         #include("${layoutmenu}")
@@ -215,7 +216,10 @@
 														<tr>
 															<td width="10"></td>
 															<td width="80">Producto</td>
-															<td width="345" colspan="4"><input type="text" name="producto" style="width:345px;"></td>
+															<td width="345" colspan="4">
+																<input type="hidden" name="id_producto" value="0">
+																<input type="text" name="producto" style="width:345px;">
+															</td>
 															<!--
 															<td width="25"></td>
 															<td width="40"></td>
@@ -251,13 +255,13 @@
 																			<tr>
 																				<td width="70">&Uacute;ltimo&nbsp;Costo</td>
 																				<td width="25">
-																					<input type="radio" name="radio" value="1" class="radio_costo_ultimo">
+																					<input type="radio" name="tipo_costo" value="1" class="radio_costo_ultimo">
 																					<!--<input type="checkbox" name="check_costo_ultimo" class="tipo_costo" >-->
 																				</td>
 																				<td width="40"></td>
 																				<td width="80">Costo&nbsp;Promedio</td>
 																				<td width="25">
-																					<input type="radio" name="radio" value="2" class="radio_costo_promedio">
+																					<input type="radio" name="tipo_costo" value="2" class="radio_costo_promedio">
 																					<!--<input type="checkbox" name="check_costo_promedio" class="tipo_costo">-->
 																				</td>
 																			</tr>
@@ -594,11 +598,13 @@
 											<td width="70">C&oacute;digo&nbsp;</td>
 											<td width="120"><input type="text" name="campo_sku" style="width:120px;"></td>
 											<td width="25"></td>
-											<td width="90">Tipo&nbsp;de&nbsp;Producto</td>
+											<td width="90"><!--Tipo&nbsp;de&nbsp;Producto--></td>
 											<td width="200">
+												<!--
 												<select name="tipo_producto" style="width:180px;">
 													<option value="0" selected="yes">[--Seleccionar Tipo--]</option>
 												</select>
+												-->
 											</td>
 											<td width="25"></td>
 											<td width="90"></td>
@@ -625,10 +631,10 @@
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
 								
-								<td width="120" style="background:#A8A9AB;">C&oacute;digo&nbsp;</td>
+								<td width="110" style="background:#A8A9AB;">C&oacute;digo&nbsp;</td>
 								<td width="280" style="background:#A8A9AB;">Nombre</td>
 								<td width="90" style="background:#A8A9AB;">Unidad</td>
-								<td width="110" style="background:#A8A9AB;">Tipo</td>
+								<td width="120" style="background:#A8A9AB;">Tipo</td>
 								
 								<td width="10" style="background:#ffffff"></td>
 								<td width="10"></td>
@@ -688,132 +694,3 @@
 </div>
 
 
-
-
-<div class="buscador_presentaciones" style="display:none;">
-	<table width="100%" border="0" class="formaBusqueda_presentaciones">
-		<tr>
-			<td>
-				<div class="div_dos_lotes">
-					<table width="100%" border="0">
-						<thead>
-							<tr>
-								<td colspan="7" height="50" valign="top"><div class="titulo_lotes" width="100%"><strong>Presentaciones disponibles</strong></div></td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr style="font-size:13px;">
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-								<td colspan="3" style="background:#ffffff">Lista de presentaciones disponibles para este producto</td>
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							
-							<tr style="font-size:13px;">
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-								<!--<td width="70"  style="background:#A8A9AB;">Lote</td>-->
-								<td width="100"  style="background:#A8A9AB;">Sku</td>
-								<td width="250"  style="background:#A8A9AB;">Nombre</td>
-								<td width="80"  style="background:#A8A9AB;">Presentacion</td>
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							
-							<tr>
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-								<td style="background:#ffffff; border: solid 1px #313E74;" colspan="3" width="500">
-									<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:500px; height:120px; align=top;">
-										<table  border="0" id="tabla_resultado" width="100%" >
-											<!--aqui van los resultados de la busqueda-->
-										</table>
-									</div>
-								</td>
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr>
-								<td width="10"></td>
-								<td width="10" colspan="5" height="6" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr>
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-								<!--<td width="70"  style="background:#ffffff"></td>-->
-								<td width="100" style="background:#ffffff"></td>
-								<td width="250" style="background:#ffffff"></td>
-								<td width="80" style="background:#ffffff" align="right">
-									<input type="button" id="cencela" class="onmouseOutCancelar">	
-								</td>
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr>
-								<td width="10"></td>
-								<td width="10" colspan="5" height="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</td>
-		</tr>
-	</table>	
-</div>
-
-
-
-
-<form id="formaCancelaEntrada" action="edit.json" method="POST" >
-<div id="div_one" class="panelcito_modal cancelaentrada_div_one"  style="display:none;" title="">
-	<div id="div_two" title="" class="cancelaentrada_div_two">
-			<div class="fixed column" style="width:290px; padding-left:6px;"><strong>Cancelar Entrada</strong></div>
-	</div>
-	<div id="div_three" title="" class="cancelaentrada_div_three">
-		<div class="columns" style="background:#731F6C;">
-			<div class="container" style="background:white;">
-				<div class="fixed column" class="content_x" >
-					
-					<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
-						<tr>
-							<td colspan="6" width="390" height="10"></td>
-						</tr>
-						<tr>
-							<td width="10"></td>
-							<td colspan="6" width="380" height="10" style="font-size:13px;">Motivo de cancelaci&oacuten</td>
-						</tr>
-						<tr>
-							<td width="10"></td>
-							<td width="370" height="90" colspan="2">
-								<textarea name="motivo_cancel" rows="5" cols="60" style="width:370px; resize: none;"></textarea>
-							</td>
-							<td width="10"></td>
-						</tr>
-						
-						<tr>
-							<td colspan="6" width="390" height="10"></td>
-						</tr>
-						
-						<tr>
-							<td width="10"></td>
-							<td width="185" align="center">
-								<a href="cancelentrada" style="font-size:13px;">Cancelar Entrada</a>
-							</td>
-							<td width="185" align="center">
-								<a href="salir" style="font-size:13px;">Salir</a>
-							</td>
-							<td width="10"></td>
-						</tr>
-					</table>
-					
-				</div>
-			</div>
-			
-		</div>
-	</div>
-	
-</div>
-</form>
