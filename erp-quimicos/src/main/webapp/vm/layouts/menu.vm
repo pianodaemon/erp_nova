@@ -474,7 +474,9 @@
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../crmregistrovisitas/startup.agnux">Registro de Visitas</a></li>
+                                                                                                        <li class="topline"><a href="../crmregistrollamadas/startup.agnux">Registro de Llamadas</a></li>
 													<li class="topline"><a href="../crmoportunidades/startup.agnux">Registro de Oportunidades</a></li>
+                                                                                                        <li class="topline"><a href="../crmmetas/startup.agnux">Registro de Metas </a></li>
 												</ul>
 											</li>
 										</ul>
