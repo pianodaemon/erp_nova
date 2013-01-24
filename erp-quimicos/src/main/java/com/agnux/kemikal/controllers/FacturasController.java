@@ -371,10 +371,12 @@ public class FacturasController {
                         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                         String rfcEmpresaEmisora = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                         String ruta_ejecutable_java = this.getGralDao().getJavaVmDir(id_empresa, id_sucursal);
+                        //String ruta_ejecutable_java = "/home/agnux/jdk/bin/java";
                         String ruta_jarWebService = this.getGralDao().getCfdiTimbreJarWsDir()+"wscli.jar";
                         String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + rfcEmpresaEmisora+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(id_empresa,id_sucursal) ;
                         String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(id_empresa, id_sucursal);
                         String ruta_java_almacen_certificados = this.getGralDao().getJavaRutaCacerts(id_empresa, id_sucursal);
+                        //String ruta_java_almacen_certificados = "/home/agnux/jdk/jre/lib/security/cacerts";
                         
                         String RutaficheroXml = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresaEmisora +"/"+ serie_folio+".xml";
                         BeanFromCfdiXml pop = new BeanFromCfdiXml(RutaficheroXml);
@@ -385,7 +387,7 @@ public class FacturasController {
                         
                         //Cancelacion timbrado diverza
                         String str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" cancelacfdi "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+emisor_rfc+" "+receptor_rfc+" "+uuid;
-                        
+                        System.out.println("str_execute: "+str_execute);
                         Process resultado = null; 
                         
                         resultado = Runtime.getRuntime().exec(str_execute);

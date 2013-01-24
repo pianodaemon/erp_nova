@@ -659,7 +659,7 @@ public class InvSpringDao implements InvInterfaceDao{
         if(id_producto != 0){
             sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE id NOT IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
         }else{
-            sql_query = "SELECT id,titulo FROM inv_prod_presentaciones order by titulo;";
+            sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE borrado_logico=FALSE order by titulo;";
         }
 	
         ArrayList<HashMap<String, String>> hm_pres= (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
