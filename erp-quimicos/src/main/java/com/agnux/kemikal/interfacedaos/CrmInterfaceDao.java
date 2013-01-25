@@ -75,7 +75,12 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, String>> getCrmRegistoMetas_Datos(Integer id);
 
     public ArrayList<HashMap<String, Object>> getRegistroMetas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-
+    
+    //Métodos para ASplicativo de Registlro de Casos
+    public ArrayList<HashMap<String, Object>> getCrmRegistroCasos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getCrmRegistroCasos_Datos(Integer id);
+    public ArrayList<HashMap<String, String>> getBuscadorCliente_Prospecto(String Razon_social, String rfc, Integer identificador_cliente_prospecto, Integer id_empresa);
+    
     
     
 }
