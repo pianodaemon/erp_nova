@@ -192,9 +192,9 @@
                                                                 <td colspan="6">
                                                                     <!--<input type="text" name="cliente_prospecto" style="width:300px;" readOnly="true">-->
                                                                     <input type="text" name="cliente_prospecto" style="width:300px;" >
-                                                                    <input type="hidden" name="id_cliente_prospecto">
+                                                                    <input type="hidden" name="id_cliente_prospecto" value="0">
                                                                 </td>
-                                                                <td >&nbsp;</td>
+                                                               <td >&nbsp;<div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cliente_prospecto"></div></td>
                                                                 <td >&nbsp;</td>
                                                                 <td >&nbsp;</td>
                                                             </tr>
@@ -243,7 +243,7 @@
                                                                 <td ><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha_cierre"></div></td>
                                                                 <td >&nbsp;</td>
                                                                 <td rowspan="3" colspan="5"><textarea name="descripcion" cols="40" rows="1" style="width:350px; height:60px; resize:none;"></textarea></td>
-                                                                <td >&nbsp;</td>
+                                                                <td ><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_descripcion"></div></td>
                                                                 
                                                                 
                                                             </tr>
@@ -303,7 +303,7 @@
                                                                 <td ><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_prioridad"></div></td>
                                                                 <td >&nbsp;</td>
                                                                 <td rowspan="3" colspan="5"><textarea name="resolucion" cols="40" rows="1" style="width:350px; height:60px; resize:none;"></textarea></td>
-                                                                <td >&nbsp;</td>
+                                                                <td ><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_resolucion"></div></td>
                                                             </tr>
 
                                                             <tr>
