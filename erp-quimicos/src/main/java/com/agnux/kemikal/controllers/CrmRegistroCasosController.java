@@ -166,9 +166,6 @@ public class CrmRegistroCasosController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
-        //ArrayList<HashMap<String, String>> motivos = new ArrayList<HashMap<String, String>>();
-        //ArrayList<HashMap<String, String>> calificaciones = new ArrayList<HashMap<String, String>>();
-        //ArrayList<HashMap<String, String>> seguimientos = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
         
@@ -184,9 +181,7 @@ public class CrmRegistroCasosController {
         }
         
         agentes = this.getCrmDao().getAgentes(id_empresa);
-        //motivos = this.getCrmDao().getCrmRegistroVisitas_Motivos(id_empresa);
-        //calificaciones = this.getCrmDao().getCrmRegistroVisitas_Calificaciones(id_empresa);
-       // seguimientos = this.getCrmDao().getCrmRegistroVisitas_Seguimientos(id_empresa);
+       
         
         extra = this.getCrmDao().getUserRol(id_usuario);
         extra.put("id_agente", String.valueOf(id_agente));
@@ -195,9 +190,7 @@ public class CrmRegistroCasosController {
         jsonretorno.put("Datos", datos);
         jsonretorno.put("Extra", arrayExtra);
         jsonretorno.put("Agentes", agentes);
-        //jsonretorno.put("Motivos", motivos);
-       // jsonretorno.put("Calificaciones", calificaciones);
-        //jsonretorno.put("Seguimientos", seguimientos);
+        
         
         return jsonretorno;
     }
