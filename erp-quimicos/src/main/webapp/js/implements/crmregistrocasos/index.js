@@ -119,22 +119,35 @@ $(function() {
 	
 	$limpiar.click(function(event){
 		event.preventDefault();
-		/*
-		var html_tipo = '';
-		$busqueda_tipo_visita.children().remove();
-		html_tipo='<option value="0">[-- Todos --]</option>';
-		html_tipo+='<option value="1">Cliente</option>';
-		html_tipo+='<option value="2">Prospecto</option>';
-		$busqueda_tipo_visita.append(html_tipo);
-		*/
-		$busqueda_folio.val('');
+                var html_tipo = '';
+                var html_prioridad = '';
+                
+                $busqueda_tipo.children().remove();
+		$busqueda_select_prioridad.children().remove();
+                
+                    html_tipo='<option value="0" selected="yes">[-- Todos --]</option>';
+                    html_tipo+='<option value="1">Cliente</option>';
+                    html_tipo+='<option value="2">Prospecto</option>';
+                    
+		$busqueda_tipo.append(html_tipo);
+                
+                    html_prioridad='<option value="0" selected="yes">[-- ninguna --]</option>';
+                    html_prioridad+='<option value="1">Muy urgente</option>';
+                    html_prioridad+='<option value="2">Urgente</option>';
+                    html_prioridad+='<option value="3">Importante</option>';
+                    html_prioridad+='<option value="4">Normal</option>';
+                    html_prioridad+='<option value="5">Baja</option>';
+               
+               $busqueda_select_prioridad.append(html_prioridad);
+               
+                $busqueda_folio.val('');
 		$busqueda_cliente_prospecto.val('');
                 $busqueda_id_cliente_prospecto.val(0);
 		$busqueda_fecha_cierre.val('');
 		
                
-		$busqueda_tipo.find('option[index=0]').attr('selected','selected');
-                $busqueda_select_prioridad.find('option[index=0]').attr('selected','selected');
+		
+                
 	});
 	
 	
@@ -804,14 +817,21 @@ $(function() {
                                         //Alimentando el buscandopor
 					$buscando_por.children().remove();
 					var buscadopor_hmtl='';
-					
+                                        var text='';
+                                        if(parseInt(entry['Datos'][0]['buscado_por'])== 1){
+                                            text='Cliente';
+                                        }else{
+                                            text='Prospecto'
+                                        }
+                                                /*
 						if(parseInt(entry['Datos'][0]['buscado_por'])== 1){
-                                                        buscadopor_hmtl += '<option value="' +parseInt(entry['Datos'][0]['buscado_por']) + '" >Cliente</option>';
+                                                        buscadopor_hmtl += '<option value="' +parseInt(entry['Datos'][0]['buscado_por']) + '" selected="yes" >Cliente</option>';
+                                                        buscadopor_hmtl += '<option value="2" >Prospecto</option>';
                                                   }else{
 							buscadopor_hmtl += '<option value="1" >Cliente</option>';
                                                         buscadopor_hmtl += '<option value="2" selected="yes">Prospecto</option>';
-						}
-					
+						}*/
+					 buscadopor_hmtl += '<option value="' +parseInt(entry['Datos'][0]['buscado_por']) + '" selected="yes">' + text + '</option>';
 					$buscando_por.append(buscadopor_hmtl);
 					
 				},"json");//termina llamada json
