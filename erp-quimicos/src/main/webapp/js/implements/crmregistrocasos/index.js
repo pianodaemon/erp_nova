@@ -514,16 +514,26 @@ $(function() {
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRegistroCaso.json';
 		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
-		$.post(input_json,$arreglo,function(entry){
+		$.post(input_json,$arreglo,function(data){
 			//Alimentando los campos select agente
+			
 			$agente.children().remove();
 			var agente_hmtl = '';
-			$.each(entry['Agentes'],function(entryIndex,agente){
-				agente_hmtl += '<option value="' + agente['id'] + '"  >' + agente['nombre_agente'] + '</option>';
+			if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+				agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+			}
+			
+			$.each(data['Agentes'],function(entryIndex,agente){
+				if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+					agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+				}else{
+					//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+					if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+						agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+					}
+				}
 			});
 			$agente.append(agente_hmtl);
-			
-			
 		},"json");//termina llamada json
         
         
@@ -667,9 +677,10 @@ $(function() {
 			
 			
 			$folio.css({'background' : '#DDDDDD'});
-			
-			//$busca_cliente_prospecto.hide();
-			
+			//$buscando_por.hide();
+			$busca_cliente_prospecto.hide();
+			$cliente_prospecto.attr('readonly',true);
+                            
 			if(accion_mode == 'edit'){
                                 
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRegistroCaso.json';
@@ -772,17 +783,6 @@ $(function() {
                                                 }
                                             $select_tipo_caso.append(Tipocaso_html);
                                         
-					/*/Alimentando los campos select_agente
-					$agente.children().remove();
-					var agente_hmtl='';
-					$.each(entry['Agentes'],function(entryIndex,agente){
-						if(parseInt(agente['id'])==parseInt(entry['Datos'][0]['agente_id'])){
-							agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
-						}else{
-							agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
-						}
-					});
-					$agente.append(agente_hmtl);*/
                                         $agente.children().remove();
                                         var agente_hmtl = '';
                                         if(parseInt(entry['Extra'][0]['exis_rol_admin']) > 0){
