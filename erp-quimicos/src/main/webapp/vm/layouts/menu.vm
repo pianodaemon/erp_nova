@@ -477,6 +477,7 @@
                                                                                                         <li class="topline"><a href="../crmregistrollamadas/startup.agnux">Registro de Llamadas</a></li>
 													<li class="topline"><a href="../crmoportunidades/startup.agnux">Registro de Oportunidades</a></li>
                                                                                                         <li class="topline"><a href="../crmmetas/startup.agnux">Registro de Metas </a></li>
+                                                                                                        <li class="topline"><a href="../crmregistrocasos/startup.agnux">Registro de Casos</a></li>
 												</ul>
 											</li>
 										</ul>
