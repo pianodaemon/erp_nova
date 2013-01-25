@@ -1230,6 +1230,183 @@ public class CrmSpringDao implements CrmInterfaceDao{
     }
     
     //----------------------------------------------Termina aplicativo de registro de llamadas----------------------------------------
+    
+    //----------------------------------------------catalogo de Registro de Casos-------------------------------------------------------------
+    @Override
+    public ArrayList<HashMap<String, Object>> getCrmRegistroCasos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT "
+                    +" crm_registro_casos.id ,  "
+                    +" crm_registro_casos.folio ,  "
+                    +" (case when crm_registro_casos.tipo = 1 then 'Clientes' else 'Prospectos' end ) as tipo,  "
+                   
+                    +" (CASE WHEN crm_registro_casos.tipo = 1 THEN   "
+                    +" cxc_clie.razon_social else crm_prospectos.razon_social END) as razon_social,  "
+                    +" to_char(crm_registro_casos.fecha_cierre,'yyyy-mm-dd') AS fecha_cierre,  "
+                    +" crm_registro_casos.estatus ,  "
+                    +" crm_registro_casos.prioridad ,  "
+                    +" crm_registro_casos.tipo_caso ,  "
+                    +" crm_registro_casos.descripcion ,  "
+                    +" crm_registro_casos.resolucion ,  "
+                    +" crm_registro_casos.observacion_agente  "
+                  
+                + "FROM crm_registro_casos "
+                +" LEFT JOIN crm_registro_casos_prospectos on crm_registro_casos_prospectos.id_crm_registro_casos=crm_registro_casos.id  "
+	        +" LEFT JOIN crm_registro_casos_clie on  crm_registro_casos_clie.id_crm_registro_casos=crm_registro_casos.id  "
+                +" LEFT JOIN cxc_clie on cxc_clie.id=crm_registro_casos_clie.id_cliente  "
+                +" LEFT JOIN crm_prospectos on crm_prospectos.id=crm_registro_casos_prospectos.id_prospecto  "
+                +" LEFT JOIN cxc_agen ON cxc_agen.id=crm_registro_casos.gral_empleado_id  "
+                + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = crm_registro_casos.id "
+                +"where crm_registro_casos.borrado_logico=false  "
+                + " order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        System.out.println("Busqueda GetPage GRIDD PRINCIPAL: "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("buscado_por",rs.getString("tipo"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("fecha_cierre",rs.getString("fecha_cierre"));
+                    row.put("estatus",String.valueOf(rs.getInt("estatus")));
+                    row.put("prioridad",String.valueOf(rs.getInt("prioridad")));
+                    row.put("tipo_caso",String.valueOf(rs.getInt("tipo_caso")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("resolucion",rs.getString("resolucion"));
+                    row.put("observacion_agente",rs.getString("observacion_agente"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    
 
-     
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCrmRegistroCasos_Datos(Integer id) {
+        
+        
+        String sql_to_query = "SELECT  "
+	+" crm_registro_casos.id ,  "
+	+" crm_registro_casos.folio ,  "
+	+" crm_registro_casos.tipo,  "
+	+" (CASE WHEN crm_registro_casos.tipo = 1 THEN   "
+	+" crm_registro_casos_clie.id_cliente else crm_registro_casos_prospectos.id_prospecto END) as id_cliente_prospecto,  "
+	+" (CASE WHEN crm_registro_casos.tipo = 1 THEN   "
+	+" cxc_clie.razon_social else crm_prospectos.razon_social END) as razon_social,  "
+	+" crm_registro_casos.gral_empleado_id as agente_id ,  "
+	+" to_char(crm_registro_casos.fecha_cierre,'yyyy-mm-dd') AS fecha_cierre,  "
+	+" crm_registro_casos.estatus ,  "
+	+" crm_registro_casos.prioridad ,  "
+	+" crm_registro_casos.tipo_caso ,  "
+	+" crm_registro_casos.descripcion ,  "
+	+" crm_registro_casos.resolucion ,  "
+	+" crm_registro_casos.observacion_agente  "                  
+	+" FROM crm_registro_casos   "
+	+" LEFT JOIN crm_registro_casos_prospectos on crm_registro_casos_prospectos.id_crm_registro_casos=crm_registro_casos.id  "
+	+" LEFT JOIN crm_registro_casos_clie on  crm_registro_casos_clie.id_crm_registro_casos=crm_registro_casos.id  "
+	+" LEFT JOIN cxc_clie on cxc_clie.id=crm_registro_casos_clie.id_cliente  "
+	+" LEFT JOIN crm_prospectos on crm_prospectos.id=crm_registro_casos_prospectos.id_prospecto  "
+	+" LEFT JOIN cxc_agen ON cxc_agen.id=crm_registro_casos.gral_empleado_id  "
+	+" WHERE crm_registro_casos.borrado_logico=false   "
+        +" AND crm_registro_casos.id=?";
+        ArrayList<HashMap<String, String>> datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("buscado_por",String.valueOf(rs.getInt("tipo")));
+                    row.put("id_cliente_prospecto",String.valueOf(rs.getInt("id_cliente_prospecto")));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("agente_id",rs.getString("agente_id"));
+                    row.put("fecha",rs.getString("fecha_cierre"));
+                    
+                    row.put("estatus",String.valueOf(rs.getInt("estatus")));
+                    row.put("prioridad",String.valueOf(rs.getInt("prioridad")));
+                    row.put("tipo_caso",String.valueOf(rs.getInt("tipo_caso")));
+                    
+                   
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("resolucion",rs.getString("resolucion"));
+                    row.put("observacion_agente",rs.getString("observacion_agente"));
+                    return row;
+                }
+            }
+        );
+        return datos;
+    }
+    
+    /*Buscador de contactos*/
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorCliente_Prospecto(String Razon_social,  String rfc, Integer identificador, Integer id_empresa) {
+        String tabla=""; 
+        String empresa=""; 
+        String cadena_where=""; 
+       Integer valor=0;
+        
+        
+        System.out.println("Filtros:: " +Razon_social+"___"+rfc);
+        if(identificador == 1){
+              tabla="cxc_clie";
+              empresa=" empresa_id";
+         }
+        if(identificador == 2){
+             tabla="crm_prospectos";
+             empresa="gral_emp_id";
+         }
+        
+        if(!Razon_social.equals("%%")){
+         cadena_where = "  and     "+tabla+".razon_social ilike '"+Razon_social+"' " ;
+         valor=1;
+        }
+        
+        if(!rfc.equals("%%")){
+            if (valor == 0){
+                cadena_where = " and "+tabla+".rfc = "+rfc+"  " ;
+            } else{
+                cadena_where = cadena_where+" and "+tabla+".rfc = "+rfc+" " ;
+            }
+        
+        }
+        String sql_to_query = "select "+tabla+".id,"
+                +" "+tabla+".numero_control,"
+                +" "+tabla+".rfc,"
+                +" "+tabla+".razon_social"
+                +" from "+tabla+" where borrado_logico=false "
+                +" "+cadena_where
+                +"  AND "+empresa+"="+id_empresa+" ";
+        
+        System.out.println("Ejecutando query" +sql_to_query);
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        ArrayList<HashMap<String, String>> hm_datos_cliente_prospecto = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("numero_control",String.valueOf(rs.getInt("numero_control")));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_datos_cliente_prospecto;  
+    }
+    //----------------------------------------------Termina aplicativo de registro de Casos----------------------------------------
 }
