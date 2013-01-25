@@ -358,6 +358,7 @@ $(function() {
                                                 }
                                             });
                                             
+                                            
                                             if(existe == 0){
                                                 $agrega_producto_preorden(id_reg,presentacion_id_element,inv_prod_id_element,gral_imp_id_element,codigo_element,presentacion_element,descripcion_element,cantidad_element, id_pedido, "false", umedida, umedida_id);
                                             }else{
