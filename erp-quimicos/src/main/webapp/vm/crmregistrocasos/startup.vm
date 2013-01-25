@@ -213,10 +213,10 @@
                                                                 <td >&nbsp;</td>
                                                                 <td >Agente</td>
                                                                 <td >&nbsp;</td>
-                                                                <td colspan="6"><select name="select_agente" style="width:100px;"></select></td>
+                                                                <td colspan="6"><select name="select_agente" style="width:300px;"></select></td>
                                                                 <td >&nbsp;<div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_agente"></div></td>
                                                                
-                                                                <td ><a href="#" id="busca_agente">(Buscar)</a></td>
+                                                                <td >&nbsp;</a></td>
                                                                 <td >&nbsp;</td>
 
 
