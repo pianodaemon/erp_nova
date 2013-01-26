@@ -210,6 +210,7 @@ public class ProOrdenProduccionController {
         
         ArrayList<HashMap<String, String>> datosOrden = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosOrdenDet = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         
@@ -227,7 +228,8 @@ public class ProOrdenProduccionController {
                 
                 datosOrdenDet = this.getProDao().getProOrden_EspecificacionesDetalle(id);
                 
-                
+                almacenes = this.getProDao().getAlmacenes(id_empresa);
+                        
             }else{
                 
                 datosOrdenDet = this.getProDao().getProOrden_Detalle(id);
@@ -241,6 +243,7 @@ public class ProOrdenProduccionController {
         jsonretorno.put("OrdenDet", datosOrdenDet);
         jsonretorno.put("ordenTipos", this.getProDao().getProOrdenTipos(id_empresa));
         jsonretorno.put("Instrumentos", this.getProDao().getInstrumentos(id_empresa));
+        jsonretorno.put("Almacenes", almacenes);
         return jsonretorno;
     }
     
@@ -777,8 +780,27 @@ public class ProOrdenProduccionController {
         return jsonretorno;
     }
     
+    //Tra la existencia de materia prima o producto
+    @RequestMapping(method = RequestMethod.POST, value="/get_existenciapor_producto.json")
+    public @ResponseBody HashMap<String, String> getExistenciaPorProductoJson(
+            @RequestParam(value="almacen_id", required=true) String almacen_id,
+            @RequestParam(value="codigo", required=true) String codigo,
+            @RequestParam(value="id_producto", required=true) String id_producto,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat.put("Existencia", this.daoPro.getExistenciaAlmacenesPorProducts(almacen_id, id_producto,String.valueOf(id_usuario)));
+        
+        return userDat;
+        
+    }
     
-    //Busca un sku en especifico
+    //Tra la materia prima de la orden
     @RequestMapping(method = RequestMethod.POST, value="/detalle_elementos_prod_formula.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> detalleElementosProdFormulaJson(
             @RequestParam(value="id_orden", required=true) String id_orden,
@@ -1139,6 +1161,7 @@ public class ProOrdenProduccionController {
         
         return null;
     }
+    
     
     
     

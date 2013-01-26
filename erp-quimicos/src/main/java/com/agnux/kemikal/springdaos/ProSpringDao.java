@@ -1920,267 +1920,6 @@ public class ProSpringDao implements ProInterfaceDao{
     
     
     
-    //AQUI EMPIEZA CATALOGO DE ALMACENES
-   //obtiene los tipos de almacen 
-    @Override
-    public ArrayList<HashMap<String, String>> getAlmacennes_TiposAlmacen() {
-        String sql_query = "SELECT id, titulo FROM inv_alm_tipos;";
-        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
-            new Object[]{}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id",String.valueOf(rs.getInt("id")));
-                    row.put("titulo",rs.getString("titulo"));
-                    return row;
-                }
-            }
-        );
-        return hm;
-    }
-    
-    
-    
-    @Override
-    public ArrayList<HashMap<String, Object>> getAlmacenes_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
-        String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
-	String sql_to_query = "SELECT inv_alm.id, "
-                                    +"inv_alm.titulo, "
-                                    +"inv_alm_tipos.titulo as tipo, "
-                                    +"inv_alm.reporteo, "
-                                    +"inv_alm.ventas, "
-                                    +"inv_alm.compras, "
-                                    +"inv_alm.traspaso, "
-                                    +"inv_alm.reabastecimiento, "
-                                    +"inv_alm.garantias, "
-                                    +"inv_alm.consignacion, "
-                                    +"inv_alm.recepcion_mat, "
-                                    +"inv_alm.explosion_mat "
-                            +"FROM inv_alm "
-                            +"JOIN inv_alm_tipos ON inv_alm_tipos.id=inv_alm.almacen_tipo_id "
-                            +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_alm.id "
-                            +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-        
-        //System.out.println("Busqueda GetPage: "+sql_to_query);
-        //System.out.println("data_string: "+data_string);
-        //System.out.println("offset: "+offset+"        pageSize: "+pageSize+"        orderBy: "+orderBy);
-        
-        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
-            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, Object> row = new HashMap<String, Object>();
-                    row.put("id",String.valueOf(rs.getInt("id")));
-                    row.put("titulo",rs.getString("titulo"));
-                    row.put("tipo",rs.getString("tipo"));
-                    
-                    if(rs.getBoolean("reporteo")){
-                        row.put("reporteo","<input type='checkbox' checked disabled name='rep'>");
-                    }else{
-                        row.put("reporteo","<input type='checkbox' disabled name='rep'>");
-                    }
-                    
-                    if(rs.getBoolean("ventas")){
-                        row.put("ventas","<input type='checkbox' checked disabled name='vent'>");
-                    }else{
-                        row.put("ventas","<input type='checkbox' disabled name='vent'>");
-                    }
-                    
-                    if(rs.getBoolean("compras")){
-                        row.put("compras","<input type='checkbox' checked disabled name='comp'>");
-                    }else{
-                        row.put("compras","<input type='checkbox' disabled name='comp'>");
-                    }
-                    
-                    if(rs.getBoolean("traspaso")){
-                        row.put("traspaso","<input type='checkbox' checked disabled name='tras'>");
-                    }else{
-                        row.put("traspaso","<input type='checkbox' disabled name='tras'>");
-                    }
-                    
-                    if(rs.getBoolean("reabastecimiento")){
-                        row.put("reabastecimiento","<input type='checkbox' checked disabled name='rea'>");
-                    }else{
-                        row.put("reabastecimiento","<input type='checkbox' disabled name='rea'>");
-                    }
-
-                    if(rs.getBoolean("garantias")){
-                        row.put("garantias","<input type='checkbox' checked disabled name='gar'>");
-                    }else{
-                        row.put("garantias","<input type='checkbox' disabled name='gar'>");
-                    }
-                    
-                    if(rs.getBoolean("consignacion")){
-                        row.put("consignacion","<input type='checkbox' checked disabled name='cons'>");
-                    }else{
-                        row.put("consignacion","<input type='checkbox' disabled name='cons'>");
-                    }
-
-                    if(rs.getBoolean("recepcion_mat")){
-                        row.put("recepcion_mat","<input type='checkbox' checked disabled name='remat'>");
-                    }else{
-                        row.put("recepcion_mat","<input type='checkbox' disabled name='remat'>");
-                    }
-                    
-                    if(rs.getBoolean("explosion_mat")){
-                        row.put("explosion_mat","<input type='checkbox' checked disabled name='exmat'>");
-                    }else{
-                        row.put("explosion_mat","<input type='checkbox' disabled name='exmat'>");
-                    }
-                    return row;
-                }
-            }
-        );
-        return hm; 
-    }
-
-    
-   //obtiene datos del almacen seleccionado
-    @Override
-    public ArrayList<HashMap<String, String>> getAlmacenes_Datos(Integer id) {
-        String sql_query = "SELECT id, "
-                                +"titulo, "
-                                +"almacen_tipo_id, "
-                                + "calle, "
-                                + "numero, "
-                                + "colonia, "
-                                + "codigo_postal, "
-                                + "gral_pais_id, "
-                                + "gral_edo_id, "
-                                + "gral_mun_id, "
-                                + "responsable, "
-                                + "responsable_email, "
-                                + "responsable_puesto, "
-                                + "tel_1_ext, "
-                                + "tel_2_ext, "
-                                + "tel_2, "
-                                + "tel_1, "
-                                +"reporteo, "
-                                +"ventas, "
-                                +"compras, "
-                                +"traspaso, "
-                                +"reabastecimiento, "
-                                +"garantias, "
-                                +"consignacion, "
-                                +"recepcion_mat, "
-                                +"explosion_mat "
-                        +"FROM inv_alm "
-                        +"WHERE id="+id;
-        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
-            new Object[]{}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id",String.valueOf(rs.getInt("id")));
-                    row.put("titulo",rs.getString("titulo"));
-                    row.put("almacen_tipo_id",String.valueOf(rs.getInt("almacen_tipo_id")));
-                    row.put("calle",rs.getString("calle"));
-                    row.put("numero",rs.getString("numero"));
-                    row.put("colonia",rs.getString("colonia"));
-                    row.put("codigo_postal",rs.getString("codigo_postal"));
-                    row.put("gral_pais_id",String.valueOf(rs.getInt("gral_pais_id")));
-                    row.put("gral_edo_id",String.valueOf(rs.getInt("gral_edo_id")));
-                    row.put("gral_mun_id",String.valueOf(rs.getInt("gral_mun_id")));
-                    row.put("responsable",rs.getString("responsable"));
-                    row.put("responsable_email",rs.getString("responsable_email"));
-                    row.put("responsable_puesto",rs.getString("responsable_puesto"));
-                    row.put("tel_1_ext",rs.getString("tel_1_ext"));
-                    row.put("tel_2_ext",rs.getString("tel_2_ext"));
-                    row.put("tel_2",rs.getString("tel_2"));
-                    row.put("tel_1",rs.getString("tel_1"));
-                    row.put("reporteo",String.valueOf(rs.getBoolean("reporteo")));
-                    row.put("ventas",String.valueOf(rs.getBoolean("ventas")));
-                    row.put("compras",String.valueOf(rs.getBoolean("compras")));
-                    row.put("traspaso",String.valueOf(rs.getBoolean("traspaso")));
-                    row.put("reabastecimiento",String.valueOf(rs.getBoolean("reabastecimiento")));
-                    row.put("garantias",String.valueOf(rs.getBoolean("garantias")));
-                    row.put("consignacion",String.valueOf(rs.getBoolean("consignacion")));
-                    row.put("recepcion_mat",String.valueOf(rs.getBoolean("recepcion_mat")));
-                    row.put("explosion_mat",String.valueOf(rs.getBoolean("explosion_mat")));
-                    return row;
-                }
-            }
-        );
-        return hm;
-    }
-    
-    
-    
-    
-    //obtiene las sucursales
-    //cuando id_almacen=0, obtiene todas las sucursales de la empresa indicada
-    //cuando id_almacen es diferente de 0, obtiene las sucursales no asignadas al almacen
-    @Override
-    public ArrayList<HashMap<String, String>> getAlmacenes_Sucursales(Integer id_almacen, Integer id_empresa) {
-        String sql_query="";
-        
-        if(id_almacen != 0){
-            //aqui obtiene solo las sucursales NO asignadas al almacen
-            sql_query = "SELECT id, titulo FROM gral_suc WHERE empresa_id="+id_empresa+" AND id NOT IN ( "
-                            + "SELECT inv_suc_alm.sucursal_id "
-                            + "FROM inv_suc_alm "
-                            + "JOIN gral_suc ON gral_suc.id = inv_suc_alm.sucursal_id "
-                            + "WHERE gral_suc.empresa_id="+id_empresa+"  AND inv_suc_alm.almacen_id="+id_almacen+" "
-                    + ") ORDER BY titulo;";
-        }else{
-            //obtiene todas las sucursales
-            sql_query = "SELECT id, titulo FROM gral_suc WHERE empresa_id="+id_empresa+" ORDER BY titulo;";
-        }
-	
-        ArrayList<HashMap<String, String>> hm_pres= (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,
-            new Object[]{}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id",rs.getString("id"));
-                    row.put("titulo",rs.getString("titulo"));
-                    return row;
-                }
-            }
-        );
-        return hm_pres;
-    }
-    
-    
-    
-    
-    //obtiene las sucursales asignadas a un almacen en especifico
-    @Override
-    public ArrayList<HashMap<String, String>> getAlmacenes_SucursalesON(Integer id_almacen, Integer id_empresa) {
-        String sql_query="";
-        //aqui obtiene solo las sucursales no asignadas al almacen
-        sql_query = "SELECT id, titulo FROM gral_suc WHERE empresa_id="+id_empresa+" AND id IN ( "
-                        + "SELECT inv_suc_alm.sucursal_id "
-                        + "FROM inv_suc_alm "
-                        + "JOIN gral_suc ON gral_suc.id = inv_suc_alm.sucursal_id "
-                        + "WHERE gral_suc.empresa_id="+id_empresa+"  AND inv_suc_alm.almacen_id="+id_almacen+" "
-                + ") ORDER BY titulo;";
-        
-        ArrayList<HashMap<String, String>> hm_pres_on = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,
-            new Object[]{}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id",rs.getString("id"));
-                    row.put("titulo",rs.getString("titulo"));
-                    return row;
-                }
-            }
-        );
-        return hm_pres_on;
-    }
-    
-    
-    
-    
-    
     
     //catalogo de marcas de Productos
     @Override
@@ -4072,49 +3811,6 @@ public class ProSpringDao implements ProInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getProOrden_EspecificacionesDetalle(Integer id) {
         
-        /*
-        String sql_to_query = "select tmp_det_orden.id,tmp_det_orden.pro_orden_prod_id, tmp_det_orden.cantidad, tmp_det_orden.num_lote,"
-                + "tmp_det_orden.pro_subprocesos_id,pro_subprocesos.titulo as subproceso, tmp_det_orden.inv_prod_id,inv_prod.sku, "
-                + "inv_prod.descripcion, esp.id as id_esp, "
-                + "(CASE WHEN esp.fineza_inicial is null THEN -1 ELSE esp.fineza_inicial END) as fineza_inicial, "
-                + "(CASE WHEN esp.viscosidads_inicial is null THEN -1 ELSE esp.viscosidads_inicial END) as viscosidads_inicial, "
-                + "(CASE WHEN esp.viscosidadku_inicial is null THEN -1 ELSE esp.viscosidadku_inicial END) as viscosidadku_inicial, "
-                + "(CASE WHEN esp.viscosidadcps_inicial is null THEN -1 ELSE esp.viscosidadcps_inicial END) as viscosidadcps_inicial, "
-                + "(CASE WHEN esp.densidad_inicial is null THEN -1 ELSE esp.densidad_inicial END) as densidad_inicial, "
-                + "(CASE WHEN esp.volatiles_inicial is null THEN -1 ELSE esp.volatiles_inicial END) as volatiles_inicial, "
-                + "(CASE WHEN esp.hidrogeno_inicial is null THEN -1 ELSE esp.hidrogeno_inicial END) as hidrogeno_inicial, "
-                + "(CASE WHEN esp.cubriente_inicial is null THEN -1 ELSE esp.cubriente_inicial END) as cubriente_inicial, "
-                + "(CASE WHEN esp.tono_inicial is null THEN -1 ELSE esp.tono_inicial END) as tono_inicial, "
-                + "(CASE WHEN esp.brillo_inicial is null THEN -1 ELSE esp.brillo_inicial END) as brillo_inicial, "
-                + "(CASE WHEN esp.dureza_inicial is null THEN 'N.A.' ELSE esp.dureza_inicial END) as dureza_inicial, "
-                + "(CASE WHEN esp.adherencia_inicial is null THEN -1 ELSE esp.adherencia_inicial END) as adherencia_inicial, "
-                + "(CASE WHEN esp.fineza_final is null THEN -1 ELSE esp.fineza_final END) as fineza_final, "
-                + "(CASE WHEN esp.viscosidads_final is null THEN -1 ELSE esp.viscosidads_final END) as viscosidads_final, "
-                + "(CASE WHEN esp.viscosidadku_final is null THEN -1 ELSE esp.viscosidadku_final END) as viscosidadku_final, "
-                + "(CASE WHEN esp.viscosidadcps_final is null THEN -1 ELSE esp.viscosidadcps_final END) as viscosidadcps_final, "
-                + "(CASE WHEN esp.densidad_final is null THEN -1 ELSE esp.densidad_final END) as densidad_final, "
-                + "(CASE WHEN esp.volatiles_final is null THEN -1 ELSE esp.volatiles_final END) as volatiles_final, "
-                + "(CASE WHEN esp.hidrogeno_final is null THEN -1 ELSE esp.hidrogeno_final END) as hidrogeno_final, "
-                + "(CASE WHEN esp.cubriente_final is null THEN -1 ELSE esp.cubriente_final END) as cubriente_final, "
-                + "(CASE WHEN esp.tono_final is null THEN -1 ELSE esp.tono_final END) as tono_final, "
-                + "(CASE WHEN esp.brillo_final is null THEN -1 ELSE esp.brillo_final END) as brillo_final, "
-                + "(CASE WHEN esp.dureza_final is null THEN 'N.A.' ELSE esp.dureza_final END) as dureza_final, "
-                + "(CASE WHEN esp.adherencia_final is null THEN -1 ELSE esp.adherencia_final END) as adherencia_final, "
-                + "inv_unid.titulo as unidad, "
-                + "tmp_det_orden.unidad_id, "
-                + "tmp_det_orden.densidad, "
-                + "(select count(inv_osal.id) as cantidad from ( "
-                + "select inv_osal_id from pro_ordenprod_invosal where pro_orden_prod_id="+id+" "
-                + ") as tmp_ord_prod join inv_osal on inv_osal.id=tmp_ord_prod.inv_osal_id "
-                + "where inv_osal.estatus=1 OR inv_osal.estatus=2) as cantidad_salida "
-                + "from (select id, pro_orden_prod_id,num_lote, cantidad,pro_subprocesos_id, inv_prod_id,gral_empleados_id, "
-                + "pro_equipos_id, pro_equipos_adic_id, unidad_id,densidad from pro_orden_prod_det where pro_orden_prod_id="+id+" ) as tmp_det_orden "
-                + "left join pro_subprocesos on  pro_subprocesos.id=tmp_det_orden.pro_subprocesos_id "
-                + "left join inv_prod on inv_prod.id=tmp_det_orden.inv_prod_id "
-                + "left JOIN inv_prod_unidades as inv_unid ON inv_unid.id=tmp_det_orden.unidad_id "
-                + "left join pro_orden_prod_subp_esp as esp on esp.pro_orden_prod_det_id=tmp_det_orden.id;";
-        */
-        
         String sql_to_query = "select tmp_det_orden.id,tmp_det_orden.pro_orden_prod_id, tmp_det_orden.cantidad, tmp_det_orden.num_lote,"
                 + "tmp_det_orden.pro_subprocesos_id,pro_subprocesos.titulo as subproceso, tmp_det_orden.inv_prod_id,inv_prod.sku, "
                 + "inv_prod.descripcion, esp.id as id_esp, "
@@ -4220,39 +3916,20 @@ public class ProSpringDao implements ProInterfaceDao{
         return hm_datos_entrada; 
     }
     
+    @Override
+    public String getExistenciaAlmacenesPorProducts(String almacen_id, String id_producto, String id_usuario) {
+        
+        String sql_to_query = "SELECT inv_calculo_existencia_producto AS existencia FROM "
+                + "inv_calculo_existencia_producto(1,false, "+id_producto+","+id_usuario+", "+almacen_id+")";
+        String valor_retorno="0";
+        
+        valor_retorno = StringHelper.roundDouble((String )this.getJdbcTemplate().queryForObject(sql_to_query, new Object[]{}, String.class) , 4);
+        return valor_retorno;
+    }
     
     /*rae los productos de los que esta compuesto un roducto teminado*/
     @Override
     public ArrayList<HashMap<String, String>> getProElementosProducto(String id_producto, String id_orden, String id_subproceso) {
-        
-        /*
-        String sql_to_query = "select distinct tmp_det.id,tmp_det.inv_prod_id,tmp_det.sku,tmp_det.descripcion,"
-                + "tmp_det.requiere_numero_lote,tmp_det.cantidad_adicional ,tmp_det.id_reg_det,tmp_det.elemento "
-                + ",tmp_salida.cantidad_tmp, "
-                + "(CASE WHEN tmp_salida.lote_int is null THEN '' ELSE tmp_salida.lote_int END) as lote, "
-                + "(CASE WHEN tmp_salida.cantidad_sur is not null THEN tmp_salida.cantidad_sur ELSE tmp_det.cantidad END) as cantidad "
-                + "from ( "
-                + "select subp.id, odtm.inv_prod_id,inv_prod.sku, inv_prod.descripcion, "
-                + "(CASE WHEN (odtm.cantidad is not null OR odtm.cantidad<>0 ) THEN odtm.cantidad ELSE 0 END) as cantidad, "
-                + "inv_prod.requiere_numero_lote, "
-                + "(CASE WHEN odtm.cantidad_adicional is not null THEN odtm.cantidad_adicional ELSE 0 END) as cantidad_adicional, "
-                + "odtm.num_lote, odtm.id as id_reg_det, odtm.elemento "
-                + "from (select id, pro_subprocesos_id, inv_prod_id,pro_orden_prod_id "
-                + "from pro_orden_prod_det where pro_orden_prod_det.pro_orden_prod_id="+id_orden+" AND inv_prod_id="+id_producto+" limit 1) as subp "
-                + "join pro_orden_detalle_mov  as odtm on odtm.pro_orden_prod_det_id=subp.id "
-                + "join inv_prod on inv_prod.id=odtm.inv_prod_id order by odtm.elemento "
-                + ") as tmp_det "
-                + "left join ( "
-                + "select inv_lote.lote_int,inv_osal_detalle.inv_prod_id, inv_osal_detalle.cantidad_sur,inv_osal_detalle.cantidad as cantidad_tmp from ( "
-                + "select id from pro_orden_prod where id="+id_orden+"  "
-                + ") as tmp_orden "
-                + "join pro_ordenprod_invosal as osal_prod on osal_prod.pro_orden_prod_id=tmp_orden.id "
-                + "join inv_osal_detalle on inv_osal_detalle.inv_osal_id=osal_prod.inv_osal_id "
-                + "join inv_lote_detalle as lot_det on lot_det.inv_osal_detalle_id=inv_osal_detalle.id "
-                + "join inv_lote on inv_lote.id=lot_det.inv_lote_id  "
-                + " ) as tmp_salida on (tmp_salida.inv_prod_id=tmp_det.inv_prod_id ) "
-                + "order by tmp_det.elemento ";
-        */
         
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccion("+id_producto+","+id_orden+","+id_subproceso+", 0)  as "
                 + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
@@ -4282,7 +3959,6 @@ public class ProSpringDao implements ProInterfaceDao{
                     //row.put("num_lote",rs.getString("num_lote"));
                     row.put("id_reg_det",String.valueOf(rs.getInt("id_reg_det")));
                     row.put("inv_osal_id",String.valueOf(rs.getInt("inv_osal_id")));
-                    
                     return row;
                 }
             }
@@ -4845,5 +4521,32 @@ public class ProSpringDao implements ProInterfaceDao{
     }
     
     //-------------------------------------------fin catalogo de instrumentos de medicion----------------------------------------
+    @Override
+    public ArrayList<HashMap<String, String>> getAlmacenes(Integer id_empresa) {
+	String sql_query = "SELECT "
+                            + "inv_alm.id, "
+                            + "inv_alm.titulo, "
+                            + "gral_suc.id AS suc_id,"
+                            + "gral_suc.empresa_id AS emp_id "
+                        + "FROM inv_alm " 
+                        + "JOIN inv_suc_alm ON inv_suc_alm.almacen_id = inv_alm.id "
+                        + "JOIN gral_suc ON gral_suc.id = inv_suc_alm.sucursal_id  "
+                        + "WHERE gral_suc.empresa_id="+id_empresa+" AND inv_alm.borrado_logico=FALSE;";
+        ArrayList<HashMap<String, String>> hm_alm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("suc_id",String.valueOf(rs.getInt("suc_id")));
+                    row.put("emp_id",String.valueOf(rs.getInt("emp_id")));
+                    return row;
+                }
+            }
+        );
+        return hm_alm;
+    }
     
 }

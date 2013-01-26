@@ -111,6 +111,8 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getProOrden_Detalle(Integer id);
     public ArrayList<HashMap<String, String>> getProOrden_EspecificacionesDetalle(Integer id);
     public ArrayList<HashMap<String, String>> getProElementosProducto(String producto_id, String orden_id, String id_subproceso);
+    public String getExistenciaAlmacenesPorProducts(String almacen_id, String id_producto, String id_usuario);
+    
     
     public ArrayList<HashMap<String, String>> getProOrdenProd_DatosLote(String no_lote, Integer id_producto, Integer id_usuario);
     
@@ -156,15 +158,6 @@ public interface ProInterfaceDao {
     //catalogo tipos de movimiento
     public ArrayList<HashMap<String, Object>> getTipoMovimientosInventaioGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getTipoMovInv_Datos(Integer id);
-    
-    
-    //catalogo de almacenes
-    public ArrayList<HashMap<String, String>> getAlmacennes_TiposAlmacen();
-    public ArrayList<HashMap<String, Object>> getAlmacenes_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
-    public ArrayList<HashMap<String, String>> getAlmacenes_Datos(Integer id);
-    public ArrayList<HashMap<String, String>> getAlmacenes_Sucursales(Integer id_almacen, Integer id_empresa);
-    public ArrayList<HashMap<String, String>> getAlmacenes_SucursalesON(Integer id_almacen, Integer id_empresa);
-    
     
     //catalogo tipos de invsecciones
     public ArrayList<HashMap<String, Object>> getInvSeccionesGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
@@ -260,5 +253,7 @@ public interface ProInterfaceDao {
     //catalogo de inventario Unidades
     public ArrayList<HashMap<String, Object>> getUnidades_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getUnidades_Datos(Integer id_unidad);
-
+    
+    public ArrayList<HashMap<String, String>> getAlmacenes(Integer id_empresa);
+    
 }
