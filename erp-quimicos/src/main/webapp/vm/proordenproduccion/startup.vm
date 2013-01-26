@@ -49,7 +49,11 @@
         <!--Esta tabla va  en la barra de buscador -->
 		<table border="0" class="tabla_buscador" style="display:none">
 				<tr>
-                                    <td colspan="13">&nbsp;&nbsp;</td>
+                                    <!--
+                                    <td colspan="13">&nbsp;&nbsp;<input type="checkbox" name="chek1" id="chek1"/>
+                                    &nbsp;&nbsp;<input type="checkbox" name="chek2" id="chek2"/>
+                                    -->
+                                </td>
 				</tr>
                                 <tr>
                                     <td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
