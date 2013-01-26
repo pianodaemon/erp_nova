@@ -346,7 +346,7 @@ public class InvControlCostosController {
         
         String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___"+producto+"___"+pres+"___"+tipo_costo;
         
-        productos = this.getInvDao().getInvProdSubFamiliasByTipoProd(id_empresa, tipo_prod);
+        productos = this.getInvDao().selectFunctionForInvReporte(app_selected, data_string);
         
         jsonretorno.put("Grid", productos);
         

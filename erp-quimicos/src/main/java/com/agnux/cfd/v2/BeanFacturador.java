@@ -207,7 +207,7 @@ public final class BeanFacturador {
                                 fac_saldado;
                                 
                                 String actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
-                                this.getGralDao().actualizarFolioNotaCredito(id_empresa, id_sucursal);
+                                //this.getGralDao().actualizarFolioNotaCredito(id_empresa, id_sucursal);
                                 
                         break;
                         

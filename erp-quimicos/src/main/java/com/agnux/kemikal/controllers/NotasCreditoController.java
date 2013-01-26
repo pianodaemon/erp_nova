@@ -17,6 +17,7 @@ import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd;
+import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -157,7 +158,7 @@ public class NotasCreditoController {
            @RequestParam(value="input_json", required=true) String input_json,
            @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
            @RequestParam(value="iu", required=true) String id_user_cod,
-           Model modcel) {
+       Model modcel) {
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
@@ -445,14 +446,22 @@ public class NotasCreditoController {
                         String sello_digital = this.getBf().getSelloDigital();
                         //System.out.println("sello_digital:"+sello_digital);
                         
+                        //este es el timbre fiscal, solo es para cfdi con timbre fiscal. Aqui debe ir vacio
+                        String sello_digital_sat = "";
+
+                        String uuid = "";
+                
                         //conceptos para el pdfcfd
                         listaConceptosPdf = this.getFacdao().getNotaCreditoCfd_ListaConceptosPdf(serieFolio);
                         
                         //datos para el pdf
                         datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
+                        datosExtrasPdf.put("tipo_facturacion", tipo_facturacion);
+                        datosExtrasPdf.put("sello_sat", sello_digital_sat);
+                        datosExtrasPdf.put("uuid", uuid);
                         
                         //pdf factura
-                        pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
+                        pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
                         //pdfFactura.viewPDF();
                         
                         jsonretorno.put("folio",serieFolio);

@@ -1024,7 +1024,9 @@ public final class pdfCfd_CfdiTimbrado {
             if ( !this.getEmisora_rfc().equals("KCM081010I58") && !this.getEmisora_rfc().equals("KME010221CB4")){
                 cuentas="";
             }else{
-                cuentas="\nDEPOSITAR EN BANORTE (MN) Cta. 0587326205 CLABE 072580005873262052, (USD) Cta. 0557037045 CLABE 072580005570370454";
+                if (getProposito().equals("FACTURA")){
+                    cuentas="\nDEPOSITAR EN BANORTE (MN) Cta. 0587326205 CLABE 072580005873262052, (USD) Cta. 0557037045 CLABE 072580005570370454";   
+                }
             }
             
             cell = new PdfPCell(new Paragraph(this.getObservaciones()+cuentas,smallFont));

@@ -92,6 +92,58 @@ public class InvSpringDao implements InvInterfaceDao{
     
     
     
+    //llamada al Procedimiento de Reportes de Inventario
+    //éste trabaja utilizando el numero de Aplicativo.
+    //Para cada aplicativo Recibe diferentes parametros y devuelve diferente Resultado
+    @Override
+    public ArrayList<HashMap<String, String>> selectFunctionForInvReporte(Integer id_app, String campos_data) {
+        ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+        String sql_to_query = "";
+        
+        if(id_app==125){
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision ) ORDER BY descripcion;";
+            System.out.println("InvReporte: "+sql_to_query);
+            
+            ArrayList<HashMap<String, String>> hm125 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_to_query,
+                new Object[]{}, new RowMapper(){
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        HashMap<String, String> row = new HashMap<String, String>();
+                        row.put("producto_id",String.valueOf(rs.getInt("producto_id")));
+                        row.put("codigo",rs.getString("codigo"));
+                        row.put("descripcion",rs.getString("descripcion"));
+                        row.put("unidad",rs.getString("unidad"));
+                        row.put("presentacion",rs.getString("presentacion"));
+                        row.put("orden_compra",rs.getString("orden_compra"));
+                        row.put("factura_prov",rs.getString("factura_prov"));
+                        row.put("moneda",rs.getString("moneda"));
+                        row.put("costo",StringHelper.roundDouble(rs.getDouble("costo"),2));
+                        row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
+                        row.put("costo_importacion",StringHelper.roundDouble(rs.getDouble("costo_importacion"),2));
+                        row.put("costo_directo",StringHelper.roundDouble(rs.getDouble("costo_directo"),2));
+                        row.put("costo_referencia",StringHelper.roundDouble(rs.getDouble("costo_referencia"),2));
+                        row.put("precio_minimo",StringHelper.roundDouble(rs.getDouble("precio_minimo"),2));
+                        
+                        return row;
+                    }
+                }
+            );
+            data=hm125;
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        return data;
+    }
+    
+    
+    
     
     @Override
     public ArrayList<HashMap<String, String>> getPaises() {

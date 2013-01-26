@@ -23,6 +23,7 @@ public interface InvInterfaceDao {
     
     public String selectFunctionForApp_MovimientosInventario(String campos_data, String extra_data_array);
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion,Integer id_empresa);
+    public ArrayList<HashMap<String, String>> selectFunctionForInvReporte(Integer id_app, String campos_data);
     
     public ArrayList<HashMap<String, String>> getBuscadorProveedores(String rfc, String email, String razon_social, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getSucursales(Integer id_empresa);
