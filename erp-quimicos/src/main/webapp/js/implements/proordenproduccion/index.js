@@ -6,10 +6,10 @@ $(function() {
             sucursal: $('#lienzo_recalculable').find('input[name=suc]').val(),
             tituloApp: 'Preorden de Producci&oacute;n' , 
             contextpath : $('#lienzo_recalculable').find('input[name=contextpath]').val(),
-
+            
             userName : $('#lienzo_recalculable').find('input[name=user]').val(),
             ui : $('#lienzo_recalculable').find('input[name=iu]').val(),
-
+            
             getUrlForGetAndPost : function(){
                 var url = document.location.protocol + '//' + document.location.host + this.getController();
                 return url;
@@ -46,6 +46,7 @@ $(function() {
         
         var $cadena_especificaciones = "";
         var $cadena_procedimientos = "";
+        var array_almacenes = new Array(); //este arreglo para la lista de almacenes
         
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
@@ -103,7 +104,52 @@ $(function() {
             
             return valor_retorno;
 	};
-	
+        
+        /*
+        var $chek1 = $('#barra_buscador').find('.tabla_buscador').find('#chek1');
+        var $chek2 = $('#barra_buscador').find('.tabla_buscador').find('#chek2');
+	if($chek1.is(':checked')){
+            $chek2.removeAttr('checked');
+        }else{
+            $chek1.removeAttr('checked');
+            $chek2.attr('checked',true);
+        }
+        
+        $('#barra_buscador').find('.tabla_buscador').find('#chek1').change(function(event){
+            event.preventDefault();
+            if($(this).is(':checked')){
+                $('#barra_buscador').find('.tabla_buscador').find('#chek1').attr('checked',true);
+                $('#barra_buscador').find('.tabla_buscador').find('#chek2').attr('checked',false);
+            }else{
+                $('#barra_buscador').find('.tabla_buscador').find('#chek1').attr('checked',false);
+                $('#barra_buscador').find('.tabla_buscador').find('#chek2').attr('checked',true);
+            }
+        });
+        
+        $('#barra_buscador').find('.tabla_buscador').find('#chek2').change(function(event){
+            event.preventDefault();
+            if($(this).is(':checked')){
+                $('#barra_buscador').find('.tabla_buscador').find('#chek1').attr('checked',false);
+                $('#barra_buscador').find('.tabla_buscador').find('#chek2').attr('checked',true);
+            }else{
+                $('#barra_buscador').find('.tabla_buscador').find('#chek1').attr('checked',true);
+                $('#barra_buscador').find('.tabla_buscador').find('#chek2').attr('checked',false);
+            }
+        });
+        */
+        /*
+        $chek2.click(function(event) {
+            var $chek1 = $('#barra_buscador').find('.tabla_buscador').find('#chek1');
+            var $chek2 = $('#barra_buscador').find('.tabla_buscador').find('#chek2');
+            if($chek2.is(':checked')){
+                $chek1.attr('checked',false);
+            }else{
+                $chek1.attr('checked',false);
+                $chek2.attr('checked',true);
+            }
+        });
+        */
+        
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
 	
@@ -1868,16 +1914,18 @@ $(function() {
                         
                         $.post(input_json,$arreglo,function(producto){
                             html_tabla = '<tr>';
-                                html_tabla += '<td colspan="8" width="895">';
+                                html_tabla += '<td colspan="8" width="865">';
                                     //html_tabla += '<form id="guarda_lotes" action="guarda_lotes.json" method="POST" >';
-                                        html_tabla += '<table class="detalle_por_prod" >';
+                                        html_tabla += '<table class="detalle_por_prod" border="1">';
                                             html_tabla += '<header>';
-                                                html_tabla += '<td class="grid" width="100">&nbsp;#</td>';
-                                                html_tabla += '<td class="grid" width="100">&nbsp;Codigo</td>';
-                                                html_tabla += '<td class="grid" width="290">&nbsp;Descripci&oacute;n</td>';
-                                                html_tabla += '<td class="grid" width="100">&nbsp;Cantidad</td>';
-                                                html_tabla += '<td class="grid" width="100">&nbsp;Adicional</td>';
-                                                html_tabla += '<td class="grid" width="200" >&nbsp;Lote</td>';
+                                                html_tabla += '<td class="grid" width="80">&nbsp;#</td>';
+                                                html_tabla += '<td class="grid" width="90">&nbsp;Codigo</td>';
+                                                html_tabla += '<td class="grid" width="205">&nbsp;Descripci&oacute;n</td>';
+                                                html_tabla += '<td class="grid" width="80">&nbsp;Cantidad</td>';
+                                                html_tabla += '<td class="grid" width="80">&nbsp;Adicional</td>';
+                                                html_tabla += '<td class="grid" width="130" >&nbsp;Lote</td>';
+                                                html_tabla += '<td class="grid" width="50" >&nbsp;Exist</td>';
+                                                html_tabla += '<td class="grid" width="110" >&nbsp;Almacen</td>';
                                             html_tabla += '</header>';
                                         html_tabla += '</table>';
                                         html_tabla += '<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:890; height: 200px; border:1px solid #C1DAD7 !important;">';
@@ -1978,16 +2026,16 @@ $(function() {
                                         table_producto_detalle.find('tr').each(function(){
                                             
                                             eliminar_tmp = $(this).find('input[name=eliminar]').val();
-                                            id_reg_tmp = $(this).find('input[name=id_reg]').val();
+                                            id_reg_tmp = $(this).find('input[name=id_reg]').val();//id de el registro ern la tabla
                                             id_reg_parent = $(this).find('input[name=id_reg_parent]').val();
                                             inv_prod_id_elemento_tmp = $(this).find('input[name=inv_prod_id_elemento]').val();
-                                            id_prod_detalle_tmp = $(this).find('input[name=id_prod_detalle]').val();
-                                            cantidad_elemento_tmp = $(this).find('input[name=cantidad_elemento]').val();
-                                            cantidad_adicional_tmp = $(this).find('input[name=cantidad_adicional]').val();
+                                            id_prod_detalle_tmp = $(this).find('input[name=id_prod_detalle]').val();//id de la materia prima
+                                            cantidad_elemento_tmp = $(this).find('input[name=cantidad_elemento]').val();//cantidad solicitar
+                                            cantidad_adicional_tmp = $(this).find('input[name=cantidad_adicional]').val();//cantidad adicional
                                             lote_tmp = $(this).find('input[name=lote]').val();
                                             id_reg_det = $(this).find('input[name=id_reg_det]').val();
                                             inv_osal_id = $(this).find('input[name=inv_osal_id]').val();
-                                            
+                                            almacen_id = $(this).find('select[name=almacen]').val();
                                             //1___0___1483___12___d3da21c7-c4ba-49be-a241-9529336c5e75&&&1___0___158___0___2471c2a0-f253-4504-9bca-b7f843a5c72d&&&1___0___148___0___f84b5f6c-6cd4-45cb-a404-b532527f60e2&&&1___0___147___0___ &&&1___0___191___0___ &&&1___0___151___0___ &&&1___0___1493___0___ &&&1___0___1397___0___ &&&1___0___1390___0___ &&&1___0___374___0___ &&&1___0___378___0___ &&&1___0___1180___0___ &&&1___0___149___0___ &&&1___0___150___0___ &&&1___0___91___0___ &&&1___0___160___0___ &&&1___0___127___0___ &&&1___0___1483___0___ 
                                             
                                             if(eliminar_tmp != null && lote_tmp != null){
@@ -1998,7 +2046,7 @@ $(function() {
                                                 cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+id_prod_detalle_tmp+"___"+
                                                     cantidad_elemento_tmp+"___"+cantidad_adicional_tmp+"___"+lote_tmp+"___"+//inv_osal_id
                                                     inv_prod_id_elemento_tmp+"___"+id_reg_parent+"___"+$subproceso_id.val()+
-                                                        "___"+id_reg_det+"___"+inv_osal_id+"$$$$";
+                                                        "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"$$$$";
                                             }
                                             
                                         });
@@ -2061,38 +2109,43 @@ $(function() {
                                                                                     .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 
                                                                                     //alert(tmp.split(':')[0]);
-
+                                                                                    
                                                                                     if(parseInt($("tr", $tabla_productos_preorden).size())>0){
                                                                                             for (var i=1;i<=parseInt($("tr", $tabla_productos_preorden).size());i++){
-                                                                                                    if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='apoerario'+i) || (tmp.split(':')[0]=='equipo'+i) || (tmp.split(':')[0]=='equipo_adicional'+i)){
-
+                                                                                                    if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='apoerario'+i) || (tmp.split(':')[0]=='equipo'+i) || 
+                                                                                                        (tmp.split(':')[0]=='equipo_adicional'+i) || (tmp.split(':')[0]=='almacen'+i)){
+                                                                                                            
                                                                                                             $('#forma-proordenproduccion-window').find('#div_warning_grid').css({'display':'block'});
                                                                                                             //$grid_productos.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-
+                                                                                                            
                                                                                                             if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
-                                                                                                                    $tabla_productos_preorden.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+                                                                                                                $tabla_productos_preorden.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
                                                                                                             }
-
+                                                                                                            
                                                                                                             if(tmp.split(':')[0].substring(0, 5) == 'apoerario'){
-                                                                                                                    $tabla_productos_preorden.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+                                                                                                                $tabla_productos_preorden.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
                                                                                                             }
-
+                                                                                                            
                                                                                                             if(tmp.split(':')[0].substring(0, 9) == 'equipo'){
-                                                                                                                    $tabla_productos_preorden.find('input[name=caducidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+                                                                                                                $tabla_productos_preorden.find('input[name=equipo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
                                                                                                             }
-
+                                                                                                            
                                                                                                             if(tmp.split(':')[0].substring(0, 9) == 'equipo_adicional'){
-                                                                                                                    $tabla_productos_preorden.find('input[name=caducidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+                                                                                                                $tabla_productos_preorden.find('input[name=equipo_adicional]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
                                                                                                             }
-
-
+                                                                                                            if(tmp.split(':')[0].substring(0, 9) == 'almacen'){
+                                                                                                                alert("sadasd");
+                                                                                                                $tabla_productos_preorden.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+                                                                                                            }
+                                                                                                            
+                                                                                                            
                                                                                                             var tr_warning = '<tr>';
                                                                                                                             tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
                                                                                                                             tr_warning += '<td width="120"><INPUT TYPE="text" value="' + $tabla_productos_preorden.find('input[name=sku' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
                                                                                                                             tr_warning += '<td width="200"><INPUT TYPE="text" value="' + $tabla_productos_preorden.find('input[name=descripcion' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
                                                                                                                             tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:485px; color:red"></td>';
                                                                                                             tr_warning += '</tr>';
-
+                                                                                                            
                                                                                                             $('#forma-proordenproduccion-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
                                                                                                     }
 
@@ -2153,7 +2206,7 @@ $(function() {
             trCount++;
             
             tmp_html = '<tr>';
-                tmp_html += '<td width="100" class="grid1" align="center" >';
+                tmp_html += '<td width="80" class="grid1" align="center" >';
                     
                     if(inv_osal_id == 0){
                         tmp_html += '<a href="#elimina_producto_componente" id="elimina_producto_componente'+trCount+'">';
@@ -2163,8 +2216,15 @@ $(function() {
                             tmp_html += "Eliminar";
                     }
                     
+                    /* html_tabla += '<td class="grid" width="80">&nbsp;#</td>';
+                                                html_tabla += '<td class="grid" width="90">&nbsp;Codigo</td>';
+                                                html_tabla += '<td class="grid" width="290">&nbsp;Descripci&oacute;n</td>';
+                                                html_tabla += '<td class="grid" width="100">&nbsp;Cantidad</td>';
+                                                html_tabla += '<td class="grid" width="90">&nbsp;Adicional</td>';
+                                                html_tabla += '<td class="grid" width="150" >&nbsp;Lote</td>';
+                                                html_tabla += '<td class="grid" width="90" >&nbsp;Almacen</td>';*/
                 tmp_html += '</td>';
-                tmp_html += '<td width="100" class="grid1" align="center" >';
+                tmp_html += '<td width="90" class="grid1" align="center" >';
                     tmp_html += '<input type="hidden" id="id_reg_parent" name="id_reg_parent" value="'+id_reg_parent+'">';
                     tmp_html += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
                     tmp_html += '<input type="hidden" id="inv_osal_id" name="inv_osal_id" value="'+inv_osal_id+'">';
@@ -2180,34 +2240,46 @@ $(function() {
                     
                 tmp_html += '</td>';
                 
-                tmp_html += '<td width="290" class="grid1">';
-                    tmp_html += '<input type="text" name="sku" value="'+$descripcion+'"  class="borde_oculto" style="width:250px;" readOnly="true" >';
+                tmp_html += '<td width="255" class="grid1">';
+                    tmp_html += '<input type="text" name="descripcoin" value="'+$descripcion+'"  class="borde_oculto" style="width:250px;" readOnly="true" >';
                 tmp_html += '</td>';
-                tmp_html += '<td width="100" class="grid1">';
+                tmp_html += '<td width="80" class="grid1">';
                     if(inv_osal_id == 0){
-                        tmp_html += '<input type="text" name="cantidad_elemento" value="'+$cantidad+'" style="width:70px;" >';
+                        tmp_html += '<input type="text" name="cantidad_elemento" id="cantidad_elemento'+trCount+'" value="'+$cantidad+'" style="width:70px;" >';
                     }else{
-                        tmp_html += '<input type="text" name="cantidad_elemento" value="'+$cantidad+'"  class="borde_oculto" style="width:70px;" readOnly="true" >';
+                        tmp_html += '<input type="text" name="cantidad_elemento" id="cantidad_elemento'+trCount+'" value="'+$cantidad+'"  class="borde_oculto" style="width:70px;" readOnly="true" >';
                     }
-                    
                 tmp_html += '</td>';
-                tmp_html += '<td width="100" class="grid1">';
+                tmp_html += '<td width="80" class="grid1">';
                     tmp_html += '<input type="text" id="cantidad_adicional'+trCount+'" name="cantidad_adicional" value="'+cantidad_adicional+'"  style="width:70px;" readOnly="true">';
                 tmp_html += '</td>';
                 
-                tmp_html += '<td width="200" class="grid1" >';
+                tmp_html += '<td width="130" class="grid1" >';
                 
                 if(num_lote == " " || num_lote == ""){
                     if(inv_osal_id != 0){
-                        tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:150px;">';
+                        tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:110px;">';
                         tmp_html += '<a href="#add_lote" id="add_lote'+trCount+'">+</a>';
                     }else{
-                        tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:150px;">';
+                        tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:110px;">';
                     }
                 }else{
-                    tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:150px;" readOnly="true">';
+                    tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:110px;" readOnly="true">';
                     tmp_html += '<a href="#add_lote" id="add_lote'+trCount+'">+</a>';
                 }
+                
+                tmp_html += '</td>';
+                tmp_html += '<td width="50" class="grid1"><input type="text" name="existencia" id="existencia'+trCount+'" value="0"  style="width:50px;" readOnly="true"></td>';
+                tmp_html += '<td width="90" class="grid1">';
+                tmp_html += '<select name="almacen" id="almacen'+trCount+'" style="width:85px;">';
+                tmp_html += '<option value="0"  >[- Selecciona un almacen -]</option>';
+                $.each(array_almacenes, function(entryIndex,item){
+                    tmp_html += '<option value="' + item['id'] + '"  >' + item['titulo'] + '</option>';
+                });
+                tmp_html += '</select>';
+                /*if(){
+                }else{
+                }*/
                 tmp_html += '</td>';
                 
             tmp_html += '</tr>';
@@ -2233,13 +2305,75 @@ $(function() {
             //  
             //});
             
+            $tmp_tr.find('#almacen'+trCount).change(function(event) {
+                event.preventDefault();
+                $almacen_seleccionado = $(this).val();
+                $this_tr = $(this).parent().parent();
+                $sku_tmp = $this_tr.find('input[name=sku]').val();
+                $id_prod_detalle_tmp = $this_tr.find('input[name=id_prod_detalle]').val();
+                var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+                
+                //obtiene los tipos de almacen para el buscador
+                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_existenciapor_producto.json';
+                $arreglo = {'almacen_id':$almacen_seleccionado,'codigo':$sku_tmp,'id_producto':$id_prod_detalle_tmp, 'iu': iu};
+                $.post(input_json,$arreglo,function(entry){
+                    
+                    $this_tr.find('input[name=existencia]').val(entry['Existencia']);
+                    
+                    cantidad_existencia = parseFloat(entry['Existencia']);
+                    //alert(entry['Existencia']);
+                    $tmp_tr.find('tr').each(function(){
+                        
+                        $sku_this_tr = $(this).find('input[name=sku]').val();
+                        $inv_prod_det_tr = $(this).find('input[name=id_prod_detalle]').val();
+                        $existencia_tr = $(this).find('input[name=existencia]').val();
+                        $almacen_tr = $(this).find('select[name=almacen]').val();
+                        $cantidad_elemnto_tr = isNaN(parseFloat($(this).find('input[name=cantidad_elemento]').val())) ? 0 : parseFloat($(this).find('input[name=cantidad_elemento]').val());
+                        $cantidad_adicional_tr = isNaN(parseFloat($(this).find('input[name=cantidad_adicional]').val())) ? 0 : parseFloat($(this).find('input[name=cantidad_adicional]').val());
+                        if($id_prod_detalle_tmp == $inv_prod_det_tr && $almacen_seleccionado == $almacen_tr ){
+                            //alert("cantidad_elemnto_tr:"+$(this).find('input[name=cantidad_elemnto]').val() +"   cantidad_adicional_tr:"+ $cantidad_adicional_tr);
+                            cantidad_existencia -= ($cantidad_elemnto_tr + $cantidad_adicional_tr );
+                        }
+                        
+                    });
+                    
+                    $cantidad_this_tr = isNaN(parseFloat($this_tr.find('input[name=cantidad_elemento]').val())) ? 0 : parseFloat($this_tr.find('input[name=cantidad_elemento]').val());
+                    $adicional_this_tr = isNaN(parseFloat($this_tr.find('input[name=cantidad_adicional]').val())) ? 0 : parseFloat($this_tr.find('input[name=cantidad_adicional]').val());
+                    cantidad_existencia = (cantidad_existencia + ($cantidad_this_tr + $adicional_this_tr ) );
+                    $this_tr.find('input[name=existencia]').val(cantidad_existencia);
+                    
+                    if(cantidad_existencia < ($cantidad_this_tr + $adicional_this_tr )){
+                        $this_tr.css({'background-color' : '#F64848'});
+                    }else{
+                        $this_tr.parent().css({'background-color' : '#FFFFFF'});
+                    }
+                });//termina llamada json
+            });
+            
+            $tmp_tr.find('#cantidad_elemento'+trCount).change(function() {
+                $valor = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+                $this_tr_tpm = $(this).parent().parent();
+                $cantidad_this_tr = isNaN(parseFloat($this_tr_tpm.find('input[name=existencia]').val())) ? 0 : parseFloat($this_tr_tpm.find('input[name=existencia]').val());
+                if($valor > $cantidad_this_tr){
+                    jAlert("La cantidad debe de ser menor o igual a la existencia", 'Atencion!');
+                }
+            });
+            
+            $tmp_tr.find('#cantidad_adicional'+trCount).change(function() {
+                alert("asd");
+                $valor = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+                $this_tr_tpm = $(this).parent().parent();
+                $adicional_this_tr = isNaN(parseFloat($this_tr_tpm.find('input[name=existencia]').val())) ? 0 : parseFloat($this_tr_tpm.find('input[name=existencia]').val());
+                if($valor > $cantidad_this_tr){
+                    jAlert("La cantidad debe de ser menor o igual a la existencia", 'Atencion!');
+                }
+            });
             
             $tmp_tr.find('#elimina_producto_componente'+trCount).click(function(event){
                 event.preventDefault();
                 $(this).parent().parent().find('input[name=eliminar]').val("0");
                 $(this).parent().parent().hide();
             });
-            
             
             $tmp_tr.find('#add_lote'+trCount).click(function(event){
                 event.preventDefault();
@@ -2267,13 +2401,13 @@ $(function() {
                 
                 
                 tmp_html = '<tr>';
-                tmp_html += '<td width="100" class="grid1" align="center" >';
+                tmp_html += '<td width="80" class="grid1" align="center" >';
                     tmp_html += '<a href="#elimina_producto_componente" id="elimina_producto_componente'+trCount+'">';
                         tmp_html += "Eliminar";
                     tmp_html += '</a>';
                 tmp_html += '</td>';
                 
-                tmp_html += '<td width="100" class="grid1" align="center" colspan="2" >';
+                tmp_html += '<td class="grid1" align="center" colspan="2" >';
                     tmp_html += '<input type="hidden" id="id_reg_parent" name="id_reg_parent" value="'+id_reg_parent+'">';
                     tmp_html += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
                     tmp_html += '<input type="hidden" id="inv_osal_id" name="inv_osal_id" value="0">';
@@ -2285,16 +2419,23 @@ $(function() {
                     tmp_html += '<input type="hidden" id="id_prod_detalle" name="id_prod_detalle" value="'+$id_prod_detalle +'">';
                 tmp_html += '</td>';
                 
-                tmp_html += '<td width="100" class="grid1">';
+                tmp_html += '<td width="80" class="grid1">';
                     tmp_html += '<input type="text" name="cantidad_elemento" value="'+cantidad_elemento+'"  class="borde_oculto" style="width:70px;" readOnly="true" >';
                 tmp_html += '</td>';
-                tmp_html += '<td width="100" class="grid1">';
+                tmp_html += '<td width="80" class="grid1">';
                     tmp_html += '<input type="text" name="cantidad_adicional" value="'+cantidad_adicional+'"  style="width:70px;" >';
                 tmp_html += '</td>';
                 
-                tmp_html += '<td width="200" class="grid1">';
-                    tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value=" "  style="width:150px;">';
+                tmp_html += '<td width="130" class="grid1">';
+                    tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value=" "  style="width:110px;">';
                     tmp_html += '<a href="#remove_lote'+trCount+'" id="remove_lote'+trCount+'">-</a>';
+                tmp_html += '</td>';
+                tmp_html += '<td width="90" class="grid1">';
+                    tmp_html += '<select name="almacen" id="almacen'+trCount+'" style="width:85px;">';
+                    $.each(array_almacenes, function(entryIndex,item){
+                        tmp_html += '<option value="' + item['id'] + '"  >' + item['titulo'] + '</option>';
+                    });
+                    tmp_html += '</select>';
                 tmp_html += '</td>';
                 
                 tmp_html += '</tr>';
@@ -2305,6 +2446,28 @@ $(function() {
                 $aplicar_evento_blur_input_lote($tmp_this_tr.parent().find('#lote'+ trCount ));
                 $aplicar_evento_keypress_input_lote($tmp_this_tr.parent().find('#lote'+ trCount ));
                 $aplicar_evento_click_input_lote($tmp_this_tr.parent().find('#lote'+ trCount ));
+                
+                $tmp_this_tr.find('#almacen'+trCount).change(function(event) {
+                    event.preventDefault();
+                    
+                    alert($(this).parent().parent().parent().html());
+                    /*
+                    //obtiene los tipos de almacen para el buscador
+                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_existenciapor_producto.json';
+                    $arreglo = {'almacen_id':valor_pais,'codigo':valor_pais,'id_producto':valor_pais, 'iu': valor_entidad};
+                    $.post(input_json,$arreglo,function(entry){
+                        //Alimentando los campos select tipos de almacen del buscador
+                        $busqueda_select_tipo.children().remove();
+                        var tipo_hmtl = '<option value="0" selected="yes">[--Seleccionar Tipo --]</option>';
+                        $.each(entry['Tipos'],function(entryIndex,reg){
+                            tipo_hmtl += '<option value="' + reg['id'] + '"  >' + reg['titulo'] + '</option>';
+                        });
+                        $busqueda_select_tipo.append(tipo_hmtl);
+                    });//termina llamada json
+                    alert($(this).val());
+                    */
+                   
+                });
                 
                 $tmp_this_tr.parent().find('#remove_lote'+trCount).click(function(event){
                     event.preventDefault();
@@ -2968,6 +3131,7 @@ $(function() {
                     });
                     $select_tipoorden.append(orden_tipos_html);
                     
+                    array_almacenes = entry['Almacenes'];
                     
                     $select_tipoorden.change(function(){
                         tipo_preorden = $select_tipoorden.val();
@@ -3270,6 +3434,7 @@ $(function() {
                                     $folio_op.attr({'value': entry['Orden']['0']['folio']});
                                     $lote_pop.attr({'value': entry['Orden']['0']['lote']});
                                     
+                                    array_almacenes = entry['Almacenes'];
                                     
                                     array_instrumentos = entry['Instrumentos'];
                                     
