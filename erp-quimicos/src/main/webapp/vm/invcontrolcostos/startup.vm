@@ -381,22 +381,22 @@
 														<thead>
 															<tr>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;C&oacute;digo</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="180">&nbsp;Descripci&oacute;n</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="150">&nbsp;Descripci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;Unidad</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Presentaci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;O.&nbsp;C.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;Fac.&nbsp;Prov.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="50">&nbsp;Moneda</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;T.&nbsp;C.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;<span id="tipo_costo">C.&nbsp;U.</span></td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;&nbsp;C.&nbsp;I.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;C.&nbsp;D.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;C.&nbsp;R.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;<span id="tipo_costo">C.&nbsp;U.</span></td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;&nbsp;C.&nbsp;I.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;C.&nbsp;D.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;C.&nbsp;R.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Precio&nbsp;M&iacute;nimo</td>
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 180px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1005; height: 180px; border:1px solid #C1DAD7 !important;">	
 														<table>
 															<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos" class="gral">
 																
