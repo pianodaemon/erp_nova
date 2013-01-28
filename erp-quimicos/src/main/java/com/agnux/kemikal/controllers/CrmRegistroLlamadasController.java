@@ -356,7 +356,7 @@ public class CrmRegistroLlamadasController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
-        Integer app_selected = 115;//Aplicativo de Registro de Visitas
+        Integer app_selected = 114;//Aplicativo de Registro de llamadas
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         
