@@ -243,7 +243,7 @@
                                                                 <td >Fecha</td>
                                                                 <td >&nbsp;</td>
                                                                 <td >
-                                                                     <input type="text" name="fecha_cierre" style="width:100px;">
+                                                                     <input type="text" name="fecha_cierre" style="width:100px;" readOnly="true">
                                                                 </td>
                                                                 <td ><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha_cierre"></div></td>
                                                                 <td >&nbsp;</td>
