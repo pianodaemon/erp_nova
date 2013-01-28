@@ -845,16 +845,28 @@ $(function() {
                                                             Tipocaso_html += '<option value="' + i + '" >' + TipoCaso[i] + '</option>';
                                                         }
                                                 }
-                                            $select_tipo_caso.append(Tipocaso_html);
+                                        $select_tipo_caso.append(Tipocaso_html);
                                         
-                                        $agente.children().remove();
+                                        //Alimentando los campos $agente
+					/*$agente.children().remove();
+					var agente_hmtl='';
+					$.each(entry['Agentes'],function(entryIndex,agente){
+						if(parseInt(agente['id'])==parseInt(entry['Datos'][0]['agente_id'])){
+							agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+						}else{
+							agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+						}
+					});
+					$agente.append(agente_hmtl);*/
+                                       
+                                        //$agente.children().remove();
                                         var agente_hmtl = '';
                                         if(parseInt(entry['Extra'][0]['exis_rol_admin']) > 0){
                                                 agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
                                         }
 			
                                         $.each(entry['Agentes'],function(entryIndex,agente){
-                                                if(parseInt(agente['id'])==parseInt(entry['Extra'][0]['id_agente'])){
+                                                if(parseInt(agente['id'])==parseInt(entry['Datos'][0]['agente_id'])){
                                                         agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
                                                 }else{
                                                         //si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
@@ -865,7 +877,7 @@ $(function() {
                                         });
                                         $agente.append(agente_hmtl);
                                         
-                                        //Alimentando el buscandopor
+                                          //Alimentando el buscandopor
 					$buscando_por.children().remove();
 					var buscadopor_hmtl='';
                                         var text='';
