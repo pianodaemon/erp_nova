@@ -2,7 +2,7 @@
 	$.fn.extend({
 		modalPanel: function() {
 		    
-		    /*
+		    
 		    //Our function for hiding the modalbox
 			function modalHide() {
 				$(document).unbind("keydown", handleEscape);
@@ -12,7 +12,7 @@
 					.fadeOut(remove)
 					.empty();
 			}
-			*/
+			
 			//Our function that listens for escape key.
 			function handleEscape(e) {
 				if (e.keyCode == 27) {
