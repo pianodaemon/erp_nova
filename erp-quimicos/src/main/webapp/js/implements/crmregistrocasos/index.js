@@ -50,13 +50,37 @@ $(function() {
         var $busqueda_cliente_prospecto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente_prospecto]');
         var $busqueda_cliente_prospecto_href =$('#barra_buscador').find('.tabla_buscador').find('#busca_cliente_prospecto');
         
+        var $busqueda_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_agente]');
+        
 	var $busqueda_select_prioridad = $('#barra_buscador').find('.tabla_buscador').find('select[name=buscador_select_prioridad]');
 	var $busqueda_fecha_cierre = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_cierre]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
 	
-        //$busqueda_id_cliente_prospecto.attr({'value' : 0});
+        var html = '';
+	$busqueda_tipo.children().remove();
+	html='<option value="0">[-- Todos --]</option>';
+	html+='<option value="1">Cliente</option>';
+	html+='<option value="2">Prospecto</option>';
+	$busqueda_tipo.append(html);
+        
+        var to_make_one_search_string = function(){
+		var valor_retorno = "";
+		var signo_separador = "=";
+		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
+		valor_retorno += "tipo" + signo_separador + $busqueda_tipo.val() + "|";
+		valor_retorno += "id_cliente_prospecto" + signo_separador + $busqueda_id_cliente_prospecto.val() + "|";
+                valor_retorno += "cliente_prospecto" + signo_separador + $busqueda_cliente_prospecto.val() + "|";
+		valor_retorno += "prioridad" + signo_separador + $busqueda_select_prioridad.val() + "|";
+		valor_retorno += "fecha_cierre" + signo_separador + $busqueda_fecha_cierre.val() + "|";
+                valor_retorno += "agente" + signo_separador + $busqueda_agente.val() + "|";
+		
+		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
+		return valor_retorno;
+	};
+	
+        
         
         //buscar cliente_prospecto
         $busqueda_cliente_prospecto_href.click(function(event){
@@ -81,29 +105,6 @@ $(function() {
                 jAlert("elige un Caso",'! Atencion');
             }
         });
-				
-	/*
-	var html = '';
-	$busqueda_tipo_caso.children().remove();
-	html='<option value="0">[-- Todos --]</option>';
-	html+='<option value="1">Cliente</option>';
-	html+='<option value="2">Prospecto</option>';
-	$busqueda_tipo_caso.append(html);*/
-	
-	var to_make_one_search_string = function(){
-		var valor_retorno = "";
-		var signo_separador = "=";
-		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
-		valor_retorno += "tipo" + signo_separador + $busqueda_tipo.val() + "|";
-		valor_retorno += "id_cliente_prospecto" + signo_separador + $busqueda_id_cliente_prospecto.val() + "|";
-                valor_retorno += "cliente_prospecto" + signo_separador + $busqueda_cliente_prospecto.val() + "|";
-		valor_retorno += "prioridad" + signo_separador + $busqueda_select_prioridad.val() + "|";
-		valor_retorno += "fecha_cierre" + signo_separador + $busqueda_fecha_cierre.val() + "|";
-		
-		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
-		return valor_retorno;
-	};
-	
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
 	//$cadena_busqueda = cadena;
@@ -113,7 +114,10 @@ $(function() {
              cadena = to_make_one_search_string();
                 $cadena_busqueda = cadena.toCharCode();
                 $get_datos_grid();
-        });
+        });			
+	
+	
+	
 	
 	
 	
@@ -121,6 +125,11 @@ $(function() {
 		event.preventDefault();
                 var html_tipo = '';
                 var html_prioridad = '';
+                $busqueda_folio.val('');
+		$busqueda_cliente_prospecto.val('');
+                $busqueda_id_cliente_prospecto.val(0);
+		$busqueda_fecha_cierre.val('');
+                $busqueda_agente.find('option[index=0]').attr('selected','selected');
                 
                 $busqueda_tipo.children().remove();
 		$busqueda_select_prioridad.children().remove();
@@ -140,12 +149,32 @@ $(function() {
                
                $busqueda_select_prioridad.append(html_prioridad);
                
-                $busqueda_folio.val('');
-		$busqueda_cliente_prospecto.val('');
-                $busqueda_id_cliente_prospecto.val(0);
-		$busqueda_fecha_cierre.val('');
+                
 		
                
+		//esto se hace para reinicar los valores del select de agentes
+		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+		$arreglo2 = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json2,$arreglo2,function(data){
+			//Alimentando los campos select_agente
+			$busqueda_agente.children().remove();
+			var agente_hmtl = '';
+			if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+				agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+			}
+			
+			$.each(data['Agentes'],function(entryIndex,agente){
+				if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+					agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+				}else{
+					//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+					if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+						agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+					}
+				}
+			});
+			$busqueda_agente.append(agente_hmtl);
+		});
 		
                 
 	});
@@ -180,6 +209,28 @@ $(function() {
 	});
 	
 	
+	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+		//Alimentando los campos select_agente
+		$busqueda_agente.children().remove();
+		var agente_hmtl = '';
+		if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+			agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+		}
+		
+		$.each(data['Agentes'],function(entryIndex,agente){
+			if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+				agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+			}else{
+				//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+				if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+					agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+				}
+			}
+		});
+		$busqueda_agente.append(agente_hmtl);
+	});
 	
 
 	//----------------------------------------------------------------
