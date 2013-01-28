@@ -30,7 +30,7 @@
 		<table class="table_acciones" style="display:none" border="0">
 			<tr>
 				<td width="15" height="30"></td>
-				<td height="30"><a href="new_item" class="tooltip"><img src="../../img/catalogo/crear.png" border=0 ><span>Registrar nuevo Cliente</span></a></td>
+				<td height="30"><a href="new_item" class="tooltip"><img src="../../img/catalogo/crear.png" border=0 ><span>Nuevo Registro</span></a></td>
 				<td width="15" height="30"></td>
 				<td height="30"><a href="visualiza_buscador" class="tooltip"><img src="../../img/catalogo/buscar.png" border=0 ><span>Busqueda</span></a>  </td>
 			</tr>
@@ -184,16 +184,14 @@
                                                 
                                                 <td>Tipo Llamada</td>
                                                 <td><SELECT NAME="select_tipo_llamada" style="width:70px;">
-                                                        <option value="0">Entrante</option>
-                                                        <option value="1">Saliente</option>
+                                                        
                                                     </SELECT>
                                                 </td>
                                                 <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipollamada"></div></td>
                                                 
                                                 <td>Llamada Planeada&nbsp;</td>
                                                 <td><SELECT NAME="select_llamada_planeada" style="width:40px;">
-                                                        <option value="1">SI</option>
-                                                        <option value="0">NO</option>
+                                                        
                                                     </SELECT>
                                                 </td>
                                                 <td>&nbsp;</td>
@@ -211,8 +209,7 @@
                                                
                                                 <td>Llamada Completada&nbsp;&nbsp;</td>
                                                 <td><select name="select_llamada_completa" style="width:40px;">
-                                                        <option value="1">Si</option>
-                                                        <option value="0">No</option>
+                                                        
                                                     </select>
                                                 </td>
                                                 <td>&nbsp;</td>
