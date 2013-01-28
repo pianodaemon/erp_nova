@@ -37,7 +37,7 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Registro de Visitas');
+	$('#barra_titulo').find('#td_titulo').append('Registro de Llamadas');
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
@@ -505,7 +505,7 @@ $(function() {
 		$tabs_li_funxionalidad();		
 		
 		var $identificador = $('#forma-registro-window').find('input[name=identificador_prospecto]');
-		var $folio = $('#forma-registro-window').find('input[name=nocontrol]');
+		var $folio = $('#forma-registro-window').find('input[name=ncontrol]');
                 var $id_contacto = $('#forma-registro-window').find('input[name=id_contacto]');
 		var $select_agente = $('#forma-registro-window').find('select[name=select_agente]');
 		var $contacto = $('#forma-registro-window').find('input[name=contacto]');
@@ -522,7 +522,8 @@ $(function() {
 		var $select_llamda_planeada =$('#forma-registro-window').find('select[name=select_llamada_planeada]');
 		//variables de observaciones y comentarios
 		var $resultado_llamada   =$('#forma-registro-window').find('textarea[name=resultado_llamada]');
-		var $observaciones_visita  =$('forma-registro-window').find('textarea[name=comentarios]');
+		var $observaciones_visita  =$('#forma-registro-window').find('textarea[name=comentarios]');
+                
                 var $comentarios_proxima_llamada =$('#forma-registro-window').find('textarea[name=observaciones');
 		
 		var $fecha_proxima_llamada =$('#forma-registro-window').find('input[name=fecha_cita_proxima]');
@@ -628,15 +629,15 @@ $(function() {
 			
 			//Alimentando los campos select de oportunidad
 			$select_oportunidad.children().remove();
-			var oportunidad_hmtl = '<option value="1" selected="yes">Si</option>';
-			oportunidad_hmtl += '<option value="0">No</option>';
+			var oportunidad_hmtl = '<option value="1" selected="yes">SI</option>';
+			oportunidad_hmtl += '<option value="0">NO</option>';
 			$select_oportunidad.append(oportunidad_hmtl);
                         
                         //Alimentando los campos select de llamda completada
 			$select_llamada_completa.children().remove();
-			var oportunidad_hmtl = '<option value="1" selected="yes">Si</option>';
-			oportunidad_hmtl += '<option value="0">No</option>';
-			$select_llamada_completa.append(oportunidad_hmtl);
+			var llamcompleta_hmtl = '<option value="1" selected="yes">SI</option>';
+			llamcompleta_hmtl += '<option value="0">NO</option>';
+			$select_llamada_completa.append(llamcompleta_hmtl);
                         
                         $select_tipo_llamada.children().remove();
                         var tipo_llamada_html ='<option value="0" selected="yes">Entrante</option>';
@@ -796,7 +797,7 @@ $(function() {
 			$tabs_li_funxionalidad();
                         
 			var $identificador = $('#forma-registro-window').find('input[name=identificador_prospecto]');
-                        var $folio = $('#forma-registro-window').find('input[name=nocontrol]');
+                        var $folio = $('#forma-registro-window').find('input[name=ncontrol]');
                         var $id_contacto = $('#forma-registro-window').find('input[name=id_contacto]');
                         var $select_agente = $('#forma-registro-window').find('select[name=select_agente]');
                         var $contacto = $('#forma-registro-window').find('input[name=contacto]');
@@ -806,6 +807,7 @@ $(function() {
                         var $hora_duracion =$('#forma-registro-window').find('input[name=duracion_llamada]');
                         var $select_motivo_llamada =$('#forma-registro-window').find('select[name=select_motivo_llamada]');
                         var $select_llamada_completa =$('#forma-registro-window').find('select[name=select_llamada_completa]');
+                       
                         var $select_calif_llamada  =$('#forma-registro-window').find('select[name=select_calificacion]');
                         var $select_tipo_seguimiento =$('#forma-registro-window').find('select[name=select_tipo_seguimiento]');
                         var $select_oportunidad =$('#forma-registro-window').find('select[name=select_consiguio_cita]');
@@ -814,7 +816,7 @@ $(function() {
                         
                         //variables de observaciones y comentarios
                         var $resultado_llamada   =$('#forma-registro-window').find('textarea[name=resultado_llamada]');
-                        var $observaciones_visita  =$('forma-registro-window').find('textarea[name=comentarios]');
+                        var $observaciones_visita  =$('#forma-registro-window').find('textarea[name=comentarios]');
                         var $comentarios_proxima_llamada =$('#forma-registro-window').find('textarea[name=observaciones]');
 
                         var $fecha_proxima_llamada =$('#forma-registro-window').find('input[name=fecha_cita_proxima]');
@@ -870,25 +872,7 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
                                     
-                                        /*
-                                         *row.put("id",String.valueOf(rs.getInt("id")));
-                                        row.put("folio",rs.getString("folio"));
-                                        row.put("fecha",rs.getString("fecha"));
-                                        row.put("hora",rs.getString("hora"));
-                                        row.put("duracion",rs.getString("duracion"));
-                                        row.put("empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
-                                        row.put("contacto_id",String.valueOf(rs.getInt("crm_contacto_id")));
-                                        row.put("nombre_contacto",rs.getString("nombre_contacto"));
-                                        row.put("motivo_id",String.valueOf(rs.getInt("crm_motivos_visita_id")));
-                                        row.put("calificacion_id",String.valueOf(rs.getInt("crm_calificacion_llamada_id")));
-                                        row.put("seguimiento_id",String.valueOf(rs.getInt("crm_tipos_seguimiento_llamada_id")));
-                                        row.put("deteccion_oportunidad",String.valueOf(rs.getInt("deteccion_oportunidad")));
-                                        row.put("recursos_utilizados",rs.getString("recursos_utilizados"));
-                                        row.put("resultado",rs.getString("resultado"));
-                                        row.put("observaciones",rs.getString("observaciones"));
-                                        row.put("fecha_sig_llamada",rs.getString("fecha_sig_llamada"));
-                                        row.put("hora_sig_llamada",rs.getString("hora_sig_llamada"));
-                                        row.put("comentarios_sig_llamada",rs.getString("comentarios_sig_llamada"));*/
+                                        
 					$identificador.attr({'value' : entry['Datos']['0']['id']});
 					$folio.attr({'value' : entry['Datos']['0']['folio']});
 					
@@ -960,7 +944,8 @@ $(function() {
 					});
 					$select_tipo_seguimiento.append(seguimiento_hmtl);
 					
-					//Alimentando los campos select de oportunidad
+					
+                                        //Alimentando los campos select de oportunidad
 					$select_oportunidad.children().remove();
 					var oportunidad_hmtl ='';
 					if(parseInt(entry['Datos'][0]['deteccion_oportunidad']) == 1){
@@ -972,17 +957,17 @@ $(function() {
 					}
 					$select_oportunidad.append(oportunidad_hmtl);
                                         
-                                        //alimenta el select de llamada completa
-                                        $select_llamada_completa.children().remove();
+                                        //alimenta el select de llamada planeada
+                                        $select_llamda_planeada.children().remove();
                                         var llamda_comp_html ="";
                                         if(parseInt(entry['Datos'][0]['llamada_planeada'])==1){
-                                            llamda_comp_html ='<option value="1" selected="yes">SI</option>';
+                                            llamda_comp_html +='<option value="1" selected="yes">SI</option>';
                                             llamda_comp_html +='<option value="0">NO</option>';
                                         }else{
-                                            llamda_comp_html ='<option value="1">SI</option>';
-                                            llamda_comp_html +='<option value="0">NO</option>'; 
+                                            llamda_comp_html +='<option value="1">SI</option>';
+                                            llamda_comp_html +='<option value="0" selected="yes">NO</option>'; 
                                         }
-					$select_llamada_completa.append(llamda_comp_html);
+					$select_llamda_planeada.append(llamda_comp_html);
                                         
                                         //aliemtenta select de tipo de llamada
                                         $select_tipo_llamada.children().remove();
@@ -992,12 +977,22 @@ $(function() {
                                             tipo_llamada_html += '<option value="0">Saliente</option>';
                                         }else{
                                             tipo_llamada_html= '<option value="1">Entrante</option>';
-                                            tipo_llamada_html= '<option value="0">Saliente</option>';
+                                            tipo_llamada_html= '<option value="0" selected="yes">Saliente</option>';
                                         }
                                         $select_tipo_llamada.append(tipo_llamada_html);
                                         
+                                        //alimentando el select de llamada completa
+                                        $select_llamada_completa.children().remove();
+                                        var llamadacom_html="";
+                                        if (parseInt(entry['Datos'][0]['llamada_completada'])==1){
+                                            llamadacom_html+='<option value="1" selected="yes">SI</option>';
+                                            llamadacom_html+='<option value="0">NO</option>';
+                                        }else{
+                                            llamadacom_html+='<option value="1">SI</option>';
+                                            llamadacom_html+='<option value="0" selected="yes">NO</option>';
+                                        }
                                         
-                                       
+                                       $select_llamada_completa.append(llamadacom_html);
                                         
 				},"json");//termina llamada json
 				
