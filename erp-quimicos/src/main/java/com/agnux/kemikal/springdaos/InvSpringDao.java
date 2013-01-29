@@ -101,7 +101,7 @@ public class InvSpringDao implements InvInterfaceDao{
         String sql_to_query = "";
         
         if(id_app==125){
-            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision ) ORDER BY descripcion;";
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision ) ORDER BY descripcion;";
             System.out.println("InvReporte: "+sql_to_query);
             
             ArrayList<HashMap<String, String>> hm125 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -114,6 +114,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         row.put("codigo",rs.getString("codigo"));
                         row.put("descripcion",rs.getString("descripcion"));
                         row.put("unidad",rs.getString("unidad"));
+                        row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
                         row.put("presentacion",rs.getString("presentacion"));
                         row.put("orden_compra",rs.getString("orden_compra"));
                         row.put("factura_prov",rs.getString("factura_prov"));

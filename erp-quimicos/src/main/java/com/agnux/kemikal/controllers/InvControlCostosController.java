@@ -317,7 +317,8 @@ public class InvControlCostosController {
     
     
     
-    //obtiene Productos para el Grid
+    //obtiene Productos para el Grid,
+    //tambien calcula costos cuando es Simulacion
     @RequestMapping(method = RequestMethod.POST, value="/getBusquedaProductos.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBusquedaProductosJson(
             @RequestParam(value="tipo_prod", required=true) String tipo_prod,
@@ -327,6 +328,10 @@ public class InvControlCostosController {
             @RequestParam(value="producto", required=true) String producto,
             @RequestParam(value="pres", required=true) String pres,
             @RequestParam(value="tipo_costo", required=true) String tipo_costo,
+            @RequestParam(value="simulacion", required=true) String simulacion,
+            @RequestParam(value="importacion", required=true) String importacion,
+            @RequestParam(value="directo", required=true) String directo,
+            @RequestParam(value="pminimo", required=true) String pminimo,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
         ) {
@@ -344,8 +349,20 @@ public class InvControlCostosController {
         //aplicativo Control de Costos
         Integer app_selected = 125;
         
-        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___"+producto+"___"+pres+"___"+tipo_costo;
+        if(importacion.equals("")){
+            importacion="0";
+        }
         
+        if(directo.equals("")){
+            directo="0";
+        }
+        
+        if(pminimo.equals("")){
+            pminimo="0";
+        }
+        
+        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___"+producto+"___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo;
+                    
         productos = this.getInvDao().selectFunctionForInvReporte(app_selected, data_string);
         
         jsonretorno.put("Grid", productos);
