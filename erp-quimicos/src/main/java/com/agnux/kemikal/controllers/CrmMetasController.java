@@ -194,7 +194,8 @@ public class CrmMetasController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
-        
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
         
         
         //decodificar id de usuario
@@ -208,9 +209,12 @@ public class CrmMetasController {
         }
         
         agentes = this.getCrmDao().getAgentes(id_empresa);
-        
+        extra = this.getCrmDao().getUserRol(id_usuario);
+        extra.put("id_agente", String.valueOf(id_agente));
+        arrayExtra.add(0,extra);
         
         jsonretorno.put("Datos", datos);
+        jsonretorno.put("Extra", arrayExtra);
         jsonretorno.put("Agentes", agentes);
         
         
@@ -231,7 +235,7 @@ public class CrmMetasController {
         @RequestParam(value="cant_cotizaciones", required=true) String cant_cotizaciones,
         @RequestParam(value="cant_cotizaciones2", required=true) String cant_cotizaciones2,
         @RequestParam(value="cant_oportunidades", required=true) String cant_oportunidades,
-        @RequestParam(value="cant_oportunidades", required=true) String cant_oportunidades2,
+        @RequestParam(value="cant_oportunidades2", required=true) String cant_oportunidades2,
         @RequestParam(value="mes", required=true) String mes,
         @RequestParam(value="monto_cotizaciones", required=true) String monto_cotizaciones,
         @RequestParam(value="monto_cotizaciones2", required=true) String monto_cotizaciones2,
