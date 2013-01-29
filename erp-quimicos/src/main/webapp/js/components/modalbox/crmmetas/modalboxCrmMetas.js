@@ -1,7 +1,8 @@
 (function($){
 	$.fn.extend({
 		modalPanel_CrmMetas: function() {
-		
+                        
+                        
 			
 			//Create our overlay object
 			var overlay = $("<div id='forma-metas-overlay'></div>");
@@ -22,6 +23,23 @@
 
                             //Activate a listener 
                             $("#forma-metas-overlay").append(modalWindow);
+                            
+                            //Our function for hiding the modalbox
+			function modalHide() {
+				$(document).unbind("keydown", handleEscape);
+				var remove = function() { $(this).remove(); };
+				overlay.fadeOut(remove);
+				modalWindow
+					.fadeOut(remove)
+					.empty();
+			}
+			
+			//Our function that listens for escape key.
+			function handleEscape(e) {
+				if (e.keyCode == 27) {
+					modalHide();
+				}
+			}
 					
 		}
 	});
