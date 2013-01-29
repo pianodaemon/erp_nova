@@ -754,6 +754,9 @@ $(function() {
 		});
 		
 		$radio_costo_ultimo.attr('checked',  true );
+		$costo_importacion.val(0);
+		$costo_directo.val(0);
+		$precio_minimo.val(0);
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -927,6 +930,7 @@ $(function() {
 		
 		$busqueda.click(function(event){
 			var tipo_costo=0;
+			var simulacion="false";
 			if($radio_costo_ultimo.is(':checked')){
 				tipo_costo=1;
 			}
@@ -934,18 +938,10 @@ $(function() {
 			if($radio_costo_promedio.is(':checked')){
 				tipo_costo=2;
 			}
-
-			/*
-			$id_producto
-			$select_tipo_prod
-			$select_marca
-			$select_familia
-			$select_subfamilia
-			$select_presentacion
-			$tipo_cambio
-			$radio_costo_ultimo
-			$radio_costo_promedio
-			*/
+			
+			if($check_simulacion.is(':checked')){
+				simulacion="true";
+			}
 			
 			//eliminar contenidos
 			$grid_productos.children().remove();
@@ -959,9 +955,13 @@ $(function() {
 							'tipo_costo':tipo_costo,
 							'producto':$id_producto.val(),
 							'pres':$select_presentacion.val(),
+							'simulacion':simulacion,
+							'importacion':$costo_importacion.val(),
+							'directo':$costo_directo.val(),
+							'pminimo':$precio_minimo.val(),
 							'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-						}
-			
+						};
+						
 			$.post(input_json2,$arreglo2,function(data){
 				
 				$.each(data['Grid'],function(dataIndex,prod){
