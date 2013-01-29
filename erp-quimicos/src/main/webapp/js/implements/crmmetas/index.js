@@ -96,7 +96,7 @@ $(function() {
 	
 	$limbuscarpiar.click(function(event){
 		event.preventDefault();
-                $busqueda_titulo.val(' ');
+                $busqueda_mes.val(' ');
                 
                 //esto se hace para reinicar los valores del select de agentes
 		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
@@ -275,7 +275,7 @@ $(function() {
                 var $select_opciones =$('#forma-metas-window').find('select[name=opciones]');
                 var $cantidad_visitas =$('#forma-metas-window').find('input[name=cant_visitas]');
                 var $cantidad_llamadas =$('#forma-metas-window').find('input[name=cant_llamadas]');
-                var $cantidad_oportunidades =$('#forma-metas-window').find('input[name=cant_prospectos]');
+                var $cantidad_prospectos =$('#forma-metas-window').find('input[name=cant_prospectos]');
                 
                 //por prospecto
                 var $cant_cotizaciones =$('#forma-metas-window').find('input[name=cant_cotizaciones]');
@@ -285,10 +285,10 @@ $(function() {
                 var $ventas_prospecto=$('#forma-metas-window').find('input[name=ventas_prospecto]');
                 
                 //por cliente
-                var $cant_cotizaciones2=$('#forma-metas-window').find('input[name=cant_cotizaciones2]');
-                var $cant_oportunidades2=$('#forma-metas-window').find('input[name=cant_oportunidades2]');
-                var $monto_cotizaciones2=$('#forma-metas-window').find('input[name=monto_cotizaciones2]');
-                var $monto_oportunidades2=$('#forma-metas-window').find('input[name=monto_oportunidades2]');
+                var $cantidad_cotizaciones=$('#forma-metas-window').find('input[name=cant_cotizaciones2]');
+                var $cantidad_oportunidades=$('#forma-metas-window').find('input[name=cant_oportunidades2]');
+                var $montos_cotizaciones=$('#forma-metas-window').find('input[name=monto_cotizaciones2]');
+                var $montos_oportunidades=$('#forma-metas-window').find('input[name=monto_oportunidades2]');
                 var $ventas_clientes=$('#forma-metas-window').find('input[name=ventas_clientes]');
                 var $ventas_oportunidades=$('#forma-metas-window').find('input[name=ventas_opor_clientes]');
                 
@@ -310,7 +310,7 @@ $(function() {
                 //dandole valores por defecto a los campos
                 $cantidad_llamadas.val(0);
                 $cantidad_visitas.val(0);
-                $cantidad_oportunidades.val(0);
+                $cantidad_prospectos.val(0);
                 
                 $cant_cotizaciones.val(0);
                 $cant_oportunidades.val(0);
@@ -318,10 +318,10 @@ $(function() {
                 $monto_oportunidades.val(0);
                 $ventas_prospecto.val(0);
        
-                $cant_cotizaciones2.val(0)
-                $cant_oportunidades2.val(0)
-                $monto_cotizaciones2.val(0);
-                $monto_oportunidades2.val(0);
+                $cantidad_cotizaciones.val(0)
+                $cantidad_oportunidades.val(0)
+                $montos_cotizaciones.val(0);
+                $montos_oportunidades.val(0);
                 $ventas_clientes.val(0);
                 $ventas_oportunidades.val(0);
                 //validaciones de los campos 
@@ -369,7 +369,7 @@ $(function() {
                         }		
                 });
                 
-                $cantidad_oportunidades.keypress(function(e){
+                $cantidad_prospectos.keypress(function(e){
                         // Permitir  numeros, borrar, suprimir, TAB, puntos, comas
                         if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
                                 return true;
@@ -419,7 +419,7 @@ $(function() {
                                 return false;
                         }		
                 });
-                $cant_cotizaciones2.keypress(function(e){
+                $cantidad_cotizaciones.keypress(function(e){
                         // Permitir  numeros, borrar, suprimir, TAB, puntos, comas
                         if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
                                 return true;
@@ -427,7 +427,7 @@ $(function() {
                                 return false;
                         }		
                 });
-                $cant_oportunidades2.keypress(function(e){
+                $cantidad_oportunidades.keypress(function(e){
                         // Permitir  numeros, borrar, suprimir, TAB, puntos, comas
                         if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
                                 return true;
@@ -435,7 +435,7 @@ $(function() {
                                 return false;
                         }		
                 });
-                $monto_cotizaciones2.keypress(function(e){
+                $montos_cotizaciones.keypress(function(e){
                         // Permitir  numeros, borrar, suprimir, TAB, puntos, comas
                         if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
                                 return true;
@@ -443,7 +443,7 @@ $(function() {
                                 return false;
                         }		
                 });
-                $monto_oportunidades2.keypress(function(e){
+                $montos_oportunidades.keypress(function(e){
                         // Permitir  numeros, borrar, suprimir, TAB, puntos, comas
                         if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
                                 return true;
@@ -485,9 +485,9 @@ $(function() {
                 });
                 
                 //elimina cero al hacer clic sobre el campo
-                $cantidad_oportunidades.focus(function(e){
-                        if(parseFloat($cantidad_oportunidades.val())<1){
-                                $cantidad_oportunidades.val('');
+                $cantidad_prospectos.focus(function(e){
+                        if(parseFloat($cantidad_prospectos.val())<1){
+                                $cantidad_prospectos.val('');
                         }
                 });
                 
@@ -527,30 +527,30 @@ $(function() {
                 });
                 
                 //elimina cero al hacer clic sobre el campo
-                $cant_cotizaciones2.focus(function(e){
-                        if(parseFloat($cant_cotizaciones2.val())<1){
-                                $cant_cotizaciones2.val('');
+                $cantidad_cotizaciones.focus(function(e){
+                        if(parseFloat($cantidad_cotizaciones.val())<1){
+                                $cantidad_cotizaciones.val('');
                         }
                 });
                 
                 //elimina cero al hacer clic sobre el campo
-                $cant_oportunidades2.focus(function(e){
-                        if(parseFloat($cant_oportunidades2.val())<1){
-                                $cant_oportunidades2.val('');
+                $cantidad_oportunidades.focus(function(e){
+                        if(parseFloat($cantidad_oportunidades.val())<1){
+                                $cantidad_oportunidades.val('');
                         }
                 });
                 
                 //elimina cero al hacer clic sobre el campo
-                $monto_cotizaciones2.focus(function(e){
-                        if(parseFloat($monto_cotizaciones2.val())<1){
-                                $monto_cotizaciones2.val('');
+                $montos_cotizaciones.focus(function(e){
+                        if(parseFloat($montos_cotizaciones.val())<1){
+                                $montos_cotizaciones.val('');
                         }
                 });
                 
                 //elimina cero al hacer clic sobre el campo
-                $monto_oportunidades2.focus(function(e){
-                        if(parseFloat($monto_oportunidades2.val())<1){
-                                $monto_oportunidades2.val('');
+                $montos_oportunidades.focus(function(e){
+                        if(parseFloat($montos_oportunidades.val())<1){
+                                $montos_oportunidades.val('');
                         }
                 });
                 
@@ -588,9 +588,9 @@ $(function() {
                 });
                 
                 //coloca 0 al perder el foco del campo
-                $cantidad_oportunidades.blur(function(){
-                        if($cantidad_oportunidades.val()=="" || parseFloat($cantidad_oportunidades.val())==0){
-                                $cantidad_oportunidades.val("0");//si el campo esta en blanco, pone cero
+                $cantidad_prospectos.blur(function(){
+                        if($cantidad_prospectos.val()=="" || parseFloat($cantidad_prospectos.val())==0){
+                                $cantidad_prospectos.val("0");//si el campo esta en blanco, pone cero
                         }
                 });
                 
@@ -630,30 +630,30 @@ $(function() {
                 });
                 
                 //coloca 0 al perder el foco del campo
-                $cant_cotizaciones2.blur(function(){
-                        if($cant_cotizaciones2.val()=="" || parseFloat($cant_cotizaciones2.val())==0){
-                                $cant_cotizaciones2.val("0");//si el campo esta en blanco, pone cero
+                $cantidad_cotizaciones.blur(function(){
+                        if($cantidad_cotizaciones.val()=="" || parseFloat($cantidad_cotizaciones.val())==0){
+                                $cantidad_cotizaciones.val("0");//si el campo esta en blanco, pone cero
                         }
                 });
                 
                 //coloca 0 al perder el foco del campo
-                $cant_oportunidades2.blur(function(){
-                        if($cant_oportunidades2.val()=="" || parseFloat($cant_oportunidades2.val())==0){
-                                $cant_oportunidades2.val("0");//si el campo esta en blanco, pone cero
+                $cantidad_oportunidades.blur(function(){
+                        if($cantidad_oportunidades.val()=="" || parseFloat($cantidad_oportunidades.val())==0){
+                                $cantidad_oportunidades.val("0");//si el campo esta en blanco, pone cero
                         }
                 });
                 
                 //coloca 0 al perder el foco del campo
-                $monto_cotizaciones2.blur(function(){
-                        if($monto_cotizaciones2.val()=="" || parseFloat($monto_cotizaciones2.val())==0){
-                                $monto_cotizaciones2.val("0");//si el campo esta en blanco, pone cero
+                $montos_cotizaciones.blur(function(){
+                        if($montos_cotizaciones.val()=="" || parseFloat($montos_cotizaciones.val())==0){
+                                $montos_cotizaciones.val("0");//si el campo esta en blanco, pone cero
                         }
                 });
                 
                 //coloca 0 al perder el foco del campo
-                $monto_oportunidades2.blur(function(){
-                        if($monto_oportunidades2.val()=="" || parseFloat($monto_oportunidades2.val())==0){
-                                $monto_oportunidades2.val("0");//si el campo esta en blanco, pone cero
+                $montos_oportunidades.blur(function(){
+                        if($montos_oportunidades.val()=="" || parseFloat($montos_oportunidades.val())==0){
+                                $montos_oportunidades.val("0");//si el campo esta en blanco, pone cero
                         }
                 });
                 
@@ -671,7 +671,7 @@ $(function() {
                         }
                 });
                 
-                
+                alert($cantidad_oportunidades.val());
                //----------------------------------fin evento blur-------------------------------------------
                 
                 
@@ -729,11 +729,22 @@ $(function() {
                         
                     //Alimentando los campos select_agente
                     $select_agente.children().remove();
-                    var motivo_hmtl = '';
-                    $.each(entry['Agentes'],function(entryIndex,motivo){
-                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
-                    });
-                    $select_agente.append(motivo_hmtl);
+			var agente_hmtl = '';
+			if(parseInt(entry['Extra'][0]['exis_rol_admin']) > 0){
+				agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+			}
+			
+			$.each(entry['Agentes'],function(entryIndex,agente){
+				if(parseInt(agente['id'])==parseInt(entry['Extra'][0]['id_agente'])){
+					agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+				}else{
+					//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+					if(parseInt(entry['Extra'][0]['exis_rol_admin']) > 0){
+						agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+					}
+				}
+			});
+			$select_agente.append(agente_hmtl);
                     
                     //select de las opciones de visualizacion "cliente" y "prospecto"
                     $select_opciones.children().remove();
@@ -869,7 +880,7 @@ $(function() {
                         var $select_opciones =$('#forma-metas-window').find('select[name=opciones]');
                         var $cantidad_visitas =$('#forma-metas-window').find('input[name=cant_visitas]');
                         var $cantidad_llamadas =$('#forma-metas-window').find('input[name=cant_llamadas]');
-                        var $cantidad_oportunidades =$('#forma-metas-window').find('input[name=cant_prospectos]');
+                        var $cantidad_prospectos =$('#forma-metas-window').find('input[name=cant_prospectos]');
 
                         //por prospecto
                         var $cant_cotizaciones =$('#forma-metas-window').find('input[name=cant_cotizaciones]');
@@ -879,10 +890,11 @@ $(function() {
                         var $ventas_prospecto=$('#forma-metas-window').find('input[name=ventas_prospecto]');
 
                         //por cliente
-                        var $cant_cotizaciones2=$('#forma-metas-window').find('input[name=cant_cotizaciones2]');
-                        var $cant_oportunidades2=$('#forma-metas-window').find('input[name=cant_oportunidades2]');
-                        var $monto_cotizaciones2=$('#forma-metas-window').find('input[name=monto_cotizaciones2]');
-                        var $monto_oportunidades2=$('#forma-metas-window').find('input[name=monto_oportunidades2]');
+                        var $cantidad_cotizaciones=$('#forma-metas-window').find('input[name=cant_cotizaciones2]');
+                        var $cantidad_oportunidades=$('#forma-metas-window').find('input[name=cant_oportunidades2]');
+                        
+                        var $montos_cotizaciones=$('#forma-metas-window').find('input[name=monto_cotizaciones2]');
+                        var $montos_oportunidades=$('#forma-metas-window').find('input[name=monto_oportunidades2]');
                         var $ventas_clientes=$('#forma-metas-window').find('input[name=ventas_clientes]');
                         var $ventas_oportunidades=$('#forma-metas-window').find('input[name=ventas_opor_clientes]');
 
@@ -899,7 +911,7 @@ $(function() {
 
 
                         $folio.css({'background' : '#DDDDDD'});   
-                        $ano.attr({'value':2013});
+                       
 			
 			
 		
@@ -946,42 +958,24 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
                                     
-                                    /*row.put("id",String.valueOf(rs.getInt("id")));
-                                        row.put("folio",rs.getString("folio"));
-                                        row.put("ano",String.valueOf(rs.getInt("ano")));
-                                        row.put("mes",String.valueOf(rs.getInt("mes")));
-                                        row.put("cantidad_visitas",String.valueOf(rs.getInt("cantidad_visitas")));
-                                        row.put("cantidad_llamadas",String.valueOf(rs.getInt("cantidad_llamadas")));
-                                        row.put("cantidad_prospectos",String.valueOf(rs.getInt("cantidad_prospectos")));
-                                        row.put("cantidad_cotizaciones",String.valueOf(rs.getInt("cantidad_cotizaciones")));
-                                        row.put("cantidad_oportunidades",String.valueOf(rs.getInt("cantidad_oportunidades")));
-                                        row.put("empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
-                                        row.put("empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
-                                        row.put("monto_cotizaciones",StringHelper.roundDouble(rs.getDouble("monto_cotizaciones"),2));
-                                        row.put("monto_oportunidades",StringHelper.roundDouble(rs.getDouble("monto_oportunidades"),2));
-                                        row.put("ventas_prospectos",String.valueOf(rs.getInt("ventas_prospectos")));
-                                        row.put("cantidad_cotizaciones2",String.valueOf(rs.getInt("cantidad_cotizaciones2")));
-                                        row.put("cantidad_oportunidades2",String.valueOf(rs.getInt("cantidad_oportunidades2")));
-                                        row.put("monto_cotizaciones2",StringHelper.roundDouble(rs.getDouble("monto_cotizaciones2"),2));
-                                        row.put("monto_oportunidades2",StringHelper.roundDouble(rs.getDouble("monto_oportunidades2"),2));
-                                        row.put("ventas_clientes",String.valueOf(rs.getInt("ventas_clientes")));
-                                        row.put("ventas_oportunidades_clientes",String.valueOf(rs.getInt("ventas_oportunidades_clientes")));
-                                        */
+                                    
                                         $campo_id.attr({'value' : entry['Datos']['0']['id']});
 					$folio.attr({'value' : entry['Datos']['0']['folio']});
 					$ano.attr({'value' : entry['Datos']['0']['ano']});
 					$cantidad_visitas.attr({'value' : entry['Datos']['0']['cantidad_visitas']});
                                         $cantidad_llamadas.attr({'value' : entry['Datos']['0']['cantidad_llamadas']});
-                                        $cantidad_oportunidades.attr({'value' : entry['Datos']['0']['cantidad_prospectos']});
+                                        $cantidad_prospectos.attr({'value' : entry['Datos']['0']['cantidad_prospectos']});
+                                        //prospectos
                                         $cant_cotizaciones.attr({'value' : entry['Datos']['0']['cantidad_cotizaciones']});
                                         $cant_oportunidades.attr({'value' : entry['Datos']['0']['cantidad_oportunidades']});
                                         $monto_cotizaciones.attr({'value' : entry['Datos']['0']['monto_cotizaciones']});
                                         $monto_oportunidades.attr({'value' : entry['Datos']['0']['monto_oportunidades']});
                                         $ventas_prospecto.attr({'value' : entry['Datos']['0']['ventas_prospectos']});
-                                        $cant_cotizaciones2.attr({'value' : entry['Datos']['0']['cantidad_cotizaciones2']});
-                                        $cant_oportunidades2.attr({'value' : entry['Datos']['0']['cantidad_oportunidades2']});
-                                        $monto_cotizaciones2.attr({'value' : entry['Datos']['0']['monto_cotizaciones2']});
-                                        $monto_oportunidades2.attr({'value' : entry['Datos']['0']['monto_oportunidades2']});
+                                        //clientes
+                                        $cantidad_cotizaciones.attr({'value' : entry['Datos']['0']['cant_cotizaciones']});
+                                        $cantidad_oportunidades.attr({'value' : entry['Datos']['0']['cant_oportunidades']});
+                                        $montos_cotizaciones.attr({'value' : entry['Datos']['0']['montos_cotizaciones']});
+                                        $montos_oportunidades.attr({'value' : entry['Datos']['0']['montos_oportunidades']});
                                         $ventas_clientes.attr({'value' : entry['Datos']['0']['ventas_clientes']});
                                         $ventas_oportunidades.attr({'value' : entry['Datos']['0']['ventas_oportunidades_clientes']});
 				
