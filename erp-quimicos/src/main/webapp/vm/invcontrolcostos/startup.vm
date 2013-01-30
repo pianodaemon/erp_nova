@@ -122,7 +122,7 @@
                     
                     <div id="div_two" title="" class="invcontrolcostos_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:1038px; padding-left:6px;"><strong>Control de Costos</strong></div>
+                            <div class="fixed column" style="width:1118px; padding-left:6px;"><strong>Control de Costos</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -144,36 +144,16 @@
                                     <div id="tabx-1" class="contenidoPes" >
 										
 										<table border="0" style="margin:0; padding:0;">
-											<tr>
-												<td valign="top" colspan="3" > 
-													
-													<table border="0" class="gral">
-														<tr>
-															<td width="10"></td>
-															<td width="80">Folio&nbsp;</td>
-															<td width="80"><input type="text" name="folio" style="width:80px;" readOnly="true"></td>
-															<td width="40"></td>
-															<td width="95"></td>
-															<td width="250"></td>
-															<td width="53"></td>
-															<td width="52"></td>
-															<td></td>
-														</tr>
-													</table>
-
-												</td>
-											</tr>
-											
 											
 											<tr>
-												<td width="735" valign="top">
+												<td width="735" valign="top" colspan="6">
 													<table border="0" class="gral">
 														<tr>
 															<td width="10"></td>
 															<td width="80">Tipo&nbsp;producto</td>
 															<td width="200"><select name="select_tipo_prod" style="width:200px;"></select></td>
 															<td width="25"></td>
-															<td width="40"></td>
+															<td width="80"></td>
 															<td width="80">Marca</td>
 															<td width="200" colspan="3"><select name="select_marca" style="width:200px;"></select></td>
 															<td width="25"></td>
@@ -303,7 +283,7 @@
 															-->
 															<td width="40"></td>
 															<td width="80">Tipo&nbsp;de&nbsp;Cambio</td>
-															<td width="75"><input type="text" name="tipo_cambio" style="width:75px;"></td>
+															<td width="75"><input type="text" name="tipo_cambio" style="width:75px; text-align:right"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipocambio"></div></td>
 															<td width="100"><input type="button" id="busqueda" value="Busqueda" style="width:100px; font-weight: bold;"></td>
 															<td width="25"></td>
@@ -326,57 +306,73 @@
 													</table>
 												</td>
 												<td width="10"></td>
-												<td width="300" style="border: solid 1px #313E74;" valign="top">
+												<td width="300" colspan="2" style="border: solid 1px #313E74;" valign="top">
 													<table border="0">
 														<tr>
-															<td width="255" colspan="5" height="10"></td>
+															<td width="50" height="10"></td>
+															<td width="110"></td>
+															<td width="20"></td>
+															<td width="60"></td>
+															<td width="5"></td>
+															<td width="30"></td>
 														</tr>
 														<tr>
-															<td width="30"></td>
+															<td width="50"></td>
 															<td width="110">Costo&nbsp;de&nbsp;Importaci&oacute;n</td>
-															<td width="80"><input type="text" name="costo_importacion" style="width:80px;"></td>
+															<td width="80" colspan="2"><input type="text" name="costo_importacion" style="width:80px; text-align:right"></td>
 															<td width="5">%</td>
 															<td width="30"></td>
 														</tr>
 														<tr>
-															<td width="255" colspan="5" height="10"></td>
+															<td width="255" colspan="6" height="10"></td>
 														</tr>
 														<tr>
-															<td width="30"></td>
+															<td width="50"></td>
 															<td width="110">Costo&nbsp;Directo</td>
-															<td width="80"><input type="text" name="costo_directo" style="width:80px;"></td>
+															<td width="80" colspan="2"><input type="text" name="costo_directo" style="width:80px; text-align:right"></td>
 															<td width="5">%</td>
 															<td width="30"></td>
 														</tr>
 														<tr>
-															<td width="255" colspan="5" height="10"></td>
+															<td width="255" colspan="6" height="10"></td>
 														</tr>
 														<tr>
-															<td width="30"></td>
+															<td width="50"></td>
 															<td width="110">Margen&nbsp;Precio&nbsp;M&iacute;nimo</td>
-															<td width="80"><input type="text" name="precio_minimo" style="width:80px;"></td>
+															<td width="80" colspan="2"><input type="text" name="precio_minimo" style="width:80px; text-align:right"></td>
 															<td width="5">%</td>
 															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_preciominimo"></div></td>
 														</tr>
 														<tr>
-															<td width="255" colspan="5" height="10"></td>
+															<td width="255" colspan="6" height="10"></td>
 														</tr>
 														<tr>
-															<td width="30"></td>
+															<td width="50"></td>
 															<td width="110">Simulaci&oacute;n</td>
-															<td width="80"><input type="checkbox" name="check_simulacion"></td>
-															<td width="5"></td>
+															<td width="20"><input type="checkbox" name="check_simulacion"></td>
+															<td width="65" colspan="2" align="right"><input type="button" id="aplicar" value="Aplicar" style="width:65px; font-weight: bold;"></td>
+															<!--<td width="5"></td>-->
+															<td width="30"></td>
+														</tr>
+														<tr>
+															<td width="255" colspan="6" height="10"></td>
+														</tr>
+														<tr>
+															<td width="50"></td>
+															<td width="110"><input type="button" id="pdf" value="PDF" style="width:80px; font-weight: bold;"></td>
+															<td width="80" colspan="3" align="right"><input type="button" id="excel" value="EXCEL" style="width:80px; font-weight: bold;"></td>
+															<!--<td width="5"></td>-->
 															<td width="30"></td>
 														</tr>
 													</table>
 												</td>
 											</tr>
 											<tr>
-												<td colspan="3" height="10"></td>
+												<td colspan="9" height="10"></td>
 											</tr>
 											
 											<tr>
-												<td colspan="3" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
+												<td colspan="9" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
 													<table >
 														<thead>
 															<tr>
@@ -386,17 +382,18 @@
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Presentaci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;O.&nbsp;C.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;Fac.&nbsp;Prov.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="50">&nbsp;Moneda</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="45">&nbsp;Moneda</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;T.&nbsp;C.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;<span id="tipo_costo">C.&nbsp;U.</span></td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;&nbsp;C.&nbsp;I.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;C.&nbsp;D.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;C.&nbsp;R.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Precio&nbsp;M&iacute;nimo</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;P.&nbsp;M.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="65">&nbsp;Moneda P.M.</td>
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1005; height: 180px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1085; height: 180px; border:1px solid #C1DAD7 !important;">	
 														<table>
 															<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos" class="gral">
 																
@@ -407,6 +404,39 @@
 												</td>
 											</tr>
 											
+											<tr>
+												<td width="30">O.C.:</td>
+												<td width="200">&nbsp;Numero de Orden de Compra</td>
+												<td width="30">C.U.:</td>
+												<td width="200">Costo Ultima Compra</td>
+												<td width="30">C.I.:</td>
+												<td>Costo de Importacion</td>
+												<td></td>
+												<td width="30">C.R.:</td>
+												<td>Costo de Referencia(C.R.=C.U.+C.I.+C.D.)</td>
+											</tr>
+											<tr>
+												<td width="30">Moneda:</td>
+												<td width="200">&nbsp;Moneda de la Factura del proveedor</td>
+												<td width="30">C.P.:</td>
+												<td width="200">Costo Promedio</td>
+												<td width="30">C.D.:</td>
+												<td>Costos Directos a la compra</td>
+												<td></td>
+												<td width="30">P.M.:</td>
+												<td>Precio Minimo de Venta</td>
+											</tr>
+											<tr>
+												<td width="30">T.C.:</td>
+												<td width="200">&nbsp;Tipo de Cambio</td>
+												<td width="30"></td>
+												<td width="200"></td>
+												<td width="30"></td>
+												<td></td>
+												<td></td>
+												<td width="30"></td>
+												<td></td>
+											</tr>
 
 											
 											
@@ -418,7 +448,7 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:1055px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" style="width:1135px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr>
 										<td width="955"></td>
