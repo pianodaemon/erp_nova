@@ -304,18 +304,18 @@ $(function() {
 	
 	
 	
-	
-	$aplicar_evento_keypress = function( $campo_input ){
-		//validar campo cantidad recibida, solo acepte numeros y punto
-		$campo_input.keypress(function(e){
+	$permitir_solo_numeros = function($campo){
+		//validar campo costo, solo acepte numeros y punto
+		$campo.keypress(function(e){
 			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-			if(e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
 				return true;
 			}else {
 				return false;
 			}
 		});
 	}
+	
 	
 	
 	$aplicar_evento_focus = function( $campo_input ){
@@ -334,33 +334,12 @@ $(function() {
 			if(parseFloat($campo_input.val())==0||$campo_input.val()==""){
 				$campo_input.val(0);
 			}
-			$(this).val(parseFloat($(this).val()).toFixed(4));
+			$(this).val(parseFloat($(this).val()).toFixed(2));
 		});
 	}
 	
 	
-	$aplicar_evento_focus_input_lote = function( $campo_input ){
-		//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-		$campo_input.focus(function(e){
-			if($(this).val() == ' '){
-				$(this).val('');
-			}
-		});
-	}
-	
-	
-	$aplicar_evento_blur_input_lote = function( $campo_input ){
-		//pone espacio en blanco al perder el enfoque, cuando no se ingresa un valor
-		$campo_input.blur(function(e){
-			if ( $(this).val() == ''  || $(this).val() == null ){
-				$(this).val(' ');
-			}else{
-				//aqui va llamada a funcion que busca datos del lote
-				//var $tr_padre = $(this).parent().parent();
-				//$obtiene_datos_lote($tr_padre);
-			}
-		});
-	}
+
 	
 	
 	$aplicar_evento_click_input_lote = function( $campo_input ){
@@ -371,22 +350,6 @@ $(function() {
 	}
 	
 	
-	$aplicar_evento_keypress_input_lote = function( $campo_input ){
-		//validar campo cantidad recibida, solo acepte numeros y punto
-		$campo_input.keypress(function(e){
-			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-			if(e.which==13 ) {
-				if ( $(this).val()!=''  &&  $(this).val()!=' ' && $(this).val()!=null ){
-					var $tr_padre = $(this).parent().parent();
-					$obtiene_datos_lote($tr_padre);
-				}else{
-					jAlert("Ingresa un n&uacute;mero de Lote.", 'Atencion!');
-				}
-				return false;
-			}
-			
-		});
-	}
 	
 	
 	
@@ -518,171 +481,72 @@ $(function() {
 	
 	
 	
-	//buscador de de Datos del Lote
-	$obtiene_datos_lote = function($tr_padre){
-		var numero_lote = $tr_padre.find('input[name=lote_int]').val();
-		var id_producto = $tr_padre.find('input[name=id_prod_grid]').val();
-		var $select_almacen_origen = $('#forma-invcontrolcostos-window').find('select[name=select_almacen_origen]');
-		var encontrado=0;
-		$tabla_padre = $tr_padre.parent();
-		
-		//buscar el numero de lote en la tabla
-		$tabla_padre.find('input[name=lote_int]').each(function (index){
-			if($(this).val() == numero_lote ){
-				encontrado++;
-			}
-		});
-		
-		//si el numero de lote solo esta una vez es valido, dos veces ya no es valido
-		if(parseInt(encontrado)<=1){
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosLote.json';
-			$arreglo = {'no_lote':numero_lote,
-						'id_producto':id_producto,
-						'id_almacen':$select_almacen_origen.val(),
-						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-						};
-			
-			$.post(input_json,$arreglo,function(entry){
-				//verifica si el arreglo  retorno datos
-				if (entry['Lote'].length > 0){
-					
-					//crea el tr con los datos del producto seleccionado
-					$.each(entry['Lote'],function(entryIndex,lote){
-						//$tr_padre.find('input[name=lote_int]').val(lote['']);
-						$tr_padre.find('input[name=exis_lote]').val(lote['exis_lote']);
-						$tr_padre.find('input[name=pedimento]').val(lote['pedimento']);
-						$tr_padre.find('input[name=caducidad]').val(lote['caducidad']);
-						$tr_padre.find('input[name=cant_sur]').val(lote['exis_lote']);
-					});//termina llamada json
-					
-				}else{
-					jAlert("El n&uacute;mero de Lote no existe para &eacute;ste producto en el Almacen de Salida.", 'Atencion!');
-					$tr_padre.find('input[name=lote_int]').select();
-				}
-			});
-		}else{
-			jAlert("El n&uacute;mero de Lote  [ "+numero_lote+" ]  ya se encuentra en la lista.", 'Atencion!');
-		}
-		
-	}//termina buscador de datos del Lote
-	
     
 	
-	//funcion que genera tr para agregar numero de lote
-	$genera_tr = function(noTr, producto_id, codigo, descripcion, unidad, presentacion, orden_compra, factura_prov, moneda, costo, tipo_cambio, costo_importacion, costo_directo, costo_referencia, precio_minimo ){
+	//funcion que genera tr para agregar 
+	$genera_tr = function(noTr, producto_id, codigo, descripcion, unidad, presentacion, orden_compra, factura_prov, moneda, costo, tipo_cambio, costo_importacion, costo_directo, costo_referencia, precio_minimo, moneda_pm ){
 		var tr_prod='';
 			tr_prod += '<tr>';
-			tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+			tr_prod += '<td width="80" class="grid" style="font-size: 11px; border:1px solid #C1DAD7; text-align:left;">';
 				tr_prod += '<input type="hidden" name="no_tr" id="notr" value="'+ noTr +'">';
 				tr_prod += '<input type="hidden" name="id_prod" id="idprod" value="'+  producto_id +'">';
-				tr_prod += '<input type="text"  name="sku" value="'+codigo+'"  id="codigo'+ noTr +'" class="borde_oculto" style="width:76px;" readOnly="true">';
+				//tr_prod += '<input type="text"  name="sku" value="'+codigo+'"  id="codigo'+ noTr +'" class="borde_oculto" style="width:76px;" readOnly="true">';
+				tr_prod += codigo;
 			tr_prod += '</td>';
-			tr_prod += '<td width="150" class="grid" align="right" style="font-size:11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="desc" value="'+descripcion+'" id="desc'+ noTr +'" class="borde_oculto" style="width:146px;" readOnly="true">';
+			tr_prod += '<td width="148" class="grid" align="right" style="font-size:11px;  border:1px solid #C1DAD7;">';
+				tr_prod += '<input type="text" name="desc" value="'+descripcion+'" id="desc'+ noTr +'" class="borde_oculto" style="width:145px;" readOnly="true">';
 			tr_prod += '</td>';
 			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 				tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="'+unidad+'" readOnly="true" style="width:66px;">';
 			tr_prod += '</td>';
-			tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+			tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:left;">';
 				tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="0">';
-				tr_prod += '<input type="text" name="presentacion" class="borde_oculto" value="'+presentacion+'" readOnly="true" style="width:76px;">';
+				//tr_prod += '<input type="text" name="presentacion" class="borde_oculto" value="'+presentacion+'" readOnly="true" style="width:76px;">';
+				tr_prod += presentacion;
 			tr_prod += '</td>';
-			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="oc" class="borde_oculto" value="'+orden_compra+'" readOnly="true" style="width:66px;">';
+			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:left;">';
+				//tr_prod += '<input type="text" name="oc" class="borde_oculto" value="'+orden_compra+'" readOnly="true" style="width:66px;">';
+				tr_prod += orden_compra;
 			tr_prod += '</td>';
-			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="fac" class="borde_oculto" value="'+factura_prov+'" readOnly="true" style="width:66px;">';
+			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:left;">';
+				//tr_prod += '<input type="text" name="fac" class="borde_oculto" value="'+factura_prov+'" readOnly="true" style="width:66px;">';
+				tr_prod += factura_prov;
 			tr_prod += '</td>';
-			tr_prod += '<td width="50" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="moneda" class="borde_oculto" value="'+moneda+'" readOnly="true" style="width:46px;">';
+			tr_prod += '<td width="40" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+				//tr_prod += '<input type="text" name="moneda" class="borde_oculto" value="'+moneda+'" readOnly="true" style="width:46px;">';
+				tr_prod += moneda;
 			tr_prod += '</td>';
-			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="tc" class="borde_oculto" value="'+tipo_cambio+'" readOnly="true" style="width:56px;">';
-			tr_prod += '</td>';
-			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="costo" class="borde_oculto" value="'+costo+'" readOnly="true" style="width:56px;">';
-			tr_prod += '</td>';
-			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="ci" class="borde_oculto" value="'+costo_importacion+'" readOnly="true" style="width:56px;">';
-			tr_prod += '</td>';
-			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="cd" class="borde_oculto" value="'+costo_directo+'" readOnly="true" style="width:56px;">';
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
+				//tr_prod += '<input type="text" name="tc" class="borde_oculto" value="'+tipo_cambio+'" readOnly="true" style="width:56px;">';
+				tr_prod +=tipo_cambio;
 			tr_prod += '</td>';
 			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="cr" class="borde_oculto" value="'+costo_referencia+'" readOnly="true" style="width:56px;">';
+				//tr_prod += '<input type="text" name="costo" class="borde_oculto" value="'+costo+'" readOnly="true" style="width:56px;">';
+				tr_prod +=costo;
 			tr_prod += '</td>';
-			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<input type="text" name="pm" class="borde_oculto" value="'+precio_minimo+'" readOnly="true" style="width:56px;">';
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
+				//tr_prod += '<input type="text" name="ci" class="borde_oculto" value="'+costo_importacion+'" readOnly="true" style="width:56px;">';
+				tr_prod +=costo_importacion;
 			tr_prod += '</td>';
-			
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
+				//tr_prod += '<input type="text" name="cd" class="borde_oculto" value="'+costo_directo+'" readOnly="true" style="width:56px;">';
+				tr_prod +=costo_directo;
+			tr_prod += '</td>';
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
+				//tr_prod += '<input type="text" name="cr" class="borde_oculto" value="'+costo_referencia+'" readOnly="true" style="width:56px;">';
+				tr_prod +=costo_referencia;
+			tr_prod += '</td>';
+			tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
+				//tr_prod += '<input type="text" name="pm" class="borde_oculto" value="'+precio_minimo+'" readOnly="true" style="width:56px;">';
+				tr_prod +=precio_minimo;
+			tr_prod += '</td>';
+			tr_prod += '<td width="45" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+				tr_prod += moneda_pm;
+			tr_prod += '</td>';
 		tr_prod += '</tr>';
 		
 		return tr_prod;
 	}
-	
-	
-	
-	//funcion para agregar lote y eliminar
-	agregar_lote_y_eliminar = function($grid_productos,tipo_registro, trCount){
-		//agregar nuevo lote
-		$grid_productos.find('.agrega_lote'+ trCount ).click(function(e){
-			e.preventDefault();
-			$(this).hide();
-			
-			$tr_padre=$(this).parent().parent();
-			
-			var id_detalle_lot = 0;
-			var id_producto = $tr_padre.find('input[name=id_prod_grid]').val();
-			var codigo = $tr_padre.find('input[name=sku]').val();
-			var titulo = $tr_padre.find('input[name=titulo]').val();
-			var unidad_medida = $tr_padre.find('input[name=unidad]').val();
-			var id_detalle_os = $tr_padre.find('input[name=id_detalle_os]').val();
-			var id_almacen = $tr_padre.find('input[name=id_alm]').val();
-			var lote_int = ' ';
-			var cant_lote=0;
-			var pedimento='';
-			var caducidad='';
-			
-			var noTr = $("tr", $grid_productos).size();
-			noTr++;
-			
-			//aqui es para crear nuevos registros del lote
-			tr_lote = $genera_tr_para_numero_de_lote(tipo_registro, id_detalle_os, id_producto, codigo, titulo, unidad_medida, id_detalle_lot, id_almacen, lote_int,cant_lote, pedimento, caducidad, noTr);
-			
-			//agregar tr_lote despues de tr_padre
-			$(tr_lote).insertAfter($tr_padre);
-			
-			//aplicar click al nuevo registro
-			//se hace una llamada recursiva a  la funcion agregar_lote
-			agregar_lote_y_eliminar($grid_productos,tipo_registro, noTr);
-			$aplicar_evento_keypress( $grid_productos.find('.cant_sur'+ noTr ) );
-			$aplicar_evento_blur( $grid_productos.find('.cant_sur'+ noTr ) );
-			$aplicar_evento_focus( $grid_productos.find('.cant_sur'+ noTr ) );
-			
-			$aplicar_evento_focus_input_lote($grid_productos.find('.lote_int'+ noTr ));
-			$aplicar_evento_blur_input_lote($grid_productos.find('.lote_int'+ noTr ));
-			$aplicar_evento_keypress_input_lote($grid_productos.find('.lote_int'+ noTr ));
-			$aplicar_evento_click_input_lote($grid_productos.find('.lote_int'+ noTr ));
-		});
-		
-		
-		//eliminar un lote
-		$grid_productos.find('.elimina_lote'+ trCount ).click(function(e){
-			e.preventDefault();
-			$tr_padre=$(this).parent().parent();
-			var id_detalle_lot = $tr_padre.find('input[name=id_detalle_lot]').val();//tomar el id_detalle
-			var tipo_registro = $tr_padre.find('input[name=tipo]').val();//tomar el el tipo de registro
-			$tr_padre.find('input').val('');//asignar vacio a todos los input del tr
-			$tr_padre.find('input[name=eliminado]').val('0');//asignamos 0 para indicar que se ha eliminado
-			$tr_padre.find('input[name=id_detalle_lot]').val(id_detalle_lot);//devolver el id_detalle, este es necesario para actualizar el campo
-			$tr_padre.find('input[name=tipo]').val(tipo_registro);
-			$tr_padre.hide();//ocultar el tr
-		});
-	}
-	
-	//p36
-	
-	//2
 	
 	
 	
@@ -737,9 +601,15 @@ $(function() {
 		var $check_simulacion = $('#forma-invcontrolcostos-window').find('input[name=check_simulacion]');
 		
 		var $busqueda = $('#forma-invcontrolcostos-window').find('#busqueda');
+		var $pdf = $('#forma-invcontrolcostos-window').find('#pdf');
+		var $excel = $('#forma-invcontrolcostos-window').find('#excel');
+		var $aplicar = $('#forma-invcontrolcostos-window').find('#aplicar');
 		
 		//tabla contenedor del listado de productos
 		var $grid_productos = $('#forma-invcontrolcostos-window').find('#grid_productos');
+		var $etiqueta_encabezado_tipo_costo = $('#forma-invcontrolcostos-window').find('#tipo_costo');
+		
+		
 		
 		var $cerrar_plugin = $('#forma-invcontrolcostos-window').find('#close');
 		var $cancelar_plugin = $('#forma-invcontrolcostos-window').find('#boton_cancelar');
@@ -754,9 +624,30 @@ $(function() {
 		});
 		
 		$radio_costo_ultimo.attr('checked',  true );
-		$costo_importacion.val(0);
-		$costo_directo.val(0);
-		$precio_minimo.val(0);
+		$costo_importacion.val(parseFloat(0).toFixed(2));
+		$costo_directo.val(parseFloat(0).toFixed(2));
+		$precio_minimo.val(parseFloat(0).toFixed(2));
+		$tipo_cambio.val(parseFloat(0).toFixed(4));
+		
+		$permitir_solo_numeros($costo_importacion);
+		$permitir_solo_numeros($costo_directo);
+		$permitir_solo_numeros($precio_minimo);
+		$permitir_solo_numeros($tipo_cambio);
+		
+		$aplicar_evento_focus( $costo_importacion );
+		$aplicar_evento_focus( $costo_directo );
+		$aplicar_evento_focus( $precio_minimo );
+		$aplicar_evento_focus( $tipo_cambio );
+		
+		$aplicar_evento_blur( $costo_importacion );
+		$aplicar_evento_blur( $costo_directo );
+		$aplicar_evento_blur( $precio_minimo );
+		//$aplicar_evento_blur( $tipo_cambio );
+		
+		$tipo_cambio.css({'background' : '#F0F0F0'});
+		$tipo_cambio.attr('readonly',true);
+		//$pdf
+		$excel.hide();//oculto por lo pronto mientras no se utiliza
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -790,35 +681,10 @@ $(function() {
 						
 						//alert(tmp.split(':')[0]);
 						
-						var campo = tmp.split(':')[0];
-						var $campo_input;
-						var cantidad_existencia=0;
-						var  width_td=0;
-						
-						if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 5) == 'costo')){
-							
-							$('#forma-invcontrolcostos-window').find('#div_warning_grid').css({'display':'block'});
-							$campo_input = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
-							
-							var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();
-							var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
-							
-							var tr_warning = '<tr>';
-									tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-									tr_warning += '<td width="90"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:88px; color:red"></td>';
-									tr_warning += '<td width="160"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:160px; color:red"></td>';
-									tr_warning += '<td width="'+width_td+'"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:'+(parseInt(width_td) - 5)+'px; color:red"></td>';
-							tr_warning += '</tr>';
-							
-							$('#forma-invcontrolcostos-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
-						}
 						
 						
 					}
 				}
-				
-				$grid_warning.find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
-				$grid_warning.find('tr:even').find('td').css({'background-color' : '#e7e8ea'});
 			}
 		}
 		
@@ -919,6 +785,62 @@ $(function() {
 		},"json");//termina llamada json
 		
 		
+		
+		
+		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+		$tipo_cambio.blur(function(e){
+			if(parseFloat($tipo_cambio.val())==0||$tipo_cambio.val()==""){
+				$tipo_cambio.val(0);
+			}
+			$(this).val(parseFloat($(this).val()).toFixed(4));
+		});
+		
+		
+	
+		
+		//click al radio buton de Costo Promedio
+		$radio_costo_promedio.click(function(event){
+			if($check_simulacion.is(':checked')){
+				$tipo_cambio.val("1.0000");
+				$tipo_cambio.css({'background' : '#F0F0F0'});
+				$tipo_cambio.attr('readonly',true);
+			}
+			$etiqueta_encabezado_tipo_costo.html("C.&nbsp;P.");
+		});
+		
+		//click al radio buton de Costo Ultimo
+		$radio_costo_ultimo.click(function(event){
+			if($check_simulacion.is(':checked')){
+				//quitar propiedad de solo lectura
+				$tipo_cambio.val("1.0000");
+				$tipo_cambio.css({'background' : '#ffffff'});
+				$tipo_cambio.removeAttr('readonly');
+			}
+			$etiqueta_encabezado_tipo_costo.html("C.&nbsp;U.");
+		});
+		
+		//click al check de Simulacion
+		$check_simulacion.click(function(event){
+			if($(this).is(':checked')){
+				if($radio_costo_ultimo.is(':checked')){
+					//quitar propiedad de solo lectura
+					$tipo_cambio.val("1.0000");
+					$tipo_cambio.css({'background' : '#ffffff'});
+					$tipo_cambio.removeAttr('readonly');
+					//$submit_actualizar.attr('disabled','-1');//deshabilitar
+					$submit_actualizar.hide();
+				}
+			}else{
+				$tipo_cambio.val("1.0000");
+				$tipo_cambio.css({'background' : '#F0F0F0'});
+				$tipo_cambio.attr('readonly',true);
+				//$submit_actualizar.removeAttr('disabled');//habilitar
+				$submit_actualizar.show();
+			}
+		});
+		
+		
+		
 		//buscar producto
 		$buscar_producto.click(function(event){
 			event.preventDefault();
@@ -959,6 +881,7 @@ $(function() {
 							'importacion':$costo_importacion.val(),
 							'directo':$costo_directo.val(),
 							'pminimo':$precio_minimo.val(),
+							'tc':$tipo_cambio.val(),
 							'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
 						
@@ -979,20 +902,86 @@ $(function() {
 					var costo_directo=prod['costo_directo'];
 					var costo_referencia=prod['costo_referencia'];
 					var precio_minimo=prod['precio_minimo'];
+					var moneda_pm=prod['moneda_pm'];
 					
 					var noTr = $("tr", $grid_productos).size();
 					noTr++;
 					
-					var nuevo_tr = $genera_tr(noTr, producto_id, codigo, descripcion, unidad, presentacion, orden_compra, factura_prov, moneda, costo, tipo_cambio, costo_importacion, costo_directo, costo_referencia, precio_minimo);
+					var nuevo_tr = $genera_tr(noTr, producto_id, codigo, descripcion, unidad, presentacion, orden_compra, factura_prov, moneda, costo, tipo_cambio, costo_importacion, costo_directo, costo_referencia, precio_minimo, moneda_pm);
 					//alert(nuevo_tr);
 					$grid_productos.append(nuevo_tr);//agrega el tr a la tabla
 					
 				});
-				
 			});
-			
 		});
 		
+		
+		//al darle aplicar en Simulacion, ejecutamos el click del boton Busqueda
+		$aplicar.click(function(event){
+			$('#forma-invcontrolcostos-window').find('div.interrogacion').css({'display':'none'});//desaparecer los warning
+			var ejecutar=false;
+			
+			if(parseInt($("tr", $grid_productos).size())>0){
+				if($check_simulacion.is(':checked')){
+					if(parseFloat($tipo_cambio.val()) > 0 ){
+						ejecutar=true;
+					}else{
+						ejecutar=false;
+						//visualizar el warning
+						$('#forma-invcontrolcostos-window').find('img[rel=warning_tipocambio]')
+						.parent()
+						.css({'display':'block'})
+						.easyTooltip({tooltipId: "easyTooltip2",content: "El Tipo de Cambio debe ser mayor que cero para la Simulaci&oacute;n."});
+					}
+					
+					if(ejecutar){
+						if(parseFloat($precio_minimo.val()) > 0 ){
+							ejecutar=true;
+						}else{
+							ejecutar=false;
+							jAlert("El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero.", 'Atencion!');
+							
+							//visualizar el warning
+							$('#forma-invcontrolcostos-window').find('img[rel=warning_preciominimo]')
+							.parent()
+							.css({'display':'block'})
+							.easyTooltip({tooltipId: "easyTooltip2",content: "El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero."});
+						}
+					}
+					
+					if(ejecutar){
+						$busqueda.trigger('click');
+					}
+				}else{
+					jAlert("El boton Aplicar es para realizar una Simulaci&oacute;n de c&aacute;lculo de costos.\nSeleccione la casilla de Simulaci&oacute;n y haga click en el boton Aplicar.", 'Atencion!');
+				}
+			}else{
+				jAlert("No hay productos en el listado.", 'Atencion!');
+			}
+		});
+		
+		
+		
+		$submit_actualizar.bind('click',function(){
+			var trCount = $("tr", $grid_productos).size();
+			if(parseInt(trCount) > 0){
+				if(parseFloat($precio_minimo.val()) > 0 ){
+					return true;
+				}else{
+					jAlert("El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero.", 'Atencion!');
+					
+					//visualizar el warning
+					$('#forma-invcontrolcostos-window').find('img[rel=warning_preciominimo]')
+					.parent()
+					.css({'display':'block'})
+					.easyTooltip({tooltipId: "easyTooltip2",content: "El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero."});
+					return false;
+				}
+			}else{
+				jAlert("No hay datos para actualizar", 'Atencion!');
+				return false;
+			}
+		});
 		
 		
 		//cerrar plugin
