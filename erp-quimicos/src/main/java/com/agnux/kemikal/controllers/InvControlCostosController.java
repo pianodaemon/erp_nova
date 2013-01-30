@@ -332,6 +332,7 @@ public class InvControlCostosController {
             @RequestParam(value="importacion", required=true) String importacion,
             @RequestParam(value="directo", required=true) String directo,
             @RequestParam(value="pminimo", required=true) String pminimo,
+            @RequestParam(value="tc", required=true) String tc,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
         ) {
@@ -361,8 +362,8 @@ public class InvControlCostosController {
             pminimo="0";
         }
         
-        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___"+producto+"___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo;
-                    
+        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___"+producto+"___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tc;
+        
         productos = this.getInvDao().selectFunctionForInvReporte(app_selected, data_string);
         
         jsonretorno.put("Grid", productos);
@@ -370,6 +371,69 @@ public class InvControlCostosController {
         return jsonretorno;
     }
     
+    
+
+                    
+                    
+    //Actualizar registros
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="select_tipo_prod", required=true) String select_tipo_prod,
+            @RequestParam(value="select_marca", required=true) String select_marca,
+            @RequestParam(value="select_familia", required=true) String select_familia,
+            @RequestParam(value="select_subfamilia", required=true) String select_subfamilia,
+            @RequestParam(value="id_producto", required=true) String id_producto,
+            @RequestParam(value="select_presentacion", required=true) String select_presentacion,
+            @RequestParam(value="tipo_costo", required=true) String tipo_costo,
+            @RequestParam(value="costo_importacion", required=true) String costo_importacion,
+            @RequestParam(value="costo_directo", required=true) String costo_directo,
+            @RequestParam(value="precio_minimo", required=true) String precio_minimo,
+            @RequestParam(value="tipo_cambio", required=true) String tipo_cambio,
+            @ModelAttribute("user") UserSessionData user,
+            Model model
+        ) {
+            
+            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            HashMap<String, String> succes = new HashMap<String, String>();
+            String extra_data_array = "'sin datos'";
+            String actualizo="0";
+            
+            
+            Integer app_selected = 125; //aplicativo Control de Costos
+            String command_selected = "new";
+            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            
+            command_selected = "edit";
+            
+            //la accion es para confirmar
+            String data_string = 
+                    app_selected+"___"+
+                    command_selected+"___"+
+                    id_usuario+"___"+
+                    select_tipo_prod+"___"+
+                    select_marca+"___"+
+                    select_familia+"___"+
+                    select_subfamilia+"___"+
+                    id_producto+"___"+
+                    select_presentacion+"___"+
+                    tipo_costo+"___"+
+                    costo_importacion+"___"+
+                    costo_directo+"___"+
+                    precio_minimo;
+            
+            actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
+            
+            
+            if(actualizo.equals("1")){
+                jsonretorno.put("success","true");
+            }else{
+                jsonretorno.put("success","false");
+            }
+            
+            log.log(Level.INFO, "Salida json {0}", actualizo);
+        return jsonretorno;
+    }
+
     
     
     

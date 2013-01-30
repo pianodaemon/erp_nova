@@ -80,7 +80,7 @@ public class InvSpringDao implements InvInterfaceDao{
     public String selectFunctionForApp_MovimientosInventario(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from inv_adm_movimientos('"+campos_data+"',array["+extra_data_array+"]);";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        //System.out.println("Ejacutando Guardar:"+sql_to_query);
+        System.out.println("MovimientosInventario:"+sql_to_query);
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -101,7 +101,7 @@ public class InvSpringDao implements InvInterfaceDao{
         String sql_to_query = "";
         
         if(id_app==125){
-            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision ) ORDER BY descripcion;";
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY descripcion;";
             System.out.println("InvReporte: "+sql_to_query);
             
             ArrayList<HashMap<String, String>> hm125 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -125,7 +125,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         row.put("costo_directo",StringHelper.roundDouble(rs.getDouble("costo_directo"),2));
                         row.put("costo_referencia",StringHelper.roundDouble(rs.getDouble("costo_referencia"),2));
                         row.put("precio_minimo",StringHelper.roundDouble(rs.getDouble("precio_minimo"),2));
-                        
+                        row.put("moneda_pm",rs.getString("moneda_pm"));
                         return row;
                     }
                 }
