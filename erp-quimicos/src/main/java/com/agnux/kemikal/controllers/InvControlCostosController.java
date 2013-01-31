@@ -5,13 +5,16 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
+import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
+import com.agnux.kemikal.reportes.PdfInvControlCosto;
 import com.agnux.kemikal.reportes.PdfOrdenSalida;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
@@ -19,7 +22,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
@@ -88,14 +93,23 @@ public class InvControlCostosController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", InvControlCostosController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
-        //infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("folio", "Folio:90");
-        infoConstruccionTabla.put("fecha","Fecha:90");
-        infoConstruccionTabla.put("familia", "Orden Compra:150");
-        infoConstruccionTabla.put("marca", "Orden Compra:150");
-        infoConstruccionTabla.put("tipo_prod", "Tipo de Producto:150");
-        infoConstruccionTabla.put("tipo", "Tipo de Costo:120");
+        //infoConstruccionTabla.put("id", "Acciones:70");
+        infoConstruccionTabla.put("codigo", "C&oacute;digo:90");
+        infoConstruccionTabla.put("descripcion","Descripci&oacute;n:150");
+        infoConstruccionTabla.put("unidad", "Unidad:80");
+        infoConstruccionTabla.put("presentacion", "Presentaci&oacute;n:100");
+        infoConstruccionTabla.put("orden_compra", "O.C.:90");
+        infoConstruccionTabla.put("factura_prov", "Fac. Prov.:90");
+        infoConstruccionTabla.put("moneda", "Moneda:65");
+        infoConstruccionTabla.put("tipo_cambio", "T.C.:70");
+        infoConstruccionTabla.put("costo", "C.U.:70");
+        infoConstruccionTabla.put("costo_importacion", "C.I.:70");
+        infoConstruccionTabla.put("costo_directo", "C.D.:70");
+        infoConstruccionTabla.put("costo_referencia", "C.R.:70");
+        infoConstruccionTabla.put("precio_minimo", "P.M..:90");
+        infoConstruccionTabla.put("moneda_pm", "Moneda&nbsp;P.M.:90");
+        
+        
         
         ModelAndView x = new ModelAndView("invcontrolcostos/startup", "title", "Control de Costos");
         
@@ -136,27 +150,39 @@ public class InvControlCostosController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo Centro de Costos
-        Integer app_selected = 94;
-        //Integer app_selected = 125;
+        //aplicativo Constorl de Costos
+        Integer app_selected = 125;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
-        String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
-        String orden_compra = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("orden_compra")))+"%";
-        String folio_doc = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio_doc")))+"%";
-        String cliente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cliente")))+"%";
-        String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
-        String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
-        String tipo_doc = StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo_doc")));
-        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
+        String tipo_producto = StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo_producto")));
+        String familia = StringHelper.isNullString(String.valueOf(has_busqueda.get("familia")));
+        String subfamilia = StringHelper.isNullString(String.valueOf(has_busqueda.get("subfamilia")));
+        String marca = StringHelper.isNullString(String.valueOf(has_busqueda.get("marca")));
+        String presentacion = StringHelper.isNullString(String.valueOf(has_busqueda.get("presentacion")));
+        String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
+        String ano = StringHelper.isNullString(String.valueOf(has_busqueda.get("ano")));
+        String mes = StringHelper.isNullString(String.valueOf(has_busqueda.get("mes")));
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+orden_compra+"___"+folio_doc+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+tipo_doc+"___"+codigo;
+        String tipo_costo="1";//calculo a partir del ultimo costo
+        String importacion="0";
+        String directo="0";
+        String pminimo="0";
+        String simulacion="false";
+        String tipo_cambio="0";
+        
+        //esta parte no es igual a todos los aplicativos porque se cambia el procedimiento de busqueda,
+        //Se utiliza el mismo procedimiento que se utiliza en el plugin de Control de Costos.
+        //se tomo la decision de utilizar el mismo proc porque se hace varios calculos y asi evitamos volver a construir codigo para el grid
+        int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
+        
+        String data_string = app_selected+"___"+id_usuario+"___"+tipo_producto+"___"+marca+"___"+familia+"___"+subfamilia+"___"+producto+"___"+presentacion+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tipo_cambio+"___"+ano+"___"+mes;
+        
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
-        int total_items = this.getInvDao().countAll(data_string);
+        int total_items = this.getInvDao().countAllControlCostos(data_string);
         
         //calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
@@ -164,10 +190,8 @@ public class InvControlCostosController {
         //variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
         DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags,id_user_cod);
         
-        int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
-        
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getInvDao().getInvOrdenSalida_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data",this.getInvDao().getInvControlCostos_PaginaGrid(data_string, offset, items_por_pag, orderby, desc) );
         
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
@@ -176,6 +200,39 @@ public class InvControlCostosController {
     }
     
     
+    //obtiene datos Buscador principal
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosBuscadorPrincipal.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosBuscadorPrincipalJson(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> marcas = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> familias = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        String id_tipo_producto = "1";//Tipo de Producto TERMINADO(Para que se traiga por default las Familias de Productos Terminados)
+        
+        tiposProducto = this.getInvDao().getProducto_Tipos();
+        marcas = this.getInvDao().getProducto_Marcas(id_empresa);
+        familias = this.getInvDao().getInvProdSubFamiliasByTipoProd(id_empresa, id_tipo_producto);
+        
+        //Se le pasa como parametro el cero para que devuelva todas las presentaciones 
+        presentaciones = this.getInvDao().getProducto_Presentaciones(0);
+        
+        jsonretorno.put("Anios", this.getInvDao().getInvControlCostos_Anios());
+        jsonretorno.put("Marcas", marcas);
+        jsonretorno.put("Familias", familias);
+        jsonretorno.put("ProdTipos", tiposProducto);
+        jsonretorno.put("Presentaciones", presentaciones);
+        return jsonretorno;
+    }
     
     
     
@@ -350,6 +407,12 @@ public class InvControlCostosController {
         //aplicativo Control de Costos
         Integer app_selected = 125;
         
+        //estos dos parematros se necesitan pero no se utilizan en esta parte,
+        //por talñ motivo se le pasa cero por default
+        //estos parametros son utilizados en el buscador del grid y paginado porque se utiliza el mismo procedimiento
+        String ano="0";
+        String mes="0";
+        
         if(importacion.equals("")){
             importacion="0";
         }
@@ -362,7 +425,8 @@ public class InvControlCostosController {
             pminimo="0";
         }
         
-        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___"+producto+"___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tc;
+        
+        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___%"+producto+"%___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tc+"___"+ano+"___"+mes;
         
         productos = this.getInvDao().selectFunctionForInvReporte(app_selected, data_string);
         
@@ -372,7 +436,7 @@ public class InvControlCostosController {
     }
     
     
-
+    
                     
                     
     //Actualizar registros
@@ -405,24 +469,9 @@ public class InvControlCostosController {
             
             command_selected = "edit";
             
-            //la accion es para confirmar
-            String data_string = 
-                    app_selected+"___"+
-                    command_selected+"___"+
-                    id_usuario+"___"+
-                    select_tipo_prod+"___"+
-                    select_marca+"___"+
-                    select_familia+"___"+
-                    select_subfamilia+"___"+
-                    id_producto+"___"+
-                    select_presentacion+"___"+
-                    tipo_costo+"___"+
-                    costo_importacion+"___"+
-                    costo_directo+"___"+
-                    precio_minimo;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+select_tipo_prod+"___"+select_marca+"___"+select_familia+"___"+select_subfamilia+"___"+id_producto+"___"+select_presentacion+"___"+tipo_costo+"___"+costo_importacion+"___"+costo_directo+"___"+precio_minimo;
             
             actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
-            
             
             if(actualizo.equals("1")){
                 jsonretorno.put("success","true");
@@ -437,6 +486,84 @@ public class InvControlCostosController {
     
     
     
+    
+    @RequestMapping(value = "/getPdfReporteCostos/{cadena}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getPdfReporteCostos(
+                @PathVariable("cadena") String cadena,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request, 
+                HttpServletResponse response, 
+                Model model
+        )throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> datos = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
+        Integer app_selected = 125; //Control de Costos
+        
+        System.out.println("Generando PDF Ajuste Inventario");
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        //cadena de parametros de la busqueda
+        String data_string = app_selected+"___"+id_usuario+"___"+cadena+"___"+0+"___"+0;
+        
+        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+        String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+        String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
+        File file_dir_tmp = new File(dir_tmp);
+        String file_name = "calculo_costos"+rfc_empresa+".pdf";
+        
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+        
+        String nombreMes= TimeHelper.ConvertNumToMonth(Integer.parseInt(TimeHelper.getMesActual()));
+        
+        SimpleDateFormat formato = new SimpleDateFormat("'Impreso el' d 'de "+nombreMes+" del ' yyyy 'a las' HH:mm:ss 'hrs.'");
+        String impreso_en = formato.format(new Date());
+        
+        String cad[] = cadena.split("___");
+        
+        if(cad[7].equals("true")){
+            datos.put("titulo_reporte", "Reporte de Simulación de Cálculo de Costos");
+        }else{
+            datos.put("titulo_reporte", "Reporte de Cálculo de Costos");
+        }
+        datos.put("periodo", impreso_en);
+        datos.put("empresa", razon_social_empresa);
+        datos.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
+        datos.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+        
+        productos = this.getInvDao().selectFunctionForInvReporte(app_selected, data_string);
+        
+        //instancia a la clase, aqui se le pasa los parametros al constructor
+        PdfInvControlCosto pdfcostos = new PdfInvControlCosto(datos, productos, fileout);
+        
+        //metodo que construye el pdf
+        pdfcostos.ViewPDF();
+        
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        int size = (int) file.length(); // Tamaño del archivo
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        response.setBufferSize(size);
+        response.setContentLength(size);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        FileCopyUtils.copy(bis, response.getOutputStream());  	
+        response.flushBuffer();
+        
+        FileHelper.delete(fileout);
+        
+        return null;        
+    }
+
     
     
     

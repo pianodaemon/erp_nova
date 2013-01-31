@@ -255,6 +255,7 @@ public class FacturasController {
     @RequestMapping(method = RequestMethod.POST, value="/datos_generador_informe.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Integer>>> get_datos_generador_informeJson(Model model) {
         HashMap<String,ArrayList<HashMap<String, Integer>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Integer>>>();
+        
         jsonretorno.put("anioinforme", this.getFacdao().getFactura_AnioInforme());
         return jsonretorno;
     }

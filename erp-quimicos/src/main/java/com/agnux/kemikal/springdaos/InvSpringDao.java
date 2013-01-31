@@ -10,6 +10,7 @@ import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -132,12 +133,6 @@ public class InvSpringDao implements InvInterfaceDao{
             );
             data=hm125;
         }
-        
-        
-        
-        
-        
-        
         
         
         return data;
@@ -6820,6 +6815,47 @@ public class InvSpringDao implements InvInterfaceDao{
     
     
     //--Métodos para Aplicativo Control de Costos---------------------------------------------------------------------------------
+    //metodo  para el grid y paginado
+    @Override
+    public ArrayList<HashMap<String, Object>> getInvControlCostos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        
+        if(orderBy.equals("id")) orderBy="descripcion";
+        
+        String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
+        System.out.println("ControlCostos_PaginaGrid: "+sql_to_query);
+        
+        ArrayList<HashMap<String, Object>> hm125 = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(pageSize),new Integer(offset)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    //row.put("producto_id",String.valueOf(rs.getInt("producto_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    //row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("orden_compra",rs.getString("orden_compra"));
+                    row.put("factura_prov",rs.getString("factura_prov"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("costo",StringHelper.roundDouble(rs.getDouble("costo"),2));
+                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
+                    row.put("costo_importacion",StringHelper.roundDouble(rs.getDouble("costo_importacion"),2));
+                    row.put("costo_directo",StringHelper.roundDouble(rs.getDouble("costo_directo"),2));
+                    row.put("costo_referencia",StringHelper.roundDouble(rs.getDouble("costo_referencia"),2));
+                    row.put("precio_minimo",StringHelper.roundDouble(rs.getDouble("precio_minimo"),2));
+                    row.put("moneda_pm",rs.getString("moneda_pm"));
+                    return row;
+                }
+            }
+        );
+        return hm125;
+    }
+    
+    
+    
+    
     
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProductosParaControlCostos(String marca, String familia, String subfamilia, String sku, String tipo, String descripcion, Integer id_empresa) {
@@ -6883,6 +6919,38 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
+    
+    
+    
+    @Override
+    public int countAllControlCostos(String data_string) {
+        String sql_to_query = "SELECT COUNT(producto_id) FROM (select producto_id from inv_reporte('"+data_string+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  )) as sbt;";
+        
+        int rowCount = this.getJdbcTemplate().queryForInt(sql_to_query);
+        return rowCount;
+    }
+    
+    
+    //esto es para cargar el select de años del Buscador en el paginado
+    @Override
+    public ArrayList<HashMap<String, String>>  getInvControlCostos_Anios() {
+        ArrayList<HashMap<String, String>> anios = new ArrayList<HashMap<String, String>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<2; i++) {
+            HashMap<String, String> row = new HashMap<String, String>();
+            row.put("valor",String.valueOf((annio-i)));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    
+    //-----Termina Métodos para el Aplicativo Control de Costos----------------------------------------------------------------
+    
     
     
     

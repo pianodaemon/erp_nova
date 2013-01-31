@@ -92,7 +92,7 @@ public class TimeHelper {
     }
     
         
-	public static Date getFechaActual(){		
+	public static Date getFechaActual(){
 		Date fechasalida = new Date();
 		fechasalida = new Date(fechasalida.getTime());		
 		return fechasalida;

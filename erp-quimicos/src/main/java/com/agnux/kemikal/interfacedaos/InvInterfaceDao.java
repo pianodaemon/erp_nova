@@ -303,9 +303,10 @@ public interface InvInterfaceDao {
     
     
     //Metodos para Aplicativo de Control de Costos
+    public ArrayList<HashMap<String, Object>> getInvControlCostos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, String>> getBuscadorProductosParaControlCostos(String marca, String familia, String subfamilia, String sku, String tipo, String descripcion,Integer id_empresa);
-    
-    
+    public int countAllControlCostos(String data_string);
+    public ArrayList<HashMap<String, String>>  getInvControlCostos_Anios();
     
     
 }
