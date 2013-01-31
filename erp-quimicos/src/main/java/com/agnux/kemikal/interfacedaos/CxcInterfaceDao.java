@@ -83,7 +83,7 @@ public interface CxcInterfaceDao {
     
     //reporte de venta netas por producto factura
     //reporte de venta netas por producto factura
-    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia);
+    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia,Integer tipo_costo);
     public ArrayList<HashMap<String, String>> getProductoTipos();
     public ArrayList<HashMap<String, String>> getLineas();
     public ArrayList<HashMap<String, String>> getMarcas();
