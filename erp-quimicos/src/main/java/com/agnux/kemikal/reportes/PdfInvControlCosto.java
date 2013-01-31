@@ -213,10 +213,8 @@ public class PdfInvControlCosto {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            System.out.println("this.getLista_productos(): "+this.getLista_productos().size());
-            
             it = this.getLista_productos().iterator();
-           while(it.hasNext()){
+            while(it.hasNext()){
                 HashMap<String,String> map = (HashMap<String,String>)it.next();
                 
                 cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(map.get("codigo")), smallFont));
