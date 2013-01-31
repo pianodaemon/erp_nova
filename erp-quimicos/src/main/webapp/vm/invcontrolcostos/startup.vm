@@ -96,7 +96,7 @@
 				<td width="20"></td>
 				<td width="105">
 					<select name="busqueda_select_presentacion" style="width:105px;">
-						<option value="0" selected="yes">[-- --]</option>
+						<option value="1" selected="yes">[-- --]</option>
 					</select>
 				</td>
 				
