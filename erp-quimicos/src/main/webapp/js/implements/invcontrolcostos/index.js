@@ -7,17 +7,6 @@ $(function() {
 	    return work.join(',');
 	};
 	
-    //arreglo para select tipo de Documento
-    var arrayTiposDocumento = {
-				1:"Factura", 
-				2:"Remision",
-				3:"Ajuste",
-				4:"Requisicion",
-				5:"Nota de Credito"
-			};
-	
-	
-	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
     var $username = $('#header').find('#header1').find('span.username');
@@ -39,33 +28,36 @@ $(function() {
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 	
-	
 	var $cadena_busqueda = "";
+	var $busqueda_select_tipo_prod = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_tipo_prod]');
+	var $busqueda_select_familia = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_familia]');
+	var $busqueda_select_subfamilia = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_subfamilia]');
+	var $busqueda_select_marca = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_marca]');
+	var $busqueda_select_presentacion = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_presentacion]');
+	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
+	var $busqueda_select_ano = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_ano]');
+	var $busqueda_select_mes = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_mes]');
+	
 	var $campo_busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
 	var $campo_busqueda_oc = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_oc]');
-	var $campo_busqueda_select_tipo_doc = $('#barra_buscador').find('.tabla_buscador').find('select[name=select_tipo_doc]');
-	var $campo_busqueda_folio_doc = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio_doc]');
-	var $campo_busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
-	var $campo_busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
-	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
-	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
-	var tiposIva = new Array(); //este arreglo carga los select del grid cada que se agrega un nuevo producto
+	
+	//este arreglo carga el select de meses
+	var array_meses = { 0:"- Mes -",  1:"Enero",  2:"Febrero", 3:"Marzo", 4:"Abirl", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"};
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
 	
-	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "folio" + signo_separador + $campo_busqueda_folio.val() + "|";
-		valor_retorno += "orden_compra" + signo_separador + $campo_busqueda_oc.val() + "|";
-		valor_retorno += "folio_doc" + signo_separador + $campo_busqueda_folio_doc.val() + "|";
-		valor_retorno += "cliente" + signo_separador + $campo_busqueda_cliente.val()+ "|";
-		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
-		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|";
-		valor_retorno += "tipo_doc" + signo_separador + $campo_busqueda_select_tipo_doc.val() + "|";
-		valor_retorno += "codigo" + signo_separador + $campo_busqueda_codigo.val();
+		valor_retorno += "tipo_producto" + signo_separador + $busqueda_select_tipo_prod.val() + "|";
+		valor_retorno += "familia" + signo_separador + $busqueda_select_familia.val() + "|";
+		valor_retorno += "subfamilia" + signo_separador + $busqueda_select_subfamilia.val() + "|";
+		valor_retorno += "marca" + signo_separador + $busqueda_select_marca.val()+ "|";
+		valor_retorno += "presentacion" + signo_separador + $busqueda_select_presentacion.val() + "|";
+		valor_retorno += "producto" + signo_separador + $busqueda_producto.val() + "|";
+		valor_retorno += "ano" + signo_separador + $busqueda_select_ano.val() + "|";
+		valor_retorno += "mes" + signo_separador + $busqueda_select_mes.val();
 		return valor_retorno;
 	};
 	
@@ -78,34 +70,6 @@ $(function() {
 		$cadena_busqueda = cadena.toCharCode();
 		$get_datos_grid();
 	});
-	
-	$limpiar.click(function(event){
-		event.preventDefault();
-		$campo_busqueda_folio.val('');
-		$campo_busqueda_oc.val('');
-		$campo_busqueda_folio_doc.val('');
-		$campo_busqueda_cliente.val(''); 
-		$busqueda_fecha_inicial.val('');
-		$busqueda_fecha_final.val(''); 
-		$campo_busqueda_codigo.val(''); 
-		//para reiniciar el select
-		$campo_busqueda_select_tipo_doc.children().remove();
-		var select_html = '<option value="0" selected="yes">[-- --]</option>';
-		for(var i in arrayTiposDocumento){
-			select_html += '<option value="' + i + '" >' + arrayTiposDocumento[i] + '</option>';
-		}
-		$campo_busqueda_select_tipo_doc.append(select_html);
-	
-	});
-	
-	
-	$campo_busqueda_select_tipo_doc.children().remove();
-	var select_html = '<option value="0" selected="yes">[-- --]</option>';
-	for(var i in arrayTiposDocumento){
-		select_html += '<option value="' + i + '" >' + arrayTiposDocumento[i] + '</option>';
-	}
-	$campo_busqueda_select_tipo_doc.append(select_html);
-	
 	
 	
 	//visualizar  la barra del buscador
@@ -138,6 +102,116 @@ $(function() {
 			 $('#cuerpo').css({'height': pix_alto});
 		};
 	});
+	
+		
+	$cargar_datos_buscador_principal= function(){
+		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosBuscadorPrincipal.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_lineas,$arreglo,function(data){
+			$busqueda_producto.val('');
+		
+			//carga select de tipos de producto
+			$busqueda_select_tipo_prod.children().remove();
+			//var prodtipos = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
+			var prodtipos = '';
+			$.each(data['ProdTipos'],function(entryIndex,tp){
+				if(parseInt(tp['id'])==1){
+					prodtipos += '<option value="' + tp['id'] + '" selected="yes">' + tp['titulo'] + '</option>';
+				}else{
+					if(parseInt(tp['id'])!=3 && parseInt(tp['id'])!=4){
+						prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
+					}
+				}
+			});
+			$busqueda_select_tipo_prod.append(prodtipos);
+			
+			//carga select de Marcas
+			$busqueda_select_marca.children().remove();
+			var marca = '<option value="0" selected="yes"> -Marca- </option>';
+			$.each(data['Marcas'],function(entryIndex,mar){
+				marca += '<option value="' + mar['id'] + '"  >' + mar['titulo'] + '</option>';
+			});
+			$busqueda_select_marca.append(marca);
+			
+			//carga select de familas
+			$busqueda_select_familia.children().remove();
+			var familia = '<option value="0">--Familia--</option>';
+			$.each(data['Familias'],function(entryIndex,fam){
+				familia += '<option value="' + fam['id'] + '"  >' + fam['titulo'] + '</option>';
+			});
+			$busqueda_select_familia.append(familia);
+			
+			//Alimentando select de SubFamilias
+			$busqueda_select_subfamilia.children().remove();
+			var subfamilia = '<option value="0">--SubFamilia--</option>';
+			$busqueda_select_subfamilia.append(subfamilia);
+			
+			//carga select de Presentaciones
+			$busqueda_select_presentacion.children().remove();
+			var presentacion = '<option value="0">-Presentaci&oacute;n-</option>';
+			$.each(data['Presentaciones'],function(entryIndex,pres){
+				presentacion += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+			});
+			$busqueda_select_presentacion.append(presentacion);
+			
+			
+			//carga select de años
+			$busqueda_select_ano.children().remove();
+			var html_anio = '';
+			$.each(data['Anios'],function(entryIndex,anio){
+				html_anio += '<option value="' + anio['valor'] + '"  >' + anio['valor'] + '</option>';
+			});
+			$busqueda_select_ano.append(html_anio);
+			
+			//cargar select del Mes
+			$busqueda_select_mes.children().remove();
+			var select_html = '';
+			for(var i in array_meses){
+				select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
+			}
+			$busqueda_select_mes.append(select_html);
+		
+			$busqueda_select_tipo_prod.change(function(){
+				var input_json1 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFamiliasByTipoProd.json';
+				$arreglo1 = { 'tipo_prod':$busqueda_select_tipo_prod.val(), 'iu': $('#lienzo_recalculable').find('input[name=iu]').val() };
+				$.post(input_json1,$arreglo1,function(data1){
+					$busqueda_select_familia.children().remove();
+					familia_hmtl = '<option value="0">--Familia--</option>';
+					$.each(data1['Familias'],function(entryIndex,fam){
+						familia_hmtl += '<option value="' + fam['id'] + '"  >' + fam['titulo'] + '</option>';
+					});
+					$busqueda_select_familia.append(familia_hmtl);
+				});
+			});
+			
+			$busqueda_select_familia.change(function(){
+				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getSubFamiliasByFamProd.json';
+				$arreglo2 = {'fam':$busqueda_select_familia.val(),'iu': $('#lienzo_recalculable').find('input[name=iu]').val() };
+				$.post(input_json2,$arreglo2,function(data2){
+					//Alimentando select de Subfamilias
+					$busqueda_select_subfamilia.children().remove();
+					var subfamilia_hmtl = '<option value="0">--Subfmilia--</option>';
+					$.each(data2['SubFamilias'],function(dataIndex,subfam){
+						subfamilia_hmtl += '<option value="' + subfam['id'] + '"  >' + subfam['titulo'] + '</option>';
+					});
+					$busqueda_select_subfamilia.append(subfamilia_hmtl);
+				});
+			});
+				
+		});
+	}//termina funcion cargar datos buscador principal
+	
+	
+	//ejecutar la funcion cargar datos al cargar la pagina por primera vez
+	$cargar_datos_buscador_principal();
+	
+	
+	$limpiar.click(function(event){
+		event.preventDefault();
+		//ejecutar la funcion cargar datos al hacer click en Limpiar
+		$cargar_datos_buscador_principal();
+	});
+	
 	
 	$tabs_li_funxionalidad = function(){
 		var $select_prod_tipo = $('#forma-invcontrolcostos-window').find('select[name=prodtipo]');
@@ -223,77 +297,6 @@ $(function() {
 		return Fecha;
 	}
 	//----------------------------------------------------------------
-
-	$busqueda_fecha_inicial.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100});
-	});
-        
-	$busqueda_fecha_inicial.DatePicker({
-		format:'Y-m-d',
-		date: $(this).val(),
-		current: $(this).val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$busqueda_fecha_inicial.val(formated);
-			if (formated.match(patron) ){
-				var valida_fecha=mayor($busqueda_fecha_inicial.val(),mostrarFecha());
-				
-				if (valida_fecha==true){
-					jAlert("Fecha no valida",'! Atencion');
-					$busqueda_fecha_inicial.val(mostrarFecha());
-				}else{
-					$busqueda_fecha_inicial.DatePickerHide();	
-				}
-			}
-		}
-	});
-        
-	$busqueda_fecha_final.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100});
-	});
-        
-	$busqueda_fecha_final.DatePicker({
-		format:'Y-m-d',
-		date: $(this).val(),
-		current: $(this).val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$busqueda_fecha_final.val(formated);
-			if (formated.match(patron) ){
-				var valida_fecha=mayor($busqueda_fecha_final.val(),mostrarFecha());
-				
-				if (valida_fecha==true){
-					jAlert("Fecha no valida",'! Atencion');
-					$busqueda_fecha_final.val(mostrarFecha());
-				}else{
-					$busqueda_fecha_final.DatePickerHide();	
-				}
-			}
-		}
-	});
-	
 	
 	
 	
@@ -599,6 +602,8 @@ $(function() {
 		var $costo_directo = $('#forma-invcontrolcostos-window').find('input[name=costo_directo]');
 		var $precio_minimo = $('#forma-invcontrolcostos-window').find('input[name=precio_minimo]');
 		var $check_simulacion = $('#forma-invcontrolcostos-window').find('input[name=check_simulacion]');
+		var $calculo_simulacion = $('#forma-invcontrolcostos-window').find('input[name=calculo_simulacion]');
+		
 		
 		var $busqueda = $('#forma-invcontrolcostos-window').find('#busqueda');
 		var $pdf = $('#forma-invcontrolcostos-window').find('#pdf');
@@ -648,6 +653,7 @@ $(function() {
 		$tipo_cambio.attr('readonly',true);
 		//$pdf
 		$excel.hide();//oculto por lo pronto mientras no se utiliza
+		$calculo_simulacion.val(0);
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -710,7 +716,9 @@ $(function() {
 				if(parseInt(tp['id'])==1){
 					prodtipos_hmtl += '<option value="' + tp['id'] + '" selected="yes">' + tp['titulo'] + '</option>';
 				}else{
-					prodtipos_hmtl += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
+					if(parseInt(tp['id'])!=3 && parseInt(tp['id'])!=4){
+						prodtipos_hmtl += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
+					}
 				}
 			});
 			$select_tipo_prod.append(prodtipos_hmtl);
@@ -862,7 +870,11 @@ $(function() {
 			}
 			
 			if($check_simulacion.is(':checked')){
-				simulacion="true";
+				//si calculo_simulacion=1, indica que el boton BUSCAR fue activado desde el boton APLICAR,
+				//por lo tanto hay que hacer calculos de simulacion con los parametros
+				if(parseInt($calculo_simulacion.val())==1){
+					simulacion="true";
+				}
 			}
 			
 			//eliminar contenidos
@@ -875,7 +887,7 @@ $(function() {
 							'fam':$select_familia.val(),
 							'subfam':$select_subfamilia.val(),
 							'tipo_costo':tipo_costo,
-							'producto':$id_producto.val(),
+							'producto':$producto.val(),
 							'pres':$select_presentacion.val(),
 							'simulacion':simulacion,
 							'importacion':$costo_importacion.val(),
@@ -920,6 +932,9 @@ $(function() {
 		$aplicar.click(function(event){
 			$('#forma-invcontrolcostos-window').find('div.interrogacion').css({'display':'none'});//desaparecer los warning
 			var ejecutar=false;
+			//indica que la busqueda se ejecuta desde el Boton APLICAR, 
+			//por lo tanto debe hacer calculos de simulacion
+			$calculo_simulacion.val(1);
 			
 			if(parseInt($("tr", $grid_productos).size())>0){
 				if($check_simulacion.is(':checked')){
@@ -952,15 +967,63 @@ $(function() {
 					if(ejecutar){
 						$busqueda.trigger('click');
 					}
+					
 				}else{
 					jAlert("El boton Aplicar es para realizar una Simulaci&oacute;n de c&aacute;lculo de costos.\nSeleccione la casilla de Simulaci&oacute;n y haga click en el boton Aplicar.", 'Atencion!');
 				}
 			}else{
 				jAlert("No hay productos en el listado.", 'Atencion!');
 			}
+			
+			//devolvemos el valor cero para que la proxima que se ejecute el 
+			//boton BUSCAR verifique si fue ejecutado desde el Boton APLICAR
+			$calculo_simulacion.val(0);
 		});
 		
 		
+		
+		//descargar pdf 
+		$pdf.click(function(event){
+			
+			var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+			var tipo_costo=0;
+			var simulacion="false";
+			if($radio_costo_ultimo.is(':checked')){
+				tipo_costo=1;
+			}
+			
+			if($radio_costo_promedio.is(':checked')){
+				tipo_costo=2;
+			}
+			
+			if($check_simulacion.is(':checked')){
+				simulacion="true";
+			}
+			
+			if($costo_importacion.val()=='') $costo_importacion.val(0);
+			if($costo_directo.val()=='') $costo_directo.val(0);
+			if($precio_minimo.val()=='') $precio_minimo.val(0);
+			//if($producto.val()=='') $producto.val("%%");
+			
+			//aqui se construye la cadena con los parametros de la busqueda
+			var cadena = $select_tipo_prod.val()+"___"+$select_marca.val()+"___"+$select_familia.val()+"___"+$select_subfamilia.val()+"___"+$producto.val()+"___"+$select_presentacion.val()+"___"+tipo_costo+"___"+simulacion+"___"+$costo_importacion.val()+"___"+$costo_directo.val()+"___"+$precio_minimo.val()+"___"+$tipo_cambio.val();
+			
+			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfReporteCostos/'+cadena+'/'+iu+'/out.json';
+			
+			var trCount = $("tr", $grid_productos).size();
+			if(parseInt(trCount) > 0){
+				window.location.href=input_json;
+			}else{
+				jAlert("No hay datos para actualizar para generar PDF.", 'Atencion!');
+			}
+			
+			
+			//5468
+			
+			
+		});
+				
+				
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
@@ -1003,550 +1066,8 @@ $(function() {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	var carga_formainvcontrolcostos00_for_datagrid00 = function(id_to_show, accion_mode){
-		//aqui entra para eliminar una entrada
-		if(accion_mode == 'cancel'){
-			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
-			$arreglo = {'no_entrada':id_to_show,
-						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-						};
-			jConfirm('Realmente desea eliminar la entrada seleccionada?', 'Dialogo de confirmacion', function(r) {
-				if (r){
-					$.post(input_json,$arreglo,function(entry){
-						if ( entry['success'] == '1' ){
-							jAlert("La entrada fue eliminada exitosamente", 'Atencion!');
-							$get_datos_grid();
-						}
-						else{
-							jAlert("La entrada no pudo ser eliminada", 'Atencion!');
-						}
-					},"json");
-				}
-			});
-			
-		}else{
-			//aqui  entra para editar un registro
-			var form_to_show = 'formainvcontrolcostos00';
-			$('#' + form_to_show).each (function(){   this.reset(); });
-			var $forma_selected = $('#' + form_to_show).clone();
-			$forma_selected.attr({ id : form_to_show + id_to_show });
-			//var accion = "get_datos_entrada_mercancia";
-			
-			$(this).modalPanel_invcontrolcostos();
-			
-			$('#forma-invcontrolcostos-window').css({ "margin-left": -425, 	"margin-top": -230 });
-			
-			$forma_selected.prependTo('#forma-invcontrolcostos-window');
-			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
-			
-			$tabs_li_funxionalidad();
-			
-			
-			//alert(id_to_show);
-			
-			if(accion_mode == 'edit'){
-                                
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getOrdenSalida.json';
-				$arreglo = {'identificador':id_to_show,
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							};
-				
-				var $identificador = $('#forma-invcontrolcostos-window').find('input[name=identificador]');
-				var $folio_salida = $('#forma-invcontrolcostos-window').find('input[name=folio_salida]');
-				var $estatus = $('#forma-invcontrolcostos-window').find('input[name=estatus]');
-				var $accion = $('#forma-invcontrolcostos-window').find('input[name=accion]');
-				var $select_tipo_movimiento = $('#forma-invcontrolcostos-window').find('select[name=select_tipo_movimiento]');
-				
-				//campos del cliente o Proveedor
-				var $hidden_id_cliente = $('#forma-invcontrolcostos-window').find('input[name=id_cliente]');
-				var $campo_razoncliente = $('#forma-invcontrolcostos-window').find('input[name=razoncliente]');
-				var $etiqueta_origen = $('#forma-invcontrolcostos-window').find('input[name=etiqueta_origen]');
-				
-				var $select_tipo_doc = $('#forma-invcontrolcostos-window').find('select[name=select_tipodoc]');
-				var $folio_doc = $('#forma-invcontrolcostos-window').find('input[name=folio_doc]');
-				var $fecha_doc = $('#forma-invcontrolcostos-window').find('input[name=fecha_doc]');
-				var $select_moneda = $('#forma-invcontrolcostos-window').find('select[name=select_moneda]');
-				var $orden_compra = $('#forma-invcontrolcostos-window').find('input[name=orden_compra]');
-				var $folio_pedido = $('#forma-invcontrolcostos-window').find('input[name=folio_pedido]');
-				var $campo_tc = $('#forma-invcontrolcostos-window').find('input[name=tc]');
-				var $observaciones = $('#forma-invcontrolcostos-window').find('textarea[name=observaciones]');
-				var $select_almacen_origen = $('#forma-invcontrolcostos-window').find('select[name=select_almacen_origen]');
-				
-				
-				//tabla contenedor del listado de productos
-				var $grid_productos = $('#forma-invcontrolcostos-window').find('#grid_productos');
-				
-				//campos de totales
-				var $campo_subtotal = $('#forma-invcontrolcostos-window').find('input[name=subtotal]');
-				var $campo_retencion = $('#forma-invcontrolcostos-window').find('input[name=retencion]');
-				var $campo_impuesto = $('#forma-invcontrolcostos-window').find('input[name=totimpuesto]');
-				var $campo_total = $('#forma-invcontrolcostos-window').find('input[name=total]');
-				
-				var $confirmar = $('#forma-invcontrolcostos-window').find('#confirmar');
-				var $descargar_pdf = $('#forma-invcontrolcostos-window').find('#descargar_pdf');
-				
-				var $cerrar_plugin = $('#forma-invcontrolcostos-window').find('#close');
-				var $cancelar_plugin = $('#forma-invcontrolcostos-window').find('#boton_cancelar');
-				var $submit_actualizar = $('#forma-invcontrolcostos-window').find('#submit');
-				//$submit_actualizar.hide();//ocultar boton para que no permita actualizar
-				
-				$folio_doc.attr("readonly", true);
-				$orden_compra.attr("readonly", true);
-				$folio_pedido.attr("readonly", true);
-				$fecha_doc.attr("readonly", true);
-				$campo_tc.attr("readonly", true);
-				//$observaciones.attr("readonly", true);
-				$accion.val('edit');
-				$submit_actualizar.hide();
-				$descargar_pdf.attr('disabled','-1'); //deshabilitar
-				$confirmar.attr('disabled','-1'); //deshabilitar
-				
-				var respuestaProcesada = function(data){
-					if ( data['success'] == "true" ){
-						if ( $accion.val()=='edit'){
-							jAlert("La Orden de Salida "+$folio_salida.val()+" se guard&oacute; con &eacute;xito", 'Atencion!');
-						}else{
-							jAlert("Orden de Salida "+$folio_salida.val()+" se Confirmado con &eacute;xito", 'Atencion!');
-						}
-						//habilitar boton actualizar
-						$submit_actualizar.removeAttr('disabled');
-						var remove = function() { $(this).remove(); };
-						$('#forma-invcontrolcostos-overlay').fadeOut(remove);
-						$get_datos_grid();
-					}else{
-						//habilitar boton actualizar
-						$submit_actualizar.removeAttr('disabled');
-						// Desaparece todas las interrogaciones si es que existen
-						$('#forma-invcontrolcostos-window').find('div.interrogacion').css({'display':'none'});
-						$grid_productos.find('input[name=cant_sur]').css({'background' : '#ffffff'});
-						$grid_productos.find('input[name=lote_int]').css({'background' : '#ffffff'});
-						
-						$('#forma-invcontrolcostos-window').find('#div_warning_grid').css({'display':'none'});
-						$('#forma-invcontrolcostos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
-						$('#forma-invcontrolcostos-window').find('.invcontrolcostos_div_one').css({'height':'585px'});
-						
-						var valor = data['success'].split('___');
-						//muestra las interrogaciones
-						for (var element in valor){
-							tmp = data['success'].split('___')[element];
-							longitud = tmp.split(':');
-							if( longitud.length > 1 ){
-								$('#forma-invcontrolcostos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-								.parent()
-								.css({'display':'block'})
-								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-								
-								var campo = tmp.split(':')[0];
-								
-								$('#forma-invcontrolcostos-window').find('#div_warning_grid').css({'display':'block'});
-								var $campo = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
-								
-								var codigo_producto = $campo.parent().parent().find('input[name=sku]').val();
-								var titulo_producto = $campo.parent().parent().find('input[name=titulo]').val();
-								
-								var tr_warning = '<tr>';
-										tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-										tr_warning += '<td width="100"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
-										tr_warning += '<td width="200"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
-										tr_warning += '<td width="420"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:420px; color:red"></td>';
-								tr_warning += '</tr>';
-								
-								$('#forma-invcontrolcostos-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
-								
-							}
-						}
-						$('#forma-invcontrolcostos-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
-						$('#forma-invcontrolcostos-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
-					}
-				}
-				
-				var options = {dataType :  'json', success : respuestaProcesada};
-				$forma_selected.ajaxForm(options);
-				
-				//aqui se cargan los campos al editar
-				$.post(input_json,$arreglo,function(entry){
-					$identificador.attr({ 'value' : entry['Datos']['0']['id'] });
-					$folio_salida.attr({ 'value' : entry['Datos']['0']['folio'] });
-					$estatus.attr({ 'value' : entry['Datos']['0']['estado'] });
-					
-					$etiqueta_origen.attr({ 'value' : entry['Datos']['0']['origen_salida'] });
-					$hidden_id_cliente.attr({ 'value' : entry['Datos']['0']['id_cliente'] });
-					$campo_razoncliente.attr({ 'value' : entry['Datos']['0']['razon_cliente'] });
-					
-					$folio_doc.attr({ 'value' : entry['Datos']['0']['folio_doc'] });
-					$fecha_doc.attr({ 'value' : entry['Datos']['0']['fecha_doc'] });
-					$orden_compra.attr({ 'value' : entry['Datos']['0']['orden_compra'] });
-					$folio_pedido.attr({ 'value' : entry['Datos']['0']['folio_pedido'] });
-					$campo_tc.attr({ 'value' : entry['Datos']['0']['tipo_cambio'] });
-					$observaciones.text(entry['Datos']['0']['observaciones']);
-					
-					//$campo_flete.attr({ 'value' : entry['Datos']['0'][''] });
-					$campo_subtotal.attr({ 'value' : $(this).agregar_comas( parseFloat(entry['Datos']['0']['subtotal']).toFixed(2) ) });
-					$campo_retencion.attr({ 'value' : $(this).agregar_comas( parseFloat(entry['Datos']['0']['retencion']).toFixed(2) ) });
-					$campo_impuesto.attr({ 'value' : $(this).agregar_comas( parseFloat(entry['Datos']['0']['iva']).toFixed(2) ) });
-					$campo_total.attr({ 'value' : $(this).agregar_comas( parseFloat(entry['Datos']['0']['total']).toFixed(2) ) });
-
-					
-					//$campo_flete.val(parseFloat( entry['Datos']['0']['flete']).toFixed(2));
-					//tiposIva = entry['Impuestos'];//asigna los tipos de impuestos al arreglo tiposIva
-					
-					
-					//carga select tipo de Movimiento
-					$select_tipo_movimiento.children().remove();
-					var tipo_mov_hmtl = '';
-					$.each(entry['TMovInv'],function(entryIndex,tmov){
-						if(parseInt(tmov['id']) == parseInt(entry['Datos']['0']['tipo_movimiento_id'])){
-							tipo_mov_hmtl += '<option value="' + tmov['id'] + '" selected="yes">' + tmov['titulo'] + '</option>';
-						}else{
-							//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-						}
-					});
-					$select_tipo_movimiento.append(tipo_mov_hmtl);
-					
-					
-					//carga select con tipo de documento
-					$select_tipo_doc.children().remove();
-					var select_html = '';
-					for(var i in arrayTiposDocumento){
-						if(parseInt(entry['Datos']['0']['tipo_doc'])==parseInt(i)){
-							select_html += '<option value="' + i + '" selected="yes">' + arrayTiposDocumento[i] + '</option>';
-						}else{
-							//select_html += '<option value="' + i + '">' + arrayTiposDocumento[i] + '</option>';
-						}
-					}
-					$select_tipo_doc.append(select_html);
-					
-					
-					
-					
-					//carga select denominacion con todas las monedas
-					$select_moneda.children().remove();
-					//var moneda_hmtl = '<option value="0">[--   --]</option>';
-					var moneda_hmtl = '';
-					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(parseInt(moneda['id']) == parseInt(entry['Datos']['0']['moneda_id'])){
-							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-						}else{
-							//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-						}
-					});
-					$select_moneda.append(moneda_hmtl);
-					
-					
-					//carga select almacen origen
-					$select_almacen_origen.children().remove();
-					//var almacen_hmtl = '<option value="0" selected="yes">[--   --]</option>';
-					var almacen_hmtl="";
-					$.each(entry['Almacenes'],function(entryIndex,alm){
-						if(parseInt(alm['id']) == parseInt(entry['Datos'][0]['id_almacen'])){
-							almacen_hmtl += '<option value="' + alm['id'] + '"  selected="yes">' + alm['titulo'] + '</option>';
-						}else{
-							//almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
-						}
-					});
-					$select_almacen_origen.append(almacen_hmtl);
-					
-					
-					
-					if(entry['datosGrid'] != null){
-						$.each(entry['datosGrid'],function(entryIndex,prodGrid){
-							var trCount = $("tr", $grid_productos).size();
-							trCount++;
-							
-							var valor_pedimento='';
-							var tr_prod='';
-							var tr_lote='';
-							var tipo_registro='PAR';//partida
-							
-							tr_prod += '<tr>';
-								tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="hidden" name="no_tr" id="notr" value="'+ trCount +'">';
-									tr_prod += '<input type="hidden" name="tipo" id="tip" value="'+ tipo_registro +'">';
-									tr_prod += '<input type="hidden" name="id_detalle_os" id="iddetos" value="'+  prodGrid['id_detalle_osal'] +'">';
-									tr_prod += '<input type="hidden" name="id_detalle_lot" id="iddetlot" value="0">';
-									tr_prod += '<input type="hidden" name="id_alm" id="idalm" value="'+  $select_almacen_origen.val() +'">';
-									tr_prod += '<input type="hidden" name="id_prod_grid" id="idprod" value="'+  prodGrid['producto_id'] +'">';
-									tr_prod += '<input type="text"  name="sku" value="' + prodGrid['codigo'] + '" id="codigo'+ trCount +'" class="borde_oculto" style="width:76px;" readOnly="true">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="180" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="titulo" value="' + prodGrid['titulo'] + '" id="titulo'+ trCount +'"  class="borde_oculto" style="width:176px;" readOnly="true">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="' + prodGrid['unidad'] + '" readOnly="true" style="width:66px;">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="'+ prodGrid['id_presentacion'] +'">';
-									tr_prod += '<input type="text" name="presentacion" class="borde_oculto" value="' + prodGrid['presentacion'] + '" readOnly="true" style="width:66px;">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="cantidad" id="cant" value="' + $(this).agregar_comas(prodGrid['cant_fac']) + '"  class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
-									tr_prod += '<input type="hidden" name="eliminado" id="elim" value="1">';//1=registro vivo, 0=Registro eliminado
-								tr_prod += '</td>';
-								tr_prod += '<td width="85" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="costo" id="cost" value="' + $(this).agregar_comas(prodGrid['precio_unitario']) + '" class="borde_oculto" style="width:79px; text-align:right;" readOnly="true">';
-								tr_prod += '</td>';
-								
-								tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="lote_int" value=" " class="lote_int'+ trCount +'" style="width:66px; display:none;">';
-									tr_prod += '<input type="hidden" name="exis_lote" value="0" class="exis_lote'+ trCount +'">';
-									tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" value="' + $(this).agregar_comas(prodGrid['importe']) + '" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
-								tr_prod += '</td>';
-								
-								tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="cant_sur" id="cant_s" value="' + prodGrid['cant_sur'] + '" class="cant_sur'+ trCount +'" style="width:86px;" >';
-								tr_prod += '</td>';
-								
-								tr_prod += '<td width="100" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="pedimento" id="ped" value="" class="pedimento'+ trCount +'" style="width:96px; display:none;">';
-								tr_prod += '</td>';
-								
-								tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="caducidad" id="cad" value="" class="caducidad'+ trCount +'" style="width:66px; display:none;">';
-								tr_prod += '</td>';
-								
-							tr_prod += '</tr>';
-							$grid_productos.append(tr_prod);//agrega el tr a la tabla
-							
-							//aqui empieza a agregar lotes si es que el producto tiene lote
-							var id_producto = 0;
-							var id_detalle_os=0;
-							var id_detalle_lot=0;
-							var codigo="";
-							var titulo="";
-							var id_almacen = 0;
-							var lote_int = '';
-							var trCount2=0;
-							var unidad_medida='';
-							var pedimento='';
-							var caducidad='';
-							//estos  se utiliza pra nuevo lote y editar lote
-							codigo = prodGrid['codigo'];
-							titulo = prodGrid['titulo'];
-							unidad_medida = prodGrid['unidad'];
-							
-							if( parseInt(entry['Datos']['0']['estado'])==0 ){
-								trCount2 = $("tr", $grid_productos).size();//obtener de nuevo el numero de trs de la tabla
-								trCount2++;
-								id_detalle_lot = 0;
-								id_producto = prodGrid['producto_id'];
-								id_detalle_os = prodGrid['id_detalle_osal'];
-								id_almacen = $select_almacen_origen.val();
-								lote_int = ' ';
-								cant_lote=0;
-								tipo_registro = 'LOT';
-								pedimento='';
-								caducidad='';
-								
-								//aqui es para crear nuevos registros del lote
-								tr_lote = $genera_tr_para_numero_de_lote(tipo_registro, id_detalle_os, id_producto,codigo,titulo,unidad_medida, id_detalle_lot, id_almacen, lote_int,cant_lote, pedimento, caducidad, trCount2);
-								$grid_productos.append(tr_lote);
-								
-								// esta funcion es para agregar un nuevo lote
-								//en esta funcion se le aplica evento click a los href Agregar Lote y Eliminar
-								agregar_lote_y_eliminar($grid_productos,tipo_registro, trCount2);
-								$aplicar_evento_keypress( $grid_productos.find('.cant_sur'+ trCount2 ) );
-								$aplicar_evento_blur( $grid_productos.find('.cant_sur'+ trCount2 ) );
-								$aplicar_evento_focus( $grid_productos.find('.cant_sur'+ trCount2 ) );
-								
-								$aplicar_evento_focus_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
-								$aplicar_evento_blur_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
-								
-								$aplicar_evento_keypress_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
-								
-								$aplicar_evento_click_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
-							}else{
-								var cont=0;
-								$.each(entry['Lotes'],function(entryIndex,lote){
-									trCount2 = $("tr", $grid_productos).size();//obtener de nuevo el numero de trs de la tabla
-									
-									id_detalle_lot = lote['id_lote_detalle'];
-									id_detalle_os = lote['id_osal_detalle'];
-									id_producto = lote['id_producto'];
-									id_almacen = lote['id_almacen'];
-									lote_int = lote['lote_int'];
-									cant_lote = lote['cantidad_sal'];
-									tipo_registro='LOT';
-									pedimento=lote['ped_lote'];
-									caducidad=lote['cad_lote'];
-									
-									if( parseInt(prodGrid['id_detalle_osal']) == parseInt(lote['id_osal_detalle']) ){
-										trCount2++;
-										if( parseInt(cont) > 0 ){
-											//ocultar el href anterior de Agregar Lote
-											$grid_productos.find('.agrega_lote'+ (parseInt(trCount2)-1) ).hide();
-										}
-										
-										//Aqui ya es para editar el lote
-										tr_lote = $genera_tr_para_numero_de_lote(tipo_registro, id_detalle_os, id_producto,codigo,titulo, unidad_medida, id_detalle_lot, id_almacen, lote_int,cant_lote, pedimento, caducidad, trCount2);
-										$grid_productos.append(tr_lote);
-										
-										// esta funcion es para agregar un nuevo lote
-										//en esta funcion se le aplica evento click a los href Agregar Lote y Eliminar
-										agregar_lote_y_eliminar($grid_productos,tipo_registro, trCount2);
-										$aplicar_evento_keypress( $grid_productos.find('.cant_sur'+ trCount2 ) );
-										$aplicar_evento_blur( $grid_productos.find('.cant_sur'+ trCount2 ) );
-										$aplicar_evento_focus( $grid_productos.find('.cant_sur'+ trCount2 ) );
-										
-										$aplicar_evento_focus_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
-										$aplicar_evento_blur_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
-										$aplicar_evento_click_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
-										
-										//estatus 2=Confirmado, menor que dos aun no esta confirmado por lo tanto le aplicamos el evento keypress
-										if(parseInt($estatus.val()) < 2){
-											$aplicar_evento_keypress_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
-										}
-										
-										cont++;
-									}
-									
-								});
-							}
-							
-							$aplicar_evento_keypress( $grid_productos.find('.cant_sur'+ trCount ) );
-							$aplicar_evento_focus( $grid_productos.find('.cant_sur'+ trCount ) );
-							
-							if( parseInt($estatus.val()) > 0 ){
-								if(parseFloat(prodGrid['cant_fac']) != parseFloat(prodGrid['cant_sur'])){
-									$grid_productos.find('.cant_sur'+ trCount ).css({'background' : '#d41000'});
-								}
-							}
-							
-							//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
-							$grid_productos.find('.cant_sur'+ trCount ).blur(function(e){
-								var tr_actual=$(this).parent().parent();
-								if(parseFloat($(this).val())<=0 || $(this).val()==""){
-									$(this).val(0);
-								}
-								
-								if ( parseFloat(quitar_comas(tr_actual.find('input[name=cantidad]').val())) != parseFloat($(this).val()) ){
-									$(this).css({'background' : '#d41000'});
-									jAlert("La Cantidad Surtida debe ser igual que la Cantidad de la Factura.", 'Atencion!');
-								}else{
-									//aqui si es correcto
-									$(this).css({'background' : '#ffffff'});
-								}
-								$(this).val(parseFloat($(this).val()).toFixed(4));
-							});
-							
-						});
-						
-						if(parseInt($estatus.val())==0 ){
-							$submit_actualizar.show();
-						}
-						
-						if(parseInt($estatus.val())==1 ){
-							$grid_productos.find('input[name=lote_int]').attr({ 'readOnly':true });
-							$submit_actualizar.show();
-							$confirmar.removeAttr('disabled');
-						}
-						
-						if(parseInt($estatus.val()) == 2 ){
-							$observaciones.attr({ 'readOnly':true });
-							$descargar_pdf.removeAttr('disabled');
-							$grid_productos.find('input[name=lote_int]').attr({ 'readOnly':true });
-							$grid_productos.find('input[name=cant_sur]').attr({ 'readOnly':true });
-							$grid_productos.find('a').hide();
-							
-							//quitar el enter en todos los input del grid
-							$grid_productos.find('input').keypress(function(e){
-								if(e.which==13 ) {
-									return false;
-								}
-							});
-						}
-						
-						
-					}
-					
-					
-					if(entry['Datos']['0']['cancelacion'] == 'true'){
-						$select_tipo_movimiento.attr('disabled','-1'); //deshabilitar
-						$confirmar.attr('disabled','-1'); //deshabilitar
-						$descargar_pdf.attr('disabled','-1'); //deshabilitar
-						$folio_salida.attr('disabled','-1'); //deshabilitar
-						$campo_razoncliente.attr('disabled','-1'); //deshabilitar
-						$folio_doc.attr('disabled','-1'); //deshabilitar
-						$fecha_doc.attr('disabled','-1'); //deshabilitar
-						$orden_compra.attr('disabled','-1'); //deshabilitar
-						$folio_pedido.attr('disabled','-1'); //deshabilitar
-						$campo_tc.attr('disabled','-1'); //deshabilitar
-						$observaciones.attr('disabled','-1'); //deshabilitar
-						
-						$campo_subtotal.attr('disabled','-1'); //deshabilitar
-						$campo_retencion.attr('disabled','-1'); //deshabilitar
-						$campo_impuesto.attr('disabled','-1'); //deshabilitar
-						$campo_total.attr('disabled','-1'); //deshabilitar
-						
-						$select_tipo_doc.attr('disabled','-1'); //deshabilitar
-						$select_moneda.attr('disabled','-1'); //deshabilitar
-						$select_almacen_origen.attr('disabled','-1'); //deshabilitar
-						
-						$grid_productos.find('a').hide();
-						$grid_productos.find('input').attr('disabled','-1'); //deshabilitar
-						$submit_actualizar.hide();
-					}
-					
-				},"json");//termina llamada json
-				
-				
-				
-				
-				$confirmar.click(function(e){
-					$accion.attr({'value' : "confirmar"});
-					jConfirm('Confirmar salida del almacen?', 'Dialogo de Confirmacion', function(r) {
-						// If they confirmed, manually trigger a form submission
-						if (r) {
-							$submit_actualizar.parents("FORM").submit();
-						}else{
-							$accion.attr({'value' : "edit"});
-						}
-					});
-					// Always return false here since we don't know what jConfirm is going to do
-					return false;
-				});
-				
-				
-				
-				
-				
-				//descargar pdf de Orden de Salida
-				$descargar_pdf.click(function(event){
-					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_pdf_OrdenSalida/'+$identificador.val()+'/'+iu+'/out.json';
-					window.location.href=input_json;
-				});
-				
-				
-				
-				$('#forma-invcontrolcostos-window').find('input').keypress(function(e){
-					if(e.which==13 ) {
-						return false;
-					}
-				});
-		
-				
-				
-				//Ligamos el boton cancelar al evento click para eliminar la forma
-				$cancelar_plugin.bind('click',function(){
-					var remove = function() { $(this).remove(); };
-					$('#forma-invcontrolcostos-overlay').fadeOut(remove);
-				});
-				
-				$cerrar_plugin.bind('click',function(){
-					var remove = function() { $(this).remove(); };
-					$('#forma-invcontrolcostos-overlay').fadeOut(remove);
-				});
-			}
-		}
+		//aqui no hay nada
 	}
 	
 	
