@@ -150,7 +150,11 @@ $(function() {
 			$busqueda_select_presentacion.children().remove();
 			var presentacion = '<option value="0">-Presentaci&oacute;n-</option>';
 			$.each(data['Presentaciones'],function(entryIndex,pres){
-				presentacion += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+				if(parseInt(pres['id'])==1){
+					presentacion += '<option value="' + pres['id'] + '" selected="yes">' + pres['titulo'] + '</option>';
+				}else{
+					presentacion += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+				}
 			});
 			$busqueda_select_presentacion.append(presentacion);
 			
@@ -657,10 +661,11 @@ $(function() {
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
-				jAlert("El Pedido se guard&oacute; con &eacute;xito", 'Atencion!');
+				jAlert("Los datos de guardaron con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
 				$('#forma-invcontrolcostos-overlay').fadeOut(remove);
-				$get_datos_grid();
+				$pdf.trigger('click');
+				//$get_datos_grid();
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				//$('#forma-invcontrolcostos-window').find('.div_one').css({'height':'545px'});//sin errores
@@ -699,14 +704,6 @@ $(function() {
 		
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
-			/*
-			$check_costo_ultimo
-			$check_costo_promedio
-			$check_simulacion
-			*/
-			//$tipo_cambio.val(entry['Tc']['0']['tipo_cambio']);
-			
-			
 			
 			//carga select de tipos de producto
 			$select_tipo_prod.children().remove();
@@ -750,7 +747,8 @@ $(function() {
 			
 			//carga select de Presentaciones
 			$select_presentacion.children().remove();
-			var presentacion_hmtl = '<option value="0">[--Seleccionar Presentaci&oacute;n--]</option>';
+			//var presentacion_hmtl = '<option value="0">[--Seleccionar Presentaci&oacute;n--]</option>';
+			var presentacion_hmtl = '';
 			$.each(entry['Presentaciones'],function(entryIndex,pres){
 				presentacion_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
 			});
