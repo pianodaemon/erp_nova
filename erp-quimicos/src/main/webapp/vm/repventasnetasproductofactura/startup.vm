@@ -93,7 +93,7 @@
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        <td>&nbsp;&nbsp;</td>
+                                        <td>Tipo&nbsp;de&nbsp;Costo</td>
                                         <td>&nbsp;</td>
                                         <td>Nombre&nbsp;de&nbsp;cliente</td>
                                         <td>&nbsp;</td>
@@ -111,7 +111,13 @@
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        <td>&nbsp;</td>
+                                        <<td>
+                                            <SELECT NAME="costo" style="width:100px;">
+                                                <option value="1" selected="yes">Costo Promedio</option>
+                                                <option value="2" >Costo Referencia</option>
+                                                
+                                            </SELECT>
+                                        </td>
                                         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                         <td><INPUT TYPE="text" name="nombrecliente" style="width:200px;"></td>
                                         <td><a href="busca_cliente" style="font-size:13px;">(Buscar)</a></td>
@@ -148,7 +154,7 @@
         
 	
         
-        <table  width="1030px">
+        <table  width="1330px">
             <tr>
                 <td >&nbsp;&nbsp;</td>
                 <td >
