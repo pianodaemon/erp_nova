@@ -223,10 +223,10 @@ public class RepVentasNetasProductoFacturaController {
     
     
     //obtiene datos para el sqlquery
-    //http://localhost:8080/erp-quimicos/controllers/repventasnetasproductofactura/getVentasNetasProductoFactura.json?1___BIOSTAR%20MEXICO%20S%20DE%20RL%20CV___POLACIDA%20LIQUIDA___2012-04-02___2012-04-20___NQ=="
     @RequestMapping(value="/getVentasNetasProductoFactura/out.json", method = RequestMethod.POST)
     public @ResponseBody ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(
             @RequestParam(value="tipo_reporte", required=true) Integer tipo_reporte,
+            @RequestParam(value="tipo_costo", required=true) Integer tipo_costo,
             @RequestParam(value="cliente", required=true) String cliente,
             @RequestParam(value="producto", required=true) String producto,
             @RequestParam(value="fecha_inicial", required=true) String fecha_inicial, 
@@ -237,9 +237,19 @@ public class RepVentasNetasProductoFacturaController {
             @RequestParam(value="subfamilia", required=true) Integer id_subfamilia,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
+            /*cliente	
+            familia	0
+            fecha_final	2013-01-01
+            fecha_inicial	2012-12-01
+            iu	MQ==
+            linea	0
+            marca	0
+            producto	
+            subfamilia	0
+            tipo_reporte	1*/
             ) {
         log.log(Level.INFO, "Ejecutando getVentasNetasProductoFactura de {0}", RepVentasNetasProductoFacturaController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        //HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         
@@ -251,7 +261,9 @@ public class RepVentasNetasProductoFacturaController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        ArrayList<HashMap<String, String>> z = this.getCxcDao().getVentasNetasProductoFactura(tipo_reporte, cliente, producto, fecha_inicial, fecha_final, id_empresa,id_linea, id_marca, id_familia, id_subfamilia);
+        ArrayList<HashMap<String, String>> z = this.getCxcDao().getVentasNetasProductoFactura(tipo_reporte, cliente, producto, fecha_inicial, fecha_final, id_empresa,id_linea, id_marca, id_familia, id_subfamilia,tipo_costo);
+        
+        
         return z;    
     
     }
@@ -267,7 +279,9 @@ public class RepVentasNetasProductoFacturaController {
                 HttpServletResponse response, 
                 Model model)
      throws ServletException, IOException, URISyntaxException, DocumentException {
-    //cadena = tipo_reporte+"___"+cliente+"___"+producto+"___"+fecha_inicial+"___"+fecha_final+"___"+usuario
+         //               1               2             3                4                   5              6           7            8              9                 10
+         //cadena = tipo_reporte+"___"+cliente+"___"+producto+"___"+fecha_inicial+"___"+fecha_final+"___"+linea+"___"+marca+"___"+familia+"___"+subfamilia+"___"+tipo_costo+"___"+usuario
+    
      String arreglo[];
      arreglo = cadena.split("___");
          
@@ -317,7 +331,7 @@ public class RepVentasNetasProductoFacturaController {
         
         //obtiene los informacion de ventas  del periodo indicado
         
-        lista_ventasporproducto = this.getCxcDao().getVentasNetasProductoFactura(Integer.parseInt(arreglo[0]), arreglo[1],arreglo[2], arreglo[3], arreglo[4], id_empresa,Integer.parseInt(arreglo[6]),Integer.parseInt(arreglo[7]),Integer.parseInt(arreglo[8]),Integer.parseInt(arreglo[9]) );
+        lista_ventasporproducto = this.getCxcDao().getVentasNetasProductoFactura(Integer.parseInt(arreglo[0]), arreglo[1],arreglo[2], arreglo[3], arreglo[4], id_empresa,Integer.parseInt(arreglo[6]),Integer.parseInt(arreglo[7]),Integer.parseInt(arreglo[8]),Integer.parseInt(arreglo[9]),Integer.parseInt(arreglo[10]) );
         //[0]tipo_reporte+"___"+[1]cliente+"___"+[2]producto+"___"+[3]fecha_inicial+"___"+[4]fecha_final+"___"+[5]usuario
         if(Integer.parseInt(arreglo[0])==1){
             //instancia a la clase que construye el pdf  del reporte ventas netas por cliente
