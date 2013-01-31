@@ -2231,8 +2231,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
     
     //reporte de ventas netas
     @Override
-    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa,Integer id_linea,Integer  id_marca, Integer id_familia,Integer id_subfamilia) {
-    String sql_to_query = "select * from repventasnetasproductofactura("+tipo_reporte+",'"+cliente+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+","+id_linea+","+id_marca+","+id_familia+","+id_subfamilia+") as foo( "
+    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa,Integer id_linea,Integer  id_marca, Integer id_familia,Integer id_subfamilia,Integer tipo_costo) {
+    String sql_to_query = "select * from repventasnetasproductofactura("+tipo_reporte+",'"+cliente+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+","+id_linea+","+id_marca+","+id_familia+","+id_subfamilia+","+tipo_costo+") as foo( "
                                     + " numero_control character varying, "        
                                     + " razon_social character varying, "
                                     + " codigo character varying, "
@@ -2242,8 +2242,14 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     + " cantidad double precision, "
                                     + " precio_unitario double precision, "
                                     + " moneda text, "
-                                    + " tipo_cambio double precision, " 
-                                    + " total_pesos double precision,  fecha_factura text); ";
+                                    + " tipo_cambio double precision,  " 
+                                    + " venta_pesos double precision,  "
+                                    + " costo double precision,  "
+                                    + " fecha_factura text,"
+                                    
+                                    + "id_presentacion Integer, "
+                                    + "presentacion character varying"
+                                    + "); ";
 
        System.out.println("getVentasNetasProductoFactura:"+ sql_to_query);
           
@@ -2264,7 +2270,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("precio_unitario",rs.getString("precio_unitario"));
                     row.put("moneda",rs.getString("moneda"));
                     row.put("tipo_cambio",rs.getString("tipo_cambio"));
-                    row.put("total_pesos",rs.getString("total_pesos"));
+                    row.put("venta_pesos",rs.getString("venta_pesos"));
+                    row.put("costo",rs.getString("costo"));
                     row.put("fecha_factura",rs.getString("fecha_factura"));
                     
                     return row;
