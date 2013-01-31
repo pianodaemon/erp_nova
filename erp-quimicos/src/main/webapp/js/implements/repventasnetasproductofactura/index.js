@@ -801,7 +801,8 @@ $Buscar_ventas_netasproductofactura.click(function(event){
                                 
                                 totalponderacion=totalponderacion + parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie * 100 ;
                                 totalmop = totalmop + (parseFloat(body_tabla[i]["venta_pesos"]) - (parseFloat(body_tabla[i]["costo"])  ) / parseFloat(body_tabla[i]["venta_pesos"]) * 100 );
-                                totalmediamop = totalmediamop + (parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) *  (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"])   / parseFloat(body_tabla[i]["venta_pesos"]) * 100  )
+                                //totalmediamop = totalmediamop + (parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) *  (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"])   / parseFloat(body_tabla[i]["venta_pesos"]) * 100  )
+                                  totalmediamop = totalmediamop + ((((parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) * (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"]) )  )  / parseFloat(body_tabla[i]["venta_pesos"]) ) *100 );
                                 cliente=body_tabla[i]["razon_social"];
                                 
                             }else{
@@ -838,7 +839,8 @@ $Buscar_ventas_netasproductofactura.click(function(event){
                                     
                                     totalponderacion=totalponderacion + parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie * 100 ;
                                     totalmop = totalmop + (parseFloat(body_tabla[i]["venta_pesos"]) - (parseFloat(body_tabla[i]["costo"])  ) / parseFloat(body_tabla[i]["venta_pesos"]) * 100 );
-                                    totalmediamop = totalmediamop + (parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) *  (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"])   / parseFloat(body_tabla[i]["venta_pesos"]) * 100  )
+                                    //totalmediamop = totalmediamop + (parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) *  (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"])   / parseFloat(body_tabla[i]["venta_pesos"]) * 100  )
+                                    totalmediamop = totalmediamop + ((((parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) * (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"]) )  )  / parseFloat(body_tabla[i]["venta_pesos"]) ) *100 );
                                 //venta_totalxcliente = venta_totalxcliente +  body_tabla[i]["venta_pesos"];
                                    cliente=body_tabla[i]["razon_social"];
                                 //clie =body_tabla[i]["razon_social"];
@@ -1335,7 +1337,8 @@ if ($select_tipo_reporte.val() == 2 ){
                                                                 
                                                                 totalponderacion=totalponderacion + parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie * 100 ;
                                                                 totalmop = totalmop + (parseFloat(body_tabla[i]["venta_pesos"]) - (parseFloat(body_tabla[i]["costo"])  ) / parseFloat(body_tabla[i]["venta_pesos"]) * 100 );
-                                                                totalmediamop = totalmediamop + (parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) *  (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"])   / parseFloat(body_tabla[i]["venta_pesos"]) * 100  )
+                                                                //totalmediamop = totalmediamop + (parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) *  (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"])   / parseFloat(body_tabla[i]["venta_pesos"]) * 100  )
+                                                                totalmediamop = totalmediamop + ((((parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) * (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"]) )  )  / parseFloat(body_tabla[i]["venta_pesos"]) ) *100 );
 								
                                                                 producto= body_tabla[i]["producto"];
                                                                 
@@ -1370,7 +1373,8 @@ if ($select_tipo_reporte.val() == 2 ){
                                                                 
                                                                 totalponderacion=totalponderacion + parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie * 100 ;
                                                                 totalmop = totalmop + (parseFloat(body_tabla[i]["venta_pesos"]) - (parseFloat(body_tabla[i]["costo"])  ) / parseFloat(body_tabla[i]["venta_pesos"]) * 100 );
-                                                                totalmediamop = totalmediamop + (parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) *  (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"])   / parseFloat(body_tabla[i]["venta_pesos"]) * 100  )
+                                                                //totalmediamop = totalmediamop + (parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) *  (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"])   / parseFloat(body_tabla[i]["venta_pesos"]) * 100  )
+                                                                totalmediamop = totalmediamop + ((((parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) * (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"]) )  )  / parseFloat(body_tabla[i]["venta_pesos"]) ) *100 );
                                                                 producto= body_tabla[i]["producto"];
                                                                 
 							}
