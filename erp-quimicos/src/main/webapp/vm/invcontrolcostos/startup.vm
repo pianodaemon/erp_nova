@@ -28,7 +28,7 @@
 		<table class="table_acciones" style="display:none" border="0">
 			<tr>
 				<td width="15" height="30"></td>
-				<td height="30"><a href="new_item" class="tooltip"><img src="../../img/catalogo/crear.png" border=0 ><span>Registrar nuevo</span></a></td>
+				<td height="30"><a href="new_item" class="tooltip"><img src="../../img/catalogo/crear.png" border=0 ><span>Nuevo Calculo de Costo</span></a></td>
 				<td width="15" height="30"></td>
 				<td height="30"><a href="visualiza_buscador" class="tooltip"><img src="../../img/catalogo/buscar.png" border=0 ><span>Busqueda</span></a>  </td>
 			</tr>
@@ -43,51 +43,80 @@
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="90">Folio&nbsp;salida</td>
+				<td width="110">Tipo&nbsp;Producto</td>
 				<td width="20"></td>
-				<td width="90">Orden&nbsp;compra</td>
+				<td width="100">Familia</td>
 				<td width="20"></td>
-				<td width="100">Tipo&nbsp;documento</td>
+				<td width="100">Subfamilia</td>
 				<td width="20">&nbsp;</td>
-				<td width="90">Folio&nbsp;documento</td>
+				<td width="100">Marca</td>
+				<td width="20">&nbsp;</td>
+				<td width="105">Presentaci&oacute;n</td>
 				<td width="20"></td>
-				<td width="200">Cliente</td>
-				<td width="20">&nbsp;</td>
-				<td width="100">C&oacute;digo&nbsp;producto</td>
-				<td width="20">&nbsp;</td>
-				<td width="25"></td>
-				<td colspan="3">Fecha de creaci&oacute;n</td>
-				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="150">Producto</td>
+				<td width="20"></td>
+				<td width="50">A&ntilde;o</td>
+				<td width="15"></td>
+				<td width="90">Mes</td>
+				
 				<td></td>
 				<td width="25"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;</td>
 				<td ></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;</td>
 			</tr>
-			
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="90"><input type="text" name="busqueda_folio" style="width:90px;"></td>
-				<td width="20"></td>
-				<td width="90"><input type="text" name="busqueda_oc" style="width:90px;"></td>
+				<td width="110">
+					<select name="busqueda_select_tipo_prod" style="width:110px;">
+						<option value="1" selected="yes">-Prod. Terminado -</option>
+					</select>
+				</td>
+				
 				<td width="20"></td>
 				<td width="100">
-					<select name="select_tipo_doc" style="width:100px;">
+					<select name="busqueda_select_familia" style="width:100px;">
 						<option value="0" selected="yes">[-- --]</option>
 					</select>
 				</td>
-				<td width="20">&nbsp;</td>
-				<td width="90"><input type="text" name="busqueda_folio_doc" style="width:90px;"></td>
 				<td width="20"></td>
-				<td width="200"><input type="text" name="busqueda_cliente" style="width:200px;"></td>
+				<td width="100">
+					<select name="busqueda_select_subfamilia" style="width:100px;">
+						<option value="0" selected="yes">[-- --]</option>
+					</select>
+				</td>
+				
+				<td width="20"></td>
+				<td width="100">
+					<select name="busqueda_select_marca" style="width:100px;">
+						<option value="0" selected="yes">[-- --]</option>
+					</select>
+				</td>
+				
+				<td width="20"></td>
+				<td width="105">
+					<select name="busqueda_select_presentacion" style="width:105px;">
+						<option value="0" selected="yes">[-- --]</option>
+					</select>
+				</td>
+				
 				<td width="20">&nbsp;</td>
-				<td width="100"><input type="text" name="busqueda_codigo" style="width:100px;"></td>
-				<td width="20">&nbsp;</td>
-				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-				<td width="90"><input type="text" name="busqueda_fecha_inicial" style="width:90px;" readOnly="true"></td>
+				<td width="150"><input type="text" name="busqueda_producto" style="width:150px;"></td>
+				
+				<td width="20"></td>
+				<td width="50">
+					<select name="busqueda_select_ano" style="width:50px;">
+						<option value="0" selected="yes">[-- --]</option>
+					</select>
+				</td>
+				
 				<td width="15"></td>
-				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-				<td width="90"><input type="text" name="busqueda_fecha_final" style="width:90px;" readOnly="true"></td>
+				<td width="90">
+					<select name="busqueda_select_mes" style="width:90px;">
+						<option value="0" selected="yes">[-- --]</option>
+					</select>
+				</td>
+				
 				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><input type="button" id="boton_buscador" class="onmouseOutBuscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -118,7 +147,7 @@
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal invcontrolcostos_div_one"  style="display:none;" title="">
                     <input type="hidden" name="identificador" value="0">
-                    <input type="hidden" name="accion">
+                    <input type="hidden" name="calculo_simulacion" value="0">
                     
                     <div id="div_two" title="" class="invcontrolcostos_div_two">
                         <div class="columns on-2">
@@ -406,25 +435,25 @@
 											
 											<tr>
 												<td width="30">O.C.:</td>
-												<td width="200">&nbsp;Numero de Orden de Compra</td>
+												<td width="200">&nbsp;Numero&nbsp;de&nbsp;Orden&nbsp;de&nbsp;Compra</td>
 												<td width="30">C.U.:</td>
-												<td width="200">Costo Ultima Compra</td>
+												<td width="200">Costo&nbsp;Ultima&nbsp;Compra</td>
 												<td width="30">C.I.:</td>
 												<td>Costo de Importacion</td>
 												<td></td>
 												<td width="30">C.R.:</td>
-												<td>Costo de Referencia(C.R.=C.U.+C.I.+C.D.)</td>
+												<td>Costo&nbsp;de&nbsp;Referencia(C.R.=C.U.+C.I.+C.D.)</td>
 											</tr>
 											<tr>
 												<td width="30">Moneda:</td>
-												<td width="200">&nbsp;Moneda de la Factura del proveedor</td>
+												<td width="200">&nbsp;Moneda&nbsp;de&nbsp;la&nbsp;Factura&nbsp;del&nbsp;proveedor</td>
 												<td width="30">C.P.:</td>
-												<td width="200">Costo Promedio</td>
+												<td width="200">Costo&nbsp;Promedio</td>
 												<td width="30">C.D.:</td>
-												<td>Costos Directos a la compra</td>
+												<td>Costos Directos&nbsp;a&nbsp;la&nbsp;compra</td>
 												<td></td>
 												<td width="30">P.M.:</td>
-												<td>Precio Minimo de Venta</td>
+												<td>Precio&nbsp;Minimo&nbsp;de&nbsp;Venta</td>
 											</tr>
 											<tr>
 												<td width="30">T.C.:</td>
@@ -446,12 +475,12 @@
 
                                 </div>
                             </div>
-
-
+							
+							
                             <div class="fixed column" style="width:1135px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="955"></td>
+										<td width="1035"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>
@@ -462,9 +491,6 @@
                                 
                             </div>
                             
-                                                      
-
-
                         </div>
                     </div>
                 </div>
