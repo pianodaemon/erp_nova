@@ -180,9 +180,8 @@ public class InvControlCostosController {
         
         String data_string = app_selected+"___"+id_usuario+"___"+tipo_producto+"___"+marca+"___"+familia+"___"+subfamilia+"___"+producto+"___"+presentacion+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tipo_cambio+"___"+ano+"___"+mes;
         
-        
         //obtiene total de registros en base de datos, con los parametros de busqueda
-        int total_items = this.getInvDao().countAllControlCostos(data_string);
+        int total_items = this.getInvDao().countAll(data_string);
         
         //calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);

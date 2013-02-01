@@ -6922,14 +6922,6 @@ public class InvSpringDao implements InvInterfaceDao{
     
     
     
-    @Override
-    public int countAllControlCostos(String data_string) {
-        String sql_to_query = "SELECT COUNT(producto_id) FROM (select producto_id from inv_reporte('"+data_string+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  )) as sbt;";
-        
-        int rowCount = this.getJdbcTemplate().queryForInt(sql_to_query);
-        return rowCount;
-    }
-    
     
     //esto es para cargar el select de años del Buscador en el paginado
     @Override
