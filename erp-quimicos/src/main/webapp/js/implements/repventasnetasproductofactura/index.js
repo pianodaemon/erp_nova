@@ -592,7 +592,7 @@ $Buscar_ventas_netasproductofactura.click(function(event){
 
         var venta_totalxcliente =0.0;
         var venTxclie = 0.0;
-        
+        var fecha_final=$fecha_final.val();
         var usuario = config.getUi();
 //if(cliente != "" ){
         if(fecha_inicial != "" && fecha_final != ""){ 
@@ -832,9 +832,8 @@ $Buscar_ventas_netasproductofactura.click(function(event){
                                     
                                     totalponderacion=totalponderacion + parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie * 100 ;
                                     totalmop = totalmop + (parseFloat(body_tabla[i]["venta_pesos"]) - (parseFloat(body_tabla[i]["costo"])  ) / parseFloat(body_tabla[i]["venta_pesos"]) * 100 );
-                                    //totalmediamop = totalmediamop + (parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) *  (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"])   / parseFloat(body_tabla[i]["venta_pesos"]) * 100  )
                                     totalmediamop = totalmediamop + ((((parseFloat(body_tabla[i]["venta_pesos"]) / venTxclie) * (parseFloat(body_tabla[i]["venta_pesos"]) - parseFloat(body_tabla[i]["costo"]) )  )  / parseFloat(body_tabla[i]["venta_pesos"]) ) *100 );
-                                //venta_totalxcliente = venta_totalxcliente +  body_tabla[i]["venta_pesos"];
+                                
                                    cliente=body_tabla[i]["razon_social"];
                                 //clie =body_tabla[i]["razon_social"];
                             }//FIN DEL ELSE
