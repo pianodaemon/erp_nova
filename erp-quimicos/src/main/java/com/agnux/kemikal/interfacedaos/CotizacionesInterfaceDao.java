@@ -87,5 +87,6 @@ public interface CotizacionesInterfaceDao {
 
     public String getEmp_RazonSocial();
     
-    
+    public void getDatosCotizacionDescripcionPdf(Integer id_cotizacion);
+
 }
