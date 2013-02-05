@@ -14,6 +14,7 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.ParametrosGeneralesInterfaceDao;
+import com.agnux.kemikal.reportes.PDFCotizacionDescripcion;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -180,9 +181,7 @@ public class CotizacionesController {
     }
     
     
-    
-    
-    
+   
     @RequestMapping(method = RequestMethod.POST, value="/getCotizacion.json")
     //public @ResponseBody HashMap<java.lang.String,java.lang.Object> getProveedorJson(
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getCotizacionJson(
@@ -391,13 +390,16 @@ public class CotizacionesController {
     
     
     //Genera pdf de la cotizacion
-    @RequestMapping(value = "/get_genera_pdf_cotizacion/{id_cotizacion}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/get_genera_pdf_cotizacion/{id_cotizacion}/{seleccionado}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView get_genera_pdf_cotizacionJson(
             @PathVariable("id_cotizacion") String id_cotizacion, 
+            @PathVariable("seleccionado") String seleccionado,
             @PathVariable("iu") String id_user,
             HttpServletRequest request, HttpServletResponse response, Model model)
             throws ServletException, IOException, URISyntaxException {
         
+       
+        System.out.println(seleccionado);
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> datos_empresa = new HashMap<String, String>();
@@ -414,11 +416,13 @@ public class CotizacionesController {
         String dir_tmp = this.getGralDao().getTmpDir();
         
         
-        String[] array_company = razon_social_empresa.split(" ");
+        /*String[] array_company = razon_social_empresa.split(" ");
         String company_name= array_company[0].toLowerCase();
-        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";*/
         
+        String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
+        String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         
         datos_empresa.put("emp_razon_social", razon_social_empresa);
         datos_empresa.put("emp_rfc", this.getGralDao().getRfcEmpresaEmisora(id_empresa));
@@ -434,30 +438,9 @@ public class CotizacionesController {
         this.getCotdao().getDatosEmpresaPdf(datos_empresa);
         //String razonSocial = this.getCdao().getEmp_RazonSocial();
         //System.out.println("Esta es la razon social: "+razonSocial);
-        this.getCotdao().getDatosCotizacionPdf(Integer.parseInt(id_cotizacion)); 
         
-        //System.out.println("Este es el folio de la cotizacion: "+ this.getCdao().getFolio());
-        //System.out.println("Razon social del cliente: "+ this.getCdao().getClient_razon_social());
         
-        //System.out.println("Esta es al razon social: "+datosEmpresa.get("razon_social"));
-        //jsonretorno.put("ret", this.getCdao().get_presentaciones_producto(sku));
-        
-        /*
-        ArrayList<LinkedHashMap<String,String>>conceptos = this.getCdao().getListaConceptos();
-        Iterator it = conceptos.iterator();
-        while(it.hasNext()){
-            LinkedHashMap<String,String> map = (LinkedHashMap<String,String>)it.next();
-            System.out.println("Sku:"+map.get("sku")+ "     Titulo:"+map.get("titulo")+ "     Unidad:"+map.get("unidad")+ "     Presentacion:"+map.get("presentacion")+ "     Cantidad:"+map.get("cantidad")+ "     P.U.:"+map.get("precio_unitario")+ "     Importe:"+map.get("importe"));
-        }
-        */
-        
-        /*
-        String scheme = request.getScheme();
-        String serverName = request.getServerName();
-        int serverPort = request.getServerPort();
-        String contextPath = request.getContextPath();
-        String ruta_imagen = scheme+"://"+serverName+":"+serverPort+contextPath+"/img/logo_kathion.gif";
-        */
+       
         
         System.out.println("Ruta absoluta de imagen: "+ruta_imagen);
         
@@ -473,13 +456,26 @@ public class CotizacionesController {
         //String ramdom_file_md5 = generaMD5.MD5(ValorRand);
         //String fileout = path_to_file + ramdom_file_md5 +".pdf";
         
-        String file_name = company_name+"_cotizacion.pdf";
+         String file_name = "FAC_COM_"+rfc_empresa+".pdf";
+        
+       // String file_name = company_name+"_cotizacion.pdf";
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
+        if(seleccionado.equals("1")){
+            //instancia a la clase que construye el pdf de la cotizacion
+            String dir_imagen_producto = this.getGralDao().getImagesDir()+rfc_empresa+"/";
+            
+            PDFCotizacionDescripcion x = new PDFCotizacionDescripcion( this.getCotdao(), fileout, ruta_imagen,seleccionado ,dir_imagen_producto);
+            this.getCotdao().getDatosCotizacionDescripcionPdf(Integer.parseInt(id_cotizacion)); 
+            
+            System.out.println("mandando la ruta desde el controller"+dir_imagen_producto);
+        }else{
+            
+            pdfCotizacion y= new pdfCotizacion( this.getCotdao(),fileout,ruta_imagen);
+            this.getCotdao().getDatosCotizacionPdf(Integer.parseInt(id_cotizacion)); 
+        }
         
-        //instancia a la clase que construye el pdf de la cotizacion
-        pdfCotizacion x = new pdfCotizacion( this.getCotdao(), fileout, ruta_imagen);
         
         
         System.out.println("Recuperando archivo: " + fileout);
