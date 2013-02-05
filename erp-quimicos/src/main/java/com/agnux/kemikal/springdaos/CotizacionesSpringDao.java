@@ -905,6 +905,123 @@ public class CotizacionesSpringDao implements CotizacionesInterfaceDao {
     }
     
     
+    @Override
+    public void getDatosCotizacionDescripcionPdf(Integer id_cotizacion) {
+        
+        //obtener datos de la cotizacion
+	String sql_query_cotizacion = "SELECT erp_cotizacions.folio, "+
+                            "erp_cotizacions.cliente_id, "+
+                            "erp_cotizacions.observaciones, "+
+                            //"erp_cotizacions.subtotal, "+
+                            //"erp_cotizacions.impuesto, "+
+                            //"erp_cotizacions.total, "+
+                            //"erp_cotizacions.moneda_id, "+
+                            //"gral_mon.descripcion as moneda, "+
+                            "to_char((CASE WHEN erp_cotizacions.momento_actualizacion IS NULL THEN erp_cotizacions.momento_creacion ELSE erp_cotizacions.momento_actualizacion END),'yyyy-mm-dd') as fecha_cotizacion "+
+                    "FROM erp_cotizacions  "+
+                    //"left JOIN gral_mon on gral_mon.id = erp_cotizacions.moneda_id "+
+                    "WHERE  erp_cotizacions.id =" + id_cotizacion + " limit 1";
+        
+        //System.out.println("sql_query_cotizacion: "+sql_query_cotizacion);
+        
+        Map<String, Object> map_dat_cot = this.getJdbcTemplate().queryForMap(sql_query_cotizacion);
+        
+        this.setFolio(map_dat_cot.get("folio").toString());
+        this.setCliente_id(map_dat_cot.get("cliente_id").toString());
+        this.setObservaciones(map_dat_cot.get("observaciones").toString());
+        //this.setSubtotal(map_dat_cot.get("subtotal").toString());
+        //this.setImpuesto(map_dat_cot.get("impuesto").toString());
+        //this.setTotal(map_dat_cot.get("total").toString());
+        //this.setMoneda_id(map_dat_cot.get("moneda_id").toString());
+        //this.setMoneda(map_dat_cot.get("moneda").toString());
+        this.setFecha_cotizacion(map_dat_cot.get("fecha_cotizacion").toString());
+        
+        //System.out.println("sql_query_cotizacion: "+sql_query_cotizacion);
+        
+        
+        //obtener datos del cliente
+	String sql_query_cliente = "SELECT cxc_clie.rfc, "+
+                            "cxc_clie.razon_social, "+
+                            "cxc_clie.calle, "+
+                            "cxc_clie.numero, "+
+                            "cxc_clie.colonia, "+
+                            "gral_mun.titulo as localidad, "+
+                            "gral_edo.titulo as entidad, "+
+                            "gral_pais.titulo as pais, "+
+                            "cxc_clie.cp, "+
+                            "cxc_clie.telefono1, "+
+                            "(CASE WHEN cxc_clie.contacto IS NULL THEN '' ELSE cxc_clie.contacto END ) AS  contacto "+
+                    "FROM cxc_clie "+
+                    "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "+
+                    "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "+
+                    "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "+
+                    "WHERE cxc_clie.borrado_logico=false AND cxc_clie.id = "+ this.getCliente_id() +" limit 1";
+        
+        Map<String, Object> map_client = this.getJdbcTemplate().queryForMap(sql_query_cliente);
+        
+        this.setClient_calle(map_client.get("calle").toString());
+        this.setClient_colonia(map_client.get("colonia").toString());
+        this.setClient_cp(map_client.get("cp").toString());
+        this.setClient_entidad(map_client.get("entidad").toString());
+        this.setClient_localidad(map_client.get("localidad").toString());
+        this.setClient_numero(map_client.get("numero").toString());
+        this.setClient_pais(map_client.get("pais").toString());
+        this.setClient_razon_social(map_client.get("razon_social").toString());
+        this.setClient_rfc(map_client.get("rfc").toString());
+        this.setClient_telefono(map_client.get("telefono1").toString());
+        this.setClient_contacto(map_client.get("contacto").toString());
+        
+        
+        //obtener lista de conceptos de la cotizacion
+	String sql_query_conceptos = "SELECT  inv_prod.sku, "+
+                            "inv_mar.titulo, "+
+                            
+                            "inv_prod_unidades.titulo_abr as unidad, "+ 
+                            "inv_prod.archivo_img as imagen, "+ 
+                            "(case when inv_prod.descripcion_corta is null then '' else inv_prod.descripcion_corta end) as descripcion, "+
+                            "inv_prod_presentaciones.titulo as presentacion, "+
+                            "erp_cotizacions_detalles.cantidad, "+
+                            "erp_cotizacions_detalles.precio_unitario, "+
+                            "gral_mon.descripcion_abr as moneda, "+
+                            "(erp_cotizacions_detalles.cantidad * erp_cotizacions_detalles.precio_unitario) AS importe "+
+                    "FROM erp_cotizacions_detalles "+
+                    "LEFT JOIN inv_prod on inv_prod.id = erp_cotizacions_detalles.producto_id "+
+                    "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "+ 
+                    "LEFT JOIN inv_mar on inv_mar.id = inv_prod.inv_mar_id "+
+                    "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_cotizacions_detalles.presentacion_id "+
+                    "LEFT JOIN gral_mon on gral_mon.id = erp_cotizacions_detalles.moneda_id "+
+                    "WHERE erp_cotizacions_detalles.cotizacions_id = "+ id_cotizacion + "" +
+                    "ORDER BY erp_cotizacions_detalles.id";
+        
+        System.out.println("Imprime con Descripcion:___ "+sql_query_conceptos);
+        
+        ArrayList< LinkedHashMap<String,String>> array_listacon = (ArrayList< LinkedHashMap<String,String>>) this.jdbcTemplate.query(
+            sql_query_conceptos,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    //HashMap<String, Object> row = new HashMap<String, Object>();
+                    LinkedHashMap<String,String> listcon = new LinkedHashMap<String,String>();
+                    listcon.put("sku",rs.getString("sku"));
+                    listcon.put("titulo",rs.getString("titulo"));
+                    listcon.put("imagen",rs.getString("imagen"));
+                    listcon.put("unidad",rs.getString("unidad"));
+                    listcon.put("presentacion",rs.getString("presentacion"));
+                    listcon.put("cantidad",rs.getString("cantidad"));
+                    listcon.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),2));
+                    listcon.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2));
+                    listcon.put("moneda",rs.getString("moneda"));
+                    listcon.put("descripcion",rs.getString("descripcion"));
+                    return listcon;
+                }
+            }
+        );
+        
+        //ArrayList<LinkedHashMap<String,String>>listacon = getListaConceptos();
+        //listacon.add(array_listacon);
+        this.setListaConceptos(array_listacon);
+        
+    }
     
     
 
