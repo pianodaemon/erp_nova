@@ -532,6 +532,7 @@ $(function() {
                                             trr += '<td width="250"><span class="titulo">'+pres['titulo']+'</span></td>';
                                             trr += '<td width="80">';
                                                 trr += '<span class="unidad" style="display:none">'+pres['unidad']+'</span>';
+                                                trr +='<span class="descripcion" style="display:none">'+pres['descripcion']+'</span>';
                                                 trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
                                                 trr += '<span class="pres">'+pres['presentacion']+'</span>';
                                             trr += '</td>';
@@ -562,13 +563,14 @@ $(function() {
                                         var sku = $(this).find('span.sku').html();
                                         var titulo = $(this).find('span.titulo').html();
                                         var unidad = $(this).find('span.unidad').html();
+                                        var descripcion =$(this).find('span.descripcion').html();
                                         var id_pres = $(this).find('span.id_pres').html();
                                         var pres = $(this).find('span.pres').html();
 
                                         $nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
 
                                         //aqui se pasan datos a la funcion que agrega el tr en el grid
-                                        $agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres);
+                                        $agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,descripcion,id_pres,pres);
 
 
                                         //elimina la ventana de busqueda
@@ -659,7 +661,7 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres){
+	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,descripcion,id_pres,pres){
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 		
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
@@ -683,27 +685,29 @@ $(function() {
 			
 			var trr = '';
 			trr = '<tr>';
-				trr += '<td width="60">';
-					trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
+				trr += '<td width="58">';
+					trr += '<a href="elimina_producto" class="borde_oculto" id="delete'+ tr +'">Eliminar</a>';
 					trr += '<input type="hidden" name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
 					trr += '<input type="hidden" name="iddetalle" id="idd" value="0">';//este es el id del registro que ocupa el producto en la tabla cotizacions_detalles
 				trr += '</td>';
-				trr += '<td width="90">';
-					trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ id_prod +'">';
+				trr += '<td width="88">';
+					trr += '<input type="hidden" name="idproducto" class="borde_oculto" id="idprod" value="'+ id_prod +'">';
 					trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:87px;">';
 				trr += '</td>';
-				trr += '<td width="200"><INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ titulo +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:196px;"></td>';
-				trr += '<td width="90"><INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;"></td>';
-				trr += '<td width="110">';
+				trr += '<td width="10"><INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ titulo +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:196px;"></td>';
+				trr += '<td width="85"><INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;"></td>';
+                                trr +='<td width="67" ><textarea name="descripcion'+tr+'"id="desc" readOnly="true" class="borde_oculto" cols="10" rows="5" style="width:180px;resize:none; background-color:#FFFFF;">'+descripcion+'</textarea></td>';
+
+                                trr += '<td width="110" >';
 					trr += '<INPUT type="hidden"    name="id_presentacion"        	value="'+  id_pres +'" 	id="idpres">';
-					trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'"		value="'+  pres +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:106px;">';
+					trr += '<INPUT TYPE="text" name="presentacion'+ tr +'" class="borde_oculto" value="'+  pres +'" 	id="pres"  readOnly="true" style="width:106px;">';
 				trr += '</td>';
 					trr += '<td width="80"><INPUT TYPE="text" 	name="cantidad" 	value=" " id="cant" style="width:76px;"></td>';
 					trr += '<td width="85"><INPUT TYPE="text" 	name="costo" 		value=" " id="cost" style="width:81px;"></td>';
 					trr += '<td width="50">';
 						trr += '<SELECT NAME="monedagrid" class="moneda'+ tr +'" style="width:50px;"></SELECT>';
 					trr += '</td>';
-				trr += '<td width="95"><INPUT TYPE="text" 	name="importe'+ tr +'" 		value="" id="import" readOnly="true" style="width:90px; text-align:right;"></td>';
+				trr += '<td width="111" border="2"><INPUT TYPE="text" 	name="importe'+ tr +'" 		value="" id="import" readOnly="true" style="width:90px; text-align:right;"></td>';
 				trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="0">';
 			trr += '</tr>';
                         
@@ -860,6 +864,7 @@ $(function() {
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 		
 		var $observaciones = $('#forma-cotizacions-window').find('textarea[name=observaciones]');
+                var $descripcion_larga =$('#forma-cotizacions-window').find('input[name=descripcion_larga]');
 		//var $select_almacen = $('#forma-cotizacions-window').find('select[name=almacen]');
 		var $sku_producto = $('#forma-cotizacions-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-cotizacions-window').find('input[name=nombre_producto]');
@@ -897,6 +902,7 @@ $(function() {
 		
 		//ocultar boton de generar pdf. Solo debe estar activo en editar
 		$boton_genera_pdf.hide();
+                $descripcion_larga.hide();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -1148,6 +1154,7 @@ $(function() {
 				var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 				
 				var $observaciones = $('#forma-cotizacions-window').find('textarea[name=observaciones]');
+                                var $descripcion_larga =$('#forma-cotizacions-window').find('input[name=descripcion_larga]');
 				//var $select_almacen = $('#forma-cotizacions-window').find('select[name=almacen]');
 				var $sku_producto = $('#forma-cotizacions-window').find('input[name=sku_producto]');
 				var $nombre_producto = $('#forma-cotizacions-window').find('input[name=nombre_producto]');
@@ -1306,28 +1313,28 @@ $(function() {
 							
 							var trr = '';
 							trr = '<tr>';
-								trr += '<td width="60">';
-									trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
-									trr += '<input type="hidden" name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
-									trr += '<input type="hidden" name="iddetalle" id="idd" value="'+ prod['id_detalle'] +'">';//este es el id del registro que ocupa el producto en la tabla cotizacions_detalles
-									//trr += '<span id="elimina">1</span>';
+								trr += '<td width="58" border="2">';
+                                                                    trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
+                                                                    trr += '<input type="hidden" name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
+                                                                    trr += '<input type="hidden" name="iddetalle" id="idd" value="'+ prod['id_detalle'] +'">';//este es el id del registro que ocupa el producto en la tabla cotizacions_detalles
 								trr += '</td>';
-								trr += '<td width="90">';
+								trr += '<td width="88" border="2">';
 									trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['producto_id'] +'">';
-									trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['sku'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:87px;">';
+									trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['sku'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:85px;">';
 								trr += '</td>';
-								trr += '<td width="200"><INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:196px;"></td>';
-								trr += '<td width="90"><INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;"></td>';
-								trr += '<td width="110">';
-									trr += '<INPUT type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
-									trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:106px;">';
+								trr += '<td width="10" border="2"><INPUT TYPE="text" name="nombre'+ tr +'" value="'+ prod['titulo'] +'" id="nom" class="borde_oculto" readOnly="true" style="width:186px;"></td>';
+								trr += '<td width="85" border="2"><INPUT TYPE="text" name="unidad'+ tr +'" value="'+ prod['unidad'] +'" id="uni" class="borde_oculto" readOnly="true" style="width:83px;"></td>';
+								trr +='<td width="70" border="2"><textarea name="descripcion'+tr+'"id="desc" class="borde_oculto" readOnly="true"  cols="10" rows="5" style="width:190px;resize:none;">'+prod['descripcion']+'</textarea></td>';
+                                                                trr += '<td width="110" border="2">';
+									trr += '<INPUT type="hidden" name="id_presentacion"  value="'+  prod['id_presentacion'] +'" id="idpres">';
+									trr += '<INPUT TYPE="text" name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" id="pres" class="borde_oculto" readOnly="true" style="width:106px;">';
 								trr += '</td>';
-								trr += '<td width="80"><INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;"></td>';
-								trr += '<td width="85"><INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:81px; text-align:right;"></td>';
-								trr += '<td width="50">';
+								trr += '<td width="80" border="2"><INPUT TYPE="text" name="cantidad" value="'+  prod['cantidad'] +'" id="cant" style="width:76px;"></td>';
+								trr += '<td width="85" border="2"><INPUT TYPE="text" name="costo" value="'+  prod['precio_unitario'] +'" id="cost" style="width:81px; text-align:right;"></td>';
+								trr += '<td width="50" border="2">';
 									trr += '<SELECT NAME="monedagrid" class="moneda'+ tr +'" style="width:50px;"></SELECT>';
 								trr += '</td>';
-								trr += '<td width="95"><INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 			id="import" readOnly="true" style="width:90px; text-align:right;"></td>';
+								trr += '<td width="111" border="2"><INPUT TYPE="text" name="importe'+ tr +'" value="'+  prod['importe'] +'" id="import" readOnly="true" style="width:90px; text-align:right;"></td>';
 								
 								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat($valor_impuesto.val())+'">';
 							trr += '</tr>';
@@ -1480,11 +1487,15 @@ $(function() {
 					}
 				});
 				
-				
+				//alert($descripcion_larga.val());
 				$boton_genera_pdf.click(function(event){
-					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_pdf_cotizacion/'+$id_cotizacion.val()+'/'+iu+'/out.json';
-					window.location.href=input_json;
+                                    var seleccionado=0;
+                                    if($descripcion_larga.is(':checked')){
+                                        seleccionado=1;
+                                    }
+                                    var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+                                    var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_pdf_cotizacion/'+$id_cotizacion.val()+'/'+seleccionado+'/'+iu+'/out.json';
+                                    window.location.href=input_json;
 				});
 				
 				$submit_actualizar.bind('click',function(){
