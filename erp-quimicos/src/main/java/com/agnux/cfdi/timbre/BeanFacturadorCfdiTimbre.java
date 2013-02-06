@@ -73,6 +73,7 @@ public class BeanFacturadorCfdiTimbre {
     private String lugar_expedicion;
     private String numero_cuenta;
     private String selloDigitalSat;
+    private String Uuid;
     
     // datos Emisor
     private String razon_social_emisor;
@@ -305,7 +306,6 @@ public class BeanFacturadorCfdiTimbre {
                     
                     myInputStream= resultado.getInputStream();
                     
-                    
                     BufferedReader reader = new BufferedReader(new InputStreamReader(myInputStream));
                     StringBuilder sb = new StringBuilder();
                     String line = null;
@@ -324,6 +324,7 @@ public class BeanFacturadorCfdiTimbre {
                         
                         this.setSelloDigital(pop2.getSelloCfd());
                         this.setSelloDigitalSat(pop2.getSelloSat());
+                        this.setUuid(pop2.getUuid());
                         
                         System.out.println("sello sat: "+this.getSelloDigitalSat());
                         //Aqui va la rutina que guarda los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
@@ -1513,6 +1514,14 @@ public class BeanFacturadorCfdiTimbre {
 
     public void setSelloDigitalSat(String selloDigitalSat) {
         this.selloDigitalSat = selloDigitalSat;
+    }
+    
+    public String getUuid() {
+        return Uuid;
+    }
+
+    public void setUuid(String Uuid) {
+        this.Uuid = Uuid;
     }
     
 }

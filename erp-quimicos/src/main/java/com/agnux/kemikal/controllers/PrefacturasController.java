@@ -591,8 +591,10 @@ public class PrefacturasController {
                         String sello_digital = this.getBfCfd().getSelloDigital();
                         //System.out.println("sello_digital:"+sello_digital);
                         
-                        //este es el timbre fiscal, solo es para cfdi con timbre fiscal. Aqui debe ir vacio
+                        //este es el timbre fiscal. Solo es para cfdi con timbre fiscal. Aqui debe ir vacio
                         String sello_digital_sat = "";
+                        //este es el folio fiscal.  Solo es para cfdi con timbre fiscal. Aqui debe ir vacio
+                        String uuid="";
                         
                         //conceptos para el pdfcfd
                         listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
@@ -601,6 +603,7 @@ public class PrefacturasController {
                         datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original, sello_digital, id_sucursal);
                         datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
                         datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
+                        datosExtrasPdfCfd.put("uuid", uuid);
                         
                         //pdf factura
                         pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
@@ -704,6 +707,9 @@ public class PrefacturasController {
                             //este es el timbre fiscal, se debe extraer del xml que nos devuelve el web service del timbrado
                             String sello_digital_sat = this.getBfCfdiTf().getSelloDigitalSat();
                             
+                            //este es el folio fiscal del la factura timbrada, se obtiene   del xml
+                            String uuid = this.getBfCfdiTf().getUuid();
+                            
                             //conceptos para el pdfcfd
                             listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
                             
@@ -711,6 +717,7 @@ public class PrefacturasController {
                             datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
                             datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
                             datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
+                            datosExtrasPdfCfd.put("uuid", uuid);
                             
                             //pdf factura
                             pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
