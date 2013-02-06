@@ -414,11 +414,11 @@
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="45">&nbsp;Moneda</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;T.&nbsp;C.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;<span id="tipo_costo">C.&nbsp;U.</span></td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;&nbsp;C.&nbsp;I.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;C.&nbsp;D.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;C.&nbsp;R.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;P.&nbsp;M.</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="65">&nbsp;Moneda P.M.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;I.&nbsp;G.&nbsp;I.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;G.&nbsp;I.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;C.&nbsp;I.&nbsp;T.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;P.M.</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="65">&nbsp;Moneda&nbsp;P.M.</td>
 															</tr>
 														</thead>
 													</table>
@@ -438,19 +438,19 @@
 												<td width="200">&nbsp;Numero&nbsp;de&nbsp;Orden&nbsp;de&nbsp;Compra</td>
 												<td width="30">C.U.:</td>
 												<td width="200">Costo&nbsp;Ultima&nbsp;Compra</td>
-												<td width="30">C.I.:</td>
-												<td>Costo de Importacion</td>
+												<td width="30">I.G.I.:</td>
+												<td>Impuesto General de Importaci&oacute;n</td>
 												<td></td>
-												<td width="30">C.R.:</td>
-												<td>Costo&nbsp;de&nbsp;Referencia(C.R.=C.U.+C.I.+C.D.)</td>
+												<td width="30">C.I.T.:</td>
+												<td>Costo Integrado Total (de Importaci&oacute;n)</td>
 											</tr>
 											<tr>
 												<td width="30">Moneda:</td>
 												<td width="200">&nbsp;Moneda&nbsp;de&nbsp;la&nbsp;Factura&nbsp;del&nbsp;proveedor</td>
 												<td width="30">C.P.:</td>
 												<td width="200">Costo&nbsp;Promedio</td>
-												<td width="30">C.D.:</td>
-												<td>Costos Directos&nbsp;a&nbsp;la&nbsp;compra</td>
+												<td width="30">G.I.:</td>
+												<td>Gastos de Importaci&oacute;n</td>
 												<td></td>
 												<td width="30">P.M.:</td>
 												<td>Precio&nbsp;Minimo&nbsp;de&nbsp;Venta</td>
