@@ -1414,4 +1414,100 @@ public class CrmSpringDao implements CrmInterfaceDao{
         return hm_datos_cliente_prospecto;  
     }
     //----------------------------------------------Termina aplicativo de registro de Casos----------------------------------------
+
+@Override
+    public ArrayList<HashMap<String, String>> getBuscadorRegistros(Integer id, Integer agente, Integer tipo_seleccion,Integer status,Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa) {
+       
+        
+            String query ="select * from crm_consultas("+id+","+agente+","+tipo_seleccion+","+status+","+etapa+",'"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+")as foo("
+                                                        + "cantidad_llamadas integer, "
+                                                        + "llamadas_totales integer, "
+                                                        + "llamadas_entrantes integer, "
+                                                        + "llamadas_salientes integer, "
+                                                        + "llamadas_planeadas integer, "
+                                                        + "llamadas_con_exito integer, "
+                                                        + "llamadas_con_cita integer, "
+                                                        + "llamadas_con_seguimiento integer, "
+                                                        + "porcentaje_llamadas double precision, "
+                                                        + "efectividad double precision, "
+                                                        + "avance double precision, "
+                                                        + "gestion double precision, "
+                                                        + "planeacion double precision)";
+        
+            System.out.println("Resultados de la FUNCION__1____"+" "+query);
+       
+      
+        //String sql_to_query="";
+        ArrayList<HashMap<String, String>> hm_datos_contacto = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cantidad_llamadas",String.valueOf(rs.getInt("cantidad_llamadas")));
+                    row.put("llamadas_totales",String.valueOf(rs.getInt("llamadas_totales")));
+                    row.put("llamadas_entrantes",String.valueOf(rs.getInt("llamadas_entrantes")));
+                    row.put("llamadas_salientes",String.valueOf(rs.getInt("llamadas_salientes")));
+                    row.put("llamadas_planeadas",String.valueOf(rs.getInt("llamadas_planeadas")));
+                    row.put("llamadas_con_exito",String.valueOf(rs.getInt("llamadas_con_exito")));
+                    row.put("llamadas_con_cita",String.valueOf(rs.getInt("llamadas_con_cita")));
+                    row.put("llamadas_con_seguimiento",String.valueOf(rs.getInt("llamadas_con_seguimiento")));
+                    row.put("porcentaje_llamadas",StringHelper.roundDouble(rs.getDouble("porcentaje_llamadas"),2));
+                    row.put("efectividad",StringHelper.roundDouble(rs.getDouble("efectividad"),2));
+                    row.put("avance",StringHelper.roundDouble(rs.getDouble("avance"),2));
+                    row.put("gestion",StringHelper.roundDouble(rs.getDouble("gestion"),2));
+                    row.put("planeacion",StringHelper.roundDouble(rs.getDouble("planeacion"),2));
+                    
+              
+                    return row;
+                }
+            }
+        );
+        return hm_datos_contacto;  
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorVisitas(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa) {
+         
+            String query ="select * from crm_consultas("+id+","+agente+","+tipo_seleccion+","+status+","+etapa+",'"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+")as foo("
+                                                        + "cantidad_visitas integer, "
+                                                        + "visitas_totales integer, "
+                                                        + "visitas_con_exito integer, "
+                                                        + "visitas_con_cita integer, "
+                                                        + "visitas_con_seguimiento integer, "
+                                                        + "porcentaje_visitas double precision, "
+                                                        + "efectividad double precision, "
+                                                        + "avance double precision, "
+                                                        + "gestion double precision) ";
+                                                        
+        
+            System.out.println("Resultados de la FUNCION___2____"+" "+query);
+      ArrayList<HashMap<String,String>>hm_registro_visitas =(ArrayList<HashMap<String,String>>)this.jdbcTemplate.query(
+            query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cantidad_visitas",String.valueOf(rs.getInt("cantidad_visitas")));
+                    row.put("visitas_totales",String.valueOf(rs.getInt("visitas_totales")));
+                    row.put("visitas_con_exito",String.valueOf(rs.getInt("visitas_con_exito")));
+                    row.put("visitas_con_cita",String.valueOf(rs.getInt("visitas_con_cita")));
+                    row.put("visitas_con_seguimiento",String.valueOf(rs.getInt("visitas_con_seguimiento")));
+                    row.put("porcentaje_visitas",StringHelper.roundDouble(rs.getDouble("porcentaje_visitas"),2));
+                    row.put("efectividad",StringHelper.roundDouble(rs.getDouble("efectividad"),2));
+                    row.put("avance",StringHelper.roundDouble(rs.getDouble("avance"),2));
+                    row.put("gestion",StringHelper.roundDouble(rs.getDouble("gestion"),2));
+                    
+                    
+              
+                    return row;
+                }
+            }
+        );
+        return hm_registro_visitas;  
+    }
+    
+    
+
 }
+
