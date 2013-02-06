@@ -337,10 +337,10 @@ $(function() {
                          'id':id_to_show,
                         'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                     }
-                    alert("pasa aqui");
+                    
 
                     $.post(input_json,$arreglo,function(entry){
-                        alert("comienza el proceso");
+                        
                         $metas.attr({'value':entry['Registros']['0']['cantidad_llamadas']});
                         $totales.attr({'value':entry['Registros']['0']['llamadas_totales']});
                         $porcentaje.attr({'value':entry['Registros']['0']['porcentaje_llamadas']});
@@ -364,12 +364,12 @@ $(function() {
             
             $cerrar_plugin.bind('click',function(){
                 var remove = function() {$(this).remove();};
-                $('#forma-visitas-overlay').fadeOut(remove);
+                $('#forma-llamadas-overlay').fadeOut(remove);
             });
 
             $cancelar_plugin.click(function(event){
                 var remove = function() {$(this).remove();};
-                $('#forma-visitas-overlay').fadeOut(remove);
+                $('#forma-llamadas-overlay').fadeOut(remove);
 
             });
 
@@ -530,7 +530,7 @@ $(function() {
                          'id':id_to_show,
                         'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                     }
-                    alert("pasa aqui");
+                   
 
                     $.post(input_json,$arreglo,function(entry){
                         
@@ -581,16 +581,39 @@ $(function() {
             $forma_selected3.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
             $tabs_li_funxionalidad();
 
-            //variables para la forma
             var $select_agente =$('#forma-casos-window').find('select[name=select_agente]');
-            var $select_estatus=$('#forma-casos-window').find('select[name=select_status]');
+            var $select_tipo =$('#forma-casos-window').find('select[name=select_tipo]');
+            var $select_status =$('#forma-casos-window').find('select[name=estatus]');
+            var $select_etapa =$('#forma-casos-window').find('input[name=etapa]');
             var $fecha_inicial =$('#forma-casos-window').find('input[name=fecha_inicial]');
             var $fecha_final =$('#forma-casos-window').find('input[name=fecha_final]');
             var $consultar =$('#forma-casos-window').find('input[name=buscar]');
+            var $metas =$('#forma-casos-window').find('input[name=metas]');
+            var $totales =$('#forma-casos-window').find('input[name=totales]');
+            var $porcentaje =$('#forma-casos-window').find('input[name=porcentaje]');
+            
+            var $con_exito =$('#forma-casos-window').find('input[name=con_exito]');
+            var $con_cita =$('#forma-casos-window').find('input[name=con_cita]');
+            var $con_seguimiento =$('#forma-casos-window').find('input[name=con_seguimiento]');
+            var $efectividad =$('#forma-casos-window').find('input[name=efectividad]');
+            var $gestion =$('#forma-casos-window').find('input[name=gestion]');
+            var $avance =$('#forma-casos-window').find('input[name=avance]');
+           
+            
+            
             var $cerrar_plugin = $('#forma-casos-window').find('#close');
             var $cancelar_plugin = $('#forma-casos-window').find('#boton_cancelar');
-
-
+            
+            
+            $select_etapa.attr({'value': 0});
+            
+            $select_tipo.children().remove();
+            var tipo_html='';
+                
+                tipo_html+='<option value="1">Cliente</option>';
+                tipo_html+='<option value="2">Prospecto</option>';
+            $select_tipo.append(tipo_html);
+            
              var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
 		var parametros={
                     
@@ -608,6 +631,12 @@ $(function() {
             
             
              });//fin json
+             
+             $select_status.children().remove();
+             var status_html='';
+                status_html +='<option value="1" selected="yes">Abierto</option>';
+                status_html +='<option value="0" >Cerrado</option>';
+            $select_status.append(status_html);
              
              $fecha_inicial.click(function (s){
 			var a=$('div.datepicker');
@@ -633,13 +662,13 @@ $(function() {
 				$fecha_inicial.val(formated);
 				if (formated.match(patron) ){
 					var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-					
-					if (valida_fecha==true){
+					$fecha_inicial.DatePickerHide();
+					/*if (valida_fecha==true){
 						jAlert("Fecha no valida",'! Atencion');
 						$fecha_inicial.val(mostrarFecha());
 					}else{
 						$fecha_inicial.DatePickerHide();	
-					}
+					}*/
 				}
 			}
 		});
@@ -671,31 +700,46 @@ $(function() {
 				$fecha_final.val(formated);
 				if (formated.match(patron) ){
 					var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-					
-					if (valida_fecha==true){
+					$fecha_final.DatePickerHide();
+					/*if (valida_fecha==true){
 						$fecha_final.DatePickerHide();	
 					}else{
 						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
 						$fecha_final.val(mostrarFecha());
-					}
+					}*/
 				}
 			}
 		});
-                 //click para hacer la consulta
+            
+             //click para hacer la consulta
 		$consultar.click(function(event){ 
                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
                     $arreglo = {
+                        
                         'agente':$select_agente.val(),
-                        'status':$select_estatus.val(),
+                        'status':$select_status.val(),
+                        'etapa':$select_etapa.val(),
+                        'tipo_seleccion':$select_tipo.val(),
                         'fecha_inicial':$fecha_inicial.val(),
                         'fecha_final':$fecha_final.val(),
+                         'id':id_to_show,
                         'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                     }
-
+                   
 
                     $.post(input_json,$arreglo,function(entry){
-
-
+                        
+                        $metas.attr({'value':entry['Visitas']['0']['cantidad_visitas']});
+                        $totales.attr({'value':entry['Visitas']['0']['visitas_totales']});
+                        $porcentaje.attr({'value':entry['Visitas']['0']['porcentaje_visitas']});
+                        
+                        $con_exito.attr({'value':entry['Visitas']['0']['visitas_con_exito']});
+                        $con_cita.attr({'value':entry['Visitas']['0']['visitas_con_cita']});
+                        $con_seguimiento.attr({'value':entry['Visitas']['0']['visitas_con_seguimiento']});
+                        $efectividad.attr({'value':entry['Visitas']['0']['efectividad']});
+                        $gestion.attr({'value':entry['Visitas']['0']['gestion']});
+                        $avance.attr({'value':entry['Visitas']['0']['avance']});
+                       
 
 
 
@@ -883,44 +927,56 @@ $(function() {
                 $forma_selected5.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
                 $tabs_li_funxionalidad();
 
-                //variables para la forma
                 var $select_agente =$('#forma-registro-window').find('select[name=select_agente]');
-                var $select_tipo =$('#forma-registro-window').fidn('select[name=select_tipo]');
+                var $select_tipo =$('#forma-registro-window').find('select[name=select_tipo]');
+                var $select_status =$('#forma-registro-window').find('input[name=status]');
+                var $select_etapa =$('#forma-registro-window').find('input[name=etapa]');
                 var $fecha_inicial =$('#forma-registro-window').find('input[name=fecha_inicial]');
                 var $fecha_final =$('#forma-registro-window').find('input[name=fecha_final]');
                 var $consultar =$('#forma-registro-window').find('input[name=buscar]');
+                var $metas =$('#forma-registro-window').find('input[name=metas]');
+                var $totales =$('#forma-registro-window').find('input[name=totales]');
+                var $porcentaje =$('#forma-registro-window').find('input[name=porcentaje]');
+                var $contacto =$('#forma-registro-window').find('input[name=contactos]');
+               
+
+
+
                 var $cerrar_plugin = $('#forma-registro-window').find('#close');
                 var $cancelar_plugin = $('#forma-registro-window').find('#boton_cancelar');
-            
+
+                $select_status.attr({'value' : 0});
+                $select_etapa.attr({'value': 0});
+
                 $select_tipo.children().remove();
                 var tipo_html='';
-                tipo_html+='<option value="0" selected="yes">--Seleccione Tipo Busqueda--</option>';
-                tipo_html+='<option value="1">Cliente</option>';
-                tipo_html+='<option value="2">Prospecto</option>';
+
+                    tipo_html+='<option value="1">Cliente</option>';
+                    tipo_html+='<option value="2">Prospecto</option>';
                 $select_tipo.append(tipo_html);
-                
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
-		var parametros={
-                    
-                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                }
-                $.post(input_json,parametros,function(entry){
 
-               //Alimentando los campos select_agente
-                       $select_agente.children().remove();
-                       var motivo_hmtl = '';
-                       $.each(entry['Agentes'],function(entryIndex,motivo){
-                               motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
-                       });
-                       $select_agente.append(motivo_hmtl);
+                 var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
+                    var parametros={
 
+                        iu: $('#lienzo_recalculable').find('input[name=iu]').val()
+                    }
+                 $.post(input_json,parametros,function(entry){
 
-                });//fin json
+                //Alimentando los campos select_agente
+                    $select_agente.children().remove();
+                    var motivo_hmtl = '';
+                    $.each(entry['Agentes'],function(entryIndex,motivo){
+                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
+                    });
+                    $select_agente.append(motivo_hmtl);
+            
+            
+             });//fin json
              
-                $fecha_inicial.click(function (s){
-                           var a=$('div.datepicker');
-                           a.css({'z-index':100});
-               });
+             $fecha_inicial.click(function (s){
+			var a=$('div.datepicker');
+			a.css({'z-index':100});
+            });
 			
 		$fecha_inicial.DatePicker({
 			format:'Y-m-d',
@@ -941,18 +997,20 @@ $(function() {
 				$fecha_inicial.val(formated);
 				if (formated.match(patron) ){
 					var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-					
-					if (valida_fecha==true){
+					$fecha_inicial.DatePickerHide();
+					/*if (valida_fecha==true){
 						jAlert("Fecha no valida",'! Atencion');
 						$fecha_inicial.val(mostrarFecha());
 					}else{
 						$fecha_inicial.DatePickerHide();	
-					}
+					}*/
 				}
 			}
 		});
 		
-                 //fecha para la proxima visita
+			
+        
+        //fecha para la proxima visita
 		$fecha_final.click(function (s){
 			var a=$('div.datepicker');
 			a.css({'z-index':100});
@@ -977,31 +1035,42 @@ $(function() {
 				$fecha_final.val(formated);
 				if (formated.match(patron) ){
 					var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-					
-					if (valida_fecha==true){
+					$fecha_final.DatePickerHide();
+					/*if (valida_fecha==true){
 						$fecha_final.DatePickerHide();	
 					}else{
 						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
 						$fecha_final.val(mostrarFecha());
-					}
+					}*/
 				}
 			}
 		});
-                
-                 //click para hacer la consulta
+            
+             //click para hacer la consulta
 		$consultar.click(function(event){ 
                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
                     $arreglo = {
+                        
                         'agente':$select_agente.val(),
+                        'status':$select_status.val(),
+                        'etapa':$select_etapa.val(),
+                        'tipo_seleccion':$select_tipo.val(),
                         'fecha_inicial':$fecha_inicial.val(),
                         'fecha_final':$fecha_final.val(),
+                         'id':id_to_show,
                         'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                     }
-
+                   
 
                     $.post(input_json,$arreglo,function(entry){
-
-
+                        
+                        $metas.attr({'value':entry['Varios']['0']['prospectos_meta']});
+                        $totales.attr({'value':entry['Varios']['0']['total_contactos']});
+                        $porcentaje.attr({'value':entry['Varios']['0']['porcentaje_cumplido']});
+                        
+                        $contacto.attr({'value':entry['Varios']['0']['contactos']});
+                        
+                       
 
 
 
