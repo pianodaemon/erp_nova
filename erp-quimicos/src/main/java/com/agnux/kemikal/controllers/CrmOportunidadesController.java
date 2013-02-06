@@ -322,7 +322,7 @@ public class CrmOportunidadesController {
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
         if( String.valueOf(succes.get("success")).equals("true") ){
-            actualizo = this.getCrmDao().selectFunctionForThisApp(data_string, extra_data_array);
+            actualizo = this.getCrmDao().selectFunctionForCrmAdmProcesos(data_string, extra_data_array);
         }
         
         jsonretorno.put("success",String.valueOf(succes.get("success")));
