@@ -31,13 +31,14 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, String>> getMotivosLlamada_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getMotivosLlamada_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc,Integer id_empresa);
     
-    //Metodos para Aplicativo de Registro de Llamadas
+   //Metodos para Aplicativo de Registro de Llamadas
     public ArrayList<HashMap<String, String>> getMotivos_Llamadas(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCalificacion_Llamadas(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getRegistroLlamadas_Seguimiento(Integer id_empresa);
     public ArrayList<HashMap<String,String>>getCrmRegistroLlamadas_Datos(Integer id);
     public ArrayList<HashMap<String,Object>>getRegistroLlamadas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
 
+    
     
     //Métodos para ASplicativo de Registlro de Visitas
     public ArrayList<HashMap<String, Object>> getCrmRegistroVisitas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
@@ -81,6 +82,12 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, String>> getCrmRegistroCasos_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getBuscadorCliente_Prospecto(String Razon_social, String rfc, Integer identificador_cliente_prospecto, Integer id_empresa);
     
-    
+    //Metodos para el buscador de Llamadas
+
+    public ArrayList<HashMap<String, String>> getBuscadorRegistros(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa);
+
+    //Metodos para el buscador de Visitas
+    public ArrayList<HashMap<String, String>> getBuscadorVisitas(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa);
+   
     
 }
