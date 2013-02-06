@@ -972,16 +972,16 @@ public class CrmSpringDao implements CrmInterfaceDao{
                         +"crm_metas.monto_cotizaciones, " 
                         +"crm_metas.monto_oportunidades, " 
                         +"crm_metas.ventas_prospectos, " 
-                        +"crm_metas.cantidad_cotizaciones2, " 
-                        +"crm_metas.cantidad_oportunidades2, " 
-                        +"crm_metas.monto_cotizaciones2, " 
-                        +"crm_metas.monto_oportunidades2, " 
+                        +"crm_metas.cantidad_cotizaciones2 as cant_cotizaciones, " 
+                        +"crm_metas.cantidad_oportunidades2 as cant_oportunidades, " 
+                        +"crm_metas.monto_cotizaciones2 as montos_cotizaciones, " 
+                        +"crm_metas.monto_oportunidades2 as montos_oportunidades, " 
                         +"crm_metas.ventas_clientes, " 
                         +"crm_metas.ventas_oportunidades_clientes, " 
                         +"crm_metas.gral_empleado_id "
                 +"FROM crm_metas "                     
                 +"WHERE crm_metas.id=? ";
-        
+        System.out.println("Datos de la META ___"+sql_to_query);
         ArrayList<HashMap<String, String>> datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id)}, new RowMapper(){
@@ -1002,10 +1002,10 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("monto_cotizaciones",StringHelper.roundDouble(rs.getDouble("monto_cotizaciones"),2));
                     row.put("monto_oportunidades",StringHelper.roundDouble(rs.getDouble("monto_oportunidades"),2));
                     row.put("ventas_prospectos",String.valueOf(rs.getInt("ventas_prospectos")));
-                    row.put("cantidad_cotizaciones2",String.valueOf(rs.getInt("cantidad_cotizaciones2")));
-                    row.put("cantidad_oportunidades2",String.valueOf(rs.getInt("cantidad_oportunidades2")));
-                    row.put("monto_cotizaciones2",StringHelper.roundDouble(rs.getDouble("monto_cotizaciones2"),2));
-                    row.put("monto_oportunidades2",StringHelper.roundDouble(rs.getDouble("monto_oportunidades2"),2));
+                    row.put("cant_cotizaciones",String.valueOf(rs.getInt("cant_cotizaciones")));
+                    row.put("cant_oportunidades",String.valueOf(rs.getInt("cant_oportunidades")));
+                    row.put("montos_cotizaciones",StringHelper.roundDouble(rs.getDouble("montos_cotizaciones"),2));
+                    row.put("montos_oportunidades",StringHelper.roundDouble(rs.getDouble("montos_oportunidades"),2));
                     row.put("ventas_clientes",String.valueOf(rs.getInt("ventas_clientes")));
                     row.put("ventas_oportunidades_clientes",String.valueOf(rs.getInt("ventas_oportunidades_clientes")));
                     
@@ -1147,6 +1147,8 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     +"crm_registro_llamadas.crm_tipos_seguimiento_llamada_id, "
                     +"crm_registro_llamadas.deteccion_oportunidad, "
                     +"crm_registro_llamadas.llamada_planeada, "
+                    +"crm_registro_llamadas.llamada_completada,"
+                    + "crm_registro_llamadas.tipo_llamada, "
                     +"crm_registro_llamadas.resultado, "
                     +"crm_registro_llamadas.observaciones, "
                     +"(CASE WHEN crm_registro_llamadas.fecha_sig_llamada::character varying='2999-12-31' THEN '' ELSE crm_registro_llamadas.fecha_sig_llamada::character varying END) AS fecha_sig_llamada, "
@@ -1175,12 +1177,14 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("seguimiento_id",String.valueOf(rs.getInt("crm_tipos_seguimiento_llamada_id")));
                     row.put("deteccion_oportunidad",String.valueOf(rs.getInt("deteccion_oportunidad")));
                     
-                    row.put("resultado",rs.getString("resultado"));
-                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("resultado",rs.getString("resultado").toUpperCase());
+                    row.put("observaciones",rs.getString("observaciones").toUpperCase());
                     row.put("fecha_sig_llamada",rs.getString("fecha_sig_llamada"));
                     row.put("hora_sig_llamada",rs.getString("hora_sig_llamada"));
-                    row.put("comentarios_sig_llamada",rs.getString("comentarios_sig_llamada"));
+                    row.put("comentarios_sig_llamada",rs.getString("comentarios_sig_llamada").toUpperCase());
                     row.put("llamada_planeada",String.valueOf(rs.getInt("llamada_planeada")));
+                    row.put("llamada_completada",String.valueOf(rs.getInt("llamada_completada")));
+                    row.put("tipo_llamada",String.valueOf(rs.getInt("tipo_llamada")));
                     return row;
                 }
             }
@@ -1205,7 +1209,8 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 +"LEFT JOIN crm_motivos_llamada ON crm_motivos_llamada.id=crm_registro_llamadas.crm_motivos_llamda_id "
                 +"LEFT JOIN crm_calificaciones_visita ON crm_calificaciones_visita.id=crm_registro_llamadas.crm_calificacion_llamada_id "
                 +"LEFT JOIN crm_tipos_seguimiento_visita ON crm_tipos_seguimiento_visita.id=crm_registro_llamadas.crm_tipos_seguimiento_llamada_id "
-                + "join ("+sql_busqueda+") AS sbt ON sbt.id = crm_registro_llamadas.id "
+                +"join ("+sql_busqueda+") AS sbt ON sbt.id = crm_registro_llamadas.id "
+                
                 + "order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
         System.out.println("Devuelve la consulta"+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
