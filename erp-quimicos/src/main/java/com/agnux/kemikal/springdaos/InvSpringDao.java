@@ -6,6 +6,7 @@
  */
 package com.agnux.kemikal.springdaos;
 import com.agnux.common.helpers.StringHelper;
+import com.agnux.common.helpers.TimeHelper;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6502,7 +6503,7 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm;
     }
     
-    
+    /*
     @Override
     public ArrayList<HashMap<String, String>> getInvTraspasos_DatosGrid(Integer id, Integer id_almacen_origen) {
         String sql_to_query = ""
@@ -6539,7 +6540,45 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
+     * 
+     */
+    @Override
+    public ArrayList<HashMap<String, String>> getInvTraspasos_DatosGrid(Integer id, Integer id_almacen_origen) {
+        String sql_to_query = ""
+                + "SELECT "
+                    + "inv_prod.id AS id_producto, "
+                    + "inv_prod.sku AS codigo, "
+                    + "inv_prod.descripcion, "
+                    + "inv_prod_unidades.titulo AS unidad,  "
+                    + "(inv_exi.exi_inicial - inv_exi.transito - inv_exi.reservado + inv_exi.entradas_1 + inv_exi.entradas_2 + inv_exi.entradas_3 + inv_exi.entradas_4 + inv_exi.entradas_5 + inv_exi.entradas_6 + inv_exi.entradas_7 + inv_exi.entradas_8 + inv_exi.entradas_9 + inv_exi.entradas_10 + inv_exi.entradas_11 + inv_exi.entradas_12 - inv_exi.salidas_1 - inv_exi.salidas_2 - inv_exi.salidas_3 - inv_exi.salidas_4 - inv_exi.salidas_5 - inv_exi.salidas_6 - inv_exi.salidas_7 - inv_exi.salidas_8 - inv_exi.salidas_9 - inv_exi.salidas_10 - inv_exi.salidas_11 - inv_exi.salidas_12) AS existencia, "
+                    + "inv_tras_det.cantidad_tras AS cant_traspaso "
+                + "FROM inv_tras_det "
+                + "JOIN inv_prod ON inv_prod.id=inv_tras_det.inv_prod_id "
+                + "JOIN inv_exi ON inv_exi.inv_prod_id=inv_prod.id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "WHERE inv_tras_det.inv_tras_id=? AND inv_exi.inv_alm_id=? AND inv_exi.ano="+TimeHelper.getFechaActualY()+" "
+                + "ORDER BY inv_tras_det.id;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        System.out.println(sql_to_query);
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id), new Integer(id_almacen_origen)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_producto",String.valueOf(rs.getInt("id_producto")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),4));
+                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
     
     
     
