@@ -474,23 +474,23 @@
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../crmregistrovisitas/startup.agnux">Registro de Visitas</a></li>
-                                                                                                        <li class="topline"><a href="../crmregistrollamadas/startup.agnux">Registro de Llamadas</a></li>
+													<li class="topline"><a href="../crmregistrollamadas/startup.agnux">Registro de Llamadas</a></li>
 													<li class="topline"><a href="../crmoportunidades/startup.agnux">Registro de Oportunidades</a></li>
-                                                                                                        <li class="topline"><a href="../crmmetas/startup.agnux">Registro de Metas </a></li>
-                                                                                                        <li class="topline"><a href="../crmregistrocasos/startup.agnux">Registro de Casos</a></li>
+													<li class="topline"><a href="../crmmetas/startup.agnux">Registro de Metas </a></li>
+													<li class="topline"><a href="../crmregistrocasos/startup.agnux">Registro de Casos</a></li>
 												</ul>
 											</li>
-                                                                                        <li>
-                                                                                            <a href="#" class="sub">Cansultas&raquo;</a>
-                                                                                            <ul>
-                                                                                                <li class ="topline"><a href="../crmconsultas/startup.agnux">Consultas</li>
-                                                                                            </ul>
-                                                                                        </li>
+											<li>
+												<a href="#" class="sub">Cansultas&raquo;</a>
+												<ul>
+													<li class ="topline"><a href="../crmconsultas/startup.agnux">Consultas</li>
+												</ul>
+											</li>
 										</ul>
 									</li>
 									
                                                                         
-                                                                        <!-- Menu de produccion "NO BORRAR PORFAVOR, se enojara tu papa"  -->
+									<!-- Menu de produccion "NO BORRAR PORFAVOR, se enojara tu papa"  -->
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Producci&oacute;n &raquo;</a>
 										<ul>
