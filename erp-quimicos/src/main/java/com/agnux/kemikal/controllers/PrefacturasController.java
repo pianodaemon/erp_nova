@@ -558,7 +558,7 @@ public class PrefacturasController {
                 if(select_tipo_documento==1 || select_tipo_documento==3){
                     System.out.println("::::::::::::Iniciando Facturacion:::::::::::::::::..");
                     String proposito = "FACTURA";
-
+                    
                     //obtener tipo de facturacion
                     tipo_facturacion = this.getFacdao().getTipoFacturacion();
                     
