@@ -211,9 +211,9 @@ public class ProOrdenProduccionController {
         ArrayList<HashMap<String, String>> datosOrden = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosOrdenDet = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
-        
+        ArrayList<HashMap<String, String>> arrayExtras = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> mapExtras = new HashMap<String, String>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
@@ -238,12 +238,16 @@ public class ProOrdenProduccionController {
             
             
         }
+        mapExtras.put("suc_id_actual", String.valueOf(id_sucursal));
         
         jsonretorno.put("Orden", datosOrden);
         jsonretorno.put("OrdenDet", datosOrdenDet);
         jsonretorno.put("ordenTipos", this.getProDao().getProOrdenTipos(id_empresa));
         jsonretorno.put("Instrumentos", this.getProDao().getInstrumentos(id_empresa));
         jsonretorno.put("Almacenes", almacenes);
+        jsonretorno.put("Sucursales", this.getProDao().getSucursales(id_empresa));
+        jsonretorno.put("Extras", arrayExtras);
+        
         return jsonretorno;
     }
     

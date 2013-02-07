@@ -3930,11 +3930,17 @@ public class ProSpringDao implements ProInterfaceDao{
     /*rae los productos de los que esta compuesto un roducto teminado*/
     @Override
     public ArrayList<HashMap<String, String>> getProElementosProducto(String id_producto, String id_orden, String id_subproceso) {
-        
+        /*
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccion("+id_producto+","+id_orden+","+id_subproceso+", 0)  as "
                 + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
                 + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
                 + "lote character varying, inv_osal_id integer) order by elemento;";
+        */
+        
+        String sql_to_query = "selecT * from pro_get_detalle_orden_produccionv2("+id_producto+","+id_orden+","+id_subproceso+", 0)  as "
+                + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
+                + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
+                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer) order by elemento;";
         
         //and tmp_salida.cantidad_tmp=tmp_det.cantidad // se quito, por que no mostraba los lotes
         System.out.println("Ejecutando query de: "+ sql_to_query);
@@ -3959,6 +3965,8 @@ public class ProSpringDao implements ProInterfaceDao{
                     //row.put("num_lote",rs.getString("num_lote"));
                     row.put("id_reg_det",String.valueOf(rs.getInt("id_reg_det")));
                     row.put("inv_osal_id",String.valueOf(rs.getInt("inv_osal_id")));
+                    row.put("inv_alm_id",String.valueOf(rs.getInt("inv_alm_id")));
+                    row.put("gral_suc_id",String.valueOf(rs.getInt("gral_suc_id")));
                     return row;
                 }
             }
@@ -4549,4 +4557,7 @@ public class ProSpringDao implements ProInterfaceDao{
         return hm_alm;
     }
     
+    //traer sucursales
+   
+     
 }
