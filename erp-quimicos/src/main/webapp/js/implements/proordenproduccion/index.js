@@ -47,6 +47,8 @@ $(function() {
         var $cadena_especificaciones = "";
         var $cadena_procedimientos = "";
         var array_almacenes = new Array(); //este arreglo para la lista de almacenes
+        var array_sucursales = new Array(); //este arreglo para la lista de asucursales de la empresa
+        var array_extradata = new Array(); //este arreglo para la lista de asucursales de la empresa
         
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
@@ -1914,17 +1916,18 @@ $(function() {
                         
                         $.post(input_json,$arreglo,function(producto){
                             html_tabla = '<tr>';
-                                html_tabla += '<td colspan="8" width="865">';
+                                html_tabla += '<td colspan="8" width="885">';
                                     //html_tabla += '<form id="guarda_lotes" action="guarda_lotes.json" method="POST" >';
                                         html_tabla += '<table class="detalle_por_prod" border="1">';
                                             html_tabla += '<header>';
-                                                html_tabla += '<td class="grid" width="80">&nbsp;#</td>';
-                                                html_tabla += '<td class="grid" width="90">&nbsp;Codigo</td>';
-                                                html_tabla += '<td class="grid" width="205">&nbsp;Descripci&oacute;n</td>';
+                                                html_tabla += '<td class="grid" width="70">&nbsp;#</td>';
+                                                html_tabla += '<td class="grid" width="80">&nbsp;Codigo</td>';
+                                                html_tabla += '<td class="grid" width="175">&nbsp;Descripci&oacute;n</td>';
                                                 html_tabla += '<td class="grid" width="80">&nbsp;Cantidad</td>';
                                                 html_tabla += '<td class="grid" width="80">&nbsp;Adicional</td>';
                                                 html_tabla += '<td class="grid" width="130" >&nbsp;Lote</td>';
                                                 html_tabla += '<td class="grid" width="50" >&nbsp;Exist</td>';
+                                                html_tabla += '<td class="grid" width="100" >&nbsp;Sucursal</td>';
                                                 html_tabla += '<td class="grid" width="110" >&nbsp;Almacen</td>';
                                             html_tabla += '</header>';
                                         html_tabla += '</table>';
@@ -1939,7 +1942,6 @@ $(function() {
                             html_tabla += '</tr>';
                             
                             $tr_parent.after(html_tabla);
-                            
                             
                             if(producto['productos'] != null){
                                 $id_tabla = '#detalle_por_prod'+$id_producto.val()+$posicion.val();
@@ -1959,7 +1961,7 @@ $(function() {
                                     //alert(prod['cantidad_adicional']);
                                     prod['cantidad'] = $calcula_cantidad_por_porducto(prod['cantidad'] , $cantidad.val());
                                     //                        function(id_reg, $id_prod, $id_prod_detalle,            $sku,         $descripcion,       $cantidad,          $con_lote,                  clase_tmp,  grid,       cantidad_adicional,             posicion,       subproceso_id, id_reg_parent)
-                                    $add_producto_eleemnto_detalle(prod['id'],$id_producto.val(), prod['inv_prod_id'], prod['sku'], prod['descripcion'], prod['cantidad'], prod['requiere_numero_lote'], $id_tabla, $grid_parent, prod['cantidad_adicional'], $posicion.val(), $subproceso_id.val(), $id_reg_parent.val(),prod['num_lote'], prod['id_reg_det'], prod['inv_osal_id'] , "");
+                                    $add_producto_eleemnto_detalle(prod['id'],$id_producto.val(), prod['inv_prod_id'], prod['sku'], prod['descripcion'], prod['cantidad'], prod['requiere_numero_lote'], $id_tabla, $grid_parent, prod['cantidad_adicional'], $posicion.val(), $subproceso_id.val(), $id_reg_parent.val(),prod['num_lote'], prod['id_reg_det'], prod['inv_osal_id'] , "", prod['inv_alm_id'], prod['gral_suc_id']);
                                 });
                                 
                                 
@@ -1988,7 +1990,7 @@ $(function() {
                                 
                                 
                                 
-                                //codigo, para guardar los cambios en los productos del detalle de la formula
+                                //codigo, para guardar los cambios en los productos del detalle de la formula, asi como los lotes
                                 $tmp_tr.find('#guardar_detalle_prod'+trCount).click(function(event){
                                     event.preventDefault();
                                     
@@ -2036,6 +2038,7 @@ $(function() {
                                             id_reg_det = $(this).find('input[name=id_reg_det]').val();
                                             inv_osal_id = $(this).find('input[name=inv_osal_id]').val();
                                             almacen_id = $(this).find('select[name=almacen]').val();
+                                            sucursal_id = $(this).find('select[name=sucursal]').val();
                                             //1___0___1483___12___d3da21c7-c4ba-49be-a241-9529336c5e75&&&1___0___158___0___2471c2a0-f253-4504-9bca-b7f843a5c72d&&&1___0___148___0___f84b5f6c-6cd4-45cb-a404-b532527f60e2&&&1___0___147___0___ &&&1___0___191___0___ &&&1___0___151___0___ &&&1___0___1493___0___ &&&1___0___1397___0___ &&&1___0___1390___0___ &&&1___0___374___0___ &&&1___0___378___0___ &&&1___0___1180___0___ &&&1___0___149___0___ &&&1___0___150___0___ &&&1___0___91___0___ &&&1___0___160___0___ &&&1___0___127___0___ &&&1___0___1483___0___ 
                                             
                                             if(eliminar_tmp != null && lote_tmp != null){
@@ -2046,7 +2049,7 @@ $(function() {
                                                 cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+id_prod_detalle_tmp+"___"+
                                                     cantidad_elemento_tmp+"___"+cantidad_adicional_tmp+"___"+lote_tmp+"___"+//inv_osal_id
                                                     inv_prod_id_elemento_tmp+"___"+id_reg_parent+"___"+$subproceso_id.val()+
-                                                        "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"$$$$";
+                                                        "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"___"+sucursal_id+"$$$$";
                                             }
                                             
                                         });
@@ -2134,7 +2137,6 @@ $(function() {
                                                                                                                 $tabla_productos_preorden.find('input[name=equipo_adicional]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
                                                                                                             }
                                                                                                             if(tmp.split(':')[0].substring(0, 9) == 'almacen'){
-                                                                                                                alert("sadasd");
                                                                                                                 $tabla_productos_preorden.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
                                                                                                             }
                                                                                                             
@@ -2199,14 +2201,14 @@ $(function() {
                                                  //prod['id'],
                                                  //$id_producto.val(), 
                                                  //prod['inv_prod_id'], prod['sku'], prod['descripcion'], prod['cantidad'], prod $id_tabla, $grid_parent, prod['cant $posicion$subproceso_id.$id_reg_parent.val(),prod['num_lote'], prod['id_reg_det'] 
-        $add_producto_eleemnto_detalle = function(id_reg, $id_prod, $id_prod_detalle, $sku, $descripcion, $cantidad, $con_lote, clase_tmp, grid, cantidad_adicional, posicion, subproceso_id, id_reg_parent, num_lote, id_reg_det, inv_osal_id, tipo_agregado){
+        $add_producto_eleemnto_detalle = function(id_reg, $id_prod, $id_prod_detalle, $sku, $descripcion, $cantidad, $con_lote, clase_tmp, grid, cantidad_adicional, posicion, subproceso_id, id_reg_parent, num_lote, id_reg_det, inv_osal_id, tipo_agregado, id_almacen, id_sucursal){
             
             $tmp_tr = grid.find(clase_tmp);
             var trCount = $("tr", $tmp_tr).size();
             trCount++;
             
             tmp_html = '<tr>';
-                tmp_html += '<td width="80" class="grid1" align="center" >';
+                tmp_html += '<td width="70" class="grid1" align="center" >';
                     
                     if(inv_osal_id == 0){
                         tmp_html += '<a href="#elimina_producto_componente" id="elimina_producto_componente'+trCount+'">';
@@ -2224,7 +2226,7 @@ $(function() {
                                                 html_tabla += '<td class="grid" width="150" >&nbsp;Lote</td>';
                                                 html_tabla += '<td class="grid" width="90" >&nbsp;Almacen</td>';*/
                 tmp_html += '</td>';
-                tmp_html += '<td width="90" class="grid1" align="center" >';
+                tmp_html += '<td width="80" class="grid1" align="center" >';
                     tmp_html += '<input type="hidden" id="id_reg_parent" name="id_reg_parent" value="'+id_reg_parent+'">';
                     tmp_html += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
                     tmp_html += '<input type="hidden" id="inv_osal_id" name="inv_osal_id" value="'+inv_osal_id+'">';
@@ -2240,8 +2242,8 @@ $(function() {
                     
                 tmp_html += '</td>';
                 
-                tmp_html += '<td width="255" class="grid1">';
-                    tmp_html += '<input type="text" name="descripcoin" value="'+$descripcion+'"  class="borde_oculto" style="width:250px;" readOnly="true" >';
+                tmp_html += '<td width="175" class="grid1">';
+                    tmp_html += '<input type="text" name="descripcoin" value="'+$descripcion+'"  class="borde_oculto" style="width:150px;" readOnly="true" >';
                 tmp_html += '</td>';
                 tmp_html += '<td width="80" class="grid1">';
                     if(inv_osal_id == 0){
@@ -2258,28 +2260,54 @@ $(function() {
                 
                 if(num_lote == " " || num_lote == ""){
                     if(inv_osal_id != 0){
-                        tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:110px;">';
+                        tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:100px;">';
                         tmp_html += '<a href="#add_lote" id="add_lote'+trCount+'">+</a>';
                     }else{
-                        tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:110px;">';
+                        tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:100px;">';
                     }
                 }else{
-                    tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:110px;" readOnly="true">';
+                    tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value="'+num_lote+'"  style="width:100px;" readOnly="true">';
                     tmp_html += '<a href="#add_lote" id="add_lote'+trCount+'">+</a>';
                 }
                 
                 tmp_html += '</td>';
                 tmp_html += '<td width="50" class="grid1"><input type="text" name="existencia" id="existencia'+trCount+'" value="0"  style="width:50px;" readOnly="true"></td>';
-                tmp_html += '<td width="90" class="grid1">';
+                tmp_html += '<td width="100" class="grid1">';
+                tmp_html += '<select name="sucursal" id="sucursal'+trCount+'" style="width:85px;">';
+                //para mostrar las sucursales en los componentes de la orden de produccion
+                selececcionado = 0;
+                $.each(array_sucursales, function(entryIndex,item){
+                    if(id_sucursal == item['id']){
+                        tmp_html += '<option value="' + item['id'] + '" selected="yes" >' + item['sucursal'] + '</option>';
+                        selececcionado = 1;
+                    }else{
+                        tmp_html += '<option value="' + item['id'] + '"  >' + item['sucursal'] + '</option>';
+                    }
+                });
+                if(selececcionado==0){
+                    tmp_html += '<option value="0" selected="yes" >[- Selecciona una sucursal -]</option>';
+                }
+                tmp_html += '</select>';
+                
+                tmp_html += '</td>';
+                //para mostrar los almacenes en los componentes de la orden de produccion
+                tmp_html += '<td width="110" class="grid1">';
                 tmp_html += '<select name="almacen" id="almacen'+trCount+'" style="width:85px;">';
                 tmp_html += '<option value="0"  >[- Selecciona un almacen -]</option>';
+                selececcionado = 0;
                 $.each(array_almacenes, function(entryIndex,item){
-                    tmp_html += '<option value="' + item['id'] + '"  >' + item['titulo'] + '</option>';
+                    if(id_almacen == item['id']){
+                        selececcionado = 1;
+                        tmp_html += '<option value="' + item['id'] + '" selected="yes" >' + item['titulo'] + '</option>';
+                    }else{
+                        tmp_html += '<option value="' + item['id'] + '"  >' + item['titulo'] + '</option>';
+                    }
                 });
+                if(selececcionado==0){
+                    tmp_html += '<option value="0" selected="yes" >[- Selecciona una sucursal -]</option>';
+                }
                 tmp_html += '</select>';
-                /*if(){
-                }else{
-                }*/
+                
                 tmp_html += '</td>';
                 
             tmp_html += '</tr>';
@@ -2310,44 +2338,52 @@ $(function() {
                 $almacen_seleccionado = $(this).val();
                 $this_tr = $(this).parent().parent();
                 $sku_tmp = $this_tr.find('input[name=sku]').val();
+                $sucursal_tmp = $this_tr.find('select[name=sucursal]').val();
                 $id_prod_detalle_tmp = $this_tr.find('input[name=id_prod_detalle]').val();
                 var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
                 
-                //obtiene los tipos de almacen para el buscador
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_existenciapor_producto.json';
-                $arreglo = {'almacen_id':$almacen_seleccionado,'codigo':$sku_tmp,'id_producto':$id_prod_detalle_tmp, 'iu': iu};
-                $.post(input_json,$arreglo,function(entry){
-                    
-                    $this_tr.find('input[name=existencia]').val(entry['Existencia']);
-                    
-                    cantidad_existencia = parseFloat(entry['Existencia']);
-                    //alert(entry['Existencia']);
-                    $tmp_tr.find('tr').each(function(){
+                if($sucursal_tmp != 0){
+                    //obtiene los tipos de almacen para el buscador
+                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_existenciapor_producto.json';
+                    $arreglo = {'almacen_id':$almacen_seleccionado,'codigo':$sku_tmp,
+                        'id_producto':$id_prod_detalle_tmp, 'iu': iu};
+                    $.post(input_json,$arreglo,function(entry){
                         
-                        $sku_this_tr = $(this).find('input[name=sku]').val();
-                        $inv_prod_det_tr = $(this).find('input[name=id_prod_detalle]').val();
-                        $existencia_tr = $(this).find('input[name=existencia]').val();
-                        $almacen_tr = $(this).find('select[name=almacen]').val();
-                        $cantidad_elemnto_tr = isNaN(parseFloat($(this).find('input[name=cantidad_elemento]').val())) ? 0 : parseFloat($(this).find('input[name=cantidad_elemento]').val());
-                        $cantidad_adicional_tr = isNaN(parseFloat($(this).find('input[name=cantidad_adicional]').val())) ? 0 : parseFloat($(this).find('input[name=cantidad_adicional]').val());
-                        if($id_prod_detalle_tmp == $inv_prod_det_tr && $almacen_seleccionado == $almacen_tr ){
-                            //alert("cantidad_elemnto_tr:"+$(this).find('input[name=cantidad_elemnto]').val() +"   cantidad_adicional_tr:"+ $cantidad_adicional_tr);
-                            cantidad_existencia -= ($cantidad_elemnto_tr + $cantidad_adicional_tr );
+                        $this_tr.find('input[name=existencia]').val(entry['Existencia']);
+                        
+                        cantidad_existencia = parseFloat(entry['Existencia']);
+                        
+                        //alert(entry['Existencia']);
+                        $tmp_tr.find('tr').each(function(){
+                            
+                            $sku_this_tr = $(this).find('input[name=sku]').val();
+                            $inv_prod_det_tr = $(this).find('input[name=id_prod_detalle]').val();
+                            $existencia_tr = $(this).find('input[name=existencia]').val();
+                            $almacen_tr = $(this).find('select[name=almacen]').val();
+                            $cantidad_elemnto_tr = isNaN(parseFloat($(this).find('input[name=cantidad_elemento]').val())) ? 0 : parseFloat($(this).find('input[name=cantidad_elemento]').val());
+                            $cantidad_adicional_tr = isNaN(parseFloat($(this).find('input[name=cantidad_adicional]').val())) ? 0 : parseFloat($(this).find('input[name=cantidad_adicional]').val());
+                            if($id_prod_detalle_tmp == $inv_prod_det_tr && $almacen_seleccionado == $almacen_tr ){
+                                //alert("cantidad_elemnto_tr:"+$(this).find('input[name=cantidad_elemnto]').val() +"   cantidad_adicional_tr:"+ $cantidad_adicional_tr);
+                                cantidad_existencia -= ($cantidad_elemnto_tr + $cantidad_adicional_tr );
+                            }
+                            
+                        });
+                        
+                        $cantidad_this_tr = isNaN(parseFloat($this_tr.find('input[name=cantidad_elemento]').val())) ? 0 : parseFloat($this_tr.find('input[name=cantidad_elemento]').val());
+                        $adicional_this_tr = isNaN(parseFloat($this_tr.find('input[name=cantidad_adicional]').val())) ? 0 : parseFloat($this_tr.find('input[name=cantidad_adicional]').val());
+                        cantidad_existencia = (cantidad_existencia + ($cantidad_this_tr + $adicional_this_tr ) );
+                        $this_tr.find('input[name=existencia]').val(cantidad_existencia);
+
+                        if(cantidad_existencia < ($cantidad_this_tr + $adicional_this_tr )){
+                            $this_tr.css({'background-color' : '#F64848'});
+                        }else{
+                            $this_tr.parent().css({'background-color' : '#FFFFFF'});
                         }
-                        
-                    });
-                    
-                    $cantidad_this_tr = isNaN(parseFloat($this_tr.find('input[name=cantidad_elemento]').val())) ? 0 : parseFloat($this_tr.find('input[name=cantidad_elemento]').val());
-                    $adicional_this_tr = isNaN(parseFloat($this_tr.find('input[name=cantidad_adicional]').val())) ? 0 : parseFloat($this_tr.find('input[name=cantidad_adicional]').val());
-                    cantidad_existencia = (cantidad_existencia + ($cantidad_this_tr + $adicional_this_tr ) );
-                    $this_tr.find('input[name=existencia]').val(cantidad_existencia);
-                    
-                    if(cantidad_existencia < ($cantidad_this_tr + $adicional_this_tr )){
-                        $this_tr.css({'background-color' : '#F64848'});
-                    }else{
-                        $this_tr.parent().css({'background-color' : '#FFFFFF'});
-                    }
-                });//termina llamada json
+                    });//termina llamada json
+                }else{
+                    jAlert("Seleccione una sucursal", 'Atencion!');
+                }
+                
             });
             
             $tmp_tr.find('#cantidad_elemento'+trCount).change(function() {
@@ -2360,7 +2396,7 @@ $(function() {
             });
             
             $tmp_tr.find('#cantidad_adicional'+trCount).change(function() {
-                alert("asd");
+                
                 $valor = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                 $this_tr_tpm = $(this).parent().parent();
                 $adicional_this_tr = isNaN(parseFloat($this_tr_tpm.find('input[name=existencia]').val())) ? 0 : parseFloat($this_tr_tpm.find('input[name=existencia]').val());
@@ -2401,7 +2437,7 @@ $(function() {
                 
                 
                 tmp_html = '<tr>';
-                tmp_html += '<td width="80" class="grid1" align="center" >';
+                tmp_html += '<td width="70" class="grid1" align="center" >';
                     tmp_html += '<a href="#elimina_producto_componente" id="elimina_producto_componente'+trCount+'">';
                         tmp_html += "Eliminar";
                     tmp_html += '</a>';
@@ -2427,15 +2463,31 @@ $(function() {
                 tmp_html += '</td>';
                 
                 tmp_html += '<td width="130" class="grid1">';
-                    tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value=" "  style="width:110px;">';
+                    tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value=" "  style="width:100px;">';
                     tmp_html += '<a href="#remove_lote'+trCount+'" id="remove_lote'+trCount+'">-</a>';
                 tmp_html += '</td>';
-                tmp_html += '<td width="90" class="grid1">';
-                    tmp_html += '<select name="almacen" id="almacen'+trCount+'" style="width:85px;">';
-                    $.each(array_almacenes, function(entryIndex,item){
-                        tmp_html += '<option value="' + item['id'] + '"  >' + item['titulo'] + '</option>';
-                    });
-                    tmp_html += '</select>';
+                
+                
+                
+                tmp_html += '<td width="50" class="grid1"><input type="text" name="existencia" id="existencia'+trCount+'" value="0"  style="width:50px;" readOnly="true"></td>';
+                tmp_html += '<td width="100" class="grid1">';
+                
+                tmp_html += '<select name="sucursal" id="sucursal'+trCount+'" style="width:85px;">';
+                tmp_html += '<option value="0"  >[- Selecciona una sucursal -]</option>';
+                $.each(array_sucursales, function(entryIndex,item){
+                    tmp_html += '<option value="' + item['id'] + '"  >' + item['sucursal'] + '</option>';
+                });
+                tmp_html += '</select>';
+                tmp_html += '</td>';
+                //para mostrar los almacenes en los componentes de la orden de produccion
+                tmp_html += '<td width="110" class="grid1">';
+                selececcionado = 0;
+                tmp_html += '<select name="almacen" id="almacen'+trCount+'" style="width:85px;">';
+                tmp_html += '<option value="0"  >[- Selecciona un almacen -]</option>';
+                $.each(array_almacenes, function(entryIndex,item){
+                    tmp_html += '<option value="' + item['id'] + '"  >' + item['titulo'] + '</option>';
+                });
+                tmp_html += '</select>';
                 tmp_html += '</td>';
                 
                 tmp_html += '</tr>';
@@ -2594,7 +2646,7 @@ $(function() {
 		var $campo_sku = $('#forma-buscaproducto-window').find('input[name=campo_sku]');
 		var $select_tipo_producto = $('#forma-buscaproducto-window').find('select[name=tipo_producto]');
 		var $campo_descripcion = $('#forma-buscaproducto-window').find('input[name=campo_descripcion]');
-			
+		
 		var $buscar_plugin_producto = $('#forma-buscaproducto-window').find('#busca_producto_modalbox');
 		var $cancelar_plugin_busca_producto = $('#forma-buscaproducto-window').find('#cencela');
 		
@@ -2605,7 +2657,7 @@ $(function() {
 		$buscar_plugin_producto.mouseout(function(){
                     $(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
 		});
-		   
+		
 		$cancelar_plugin_busca_producto.mouseover(function(){
                     $(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
 		});
@@ -2671,16 +2723,16 @@ $(function() {
 			$.post(input_json,$arreglo,function(entry){
                             
 				$.each(entry['productos'],function(entryIndex,producto){
-					trr = '<tr>';
-						trr += '<td width="120">';
-							trr += '<span class="sku_prod_buscador">'+producto['sku']+'</span>';
-							trr += '<input type="hidden" id="id_prod_buscador" value="'+producto['id']+'">';
-						trr += '</td>';
-						trr += '<td width="280"><span class="titulo_prod_buscador">'+producto['descripcion']+'</span></td>';
-						trr += '<td width="90"><span class="unidad_prod_buscador">'+producto['unidad']+'</span></td>';
-						trr += '<td width="90"><span class="tipo_prod_buscador">'+producto['tipo']+'</span></td>';
-					trr += '</tr>';
-					$tabla_resultados.append(trr);
+                                    trr = '<tr>';
+                                        trr += '<td width="120">';
+                                            trr += '<span class="sku_prod_buscador">'+producto['sku']+'</span>';
+                                            trr += '<input type="hidden" id="id_prod_buscador" value="'+producto['id']+'">';
+                                        trr += '</td>';
+                                        trr += '<td width="280"><span class="titulo_prod_buscador">'+producto['descripcion']+'</span></td>';
+                                        trr += '<td width="90"><span class="unidad_prod_buscador">'+producto['unidad']+'</span></td>';
+                                        trr += '<td width="90"><span class="tipo_prod_buscador">'+producto['tipo']+'</span></td>';
+                                    trr += '</tr>';
+                                    $tabla_resultados.append(trr);
 				});
                                 
 				$colorea_tr_grid($tabla_resultados);
@@ -2725,7 +2777,7 @@ $(function() {
                                         
                                         $add_producto_eleemnto_detalle(0,inv_prod_id_elemento.val(), id_prod, codigo, descripcion, 
                                         0, "", $id_tabla, $grid_parent, 0, trCount, subproceso_id.val(), id_reg_parent.val(),"", 
-                                        id_reg_det, inv_osal_id, "recuperado");
+                                        id_reg_det, inv_osal_id, "recuperado", 0, 0);
                                         
                                     }
                                     
@@ -3435,6 +3487,8 @@ $(function() {
                                     $lote_pop.attr({'value': entry['Orden']['0']['lote']});
                                     
                                     array_almacenes = entry['Almacenes'];
+                                    array_sucursales = entry['Sucursales'];
+                                    array_extradata = entry['Extras'];
                                     
                                     array_instrumentos = entry['Instrumentos'];
                                     
