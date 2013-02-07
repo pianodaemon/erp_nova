@@ -124,7 +124,7 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="18">&nbsp;</td>
-                                            </tr>4
+                                            </tr>
                                             
                                             <tr>
                                                 <td>&nbsp;Fechas del:</td>
@@ -431,8 +431,8 @@
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal casos_div_one"  style="display:none;" title="">
                 
-                <input type="hidden" name="identificador_prospecto">
-                <input type="hidden" name="total_tr">
+                    <input type="hidden" name="select_tipo">
+                    <input type="hidden" name="etapa">
                 
 					
                     <div id="div_two" title="" class="casos_div_two">
@@ -576,8 +576,8 @@
         <!--clase la quite por causar problemas tabulador -->
                 <div id="div_one" class="panelcito_modal oportunidades_div_one"  style="display:none;" title="">
                 
-                <input type="hidden" name="identificador_prospecto">
-                <input type="hidden" name="total_tr">
+                    <input type="hidden" name="select_tipo">
+                    <input type="hidden" name="estatus">
                 
 					
                     <div id="div_two" title="" class="oportunidades_div_two">
@@ -621,13 +621,15 @@
                                             </tr>
                                             
                                             <tr>
-                                                <td>&nbsp;Del mes de:</td>
-                                                <td width="30px;"><select name="mes_inicial" style="width:100px;"></select></td>
-                                                <td align="center">a</td>
-                                                <td width="30px;"><select name="mes_final" style="width:100px;"></select></td>
+                                                <td>&nbsp;Fechas del:</td>
+                                                <td width="30px;"><input type="text" name="fecha_inicial" style="width:80px;"></td>
+                                                <td align="center">al</td>
+                                                <td width="30px;"><input type="text" name="fecha_final" style="width:80px;"></td>
                                                 <td>&nbsp;&nbsp;&nbsp;</td>
+                                                <td>Etapa</td>
+                                                 <td><select name="etapa" style="width:120px;"></select></td>
                                                 <td><input type="button" name="buscar" value="Consultar" style="width:80px; border-radius:5px;"</td>
-                                                <td colspan="6">&nbsp;</td> 
+                                                
                                                 
                                                 
                                             </tr>
@@ -643,7 +645,7 @@
                                                                     <td>&nbsp;Metas</td>
                                                                     <td><input type="text" name="metas" style="width:70px;" readOnly="true"></td>
                                                                     <td></td>
-                                                                    <td>Total&nbsp;</td>
+                                                                    <td>Total Metas&nbsp;</td>
                                                                     <td><input type="text" name="totales" style="width:70px;" readOnly="true"></td>
                                                                     
                                                                 </tr>
@@ -651,10 +653,10 @@
                                                                     <td colspan="13">&nbsp;</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td>&nbsp;Montos&nbsp;</td>
+                                                                    <td>&nbsp;Montos Meta&nbsp;</td>
                                                                     <td><input type="text" name="montos" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;&nbsp;</td>
-                                                                    <td>Totales&nbsp;</td>
+                                                                    <td>Total Montos&nbsp;</td>
                                                                     <td><input type="text" name="totales_monto" style="width:70px;" readOnly="true"></td>
                                                                 </tr>
                                                                 <tr>
@@ -705,11 +707,11 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td>&nbsp;% Ganados</td>
-                                                                    <td><input type="text" name="por_inicial" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="text" name="por_ganados" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;</td>
 
                                                                     <td>% Perdidos</td>
-                                                                    <td><input type="text" name="por_seguimiento" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="text" name="por_perdidos" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;</td>
                                                                     
                                                                 </tr>
@@ -749,8 +751,8 @@
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal registro_div_one"  style="display:none;" title="">
                 
-                <input type="hidden" name="identificador_prospecto">
-                <input type="hidden" name="total_tr">
+                <input type="hidden" name="status">
+                <input type="hidden" name="etapa">
                 
 					
                     <div id="div_two" title="" class="registro_div_two">
@@ -799,13 +801,15 @@
                                                 <td colspan="18">&nbsp;</td>
                                             </tr>
                                             <tr>
-                                                 <td>&nbsp;Del mes de:</td>
-                                                <td width="30px;"><select name="mes_inicial" style="width:100px;"></select></td>
-                                                <td align="center">a</td>
-                                                <td width="30px;"><select name="mes_final" style="width:100px;"></select></td>
+                                                <td>&nbsp;Fechas del:</td>
+                                                <td width="30px;"><input type="text" name="fecha_inicial" style="width:80px;"></td>
+                                                <td align="center">al</td>
+                                                <td width="30px;"><input type="text" name="fecha_final" style="width:80px;"></td>
                                                 <td>&nbsp;&nbsp;&nbsp;</td>
+                                                <!--<td>Estatus</td>
+                                                 <td><select name="estatus" style="width:120px;"></select></td>-->
                                                 <td><input type="button" name="buscar" value="Consultar" style="width:80px; border-radius:5px;"</td>
-                                                <td colspan="6">&nbsp;</td> 
+                                                
                                                 
                                             </tr>
                                             <tr>
@@ -839,11 +843,12 @@
                                                                     <td><input type="text" name="contactos" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;</td>
 
-                                                                    <td>Prospectos</td>
+                                                                    <!--<td>Prospectos</td>
                                                                     <td><input type="text" name="prospectos" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;</td>
                                                                     <td>Clientes</td>
                                                                     <td><input type="text" name="clientes" style="width:70px;" readOnly="true"></td>
+                                                                    -->
                                                                     <td>&nbsp;</td>
                                                                 </tr>
                                                                 <tr>
