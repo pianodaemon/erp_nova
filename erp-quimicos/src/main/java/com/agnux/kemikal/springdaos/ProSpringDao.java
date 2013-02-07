@@ -3976,8 +3976,6 @@ public class ProSpringDao implements ProInterfaceDao{
     
     
     
-    
-    
     //catalogos chekes
     //CATALOGO DE TIPOS DE EQUIPOS
     @Override
