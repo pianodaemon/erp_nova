@@ -88,6 +88,12 @@ public interface CrmInterfaceDao {
 
     //Metodos para el buscador de Visitas
     public ArrayList<HashMap<String, String>> getBuscadorVisitas(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa);
+
+    public ArrayList<HashMap<String, String>> getBuscadorVarios(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa);
+
+    public ArrayList<HashMap<String, String>> getBuscadorCasos(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa);
+
+    public ArrayList<HashMap<String, String>> getBuscadorOportunidades(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa);
    
     
 }
