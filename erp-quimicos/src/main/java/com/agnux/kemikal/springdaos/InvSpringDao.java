@@ -6429,6 +6429,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_prod.id AS id_producto, "
                     + "inv_prod.sku, "
                     + "inv_prod.descripcion,"
+                    + "inv_prod.densidad,"
                     + "inv_prod_unidades.titulo AS unidad, "
                     + "inv_exi.inv_alm_id AS id_almacen, "
                     + "(inv_exi.exi_inicial - inv_exi.transito - inv_exi.reservado + inv_exi.entradas_1 + inv_exi.entradas_2 + inv_exi.entradas_3 + inv_exi.entradas_4 + inv_exi.entradas_5 + inv_exi.entradas_6 + inv_exi.entradas_7 + inv_exi.entradas_8 + inv_exi.entradas_9 + inv_exi.entradas_10 + inv_exi.entradas_11 + inv_exi.entradas_12 - inv_exi.salidas_1 - inv_exi.salidas_2 - inv_exi.salidas_3 - inv_exi.salidas_4 - inv_exi.salidas_5 - inv_exi.salidas_6 - inv_exi.salidas_7 - inv_exi.salidas_8 - inv_exi.salidas_9 - inv_exi.salidas_10 - inv_exi.salidas_11 - inv_exi.salidas_12) AS existencia "
@@ -6454,6 +6455,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("id_almacen",String.valueOf(rs.getInt("id_almacen")));
                     row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),2));
+                    row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), 4));
+                    
                     return row;
                 }
             }
@@ -6549,6 +6552,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_prod.id AS id_producto, "
                     + "inv_prod.sku AS codigo, "
                     + "inv_prod.descripcion, "
+                    + "inv_prod.densidad, "
                     + "inv_prod_unidades.titulo AS unidad,  "
                     + "(inv_exi.exi_inicial - inv_exi.transito - inv_exi.reservado + inv_exi.entradas_1 + inv_exi.entradas_2 + inv_exi.entradas_3 + inv_exi.entradas_4 + inv_exi.entradas_5 + inv_exi.entradas_6 + inv_exi.entradas_7 + inv_exi.entradas_8 + inv_exi.entradas_9 + inv_exi.entradas_10 + inv_exi.entradas_11 + inv_exi.entradas_12 - inv_exi.salidas_1 - inv_exi.salidas_2 - inv_exi.salidas_3 - inv_exi.salidas_4 - inv_exi.salidas_5 - inv_exi.salidas_6 - inv_exi.salidas_7 - inv_exi.salidas_8 - inv_exi.salidas_9 - inv_exi.salidas_10 - inv_exi.salidas_11 - inv_exi.salidas_12) AS existencia, "
                     + "inv_tras_det.cantidad_tras AS cant_traspaso "
@@ -6573,6 +6577,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),4));
                     row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
+                    row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), 4));
+                    
                     return row;
                 }
             }
@@ -6752,6 +6758,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_otras_det.id AS id_partida, "
                     + "inv_prod.id AS id_producto, "
                     + "inv_prod.sku AS codigo, "
+                    + "inv_prod.densidad, "
                     + "inv_prod.descripcion, "
                     + "inv_prod_unidades.titulo AS unidad,  "
                     + "inv_otras_det.cantidad_tras AS cant_traspaso "
@@ -6774,6 +6781,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
+                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),4));
                     return row;
                 }
             }
