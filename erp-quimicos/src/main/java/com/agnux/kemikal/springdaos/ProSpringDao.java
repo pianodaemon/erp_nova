@@ -4080,23 +4080,16 @@ public class ProSpringDao implements ProInterfaceDao{
     
     //obtiene datos de los productos de la formula para produccion
     private ArrayList<HashMap<String, String>> getOrdenProdFormulaProducto(Integer id_orden, Integer id_producto) {
-        
         /*
-        String sql_to_query = "select odtm.inv_prod_id,subp.pro_orden_prod_id, inv_prod.sku, inv_prod.descripcion,"
-                + "(CASE WHEN (odtm.cantidad is not null AND odtm.cantidad<>0 ) "
-                + "THEN odtm.cantidad ELSE odtm.cantidad_adicional END) as cantidad,"
-                + "odtm.num_lote, odtm.elemento  from "
-                + "(select id, pro_subprocesos_id, inv_prod_id,pro_orden_prod_id from pro_orden_prod_det "
-                + "where pro_orden_prod_det.pro_orden_prod_id="+id_orden+" AND inv_prod_id="+id_producto+" limit 1) as subp "
-                + "join pro_orden_detalle_mov  as odtm on odtm.pro_orden_prod_det_id=subp.id "
-                + "join inv_prod on inv_prod.id=odtm.inv_prod_id "
-                + "order by odtm.elemento ";
-        */
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccion("+id_producto+","+id_orden+",1, 0)  as "
                 + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
                 + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
                 + "lote character varying, inv_osal_id integer) order by elemento";
-        
+        */
+        String sql_to_query = "selecT * from pro_get_detalle_orden_produccionv2("+id_producto+","+id_orden+",1, 0)  as "
+                + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
+                + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
+                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer) order by elemento";
         
         System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
