@@ -249,11 +249,12 @@
 															<thead>
 																<tr>
 																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="180">&nbsp;C&oacute;digo</td>
-																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="350">&nbsp;Descripci&oacute;n</td>
+																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="300">&nbsp;Descripci&oacute;n</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="150">&nbsp;Unidad</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="110" >&nbsp;Cant.&nbsp;Traspaso</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="15" >&nbsp;</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="15" >&nbsp;</td>
+                                                                                                                                        <td class="grid" style="background-color: rgb(180, 180, 180);" width="60" >&nbsp;Kilos</td>
 																</tr>
 															</thead>
 														</table>

@@ -277,8 +277,9 @@
 																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60"><div class="delete">&nbsp;#</div></td>
 																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="150">&nbsp;C&oacute;digo</td>
 																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="270">&nbsp;Descripci&oacute;n</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Unidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Existencia</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
+                                                                                                                                        <td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;Kilos</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Existencia</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Cant.&nbsp;Traspaso</td>
 																</tr>
 															</thead>
