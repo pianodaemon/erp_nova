@@ -518,7 +518,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 + "join crm_tipos_oportunidad on crm_tipos_oportunidad.id=oport.crm_tipos_oportunidad_id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
                 
-        
+        System.out.println("Trae Oportunidades"+sql_to_query);
         //System.out.println("sql_to_query: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
@@ -1506,7 +1506,116 @@ public class CrmSpringDao implements CrmInterfaceDao{
         );
         return hm_registro_visitas;  
     }
+
     
+
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorCasos(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa) {
+        String query ="select * from crm_consultas("+id+","+agente+","+tipo_seleccion+","+status+","+etapa+",'"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+")as foo("
+                                                        +"total_casos_agente integer )";
+
+        
+            System.out.println("Resultados de la FUNCION___3____"+" "+query);
+      ArrayList<HashMap<String,String>>hm_registro_casos =(ArrayList<HashMap<String,String>>)this.jdbcTemplate.query(
+            query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("total_casos_agente",String.valueOf(rs.getInt("total_casos_agente")));
+                    /*row.put("total_contactos",String.valueOf(rs.getInt("total_contactos")));
+                    row.put("porcentaje_cumplido",StringHelper.roundDouble(rs.getDouble("porcentaje_cumplido"),1));
+                    row.put("contactos",String.valueOf(rs.getInt("contactos")));
+                    */
+                    
+                    
+              
+                    return row;
+                }
+            }
+        );
+        return hm_registro_casos;  
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorOportunidades(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa) {
+         String query ="select * from crm_consultas("+id+","+agente+","+tipo_seleccion+","+status+","+etapa+",'"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+")as foo("
+                                                        +"cierre integer, "
+                                                        +"oportunidades_totales integer, "
+                                                        + "montos_totales double precision, "
+                                                        + "oportunidades_meta integer, "
+                                                        + "montos_meta double precision,"
+                                                        + "porciento_cumplido double precision, "
+                                                        + "porciento_montos double precision, "
+                                                        + "inicial integer, "
+                                                        + "visita integer, "
+                                                        + "seguimiento integer, "
+                                                        + "cotizacion integer, "
+                                                        + "negociacion integer, "
+                                                        + "ganadas integer, "
+                                                        + "perdidas integer)";
+
+        
+            System.out.println("Resultados de la FUNCION___4____"+" "+query);
+      ArrayList<HashMap<String,String>>hm_registro_oportunidades =(ArrayList<HashMap<String,String>>)this.jdbcTemplate.query(
+            query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("oportunidades_totales",String.valueOf(rs.getInt("oportunidades_totales")));
+                    row.put("oportunidades_meta",String.valueOf(rs.getInt("oportunidades_meta")));
+                    row.put("montos_totales",StringHelper.roundDouble(rs.getDouble("montos_totales"),1));
+                    row.put("montos_meta",StringHelper.roundDouble(rs.getDouble("montos_meta"),1));
+                    row.put("inicial",String.valueOf(rs.getInt("inicial")));
+                    row.put("visita",String.valueOf(rs.getInt("visita")));
+                    row.put("seguimiento",String.valueOf(rs.getInt("seguimiento")));
+                    row.put("cotizacion",String.valueOf(rs.getInt("cotizacion")));
+                    row.put("negociacion",String.valueOf(rs.getInt("negociacion")));
+                    row.put("ganadas",String.valueOf(rs.getInt("ganadas")));
+                    row.put("perdidas",String.valueOf(rs.getInt("perdidas")));
+                    row.put("cierre",String.valueOf(rs.getInt("cierre")));
+                    row.put("porciento_cumplido",StringHelper.roundDouble(rs.getDouble("porciento_cumplido"),2));
+                    row.put("porciento_montos",StringHelper.roundDouble(rs.getDouble("porciento_montos"),2));
+                    
+              
+                    return row;
+                }
+            }
+        );
+        return hm_registro_oportunidades;
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorVarios(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa) {
+        String query ="select * from crm_consultas("+id+","+agente+","+tipo_seleccion+","+status+","+etapa+",'"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+")as foo("
+                                                        +"prospectos_meta integer, "
+                                                        + "total_contactos integer, "
+                                                        + "porcentaje_cumplido double precision, "
+                                                        + "contactos integer )";
+
+        
+            System.out.println("Resultados de la FUNCION___5____"+" "+query);
+      ArrayList<HashMap<String,String>>hm_registro_varios =(ArrayList<HashMap<String,String>>)this.jdbcTemplate.query(
+            query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("prospectos_meta",String.valueOf(rs.getInt("prospectos_meta")));
+                    row.put("total_contactos",String.valueOf(rs.getInt("total_contactos")));
+                    row.put("porcentaje_cumplido",StringHelper.roundDouble(rs.getDouble("porcentaje_cumplido"),1));
+                    row.put("contactos",String.valueOf(rs.getInt("contactos")));
+                    
+                    
+                    
+              
+                    return row;
+                }
+            }
+        );
+        return hm_registro_varios;  
+    }
     
 
 }
