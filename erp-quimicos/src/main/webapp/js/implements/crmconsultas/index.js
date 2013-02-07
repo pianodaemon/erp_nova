@@ -582,7 +582,7 @@ $(function() {
             $tabs_li_funxionalidad();
 
             var $select_agente =$('#forma-casos-window').find('select[name=select_agente]');
-            var $select_tipo =$('#forma-casos-window').find('select[name=select_tipo]');
+            var $select_tipo =$('#forma-casos-window').find('input[name=select_tipo]');
             var $select_status =$('#forma-casos-window').find('select[name=estatus]');
             var $select_etapa =$('#forma-casos-window').find('input[name=etapa]');
             var $fecha_inicial =$('#forma-casos-window').find('input[name=fecha_inicial]');
@@ -604,7 +604,7 @@ $(function() {
             var $cerrar_plugin = $('#forma-casos-window').find('#close');
             var $cancelar_plugin = $('#forma-casos-window').find('#boton_cancelar');
             
-            
+            $select_tipo.attr({'value':0});
             $select_etapa.attr({'value': 0});
             
             $select_tipo.children().remove();
@@ -634,8 +634,10 @@ $(function() {
              
              $select_status.children().remove();
              var status_html='';
-                status_html +='<option value="1" selected="yes">Abierto</option>';
-                status_html +='<option value="0" >Cerrado</option>';
+                status_html +='<option value="1" selected="yes">Registro</option>';
+                status_html +='<option value="2" >Asignado</option>';
+                status_html +='<option value="3" >Seguimiento</option>';
+                status_html +='<option value="4" >Resolucion</option>';
             $select_status.append(status_html);
              
              $fecha_inicial.click(function (s){
@@ -729,8 +731,8 @@ $(function() {
 
                     $.post(input_json,$arreglo,function(entry){
                         
-                        $metas.attr({'value':entry['Visitas']['0']['cantidad_visitas']});
-                        $totales.attr({'value':entry['Visitas']['0']['visitas_totales']});
+                        $metas.attr({'value':entry['Casos']['0']['total_casos_agente']});
+                        /*$totales.attr({'value':entry['Visitas']['0']['visitas_totales']});
                         $porcentaje.attr({'value':entry['Visitas']['0']['porcentaje_visitas']});
                         
                         $con_exito.attr({'value':entry['Visitas']['0']['visitas_con_exito']});
@@ -738,7 +740,7 @@ $(function() {
                         $con_seguimiento.attr({'value':entry['Visitas']['0']['visitas_con_seguimiento']});
                         $efectividad.attr({'value':entry['Visitas']['0']['efectividad']});
                         $gestion.attr({'value':entry['Visitas']['0']['gestion']});
-                        $avance.attr({'value':entry['Visitas']['0']['avance']});
+                        $avance.attr({'value':entry['Visitas']['0']['avance']});*/
                        
 
 
@@ -776,14 +778,45 @@ $(function() {
             $forma_selected4.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
             $tabs_li_funxionalidad();
 
-            //variables para la forma
             var $select_agente =$('#forma-oportunidades-window').find('select[name=select_agente]');
+            var $select_tipo =$('#forma-oportunidades-window').find('input[name=select_tipo]');
+            var $select_status =$('#forma-oportunidades-window').find('input[name=estatus]');
             var $select_etapa =$('#forma-oportunidades-window').find('select[name=etapa]');
             var $fecha_inicial =$('#forma-oportunidades-window').find('input[name=fecha_inicial]');
             var $fecha_final =$('#forma-oportunidades-window').find('input[name=fecha_final]');
             var $consultar =$('#forma-oportunidades-window').find('input[name=buscar]');
+            var $metas =$('#forma-oportunidades-window').find('input[name=metas]');
+            var $totales =$('#forma-oportunidades-window').find('input[name=totales]');
+            var $montos_meta =$('#forma-oportunidades-window').find('input[name=montos]');
+            var $total_montos_meta =$('#forma-oportunidades-window').find('input[name=totales_monto]');
+            
+            
+            var $porciento_metas =$('#forma-oportunidades-window').find('input[name=porcentaje]');
+            var $porciento_montos =$('#forma-oportunidades-window').find('input[name=porcentaje_montos]');
+            var $incial =$('#forma-oportunidades-window').find('input[name=por_inicial]');
+            var $ganados =$('#forma-oportunidades-window').find('input[name=por_ganados]');
+            var $perdidos =$('#forma-oportunidades-window').find('input[name=por_perdidos]');
+            var $visita =$('#forma-oportunidades-window').find('input[name=por_visitas]');
+            var $seguimiento =$('#forma-oportunidades-window').find('input[name=por_seguimiento]');
+            var $cotizacion =$('#forma-oportunidades-window').find('input[name=por_cotizacion]');
+            var $negociacion =$('#forma-oportunidades-window').find('input[name=por_negociacion]');
+            var $cierre =$('#forma-oportunidades-window').find('input[name=por_cierre]');
+            
+           
+            
+            
             var $cerrar_plugin = $('#forma-oportunidades-window').find('#close');
             var $cancelar_plugin = $('#forma-oportunidades-window').find('#boton_cancelar');
+            
+            $select_tipo.attr({'value':0});
+            $select_status.attr({'value': 0});
+            
+            $select_tipo.children().remove();
+            var tipo_html='';
+                
+                tipo_html+='<option value="1">Cliente</option>';
+                tipo_html+='<option value="2">Prospecto</option>';
+            $select_tipo.append(tipo_html);
             
              var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
 		var parametros={
@@ -802,6 +835,17 @@ $(function() {
             
             
              });//fin json
+             
+             $select_etapa.children().remove();
+             var status_html='';
+                status_html +='<option value="1" selected="yes">Inicial</option>';
+                status_html +='<option value="2" >Calificacion</option>';
+                status_html +='<option value="3" >Necesidad Analisis</option>';
+                status_html +='<option value="4" >Cotizacion</option>';
+                status_html +='<option value="5" >Cotizacion</option>';
+                status_html +='<option value="6" >Ganadas</option>';
+                status_html +='<option value="4" >Perdidas</option>';
+            $select_etapa.append(status_html);
              
              $fecha_inicial.click(function (s){
 			var a=$('div.datepicker');
@@ -827,13 +871,13 @@ $(function() {
 				$fecha_inicial.val(formated);
 				if (formated.match(patron) ){
 					var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-					
-					if (valida_fecha==true){
+					$fecha_inicial.DatePickerHide();
+					/*if (valida_fecha==true){
 						jAlert("Fecha no valida",'! Atencion');
 						$fecha_inicial.val(mostrarFecha());
 					}else{
 						$fecha_inicial.DatePickerHide();	
-					}
+					}*/
 				}
 			}
 		});
@@ -865,38 +909,58 @@ $(function() {
 				$fecha_final.val(formated);
 				if (formated.match(patron) ){
 					var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-					
-					if (valida_fecha==true){
+					$fecha_final.DatePickerHide();
+					/*if (valida_fecha==true){
 						$fecha_final.DatePickerHide();	
 					}else{
 						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
 						$fecha_final.val(mostrarFecha());
-					}
+					}*/
 				}
 			}
 		});
-                
-                 //click para hacer la consulta
+            
+             //click para hacer la consulta
 		$consultar.click(function(event){ 
                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
                     $arreglo = {
+                        
                         'agente':$select_agente.val(),
+                        'status':$select_status.val(),
                         'etapa':$select_etapa.val(),
+                        'tipo_seleccion':$select_tipo.val(),
                         'fecha_inicial':$fecha_inicial.val(),
                         'fecha_final':$fecha_final.val(),
+                         'id':id_to_show,
                         'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                     }
-
+                   
 
                     $.post(input_json,$arreglo,function(entry){
-
-
+                        
+                        $metas.attr({'value':entry['Oportunidades']['0']['oportunidades_meta']});
+                        $totales.attr({'value':entry['Oportunidades']['0']['oportunidades_totales']});
+                        $montos_meta.attr({'value':entry['Oportunidades']['0']['montos_meta']});
+                        $total_montos_meta.attr({'value':entry['Oportunidades']['0']['montos_totales']});
+                        
+                        $porciento_metas.attr({'value':entry['Oportunidades']['0']['porciento_cumplidos']});
+                        $porciento_montos.attr({'value':entry['Oportunidades']['0']['porciento_montos']});
+                        $incial.attr({'value':entry['Oportunidades']['0']['inicial']});
+                        $visita.attr({'value':entry['Oportunidades']['0']['visita']});
+                        $ganados.attr({'value':entry['Oportunidades']['0']['ganados']});
+                        $perdidos.attr({'value':entry['Oportunidades']['0']['perdidos']});
+                        $seguimiento.attr({'value':entry['Oportunidades']['0']['seguimiento']});
+                        $cotizacion.attr({'value':entry['Oportunidades']['0']['cotizacion']});
+                        $cierre.attr({'value':entry['Oportunidades']['0']['cierre']});
+                        $negociacion.attr({'value':entry['Oportunidades']['0']['negociacion']})
+                       
 
 
 
 
                     });
 		});
+
                 
                 $cerrar_plugin.bind('click',function(){
                     var remove = function() {$(this).remove();};
