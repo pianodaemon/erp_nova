@@ -393,7 +393,47 @@ $(function() {
 		});
 	}
 	
-	
+	$realiza_calculo_kilos = function($this_tr, $campo_input){
+            
+            if($campo_input.val()=='0' || $campo_input.val()==""){
+                    $this_tr.find('input[name=cantidad_kilos]').val(0);
+            }else{
+                $densidad_tmp = parseFloat($this_tr.find('input[name=densidad_litro]').val());
+                cant_traspaso = $this_tr.find('input[name=cant_traspaso]').val();
+                if(isNaN($densidad_tmp)){
+                    $this_tr.find('input[name=cantidad_kilos]').val(0);
+                }else{
+                    if($densidad_tmp == 1){
+                        unidad = $this_tr.find('input[name=unidad]').val();
+                        unidad = unidad.toUpperCase();
+
+                        if(/^KILO*|KILOGRAMO$/.test(unidad)){
+                            $this_tr.find('input[name=cantidad_kilos]').val(cant_traspaso);
+                        }else{
+                            $this_tr.find('input[name=cantidad_kilos]').val(0);
+                        }
+                    }else{
+                        kilos = parseFloat(cant_traspaso) * ($densidad_tmp);
+                        $this_tr.find('input[name=cantidad_kilos]').val(parseFloat(kilos).toFixed(4));
+                    }
+                }
+            }
+        }
+        
+        //funcion para aplicar la conversion de litros a kilos, de acuerdo a la densidad
+	$aplicar_evento_kilos_densidad = function( $campo_input, tipo){
+            //tipo almacene, si se envio, para realizar el evento blur, o para solo hacer el calculo
+            $this_tr = $campo_input.parent().parent();
+            if(tipo == "blur"){
+                $campo_input.blur(function(e){
+                    $realiza_calculo_kilos($this_tr, $campo_input);
+                });
+            }else{
+                $realiza_calculo_kilos($this_tr, $campo_input);
+            }
+	}
+        
+        
 	$aplicar_evento_blur_input_lote = function( $campo_input ){
 		//pone espacio en blanco al perder el enfoque, cuando no se ingresa un valor
 		$campo_input.blur(function(e){
@@ -489,7 +529,7 @@ $(function() {
 	
 	
 	//generar tr para lote
-	$genera_tr_lote = function(noTr, tipo_tr, idPartida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly){
+	$genera_tr_lote = function(noTr, tipo_tr, idPartida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly, densidad){
 		var trr = '';
 		trr = '<tr>';
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
@@ -498,9 +538,9 @@ $(function() {
 				trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_producto +'">';
 				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" style="width:176px; display:none;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="350">';
-				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" style="width:346px; display:none;">';
-				trr += '<input type="text" 		value="Lote" class="borde_oculto" readOnly="true" style="width:346px; text-align:right;">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="300">';
+				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" style="width:296px; display:none;">';
+				trr += '<input type="text" 		value="Lote" class="borde_oculto" readOnly="true" style="width:296px; text-align:right;">';
 			trr += '</td>';
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="150">';
 				trr += '<input type="text" 		name="lote_int" class="lote_int'+ noTr +'" value="'+lote_int+'" title="Ingresar Lote" style="width:146px;">';
@@ -516,6 +556,11 @@ $(function() {
 				trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
 				trr += '<a href="elimina_lote" class="elimina_lote'+ noTr +'" title="Eliminar Lote"> - </a>';
 			trr += '</td>';
+                        //agregado por paco
+                        trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
+                                trr += '<input name="densidad_litro" value="'+densidad+'" type="hidden">';
+                                //trr += '<input name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="0.00" class="borde_oculto" readonly="true" style="width:56px; text-align:right;" type="text">';
+                        trr += '</td>';
 		trr += '</tr>';
 		
 		return trr;
@@ -527,7 +572,7 @@ $(function() {
 	
 	
 	//generar tr para agregar al grid
-	$genera_tr_partida = function(noTr, tipo_tr, idPartida, id_producto, codigo, descripcion, unidad, cant_traspaso, readOnly){
+	$genera_tr_partida = function(noTr, tipo_tr, idPartida, id_producto, codigo, descripcion, unidad, cant_traspaso, readOnly, densidad){
 		var trr = '';
 		trr = '<tr>';
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
@@ -553,6 +598,11 @@ $(function() {
 				trr += '<input type="hidden" 	name="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
 				trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
 			trr += '</td>';
+                        //agregado por paco
+                        trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
+                                trr += '<input name="densidad_litro" value="'+densidad+'" type="hidden">';
+                                trr += '<input name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="0.00" class="borde_oculto" readonly="true" style="width:56px; text-align:right;" type="text">';
+                        trr += '</td>';
 		trr += '</tr>';
 		
 		return trr;
@@ -827,19 +877,21 @@ $(function() {
 							var descripcion = prodGrid['descripcion'];
 							var unidad = prodGrid['unidad'];
 							var cant_traspaso=prodGrid['cant_traspaso'];
+                                                        var densidad=prodGrid['densidad'];
 							var readOnly='readOnly="true"';
 							var lote_int='';
 							
-							var cadena_tr = $genera_tr_partida(noTr, tipo_tr, id_partida, id_producto, codigo, descripcion, unidad, cant_traspaso, readOnly);
+							var cadena_tr = $genera_tr_partida(noTr, tipo_tr, id_partida, id_producto, codigo, descripcion, unidad, cant_traspaso, readOnly, densidad);
 							$grid_productos.append(cadena_tr);
-							
+							$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+noTr), "");
+                                                        
 							if(parseInt(entry['Datos']['0']['estatus'])==0){
 								trCount2 = $("tr", $grid_productos).size();//obtener de nuevo el numero de trs de la tabla
 								trCount2++;
 								tipo_tr='LOTE';
 								cant_traspaso='0.0000';
 								readOnly='';
-								tr_lote = $genera_tr_lote(trCount2, tipo_tr, id_partida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly);
+								tr_lote = $genera_tr_lote(trCount2, tipo_tr, id_partida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly, densidad);
 								$grid_productos.append(tr_lote);
 								
 								
@@ -850,6 +902,7 @@ $(function() {
 								$aplicar_evento_blur( $grid_productos.find('.cant_traspaso'+ trCount2 ) );
 								$aplicar_evento_focus( $grid_productos.find('.cant_traspaso'+ trCount2 ) );
 								
+                                                                //$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+trCount2), "blur");
 								$aplicar_evento_focus_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
 								$aplicar_evento_blur_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
 								$aplicar_evento_keypress_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
@@ -866,9 +919,9 @@ $(function() {
 										lote_int=lote['lote_int']
 										cant_traspaso=lote['cant_traspaso']
 										readOnly='readOnly="true"';
-										tr_lote = $genera_tr_lote(trCount2, tipo_tr, id_partida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly);
+										tr_lote = $genera_tr_lote(trCount2, tipo_tr, id_partida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly, densidad);
 										$grid_productos.append(tr_lote);
-								
+                                                                                //$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+trCount2), "");
 									}
 								});
 								
