@@ -137,6 +137,7 @@
 												<a href="#" class="sub">Reportes &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../repedoctacliente/startup.agnux">Estados de Cuenta</a></li>
+													<li class="topline"><a href="../repanticiposnoaplicados/startup.agnux">Anticipos no Aplicados</a></li>
 													<li class="topline"><a href="../repcobranzadiaria/startup.agnux">Relaci&oacute;n de Cobranza Diaria</a></li>
 													<li class="topline"><a href="../reppronoscobranza/startup.agnux">Proyecci&oacute;n de Cobranza</a></li>
 													<li class="topline"><a href="../repventasnetasxcliente/startup.agnux">Ventas Netas por Cliente</a></li>
