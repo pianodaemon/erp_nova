@@ -166,7 +166,15 @@ public class CrmConsultasController {
             visitas =this.getCrmDao().getBuscadorVisitas(id,agente,tipo_seleccion,status,etapa,fecha_inicial,fecha_final,id_empresa);
 
         }
-        
+        if(id==3){
+            casos = this.getCrmDao().getBuscadorCasos(id,agente,tipo_seleccion,status,etapa,fecha_inicial,fecha_final,id_empresa);
+        }
+        if(id==4){
+            oportunidades=this.getCrmDao().getBuscadorOportunidades(id,agente,tipo_seleccion,status,etapa,fecha_inicial,fecha_final,id_empresa);
+        }
+        if(id==5){
+            varios = this.getCrmDao().getBuscadorVarios(id,agente,tipo_seleccion,status,etapa,fecha_inicial,fecha_final,id_empresa);
+        }
         
         //registros = this.getCrmDao().getBuscadorRegistrosLlamadas(agente, fecha_inicial, fecha_final,id_empresa);
         
