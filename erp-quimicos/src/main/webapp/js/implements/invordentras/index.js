@@ -10,7 +10,7 @@ $(function() {
     //arreglo para select tipo de Ajuste
     var arrayTiposAjuste = {
 				0:"Positivo", //grupo Entradas en la tabla tipos de movimiento de Invetario
-				2:"Negativo",//grupo salidas en la tabla tipos de movimiento de Invetario
+				2:"Negativo"//grupo salidas en la tabla tipos de movimiento de Invetario
 			};
 	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
@@ -400,21 +400,21 @@ $(function() {
             }else{
                 $densidad_tmp = parseFloat($this_tr.find('input[name=densidad_litro]').val());
                 cant_traspaso = $this_tr.find('input[name=cant_traspaso]').val();
+                
                 if(isNaN($densidad_tmp)){
                     $this_tr.find('input[name=cantidad_kilos]').val(0);
                 }else{
-                    if($densidad_tmp == 1){
-                        unidad = $this_tr.find('input[name=unidad]').val();
-                        unidad = unidad.toUpperCase();
-
-                        if(/^KILO*|KILOGRAMO$/.test(unidad)){
-                            $this_tr.find('input[name=cantidad_kilos]').val(cant_traspaso);
+                    unidad = $this_tr.find('input[name=unidad]').val();
+                    unidad = unidad.toUpperCase();
+                    if(/^KILO*|KILOGRAMO$/.test(unidad)){
+                        $this_tr.find('input[name=cantidad_kilos]').val(cant_traspaso);
+                    }else{
+                        if(/^LITRO*|LITROS$/.test(unidad)){
+                            kilos = parseFloat(cant_traspaso) * ($densidad_tmp);
+                            $this_tr.find('input[name=cantidad_kilos]').val(parseFloat(kilos).toFixed(4));
                         }else{
                             $this_tr.find('input[name=cantidad_kilos]').val(0);
                         }
-                    }else{
-                        kilos = parseFloat(cant_traspaso) * ($densidad_tmp);
-                        $this_tr.find('input[name=cantidad_kilos]').val(parseFloat(kilos).toFixed(4));
                     }
                 }
             }
