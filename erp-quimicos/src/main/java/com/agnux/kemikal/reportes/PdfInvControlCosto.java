@@ -39,6 +39,7 @@ public class PdfInvControlCosto {
     private HashMap<String, String> datosHeaderFooter = new HashMap<String, String>();
     private ArrayList<HashMap<String, String>> lista_productos = new ArrayList<HashMap<String, String>>();
     private String file_out;
+    private String tipo_costo;
     
     public HashMap<String, String> getDatosHeaderFooter() {
         return datosHeaderFooter;
@@ -64,9 +65,17 @@ public class PdfInvControlCosto {
         this.file_out = file_out;
     }
     
+    public String getTipo_costo() {
+        return tipo_costo;
+    }
+
+    public void setTipo_costo(String tipo_costo) {
+        this.tipo_costo = tipo_costo;
+    }
     
-    public PdfInvControlCosto(HashMap<String, String> datos, ArrayList<HashMap<String, String>> productos, String fileout) {
+    public PdfInvControlCosto(HashMap<String, String> datos, ArrayList<HashMap<String, String>> productos, String fileout, String tipo_costo) {
         this.setFile_out(fileout);
+        this.setTipo_costo(tipo_costo);
         this.setDatosHeaderFooter(datos);
         this.setLista_productos(productos);
     }
@@ -78,8 +87,7 @@ public class PdfInvControlCosto {
         Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
         Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
         
-        PdfPTable tablaProductos;
-        PdfPTable tableElaboro;
+        PdfPTable tableAbreviaturas;
         PdfPCell cell;
         Iterator it;
         
@@ -164,7 +172,14 @@ public class PdfInvControlCosto {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("C.U.",smallBoldFont));
+            String etiqueta_tipo_costo ="";
+            if(this.getTipo_costo().equals("1")){
+                etiqueta_tipo_costo="C.U.";
+            }else{
+                etiqueta_tipo_costo="C.P.";
+            }
+            
+            cell = new PdfPCell(new Paragraph(etiqueta_tipo_costo,smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -172,7 +187,7 @@ public class PdfInvControlCosto {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("C.I.",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("I.G.I.",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -180,7 +195,7 @@ public class PdfInvControlCosto {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("C.D.",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("G.I.",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -188,7 +203,7 @@ public class PdfInvControlCosto {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("C.R.",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("C.I.T.",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -298,6 +313,122 @@ public class PdfInvControlCosto {
             table.addCell(cell);
             
             document.add(table);
+            
+            
+            //aquí empieza la tbla de de descripción de Abreviaturas de los campos
+            float [] widths3 = {0.8f,5,0.8f,5,0.8f,5,0.8f,5};
+            tableAbreviaturas = new PdfPTable(widths3);
+            tableAbreviaturas.setKeepTogether(true);
+            int altura_fila=11;
+            
+            //FILA 1
+            cell = new PdfPCell(new Paragraph("*  Los valores para los campos T.C., C.U., I.G.I., G.I., C.I.T., P.M. son en M.N.",smallFont));
+            cell.setBorder(0);
+            cell.setColspan(8);
+            cell.setFixedHeight(altura_fila);
+            tableAbreviaturas.addCell(cell);
+            /*
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            */
+            
+            
+            //FILA 2
+            cell = new PdfPCell(new Paragraph("O.C.:",smallFont));
+            cell.setBorder(0);
+            cell.setFixedHeight(altura_fila);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Orden de Compra",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("C.U.:",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Costo de la ultima Compra",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("I.G.I.:",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Impuesto General de Importación",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("C.I.T.:",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Costo Integrado Total (de Importación)",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            //FILA 3
+            cell = new PdfPCell(new Paragraph("T.C.:",smallFont));
+            cell.setBorder(0);
+            cell.setFixedHeight(altura_fila);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Tipo de Cambio de la Compra",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("	C.P.:",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Costo Promedio",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("G.I.:",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Gastos de Importación",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("P.M.:",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Precio Mínimo de Venta",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            document.add(tableAbreviaturas);
+            
+            
             
             document.close();
             

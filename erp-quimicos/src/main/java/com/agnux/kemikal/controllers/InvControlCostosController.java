@@ -529,6 +529,8 @@ public class InvControlCostosController {
         
         String cad[] = cadena.split("___");
         
+        String tipo_costo=cad[6];
+        
         if(cad[7].equals("true")){
             datos.put("titulo_reporte", "Reporte de Simulación de Cálculo de Costos");
         }else{
@@ -542,7 +544,7 @@ public class InvControlCostosController {
         productos = this.getInvDao().selectFunctionForInvReporte(app_selected, data_string);
         
         //instancia a la clase, aqui se le pasa los parametros al constructor
-        PdfInvControlCosto pdfcostos = new PdfInvControlCosto(datos, productos, fileout);
+        PdfInvControlCosto pdfcostos = new PdfInvControlCosto(datos, productos, fileout, tipo_costo);
         
         //metodo que construye el pdf
         pdfcostos.ViewPDF();
