@@ -4,7 +4,6 @@
  */
 package com.agnux.kemikal.reportes;
 import com.agnux.common.helpers.StringHelper;
-import com.itextpdf.text.Image;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import org.apache.commons.lang.StringEscapeUtils;
