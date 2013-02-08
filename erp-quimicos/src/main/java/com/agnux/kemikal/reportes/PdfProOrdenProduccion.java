@@ -1044,7 +1044,7 @@ public class PdfProOrdenProduccion {
                                 if(registrotmp.get("dureza_inicial").equals("N.A.")){
                                     res_tmp = "";
                                 }else{
-                                    texto_especificacion = "DE "+registrotmp.get("dureza_inicial")+" A "+registrotmp.get("dureza_final")+"Letras";
+                                    res_tmp = "DE "+registrotmp.get("dureza_inicial")+" A "+registrotmp.get("dureza_final")+" Letras";
                                 }
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
