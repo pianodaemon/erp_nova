@@ -43,7 +43,7 @@
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="110">Tipo&nbsp;Producto</td>
+				<td width="130">Tipo&nbsp;Producto</td>
 				<td width="20"></td>
 				<td width="100">Familia</td>
 				<td width="20"></td>
@@ -67,8 +67,8 @@
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="110">
-					<select name="busqueda_select_tipo_prod" style="width:110px;">
+				<td width="130">
+					<select name="busqueda_select_tipo_prod" style="width:130px;">
 						<option value="1" selected="yes">-Prod. Terminado -</option>
 					</select>
 				</td>

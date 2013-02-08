@@ -145,6 +145,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/reppedidos/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_PEDIDOS" />
         <intercept-url pattern="/controllers/empleados/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_EMPLEADO" />
         <intercept-url pattern="/controllers/graldocs/startup.agnux" access="ROLE_ADMIN,ROLE_ACTUALIZA_CODIGO_ISO" />
+        <intercept-url pattern="/controllers/repanticiposnoaplicados/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_ANTICIPOS_CXC" />
         
         <!--Ezequiel-->
         <intercept-url pattern="/controllers/logvehiculos/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_VEHICULO" />

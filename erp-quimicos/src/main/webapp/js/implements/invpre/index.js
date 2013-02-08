@@ -83,26 +83,29 @@ $(function() {
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
     
 	var $cadena_busqueda = "";
-	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
+	var $busqueda_select_tipo_prod = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_tipo_prod]');
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
 	var $busqueda_descripcion = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_descripcion]');
-	//var $busqueda_select_grupo = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_grupo]');
+	var $busqueda_select_pres = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_pres]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	
+	
+	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "seccion" + signo_separador + $busqueda_producto.val() + "|";
+		valor_retorno += "tipo_prod" + signo_separador + $busqueda_select_tipo_prod.val() + "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
 		valor_retorno += "descripcion" + signo_separador + $busqueda_descripcion.val() + "|";
-		//valor_retorno += "grupo" + signo_separador + $busqueda_select_grupo.val() + "|";
+		valor_retorno += "presentacion" + signo_separador + $busqueda_select_pres.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
 	
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
-	//$cadena_busqueda = cadena;
 	
 	$buscar.click(function(event){
 		event.preventDefault();
@@ -112,10 +115,51 @@ $(function() {
 	});
 	
 	
+	
+	
+	
+		
+	$cargar_datos_buscador_principal= function(){
+		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosBuscadorPrincipal.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_lineas,$arreglo,function(data){
+			
+			//carga select de tipos de producto
+			$busqueda_select_tipo_prod.children().remove();
+			//var prodtipos = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
+			var prodtipos = '';
+			$.each(data['ProdTipos'],function(entryIndex,tp){
+				if(parseInt(tp['id'])==1){
+					prodtipos += '<option value="' + tp['id'] + '" selected="yes">' + tp['titulo'] + '</option>';
+				}else{
+					//if(parseInt(tp['id'])!=3 && parseInt(tp['id'])!=4){
+						prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
+					//}
+				}
+			});
+			$busqueda_select_tipo_prod.append(prodtipos);
+			
+			//carga select de Presentaciones
+			$busqueda_select_pres.children().remove();
+			var presentacion = '<option value="0">[-Presentaci&oacute;n--]</option>';
+			$.each(data['Presentaciones'],function(entryIndex,pres){
+				presentacion += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+			});
+			$busqueda_select_pres.append(presentacion);
+		});
+	}//termina funcion cargar datos buscador principal
+	
+	
+	//ejecutar la funcion cargar datos al cargar la pagina por primera vez
+	$cargar_datos_buscador_principal();
+	
+	
+	
 	$limpiar.click(function(event){
 		event.preventDefault();
-		$busqueda_titulo.val('');
+		$busqueda_codigo.val('');
 		$busqueda_descripcion.val('');
+		$cargar_datos_buscador_principal();
 	});
 	
 	/*
@@ -217,7 +261,7 @@ $(function() {
 	
 	
 	//buscador de productos
-	$busca_productos = function(){
+	$busca_productos = function($select_presentacion, sku, descripcion){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
@@ -234,7 +278,7 @@ $(function() {
 		
 		var $buscar_plugin_producto = $('#forma-buscaproducto-window').find('#busca_producto_modalbox');
 		var $cancelar_plugin_busca_producto = $('#forma-buscaproducto-window').find('#cencela');
-			
+		
 		//funcionalidad botones
 		$buscar_plugin_producto.mouseover(function(){
 			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
@@ -260,11 +304,17 @@ $(function() {
 			$select_tipo_producto.children().remove();
 			var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
 			$.each(data['prodTipos'],function(entryIndex,pt){
-				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+				if(parseInt(pt['id'])==1 ){
+					prod_tipos_html += '<option value="' + pt['id'] + '" selected="yes">' + pt['titulo'] + '</option>';
+				}else{
+					prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+				}
 			});
 			$select_tipo_producto.append(prod_tipos_html);
 		});
 		
+		$campo_sku.val(sku);
+		$campo_descripcion.val(descripcion);
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -316,11 +366,33 @@ $(function() {
 					$('#forma-entradamercancias-window').find('input[name=id_producto]').val($(this).find('#id_prod_buscador').val());
 					$('#forma-entradamercancias-window').find('input[name=sku_producto]').val($(this).find('span.sku_prod_buscador').html());
 					$('#forma-entradamercancias-window').find('input[name=titulo_producto]').val($(this).find('span.titulo_prod_buscador').html());
-					
-					$('#forma-invpre-window').find('input[name=producto_id]').val($(this).find('#id_prod_buscador').val());
+					var id_producto = $(this).find('#id_prod_buscador').val();
+					$('#forma-invpre-window').find('input[name=producto_id]').val(id_producto);
 					$('#forma-invpre-window').find('input[name=productosku]').val($(this).find('span.sku_prod_buscador').html());
 					$('#forma-invpre-window').find('input[name=producto_descripcion]').val($(this).find('span.titulo_prod_buscador').html());
 					$('#forma-invpre-window').find('input[name=producto_unidad]').val($(this).find('span.utitulo').html());
+					
+					//aqui nos vamos a buscar las presentaciones del Producto seleccionado
+					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
+					$arreglo = {'id_prod':id_producto,
+							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+							};
+					$.post(input_json,$arreglo,function(entry){
+						
+						//verifica si el arreglo  retorno datos
+						if (entry['Presentaciones'].length > 0){
+							$select_presentacion.children().remove();
+							var html_pres = '';
+							$.each(entry['Presentaciones'],function(entryIndex,pres){
+								html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+							});
+							$select_presentacion.append(html_pres);
+						}else{
+							$select_presentacion.children().remove();
+							var html_pres = '<option value="0">[-Presentaci&oacute;n--]</option>';
+							$select_presentacion.append(html_pres);
+						}
+					});
 					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -332,9 +404,8 @@ $(function() {
 			});
 		});
 		
-		
 		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
-		if($campo_sku.val() != ''){
+		if($campo_sku.val() != ''  ||  $campo_descripcion.val() != ''){
 			$buscar_plugin_producto.trigger('click');
 		}
 		
@@ -569,6 +640,7 @@ $(function() {
 		var $productosku = $('#forma-invpre-window').find('input[name=productosku]');
 		var $producto_descripcion = $('#forma-invpre-window').find('input[name=producto_descripcion]');
 		var $producto_unidad = $('#forma-invpre-window').find('input[name=producto_unidad]');
+		var $select_presentacion = $('#forma-invpre-window').find('select[name=select_presentacion]');
 		
 		var $lista1 = $('#forma-invpre-window').find('input[name=lista1]');
 		var $lista2 = $('#forma-invpre-window').find('input[name=lista2]');
@@ -660,7 +732,8 @@ $(function() {
 		
 		$campo_id.attr({'value' : 0});
 		$producto_id.attr({'value' : 0});
-                
+		$producto_unidad.css({'background' : '#F0F0F0'});
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == 'true' ){
 				var remove = function() {$(this).remove();};
@@ -692,7 +765,7 @@ $(function() {
 		
 		$buscar_producto.click(function(event){
 			event.preventDefault();
-			$busca_productos();
+			$busca_productos($select_presentacion, $productosku.val(), $producto_descripcion.val());
 		})
 		
 		//inicializa campos en cero
@@ -834,6 +907,7 @@ $(function() {
 			var $productosku = $('#forma-invpre-window').find('input[name=productosku]');
 			var $producto_descripcion = $('#forma-invpre-window').find('input[name=producto_descripcion]');
 			var $producto_unidad = $('#forma-invpre-window').find('input[name=producto_unidad]');
+			var $select_presentacion = $('#forma-invpre-window').find('select[name=select_presentacion]');
 			
 			var $lista1 = $('#forma-invpre-window').find('input[name=lista1]');
 			var $lista2 = $('#forma-invpre-window').find('input[name=lista2]');
@@ -926,6 +1000,7 @@ $(function() {
 			var $submit_actualizar = $('#forma-invpre-window').find('#submit');
 			
 			$buscar_producto.hide();
+			$producto_unidad.css({'background' : '#F0F0F0'});
 			
 			if(accion_mode == 'edit'){
                                 
@@ -969,6 +1044,22 @@ $(function() {
 					$productosku.attr({'value' : entry['InvPre']['0']['sku']});
 					$producto_descripcion.attr({'value' : entry['InvPre']['0']['titulo']});
 					$producto_unidad.attr({'value' : entry['InvPre']['0']['utitulo']});
+					
+					$select_presentacion.children().remove();
+					var html_pres = '';
+					if(parseInt(entry['InvPre']['0']['presentacion_id'])==0 ){
+						html_pres = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+					}else{
+						html_pres = '';
+					}
+					$.each(entry['Presentaciones'],function(entryIndex,pres){
+						if(parseInt(entry['InvPre']['0']['presentacion_id']) == parseInt(pres['id'] )){
+							html_pres += '<option value="' + pres['id'] + '" selected="yes">' + pres['titulo'] + '</option>';
+						}else{
+							//html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+						}
+					});
+					$select_presentacion.append(html_pres);
 					
 					$lista1.attr({'value' : $(this).agregar_comas(parseFloat(entry['InvPre']['0']['precio_1']).toFixed(2))});
 					$lista2.attr({'value' : $(this).agregar_comas(parseFloat(entry['InvPre']['0']['precio_2']).toFixed(2))});

@@ -37,16 +37,18 @@
         <!--Esta tabla va  en la barra de buscador -->
 		<table border="0" class="tabla_buscador" style="display:none">
 			<tr>
-				<td colspan="13">&nbsp;&nbsp;</td>
+				<td colspan="15" height="10"></td>
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>Descripci&oacute;n</td>
+				<td width="130">Tipo&nbsp;de&nbsp;producto</td>
+				<td width="10"></td>
+				<td width="100">C&oacute;digo</td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>&nbsp;&nbsp;</td>
+				<td width="150">Descripci&oacute;n</td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>&nbsp;</td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="150">Presentaci&oacute;n</td>
+				<td width="20"></td>
 				<td></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td></td>
@@ -55,16 +57,23 @@
 			
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="busqueda_producto" style="width:80px;"></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td><!--<INPUT TYPE="text" name="busqueda_descripcion" style="width:230px;">--></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>
-					<!--<SELECT NAME="busqueda_select_grupo" style="width:150px;">
-						<option value="0">[--Seleccionar grupo --]</option>
-					</SELECT>-->
+				<td width="130">
+					<select name="busqueda_select_tipo_prod" style="width:130px;">
+						<option value="1" selected="yes">Prod. Terminado</option>
+					</select>
 				</td>
+				<td width="10"></td>
+				<td><INPUT TYPE="text" name="busqueda_codigo" style="width:100px;"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td><INPUT TYPE="text" name="busqueda_descripcion" style="width:150px;"></td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="150">
+					<select name="busqueda_select_pres" style="width:150px;">
+						<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>
+					</select>
+				</td>
+				
+				<td width="20"></td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td ><INPUT TYPE="button" value="Limpiar"></td>
@@ -126,29 +135,47 @@
                                         <table border="0">
 											<tr>
 												<td width="5"></td>
-												<td width="50">Art&iacute;culo</td>
-												<td width="90">
+												<td width="90">C&oacute;digo</td>
+												<td width="10"></td>
+												<td width="60"></td>
+												<td width="240">Descripci&oacute;n</td>
+												<td width="10">&nbsp;</td>
+												<td width="80">Unidad</td>
+												<td width="10">&nbsp;</td>
+												<td width="120">Presentaci&oacute;n</td>
+												<td width="10">&nbsp;</td>
+												<td width="5"></td>
+											</tr>
+											
+											<tr>
+												<td width="5"></td>
+												<td width="90">													
 													<input type="hidden" name="producto_id">
-													<INPUT TYPE="text" name="productosku" style="width:90px;" readOnly="true">
+													<input type="text" name="productosku" style="width:90px;">
 												</td>
-												<td width="60">&nbsp;<a href="busca_producto">(Buscar)</a></td>
 												<td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_productosku"></div></td>
-												<td width="85">Descripci&oacute;n</td>
-												<td width="240">
-													<INPUT TYPE="text" name="producto_descripcion" style="width:240px;" readOnly="true">
-												</td>
+												<td width="60">&nbsp;<a href="busca_producto">(Buscar)</a></td>
+												<td width="240"><INPUT TYPE="text" name="producto_descripcion" style="width:240px;"></td>
 												<td width="10">&nbsp;</td>
 												<td width="80">
 													<INPUT TYPE="text" name="producto_unidad" style="width:80px;" readOnly="true">
 												</td>
+												<td width="10">&nbsp;</td>
+												<td width="120">
+													<select name="select_presentacion" style="width:120px;">
+														<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>
+													</select>
+												</td>
+												<td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
 												<td width="5"></td>
 											</tr>
+											
 											<tr>
-												<td colspan="10">&nbsp;</td>
+												<td colspan="11">&nbsp;</td>
 											</tr>
 											<tr>
 												<td width="5">&nbsp;</td>
-												<td colspan="8">
+												<td colspan="9">
 													
 													<!-- tags interiores -->
 													<div class="invpre_div_three_interno">
