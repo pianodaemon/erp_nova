@@ -69,12 +69,21 @@ public class InvPreController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", InvSeccionesController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
-        infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("sku", "Producto:160");
+        infoConstruccionTabla.put("id", "Acciones:90");
+        infoConstruccionTabla.put("sku", "C&oacute;digo:100");
         infoConstruccionTabla.put("titulo_es", "Descripci&oacute;n:200");
-        infoConstruccionTabla.put("precio_1", "Lista 1:70");
-        infoConstruccionTabla.put("precio_2", "Lista 2:70");
-        infoConstruccionTabla.put("precio_3", "Lista 3:70");
+        infoConstruccionTabla.put("pres", "Presentaci&oacute;n:120");
+        infoConstruccionTabla.put("precio_1", "Lista 1:60");
+        infoConstruccionTabla.put("precio_2", "Lista 2:60");
+        infoConstruccionTabla.put("precio_3", "Lista 3:60");
+        infoConstruccionTabla.put("precio_4", "Lista 4:60");
+        infoConstruccionTabla.put("precio_5", "Lista 5:60");
+        infoConstruccionTabla.put("precio_6", "Lista 6:60");
+        infoConstruccionTabla.put("precio_7", "Lista 7:60");
+        infoConstruccionTabla.put("precio_8", "Lista 8:60");
+        infoConstruccionTabla.put("precio_9", "Lista 9:60");
+        infoConstruccionTabla.put("precio_10", "Lista 10:65");
+        
         
         ModelAndView x = new ModelAndView("invpre/startup", "title", "Precios");
         
@@ -122,6 +131,36 @@ public class InvPreController {
     
     
     
+    //obtiene datos Buscador principal
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosBuscadorPrincipal.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosBuscadorPrincipalJson(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        tiposProducto = this.getInvDao().getProducto_Tipos();
+        
+        //Se le pasa como parametro el cero para que devuelva todas las presentaciones 
+        presentaciones = this.getInvDao().getProducto_Presentaciones(0);
+        
+        jsonretorno.put("ProdTipos", tiposProducto);
+        jsonretorno.put("Presentaciones", presentaciones);
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    
     
     @RequestMapping(value="/getAllInvPre.json", method = RequestMethod.POST)
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllInvPreJson(
@@ -145,10 +184,11 @@ public class InvPreController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
-        String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
-        //String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
-        
-        String data_string = app_selected+"___"+id_usuario+"___"+producto;
+        String tipo_prod = StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo_prod")));
+        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
+        String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
+        String presentacion = StringHelper.isNullString(String.valueOf(has_busqueda.get("presentacion")));
+        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+codigo+"___"+descripcion+"___"+presentacion;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getInvDao().countAll(data_string);
@@ -180,13 +220,16 @@ public class InvPreController {
         log.log(Level.INFO, "Ejecutando getInvSeccion de {0}", InvSeccionesController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> datosInvPre = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         
         if( id != 0  ){
             datosInvPre = this.getInvDao().getInvPre_Datos(id);
+            presentaciones=this.getInvDao().getProducto_PresentacionesON(Integer.parseInt(datosInvPre.get(0).get("inv_prod_id")));
         }
         
         jsonretorno.put("InvPre", datosInvPre);
-        //jsonretorno.put("Grupos", TpolGrupos);
+        jsonretorno.put("Presentaciones", presentaciones);
+        
         
         return jsonretorno;
     }
@@ -218,11 +261,35 @@ public class InvPreController {
         return jsonretorno;
     }
     
+    
+    
+    
+    //obtiene las presentaciones de un producto en especifico
+    @RequestMapping(method = RequestMethod.POST, value="/getPresentacionesProducto.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPresentacionesProductoJson(
+            @RequestParam(value="id_prod", required=true) Integer id_prod,
+            Model model
+    ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        
+        presentaciones=this.getInvDao().getProducto_PresentacionesON(id_prod);
+        jsonretorno.put("Presentaciones", presentaciones);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    
     //crear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) String id,
             @RequestParam(value="producto_id", required=true) String producto_id,
+            @RequestParam(value="select_presentacion", required=true) String select_presentacion,
             @RequestParam(value="lista1", required=false) String lista1,
             @RequestParam(value="lista2", required=false) String lista2,
             @RequestParam(value="lista3", required=false) String lista3,
@@ -417,7 +484,8 @@ public class InvPreController {
                 select_tipo_redondeo7+"___"+
                 select_tipo_redondeo8+"___"+
                 select_tipo_redondeo9+"___"+
-                select_tipo_redondeo10;
+                select_tipo_redondeo10+"___"+
+                select_presentacion;
         
         succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

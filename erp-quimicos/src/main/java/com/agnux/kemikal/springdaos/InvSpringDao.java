@@ -2776,11 +2776,26 @@ public class InvSpringDao implements InvInterfaceDao{
     public ArrayList<HashMap<String, Object>> getInvPreGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
-	String sql_to_query = "SELECT inv_pre.id,inv_prod.sku ,inv_prod.descripcion, inv_pre.precio_1,inv_pre.precio_2,inv_pre.precio_3 "
-                            + "FROM inv_pre "
-                            + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_pre.id "
-                            +" join inv_prod on inv_prod.id=inv_pre.inv_prod_id "
-                            +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+	String sql_to_query = "SELECT "
+                + "inv_pre.id "
+                + ", inv_prod.sku "
+                + ", inv_prod.descripcion "
+                + ", (CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END ) AS pres "
+                + ", inv_pre.precio_1"
+                + ", inv_pre.precio_2"
+                + ", inv_pre.precio_3 "
+                + ", inv_pre.precio_4 "
+                + ", inv_pre.precio_5 "
+                + ", inv_pre.precio_6 "
+                + ", inv_pre.precio_7 "
+                + ", inv_pre.precio_8 "
+                + ", inv_pre.precio_9 "
+                + ", inv_pre.precio_10 "
+                + "FROM inv_pre "
+                + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_pre.inv_prod_presentacion_id "
+                + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_pre.id "
+                +" join inv_prod on inv_prod.id=inv_pre.inv_prod_id "
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -2792,10 +2807,18 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",rs.getInt("id"));
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo_es",rs.getString("descripcion"));
+                    row.put("pres",rs.getString("pres"));
                     row.put("precio_1",StringHelper.roundDouble(rs.getDouble("precio_1"), 2));
                     row.put("precio_2",StringHelper.roundDouble(rs.getDouble("precio_2"), 2));
                     row.put("precio_3",StringHelper.roundDouble(rs.getDouble("precio_3"), 2));
-                    
+                    row.put("precio_4",StringHelper.roundDouble(rs.getDouble("precio_4"), 2));
+                    row.put("precio_5",StringHelper.roundDouble(rs.getDouble("precio_5"), 2));
+                    row.put("precio_6",StringHelper.roundDouble(rs.getDouble("precio_6"), 2));
+                    row.put("precio_7",StringHelper.roundDouble(rs.getDouble("precio_7"), 2));
+                    row.put("precio_8",StringHelper.roundDouble(rs.getDouble("precio_8"), 2));
+                    row.put("precio_9",StringHelper.roundDouble(rs.getDouble("precio_9"), 2));
+                    row.put("precio_10",StringHelper.roundDouble(rs.getDouble("precio_10"), 2));
+                                        
                     return row;
                 }
             }
@@ -2824,6 +2847,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("presentacion_id",String.valueOf(rs.getInt("inv_prod_presentacion_id")));
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("utitulo",rs.getString("utitulo"));
