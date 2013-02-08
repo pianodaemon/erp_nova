@@ -747,7 +747,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "'1'::character varying  AS exis_prod_lp ";
         }else{
             precio=" (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 0 ELSE inv_pre.precio_"+lista_precio+" END ) AS precio,"
-                 + " (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 'El producto no se encuentra en el cat&aacute;logo de Listas de Precios.\nEs necesario asignarle un precio.' ELSE '1' END ) AS exis_prod_lp ";
+                 + " (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 'El producto con &eacute;sta presentaci&oacute;n no se encuentra en el cat&aacute;logo de Listas de Precios.\nEs necesario asignarle un precio.' ELSE '1' END ) AS exis_prod_lp ";
         }
         
         sql_query = ""
@@ -764,7 +764,7 @@ public class PocSpringDao implements PocInterfaceDao{
             +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
             +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
             +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
-            +"LEFT JOIN inv_pre on inv_pre.inv_prod_id = inv_prod.id "
+            +"LEFT JOIN inv_pre ON (inv_pre.inv_prod_id=inv_prod.id AND inv_pre.inv_prod_presentacion_id=inv_prod_pres_x_prod.presentacion_id) "
             +"WHERE  empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
         
         System.out.println("getPresentacionesProducto: "+sql_query);
