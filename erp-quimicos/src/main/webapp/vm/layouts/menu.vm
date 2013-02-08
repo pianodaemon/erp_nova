@@ -481,10 +481,12 @@
 													<li class="topline"><a href="../crmregistrocasos/startup.agnux">Registro de Casos</a></li>
 												</ul>
 											</li>
+											
 											<li>
-												<a href="#" class="sub">Cansultas&raquo;</a>
+												<a href="#" class="sub">Consultas &raquo;</a>
 												<ul>
-													<li class ="topline"><a href="../crmconsultas/startup.agnux">Consultas</li>
+													<li class="topline"><a href="../crmconsultas/startup.agnux">Consultas</a></li>
+													
 												</ul>
 											</li>
 										</ul>
