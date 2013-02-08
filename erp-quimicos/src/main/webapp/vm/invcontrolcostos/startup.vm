@@ -460,11 +460,13 @@
 												<td width="200">&nbsp;Tipo de Cambio</td>
 												<td width="30"></td>
 												<td width="200"></td>
-												<td width="30"></td>
+												<td width="30" colspan="5">Los valores para los campos T.C., C.U., I.G.I., G.I., C.I.T., P.M. son en M.N.</td>
+												<!--
 												<td></td>
 												<td></td>
 												<td width="30"></td>
 												<td></td>
+												-->
 											</tr>
 
 											

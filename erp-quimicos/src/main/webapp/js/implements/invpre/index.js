@@ -990,17 +990,19 @@ $(function() {
 			var $select_forma_calculo10 = $('#forma-invpre-window').find('select[name=select_forma_calculo10]');
 			var $select_tipo_redondeo10 = $('#forma-invpre-window').find('select[name=select_tipo_redondeo10]');
 			
-			
 			//href para buscar producto
 			var $buscar_producto = $('#forma-invpre-window').find('a[href*=busca_producto]');
-                        
-                        
+			
 			var $cerrar_plugin = $('#forma-invpre-window').find('#close');
 			var $cancelar_plugin = $('#forma-invpre-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-invpre-window').find('#submit');
 			
 			$buscar_producto.hide();
 			$producto_unidad.css({'background' : '#F0F0F0'});
+			$productosku.css({'background' : '#F0F0F0'});
+			$producto_descripcion.css({'background' : '#F0F0F0'});
+			$productosku.attr('readonly',true);
+			$producto_descripcion.attr('readonly',true);
 			
 			if(accion_mode == 'edit'){
                                 
