@@ -236,10 +236,10 @@ $(function() {
                 return false;
             });
 	}
-
+	
 	
 	//buscador de clientes
-	$busca_clientes = function(){
+	$busca_clientes = function(tipo, no_control, cliente){
             //limpiar_campos_grids();
             $(this).modalPanel_Buscacliente();
             var $dialogoc =  $('#forma-buscacliente-window');
@@ -272,31 +272,48 @@ $(function() {
 				$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 			});
 
+            if(parseInt(tipo)==1){
+				$('#forma-buscacliente-window').find('div.titulo_clientes').find('strong').text("Buscador de Clientes");
+			}else{
+				$('#forma-buscacliente-window').find('div.titulo_clientes').find('strong').text("Buscador de Prospectos");
+			}
             
             var html = '';
             $select_filtro_por.children().remove();
             html='<option value="0">[-- Opcion busqueda --]</option>';
-            html+='<option value="1">No. de control</option>';
+            
+            if(no_control!=''){
+				html+='<option value="1" selected="yes">No. de control</option>';
+				$cadena_buscar.val(no_control);
+			}else{
+				html+='<option value="1">No. de control</option>';
+			}
             html+='<option value="2">RFC</option>';
-            html+='<option value="3">Razon social</option>';
+            if(cliente!=''){
+				html+='<option value="3" selected="yes">Razon social</option>';
+				$cadena_buscar.val(cliente);
+			}else{
+				html+='<option value="3">Razon social</option>';
+			}
             html+='<option value="4">CURP</option>';
             html+='<option value="5">Alias</option>';
             $select_filtro_por.append(html);
 			
 			
-			
             //click buscar clientes
             $busca_cliente_modalbox.click(function(event){
                 //event.preventDefault();
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_clientes.json';
-                $arreglo = {'cadena':$cadena_buscar.val(),
+                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorClienteProspecto.json';
+                $arreglo = {
+							'tipo':tipo,
+							'cadena':$cadena_buscar.val(),
                             'filtro':$select_filtro_por.val(),
                             'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                             }
                 var trr = '';
                 $tabla_resultados.children().remove();
                 $.post(input_json,$arreglo,function(entry){
-                    $.each(entry['clientes'],function(entryIndex,cliente){
+                    $.each(entry['Resultado'],function(entryIndex,cliente){
 						
                         trr = '<tr>';
                             trr += '<td width="80">';
@@ -358,7 +375,12 @@ $(function() {
 					
                 });
             });//termina llamada json
-
+			
+			//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+			if($cadena_buscar.val() != ''){
+				$busca_cliente_modalbox.trigger('click');
+			}
+			
             $cancelar_plugin_busca_cliente.click(function(event){
                 //event.preventDefault();
                 var remove = function() {$(this).remove();};
@@ -663,6 +685,7 @@ $(function() {
 	//agregar producto al grid
 	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,descripcion,id_pres,pres){
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
+		var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
 		
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
 		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
@@ -685,38 +708,56 @@ $(function() {
 			
 			var trr = '';
 			trr = '<tr>';
-				trr += '<td width="58">';
+				trr += '<td class="grid" style="font-size:11px;  border:1px solid #C1DAD7;" width="40">';
 					trr += '<a href="elimina_producto" class="borde_oculto" id="delete'+ tr +'">Eliminar</a>';
 					trr += '<input type="hidden" name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
 					trr += '<input type="hidden" name="iddetalle" id="idd" value="0">';//este es el id del registro que ocupa el producto en la tabla cotizacions_detalles
 				trr += '</td>';
-				trr += '<td width="88">';
+				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="100">';
 					trr += '<input type="hidden" name="idproducto" class="borde_oculto" id="idprod" value="'+ id_prod +'">';
-					trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:87px;">';
+					trr += '<input type="text" name="sku'+ tr +'" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:96px;">';
 				trr += '</td>';
-				trr += '<td width="10"><INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ titulo +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:196px;"></td>';
-				trr += '<td width="85"><INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;"></td>';
-                                trr +='<td width="67" ><textarea name="descripcion'+tr+'"id="desc" readOnly="true" class="borde_oculto" cols="10" rows="5" style="width:180px;resize:none; background-color:#FFFFF;">'+descripcion+'</textarea></td>';
-
-                                trr += '<td width="110" >';
-					trr += '<INPUT type="hidden"    name="id_presentacion"        	value="'+  id_pres +'" 	id="idpres">';
-					trr += '<INPUT TYPE="text" name="presentacion'+ tr +'" class="borde_oculto" value="'+  pres +'" 	id="pres"  readOnly="true" style="width:106px;">';
+				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="180">';
+					trr += '<input type="text" 	name="nombre'+ tr +'" 	value="'+ titulo +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:176px;">';
 				trr += '</td>';
-					trr += '<td width="80"><INPUT TYPE="text" 	name="cantidad" 	value=" " id="cant" style="width:76px;"></td>';
-					trr += '<td width="85"><INPUT TYPE="text" 	name="costo" 		value=" " id="cost" style="width:81px;"></td>';
-					trr += '<td width="50">';
-						trr += '<SELECT NAME="monedagrid" class="moneda'+ tr +'" style="width:50px;"></SELECT>';
-					trr += '</td>';
-				trr += '<td width="111" border="2"><INPUT TYPE="text" 	name="importe'+ tr +'" 		value="" id="import" readOnly="true" style="width:90px; text-align:right;"></td>';
+				
+				trr += '<td class="grid1" id="td_imagen" style="font-size:11px;  border:1px solid #C1DAD7;" width="100">';
+					trr += '<div style="width:96px;"></div>';
+				trr += '</td>';
+				trr += '<td class="grid1" id="td_descripcion" style="font-size:11px;  border:1px solid #C1DAD7;" width="220">';
+					trr += '<textarea name="descripcion'+tr+'" id="desc" readOnly="true" class="borde_oculto" cols="10" rows="5" style="width:216px;resize:none; background-color:#FFFFF;">'+descripcion+'</textarea>';
+				trr += '</td>';
+				
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+					trr += '<input type="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+				trr += '</td>';
+				
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+					trr += '<INPUT type="hidden" name="id_presentacion" value="'+  id_pres +'" 	id="idpres">';
+					trr += '<INPUT TYPE="text" name="presentacion'+ tr +'" class="borde_oculto" value="'+  pres +'" id="pres"  readOnly="true" style="width:96px;">';
+				trr += '</td>';
+				
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
+					trr += '<input type="text" name="cantidad" value=" " id="cant" style="width:66px;">';
+				trr += '</td>';
+				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+					trr += '<input type="text" name="costo" value=" " id="cost" style="width:76px;">';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
+					trr += '<select name="monedagrid" class="moneda'+ tr +'" style="width:46px;"></select>';
+				trr += '</td>';
+				
+				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
+					trr += '<input type="text" 	name="importe'+ tr +'" 		value="" id="import" readOnly="true" style="width:66px; text-align:right;">';
+				trr += '</td>';
 				trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="0">';
 			trr += '</tr>';
-                        
 			$grid_productos.append(trr);
 			
-			//$('#datos option:selected').clone().appendTo("#recibe");
+			$aplicar_evento_click_checkbox($check_descripcion_larga);
             
             $('#forma-cotizacions-window').find('select[name=moneda2]').find('option').clone().appendTo('.moneda'+ tr);
-                    
+            
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 			$grid_productos.find('#cant').focus(function(e){
 				if($(this).val() == ' '){
@@ -821,6 +862,49 @@ $(function() {
 	
 	
 	
+	$aplicar_evento_click_checkbox = function($campo_check){
+		//click al checkbox descripcion larga
+		$campo_check.click(function(event){
+			if(this.checked){
+				$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'550px'});
+				$('#forma-cotizacions-window').find('input[name=dircliente]').css({'width':'550px'});
+				$('#forma-cotizacions-window').find('input[name=contactocliente]').css({'width':'550px'});
+				$('#forma-cotizacions-window').find('#td_imagen').show();
+				$('#forma-cotizacions-window').find('#td_descripcion').show();
+				$('#forma-cotizacions-window').find('#td1').css({'width':'740px'});
+				$('#forma-cotizacions-window').find('#td2').css({'width':'460px'});
+				$('#forma-cotizacions-window').find('.contenedor_grid').css({'width':'1180px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1213px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1213px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'1213px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'1203px'});
+				$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -220});
+				$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'1173px'});
+				$('#forma-cotizacions-window').find('#div_botones').css({'width':'1190px'});
+				$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'1090px'});
+			}else{
+				$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'430px'});
+				$('#forma-cotizacions-window').find('input[name=dircliente]').css({'width':'430px'});
+				$('#forma-cotizacions-window').find('input[name=contactocliente]').css({'width':'430px'});
+				$('#forma-cotizacions-window').find('#td_imagen').hide();
+				$('#forma-cotizacions-window').find('#td_descripcion').hide();
+				$('#forma-cotizacions-window').find('#td1').css({'width':'520px'});
+				$('#forma-cotizacions-window').find('#td2').css({'width':'350px'});
+				$('#forma-cotizacions-window').find('.contenedor_grid').css({'width':'860px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'893px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'893px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'880px'});
+				$('#forma-cotizacions-window').css({"margin-left": -320, 	"margin-top": -220});
+				$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'853px'});
+				$('#forma-cotizacions-window').find('#div_botones').css({'width':'870px'});
+				$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'770px'});
+			}
+		});
+	}
+	
+	
+	
+	
 	//nueva cotizacion
 	$new_cotizacion.click(function(event){
 		event.preventDefault();
@@ -834,7 +918,7 @@ $(function() {
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		//var accion = "getCotizacion";
 		
-		$('#forma-cotizacions-window').css({"margin-left": -370, 	"margin-top": -220});
+		$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -220});
 		
 		$forma_selected.prependTo('#forma-cotizacions-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -847,34 +931,41 @@ $(function() {
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 					};
                 
+		var $tr_tipo = $('#forma-cotizacions-window').find('#tr_tipo');
+		var $td_imagen = $('#forma-cotizacions-window').find('#td_imagen');
+		var $td_descripcion = $('#forma-cotizacions-window').find('#td_descripcion');
+		var $td1 = $('#forma-cotizacions-window').find('#td1');
+		var $td2 = $('#forma-cotizacions-window').find('#td2');
+		var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
+		var $contenedor_grid = $('#forma-cotizacions-window').find('.contenedor_grid');
+		
 		var $id_cotizacion = $('#forma-cotizacions-window').find('input[name=id_cotizacion]');
 		var $total_tr = $('#forma-cotizacions-window').find('input[name=total_tr]');
-		var $select_tipocotizacion = $('#forma-cotizacions-window').find('select[name=tipocotizacion]');
+		var $select_tipo_cotizacion = $('#forma-cotizacions-window').find('select[name=select_tipo_cotizacion]');
 		
 		var $busca_cliente = $('#forma-cotizacions-window').find('a[href*=busca_cliente]');
 		var $id_cliente = $('#forma-cotizacions-window').find('input[name=id_cliente]');
 		var $rfc_cliente = $('#forma-cotizacions-window').find('input[name=rfccliente]');
+		var $nocontrolcliente = $('#forma-cotizacions-window').find('input[name=nocontrolcliente]');
 		var $razon_cliente = $('#forma-cotizacions-window').find('input[name=razoncliente]');
 		var $dir_cliente = $('#forma-cotizacions-window').find('input[name=dircliente]');
+		var $contactocliente = $('#forma-cotizacions-window').find('input[name=contactocliente]');
 		var $select_moneda = $('#forma-cotizacions-window').find('select[name=moneda]');
 		var $select_moneda2 = $('#forma-cotizacions-window').find('select[name=moneda2]');
 		
 		//var $campo_tc = $('#forma-cotizacions-window').find('input[name=tc]');
 		var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
-		
 		var $observaciones = $('#forma-cotizacions-window').find('textarea[name=observaciones]');
-                var $descripcion_larga =$('#forma-cotizacions-window').find('input[name=descripcion_larga]');
+		
 		//var $select_almacen = $('#forma-cotizacions-window').find('select[name=almacen]');
 		var $sku_producto = $('#forma-cotizacions-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-cotizacions-window').find('input[name=nombre_producto]');
-		
 		
 		//buscar producto
 		var $busca_sku = $('#forma-cotizacions-window').find('a[href*=busca_sku]');
 		//href para agregar producto al grid
 		var $agregar_producto = $('#forma-cotizacions-window').find('a[href*=agregar_producto]');
-		
 		
 		var $boton_genera_pdf = $('#forma-cotizacions-window').find('#genera_pdf');
 		
@@ -882,8 +973,6 @@ $(function() {
 		var $grid_productos = $('#forma-cotizacions-window').find('#grid_productos');
 		//grid de errores
 		var $grid_warning = $('#forma-cotizacions-window').find('#div_warning_grid').find('#grid_warning');
-		
-		
 		
 		//var $flete = $('#forma-cotizacions-window').find('input[name=flete]');
 		var $subtotal = $('#forma-cotizacions-window').find('input[name=subtotal]');
@@ -898,11 +987,40 @@ $(function() {
 		$id_cotizacion.val(0);//para nueva cotizacion el folio es 0
 		$select_moneda2.hide();
 		
+		
+		//quitar enter a todos los campos input
+		$('#forma-cotizacions-window').find('input').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
+		
 		//$campo_factura.css({'background' : '#ffffff'});
 		
 		//ocultar boton de generar pdf. Solo debe estar activo en editar
 		$boton_genera_pdf.hide();
-                $descripcion_larga.hide();
+		//$descripcion_larga.hide();
+		$tr_tipo.hide();
+		$dir_cliente.attr('readonly',true);
+		$dir_cliente.css({'background' : '#F0F0F0'});
+		$contactocliente.css({'background' : '#F0F0F0'});
+		
+		$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'430px'});
+		$('#forma-cotizacions-window').find('input[name=dircliente]').css({'width':'430px'});
+		$('#forma-cotizacions-window').find('input[name=contactocliente]').css({'width':'430px'});
+		$('#forma-cotizacions-window').find('#td_imagen').hide();
+		$('#forma-cotizacions-window').find('#td_descripcion').hide();
+		$('#forma-cotizacions-window').find('#td1').css({'width':'520px'});
+		$('#forma-cotizacions-window').find('#td2').css({'width':'350px'});
+		$('#forma-cotizacions-window').find('.contenedor_grid').css({'width':'860px'});
+		$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'893px'});
+		$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'893px'});
+		$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'880px'});
+		$('#forma-cotizacions-window').css({"margin-left": -320, 	"margin-top": -220});
+		$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'853px'});
+		$('#forma-cotizacions-window').find('#div_botones').css({'width':'870px'});
+		$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'770px'});
+		
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -985,6 +1103,13 @@ $(function() {
 		
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
+			
+			if(entry['Extras'][0]['mod_crm']=='true'){
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'470px'});
+				$tr_tipo.show();//mostrar tr para escoger el tipo destino de la cotizacion
+			}
+			
+			
 			//$campo_tc.val(entry['tc']['tipo_cambio']);
 			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
 			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
@@ -1013,11 +1138,10 @@ $(function() {
 		});
         
 		
-		
 		//buscador de clientes
 		$busca_cliente.click(function(event){
 			event.preventDefault();
-			$busca_clientes();
+			$busca_clientes($select_tipo_cotizacion.val(), $nocontrolcliente.val(), $razon_cliente.val());
 		});
 
 
@@ -1052,11 +1176,31 @@ $(function() {
 			}
 		});
 		
+		//desencadena clic del href Buscar cliente al pulsar enter en el campo numero de control del cliente
+		$nocontrolcliente.keypress(function(e){
+			if(e.which == 13){
+				$busca_cliente.trigger('click');
+				return false;
+			}
+		});
+		
+		//desencadena clic del href Buscar cliente al pulsar enter en el campo razon social del cliente
+		$razon_cliente.keypress(function(e){
+			if(e.which == 13){
+				$busca_cliente.trigger('click');
+				return false;
+			}
+		});
+		
 		/*
 		$boton_genera_pdf.click(function(event){
 			//cuando la cotizacion es nueva no se genera pdf, hasta despues de guardar
 		});
 		*/
+		
+		$aplicar_evento_click_checkbox($check_descripcion_larga);
+
+		
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
