@@ -39,6 +39,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                 +"gral_emp.titulo AS empresa, "
                 +"gral_emp.incluye_produccion, "
                 +"gral_emp.incluye_contabilidad, "
+                +"gral_emp.incluye_crm, "
                 +"gral_emp.nivel_cta, "
                 +"gral_usr_suc.gral_suc_id AS sucursal_id, "
                 +"gral_suc.titulo AS sucursal,"
@@ -63,6 +64,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                     row.put("empresa",String.valueOf(rs.getString("empresa")));
                     row.put("incluye_produccion",String.valueOf(rs.getBoolean("incluye_produccion")));
                     row.put("incluye_contab",String.valueOf(rs.getBoolean("incluye_contabilidad")));
+                    row.put("incluye_crm",String.valueOf(rs.getBoolean("incluye_crm")));
                     row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
                     row.put("sucursal_id",String.valueOf(rs.getInt("sucursal_id")));
                     row.put("sucursal",String.valueOf(rs.getString("sucursal")));
@@ -90,6 +92,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                                 + "gral_emp.titulo AS empresa, "
                                 + "gral_emp.incluye_produccion, "
                                 + "gral_emp.incluye_contabilidad, "
+                                + "gral_emp.incluye_crm, "
                                 + "gral_emp.nivel_cta, "
                                 + "gral_usr_suc.gral_suc_id AS sucursal_id, "
                                 + "gral_suc.titulo AS sucursal, "
@@ -114,6 +117,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                     row.put("empresa",String.valueOf(rs.getString("empresa")));
                     row.put("incluye_produccion",String.valueOf(rs.getBoolean("incluye_produccion")));
                     row.put("incluye_contab",String.valueOf(rs.getBoolean("incluye_contabilidad")));
+                    row.put("incluye_crm",String.valueOf(rs.getBoolean("incluye_crm")));
                     row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
                     row.put("sucursal_id",String.valueOf(rs.getInt("sucursal_id")));
                     row.put("sucursal",String.valueOf(rs.getString("sucursal")));

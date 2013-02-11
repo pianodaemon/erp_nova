@@ -186,16 +186,25 @@ public class CotizacionesController {
     //public @ResponseBody HashMap<java.lang.String,java.lang.Object> getProveedorJson(
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getCotizacionJson(
             @RequestParam(value="id_cotizacion", required=true) String id_cotizacion,
-            @RequestParam(value="iu", required=true) String id_user,
+            @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getProveedorJson de {0}", CotizacionesController.class.getName());
+        log.log(Level.INFO, "Ejecutando getCotizacionJson de {0}", CotizacionesController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, Object>> datosCotizacion = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> valorIva = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
+        HashMap<String, Object> extra = new HashMap<String, Object>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        extra.put("mod_crm", userDat.get("incluye_crm"));
+        arrayExtra.add(0,extra);
         
         if( (id_cotizacion.equals("0"))==false  ){
             datosCotizacion = this.getCotdao().getCotizacion(Integer.parseInt(id_cotizacion));
@@ -209,15 +218,18 @@ public class CotizacionesController {
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", monedas);
+        jsonretorno.put("Extras", arrayExtra);
+        
         
         return jsonretorno;
     }
     
     
     
-    //Buscador de clientes
-    @RequestMapping(method = RequestMethod.POST, value="/get_buscador_clientes.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> get_buscador_clientesJson(
+    //Buscador de Clientes ó Prospectos segun el parametro Tipo de busqueda
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorClienteProspecto.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorClienteProspectoJson(
+            @RequestParam(value="tipo", required=true) String tipo,
             @RequestParam(value="cadena", required=true) String cadena,
             @RequestParam(value="filtro", required=true) Integer filtro,
             @RequestParam(value="iu", required=true) String id_user,
@@ -235,7 +247,13 @@ public class CotizacionesController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        jsonretorno.put("clientes", this.getCotdao().get_buscador_clientes(cadena,filtro,id_empresa,id_sucursal));
+        if(tipo.equals("1")){
+            //buscar clientes
+            jsonretorno.put("Resultado", this.getCotdao().get_buscador_clientes(cadena,filtro,id_empresa,id_sucursal));
+        }else{
+            //buscar Prospectos
+            //jsonretorno.put("Resultado", this.getCotdao().get_buscador_clientes(cadena,filtro,id_empresa,id_sucursal));
+        }
         
         return jsonretorno;
     }
