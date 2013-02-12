@@ -60,5 +60,9 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getListaPrecio(Integer lista_precio);
     
     
+    //metodos para aplicativo de Cotizaciones
+    public ArrayList<HashMap<String, Object>> getCotizacion_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, String>> getCotizacion_Datos(Integer id);
+    public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id, String dirImgProd);
     
 }

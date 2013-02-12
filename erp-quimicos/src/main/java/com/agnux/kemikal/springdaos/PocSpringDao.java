@@ -465,7 +465,7 @@ public class PocSpringDao implements PocInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion, descripcion_abr FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -475,6 +475,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("descripcion",rs.getString("descripcion"));
+                    row.put("descripcion_abr",rs.getString("descripcion_abr"));
                     return row;
                 }
             }
@@ -606,7 +607,8 @@ public class PocSpringDao implements PocInterfaceDao{
                                     +"sbt.cta_pago_usd, "
                                     +"sbt.lista_precio, "
                                     +"sbt.metodo_pago_id, "
-                                    +"tiene_dir_fiscal "
+                                    +"tiene_dir_fiscal,"
+                                    +"sbt.contacto "
                             +"FROM(SELECT cxc_clie.id, "
                                             +"cxc_clie.numero_control, "
                                             +"cxc_clie.rfc, "
@@ -614,6 +616,7 @@ public class PocSpringDao implements PocInterfaceDao{
                                             +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
                                             +"cxc_clie.moneda as moneda_id, "
                                             +"cxc_clie.cxc_agen_id, "
+                                            +"cxc_clie.contacto, "
                                             +"cxc_clie.dias_credito_id AS terminos_id, "
                                             +"cxc_clie.empresa_immex, "
                                             +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
@@ -657,6 +660,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("lista_precio",rs.getString("lista_precio"));
                     row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
                     row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
+                    row.put("contacto",rs.getString("contacto"));
+                    
                     return row;
                 }
             }
@@ -755,6 +760,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     +"inv_prod.id,"
                     +"inv_prod.sku,"
                     +"inv_prod.descripcion AS titulo,"
+                    +"inv_prod.descripcion_larga,"
+                    +"(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img,"
                     +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
                     +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
                     +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
@@ -778,6 +785,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("descripcion_larga",rs.getString("descripcion_larga"));
+                    row.put("archivo_img",rs.getString("archivo_img"));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
                     row.put("presentacion",rs.getString("presentacion"));
@@ -1330,6 +1339,124 @@ public class PocSpringDao implements PocInterfaceDao{
             }
         );
         return hm; 
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getCotizacion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT DISTINCT "
+                +"poc_cot.id,"
+                +"poc_cot.folio,"
+                //+"cxc_clie.razon_social AS cliente,"
+                +"to_char(poc_cot.momento_creacion,'dd-mm-yyyy') AS fecha_creacion "
+        +"FROM poc_cot "
+        //+"LEFT JOIN cxc_clie on cxc_clie.id = poc_cot.cliente_id "
+        +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot.id "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("cliente","");
+                    row.put("fecha",rs.getString("fecha_creacion"));
+                    return row;
+                }
+            }
+        );
+        return hm;  
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCotizacion_Datos(Integer id) {
+        String sql_query = "SELECT "
+                + "id, "
+                + "folio, "
+                + "tipo, "
+                + "contacto, "
+                + "observaciones, "
+                + "proceso_id, "
+                + "incluye_img_desc "
+                + "FROM poc_cot WHERE id=? ";
+                        
+        //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
+        ArrayList<HashMap<String, String>> hm_cotizacion = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("tipo",String.valueOf(rs.getInt("tipo")));
+                    row.put("proceso_id",String.valueOf(rs.getInt("proceso_id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("contacto",rs.getString("contacto"));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("img_desc",String.valueOf(rs.getBoolean("incluye_img_desc")));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_cotizacion;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id, String dirImgProd) {
+        String sql_query = ""
+                + "SELECT  "
+                    + "poc_cot_detalle.id as id_detalle, "
+                    + "poc_cot_detalle.inv_prod_id as producto_id, "
+                    + "inv_prod.sku as codigo, "
+                    + "inv_prod.descripcion as producto, "
+                    + "inv_prod.descripcion_larga, "
+                    + "(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img, "
+                    + "inv_prod_unidades.titulo as unidad, "
+                    + "inv_prod_presentaciones.id as presentacion_id, "
+                    + "inv_prod_presentaciones.titulo as presentacion, "
+                    + "poc_cot_detalle.cantidad, "
+                    + "poc_cot_detalle.precio_unitario, "
+                    + "poc_cot_detalle.gral_mon_id as moneda_id, "
+                    + "(poc_cot_detalle.cantidad * poc_cot_detalle.precio_unitario) AS importe "
+                + "FROM poc_cot_detalle  "
+                + "LEFT JOIN inv_prod on inv_prod.id = poc_cot_detalle.inv_prod_id  "
+                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id  "
+                + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_cot_detalle.inv_presentacion_id  "
+                + "WHERE poc_cot_detalle.poc_cot_id= ? "
+                + "ORDER BY poc_cot_detalle.id";
+        
+        ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_detalle",String.valueOf(rs.getInt("id_detalle")));
+                    row.put("producto_id",String.valueOf(rs.getInt("producto_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("producto",rs.getString("producto"));
+                    row.put("descripcion_larga",rs.getString("descripcion_larga"));
+                    row.put("archivo_img",rs.getString("archivo_img"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("presentacion_id",rs.getString("presentacion_id"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("cantidad",rs.getString("cantidad"));
+                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),2));
+                    row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2));
+                    return row;
+                }
+            }
+        );
+        return hm_grid;
     }
     
     

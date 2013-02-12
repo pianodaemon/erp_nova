@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.kemikal.interfacedaos.CotizacionesInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCotizacion;
 import com.agnux.common.helpers.StringHelper;
@@ -14,6 +15,7 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.ParametrosGeneralesInterfaceDao;
+import com.agnux.kemikal.interfacedaos.PocInterfaceDao;
 import com.agnux.kemikal.reportes.PDFCotizacionDescripcion;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -38,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import javax.servlet.ServletOutputStream;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,14 +58,12 @@ public class CotizacionesController {
     
     private static final Logger log  = Logger.getLogger(CotizacionesController.class.getName());
     ResourceProject resource = new ResourceProject();
-    @Autowired
-    @Qualifier("daoCotizacion")
-    private CotizacionesInterfaceDao cotdao;
-    
-    @Autowired
-    @Qualifier("daoParametros")
-    private ParametrosGeneralesInterfaceDao pgdao;
 
+    //dao de procesos comerciales
+    @Autowired
+    @Qualifier("daoPoc")
+    private PocInterfaceDao PocDao;
+    
     @Autowired
     @Qualifier("daoGral")
     private GralInterfaceDao gralDao;
@@ -75,12 +76,8 @@ public class CotizacionesController {
         return HomeDao;
     }
     
-    public ParametrosGeneralesInterfaceDao getPgdao() {
-        return pgdao;
-    }
-    
-    public CotizacionesInterfaceDao getCotdao() {
-        return cotdao;
+    public PocInterfaceDao getPocDao() {
+        return PocDao;
     }
     
     public GralInterfaceDao getGralDao() {
@@ -98,8 +95,8 @@ public class CotizacionesController {
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("folio", "Folio:90");
         infoConstruccionTabla.put("cliente", "Cliente:300");
-        infoConstruccionTabla.put("situacion", "Estado:100");
-        infoConstruccionTabla.put("fecha","Fecha creacion:110");
+        //infoConstruccionTabla.put("situacion", "Estado:100");
+        infoConstruccionTabla.put("fecha","Fecha:110");
         
         ModelAndView x = new ModelAndView("cotizaciones/startup", "title", "Cotizaciones");
         
@@ -154,13 +151,10 @@ public class CotizacionesController {
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
         
-        
-        
         String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
-        int total_items = this.getCotdao().countAll(folio,cliente,fecha_inicial,fecha_final);
-        
+        int total_items = this.getPocDao().countAll(data_string);
         
         //calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
@@ -171,10 +165,9 @@ public class CotizacionesController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getCotdao().getPage(folio,cliente,fecha_inicial,fecha_final, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getPocDao().getCotizacion_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
-        
         
         return jsonretorno;
         
@@ -183,36 +176,39 @@ public class CotizacionesController {
     
    
     @RequestMapping(method = RequestMethod.POST, value="/getCotizacion.json")
-    //public @ResponseBody HashMap<java.lang.String,java.lang.Object> getProveedorJson(
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getCotizacionJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCotizacionJson(
             @RequestParam(value="id_cotizacion", required=true) String id_cotizacion,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getCotizacionJson de {0}", CotizacionesController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, Object>> datosCotizacion = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> valorIva = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
-        HashMap<String, Object> extra = new HashMap<String, Object>();
+        ArrayList<HashMap<String, String>> datosCotizacion = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        String dirImgProd="";
+        
         extra.put("mod_crm", userDat.get("incluye_crm"));
         arrayExtra.add(0,extra);
         
         if( (id_cotizacion.equals("0"))==false  ){
-            datosCotizacion = this.getCotdao().getCotizacion(Integer.parseInt(id_cotizacion));
-            datosGrid = this.getCotdao().getDatosGrid(Integer.parseInt(id_cotizacion));
+            datosCotizacion = this.getPocDao().getCotizacion_Datos(Integer.parseInt(id_cotizacion));
+            datosGrid = this.getPocDao().getCotizacion_DatosGrid(Integer.parseInt(id_cotizacion), dirImgProd);
         }
         
-        valorIva= this.getCotdao().getValoriva();
-        monedas = this.getCotdao().getMonedas();
+        valorIva= this.getPocDao().getValoriva(id_sucursal);
+        monedas = this.getPocDao().getMonedas();
         
         jsonretorno.put("datosCotizacion", datosCotizacion);
         jsonretorno.put("datosGrid", datosGrid);
@@ -228,16 +224,17 @@ public class CotizacionesController {
     
     //Buscador de Clientes ó Prospectos segun el parametro Tipo de busqueda
     @RequestMapping(method = RequestMethod.POST, value="/getBuscadorClienteProspecto.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorClienteProspectoJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorClienteProspectoJson(
             @RequestParam(value="tipo", required=true) String tipo,
             @RequestParam(value="cadena", required=true) String cadena,
             @RequestParam(value="filtro", required=true) Integer filtro,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
-        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -249,11 +246,13 @@ public class CotizacionesController {
         
         if(tipo.equals("1")){
             //buscar clientes
-            jsonretorno.put("Resultado", this.getCotdao().get_buscador_clientes(cadena,filtro,id_empresa,id_sucursal));
+            datos = this.getPocDao().getBuscadorClientes(cadena,filtro,id_empresa,id_sucursal);
         }else{
             //buscar Prospectos
             //jsonretorno.put("Resultado", this.getCotdao().get_buscador_clientes(cadena,filtro,id_empresa,id_sucursal));
         }
+        
+        jsonretorno.put("Resultado", datos);
         
         return jsonretorno;
     }
@@ -270,7 +269,7 @@ public class CotizacionesController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
         ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
-        arrayTiposProducto=this.getCotdao().getProductoTipos();
+        arrayTiposProducto=this.getPocDao().getProductoTipos();
         jsonretorno.put("prodTipos", arrayTiposProducto);
         
         return jsonretorno;
@@ -285,7 +284,7 @@ public class CotizacionesController {
             @RequestParam(value="descripcion", required=true) String descripcion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -296,21 +295,32 @@ public class CotizacionesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        jsonretorno.put("productos", this.getCotdao().getBuscadorProductos(sku,tipo,descripcion,id_empresa));
+        jsonretorno.put("productos", this.getPocDao().getBuscadorProductos(sku,tipo,descripcion,id_empresa));
         
         return jsonretorno;
     }
     
     
     //Buscador de presentaciones de producto
-    @RequestMapping(method = RequestMethod.POST, value="/get_presentaciones_producto.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> get_presentaciones_productoJson(
+    @RequestMapping(method = RequestMethod.POST, value="/getPresentacionesProducto.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPresentacionesProductoJson(
             @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="lista_precio",required=true) String lista_precio,
+            @RequestParam(value="tipo",required=true) String tipo,
+            @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
-        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
-        jsonretorno.put("Presentaciones", this.getCotdao().get_presentaciones_producto(sku));
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        jsonretorno.put("Presentaciones", this.getPocDao().getPresentacionesProducto(sku, lista_precio, id_empresa));
         
         return jsonretorno;
     }
@@ -318,56 +328,144 @@ public class CotizacionesController {
     
     
     
+    //obtiene la moneda de la lista de precios del cliente
+    @RequestMapping(method = RequestMethod.POST,value="/getMonedaLista.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String,String>>>getMonedaListaClienteJson(
+            @RequestParam(value="lista_precio",required=true )Integer lista_precio,
+            Model model
+        ){
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        
+        ArrayList<HashMap<String, String>> arraylistaprecio = new ArrayList<HashMap<String, String>>();
+        arraylistaprecio=this.getPocDao().getListaPrecio(lista_precio);
+        jsonretorno.put("listaprecio", arraylistaprecio);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    //descargtar imagen
+    @RequestMapping(method = RequestMethod.GET, value="/imgDownloadImg/{name_img}/{id}/{iu}/out.json")
+    public @ResponseBody HashMap<String, String> imgDownloadImgJson(
+        @PathVariable("name_img") String name_img,
+        @PathVariable("id") String id,
+        @PathVariable("iu") String id_user,
+        HttpServletResponse response, 
+        Model model) throws IOException {
+        ServletOutputStream out;
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        
+        String varDir = "";
+        if(id.equals("0")){
+            varDir = this.getGralDao().getJvmTmpDir();
+        }else{
+            varDir = this.getGralDao().getProdImgDir()+rfc_empresa;
+        }
+        
+        File file = new File(varDir+"/"+name_img);
+        
+        byte[] fichero = FileHelper.BytesFromFile(file);
+        response.setContentType ("application/png");
+        response.setHeader ( "Content-disposition", "inline; filename=" + name_img );
+        response.setHeader ( "Cache-Control", "max-age=30" );
+        response.setHeader ( "Pragma", "No-cache" );
+        response.setDateHeader ("Expires", 0);
+        response.setContentLength (fichero.length);
+        out = response.getOutputStream ();
+        out.write (fichero, 0, fichero.length);
+        out.flush ();
+        out.close ();
+        
+        return null;
+    }
+    
+    
+    /*
+    id_cotizacion
+    id_cliente
+    select_tipo_cotizacion
+    check_descripcion_larga
+    observaciones
+    total_tr
+    
+    iddetalle
+    eliminado
+    idproducto
+    id_presentacion
+    monedagrid
+    cantidad
+    precio
+     */
     //edicion y nuevo
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
-            @RequestParam(value="id_cotizacion", required=true) String id_cotizacion,
+            @RequestParam(value="id_cotizacion", required=true) Integer identificador,
+            @RequestParam(value="select_tipo_cotizacion", required=true) String select_tipo_cotizacion,
             @RequestParam(value="id_cliente", required=true) String id_cliente,
-            @RequestParam(value="moneda", required=true) String moneda,
             @RequestParam(value="observaciones", required=true) String observaciones,
+            @RequestParam(value="check_descripcion_larga", required=false) String check_descripcion_larga,
             @RequestParam(value="total_tr", required=true) String total_tr,
-            @RequestParam(value="eliminado", required=true) String[] eliminado,
             @RequestParam(value="iddetalle", required=true) String[] iddetalle,
+            @RequestParam(value="eliminado", required=true) String[] eliminado,
             @RequestParam(value="idproducto", required=true) String[] idproducto,
             @RequestParam(value="id_presentacion", required=true) String[] id_presentacion,
-            @RequestParam(value="id_impuesto", required=true) String id_impuesto,
             @RequestParam(value="cantidad", required=true) String[] cantidad,
-            @RequestParam(value="costo", required=true) String[] costo,
+            @RequestParam(value="precio", required=true) String[] precio,
             @RequestParam(value="monedagrid", required=true) String[] monedagrid,
+            @ModelAttribute("user") UserSessionData user,
             Model model
-            ) {
+        ) {
             
+            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            HashMap<String, String> succes = new HashMap<String, String>();
             String arreglo[];
             arreglo = new String[eliminado.length];
-            Integer id_usuario=0;//variable para el id del usuario
+            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            Integer app_selected = 12;
+            String command_selected = "new";
+            String actualizo = "0";
+            
+            if( identificador==0 ){
+                command_selected = "new";
+            }else{
+                command_selected = "edit";
+            }
             
             for(int i=0; i<eliminado.length; i++) { 
                 //Imprimir el contenido de cada celda 
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i] +"___" + monedagrid[i]+"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + precio[i] +"___" + monedagrid[i]+"'";
             }
             
-            
             //serializar el arreglo
-            String string_array = StringUtils.join(arreglo, ",");
+            String extra_data_array = StringUtils.join(arreglo, ",");
             
-            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            check_descripcion_larga = StringHelper.verificarCheckBox(check_descripcion_larga);
             
-            HashMap<String, String> succes = new HashMap<String, String>();
+            String data_string = 
+                    app_selected + "___"+ 
+                    command_selected + "___"+ 
+                    id_usuario + "___"+ 
+                    identificador + "___"+ 
+                    select_tipo_cotizacion + "___"+ 
+                    id_cliente + "___"+ 
+                    check_descripcion_larga + "___"+ 
+                    observaciones.toUpperCase();
             
-            String data_string = id_cliente+"___"+observaciones.toUpperCase()+"___"+id_usuario;
-            
-            
-            succes = this.getCotdao().selectFunctionValidateAaplicativo(data_string,12,string_array);
+            succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
             
             log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
-            int actualizo = 0;
             
-            if( String.valueOf(succes.get("success")).equals("true") && id_cotizacion.equals("0") ){
-                actualizo = this.getCotdao().selectFunctionForThisApp(Integer.parseInt(id_cotizacion), data_string, "new",string_array);
-            }else{
-                if(String.valueOf(succes.get("success")).equals("true")){
-                    actualizo = this.getCotdao().selectFunctionForThisApp(Integer.parseInt(id_cotizacion), data_string, "edit",string_array);
-                }
+            if( String.valueOf(succes.get("success")).equals("true")  ){
+                actualizo = this.getPocDao().selectFunctionForThisApp(data_string, extra_data_array);
             }
             jsonretorno.put("success",String.valueOf(succes.get("success")));
             
@@ -380,14 +478,23 @@ public class CotizacionesController {
     //cambiar a borrado logico un registro
     @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
     public @ResponseBody HashMap<String, String> logicDeleteJson(
-            @RequestParam(value="id_cotizacion", required=true) String id_cotizacion,
+            @RequestParam(value="id_cotizacion", required=true) String id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
-        //$id,"", "delete"
-        String string_array ="'sin datos'";
+        ) {
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
-        jsonretorno.put("success",String.valueOf(this.getCotdao().selectFunctionForThisApp(Integer.parseInt(id_cotizacion), "", "delete",string_array)));
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        Integer app_selected = 12;
+        String command_selected = "delete";
+        String extra_data_array = "'sin datos'";
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        
+        System.out.println("Ejecutando borrado logico de una Cotizacion");
+        jsonretorno.put("success",String.valueOf( this.getPocDao().selectFunctionForThisApp(data_string,extra_data_array)) );
+        
         return jsonretorno;
     }
     
@@ -406,7 +513,7 @@ public class CotizacionesController {
     
     
     
-    
+    /*
     //Genera pdf de la cotizacion
     @RequestMapping(value = "/get_genera_pdf_cotizacion/{id_cotizacion}/{seleccionado}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView get_genera_pdf_cotizacionJson(
@@ -433,10 +540,6 @@ public class CotizacionesController {
         //obtener el directorio temporal
         String dir_tmp = this.getGralDao().getTmpDir();
         
-        
-        /*String[] array_company = razon_social_empresa.split(" ");
-        String company_name= array_company[0].toLowerCase();
-        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";*/
         
         String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
@@ -466,13 +569,6 @@ public class CotizacionesController {
         File file_dir_tmp = new File(dir_tmp);
         System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        //String path_to_file = new OsVars().getTmpDir();
-        //System.out.println("Path file:"+ path_to_file);
-        //Random rnmd5 = new Random();
-        //genera numero aleatorio y se convierte a cadena
-        //String ValorRand = String.format("%s", rnmd5.nextInt(999999990));
-        //String ramdom_file_md5 = generaMD5.MD5(ValorRand);
-        //String fileout = path_to_file + ramdom_file_md5 +".pdf";
         
          String file_name = "FAC_COM_"+rfc_empresa+".pdf";
         
@@ -510,6 +606,6 @@ public class CotizacionesController {
         return null;
         
     } 
-    
+    */
     
 }
