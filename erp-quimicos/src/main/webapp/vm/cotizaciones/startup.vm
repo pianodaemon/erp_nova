@@ -150,23 +150,23 @@
                                                             
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="80">No. Control</td>
+                                                                <td width="80">No.&nbsp;Control</td>
                                                                 <td width="80">
                                                                     <INPUT TYPE="text" name="nocontrolcliente" style="width:80px;">
+                                                                    <input type="hidden" name="id_cliente" value="">
+                                                                    <input type="hidden" name="rfccliente" style="width:100px;">
+                                                                    <input type="hidden" name="num_lista_precio" value="0">
                                                                 </td>
                                                                 <td width="20"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_rfccliente"></div></td>
                                                                 <td width="60"><a href="busca_cliente">(Buscar)</a></td>
-                                                                <td width="100">
-                                                                    <input type="hidden" name="id_cliente" value="">
-                                                                    <input type="hidden" name="rfccliente" style="width:100px;">
-                                                                </td>
-                                                                <td width="20"></td>
-                                                                <td width="150"></td>
+                                                                <td width="100" align="right" colspan="2">Folio&nbsp;Cotizaci&oacute;n&nbsp;</td>
+                                                                <!--<td width="20"></td>-->
+                                                                <td width="150"><input type="text" name="folio" style="width:80px;" readOnly="true"></td>
                                                             </tr>
                                                             <tr><td colspan="8" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="80">Razon social</td>
+                                                                <td width="80">Razon&nbsp;social</td>
                                                                 <td colspan="6" width="430"><INPUT TYPE="text" name="razoncliente" style="width:430px;"></td>
                                                             </tr>
                                                             <tr><td colspan="8" height="5"></td></tr>
@@ -217,7 +217,7 @@
                                                             <tr><td colspan="4" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="165">Incluir imagen y descripci&oacute;n larga</td>
+                                                                <td width="165">Incluir&nbsp;imagen&nbsp;y&nbsp;descripci&oacute;n&nbsp;larga</td>
                                                                 <td width="165"><input type="checkbox" name="check_descripcion_larga" value="false"></td>
                                                                 <td width="10"></td>
                                                             </tr>
@@ -270,7 +270,7 @@
 																</tr>
 															</thead>
 														</table>
-														<div class="contenedor_grid" style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:1180px; height:115px; border:1px solid #C1DAD7 !important;">	
+														<div class="contenedor_grid" style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:1180px; height:135px; border:1px solid #C1DAD7 !important;">	
 															<table class="tabla_facturas">
 																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
 

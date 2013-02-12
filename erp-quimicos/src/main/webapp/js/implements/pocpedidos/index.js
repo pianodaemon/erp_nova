@@ -822,9 +822,9 @@ $(function() {
 			if(sku_producto != ''){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
 				$arreglo = {'sku':sku_producto,
-                                            'lista_precios':cliente_listaprecio,
-                                            'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                                };
+							'lista_precios':cliente_listaprecio,
+							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+						};
 
 				var trr = '';
 				
@@ -864,7 +864,7 @@ $(function() {
 										trr += '<span class="unidad" style="display:none">'+pres['unidad']+'</span>';
 										trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
 										trr += '<span class="pres">'+pres['presentacion']+'</span>';
-										trr +='<span class="costo" style="display:none">'+pres['precio']+'</span>';
+										trr += '<span class="costo" style="display:none">'+pres['precio']+'</span>';
 										trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
 									trr += '</td>';
 								trr += '</tr>';
