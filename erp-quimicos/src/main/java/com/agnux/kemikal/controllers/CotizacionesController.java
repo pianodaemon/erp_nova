@@ -249,7 +249,7 @@ public class CotizacionesController {
             datos = this.getPocDao().getBuscadorClientes(cadena,filtro,id_empresa,id_sucursal);
         }else{
             //buscar Prospectos
-            //jsonretorno.put("Resultado", this.getCotdao().get_buscador_clientes(cadena,filtro,id_empresa,id_sucursal));
+            datos = this.getPocDao().getBuscadorProspectos(cadena,filtro,id_empresa,id_sucursal);
         }
         
         jsonretorno.put("Resultado", datos);

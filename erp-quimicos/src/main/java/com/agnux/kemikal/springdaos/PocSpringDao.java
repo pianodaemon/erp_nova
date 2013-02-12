@@ -570,7 +570,7 @@ public class PocSpringDao implements PocInterfaceDao{
     
     
     
-    
+    //buscador de clientes
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
         String where="";
@@ -668,7 +668,88 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_cli;
     }
+    
+    
+    
+    //Buscador de Prospectos
+    //Se utiliza en cotizaciones, cuando el proyecto incluye modulo de CRM.
+    //Varios de los campos se les asigna un valor por default, solo es para que sea igual que el de clientes 
+    //porque se utiliza en la misma ventana de busqueda
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorProspectos(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+	if(filtro == 1){
+            where=" AND crm_prospectos.numero_control ilike '%"+cadena.toUpperCase()+"%'";
+	}
+	if(filtro == 2){
+            where=" AND crm_prospectos.rfc ilike '%"+cadena.toUpperCase()+"%'";
+	}
+	if(filtro == 3){
+            where=" AND crm_prospectos.razon_social ilike '%"+cadena.toUpperCase()+"%'";
+	}
+	
+	String sql_query = ""
+                + "SELECT "
+                    + "crm_prospectos.id, "
+                    + "crm_prospectos.numero_control, "
+                    + "crm_prospectos.rfc, "
+                    + "crm_prospectos.razon_social,"
+                    + "crm_prospectos.calle||' '||crm_prospectos.numero||', '||crm_prospectos.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||crm_prospectos.cp as direccion, "
+                    + "1::integer AS moneda_id, "
+                    + "''::character varying AS moneda,"
+                    + "0::integer AS cxc_agen_id, "
+                    + "0::integer AS terminos_id, "
+                    + "false AS empresa_immex, "
+                    + "0::double precision AS tasa_ret_immex, "
+                    + "''::character varying cta_pago_mn,"
+                    + "''::character varying cta_pago_usd,  "
+                    + "0::integer AS lista_precio, "
+                    + "0::integer AS metodo_pago_id, "
+                    + "false AS tiene_dir_fiscal,"
+                    + "crm_prospectos.contacto "
+                + "FROM crm_prospectos "
+                + "JOIN gral_pais ON gral_pais.id=crm_prospectos.pais_id "
+                + "JOIN gral_edo ON gral_edo.id=crm_prospectos.estado_id "
+                + "JOIN gral_mun ON gral_mun.id=crm_prospectos.municipio_id  "
+                + "WHERE crm_prospectos.gral_emp_id="+id_empresa+" "
+                + "AND crm_prospectos.borrado_logico=false  "+where+";";
+                            
+        System.out.println("BuscadorProspectos: "+sql_query);
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("cxc_agen_id",rs.getString("cxc_agen_id"));
+                    row.put("terminos_id",rs.getString("terminos_id"));
+                    row.put("empresa_immex",String.valueOf(rs.getBoolean("empresa_immex")));
+                    row.put("tasa_ret_immex",StringHelper.roundDouble(String.valueOf(rs.getDouble("tasa_ret_immex")),2));
+                    row.put("cta_pago_mn",rs.getString("cta_pago_mn"));
+                    row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
+                    row.put("lista_precio",rs.getString("lista_precio"));
+                    row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
+                    row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
+                    row.put("contacto",rs.getString("contacto"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
 
+    
+    
+    //buscador de tipos de producto
     @Override
     public ArrayList<HashMap<String, String>> getProductoTipos() {
 	String sql_query = "SELECT DISTINCT id ,titulo FROM inv_prod_tipos WHERE borrado_logico=false order by id;";
@@ -760,7 +841,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     +"inv_prod.id,"
                     +"inv_prod.sku,"
                     +"inv_prod.descripcion AS titulo,"
-                    +"inv_prod.descripcion_larga,"
+                    +"(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga,"
                     +"(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img,"
                     +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
                     +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
