@@ -293,10 +293,18 @@ $(function() {
 				html+='<option value="3" selected="yes">Razon social</option>';
 				$cadena_buscar.val(cliente);
 			}else{
-				html+='<option value="3">Razon social</option>';
+				if(no_control=='' && cliente==''){
+					html+='<option value="3" selected="yes">Razon social</option>';
+				}else{
+					html+='<option value="3">Razon social</option>';
+				}
 			}
-            html+='<option value="4">CURP</option>';
-            html+='<option value="5">Alias</option>';
+			
+			if(parseInt(tipo)==1){
+				//estos dos filtros solo son para clientes, no para prospectos
+				html+='<option value="4">CURP</option>';
+				html+='<option value="5">Alias</option>';
+			}
             $select_filtro_por.append(html);
 			
             //click buscar clientes
@@ -388,7 +396,6 @@ $(function() {
 							}
 						});
 						$('#forma-cotizacions-window').find('select[name=moneda]').append(moneda_hmtl);
-						
 						
                         //elimina la ventana de busqueda
                         var remove = function() {$(this).remove();};
