@@ -191,6 +191,8 @@ public class CotizacionesController {
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
+        HashMap<String, String> tc = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> tipoCambioActual = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -209,13 +211,15 @@ public class CotizacionesController {
         
         valorIva= this.getPocDao().getValoriva(id_sucursal);
         monedas = this.getPocDao().getMonedas();
+        tc.put("tipo_cambio", StringHelper.roundDouble(this.getPocDao().getTipoCambioActual(), 4));
+        tipoCambioActual.add(0,tc);
         
         jsonretorno.put("datosCotizacion", datosCotizacion);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Extras", arrayExtra);
-        
+        jsonretorno.put("Tc", tipoCambioActual);
         
         return jsonretorno;
     }
@@ -413,6 +417,7 @@ public class CotizacionesController {
             @RequestParam(value="id_cliente", required=true) String id_cliente,
             @RequestParam(value="observaciones", required=true) String observaciones,
             @RequestParam(value="check_descripcion_larga", required=false) String check_descripcion_larga,
+            @RequestParam(value="tc", required=true) String tc,
             @RequestParam(value="total_tr", required=true) String total_tr,
             @RequestParam(value="iddetalle", required=true) String[] iddetalle,
             @RequestParam(value="eliminado", required=true) String[] eliminado,
@@ -421,6 +426,7 @@ public class CotizacionesController {
             @RequestParam(value="cantidad", required=true) String[] cantidad,
             @RequestParam(value="precio", required=true) String[] precio,
             @RequestParam(value="monedagrid", required=true) String[] monedagrid,
+            @RequestParam(value="notr", required=true) String[] notr,
             @ModelAttribute("user") UserSessionData user,
             Model model
         ) {
@@ -442,7 +448,7 @@ public class CotizacionesController {
             
             for(int i=0; i<eliminado.length; i++) { 
                 //Imprimir el contenido de cada celda 
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + precio[i] +"___" + monedagrid[i]+"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + precio[i] +"___" + monedagrid[i]+"___"+notr[i]+"'";
             }
             
             //serializar el arreglo
@@ -458,7 +464,8 @@ public class CotizacionesController {
                     select_tipo_cotizacion + "___"+ 
                     id_cliente + "___"+ 
                     check_descripcion_larga + "___"+ 
-                    observaciones.toUpperCase();
+                    observaciones.toUpperCase() + "___"+ 
+                    tc;
             
             succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
             
