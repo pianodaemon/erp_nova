@@ -70,7 +70,6 @@ $(function() {
          $('#barra_buscador').toggle( 'blind');
 	});	
         
-        
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada
 	function mayor(fecha, fecha2){
@@ -762,6 +761,7 @@ $(function() {
 					trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
 					trr += '<input type="hidden" name="eliminado" class="elim'+ tr +'" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
 					trr += '<input type="hidden" name="iddetalle" class="iddetalle'+ tr +'" id="idd" value="'+id_detalle+'">';//este es el id del registro que ocupa el producto en la tabla cotizacions_detalles
+					trr += '<input type="hidden" name="notr" class="notr'+ tr +'" value="'+ tr +'">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="100">';
 					trr += '<input type="hidden" name="idproducto" class="borde_oculto" id="idprod" value="'+ id_prod +'">';
@@ -911,6 +911,7 @@ $(function() {
 				if(parseInt($(this).parent().find('.elim'+ tr).val()) != 0){
 					//tomamos el valor de la partida eliminada
 					var iddetalle= $(this).parent().find('.iddetalle'+ tr).val();
+					var numTr= $(this).parent().find('.notr'+ tr).val();
 					
 					//asigna espacios en blanco a todos los input de la fila eliminada
 					$(this).parent().parent().find('input').val(' ');
@@ -918,6 +919,7 @@ $(function() {
 					//asigna un 0 al input eliminado como bandera para saber que esta eliminado
 					$(this).parent().find('.elim'+ tr).val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
 					$(this).parent().find('.iddetalle'+ tr).val(iddetalle);//le devolvemos el valor a la partida eliminada
+					$(this).parent().find('.notr'+ tr).val(numTr);//le devolvemos el valor a la partida eliminada
 					
 					//oculta la fila eliminada
 					$(this).parent().parent().hide();
@@ -1023,6 +1025,8 @@ $(function() {
 		var $contactocliente = $('#forma-cotizacions-window').find('input[name=contactocliente]');
 		var $select_moneda = $('#forma-cotizacions-window').find('select[name=moneda]');
 		var $select_moneda2 = $('#forma-cotizacions-window').find('select[name=moneda2]');
+		var $tc = $('#forma-cotizacions-window').find('input[name=tc]');
+		var $fecha = $('#forma-cotizacions-window').find('input[name=fecha]');
 		
 		//var $campo_tc = $('#forma-cotizacions-window').find('input[name=tc]');
 		var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
@@ -1076,6 +1080,9 @@ $(function() {
 		$folio.css({'background' : '#F0F0F0'});
 		$dir_cliente.css({'background' : '#F0F0F0'});
 		$contactocliente.css({'background' : '#F0F0F0'});
+		$fecha.css({'background' : '#F0F0F0'});
+		$fecha.val(mostrarFecha());//mostrar la fecha actual
+		
 		
 		$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'430px'});
 		$('#forma-cotizacions-window').find('input[name=dircliente]').css({'width':'430px'});
@@ -1105,9 +1112,9 @@ $(function() {
 				//$('#forma-cotizacions-window').find('.div_one').css({'height':'545px'});//sin errores
 				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'592px'});//con errores
 				$('#forma-cotizacions-window').find('div.interrogacion').css({'display':'none'});
-
-				$grid_productos.find('.cant'+ tr).css({'background' : '#ffffff'});
-				$grid_productos.find('.precio'+ tr).css({'background' : '#ffffff'});
+				
+				$grid_productos.find('#cant').css({'background' : '#ffffff'});
+				$grid_productos.find('#cost').css({'background' : '#ffffff'});
 				
 				$('#forma-cotizacions-window').find('#div_warning_grid').css({'display':'none'});
 				$('#forma-cotizacions-window').find('#div_warning_grid').find('#grid_warning').children().remove();
@@ -1119,48 +1126,31 @@ $(function() {
 					longitud = tmp.split(':');
 
 					if( longitud.length > 1 ){
-							$('#forma-cotizacions-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-							.parent()
-							.css({'display':'block'})
-							.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+						$('#forma-cotizacions-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						.parent()
+						.css({'display':'block'})
+						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+						
+						//alert(tmp.split(':')[0]);
+						var campo = tmp.split(':')[0];
+						var $campo_input;
+						
+						if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 6) == 'precio')){
+							$('#forma-cotizacions-window').find('#div_warning_grid').css({'display':'block'});
+							$campo_input = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
 							
-							//alert(tmp.split(':')[0]);
-
-						if(parseInt($("tr", $grid_productos).size())>0){
-							for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
-								if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
-									//alert(tmp.split(':')[0]);
-									$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'575px'});
-									//$('#forma-cotizacions-window').find('.div_three').css({'height':'910px'});
-
-									$('#forma-cotizacions-window').find('#div_warning_grid').css({'display':'block'});
-									if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
-										$grid_productos.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-										//alert();
-									}else{
-										if(tmp.split(':')[0].substring(0, 5) == 'costo'){
-											$grid_productos.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-										}
-									}
-									
-									//$grid_productos.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-									//$grid_productos.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-
-									var tr_warning = '<tr>';
-										tr_warning += '<td width="20"><div><IMG SRC="../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-										tr_warning += '<td width="120">';
-										tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
-										tr_warning += '</td>';
-										tr_warning += '<td width="200">';
-										tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
-										tr_warning += '</td>';
-										tr_warning += '<td width="235">';
-										tr_warning += '<INPUT TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
-										tr_warning += '</td>';
-									tr_warning += '</tr>';
-									$grid_warning.append(tr_warning);
-								}
-							}
+							var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();
+							var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
+							
+							var tr_warning = '<tr>';
+									tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+									tr_warning += '<td width="120"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:116px; color:red"></td>';
+									tr_warning += '<td width="200"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:196px; color:red"></td>';
+									tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:225px; color:red"></td>';
+							tr_warning += '</tr>';
+							
+							$('#forma-cotizacions-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+											
 						}
 					}
 				}
@@ -1182,10 +1172,9 @@ $(function() {
 			}
 			
 			
-			//$campo_tc.val(entry['tc']['tipo_cambio']);
 			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
 			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
-			
+			$tc.val(entry['Tc']['0']['tipo_cambio']);
                         
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
@@ -1262,7 +1251,16 @@ $(function() {
 		*/
 		
 		$aplicar_evento_click_checkbox($check_descripcion_larga);
-
+		
+		//validar campo Tipo de Cambio, solo acepte numeros y punto
+		$tc.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
 		
 		
 		$submit_actualizar.bind('click',function(){
