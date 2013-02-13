@@ -141,12 +141,13 @@
                                                                 </td>
                                                                 <td width="20"></td>
                                                                 <td width="60"></td>
-                                                                <td width="100"></td>
-                                                                <td width="20"></td>
-                                                                <td width="150"></td>
+                                                                <td width="60"></td>
+                                                                <td width="60"></td>
+                                                                <td width="70"></td>
+                                                                <td width="80"></td>
                                                             </tr>
                                                             
-                                                            <tr><td colspan="8" height="5"></td></tr>
+                                                            <tr><td colspan="9" height="5"></td></tr>
                                                             
                                                             <tr>
                                                                 <td width="10"></td>
@@ -161,27 +162,27 @@
                                                                 <td width="60"><a href="busca_cliente">(Buscar)</a></td>
                                                                 <td width="100" align="right" colspan="2">Folio&nbsp;Cotizaci&oacute;n&nbsp;</td>
                                                                 <!--<td width="20"></td>-->
-                                                                <td width="150"><input type="text" name="folio" style="width:80px;" readOnly="true"></td>
+                                                                <td width="150" colspan="2"><input type="text" name="folio" style="width:80px;" readOnly="true"></td>
                                                             </tr>
-                                                            <tr><td colspan="8" height="5"></td></tr>
+                                                            <tr><td colspan="9" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Razon&nbsp;social</td>
-                                                                <td colspan="6" width="430"><INPUT TYPE="text" name="razoncliente" style="width:430px;"></td>
+                                                                <td colspan="7" width="430"><INPUT TYPE="text" name="razoncliente" style="width:430px;"></td>
                                                             </tr>
-                                                            <tr><td colspan="8" height="5"></td></tr>
+                                                            <tr><td colspan="9" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Direcci&oacute;n</td>
-                                                                <td colspan="6" width="430"><INPUT TYPE="text" name="dircliente" style="width:430px;" readOnly="true"></td>
+                                                                <td colspan="7" width="430"><INPUT TYPE="text" name="dircliente" style="width:430px;" readOnly="true"></td>
                                                             </tr>
-                                                            <tr><td colspan="8" height="5"></td></tr>
+                                                            <tr><td colspan="9" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Contacto</td>
-                                                                <td colspan="6" width="430"><INPUT TYPE="text" name="contactocliente" style="width:430px;" readOnly="true"></td>
+                                                                <td colspan="7" width="430"><INPUT TYPE="text" name="contactocliente" style="width:430px;" readOnly="true"></td>
                                                             </tr>
-                                                            <tr><td colspan="8" height="5"></td></tr>
+                                                            <tr><td colspan="9" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Moneda</td>
@@ -192,10 +193,11 @@
                                                                     <input type="hidden" name="valorimpuesto" value="0">
                                                                 </td>
                                                                 <td width="20"></td>
-                                                                <td width="60"></td>
-                                                                <td width="100"></td>
-                                                                <td width="20"></td>
-                                                                <td width="150"></td>
+                                                                <td width="60">Tipo&nbsp;Cambio</td>
+                                                                <td width="60"><input type="text" name="tc" value="0.0000" style="width:60px;" maxlength="8"></td>
+                                                                <td width="60"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_tc"></div></td>
+                                                                <td width="70" align="right">Fecha&nbsp;</td>
+                                                                <td width="80"><input type="text" name="fecha" style="width:80px;" readOnly="true"></td>
                                                             </tr>
                                                         </table>
                                                     </td>
