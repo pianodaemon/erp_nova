@@ -37,10 +37,26 @@ $(function() {
 	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
+	var $busqueda_select_tipo = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_tipo]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	//var almacenes = new Array(); //este arreglo carga el select de almacen, los select almacen destino del grid
+	
+	//con esta variable se verifica si el erp incluye modulo de CRM
+	if($('#lienzo_recalculable').find('input[name=crm]').val()=='false'){
+		$('#barra_buscador').find('.tabla_buscador').find('#td_tipo').hide();
+	}
+	
+	
+	//cambiar el tipo
+	$busqueda_select_tipo.change(function(){
+		if(parseInt($(this).val())==1){
+			$('#barra_buscador').find('.tabla_buscador').find('#etiqueta_tipo').text("Cliente");
+		}else{
+			$('#barra_buscador').find('.tabla_buscador').find('#etiqueta_tipo').text("Prospecto");
+		}
+	});
 	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
@@ -48,7 +64,9 @@ $(function() {
 		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
-		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val();
+		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val()+ "|";
+		valor_retorno += "tipo" + signo_separador + $busqueda_select_tipo.val()+ "|";
+		valor_retorno += "incluye_crm" + signo_separador + $('#lienzo_recalculable').find('input[name=crm]').val();
 		return valor_retorno;
 	};
         
@@ -62,8 +80,17 @@ $(function() {
 		$get_datos_grid();
 	});
         
-
-
+	$limpiar.click(function(event){
+		$busqueda_folio.val('');
+		$busqueda_cliente.val('');
+		$busqueda_fecha_inicial.val('');
+		$busqueda_fecha_final.val('');
+		$busqueda_select_tipo.children().remove();
+			var html='<option value="1" selected="yes">Cliente</option>';
+			html +='<option value="2">Prospecto</option>';
+		$busqueda_select_tipo.append(html);
+	});
+	
 	//visualizar  la barra del buscador
 	$visualiza_buscador.click(function(event){
 		event.preventDefault();
@@ -633,11 +660,14 @@ $(function() {
 								var id_pres = $(this).find('span.id_pres').html();
 								var pres = $(this).find('span.pres').html();
 								var precio = $(this).find('span.precio').html();
+								var cantidad = 0;
+								var importe = 0;
+								var mon_id = $('#forma-cotizacions-window').find('select[name=moneda]').val();
 								
 								$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
 								
 								//aqui se pasan datos a la funcion que agrega el tr en el grid
-								$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, arrayMonedas);
+								$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas);
 								
 								//elimina la ventana de busqueda
 								var remove = function() {$(this).remove();};
@@ -732,7 +762,7 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, arrayMonedas){
+	$agrega_producto_grid = function($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas){
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 		var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
 		
@@ -771,13 +801,18 @@ $(function() {
 					trr += '<input type="text" 	name="nombre" 	value="'+ titulo +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:176px;">';
 				trr += '</td>';
 				
-				trr += '<td class="grid1" id="td_imagen" style="font-size:11px;  border:1px solid #C1DAD7;" width="100" height="90">';
-					trr += '<div style="width:96px; height:90px;" border="1">';
+				var altura_td='';
+				if(imagen != ""){
+					altura_td='height="90"';
+				}
+				
+				trr += '<td class="grid1" id="td_imagen" style="font-size:11px;  border:1px solid #C1DAD7;" width="100" '+altura_td+' >';
+					trr += '<div class="div_img'+ tr +'" style="width:96px; height:90px;" border="1">';
 						trr += '<img id="contenidofileimg'+tr+'" src="#" align="top" width="96" height="90">';
 					trr += '</div>';
 				trr += '</td>';
 				trr += '<td class="grid1" id="td_descripcion" style="font-size:11px;  border:1px solid #C1DAD7;" width="220">';
-					trr += '<textarea name="descripcion" id="desc" readOnly="true" class="borde_oculto" cols="10" rows="5" readOnly="true" style="width:216px; height:90px; resize:none; background-color:#FFFFF;">'+descripcion+'</textarea>';
+					trr += '<textarea name="descripcion" id="desc'+ tr +'" readOnly="true" class="borde_oculto" cols="10" rows="5" readOnly="true" style="width:216px; height:90px; resize:none; background-color:#FFFFF;">'+descripcion+'</textarea>';
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
@@ -790,7 +825,7 @@ $(function() {
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
-					trr += '<input type="text" name="cantidad" class="cant'+ tr +'" value=" " id="cant" style="width:66px;">';
+					trr += '<input type="text" name="cantidad" class="cant'+ tr +'" value="'+cantidad+'" id="cant" style="width:66px;">';
 				trr += '</td>';
 				
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
@@ -802,7 +837,7 @@ $(function() {
 				trr += '</td>';
 				
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
-					trr += '<input type="text" 	name="importe" 	class="import'+ tr +'" value="" id="import" readOnly="true" style="width:66px; text-align:right;">';
+					trr += '<input type="text" 	name="importe" 	class="import'+ tr +'" value="'+importe+'" id="import" readOnly="true" style="width:66px; text-align:right;">';
 				trr += '</td>';
 			trr += '</tr>';
 			$grid_productos.append(trr);
@@ -821,16 +856,17 @@ $(function() {
 				$grid_productos.find('#td_descripcion').hide();
 			}
 			
+			//si la descripcion larga viene vacia entonces no mostramos el txtarea
+			if(descripcion=="" && imagen == ""){
+				$grid_productos.find('#desc'+tr).hide();
+				$grid_productos.find('.div_img'+tr).hide();
+			}
 			
-			
-            //$('#forma-cotizacions-window').find('select[name=moneda]').find('option').clone().appendTo('.moneda'+ tr);
-            var id_moneda = $('#forma-cotizacions-window').find('select[name=moneda]').val();
-            
 			//carga el select de monedas  con la moneda del cliente seleccionada por default
 			$grid_productos.find('.moneda'+ tr).children().remove();
 			var moneda_hmtl = '';
 			$.each(arrayMonedas ,function(entryIndex,moneda){
-				if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+				if( parseInt(moneda['id']) == parseInt(mon_id) ){
 					moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion_abr'] + '</option>';
 				}else{
 					//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion_abr'] + '</option>';
@@ -1135,7 +1171,7 @@ $(function() {
 						var campo = tmp.split(':')[0];
 						var $campo_input;
 						
-						if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 6) == 'precio')){
+						if((tmp.split(':')[0].substring(0, 4) == 'cant') || (tmp.split(':')[0].substring(0, 6) == 'precio')){
 							$('#forma-cotizacions-window').find('#div_warning_grid').css({'display':'block'});
 							$campo_input = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
 							
@@ -1209,6 +1245,7 @@ $(function() {
 			$busca_productos($sku_producto.val());
 		});
 		
+		/*
         //seleccionar tipo de movimiento
 		$select_moneda.change(function(){
 			var seleccionado = $(this).val();
@@ -1218,7 +1255,7 @@ $(function() {
 			$grid_productos.find('select[name=monedagrid]').find('option[value="'+seleccionado+'"]').attr('selected','selected');
 			
 		});
-        
+        */
 		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$sku_producto.keypress(function(e){
@@ -1341,9 +1378,20 @@ $(function() {
 				$arreglo = {'id_cotizacion':id_to_show,
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 							};
-                                
-				var $total_tr = $('#forma-cotizacions-window').find('input[name=total_tr]');
+				
+				var $tr_tipo = $('#forma-cotizacions-window').find('#tr_tipo');
+				var $td_imagen = $('#forma-cotizacions-window').find('#td_imagen');
+				var $td_descripcion = $('#forma-cotizacions-window').find('#td_descripcion');
+				var $td1 = $('#forma-cotizacions-window').find('#td1');
+				var $td2 = $('#forma-cotizacions-window').find('#td2');
+				var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
+				var $contenedor_grid = $('#forma-cotizacions-window').find('.contenedor_grid');
+				
 				var $id_cotizacion = $('#forma-cotizacions-window').find('input[name=id_cotizacion]');
+				var $total_tr = $('#forma-cotizacions-window').find('input[name=total_tr]');
+				var $select_tipo_cotizacion = $('#forma-cotizacions-window').find('select[name=select_tipo_cotizacion]');
+				var $folio = $('#forma-cotizacions-window').find('input[name=folio]');
+				var $num_lista_precio=  $('#forma-cotizacions-window').find('input[name=num_lista_precio]');
 				
 				var $busca_cliente = $('#forma-cotizacions-window').find('a[href*=busca_cliente]');
 				var $id_cliente = $('#forma-cotizacions-window').find('input[name=id_cliente]');
@@ -1351,16 +1399,18 @@ $(function() {
 				var $rfc_cliente = $('#forma-cotizacions-window').find('input[name=rfccliente]');
 				var $razon_cliente = $('#forma-cotizacions-window').find('input[name=razoncliente]');
 				var $dir_cliente = $('#forma-cotizacions-window').find('input[name=dircliente]');
+				var $contactocliente = $('#forma-cotizacions-window').find('input[name=contactocliente]');
 				var $select_moneda = $('#forma-cotizacions-window').find('select[name=moneda]');
 				var $select_moneda2 = $('#forma-cotizacions-window').find('select[name=moneda2]');
+				var $tc = $('#forma-cotizacions-window').find('input[name=tc]');
+				var $fecha = $('#forma-cotizacions-window').find('input[name=fecha]');
 				
-				//var $campo_tc = $('#forma-cotizacions-window').find('input[name=tc]');
+				
 				var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
 				var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 				
 				var $observaciones = $('#forma-cotizacions-window').find('textarea[name=observaciones]');
-                                var $descripcion_larga =$('#forma-cotizacions-window').find('input[name=descripcion_larga]');
-				//var $select_almacen = $('#forma-cotizacions-window').find('select[name=almacen]');
+				
 				var $sku_producto = $('#forma-cotizacions-window').find('input[name=sku_producto]');
 				var $nombre_producto = $('#forma-cotizacions-window').find('input[name=nombre_producto]');
 				
@@ -1387,7 +1437,19 @@ $(function() {
 				
 				
 				$select_moneda2.hide();
-				
+				//ocultar boton de generar pdf. Solo debe estar activo en editar
+				$boton_genera_pdf.hide();
+				//$descripcion_larga.hide();
+				$tr_tipo.hide();
+				$no_control_cliente.attr('readonly',true);
+				$razon_cliente.attr('readonly',true);
+				$dir_cliente.attr('readonly',true);
+				$no_control_cliente.css({'background' : '#F0F0F0'});
+				$razon_cliente.css({'background' : '#F0F0F0'});
+				$folio.css({'background' : '#F0F0F0'});
+				$dir_cliente.css({'background' : '#F0F0F0'});
+				$contactocliente.css({'background' : '#F0F0F0'});
+				$fecha.css({'background' : '#F0F0F0'});
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 						jAlert("La cotizaci&oacute;n se guard&oacute; con exito", 'Atencion!');
@@ -1397,11 +1459,11 @@ $(function() {
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						//$('#forma-cotizacions-window').find('.div_one').css({'height':'545px'});//sin errores
-						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'575px'});//con errores
+						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'592px'});//con errores
 						$('#forma-cotizacions-window').find('div.interrogacion').css({'display':'none'});
 						
-						$grid_productos.find('.cant'+ tr).css({'background' : '#ffffff'});
-						$grid_productos.find('.precio'+ tr).css({'background' : '#ffffff'});
+						$grid_productos.find('#cant').css({'background' : '#ffffff'});
+						$grid_productos.find('#cost').css({'background' : '#ffffff'});
 						
 						$('#forma-cotizacions-window').find('#div_warning_grid').css({'display':'none'});
 						$('#forma-cotizacions-window').find('#div_warning_grid').find('#grid_warning').children().remove();
@@ -1411,7 +1473,7 @@ $(function() {
 						for (var element in valor){
 							tmp = data['success'].split('___')[element];
 							longitud = tmp.split(':');
-							
+
 							if( longitud.length > 1 ){
 								$('#forma-cotizacions-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 								.parent()
@@ -1419,44 +1481,33 @@ $(function() {
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 								
 								//alert(tmp.split(':')[0]);
-
-								if(parseInt($("tr", $grid_productos).size())>0){
-									for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
-										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
-											$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'592px'});
-											$('#forma-cotizacions-window').find('#div_warning_grid').css({'display':'block'});
-											
-											if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
-												$grid_productos.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-												//alert();
-											}else{
-												if(tmp.split(':')[0].substring(0, 5) == 'costo'){
-													$grid_productos.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-												}
-											}
-											
-											var tr_warning = '<tr>';
-												tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-												tr_warning += '<td width="120">';
-												tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
-												tr_warning += '</td>';
-												tr_warning += '<td width="200">';
-												tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
-												tr_warning += '</td>';
-												tr_warning += '<td width="235">';
-												tr_warning += '<INPUT TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
-												tr_warning += '</td>';
-											tr_warning += '</tr>';
-											$grid_warning.append(tr_warning);
-										}
-										
-									}
+								var campo = tmp.split(':')[0];
+								var $campo_input;
+								
+								if((tmp.split(':')[0].substring(0, 4) == 'cant') || (tmp.split(':')[0].substring(0, 6) == 'precio')){
+									$('#forma-cotizacions-window').find('#div_warning_grid').css({'display':'block'});
+									$campo_input = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
+									
+									var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();
+									var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
+									
+									var tr_warning = '<tr>';
+											tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+											tr_warning += '<td width="120"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:116px; color:red"></td>';
+											tr_warning += '<td width="200"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:196px; color:red"></td>';
+											tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:225px; color:red"></td>';
+									tr_warning += '</tr>';
+									
+									$('#forma-cotizacions-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+													
 								}
 							}
 						}
-
+						
 						$grid_warning.find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
 						$grid_warning.find('tr:even').find('td').css({'background-color' : '#e7e8ea'});
+
+						
 					}
 				}
 				
@@ -1466,16 +1517,76 @@ $(function() {
 				//aqui se cargan los campos al editar
 				//$.getJSON(json_string,function(entry){
 				$.post(input_json,$arreglo,function(entry){
+					if(entry['datosCotizacion'][0]['img_desc'] == 'true'){
+						$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'550px'});
+						$('#forma-cotizacions-window').find('input[name=dircliente]').css({'width':'550px'});
+						$('#forma-cotizacions-window').find('input[name=contactocliente]').css({'width':'550px'});
+						$('#forma-cotizacions-window').find('#td_imagen').show();
+						$('#forma-cotizacions-window').find('#td_descripcion').show();
+						$('#forma-cotizacions-window').find('#td1').css({'width':'740px'});
+						$('#forma-cotizacions-window').find('#td2').css({'width':'460px'});
+						$('#forma-cotizacions-window').find('.contenedor_grid').css({'width':'1180px'});
+						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1213px'});
+						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1213px'});
+						$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'1213px'});
+						$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'1203px'});
+						$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -220});
+						$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'1173px'});
+						$('#forma-cotizacions-window').find('#div_botones').css({'width':'1190px'});
+						$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'1090px'});
+					}else{
+						$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'430px'});
+						$('#forma-cotizacions-window').find('input[name=dircliente]').css({'width':'430px'});
+						$('#forma-cotizacions-window').find('input[name=contactocliente]').css({'width':'430px'});
+						$('#forma-cotizacions-window').find('#td_imagen').hide();
+						$('#forma-cotizacions-window').find('#td_descripcion').hide();
+						$('#forma-cotizacions-window').find('#td1').css({'width':'520px'});
+						$('#forma-cotizacions-window').find('#td2').css({'width':'350px'});
+						$('#forma-cotizacions-window').find('.contenedor_grid').css({'width':'860px'});
+						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'893px'});
+						$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'893px'});
+						$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'880px'});
+						$('#forma-cotizacions-window').css({"margin-left": -320, 	"margin-top": -220});
+						$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'853px'});
+						$('#forma-cotizacions-window').find('#div_botones').css({'width':'870px'});
+						$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'770px'});
+					}
 					
-					$id_cotizacion.val(entry['datosCotizacion']['0']['id']);
-					$id_cliente.val(entry['datosCotizacion']['0']['cliente_id']);
-					$no_control_cliente.val(entry['datosCotizacion']['0']['numero_control']);
-					$rfc_cliente.val(entry['datosCotizacion']['0']['rfc']);
-					$razon_cliente.val(entry['datosCotizacion']['0']['razon_social']);
-					$dir_cliente.val(entry['datosCotizacion']['0']['direccion']);
-					$observaciones.text(entry['datosCotizacion']['0']['observaciones']);
+					if(entry['Extras'][0]['mod_crm']=='true'){
+						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'490px'});
+						$tr_tipo.show();//mostrar tr para escoger el tipo destino de la cotizacion
+					}
+					$folio.val(entry['datosCotizacion'][0]['folio']);
+					$id_cotizacion.val(entry['datosCotizacion'][0]['id']);
+					$observaciones.text(entry['datosCotizacion'][0]['observaciones']);
+					$check_descripcion_larga.attr('checked',  (entry['datosCotizacion'][0]['img_desc'] == 'true')? true:false );
+					$tc.val(entry['datosCotizacion'][0]['tipo_cambio']);
+					$fecha.val(entry['datosCotizacion'][0]['fecha']);
 					
-                                        
+					
+					$id_cliente.val(entry['DatosCP'][0]['cliente_id']);
+					$no_control_cliente.val(entry['DatosCP'][0]['numero_control']);
+					$rfc_cliente.val(entry['DatosCP'][0]['rfc']);
+					$razon_cliente.val(entry['DatosCP'][0]['razon_social']);
+					$dir_cliente.val(entry['DatosCP'][0]['direccion']);
+					$num_lista_precio.val(entry['DatosCP'][0]['lista_precio']);
+					$contactocliente.val(entry['DatosCP'][0]['contacto']);
+					
+					
+					$select_tipo_cotizacion.children().remove();
+					var html='';
+					if(parseInt(entry['datosCotizacion'][0]['tipo'])==1){
+						html='<option value="1" selected="yes">Cliente</option>';
+						html +='<option value="2">Prospecto</option>';
+					}else{
+						html='<option value="1">Cliente</option>';
+						html +='<option value="2"  selected="yes">Prospecto</option>';
+					}
+					$select_tipo_cotizacion.append(html);
+					
+					
+					
+					
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
 					//var moneda_hmtl = '<option value="0">[--   --]</option>';
@@ -1493,173 +1604,45 @@ $(function() {
 					//este select esta oculto, de esta se copian los elementos para el select de moneda del grid
 					$select_moneda2.append(moneda_hmtl2);
 					
-                                        /*
-					$select_moneda.children().remove();
-					var moneda_hmtl = '<option value="' + entry['datosCotizacion']['0']['moneda_id'] + '" selected="yes">' + entry['datosCotizacion']['0']['moneda'] + '</option>';
-					$select_moneda.append(moneda_hmtl);
-                                        */
-                                        
-					//$campo_tc.val();
-					//$id_impuesto.val();
-					//$valor_impuesto.val();
-					//$campo_tc.val(entry['tc']['tipo_cambio']);
 					$id_impuesto.val(entry['iva']['0']['id_impuesto']);
 					$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
-					
 					
 					$busca_cliente.hide();
 					
 					if(entry['datosGrid'] != null){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
+							var id_detalle=prod['id_detalle'];
+							var id_prod = prod['producto_id'];
+							var sku = prod['codigo'];
+							var titulo = prod['producto'];
+							var imagen = prod['archivo_img'];
+							var descripcion = prod['descripcion_larga'];
+							var unidad = prod['unidad'];
+							var id_pres = prod['presentacion_id'];
+							var pres = prod['presentacion'];
+							var precio = prod['precio_unitario'];
+							var cantidad = prod['cantidad'];
+							var importe = prod['importe'];
+							var mon_id = prod['moneda_id'];
 							
-							//obtiene numero de trs
-							var tr = $("tr", $grid_productos).size();
-							tr++;
-							
-							var trr = '';
-							trr = '<tr>';
-								trr += '<td width="58" border="2">';
-									trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
-									trr += '<input type="hidden" name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
-									trr += '<input type="hidden" name="iddetalle" id="idd" value="'+ prod['id_detalle'] +'">';//este es el id del registro que ocupa el producto en la tabla cotizacions_detalles
-								trr += '</td>';
-								trr += '<td width="88" border="2">';
-									trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['producto_id'] +'">';
-									trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['sku'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:85px;">';
-								trr += '</td>';
-								trr += '<td width="10" border="2"><INPUT TYPE="text" name="nombre'+ tr +'" value="'+ prod['titulo'] +'" id="nom" class="borde_oculto" readOnly="true" style="width:186px;"></td>';
-								trr += '<td width="85" border="2"><INPUT TYPE="text" name="unidad'+ tr +'" value="'+ prod['unidad'] +'" id="uni" class="borde_oculto" readOnly="true" style="width:83px;"></td>';
-								trr +='<td width="70" border="2"><textarea name="descripcion'+tr+'"id="desc" class="borde_oculto" readOnly="true"  cols="10" rows="5" style="width:190px;resize:none;">'+prod['descripcion']+'</textarea></td>';
-									trr += '<td width="110" border="2">';
-									trr += '<INPUT type="hidden" name="id_presentacion"  value="'+  prod['id_presentacion'] +'" id="idpres">';
-									trr += '<INPUT TYPE="text" name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" id="pres" class="borde_oculto" readOnly="true" style="width:106px;">';
-								trr += '</td>';
-								trr += '<td width="80" border="2"><INPUT TYPE="text" name="cantidad" value="'+  prod['cantidad'] +'" id="cant" style="width:76px;"></td>';
-								trr += '<td width="85" border="2"><INPUT TYPE="text" name="costo" value="'+  prod['precio_unitario'] +'" id="cost" style="width:81px; text-align:right;"></td>';
-								trr += '<td width="50" border="2">';
-									trr += '<SELECT NAME="monedagrid" class="moneda'+ tr +'" style="width:50px;"></SELECT>';
-								trr += '</td>';
-								trr += '<td width="111" border="2"><INPUT TYPE="text" name="importe'+ tr +'" value="'+  prod['importe'] +'" id="import" readOnly="true" style="width:90px; text-align:right;"></td>';
-								
-								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat($valor_impuesto.val())+'">';
-							trr += '</tr>';
-							$grid_productos.append(trr);
-							//asigna las monedas al select de monedas en el grid
-							$select_moneda2.find('option').clone().appendTo($grid_productos.find('.moneda'+ tr));
-							
-							// selecciona la moneda del producto cotizado
-							$grid_productos.find('.moneda'+ tr).find('option[value="'+prod['moneda_id']+'"]').attr('selected','selected');
-							
-							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-							$grid_productos.find('.cant'+ tr).focus(function(e){
-								if($(this).val() == ' '){
-									$(this).val('');
-								}
-							});
-							
-							
-							//recalcula importe al perder enfoque el campo cantidad
-							//$grid_productos.find('input[name=cantidad['+ tr +']]').blur(function(){
-							$grid_productos.find('.cant'+ tr).blur(function(){
-								if ($(this).val() == ''){
-									$(this).val(' ');
-								}
-								
-								if( ($(this).val() != ' ') && ($(this).parent().parent().find('.precio'+ tr).val() != ' ') )
-								{	//calcula el importe
-									$(this).parent().parent().find('.import'+ tr).val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('.precio'+ tr).val()));
-									//redondea el importe en dos decimales
-									$(this).parent().parent().find('.import'+ tr).val(Math.round(parseFloat($(this).parent().parent().find('.import'+ tr).val())*100)/100);
-
-									//calcula el impuesto para este producto multiplicando el importe por el valor del iva
-									//$(this).parent().parent().find('#totimp').val(parseFloat($(this).parent().parent().find('.import'+ tr).val()) * parseFloat($valor_impuesto.val()));
-									
-								}else{
-									$(this).parent().parent().find('.import'+ tr).val('');
-									//$(this).parent().parent().find('#totimp').val('');
-								}
-								//$calcula_totales();//llamada a la funcion que calcula totales
-							});
-
-							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-							$grid_productos.find('.precio'+ tr).focus(function(e){
-								if($(this).val() == ' '){
-									$(this).val('');
-								}
-							});
-
-							//recalcula importe al perder enfoque el campo costo
-							$grid_productos.find('.precio'+ tr).blur(function(){
-								if ($(this).val() == ''){
-									$(this).val(' ');
-								}
-								//$grid_productos.find('input[name=costo['+ tr +']]').blur(function(){
-								if( ($(this).val() != ' ') && ($(this).parent().parent().find('.cant'+ tr).val() != ' ') )
-								{	//calcula el importe
-									$(this).parent().parent().find('.import'+ tr).val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('.cant'+ tr).val()));
-									//redondea el importe en dos decimales
-									$(this).parent().parent().find('.import'+ tr).val(Math.round(parseFloat($(this).parent().parent().find('.import'+ tr).val())*100)/100);
-
-									//calcula el impuesto para este producto multiplicando el importe por el valor del iva
-									//$(this).parent().parent().find('#totimp').val(parseFloat($(this).parent().parent().find('.import'+ tr).val()) * parseFloat($valor_impuesto.val()));
-
-								}else{
-									$(this).parent().parent().find('.import'+ tr).val('');
-									//$(this).parent().parent().find('#totimp').val('');
-								}
-								//$calcula_totales();//llamada a la funcion que calcula totales
-							});
-
-							//validar campo costo, solo acepte numeros y punto
-							//$grid_productos.find('input[name=costo['+ tr +']]').keypress(function(e){
-							$grid_productos.find('.precio'+ tr).keypress(function(e){
-								// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-								if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-									return true;
-								}else {
-									return false;
-								}		
-							});
-
-							//validar campo cantidad, solo acepte numeros y punto
-							//$grid_productos.find('input[name=cantidad['+ tr +']]').keypress(function(e){
-							$grid_productos.find('.precio'+ tr).keypress(function(e){
-								// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-								if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-									return true;
-								}else {
-									return false;
-								}		
-							});
-							
-							//elimina un producto del grid
-							$grid_productos.find('#delete'+ tr).bind('click',function(event){
-								event.preventDefault();
-								if(parseInt($(this).parent().find('#elim').val()) != 0){
-									var iddetalle = $(this).parent().find('#idd').val();
-
-									//asigna espacios en blanco a todos los input de la fila eliminada
-									$(this).parent().parent().find('input').val(' ');
-
-									//asigna un 0 al input eliminado como bandera para saber que esta eliminado
-									$(this).parent().find('#elim').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
-									$(this).parent().find('#idd').val(iddetalle);
-									//oculta la fila eliminada
-									$(this).parent().parent().hide();
-									//$calcula_totales();//llamada a la funcion que calcula totales
-								}
-							});
+							//aqui se pasan datos a la funcion que agrega el tr en el grid
+							$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, entry['Monedas']);
 							
 						});
-						
-						
 					}
 					
-					//$calcula_totales();//llamada a la funcion que calcula totales
 					
+					
+					//agregar producto al grid
+					$agregar_producto.click(function(event){
+						event.preventDefault();
+						$buscador_presentaciones_producto($rfc_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos, entry['Monedas']);
+					});
 					
 				});//termina llamada json
 				
+				
+				/*
 				//seleccionar tipo de moneda
 				$select_moneda.change(function(){
 					var seleccionado = $(this).val();
@@ -1668,8 +1651,7 @@ $(function() {
 					$select_moneda2.find('option').clone().appendTo($grid_productos.find('select[name=monedagrid]'));
 					$grid_productos.find('select[name=monedagrid]').find('option[value="'+seleccionado+'"]').attr('selected','selected');
 				});
-				
-				
+				*/
 				
 				//buscador de productos
 				$busca_sku.click(function(event){
@@ -1677,11 +1659,6 @@ $(function() {
 					$busca_productos($sku_producto.val());
 				});
 				
-				//agregar producto al grid
-				$agregar_producto.click(function(event){
-					event.preventDefault();
-					$buscador_presentaciones_producto($rfc_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos);
-				});
 				
 				
 				//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
@@ -1701,6 +1678,19 @@ $(function() {
                                     var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
                                     var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_pdf_cotizacion/'+$id_cotizacion.val()+'/'+seleccionado+'/'+iu+'/out.json';
                                     window.location.href=input_json;
+				});
+				
+				
+				$aplicar_evento_click_checkbox($check_descripcion_larga);
+				
+				//validar campo Tipo de Cambio, solo acepte numeros y punto
+				$tc.keypress(function(e){
+					// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+					if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+						return true;
+					}else {
+						return false;
+					}
 				});
 				
 				$submit_actualizar.bind('click',function(){

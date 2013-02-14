@@ -19,7 +19,6 @@
         <script type="text/javascript" src="../../js/components/modalbox/cotizaciones/modalboxBuscaproducto.js"></script>
         <script type="text/javascript" src="../../js/implements/cotizaciones/index.js" ></script>
         
-        
         #include("${layoutmenu}")
         
         <input type="hidden" name="contextpath" value="$url">
@@ -27,6 +26,7 @@
         <input type="hidden" name="iu" value="$iu">
         <input type="hidden" name="emp" value="$empresa">
         <input type="hidden" name="suc" value="$sucursal">
+        <input type="hidden" name="crm" value="$crm">
         
         <!--Esta tabla va  en la barra de acciones -->
 		<table class="table_acciones" style="display:none" border="0">
@@ -41,16 +41,17 @@
         <!--Esta tabla va  en la barra de buscador -->
 		<table border="0" class="tabla_buscador" style="display:none">
 			<tr>
-				<td colspan="13">&nbsp;&nbsp;</td>
+				<td colspan="17">&nbsp;&nbsp;</td>
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="70">Folio</td>
 				<td width="5">&nbsp;</td>
-				<td width="245">Cliente</td>
-
+				<td id="td_tipo">Tipo</td>
+				<td width="5">&nbsp;</td>
+				<td width="245"><span id="etiqueta_tipo">Cliente</span></td>
 				<td width="20">&nbsp;</td>
-				<td colspan="3">Fecha de cotizacion</td>
+				<td colspan="5">Fecha de cotizaci&oacute;n</td>
 				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;</td>
@@ -61,12 +62,21 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="70"><INPUT TYPE="text" name="busqueda_folio" style="width:70px;"></td>
 				<td width="5">&nbsp;</td>
+				<td id="td_tipo">
+					<select name="busqueda_select_tipo" style="width:90px;">
+						<option value="0" selected="yes">[-Tipo-]</option>
+						<option value="1">Cliente</option>
+						<option value="2">Prospecto</option>
+					</select>
+				</td>
+				<td width="5">&nbsp;</td>
 				<td width="245"><INPUT TYPE="text" name="busqueda_cliente" style="width:245px;"></td>
-
 				<td width="20">&nbsp;</td>
-				<td width="90"><INPUT TYPE="text" name="busqueda_fecha_inicial" style="width:90px;"></td>
+				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
+				<td width="80"><INPUT TYPE="text" name="busqueda_fecha_inicial" style="width:80px;" readOnly="true"></td>
 				<td width="5">al</td>
-				<td width="90"><INPUT TYPE="text" name="busqueda_fecha_final" style="width:90px;"></td>
+				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
+				<td width="80"><INPUT TYPE="text" name="busqueda_fecha_final" style="width:80px;" readOnly="true"></td>
 				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -220,7 +230,7 @@
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="165">Incluir&nbsp;imagen&nbsp;y&nbsp;descripci&oacute;n&nbsp;larga</td>
-                                                                <td width="165"><input type="checkbox" name="check_descripcion_larga" value="false"></td>
+                                                                <td width="165"><input type="checkbox" name="check_descripcion_larga" ></td>
                                                                 <td width="10"></td>
                                                             </tr>
                                                         </table>
