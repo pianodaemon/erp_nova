@@ -132,7 +132,7 @@ public class ProSpringDao implements ProInterfaceDao{
         
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos('"+data_string+"') AS foo (id integer)";
         
-	String sql_to_query = "SELECT pro_estruc.id, inv_prod.sku as codigo, inv_prod.descripcion "
+	String sql_to_query = "SELECT pro_estruc.id, inv_prod.sku as codigo, inv_prod.descripcion, pro_estruc.version "
                             + "FROM pro_estruc JOIN ("+sql_busqueda+") as subt on subt.id=pro_estruc.id "
                 + "JOIN inv_prod ON inv_prod.id=pro_estruc.inv_prod_id  "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -148,6 +148,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
+                    row.put("version",String.valueOf(rs.getInt("version")));
                     
                     return row;
                 }
@@ -165,7 +166,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "inv_formulas.nivel, inv_prod.sku, inv_prod.descripcion, inv_formulas.inv_prod_id_master";
         */
         
-        String sql_to_query = "select inv_prod.sku, inv_prod.descripcion,pro_estruc.inv_prod_id, pro_estruc.id "
+        String sql_to_query = "select inv_prod.sku, inv_prod.descripcion,pro_estruc.inv_prod_id, pro_estruc.id, pro_estruc.version  "
                 + "from pro_estruc join inv_prod on inv_prod.id=pro_estruc.inv_prod_id "
                 + "where pro_estruc.inv_prod_id="+id_prod+" and pro_estruc.borrado_logico=false and pro_estruc.gral_emp_id="+emp_id;
         
@@ -179,6 +180,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
+                    row.put("version",String.valueOf(rs.getInt("version")));
                     return row;
                 }
             }
@@ -260,14 +262,20 @@ public class ProSpringDao implements ProInterfaceDao{
     //:::::::::::CONSULTA QUE RETORNA EL GRID DE FORMULAS EN DESARROLLO DE ACUERDO A SU PASO::::::::::::::::::::::::
     @Override
     public ArrayList<HashMap<String, String>> getFormulaLaboratorio_DatosMinigrid(String id_tabla_formula, String id_nivel) {
-        
+        /*
          String sql_to_query = "select pro_estruc_det.id,inv_prod.sku AS codigo,  inv_prod.descripcion, pro_estruc_det.nivel, "
                  + "pro_estruc_det.elemento, pro_estruc_det.inv_prod_id, pro_estruc_det.cantidad, "
                 + "(select version from pro_estruc where pro_estruc_id=(select pro_estruc_id from pro_estruc where id="+id_tabla_formula+") "
                 + "order by version desc limit 1) as version  from pro_estruc_det JOIN "
                  + "inv_prod ON inv_prod.id=pro_estruc_det.inv_prod_id where pro_estruc_id="+id_tabla_formula+" and pro_estruc_det.nivel="+id_nivel+" "
                  + "order by pro_estruc_det.elemento asc";
-         
+         */
+        
+        String sql_to_query = "select pro_estruc_det.id,inv_prod.sku AS codigo,  inv_prod.descripcion, pro_estruc_det.nivel, pro_estruc_det.elemento, "
+                + "pro_estruc_det.inv_prod_id, pro_estruc_det.cantidad, (select version from pro_estruc where id=723 and version="+id_tabla_formula+") as version  from pro_estruc_det "
+                + "JOIN inv_prod ON inv_prod.id=pro_estruc_det.inv_prod_id where pro_estruc_id="+id_tabla_formula+" and pro_estruc_det.nivel="+id_nivel+" "
+                + "order by pro_estruc_det.elemento asc";
+        
         //.get("inv_prod_id_master").toString();
         System.out.println("Checar este query??"+sql_to_query);
         ArrayList<HashMap<String, String>> datos_formulas_minigrid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1288,15 +1296,29 @@ public class ProSpringDao implements ProInterfaceDao{
     
     //busca producto en especifico para agregar a la lista de productos elemento en el catalogo de formulas
     @Override
-    public ArrayList<HashMap<String, String>> getProSubprocesosPorProductoSku(String sku, Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getProSubprocesosPorProductoSku(String sku, Integer id_empresa, String id_formula,String version) {
         
-        String sql_query = "select prod_tmp.id as inv_prod_id, pro_subproceso_prod.id as pro_subproceso_prod_id,pro_subprocesos.id as "
-                + "pro_subprocesos_id, pro_subprocesos.titulo as pro_subprocesos_titulo from (select id from inv_prod where sku "
-                + "ilike '"+sku+"' and empresa_id="+id_empresa+" and borrado_logico=false limit 1 ) "
-                + "as prod_tmp join pro_procesos on pro_procesos.inv_prod_id=prod_tmp.id join pro_subproceso_prod "
-                + "on pro_subproceso_prod.pro_procesos_id=pro_procesos.id "
-                + "join pro_subprocesos on pro_subproceso_prod.pro_subprocesos_id=pro_subprocesos.id "
-                + "where pro_procesos.gral_emp_id="+id_empresa+" and pro_procesos.borrado_logico=false;";
+        String sql_query = "";
+        
+        if(id_formula.equals("0")){
+            //Sql para ordendes diferentes de productos en desarrollo
+            sql_query = "select prod_tmp.id as inv_prod_id, pro_subproceso_prod.id as pro_subproceso_prod_id,pro_subprocesos.id as "
+            + "pro_subprocesos_id, pro_subprocesos.titulo as pro_subprocesos_titulo, pro_subproceso_prod.pro_estruc_id from (select id from inv_prod where sku "
+            + "ilike '"+sku+"' and empresa_id="+id_empresa+" and borrado_logico=false limit 1 ) "
+            + "as prod_tmp join pro_procesos on pro_procesos.inv_prod_id=prod_tmp.id join pro_subproceso_prod "
+            + "on pro_subproceso_prod.pro_procesos_id=pro_procesos.id "
+            + "join pro_subprocesos on pro_subproceso_prod.pro_subprocesos_id=pro_subprocesos.id "
+            + "where pro_procesos.gral_emp_id="+id_empresa+" and pro_procesos.borrado_logico=false;";
+        }else{
+            //Sql para ordendes de productos en desarrollo
+            sql_query = "select prod_tmp.id as inv_prod_id, sumbprod.id as pro_subproceso_prod_id,pro_subprocesos.id as pro_subprocesos_id, "
+                    + "pro_subprocesos.titulo as pro_subprocesos_titulo, sumbprod.pro_estruc_id from( "
+                    + "select id from inv_prod where sku ilike '"+sku+"' and empresa_id="+id_empresa+" and borrado_logico=false limit 1 "
+                    + ") as prod_tmp join "
+                    + "(select * from pro_subproceso_prod where pro_estruc_id="+id_formula+") as sumbprod "
+                    + "on sumbprod.inv_prod_id=prod_tmp.id "
+                    + "join pro_subprocesos on pro_subprocesos.id=sumbprod.pro_subprocesos_id";
+        }
         
         System.out.println("Obteniendo datos sku:"+sql_query);
         
@@ -1310,12 +1332,14 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("pro_subproceso_prod_id",rs.getString("pro_subproceso_prod_id"));
                     row.put("pro_subprocesos_id",rs.getString("pro_subprocesos_id"));
                     row.put("pro_subprocesos_titulo",rs.getString("pro_subprocesos_titulo"));
+                    row.put("pro_estruc_id",rs.getString("pro_estruc_id"));
                     return row;
                 }
             }
         );
         return hm_sku;
     }
+    
     
     
     @Override
@@ -3726,7 +3750,8 @@ public class ProSpringDao implements ProInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getProOrden_Datos(Integer id) {
-        String sql_to_query = "select pro_orden_prod.*,pro_proceso.pro_proceso_flujo_id, pro_proceso_flujo.titulo as flujo  from pro_orden_prod join "
+        String sql_to_query = "select pro_orden_prod.*,pro_proceso.pro_proceso_flujo_id, pro_proceso_flujo.titulo as flujo  "
+                + "from pro_orden_prod join "
                 + " pro_proceso on pro_proceso.id=pro_orden_prod.pro_proceso_id "
                 + " join pro_proceso_flujo on pro_proceso_flujo.id=pro_proceso.pro_proceso_flujo_id "
                 + "where pro_orden_prod.id="+id+";";
@@ -3747,6 +3772,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("flujo",rs.getString("flujo"));
                     row.put("pro_proceso_flujo_id",String.valueOf(rs.getInt("pro_proceso_flujo_id")));
+                    row.put("pro_estruc_id",String.valueOf(rs.getInt("pro_estruc_id")));
                     
                     return row;
                 }
@@ -4550,5 +4576,38 @@ public class ProSpringDao implements ProInterfaceDao{
     
     //traer sucursales
    
+    
+    
+    
+    
+    //Lista lad formulas de un sku de un producto en desarrollo
+     @Override
+    public ArrayList<HashMap<String, String>> getVersionesFormulasPorCodigoProducto(String sku, String tipo, Integer id_empresa) {
+        
+        String sql_to_query = "select pro_estruc.id, pro_estruc.inv_prod_id, prod_tmp.sku, prod_tmp.descripcion, pro_estruc.version from "
+                + "(select id, sku, descripcion from inv_prod where sku ilike '"+sku+"' AND borrado_logico=false AND empresa_id="+id_empresa+" ) as prod_tmp "
+                + "JOIN pro_estruc on prod_tmp.id=pro_estruc.inv_prod_id"
+                + " where pro_estruc.borrado_logico=false AND gral_emp_id="+id_empresa+" ";
+        
+        System.out.println("Ejecutando query de: "+ sql_to_query);
+        
+        ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("version",String.valueOf(rs.getInt("version")));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
      
 }

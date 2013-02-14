@@ -444,8 +444,9 @@ public class ProFormulasDesarrolloController {
           nivel=paso_actual;  
         }
         
-        
+        //                                                                                              5
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+id_prod_master+"___"+
+                //      6           7                   8                           9               10
                 inv_prod_id+"___"+nivel+"___"+pro_config_prod_pertenece_id+"___"+version+"___"+prodtipo_id;
         
         succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);

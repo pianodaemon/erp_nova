@@ -32,7 +32,7 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getProcedimientosPorFormulacion(Integer id_producto,Integer id_empresa);
     
     public ArrayList<HashMap<String, String>> getProProductoPorSku(String sku, Integer id_empresa);
-    public ArrayList<HashMap<String, String>> getProSubprocesosPorProductoSku(String sku, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getProSubprocesosPorProductoSku(String sku, Integer id_empresa ,String id_formula,String version);
     
     public ArrayList<HashMap<String, String>> getSubProcesos(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getTiposEquipos(Integer id_empresa);
@@ -255,5 +255,7 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getUnidades_Datos(Integer id_unidad);
     
     public ArrayList<HashMap<String, String>> getAlmacenes(Integer id_empresa);
+    
+    public ArrayList<HashMap<String, String>> getVersionesFormulasPorCodigoProducto(String sku, String tipo, Integer id_empresa);
     
 }

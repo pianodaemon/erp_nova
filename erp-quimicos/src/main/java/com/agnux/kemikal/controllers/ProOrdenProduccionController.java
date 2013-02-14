@@ -373,6 +373,7 @@ public class ProOrdenProduccionController {
     public @ResponseBody HashMap<String, String> guardaRequisicionJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="data_string", required=true) String cadena,
+            @RequestParam(value="id_formula", required=true) String id_formula,
             @RequestParam(value="command_selected", required=true) String command_selected,
             @RequestParam(value="iu", required=true) String user,
                 Model model
@@ -414,7 +415,8 @@ public class ProOrdenProduccionController {
         }
         
         
-        String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___0___0___0___"+command_selected+"___"+accion;
+        String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___0___0___0___"+
+                command_selected+"___"+accion+"___"+id_formula;
         
         succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
@@ -440,6 +442,7 @@ public class ProOrdenProduccionController {
             @RequestParam(value="id", required=true) Integer id,
         @RequestParam(value="id_prod", required=true) Integer id_prod,
         @RequestParam(value="tipoorden", required=true) String tipoorden,
+        @RequestParam(value="id_formula", required=true) String id_formula,
         @RequestParam(value="id_subproceso", required=true) Integer id_subproceso,
         @RequestParam(value="observaciones", required=true) String observaciones,
         @RequestParam(value="command_selected", required=true) String command_selected,
@@ -484,7 +487,8 @@ public class ProOrdenProduccionController {
         }
         
         
-        String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+fecha_elavorar+"___"+observaciones+"___"+command_selected+"___"+accion;
+        String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+
+                fecha_elavorar+"___"+observaciones+"___"+command_selected+"___"+accion+"___"+id_formula;
         
         succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
@@ -536,6 +540,7 @@ public class ProOrdenProduccionController {
         @RequestParam(value="observaciones", required=true) String observaciones,
         @RequestParam(value="command_selected", required=true) String command_selected,
         @RequestParam(value="especificaicones_lista", required=true) String especificaicones_lista,
+        @RequestParam(value="id_formula", required=true) String id_formula,
         
         @RequestParam(value="eliminar", required=true) String[] eliminar,
         @RequestParam(value="id_reg", required=true) String[] id_reg,
@@ -638,7 +643,8 @@ public class ProOrdenProduccionController {
         
         
         
-        String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+fecha_elavorar+"___"+observaciones+"___"+command_selected+"___"+accion;
+        String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+fecha_elavorar+"___"+observaciones+"___"+
+                command_selected+"___"+accion+"___"+id_formula;
         
         succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
@@ -681,6 +687,31 @@ public class ProOrdenProduccionController {
     }
     
     
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_versiones_formulas_por_sku.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_versiones_formulas_por_skuJson(
+            @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="tipo", required=true) String tipo,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando get_versiones_formulas_por_sku de {0}", ProOrdenProduccionController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> formulas = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        formulas = this.getProDao().getVersionesFormulasPorCodigoProducto(sku, tipo, id_empresa);
+        
+        jsonretorno.put("formulas", formulas);
+        
+        return jsonretorno;
+    }
     
     
     //obtiene los productos para el buscador
@@ -765,6 +796,8 @@ public class ProOrdenProduccionController {
     @RequestMapping(method = RequestMethod.POST, value="/get_busca_sku_prod.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscaSkuProdJson(
             @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="id_formula", required=true) String id_formula,
+            @RequestParam(value="version", required=true) String version,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
@@ -779,7 +812,7 @@ public class ProOrdenProduccionController {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         jsonretorno.put("Sku", this.daoPro.getProProductoPorSku(sku.toUpperCase(), id_empresa));
-        jsonretorno.put("SubProcesos", this.daoPro.getProSubprocesosPorProductoSku(sku.toUpperCase(), id_empresa));
+        jsonretorno.put("SubProcesos", this.daoPro.getProSubprocesosPorProductoSku(sku.toUpperCase(), id_empresa, id_formula, version));
         
         return jsonretorno;
     }

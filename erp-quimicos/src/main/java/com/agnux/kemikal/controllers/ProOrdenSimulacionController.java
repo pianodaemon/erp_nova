@@ -772,7 +772,7 @@ public class ProOrdenSimulacionController {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         jsonretorno.put("Sku", this.daoPro.getProProductoPorSku(sku.toUpperCase(), id_empresa));
-        jsonretorno.put("SubProcesos", this.daoPro.getProSubprocesosPorProductoSku(sku.toUpperCase(), id_empresa));
+        jsonretorno.put("SubProcesos", this.daoPro.getProSubprocesosPorProductoSku(sku.toUpperCase(), id_empresa, "0", "0"));
         
         return jsonretorno;
     }
