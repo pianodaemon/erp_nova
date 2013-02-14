@@ -2061,7 +2061,7 @@ $(function() {
                                             jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
                                                 // If they confirmed, manually trigger a form submission
                                                 if (r){
-                                                    
+                                                    var $id_formula = $('#forma-proordenproduccion-window').find('input[name=id_formula]');
                                                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/guarda_lotes.json';
                                                     $arreglo = {
                                                                 'id':$id_orden.val(),
@@ -2072,6 +2072,7 @@ $(function() {
                                                                 'command_selected':$command_selected.val() ,
                                                                 'observaciones': $observaciones.val(),
                                                                 'fecha_elavorar':$fecha_elavorar.val(),
+                                                                'id_formula':$id_formula.val(),
                                                                 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                                                                 }
                                                        
@@ -2602,13 +2603,15 @@ $(function() {
             
 	}//termina buscador de datos del Lote
         
-        $opbtiene_datos_producto_por_sku = function($sku){
+        $opbtiene_datos_producto_por_sku = function($sku, $id_formula, $version){
             
             var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_busca_sku_prod.json';
             $arreglo = {'sku':$sku,
+                            'id_formula':$id_formula,
+                            'version':$version,
                             'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                         }
-            
+                        
             $.post(input_json,$arreglo,function(prod){
                 var res=0;
                 if(prod['Sku'][0] != null){
@@ -2616,7 +2619,9 @@ $(function() {
                     unidad = prod['Sku'][0]['unidad'];
                     unidad_id = prod['Sku'][0]['unidad_id'];
                     densidad = prod['Sku'][0]['densidad'];
+                    formulacion_id = prod['SubProcesos'][0]['pro_estruc_id'];
                     
+                    $('#forma-proordenproduccion-window').find('input[name=id_formula]').val(formulacion_id);
                     //                                id, prod_id,              aku,                descripcion,                , persona, maquina,eq_adicional, cantidad , proceso_flujo_id
                     //agrega productos a el grid de formulaciones
                     $add_grid_componente_orden(0,prod['Sku'][0]['id'],prod['Sku'][0]['sku'],prod['Sku'][0]['descripcion'],""       ,""    ,""          , 0, prod['SubProcesos'], 1, unidad, unidad_id, densidad);
@@ -3005,6 +3010,81 @@ $(function() {
             
         }
         
+        $seleccionar_version_de_formula = function(sku, tipo_orden){
+            if(tipo_orden == 3){
+                //limpiar_campos_grids();
+		$(this).modalPanel_Formulasendesarrollo();
+		var $dialogoc =  $('#forma-formulasendesarrollo-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_formulasendesarrollo').find('table.formaBusqueda_formulasendesarrollo').clone());
+		
+		$('#forma-formulasendesarrollo-window').css({"margin-left": -200, 	"margin-top": -200});
+		
+		var $tabla_resultados = $('#forma-formulasendesarrollo-window').find('#tabla_resultado');
+		
+		var $cancelar_plugin_formulasendesarrollo = $('#forma-formulasendesarrollo-window').find('#cencela');
+		
+		$cancelar_plugin_formulasendesarrollo.mouseover(function(){
+                    $(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		$cancelar_plugin_formulasendesarrollo.mouseout(function(){
+                    $(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		//buscador de versiones de formulas
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_versiones_formulas_por_sku.json';
+                $arreglo = {'sku':sku,
+                                'tipo':tipo_orden,
+                                'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+                            }
+                var trr = '';
+                $tabla_resultados.children().remove();
+                $.post(input_json,$arreglo,function(entry){
+                    
+                    $.each(entry['formulas'],function(entryIndex,formula){
+                        trr = '<tr>';
+                            trr += '<td width="100">';
+                                trr += '<span class="sku_prod_buscador">'+formula['sku']+'</span>';
+                                trr += '<input type="hidden" id="id_prod_buscador" value="'+formula['inv_prod_id']+'">';
+                                trr += '<input type="hidden" id="id_formula_buscador" value="'+formula['id']+'">';
+                            trr += '</td>';
+                            trr += '<td width="330"><span class="titulo_prod_buscador">'+formula['descripcion']+'</span></td>';
+                            trr += '<td width="100"><span class="version_form_buscador">'+formula['version']+'</span></td>';
+                        trr += '</tr>';
+                        $tabla_resultados.append(trr);
+                    });
+                    
+                    $colorea_tr_grid($tabla_resultados);
+                    
+                    //seleccionar un producto del grid de resultados
+                    $tabla_resultados.find('tr').click(function(){
+                        var id_prod=$(this).find('#id_prod_buscador').val();
+                        var id_formula=$(this).find('#id_formula_buscador').val();
+                        var version=$(this).find('span.version_form_buscador').html();
+                        var codigo=$(this).find('span.sku_prod_buscador').html();
+                        var descripcion=$(this).find('span.titulo_prod_buscador').html();
+                        
+                        $('#forma-proordenproduccion-window').find('input[name=version_formula]').val(version);
+                        $('#forma-proordenproduccion-window').find('input[name=id_formula]').val(id_formula);
+                        
+                        $opbtiene_datos_producto_por_sku(codigo,id_formula, version);
+                        
+                        //elimina la ventana de busqueda
+                        var remove = function() {$(this).remove();};
+                        $('#forma-formulasendesarrollo-overlay').fadeOut(remove);
+                        //asignar el enfoque al campo sku del producto
+                        
+                    });
+                });
+                
+		$cancelar_plugin_formulasendesarrollo.click(function(event){
+                    //event.preventDefault();
+                    var remove = function() {$(this).remove();};
+                    $('#forma-formulasendesarrollo-overlay').fadeOut(remove);
+		});
+            }
+        }
+        
 	//nueva entrada
 	$new_orden.click(function(event){
             
@@ -3041,6 +3121,8 @@ $(function() {
             //
             var $titprod_tmp = $('#forma-proordenproduccion-window').find('input[name=titprod_tmp]');
             var $sku_tmp = $('#forma-proordenproduccion-window').find('input[name=sku_tmp]');
+            var $version_formula = $('#forma-proordenproduccion-window').find('input[name=version_formula]');
+            var $id_formula = $('#forma-proordenproduccion-window').find('input[name=id_formula]');
             var $id_producto_tmp = $('#forma-proordenproduccion-window').find('input[name=id_producto_tmp]');
             var $descripcion_tmp = $('#forma-proordenproduccion-window').find('input[name=descripcion_tmp]');
             
@@ -3171,6 +3253,8 @@ $(function() {
 		//$.getJSON(json_string,function(entry){
                 $.post(input_json,$arreglo,function(entry){
                     
+                    //$id_formula.val(entry['Orden']['0']['pro_proceso_id']);
+                    
                     array_instrumentos = entry['Instrumentos'];
                     
                     $select_tipoorden.children().remove();
@@ -3236,7 +3320,17 @@ $(function() {
                 $agregar_producto.click(function(event){
                     event.preventDefault();
                     if(/^[A-Za-z0-9]*$/.test($sku_tmp.val())){
-                        $opbtiene_datos_producto_por_sku($sku_tmp.val());
+                        $tipo = parseInt($select_tipoorden.val());
+                        if($tipo == 3){
+                            //Esta parte es para las ordende de produccioin de productos en desarrollo, 
+                            
+                            $seleccionar_version_de_formula($sku_tmp.val(), $tipo);
+                            
+                            //$opbtiene_datos_producto_por_sku($sku_tmp.val());
+                        }else{
+                            //llama el meto $opbtiene_datos_producto_por_sku para agregar un producto diferente a desarrollo
+                            $opbtiene_datos_producto_por_sku($sku_tmp.val(), 0, 0);
+                        }
                     }else{
                         jAlert("Agregue un c&oacute;digo", 'Atencion!');
                     }
@@ -3343,6 +3437,8 @@ $(function() {
                                 var $id_producto_tmp = $('#forma-proordenproduccion-window').find('input[name=id_producto_tmp]');
                                 var $descripcion_tmp = $('#forma-proordenproduccion-window').find('input[name=descripcion_tmp]');
                                 var $especificaicones_lista = $('#forma-proordenproduccion-window').find('input[name=especificaicones_lista]');
+                                var $version_formula = $('#forma-proordenproduccion-window').find('input[name=version_formula]');
+                                var $id_formula = $('#forma-proordenproduccion-window').find('input[name=id_formula]');
                                 
                                 //grids detalle pedido
                                 var $tabla_productos_header = $('#forma-proordenproduccion-window').find('#subprocesos_seleccionados');
@@ -3485,6 +3581,7 @@ $(function() {
                                     $proceso_flujo_id.attr({'value': entry['Orden']['0']['pro_proceso_flujo_id']});
                                     $folio_op.attr({'value': entry['Orden']['0']['folio']});
                                     $lote_pop.attr({'value': entry['Orden']['0']['lote']});
+                                    $id_formula.attr({'value': entry['Orden']['0']['pro_estruc_id']});
                                     
                                     array_almacenes = entry['Almacenes'];
                                     array_sucursales = entry['Sucursales'];
@@ -3592,7 +3689,7 @@ $(function() {
                                 $agregar_producto.click(function(event){
                                     event.preventDefault();
                                     if(/^[A-Za-z0-9]*$/.test($sku_tmp.val())){
-                                        $opbtiene_datos_producto_por_sku($sku_tmp.val());
+                                        $opbtiene_datos_producto_por_sku($sku_tmp.val(), 0, 0);
                                     }else{
                                         jAlert("Agregue un c&oacute;digo", 'Atencion!');
                                     }
@@ -4013,8 +4110,10 @@ $(function() {
                             //para que ejecute la parte de generar la orden de entrada en la requisicion
                             //command_selected=6
                             
+                            $id_formula = $('#forma-proordenproduccion-window').find('input[name=id_formula]').val();
                             var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-                            $arreglo = {'id':$id_orden.val(),'iu':iu,'data_string':cadena_pos,'command_selected':6}
+                            $arreglo = {'id':$id_orden.val(),'iu':iu,'data_string':cadena_pos,'command_selected':6, 
+                            'id_formula':$id_formula}
                             
                             $.post(input_json,$arreglo,function(entry){
                                     

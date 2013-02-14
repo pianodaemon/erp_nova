@@ -2089,7 +2089,7 @@ $(function() {
        }
         
         
-        $alimenta_grid_formulaciones = function($tr_count, $id_formula, $sku, $descripcion){
+        $alimenta_grid_formulaciones = function($tr_count, $id_formula, $sku, $descripcion, $version){
             var $formulas_proceso = $('#forma-proconfigproduccion-window').find('#formulas_porproceso');
             
             //$formulas_proceso.children().remove();
@@ -2103,11 +2103,11 @@ $(function() {
                     trr += '<span id="img_eliminar" class="onmouseOutDelete" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></a> ';
                 trr += '</td>';
                 trr += '<td width="100">'+$sku+'</td>';
-                trr += '<td width="276">'+$descripcion+'</td>';
+                trr += '<td width="276">'+$descripcion+'&nbsp;&nbsp;&nbsp;&nbsp;Version: '+$version+'</td>';
             trr += '</tr>';
             
             $formulas_proceso.append(trr);
-
+            
             $colorea_tr_grid($formulas_proceso);
             
             $tr_clickeado = $formulas_proceso.find('a[href="editar_'+$id_formula+'"],a[href="cancelar_'+$id_formula+'"]');
@@ -2217,7 +2217,9 @@ $(function() {
                                         trr += '<span class="inv_prod_id_master" style="display:none">'+form['inv_prod_id']+'</span>';
                                         trr += '</td>';
                                         trr += '<td width="80"> <span class="sku" >'+form['sku']+'</span></td>';
-                                        trr += '<td width="390"><span class="descripcion" >'+form['descripcion']+'</span></td>';
+                                        trr += '<td width="390"><span class="descripcion" >'+form['descripcion']+'</span>&nbsp;&nbsp;&nbsp;';
+                                            trr += '<span class="version" >'+form['version']+'</span>';
+                                        trr += '</td>';
                                     trr += '</tr>';
                                     
                                     $tabla_resultados_formulas.append(trr);
@@ -2279,49 +2281,61 @@ $(function() {
                                     'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                                     };
                     //$.getJSON(json_string,function(entry){
+                    contador = 0;
                     $.post(input_json,$arreglo,function(entry){
                         $.each(entry,function(entryIndex,form){
-
-                            trr = '<tr>';
+                            
+                            trr = '<tr class="clickmetr'+contador+'">';
                                 trr += '<td width="100">';
                                 trr += '<span class="id_formula" style="display:none">'+form['id']+'</span>';
                                 trr += '<span class="inv_prod_id_master" style="display:none">'+form['inv_prod_id']+'</span>';
                                 trr += '</td>';
                                 trr += '<td width="80"> <span class="sku" >'+form['sku']+'</span></td>';
-                                trr += '<td width="390"><span class="descripcion" >'+form['descripcion']+'</span></td>';
+                                trr += '<td width="80"> <span class="sku" >'+form['sku']+'</span></td>';
+                                trr += '<td width="390"><span class="descripcion" >'+form['descripcion']+'</span>&nbsp;&nbsp;&nbsp;';
+                                    trr += '<span class="version" >'+form['version']+'</span>';
+                                trr += '</td>';
                             trr += '</tr>';
-
+                            
                             $tabla_resultados_formulas.append(trr);
-
+                            
                             $colorea_tr_grid($tabla_resultados_formulas);
+                            
+                            //$tabla_resultados_formulas.find('tbody > tr').each(function (index){
+                            value_plugin = 0;
+                            $tabla_resultados_formulas.find('.clickmetr'+contador).bind('click', function(event){
+                                event.preventDefault();
+                                if(value_plugin == 0){
+                                
+                                    value_plugin = 1;
+                                    var $grid_sub_procesos = $('#forma-proconfigproduccion-window').find('#tabla_subprocesos_seleccionados');
+                                    /*
+                                    $grid_sub_procesos.find('tbody').find('tr').each(function(){
+                                        //alert($(this).html());
+                                    });
+                                    */
 
+                                    var id_prod_master_ = $(this).find('span.inv_prod_id_master').html();
+                                    //var nivel_ = $(this).find('span.nivel').html();
+                                    var sku_ = $(this).find('span.sku').html();
+                                    var id_formula_ = $(this).find('span.id_formula').html();
+                                    nivel_ = 1;
 
-                            $tabla_resultados_formulas.find('tr').click(function(){
+                                    $llenar_especificaciones_procedidmientos_config(id_subp, titulo, "","", 'new', '0', id_prod_master_, nivel_, 0, id_formula_);
 
-                                var $grid_sub_procesos = $('#forma-proconfigproduccion-window').find('#tabla_subprocesos_seleccionados');
-                                $grid_sub_procesos.find('tbody').find('tr').each(function(){
-                                    //alert($(this).html());
-                                });
-
-                                var id_prod_master_ = $(this).find('span.inv_prod_id_master').html();
-                                //var nivel_ = $(this).find('span.nivel').html();
-                                var sku_ = $(this).find('span.sku').html();
-                                var id_formula_ = $(this).find('span.id_formula').html();
-                                nivel_ = 1;
-
-                                $llenar_especificaciones_procedidmientos_config(id_subp, titulo, "","", 'new', '0', id_prod_master_, nivel_, 0, id_formula_);
-
-                                 var remove = function() {$(this).remove();};
-                                $('#forma-listaformulas-overlay').fadeOut(remove);
+                                    var remove = function() {$(this).remove();};
+                                    $('#forma-listaformulas-overlay').fadeOut(remove);
+                                }
                             });
                         });
+                        contador++;
                     },"json");//termina llamada json
-
+                    
                     $crear_nueva_formula_en_listaformulas.click(function(event){
                         event.preventDefault();
                         $plugin_cargar_formulacion(0);
                     });
-
+                    
                     $cancela_lista_formulas.click(function(event){
                         event.preventDefault();
                         var remove = function() {$(this).remove();};
@@ -2388,66 +2402,65 @@ $(function() {
                         $('#forma-proconfigproduccion-overlay').fadeOut(remove);
                         $get_datos_grid();
                     }else{
+                        // Desaparece todas las interrogaciones si es que existen
+                        $('#forma-proconfigproduccion-window').find('div.interrogacion').css({'display':'none'});
+                        //$grid_productos.find('#cost').css({'background' : '#ffffff'});
+                        //$grid_productos.find('#cant').css({'background' : '#ffffff'});
+                        //$grid_productos.find('#cad').css({'background' : '#ffffff'});
+
+                        $('#forma-proconfigproduccion-window').find('#div_warning_grid').css({'display':'none'});
+                        $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+
+
+                        var valor = data['success'].split('___');
+                        //muestra las interrogaciones
+                        for (var element in valor){
+                                tmp = data['success'].split('___')[element];
+                                longitud = tmp.split(':');
+
+                                if( longitud.length > 1 ){
+                                        $('#forma-proconfigproduccion-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+                                        .parent()
+                                        .css({'display':'block'})
+                                        .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+
+                                        //alert(tmp.split(':')[0]);
+                                        /*
+                                        if(parseInt($("tr", $grid_productos).size())>0){
+                                                for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
+                                                        if((tmp.split(':')[0]=='costo'+i) || (tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='caducidad'+i)){
+                                                                //alert(tmp.split(':')[0]);
+                                                                $('#forma-proconfigproduccion-window').find('#div_warning_grid').css({'display':'block'});
+
+                                                                if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
+                                                                        $grid_productos.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+                                                                }
+                                                                if(tmp.split(':')[0].substring(0, 5) == 'costo'){
+                                                                        $grid_productos.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+                                                                }
+                                                                if(tmp.split(':')[0].substring(0, 9) == 'caducidad'){
+                                                                        $grid_productos.find('input[name=caducidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+                                                                }
+
+                                                                //$grid_productos.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
+                                                                //$grid_productos.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
+
+                                                                var tr_warning = '<tr>';
+                                                                                tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+                                                                                tr_warning += '<td width="120"><INPUT TYPE="text" value="' + $grid_productos.find('input[name=sku' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
+                                                                                tr_warning += '<td width="200"><INPUT TYPE="text" value="' + $grid_productos.find('input[name=titulo' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
+                                                                                tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:285px; color:red"></td>';
+                                                                tr_warning += '</tr>';
+                                                                $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+                                                        }
+                                                }
+                                        }*/
+                                }
+                        }
+
+                        $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
+                        $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({'background-color' : '#e7e8ea'});			
                         
-                            // Desaparece todas las interrogaciones si es que existen
-                            $('#forma-proconfigproduccion-window').find('div.interrogacion').css({'display':'none'});
-                            //$grid_productos.find('#cost').css({'background' : '#ffffff'});
-                            //$grid_productos.find('#cant').css({'background' : '#ffffff'});
-                            //$grid_productos.find('#cad').css({'background' : '#ffffff'});
-
-                            $('#forma-proconfigproduccion-window').find('#div_warning_grid').css({'display':'none'});
-                            $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').children().remove();
-                            
-                            
-                            var valor = data['success'].split('___');
-                            //muestra las interrogaciones
-                            for (var element in valor){
-                                    tmp = data['success'].split('___')[element];
-                                    longitud = tmp.split(':');
-
-                                    if( longitud.length > 1 ){
-                                            $('#forma-proconfigproduccion-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-                                            .parent()
-                                            .css({'display':'block'})
-                                            .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-
-                                            //alert(tmp.split(':')[0]);
-                                            /*
-                                            if(parseInt($("tr", $grid_productos).size())>0){
-                                                    for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
-                                                            if((tmp.split(':')[0]=='costo'+i) || (tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='caducidad'+i)){
-                                                                    //alert(tmp.split(':')[0]);
-                                                                    $('#forma-proconfigproduccion-window').find('#div_warning_grid').css({'display':'block'});
-
-                                                                    if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
-                                                                            $grid_productos.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-                                                                    }
-                                                                    if(tmp.split(':')[0].substring(0, 5) == 'costo'){
-                                                                            $grid_productos.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-                                                                    }
-                                                                    if(tmp.split(':')[0].substring(0, 9) == 'caducidad'){
-                                                                            $grid_productos.find('input[name=caducidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-                                                                    }
-
-                                                                    //$grid_productos.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-                                                                    //$grid_productos.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-
-                                                                    var tr_warning = '<tr>';
-                                                                                    tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-                                                                                    tr_warning += '<td width="120"><INPUT TYPE="text" value="' + $grid_productos.find('input[name=sku' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
-                                                                                    tr_warning += '<td width="200"><INPUT TYPE="text" value="' + $grid_productos.find('input[name=titulo' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
-                                                                                    tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:285px; color:red"></td>';
-                                                                    tr_warning += '</tr>';
-                                                                    $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
-                                                            }
-                                                    }
-                                            }*/
-                                    }
-                            }
-
-                            $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
-                            $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({'background-color' : '#e7e8ea'});			
-                            
                     }
 		}
 		
@@ -2692,7 +2705,7 @@ $(function() {
                                     //llena el grid de las formulas
                                     if(entry['getAllFormulas'] != null){
                                         $.each(entry['getAllFormulas'],function(entryIndex,formula){
-                                            $alimenta_grid_formulaciones(0, formula['id'], formula['codigo'], formula['descripcion']);
+                                            $alimenta_grid_formulaciones(0, formula['id'], formula['codigo'], formula['descripcion'], formula['version']);
                                         });
                                     }else{
                                         //aqui ira el buscador de formulas

@@ -43,17 +43,15 @@ $(function() {
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-    
-    
-	
+        
+        
 	var $cadena_busqueda = "";
 	var $busqueda_descripcion = $('#barra_buscador').find('.tabla_buscador').find('input[name=descripcion_buscador]');
         var $sku_buscador = $('#barra_buscador').find('.tabla_buscador').find('input[name=sku_buscador]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	
-	
-	
+        
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
@@ -74,13 +72,11 @@ $(function() {
             $get_datos_grid();
 	});
 	
-	
-	
+        
 	$limpiar.click(function(event){
             event.preventDefault();
             $busqueda_descripcion.val(' ');
 	});
-	
 	
 	
 	TriggerClickVisializaBuscador = 0;
