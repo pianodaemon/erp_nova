@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaRequisicionOP.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaEquivalentes.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaEspecificaciones.css" type="text/css" />
-        
+        <link rel="stylesheet" href="../../css/modalbox/proordenproduccion/formaFormulasendesarrollo.css" type="text/css" />
         
         
         
@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxRequisicionOP.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxEquivalentes.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxEspecificaciones.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/proordenproduccion/modalboxFormulasendesarrollo.js"></script>
         <script type="text/javascript" src="../../js/implements/proordenproduccion/index.js" ></script>
 	
         #include("${layoutmenu}")
@@ -304,6 +305,8 @@
                                                                                                         <td>
                                                                                                             <input type="hidden" name="id_producto_tmp">
                                                                                                             <INPUT TYPE="text" name="sku_tmp" style="width:120px;">
+                                                                                                            <input type="hidden" name="version_formula">
+                                                                                                            <input type="hidden" name="id_formula">
                                                                                                         </td>
                                                                                                         <td width="20">&nbsp;</td>
                                                                                                         <td width="100"><a href="busca_producto">(Buscar Producto)</a></td>
@@ -1034,4 +1037,79 @@
     </table>
 </div>
 
+
+
+
+
+<!-- Para mostrar las diferentes versiones de las formulas de los productos en desarrollo-->
+<div class="buscador_formulasendesarrollo" style="display:none;">
+    <table width="100%" border="0" class="formaBusqueda_formulasendesarrollo">
+        <tr>
+            <td>
+                <div class="div_dos_formulasendesarrollo">
+                    <table width="100%" border="0">
+                        <thead>
+                            <tr>
+                                <td colspan="7" height="50" valign="top">
+                                    <div class="titulo_formulasendesarrollo" width="100%"><strong>Versiones</strong>
+                                    </div>
+                                </td>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                            <tr style="font-size:13px;">
+                                <td width="10px"></td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td width="100px" style="background:#A8A9AB;">C&oacute;digo&nbsp;</td>
+                                <td width="300px" style="background:#A8A9AB;">Nombre</td>
+                                <td width="100px" style="background:#A8A9AB;">Version</td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td width="10px"></td>
+                            </tr>
+                            
+                            <tr>
+                                <td width="10px"></td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td style="background:#ffffff; border: solid 1px #313E74;" colspan="3" width="500px">
+                                    <div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:500px; height:150px; align=top;">
+                                        <table  border="0" id="tabla_resultado" width="485px" style="font-size:12px;">
+                                            <!--aqui van los resultados de la busqueda-->
+                                            
+                                        </table>
+                                    </div>
+                                </td>
+                                <td width="10px" style="background:#ffffff"></td>
+                                <td width="10px"></td>
+                            </tr>
+                            
+                            <tr>
+                                <td width="10"></td>
+                                <td width="10" colspan="5" height="4" style="background:#ffffff"></td>
+                                <td width="10"></td>
+                            </tr>
+                            <tr>
+                                <td width="10"></td>
+                                <td width="10"  style="background:#ffffff"></td>
+                                <td width="100" style="background:#ffffff"></td>
+                                <td width="300" style="background:#ffffff"></td>
+                                <td width="100" style="background:#ffffff" align="right">
+                                    <INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+                                </td>
+                                <td width="10" style="background:#ffffff"></td>
+                                <td width="10"></td>
+                            </tr>
+                            <tr>
+                                <td width="10"></td>
+                                <td width="10" colspan="5" height="6" style="background:#ffffff"></td>
+                                <td width="10"></td>
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
 
