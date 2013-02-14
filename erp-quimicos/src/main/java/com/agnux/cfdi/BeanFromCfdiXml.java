@@ -28,7 +28,7 @@ public class BeanFromCfdiXml {
     private String selloCfd;
     private String emisor_rfc;
     private String receptor_rfc;
-    
+    private String fecha_comprobante;
     
     public BeanFromCfdiXml(String fichero) {
         String comprobante = new String();
@@ -112,7 +112,14 @@ public class BeanFromCfdiXml {
                 }
             }
             
-            
+            if ("cfdi:Comprobante".equals(qName)) {
+                for(int i=0; i < atts.getLength(); i++){
+                    String valor=atts.getQName(i);
+                    if (valor.equals("fecha")){
+                        setFecha_comprobante(atts.getValue(i));
+                    }
+                }
+            }
             
         }
         
@@ -160,5 +167,12 @@ public class BeanFromCfdiXml {
 
     public void setSelloCfd(String selloCfd) {
         this.selloCfd = selloCfd;
+    }
+    public String getFecha_comprobante() {
+        return fecha_comprobante;
+    }
+
+    public void setFecha_comprobante(String fecha_comprobante) {
+        this.fecha_comprobante = fecha_comprobante;
     }
 }

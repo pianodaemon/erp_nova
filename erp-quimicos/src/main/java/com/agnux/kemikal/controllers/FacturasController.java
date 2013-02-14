@@ -847,6 +847,9 @@ public class FacturasController {
                 */
                 BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+serieFolio +".xml");
                 
+                //sacar la fecha del comprobante 
+                String fecha_comprobante=pop2.getFecha_comprobante();
+                
                 //este es el timbre fiscal, solo es para cfdi con timbre fiscal.
                 String sello_digital_sat = pop2.getSelloSat();
                 System.out.println("sello_digital_sat: "+sello_digital_sat);
@@ -865,6 +868,7 @@ public class FacturasController {
                 datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
                 datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                 datosExtrasPdfCfd.put("uuid", uuid);
+                datosExtrasPdfCfd.put("fecha_comprobante", fecha_comprobante);
                 
                 //pdf factura
                 pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);

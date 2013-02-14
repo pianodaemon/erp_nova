@@ -1424,20 +1424,54 @@ public class PocSpringDao implements PocInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, Object>> getCotizacion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_to_query="";
         
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
-	String sql_to_query = "SELECT DISTINCT "
-                +"poc_cot.id,"
-                +"poc_cot.folio,"
-                //+"cxc_clie.razon_social AS cliente,"
-                +"to_char(poc_cot.momento_creacion,'dd-mm-yyyy') AS fecha_creacion "
-        +"FROM poc_cot "
-        //+"LEFT JOIN cxc_clie on cxc_clie.id = poc_cot.cliente_id "
-        +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot.id "
-        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        String cad[]=data_string.split("___");
         
-        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        if (cad[6].equals("1")){
+            sql_to_query = "SELECT DISTINCT "
+                    +"poc_cot.id,"
+                    +"poc_cot.folio,"
+                    +"cxc_clie.razon_social AS cliente,"
+                    +"to_char(poc_cot.momento_creacion,'dd/mm/yyyy') AS fecha_creacion "
+            +"FROM poc_cot "
+            +"JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id  "
+            +"JOIN cxc_clie ON cxc_clie.id =  poc_cot_clie.cxc_clie_id  "
+            +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot.id "
+            +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        }else{
+            if (cad[7].equals("false")){
+                sql_to_query = "SELECT DISTINCT "
+                        +"poc_cot.id,"
+                        +"poc_cot.folio,"
+                        +"cxc_clie.razon_social AS cliente,"
+                        +"to_char(poc_cot.momento_creacion,'dd/mm/yyyy') AS fecha_creacion "
+                +"FROM poc_cot "
+                +"JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id  "
+                +"JOIN cxc_clie ON cxc_clie.id =  poc_cot_clie.cxc_clie_id  "
+                +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot.id "
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+            }else{
+                sql_to_query = "SELECT DISTINCT "
+                        +"poc_cot.id,"
+                        +"poc_cot.folio,"
+                        +"(CASE WHEN poc_cot.tipo=1 THEN cxc_clie.razon_social ELSE crm_prospectos.razon_social END) AS cliente,"
+                        +"to_char(poc_cot.momento_creacion,'dd/mm/yyyy') AS fecha_creacion "
+                +"FROM poc_cot "
+                +"LEFT JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id  "
+                +"LEFT JOIN cxc_clie ON cxc_clie.id=poc_cot_clie.cxc_clie_id  "
+                +"LEFT JOIN poc_cot_prospecto ON poc_cot_prospecto.poc_cot_id=poc_cot.id  "
+                +"LEFT JOIN crm_prospectos ON crm_prospectos.id=poc_cot_prospecto.crm_prospecto_id "
+                +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot.id "
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";  
+            }
+        }
+        
+        
+        System.out.println("data_string: "+data_string);
+        System.out.println("PaginaGrid: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -1446,7 +1480,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
                     row.put("folio",rs.getString("folio"));
-                    row.put("cliente","");
+                    row.put("cliente",rs.getString("cliente"));
                     row.put("fecha",rs.getString("fecha_creacion"));
                     return row;
                 }
@@ -1456,18 +1490,21 @@ public class PocSpringDao implements PocInterfaceDao{
     }
     
     
+    //obtiene datos de la cotizacion
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_Datos(Integer id) {
-        String sql_query = "SELECT "
-                + "id, "
-                + "folio, "
-                + "tipo, "
-                + "contacto, "
-                + "observaciones, "
-                + "proceso_id, "
-                + "incluye_img_desc "
+        String sql_query = ""
+                + "SELECT "
+                    + "id, "
+                    + "folio, "
+                    + "tipo, "
+                    + "observaciones, "
+                    + "proceso_id, "
+                    + "incluye_img_desc, "
+                    + "tipo_cambio,"
+                    + "to_char(momento_creacion,'yyyy-mm-dd') as fecha "
                 + "FROM poc_cot WHERE id=? ";
-                        
+        
         //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm_cotizacion = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
@@ -1479,16 +1516,99 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("tipo",String.valueOf(rs.getInt("tipo")));
                     row.put("proceso_id",String.valueOf(rs.getInt("proceso_id")));
                     row.put("folio",rs.getString("folio"));
-                    row.put("contacto",rs.getString("contacto"));
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("img_desc",String.valueOf(rs.getBoolean("incluye_img_desc")));
-                    
+                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getString("tipo_cambio"),4));
+                    row.put("fecha",rs.getString("fecha"));
                     return row;
                 }
             }
         );
         return hm_cotizacion;
     }
+    
+    //obtine datos del cliente 
+    @Override
+    public ArrayList<HashMap<String, String>> getCotizacion_DatosCliente(Integer id) {
+        String sql_query = ""
+                + "SELECT cxc_clie.id AS cliente_id, "
+                        + "cxc_clie.rfc, "
+                        + "cxc_clie.razon_social, "
+                        + "cxc_clie.moneda, "
+                        + "cxc_clie.numero_control, "
+                        + "cxc_clie.contacto, "
+                        + "cxc_clie.lista_precio,"
+                        + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion "
+                    + "FROM poc_cot_clie "
+                    + "JOIN cxc_clie ON cxc_clie.id=poc_cot_clie.cxc_clie_id "
+                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                    + "WHERE poc_cot_clie.poc_cot_id=?;";
+        
+        //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cliente_id",String.valueOf(rs.getInt("cliente_id")));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("contacto",rs.getString("contacto"));
+                    row.put("lista_precio",String.valueOf(rs.getInt("lista_precio")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //obtiene datos del prospecto
+    @Override
+    public ArrayList<HashMap<String, String>> getCotizacion_DatosProspecto(Integer id) {
+        String sql_query = ""
+                + "SELECT crm_prospectos.id as prospecto_id, "
+                        + "crm_prospectos.rfc, "
+                        + "crm_prospectos.razon_social, "
+                        + "1::integer AS moneda, "
+                        + "crm_prospectos.numero_control, "
+                        + "crm_prospectos.contacto, "
+                        + "0::integer AS lista_precio,"
+                        + "crm_prospectos.calle||' '||crm_prospectos.numero||', '||crm_prospectos.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||crm_prospectos.cp as direccion "
+                    + "FROM poc_cot_prospecto "
+                    + "JOIN crm_prospectos ON crm_prospectos.id=poc_cot_prospecto.crm_prospecto_id "
+                    + "JOIN gral_pais ON gral_pais.id = crm_prospectos.pais_id "
+                    + "JOIN gral_edo ON gral_edo.id = crm_prospectos.estado_id "
+                    + "JOIN gral_mun ON gral_mun.id = crm_prospectos.municipio_id "
+                    + "WHERE poc_cot_prospecto.poc_cot_id=?;";
+        
+        //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cliente_id",String.valueOf(rs.getInt("prospecto_id")));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("contacto",rs.getString("contacto"));
+                    row.put("lista_precio",String.valueOf(rs.getInt("lista_precio")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
 
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id, String dirImgProd) {
@@ -1498,7 +1618,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot_detalle.inv_prod_id as producto_id, "
                     + "inv_prod.sku as codigo, "
                     + "inv_prod.descripcion as producto, "
-                    + "inv_prod.descripcion_larga, "
+                    + "(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga, "
                     + "(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img, "
                     + "inv_prod_unidades.titulo as unidad, "
                     + "inv_prod_presentaciones.id as presentacion_id, "

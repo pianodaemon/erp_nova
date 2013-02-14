@@ -143,7 +143,7 @@ public class HomeController {
         HashMap<String, String> succes = new HashMap<String, String>();
         
         succes = this.getHomeDao().getUserByName(username);
-        userdata = new UserSessionData(String.valueOf(succes.get("username")), Integer.parseInt(succes.get("id")), Integer.parseInt(succes.get("empresa_id")), String.valueOf(succes.get("empresa")),Integer.parseInt(succes.get("sucursal_id")), String.valueOf(succes.get("sucursal")));
+        userdata = new UserSessionData(String.valueOf(succes.get("username")), Integer.parseInt(succes.get("id")), Integer.parseInt(succes.get("empresa_id")), String.valueOf(succes.get("empresa")),Integer.parseInt(succes.get("sucursal_id")), String.valueOf(succes.get("sucursal")), String.valueOf(succes.get("incluye_crm")));
         x.addObject("user", userdata);
        
        /* 

@@ -15,14 +15,17 @@ public final class UserSessionData {
     private String razonSocialEmpresa;
     private int sucursalId;
     private String Sucursal;
+    private String incluyeCrm;
 
-    public UserSessionData(String login_name, int userId , int empresaId, String razonSocEmp, int sucursalid, String nombreSucursal) {
+
+    public UserSessionData(String login_name, int userId , int empresaId, String razonSocEmp, int sucursalid, String nombreSucursal,String incluyeCrm) {
         this.setUserId(userId);
         this.setUserName(login_name);
         this.setEmpresaId(empresaId);
         this.setRazonSocialEmpresa(razonSocEmp);
         this.setSucursalId(sucursalid);
         this.setSucursal(nombreSucursal);
+        this.setIncluyeCrm(incluyeCrm);
     }
     
     
@@ -74,4 +77,12 @@ public final class UserSessionData {
         this.sucursalId = sucursalId;
     }
     
+    public String getIncluyeCrm() {
+        return incluyeCrm;
+    }
+
+    public void setIncluyeCrm(String incluyeCrm) {
+        this.incluyeCrm = incluyeCrm;
+    }
+
 }

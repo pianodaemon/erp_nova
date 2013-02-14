@@ -94,12 +94,16 @@ public class CotizacionesController {
         
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("folio", "Folio:90");
-        infoConstruccionTabla.put("cliente", "Cliente:300");
-        //infoConstruccionTabla.put("situacion", "Estado:100");
+        
+        if(user.getIncluyeCrm().equals("true")){
+            infoConstruccionTabla.put("cliente", "Cliente/Prospecto:300");
+        }else{
+            infoConstruccionTabla.put("cliente", "Cliente:300");
+        }
+        
         infoConstruccionTabla.put("fecha","Fecha:110");
         
         ModelAndView x = new ModelAndView("cotizaciones/startup", "title", "Cotizaciones");
-        
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -109,6 +113,7 @@ public class CotizacionesController {
         x = x.addObject("username", user.getUserName());
         x = x.addObject("empresa", user.getRazonSocialEmpresa());
         x = x.addObject("sucursal", user.getSucursal());
+        x = x.addObject("crm", user.getIncluyeCrm());
         
         String userId = String.valueOf(user.getUserId());
         
@@ -150,8 +155,10 @@ public class CotizacionesController {
         String cliente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cliente")))+"%";
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
+        String tipo = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo")))+"";
+        String incluye_crm = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("incluye_crm")))+"";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+tipo+"___"+incluye_crm;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getPocDao().countAll(data_string);
@@ -186,6 +193,7 @@ public class CotizacionesController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosCotizacion = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> DatosCliPros = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
@@ -206,6 +214,11 @@ public class CotizacionesController {
         
         if( (id_cotizacion.equals("0"))==false  ){
             datosCotizacion = this.getPocDao().getCotizacion_Datos(Integer.parseInt(id_cotizacion));
+            if(datosCotizacion.get(0).get("tipo").equals("1")){
+                DatosCliPros = this.getPocDao().getCotizacion_DatosCliente(Integer.parseInt(id_cotizacion));
+            }else{
+                DatosCliPros = this.getPocDao().getCotizacion_DatosProspecto(Integer.parseInt(id_cotizacion));
+            }
             datosGrid = this.getPocDao().getCotizacion_DatosGrid(Integer.parseInt(id_cotizacion), dirImgProd);
         }
         
@@ -215,6 +228,7 @@ public class CotizacionesController {
         tipoCambioActual.add(0,tc);
         
         jsonretorno.put("datosCotizacion", datosCotizacion);
+        jsonretorno.put("DatosCP", DatosCliPros);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", monedas);
