@@ -1671,13 +1671,13 @@ $(function() {
 				
 				//alert($descripcion_larga.val());
 				$boton_genera_pdf.click(function(event){
-                                    var seleccionado=0;
-                                    if($descripcion_larga.is(':checked')){
-                                        seleccionado=1;
-                                    }
-                                    var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-                                    var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_pdf_cotizacion/'+$id_cotizacion.val()+'/'+seleccionado+'/'+iu+'/out.json';
-                                    window.location.href=input_json;
+					var seleccionado=0;
+					if($check_descripcion_larga.is(':checked')){
+						seleccionado=1;
+					}
+					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getGeneraPdfCotizacion/'+$id_cotizacion.val()+'/'+seleccionado+'/'+iu+'/out.json';
+					window.location.href=input_json;
 				});
 				
 				
