@@ -68,7 +68,7 @@ public class PdfInvControlCosto {
     public String getTipo_costo() {
         return tipo_costo;
     }
-
+    
     public void setTipo_costo(String tipo_costo) {
         this.tipo_costo = tipo_costo;
     }

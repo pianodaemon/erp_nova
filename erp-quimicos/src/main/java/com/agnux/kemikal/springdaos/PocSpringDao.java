@@ -1434,6 +1434,7 @@ public class PocSpringDao implements PocInterfaceDao{
             sql_to_query = "SELECT DISTINCT "
                     +"poc_cot.id,"
                     +"poc_cot.folio,"
+                    + "(CASE WHEN poc_cot.tipo=1 THEN 'CLIENTE' ELSE 'PROSPECTO' END ) as tipo, "
                     +"cxc_clie.razon_social AS cliente,"
                     +"to_char(poc_cot.momento_creacion,'dd/mm/yyyy') AS fecha_creacion "
             +"FROM poc_cot "
@@ -1446,6 +1447,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 sql_to_query = "SELECT DISTINCT "
                         +"poc_cot.id,"
                         +"poc_cot.folio,"
+                        + "(CASE WHEN poc_cot.tipo=1 THEN 'CLIENTE' ELSE 'PROSPECTO' END ) as tipo, "
                         +"cxc_clie.razon_social AS cliente,"
                         +"to_char(poc_cot.momento_creacion,'dd/mm/yyyy') AS fecha_creacion "
                 +"FROM poc_cot "
@@ -1457,6 +1459,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 sql_to_query = "SELECT DISTINCT "
                         +"poc_cot.id,"
                         +"poc_cot.folio,"
+                        + "(CASE WHEN poc_cot.tipo=1 THEN 'CLIENTE' ELSE 'PROSPECTO' END ) as tipo, "
                         +"(CASE WHEN poc_cot.tipo=1 THEN cxc_clie.razon_social ELSE crm_prospectos.razon_social END) AS cliente,"
                         +"to_char(poc_cot.momento_creacion,'dd/mm/yyyy') AS fecha_creacion "
                 +"FROM poc_cot "
@@ -1480,6 +1483,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
                     row.put("folio",rs.getString("folio"));
+                    row.put("tipo",rs.getString("tipo"));
                     row.put("cliente",rs.getString("cliente"));
                     row.put("fecha",rs.getString("fecha_creacion"));
                     return row;
@@ -1502,6 +1506,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "proceso_id, "
                     + "incluye_img_desc, "
                     + "tipo_cambio,"
+                    + "gral_mon_id, "
                     + "to_char(momento_creacion,'yyyy-mm-dd') as fecha "
                 + "FROM poc_cot WHERE id=? ";
         
@@ -1514,6 +1519,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("tipo",String.valueOf(rs.getInt("tipo")));
+                    row.put("moneda_id",String.valueOf(rs.getInt("gral_mon_id")));
                     row.put("proceso_id",String.valueOf(rs.getInt("proceso_id")));
                     row.put("folio",rs.getString("folio"));
                     row.put("observaciones",rs.getString("observaciones"));
