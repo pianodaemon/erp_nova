@@ -4610,4 +4610,48 @@ public class ProSpringDao implements ProInterfaceDao{
         return hm_datos_productos;
     }
      
+     
+     @Override
+    public ArrayList<HashMap<String, String>> getProductosFormula(String id_orden, Integer id_empresa,Integer id_user) {
+        
+        String sql_to_query = "selecT det_mov.id,det_mov.cantidad,det_mov.inv_prod_id, inv_prod.sku, inv_prod.descripcion, "
+                + "( SELECT inv_calculo_existencia_producto AS existencia FROM inv_calculo_existencia_producto(1,false, "
+                + "det_mov.inv_prod_id, "+id_user+", (select inv_alm_id from pro_par where gral_emp_id="+id_empresa+" limit 1)) ) as existencia,"
+                + " det_mov.elemento, det_mov.pro_orden_prod_det_id, det_mov.pro_subprocesos_id  "
+                + "from (select id from pro_orden_prod_det where pro_orden_prod_id="+id_orden+") as tmp_det_prod "
+                + "join pro_orden_detalle_mov as det_mov on det_mov.pro_orden_prod_det_id=tmp_det_prod.id "
+                + "left join inv_prod on inv_prod.id=det_mov.inv_prod_id";
+        /*
+         selecT det_mov.id,det_mov.cantidad,det_mov.inv_prod_id, inv_prod.sku, inv_prod.descripcion, ( 
+SELECT inv_calculo_existencia_producto AS existencia FROM inv_calculo_existencia_producto(1,false, det_mov.inv_prod_id, 1, 
+(select inv_alm_id from pro_par where gral_emp_id=1 limit 1)) ) as existencia, det_mov.elemento, det_mov.pro_orden_prod_det_id, 
+det_mov.pro_subprocesos_id  from (select id from pro_orden_prod_det where pro_orden_prod_id=773) as tmp_det_prod 
+join pro_orden_detalle_mov as det_mov on det_mov.pro_orden_prod_det_id=tmp_det_prod.id 
+left join inv_prod on inv_prod.id=det_mov.inv_prod_id
+         */
+        System.out.println("Ejecutando query de: "+ sql_to_query);
+        
+        ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("cantidad",String.valueOf(rs.getDouble("cantidad")));
+                    row.put("existencia",String.valueOf(rs.getDouble("existencia")));
+                    row.put("elemento",String.valueOf(rs.getInt("elemento")));
+                    row.put("pro_orden_prod_det_id",String.valueOf(rs.getInt("pro_orden_prod_det_id")));
+                    row.put("pro_subprocesos_id",String.valueOf(rs.getInt("pro_subprocesos_id")));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
+     
 }

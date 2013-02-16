@@ -94,15 +94,8 @@ public class ProOrdenSimulacionController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         //infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("folio", "Folio:100");
-        infoConstruccionTabla.put("sku", "Codigo:100");
-        infoConstruccionTabla.put("accesor_tipo", "Tipo de Orden:150");
-        infoConstruccionTabla.put("fecha_elavorar", "Fecha:150");
-        infoConstruccionTabla.put("folio", "Folio:100");
-        infoConstruccionTabla.put("proceso", "Estatus:100");
         
-        ModelAndView x = new ModelAndView("proordensimulacion/startup", "title", "Orden de Produccion");
+        ModelAndView x = new ModelAndView("proordensimulacion/startup", "title", "Simulaci&oacute;n de Producci&oacute;n");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -174,6 +167,32 @@ public class ProOrdenSimulacionController {
         return jsonretorno;
     }
     
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_productos_formula_prod.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProductosFormulaJson(
+            @RequestParam(value="id_formula", required=true) String id_orden,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", ProOrdenProduccionController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> equivalentes = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        equivalentes = this.getProDao().getRequisicionOP(id_orden, id_empresa, id_usuario);
+        
+        jsonretorno.put("requisicion", equivalentes);
+        
+        return jsonretorno;
+    }
+    
+    
     //obtiene datos para el autopletar
     @RequestMapping(value="/get_proordentipos.json", method = RequestMethod.POST)
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProOrdenTiposJson(
@@ -191,6 +210,33 @@ public class ProOrdenSimulacionController {
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         jsonretorno.put("ordenTipos", this.getProDao().getProOrdenTipos(id_empresa));
+        
+        return jsonretorno;
+    }
+    
+    
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_versiones_formulas_por_sku.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_versiones_formulas_por_skuJson(
+            @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="tipo", required=true) String tipo,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando get_versiones_formulas_por_sku de {0}", ProOrdenProduccionController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> formulas = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        formulas = this.getProDao().getVersionesFormulasPorCodigoProducto(sku, tipo, id_empresa);
+        
+        jsonretorno.put("formulas", formulas);
         
         return jsonretorno;
     }
