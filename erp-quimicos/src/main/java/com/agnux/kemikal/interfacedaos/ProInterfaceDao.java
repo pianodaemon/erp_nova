@@ -258,4 +258,9 @@ public interface ProInterfaceDao {
     
     public ArrayList<HashMap<String, String>> getVersionesFormulasPorCodigoProducto(String sku, String tipo, Integer id_empresa);
     
+    
+    //Para siimulacion de produccioon
+    public ArrayList<HashMap<String, String>> getProductosFormula(String id_formula);
+    
+    
 }
