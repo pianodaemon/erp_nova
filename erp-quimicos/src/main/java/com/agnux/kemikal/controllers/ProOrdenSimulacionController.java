@@ -170,7 +170,7 @@ public class ProOrdenSimulacionController {
     //obtiene los productos para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/get_productos_formula_prod.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProductosFormulaJson(
-            @RequestParam(value="id_formula", required=true) String id_orden,
+            @RequestParam(value="id_formula", required=true) String id_formula,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
@@ -185,9 +185,9 @@ public class ProOrdenSimulacionController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        equivalentes = this.getProDao().getRequisicionOP(id_orden, id_empresa, id_usuario);
+        equivalentes = this.getProDao().getProductosFormula(id_formula);
         
-        jsonretorno.put("requisicion", equivalentes);
+        jsonretorno.put("productos", equivalentes);
         
         return jsonretorno;
     }
