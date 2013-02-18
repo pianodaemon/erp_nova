@@ -107,14 +107,14 @@
 <!--clase la quite por causar problemas      tabulador -->
         <div id="div_one" class="panelcito_modal proordensimulacion_div_one"  style="display:none;" title="">
             
-
+            
             <div id="div_two" title="" class="proordensimulacion_div_two">
                 <div class="columns on-2">
                     <div class="fixed column" style="width:938px; padding-left:6px;"><strong>Simulaci&oacute;n de Producci&oacute;n</strong></div>
                     <div class="fixed column" style="width:20px; height:25px;">
                         <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                     </div>
-                </div>                    
+                </div>
 
             </div>
 
@@ -152,6 +152,7 @@
                                                                                                 <td width="10">&nbsp;</td>
                                                                                                 <td width="130">
                                                                                                     <INPUT TYPE="text" name="sku_tmp" style="width:120px;">
+                                                                                                    <INPUT TYPE="hidden" name="densidad_tmp" >
                                                                                                 </td>
                                                                                                 <td width="20">&nbsp;</td>
                                                                                                 <td width="90">&nbsp;Descripci&oacute;n</td>
@@ -185,15 +186,11 @@
                                                                                                     <table >
                                                                                                         <thead>
                                                                                                             <tr class="subprocesos_seleccionados">
-                                                                                                                <td class="grid" id="td_eliminar" width="61"><div class="delete">&nbsp;#</div></td>
-                                                                                                                <td class="grid" width="80">&nbsp;Codigo</td>
-                                                                                                                <td class="grid" width="200">&nbsp;Descripci&oacute;n</td>
-                                                                                                                <td class="grid" width="100">&nbsp;Subproceso</td>
-                                                                                                                <td class="grid" width="100">&nbsp;Persona</td>
-                                                                                                                <td class="grid" width="100">&nbsp;Equipo</td>
-                                                                                                                <td class="grid" width="100">&nbsp;Eq. Adicional.</td>
-                                                                                                                <td class="grid" width="80">&nbsp;Cantidad</td>
-                                                                                                                <td class="grid" width="80">&nbsp;U. Medida</td>
+                                                                                                                <td class="grid" width="100">&nbsp;Codigo</td>
+                                                                                                                <td class="grid" width="460">&nbsp;Descripci&oacute;n</td>
+                                                                                                                <td class="grid" width="100">&nbsp;Unidad</td>
+                                                                                                                <td class="grid" width="100">&nbsp;Cantidad</td>
+                                                                                                                <td class="grid" width="100">&nbsp;Existencia</td>
                                                                                                             </tr>
                                                                                                         </thead>
                                                                                                     </table>
