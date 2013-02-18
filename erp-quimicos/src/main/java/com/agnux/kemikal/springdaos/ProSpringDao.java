@@ -4584,8 +4584,8 @@ public class ProSpringDao implements ProInterfaceDao{
      @Override
     public ArrayList<HashMap<String, String>> getVersionesFormulasPorCodigoProducto(String sku, String tipo, Integer id_empresa) {
         
-        String sql_to_query = "select pro_estruc.id, pro_estruc.inv_prod_id, prod_tmp.sku, prod_tmp.descripcion, pro_estruc.version from "
-                + "(select id, sku, descripcion from inv_prod where sku ilike '"+sku+"' AND borrado_logico=false AND empresa_id="+id_empresa+" ) as prod_tmp "
+        String sql_to_query = "select pro_estruc.id, pro_estruc.inv_prod_id, prod_tmp.sku, prod_tmp.descripcion, pro_estruc.version, prod_tmp.densidad from "
+                + "(select id, sku, descripcion, densidad from inv_prod where sku ilike '"+sku+"' AND borrado_logico=false AND empresa_id="+id_empresa+" ) as prod_tmp "
                 + "JOIN pro_estruc on prod_tmp.id=pro_estruc.inv_prod_id"
                 + " where pro_estruc.borrado_logico=false AND gral_emp_id="+id_empresa+" ";
         
@@ -4602,6 +4602,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("version",String.valueOf(rs.getInt("version")));
+                    row.put("densidad",String.valueOf(StringHelper.roundDouble(rs.getInt("densidad"),4)));
                     
                     return row;
                 }
@@ -4609,26 +4610,20 @@ public class ProSpringDao implements ProInterfaceDao{
         );
         return hm_datos_productos;
     }
-     
+    
      
      @Override
-    public ArrayList<HashMap<String, String>> getProductosFormula(String id_orden, Integer id_empresa,Integer id_user) {
+    public ArrayList<HashMap<String, String>> getProductosFormula(String id_formula) {
         
-        String sql_to_query = "selecT det_mov.id,det_mov.cantidad,det_mov.inv_prod_id, inv_prod.sku, inv_prod.descripcion, "
-                + "( SELECT inv_calculo_existencia_producto AS existencia FROM inv_calculo_existencia_producto(1,false, "
-                + "det_mov.inv_prod_id, "+id_user+", (select inv_alm_id from pro_par where gral_emp_id="+id_empresa+" limit 1)) ) as existencia,"
-                + " det_mov.elemento, det_mov.pro_orden_prod_det_id, det_mov.pro_subprocesos_id  "
-                + "from (select id from pro_orden_prod_det where pro_orden_prod_id="+id_orden+") as tmp_det_prod "
-                + "join pro_orden_detalle_mov as det_mov on det_mov.pro_orden_prod_det_id=tmp_det_prod.id "
-                + "left join inv_prod on inv_prod.id=det_mov.inv_prod_id";
-        /*
-         selecT det_mov.id,det_mov.cantidad,det_mov.inv_prod_id, inv_prod.sku, inv_prod.descripcion, ( 
-SELECT inv_calculo_existencia_producto AS existencia FROM inv_calculo_existencia_producto(1,false, det_mov.inv_prod_id, 1, 
-(select inv_alm_id from pro_par where gral_emp_id=1 limit 1)) ) as existencia, det_mov.elemento, det_mov.pro_orden_prod_det_id, 
-det_mov.pro_subprocesos_id  from (select id from pro_orden_prod_det where pro_orden_prod_id=773) as tmp_det_prod 
-join pro_orden_detalle_mov as det_mov on det_mov.pro_orden_prod_det_id=tmp_det_prod.id 
-left join inv_prod on inv_prod.id=det_mov.inv_prod_id
-         */
+        String sql_to_query = "select det_form.*,inv_prod.sku, inv_prod.descripcion, inv_prod.densidad, inv_prod.unidad_id,"
+                + "inv_prod_unidades.titulo, "
+                + "(SELECT inv_calculo_existencia_producto AS existencia FROM inv_calculo_existencia_producto(2,false, det_form.inv_prod_id, 1, 1)) as existencia from ("
+                + "select elemento, inv_prod_id, cantidad from pro_estruc_det where pro_estruc_id="+id_formula+" "
+                + ") as det_form join "
+                + "inv_prod on inv_prod.id=det_form.inv_prod_id "
+                + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+                + "order by elemento";
+        
         System.out.println("Ejecutando query de: "+ sql_to_query);
         
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -4637,15 +4632,15 @@ left join inv_prod on inv_prod.id=det_mov.inv_prod_id
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("elemento",String.valueOf(rs.getInt("elemento")));
+                    row.put("cantidad",String.valueOf(StringHelper.roundDouble(rs.getDouble("cantidad"), 4)));
+                    row.put("densidad",String.valueOf(StringHelper.roundDouble(rs.getDouble("densidad"), 4)));
+                    row.put("existencia",String.valueOf(StringHelper.roundDouble(rs.getDouble("existencia"), 4)));
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
-                    row.put("cantidad",String.valueOf(rs.getDouble("cantidad")));
-                    row.put("existencia",String.valueOf(rs.getDouble("existencia")));
-                    row.put("elemento",String.valueOf(rs.getInt("elemento")));
-                    row.put("pro_orden_prod_det_id",String.valueOf(rs.getInt("pro_orden_prod_det_id")));
-                    row.put("pro_subprocesos_id",String.valueOf(rs.getInt("pro_subprocesos_id")));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
+                    row.put("titulo",rs.getString("titulo"));
                     
                     return row;
                 }
