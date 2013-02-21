@@ -1511,31 +1511,40 @@ public class CrmSpringDao implements CrmInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorCasos(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa) {
-        String query ="select * from crm_consultas("+id+","+agente+","+tipo_seleccion+","+status+","+etapa+",'"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+")as foo("
-                                                        +"total_casos_agente integer )";
-
+        String query ="select * from crm_consultas("+id+","+agente+","+tipo_seleccion+","+status+","+etapa+",'"+fecha_inicial+"','"+
+                fecha_final+"',"+id_empresa+")as foo(casos_totales integer, casos_facturacion double precision ,"
+                + "casos_producto double precision,casos_garantia double precision,casos_distribucion double precision ,"
+                + "casos_danos double precision,casos_devoluciones double precision, casos_cobranza double precision,"
+                + "casos_varios double precision)";
         
-            System.out.println("Resultados de la FUNCION___3____"+" "+query);
+        
+        System.out.println("Resultados de la FUNCION___3____"+" "+query);
       ArrayList<HashMap<String,String>>hm_registro_casos =(ArrayList<HashMap<String,String>>)this.jdbcTemplate.query(
             query,
             new Object[]{}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("total_casos_agente",String.valueOf(rs.getInt("total_casos_agente")));
-                    /*row.put("total_contactos",String.valueOf(rs.getInt("total_contactos")));
-                    row.put("porcentaje_cumplido",StringHelper.roundDouble(rs.getDouble("porcentaje_cumplido"),1));
-                    row.put("contactos",String.valueOf(rs.getInt("contactos")));
-                    */
+                    row.put("casos_totales",String.valueOf(rs.getInt("casos_totales")));
+                    row.put("casos_facturacion",StringHelper.roundDouble(rs.getDouble("casos_facturacion"),2));
+                    row.put("casos_producto",StringHelper.roundDouble(rs.getDouble("casos_producto"),2));
+                    row.put("casos_garantia",StringHelper.roundDouble(rs.getDouble("casos_garantia"),2));
+                    row.put("casos_distribucion",StringHelper.roundDouble(rs.getDouble("casos_distribucion"),2));
+                    row.put("casos_danos",StringHelper.roundDouble(rs.getDouble("casos_danos"),2));
+                    row.put("casos_devoluciones",StringHelper.roundDouble(rs.getDouble("casos_devoluciones"),2));
+                    row.put("casos_cobranza",StringHelper.roundDouble(rs.getDouble("casos_cobranza"),2));
+                    row.put("casos_varios",StringHelper.roundDouble(rs.getDouble("casos_varios"),2));
                     
-                    
-              
                     return row;
                 }
             }
         );
         return hm_registro_casos;  
     }
+
+
+
+
 
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorOportunidades(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa) {
