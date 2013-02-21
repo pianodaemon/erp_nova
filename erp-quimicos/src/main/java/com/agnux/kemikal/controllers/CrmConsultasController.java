@@ -184,7 +184,6 @@ public class CrmConsultasController {
         jsonretorno.put("Oportunidades", oportunidades);
         jsonretorno.put("Varios", varios);
         
-        
         return jsonretorno;
     }
     
