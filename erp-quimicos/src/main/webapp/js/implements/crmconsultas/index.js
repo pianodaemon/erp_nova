@@ -56,12 +56,12 @@ $(function() {
 		
 		//On Click Event
 		$('#forma-registro-window').find("ul.pestanas li").click(function() {
-			$('#forma-registro-window').find(".contenidoPes").hide();
-			$('#forma-registro-window').find("ul.pestanas li").removeClass("active");
-			var activeTab = $(this).find("a").attr("href");
-			$('#forma-registro-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
-			$(this).addClass("active");
-			return false;
+                    $('#forma-registro-window').find(".contenidoPes").hide();
+                    $('#forma-registro-window').find("ul.pestanas li").removeClass("active");
+                    var activeTab = $(this).find("a").attr("href");
+                    $('#forma-registro-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+                    $(this).addClass("active");
+                    return false;
 		});
 	}
 	
@@ -71,8 +71,8 @@ $(function() {
             opciones_html+='<option value="1">Registro Visitas</option>';
             opciones_html+='<option value="2">Registro Llamadas</option>';
             opciones_html+='<option value="3">Registro Casos</option>';
-            opciones_html+='<option value="4">Registro Oportunidades</option>';
-            opciones_html+='<option value="5">Contactos/Prospectos/Clientes</option>';
+            //opciones_html+='<option value="4">Registro Oportunidades</option>';
+            //opciones_html+='<option value="5">Contactos/Prospectos/Clientes</option>';
          $select_opciones.append(opciones_html);
          
          //valida la fecha seleccionada
@@ -135,8 +135,6 @@ $(function() {
                 11:"Noviembre", 
                 12:"Diciembre"
             };
-
-            
          
         //Plugin de registro de llamadas
         $registro_llamadas = function(){
@@ -152,10 +150,10 @@ $(function() {
             $forma_selected1.prependTo('#forma-llamadas-window');
             $forma_selected1.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
             $tabs_li_funxionalidad();
-
+            
             //variables para la forma
             var $select_agente =$('#forma-llamadas-window').find('select[name=select_agente]');
-            var $select_tipo =$('#forma-llamadas-window').find('select[name=select_tipo]');
+            var $select_tipo =$('#forma-llamadas-window').find('input[name=select_tipo]');
             var $select_status =$('#forma-llamadas-window').find('input[name=status]');
             var $select_etapa =$('#forma-llamadas-window').find('input[name=etapa]');
             var $fecha_inicial =$('#forma-llamadas-window').find('input[name=fecha_inicial]');
@@ -175,19 +173,13 @@ $(function() {
             var $avance =$('#forma-llamadas-window').find('input[name=avance]');
             var $planeacion =$('#forma-llamadas-window').find('input[name=planeacion]');
             
-            
             var $cerrar_plugin = $('#forma-llamadas-window').find('#close');
             var $cancelar_plugin = $('#forma-llamadas-window').find('#boton_cancelar');
             
             $select_status.attr({'value' : 0});
             $select_etapa.attr({'value': 0});
             
-            $select_tipo.children().remove();
-            var tipo_html='';
-                
-                tipo_html+='<option value="1">Cliente</option>';
-                tipo_html+='<option value="2">Prospecto</option>';
-            $select_tipo.append(tipo_html);
+            $select_tipo.val(0);
             
             var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
 		var parametros={
@@ -252,7 +244,7 @@ $(function() {
 			var a=$('div.datepicker');
 			a.css({'z-index':100});
             });
-			
+		
 		$fecha_inicial.DatePicker({
 			format:'Y-m-d',
 			date: $fecha_inicial.val(),
@@ -283,8 +275,7 @@ $(function() {
 			}
 		});
 		
-			
-        
+		
         //fecha para la proxima visita
 		$fecha_final.click(function (s){
 			var a=$('div.datepicker');
@@ -324,6 +315,19 @@ $(function() {
              
                 //click para hacer la consulta
 		$consultar.click(function(event){
+                    $metas.attr({'value':''});
+                    $totales.attr({'value':''});
+                    $porcentaje.attr({'value':''});
+                    $llam_entrantes.attr({'value':''});
+                    $llam_salientes.attr({'value':''});
+                    $llam_planeadas.attr({'value':''});
+                    $con_exito.attr({'value':''});
+                    $con_cita.attr({'value':''});
+                    $con_seguimiento.attr({'value':''});
+                    $efectividad.attr({'value':''});
+                    $gestion.attr({'value':''});
+                    $avance.attr({'value':''});
+                    $planeacion.attr({'value':''});
                     
                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
                     $arreglo = {
@@ -356,34 +360,19 @@ $(function() {
                             $avance.attr({'value':entry['Registros']['0']['avance']});
                             $planeacion.attr({'value':entry['Registros']['0']['planeacion']});
                         }else{
-                            $metas.attr({'value':0});
-                            $totales.attr({'value':0});
-                            $porcentaje.attr({'value':0});
-                            $llam_entrantes.attr({'value':0});
-                            $llam_salientes.attr({'value':0});
-                            $llam_planeadas.attr({'value':0});
-                            $con_exito.attr({'value':0});
-                            $con_cita.attr({'value':0});
-                            $con_seguimiento.attr({'value':0});
-                            $efectividad.attr({'value':0});
-                            $gestion.attr({'value':0});
-                            $avance.attr({'value':0});
-                            $planeacion.attr({'value':0});
                             jAlert("No se encontraron resultados.",'! Atencion');
                         }
                     });
 		});
             
-            
             $cerrar_plugin.bind('click',function(){
                 var remove = function() {$(this).remove();};
                 $('#forma-llamadas-overlay').fadeOut(remove);
             });
-
+            
             $cancelar_plugin.click(function(event){
                 var remove = function() {$(this).remove();};
                 $('#forma-llamadas-overlay').fadeOut(remove);
-
             });
 
         }
@@ -406,7 +395,7 @@ $(function() {
             $tabs_li_funxionalidad();
 
             var $select_agente =$('#forma-visitas-window').find('select[name=select_agente]');
-            var $select_tipo =$('#forma-visitas-window').find('select[name=select_tipo]');
+            var $select_tipo =$('#forma-visitas-window').find('input[name=select_tipo]');
             var $select_status =$('#forma-visitas-window').find('input[name=status]');
             var $select_etapa =$('#forma-visitas-window').find('input[name=etapa]');
             var $fecha_inicial =$('#forma-visitas-window').find('input[name=fecha_inicial]');
@@ -431,12 +420,7 @@ $(function() {
             $select_status.attr({'value' : 0});
             $select_etapa.attr({'value': 0});
             
-            $select_tipo.children().remove();
-            var tipo_html='';
-                
-                tipo_html+='<option value="1">Cliente</option>';
-                tipo_html+='<option value="2">Prospecto</option>';
-            $select_tipo.append(tipo_html);
+            $select_tipo.val(0);
             
              var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
 		var parametros={
@@ -531,6 +515,17 @@ $(function() {
             
              //click para hacer la consulta
 		$consultar.click(function(event){ 
+                    $metas.attr({'value':''});
+                    $totales.attr({'value':''});
+                    $porcentaje.attr({'value':''});
+
+                    $con_exito.attr({'value':''});
+                    $con_cita.attr({'value':''});
+                    $con_seguimiento.attr({'value':''});
+                    $efectividad.attr({'value':''});
+                    $gestion.attr({'value':''});
+                    $avance.attr({'value':''});
+                    
                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
                     $arreglo = {
                         
@@ -543,8 +538,8 @@ $(function() {
                          'id':id_to_show,
                         'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                     }
+                    
                    
-
                     $.post(input_json,$arreglo,function(entry){
                         
                         if(entry['Visitas'] != null && entry['Visitas'] != ""){
@@ -601,16 +596,16 @@ $(function() {
             var $fecha_final =$('#forma-casos-window').find('input[name=fecha_final]');
             var $consultar =$('#forma-casos-window').find('input[name=buscar]');
             var $metas =$('#forma-casos-window').find('input[name=metas]');
-            var $totales =$('#forma-casos-window').find('input[name=totales]');
-            var $porcentaje =$('#forma-casos-window').find('input[name=porcentaje]');
             
-            var $con_exito =$('#forma-casos-window').find('input[name=con_exito]');
-            var $con_cita =$('#forma-casos-window').find('input[name=con_cita]');
-            var $con_seguimiento =$('#forma-casos-window').find('input[name=con_seguimiento]');
-            var $efectividad =$('#forma-casos-window').find('input[name=efectividad]');
-            var $gestion =$('#forma-casos-window').find('input[name=gestion]');
-            var $avance =$('#forma-casos-window').find('input[name=avance]');
-           
+            var $casos_totales =$('#forma-casos-window').find('input[name=casos_totales]');
+            var $casos_facturacion =$('#forma-casos-window').find('input[name=casos_facturacion]');
+            var $casos_producto =$('#forma-casos-window').find('input[name=casos_producto]');
+            var $casos_garantia =$('#forma-casos-window').find('input[name=casos_garantia]');
+            var $casos_distribucion =$('#forma-casos-window').find('input[name=casos_distribucion]');
+            var $casos_danos =$('#forma-casos-window').find('input[name=casos_danos]');
+            var $casos_devoluciones =$('#forma-casos-window').find('input[name=casos_devoluciones]');
+            var $casos_cobranza =$('#forma-casos-window').find('input[name=casos_cobranza]');
+            var $casos_varios =$('#forma-casos-window').find('input[name=casos_varios]');
             
             
             var $cerrar_plugin = $('#forma-casos-window').find('#close');
@@ -619,16 +614,8 @@ $(function() {
             $select_tipo.attr({'value':0});
             $select_etapa.attr({'value': 0});
             
-            $select_tipo.children().remove();
-            var tipo_html='';
-                
-                tipo_html+='<option value="1">Cliente</option>';
-                tipo_html+='<option value="2">Prospecto</option>';
-                $select_tipo.append(tipo_html);
-            
              var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
 		var parametros={
-                    
                     iu: $('#lienzo_recalculable').find('input[name=iu]').val()
                 }
              $.post(input_json,parametros,function(entry){
@@ -686,13 +673,11 @@ $(function() {
 				}
 			}
 		});
-		
-			
-        
-        //fecha para la proxima visita
+                
+                //fecha para la proxima visita
 		$fecha_final.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
+                    var a=$('div.datepicker');
+                    a.css({'z-index':100});
 		});
 		
 		$fecha_final.DatePicker({
@@ -702,34 +687,42 @@ $(function() {
 			starts: 1,
 			position: 'bottom',
 			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
+                            days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+                            daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+                            daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+                            months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+                            monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+                            weekMin: 'se'
 			},
 			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_final.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-					$fecha_final.DatePickerHide();
-					/*if (valida_fecha==true){
-						$fecha_final.DatePickerHide();	
-					}else{
-						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
-						$fecha_final.val(mostrarFecha());
-					}*/
-				}
+                            var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+                            $fecha_final.val(formated);
+                            if (formated.match(patron) ){
+                                var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
+                                $fecha_final.DatePickerHide();
+                                /*if (valida_fecha==true){
+                                        $fecha_final.DatePickerHide();	
+                                }else{
+                                        jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+                                        $fecha_final.val(mostrarFecha());
+                                }*/
+                            }
 			}
 		});
-            
-             //click para hacer la consulta
-		$consultar.click(function(event){ 
+                
+                //click para hacer la consulta
+		$consultar.click(function(event){
+                    $casos_facturacion.attr({'value':''});
+                    $casos_producto.attr({'value':''});
+                    $casos_garantia.attr({'value':''});
+                    $casos_distribucion.attr({'value':''});
+                    $casos_danos.attr({'value':''});
+                    $casos_devoluciones.attr({'value':''});
+                    $casos_cobranza.attr({'value':''});
+                    $casos_varios.attr({'value':''});
+                    
                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
                     $arreglo = {
-                        
                         'agente':$select_agente.val(),
                         'status':$select_status.val(),
                         'etapa':$select_etapa.val(),
@@ -739,33 +732,30 @@ $(function() {
                          'id':id_to_show,
                         'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                     }
-                   
-
+                    
                     $.post(input_json,$arreglo,function(entry){
-                        
-                        $metas.attr({'value':entry['Casos']['0']['total_casos_agente']});
-                        /*$totales.attr({'value':entry['Visitas']['0']['visitas_totales']});
-                        $porcentaje.attr({'value':entry['Visitas']['0']['porcentaje_visitas']});
-                        
-                        $con_exito.attr({'value':entry['Visitas']['0']['visitas_con_exito']});
-                        $con_cita.attr({'value':entry['Visitas']['0']['visitas_con_cita']});
-                        $con_seguimiento.attr({'value':entry['Visitas']['0']['visitas_con_seguimiento']});
-                        $efectividad.attr({'value':entry['Visitas']['0']['efectividad']});
-                        $gestion.attr({'value':entry['Visitas']['0']['gestion']});
-                        $avance.attr({'value':entry['Visitas']['0']['avance']});*/
-                       
-
-
-
-
+                        if(entry['Casos'] != null && entry['Casos'] != ''){
+                            
+                            $casos_facturacion.attr({'value':entry['Casos']['0']['casos_facturacion']});
+                            $casos_producto.attr({'value':entry['Casos']['0']['casos_producto']});
+                            $casos_garantia.attr({'value':entry['Casos']['0']['casos_garantia']});
+                            $casos_distribucion.attr({'value':entry['Casos']['0']['casos_distribucion']});
+                            $casos_danos.attr({'value':entry['Casos']['0']['casos_danos']});
+                            $casos_devoluciones.attr({'value':entry['Casos']['0']['casos_devoluciones']});
+                            $casos_cobranza.attr({'value':entry['Casos']['0']['casos_cobranza']});
+                            $casos_varios.attr({'value':entry['Casos']['0']['casos_varios']});
+                            
+                        }else{
+                            jAlert("No se encontraron resultados.",'! Atencion');
+                        }
                     });
 		});
-
+                
                 $cerrar_plugin.bind('click',function(){
                     var remove = function() {$(this).remove();};
                     $('#forma-casos-overlay').fadeOut(remove);
                 });
-
+                
                 $cancelar_plugin.click(function(event){
                     var remove = function() {$(this).remove();};
                     $('#forma-casos-overlay').fadeOut(remove);
@@ -823,12 +813,6 @@ $(function() {
             $select_tipo.attr({'value':0});
             $select_status.attr({'value': 0});
             
-            $select_tipo.children().remove();
-            var tipo_html='';
-                
-                tipo_html+='<option value="1">Cliente</option>';
-                tipo_html+='<option value="2">Prospecto</option>';
-            $select_tipo.append(tipo_html);
             
              var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
 		var parametros={
@@ -1004,7 +988,7 @@ $(function() {
                 $tabs_li_funxionalidad();
 
                 var $select_agente =$('#forma-registro-window').find('select[name=select_agente]');
-                var $select_tipo =$('#forma-registro-window').find('select[name=select_tipo]');
+                var $select_tipo =$('#forma-registro-window').find('input[name=select_tipo]');
                 var $select_status =$('#forma-registro-window').find('input[name=status]');
                 var $select_etapa =$('#forma-registro-window').find('input[name=etapa]');
                 var $fecha_inicial =$('#forma-registro-window').find('input[name=fecha_inicial]');
@@ -1024,12 +1008,7 @@ $(function() {
                 $select_status.attr({'value' : 0});
                 $select_etapa.attr({'value': 0});
 
-                $select_tipo.children().remove();
-                var tipo_html='';
-
-                    tipo_html+='<option value="1">Cliente</option>';
-                    tipo_html+='<option value="2">Prospecto</option>';
-                $select_tipo.append(tipo_html);
+                $select_tipo.attr({'value' : 0});
 
                  var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
                     var parametros={
