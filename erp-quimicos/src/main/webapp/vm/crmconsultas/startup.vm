@@ -84,7 +84,7 @@
                 <input type="hidden" name="status">
                 <input type="hidden" name="etapa">
                 
-					
+                    
                     <div id="div_two" title="" class="llamadas_div_two">
                         <div class="columns on-2">
                             <div class="fixed column" id="cierra" style="width:735px; padding-left:6px;"><strong>Consultas</strong></div>
