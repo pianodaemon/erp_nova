@@ -330,9 +330,12 @@
 													<li class="topline"><a href="../invordsubensamble/startup.agnux">Costos</a></li>
 													-->
 													<li class="topline"><a href="../invcontrolcostos/startup.agnux">Control de Costos</a></li>
-													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar de Precios</a></li>
+													
 													
 													<!--
+													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar de Precios</a></li>
+													
+													
 													<li class="topline"><a href="#">Actualizar Precios</a></li>
 													<li class="topline"><a href="#">Existencias F&iacute;sicas</a></li>
 													<li class="topline"><a href="#">Orden Devoluci&oacute;n</a></li>
