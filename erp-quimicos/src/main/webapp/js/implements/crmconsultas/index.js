@@ -323,7 +323,7 @@ $(function() {
                 
              
                 //click para hacer la consulta
-		$consultar.click(function(event){ 
+		$consultar.click(function(event){
                     
                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
                     $arreglo = {
@@ -341,23 +341,36 @@ $(function() {
 
                     $.post(input_json,$arreglo,function(entry){
                         
-                        $metas.attr({'value':entry['Registros']['0']['cantidad_llamadas']});
-                        $totales.attr({'value':entry['Registros']['0']['llamadas_totales']});
-                        $porcentaje.attr({'value':entry['Registros']['0']['porcentaje_llamadas']});
-                        $llam_entrantes.attr({'value':entry['Registros']['0']['llamadas_entrantes']});
-                        $llam_salientes.attr({'value':entry['Registros']['0']['llamadas_salientes']});
-                        $llam_planeadas.attr({'value':entry['Registros']['0']['llamadas_planeadas']});
-                        $con_exito.attr({'value':entry['Registros']['0']['llamadas_con_exito']});
-                        $con_cita.attr({'value':entry['Registros']['0']['llamadas_con_cita']});
-                        $con_seguimiento.attr({'value':entry['Registros']['0']['llamadas_con_seguimiento']});
-                        $efectividad.attr({'value':entry['Registros']['0']['efectividad']});
-                        $gestion.attr({'value':entry['Registros']['0']['gestion']});
-                        $avance.attr({'value':entry['Registros']['0']['avance']});
-                        $planeacion.attr({'value':entry['Registros']['0']['planeacion']});
-
-
-
-
+                        if(entry['Registros'] != "" && entry['Registros'] != null ){
+                            $metas.attr({'value':entry['Registros']['0']['cantidad_llamadas']});
+                            $totales.attr({'value':entry['Registros']['0']['llamadas_totales']});
+                            $porcentaje.attr({'value':entry['Registros']['0']['porcentaje_llamadas']});
+                            $llam_entrantes.attr({'value':entry['Registros']['0']['llamadas_entrantes']});
+                            $llam_salientes.attr({'value':entry['Registros']['0']['llamadas_salientes']});
+                            $llam_planeadas.attr({'value':entry['Registros']['0']['llamadas_planeadas']});
+                            $con_exito.attr({'value':entry['Registros']['0']['llamadas_con_exito']});
+                            $con_cita.attr({'value':entry['Registros']['0']['llamadas_con_cita']});
+                            $con_seguimiento.attr({'value':entry['Registros']['0']['llamadas_con_seguimiento']});
+                            $efectividad.attr({'value':entry['Registros']['0']['efectividad']});
+                            $gestion.attr({'value':entry['Registros']['0']['gestion']});
+                            $avance.attr({'value':entry['Registros']['0']['avance']});
+                            $planeacion.attr({'value':entry['Registros']['0']['planeacion']});
+                        }else{
+                            $metas.attr({'value':0});
+                            $totales.attr({'value':0});
+                            $porcentaje.attr({'value':0});
+                            $llam_entrantes.attr({'value':0});
+                            $llam_salientes.attr({'value':0});
+                            $llam_planeadas.attr({'value':0});
+                            $con_exito.attr({'value':0});
+                            $con_cita.attr({'value':0});
+                            $con_seguimiento.attr({'value':0});
+                            $efectividad.attr({'value':0});
+                            $gestion.attr({'value':0});
+                            $avance.attr({'value':0});
+                            $planeacion.attr({'value':0});
+                            jAlert("No se encontraron resultados.",'! Atencion');
+                        }
                     });
 		});
             
@@ -534,24 +547,23 @@ $(function() {
 
                     $.post(input_json,$arreglo,function(entry){
                         
-                        $metas.attr({'value':entry['Visitas']['0']['cantidad_visitas']});
-                        $totales.attr({'value':entry['Visitas']['0']['visitas_totales']});
-                        $porcentaje.attr({'value':entry['Visitas']['0']['porcentaje_visitas']});
-                        
-                        $con_exito.attr({'value':entry['Visitas']['0']['visitas_con_exito']});
-                        $con_cita.attr({'value':entry['Visitas']['0']['visitas_con_cita']});
-                        $con_seguimiento.attr({'value':entry['Visitas']['0']['visitas_con_seguimiento']});
-                        $efectividad.attr({'value':entry['Visitas']['0']['efectividad']});
-                        $gestion.attr({'value':entry['Visitas']['0']['gestion']});
-                        $avance.attr({'value':entry['Visitas']['0']['avance']});
-                       
+                        if(entry['Visitas'] != null && entry['Visitas'] != ""){
+                            $metas.attr({'value':entry['Visitas']['0']['cantidad_visitas']});
+                            $totales.attr({'value':entry['Visitas']['0']['visitas_totales']});
+                            $porcentaje.attr({'value':entry['Visitas']['0']['porcentaje_visitas']});
 
-
-
-
+                            $con_exito.attr({'value':entry['Visitas']['0']['visitas_con_exito']});
+                            $con_cita.attr({'value':entry['Visitas']['0']['visitas_con_cita']});
+                            $con_seguimiento.attr({'value':entry['Visitas']['0']['visitas_con_seguimiento']});
+                            $efectividad.attr({'value':entry['Visitas']['0']['efectividad']});
+                            $gestion.attr({'value':entry['Visitas']['0']['gestion']});
+                            $avance.attr({'value':entry['Visitas']['0']['avance']});
+                        }else{
+                            jAlert("No se encontraron resultados.",'! Atencion');
+                        }
                     });
 		});
-
+                
                 $cerrar_plugin.bind('click',function(){
                     var remove = function() {$(this).remove();};
                     $('#forma-visitas-overlay').fadeOut(remove);
@@ -575,12 +587,12 @@ $(function() {
             $('#' + form_to_show3).each (function(){this.reset();});
             var $forma_selected3 = $('#' + form_to_show3).clone();
             $forma_selected3.attr({id : form_to_show3 + id_to_show});
-
+            
             $('#forma-casos-window').css({"margin-left": -400, 	"margin-top": -265});
             $forma_selected3.prependTo('#forma-casos-window');
             $forma_selected3.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
             $tabs_li_funxionalidad();
-
+            
             var $select_agente =$('#forma-casos-window').find('select[name=select_agente]');
             var $select_tipo =$('#forma-casos-window').find('input[name=select_tipo]');
             var $select_status =$('#forma-casos-window').find('select[name=estatus]');
@@ -612,7 +624,7 @@ $(function() {
                 
                 tipo_html+='<option value="1">Cliente</option>';
                 tipo_html+='<option value="2">Prospecto</option>';
-            $select_tipo.append(tipo_html);
+                $select_tipo.append(tipo_html);
             
              var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
 		var parametros={
