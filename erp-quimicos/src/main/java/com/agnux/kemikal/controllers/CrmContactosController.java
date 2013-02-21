@@ -138,9 +138,10 @@ public class CrmContactosController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         //variables para el buscador
-        String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
+        String nombre = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("nombre")))+"%";
+        String busquedatipo_contacto = String.valueOf(has_busqueda.get("busquedatipo_contacto"));
         
-        String data_string = app_selected+"___"+id_usuario+"___"+descripcion;
+        String data_string = app_selected+"___"+id_usuario+"___"+nombre+"___"+busquedatipo_contacto;
         
         System.out.println("Esto es lo que busca "+"---->"+data_string);
         
@@ -164,18 +165,62 @@ public class CrmContactosController {
         return jsonretorno;
     }
     
+    //obtiene los Contactos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/get_buscador_cliente_prospecto.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorContactoJson(
+            @RequestParam(value="buscador_razon_social", required=true) String Razon_Social,
+            @RequestParam(value="buscador_rfc", required=true) String Rfc,
+            @RequestParam(value="identificador_cliente_prospecto", required=true) Integer Identificador_Cliente_Prospecto,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getBuscadorContactoJson de {0}", CrmRegistroCasosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> cliente_Prospecto = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        userDat = this.getHomeDao().getUserById(Integer.parseInt(Base64Coder.decodeString(id_user)));
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        Razon_Social = "%"+StringHelper.isNullString(String.valueOf(Razon_Social))+"%";
+        Rfc = "%"+StringHelper.isNullString(String.valueOf(Rfc))+"%";
+        Identificador_Cliente_Prospecto = Identificador_Cliente_Prospecto;
+        
+        cliente_Prospecto = this.getCrmDao().getBuscadorCliente_Prospecto(Razon_Social, Rfc,Identificador_Cliente_Prospecto, id_empresa);
+        
+        jsonretorno.put("array_cliente_prospecto", cliente_Prospecto);
+        
+        return jsonretorno;
+    }
+    
+    
     //crear y editar un motivo de llamada
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) Integer id,
-            @RequestParam(value="descripcion", required=true) String descripcion,
+            @RequestParam(value="tipo_contacto", required=true) String tipo_contacto,
+            @RequestParam(value="folio", required=true) String folio,
+            @RequestParam(value="id_cliente", required=true) String id_cliente,
+            @RequestParam(value="nombre", required=true) String nombre,
+            @RequestParam(value="apellido_paterno", required=true) String apellido_paterno,
+            @RequestParam(value="apellido_materno", required=true) String apellido_materno,
+            @RequestParam(value="telefono_2", required=true) String telefono_2,
+            @RequestParam(value="telefono_1", required=true) String telefono_1,
+            @RequestParam(value="fax", required=true) String fax,
+            @RequestParam(value="telefono_directo", required=true) String telefono_directo,
+            @RequestParam(value="correo_1", required=true) String correo_1,
+            @RequestParam(value="correo_2", required=true) String correo_2,
+            @RequestParam(value="observaciones", required=true) String observaciones,
             @ModelAttribute("user") UserSessionData user,
             Model model
             ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
-        Integer app_selected = 111;//catalogo de motivos de llamada
+        Integer app_selected = 127;//catalogo de contactos
         String command_selected = "new";
         //decodificar id de usuario
         Integer id_usuario = user.getUserId();
@@ -190,15 +235,16 @@ public class CrmContactosController {
            command_selected = "edit"; 
         }
         
-       
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+descripcion.toUpperCase();//6
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+tipo_contacto+"___"+folio
+                +"___"+id_cliente+"___"+nombre+"___"+apellido_paterno+"___"+apellido_materno+"___"+telefono_1
+                +"___"+telefono_2+"___"+fax+"___"+telefono_directo+"___"+correo_1+"___"+correo_2+"___"+observaciones;//6
         
         System.out.println("La cadena que se envia:"+"___"+data_string);
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
         if( String.valueOf(succes.get("success")).equals("true") ){
-            actualizo = this.getCrmDao().selectFunctionForThisApp(data_string, extra_data_array);
+            actualizo = this.getCrmDao().selectFunctionForCrmAdmProcesos(data_string, extra_data_array);
         }
         
         jsonretorno.put("success",String.valueOf(succes.get("success")));
@@ -219,13 +265,13 @@ public class CrmContactosController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
-        Integer app_selected = 111;
+        Integer app_selected = 127;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
         
         
-        jsonretorno.put("success",String.valueOf( this.getCrmDao().selectFunctionForThisApp(data_string, extra_data_array)));
+        jsonretorno.put("success",String.valueOf( this.getCrmDao().selectFunctionForCrmAdmProcesos(data_string, extra_data_array)));
         return jsonretorno;
     }
     
