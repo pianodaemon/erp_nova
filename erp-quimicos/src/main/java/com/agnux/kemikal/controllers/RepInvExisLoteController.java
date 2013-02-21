@@ -59,7 +59,7 @@ public class RepInvExisLoteController {
     @Autowired
     @Qualifier("daoInv")
     private InvInterfaceDao invDao;
-
+    
     
     @Autowired
     @Qualifier("daoHome")

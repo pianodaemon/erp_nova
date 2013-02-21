@@ -81,7 +81,6 @@ public class PdfInvControlCosto {
     }
     
     public void ViewPDF() throws URISyntaxException {
-        HashMap<String, String> datos = new HashMap<String, String>();
         Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
         Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);

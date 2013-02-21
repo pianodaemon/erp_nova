@@ -50,7 +50,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  *
- * @author pianodaemon
+ * @author Noe Martinez
+ * 11/febrero/2013
+ * gpmarsan@gmail.com
  */
 @Controller
 @SessionAttributes({"user"})
@@ -183,7 +185,7 @@ public class CotizacionesController {
     }
     
     
-   
+    
     @RequestMapping(method = RequestMethod.POST, value="/getCotizacion.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCotizacionJson(
             @RequestParam(value="id_cotizacion", required=true) String id_cotizacion,
@@ -221,7 +223,7 @@ public class CotizacionesController {
             }else{
                 DatosCliPros = this.getPocDao().getCotizacion_DatosProspecto(Integer.parseInt(id_cotizacion));
             }
-            datosGrid = this.getPocDao().getCotizacion_DatosGrid(Integer.parseInt(id_cotizacion), dirImgProd);
+            datosGrid = this.getPocDao().getCotizacion_DatosGrid(Integer.parseInt(id_cotizacion));
         }
         
         valorIva= this.getPocDao().getValoriva(id_sucursal);
@@ -530,11 +532,11 @@ public class CotizacionesController {
     
     
     
-    /*
+    
     @RequestMapping(value = "/getGeneraPdfCotizacion/{id_cotizacion}/{incluye_img}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getGeneraPdfCotizacionJson(
                 @PathVariable("id_cotizacion") Integer id_cotizacion,
-                @PathVariable("incluye_img") Integer incluye_img,
+                @PathVariable("incluye_img") String incluye_img,
                 @PathVariable("iu") String id_user,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
@@ -543,15 +545,12 @@ public class CotizacionesController {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> HeaderFooter = new HashMap<String, String>();
+        HashMap<String, String> datos = new HashMap<String, String>();
         HashMap<String, String> datosEmisor = new HashMap<String, String>();
-        HashMap<String, String> datosCotizacion = new HashMap<String, String>();
-        
-        ArrayList<HashMap<String, String>> datosProveedor = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> proveedorContactos = new ArrayList<HashMap<String, String>>();
-        
-        HashMap<String, String> datos_proveedor = new HashMap<String, String>();
+        HashMap<String, String> datosReceptor = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> datosCotizacion = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosCliPros = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> lista_productos = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> LotesGrid = new ArrayList<HashMap<String, String>>();
         
         System.out.println("Generando PDF de Cotizacion");
         
@@ -579,7 +578,7 @@ public class CotizacionesController {
         String file_name = "COT_"+rfc_empresa+".pdf";
         
         //ruta de archivo de salida
-        String fileout = dir_tmp +"/"+  file_name;
+        String fileout = dir_tmp + file_name;
         
         datosEmisor.put("emp_razon_social", razon_social_empresa);
         datosEmisor.put("emp_rfc", this.getGralDao().getRfcEmpresaEmisora(id_empresa));
@@ -591,52 +590,46 @@ public class CotizacionesController {
         datosEmisor.put("emp_municipio", this.getGralDao().getMunicipioDomicilioFiscalEmpresaEmisora(id_empresa));
         datosEmisor.put("emp_cp", this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa));
         
+        HeaderFooter.put("titulo_reporte", "COTIZACIÓN");
+        HeaderFooter.put("periodo", "");
+        HeaderFooter.put("empresa", "");
         HeaderFooter.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
         HeaderFooter.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
         
         datosCotizacion = this.getPocDao().getCotizacion_Datos(id_cotizacion);
+        lista_productos = this.getPocDao().getCotizacion_DatosGrid(id_cotizacion);
+        datos.put("ruta_logo", rutaLogoEmpresa);
+        datos.put("file_out", fileout);
+        datos.put("dirImagenes", dirImgProd);
+        datos.put("tipo", datosCotizacion.get(0).get("tipo"));
+        datos.put("folio", datosCotizacion.get(0).get("folio"));
+        datos.put("fecha", datosCotizacion.get(0).get("fecha"));
+        datos.put("tipoCambio", datosCotizacion.get(0).get("tipo_cambio"));
+        datos.put("observaciones", datosCotizacion.get(0).get("observaciones"));
+        datos.put("img_desc", incluye_img);
+        datos.put("nombre_usuario", datosCotizacion.get(0).get("nombre_usuario"));
+        datos.put("puesto_usuario", datosCotizacion.get(0).get("puesto_usuario"));
         
-        
-        
-        datosProveedor = this.getInvDao().getEntradas_DatosProveedor(Integer.parseInt(datos_entrada.get("proveedor_id")));
-        proveedorContactos = this.getInvDao().getProveedor_Contacto(Integer.parseInt(datos_entrada.get("proveedor_id")));
-        
-        if(datosProveedor.size()<=0){
-            datos_proveedor.put("prov_razon_social", "");
-            datos_proveedor.put("prov_rfc", "");
-            datos_proveedor.put("prov_calle", "");
-            datos_proveedor.put("prov_numero", "");
-            datos_proveedor.put("prov_colonia", "");
-            datos_proveedor.put("prov_municipio", "");
-            datos_proveedor.put("prov_estado", "");
-            datos_proveedor.put("prov_pais", "");
-            datos_proveedor.put("prov_cp", "");
-            datos_proveedor.put("prov_telefono", "");
+        if(datosCotizacion.get(0).get("tipo").equals("1")){
+            datosCliPros = this.getPocDao().getCotizacion_DatosCliente(id_cotizacion);
         }else{
-            datos_proveedor.put("prov_razon_social", datosProveedor.get(0).get("razon_social"));
-            datos_proveedor.put("prov_rfc", datosProveedor.get(0).get("rfc"));
-            datos_proveedor.put("prov_calle", datosProveedor.get(0).get("calle"));
-            datos_proveedor.put("prov_numero", datosProveedor.get(0).get("numero"));
-            datos_proveedor.put("prov_colonia", datosProveedor.get(0).get("colonia"));
-            datos_proveedor.put("prov_municipio", datosProveedor.get(0).get("municipio"));
-            datos_proveedor.put("prov_estado", datosProveedor.get(0).get("estado"));
-            datos_proveedor.put("prov_pais", datosProveedor.get(0).get("pais"));
-            datos_proveedor.put("prov_cp", datosProveedor.get(0).get("cp"));
-            datos_proveedor.put("prov_telefono", datosProveedor.get(0).get("telefono"));
+            datosCliPros = this.getPocDao().getCotizacion_DatosProspecto(id_cotizacion);
         }
         
-        if(proveedorContactos.size()<=0){
-            datos_proveedor.put("prov_contacto", "");
-        }else{
-            datos_proveedor.put("prov_contacto", proveedorContactos.get(0).get("contacto"));
-        }
+        datosReceptor.put("clieCalle", datosCliPros.get(0).get("calle"));
+        datosReceptor.put("clieNumero", datosCliPros.get(0).get("numero"));
+        datosReceptor.put("clieColonia", datosCliPros.get(0).get("colonia"));
+        datosReceptor.put("clieMunicipio", datosCliPros.get(0).get("municipio"));
+        datosReceptor.put("clieEstado", datosCliPros.get(0).get("estado"));
+        datosReceptor.put("cliePais", datosCliPros.get(0).get("pais"));
+        datosReceptor.put("clieCp", datosCliPros.get(0).get("cp"));
+        datosReceptor.put("clieTel", datosCliPros.get(0).get("telefono"));
+        datosReceptor.put("clieRfc", datosCliPros.get(0).get("rfc"));
+        datosReceptor.put("clieContacto", datosCliPros.get(0).get("contacto"));
+        datosReceptor.put("clieRazonSocial", datosCliPros.get(0).get("razon_social"));
         
-        //obtiene el listado de productos para el pdf
-        System.out.println("id de orden de entrada"+id_OrdenEntrada);
-        lista_productos = this.getInvDao().getInvOrdenEntrada_DatosGrid(id_OrdenEntrada);
-        LotesGrid = this.getInvDao().getInvOrdenEntrada_DatosGridLotes(id_OrdenEntrada);
-        
-        PdfOrdenEntrada OEntradas = new PdfOrdenEntrada(datos_empresa, datos_entrada, datos_proveedor,lista_productos,LotesGrid, fileout, ruta_imagen);
+        pdfCotizacion pdf = new pdfCotizacion(HeaderFooter, datosEmisor, datos,datosReceptor,lista_productos);
+        pdf.ViewPDF();
         
         
         System.out.println("Recuperando archivo: " + fileout);
@@ -655,7 +648,7 @@ public class CotizacionesController {
         return null;
         
     }
-    */
+    
     
     
 }

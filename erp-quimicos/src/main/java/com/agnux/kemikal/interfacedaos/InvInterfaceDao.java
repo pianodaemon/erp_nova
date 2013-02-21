@@ -31,6 +31,7 @@ public interface InvInterfaceDao {
     //se utiliza en traspasos, reporte de existencias, reporte de existencias por Lote, Facturas Compras(Entradas Mercnacias)
     public ArrayList<HashMap<String, String>> getAlmacenes2(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getMonedas();
+    public ArrayList<HashMap<String, String>> getMonedas2();//solo se utiliza en listas de precios
     public ArrayList<HashMap<String, String>> getAllTiposMovimientoInventario(Integer id_empresa);
     
     public ArrayList<HashMap<String, String>> getPaises();
@@ -307,5 +308,7 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getBuscadorProductosParaControlCostos(String marca, String familia, String subfamilia, String sku, String tipo, String descripcion,Integer id_empresa);
     public ArrayList<HashMap<String, String>>  getInvControlCostos_Anios();
     
+    
+    public ArrayList<HashMap<String, Object>> getInvActualizaPrecio_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     
 }

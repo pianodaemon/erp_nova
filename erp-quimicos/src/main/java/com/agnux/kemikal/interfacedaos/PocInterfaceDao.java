@@ -66,6 +66,6 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getCotizacion_Datos(Integer id_cot);
     public ArrayList<HashMap<String, String>> getCotizacion_DatosCliente(Integer id_cot);
     public ArrayList<HashMap<String, String>> getCotizacion_DatosProspecto(Integer id_cot);
-    public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id, String dirImgProd);
+    public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id);
     
 }

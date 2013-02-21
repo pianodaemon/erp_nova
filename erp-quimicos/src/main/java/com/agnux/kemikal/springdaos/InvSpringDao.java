@@ -1213,7 +1213,27 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm_monedas;
     }
     
-
+    
+    //este metodo solo se utiliza en el Catalogo de Listas de Precios
+    @Override
+    public ArrayList<HashMap<String, String>> getMonedas2() {
+        String sql_to_query = "SELECT id, descripcion, descripcion_abr FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("descripcion_abr",rs.getString("descripcion_abr"));
+                    return row;
+                }
+            }
+        );
+        return hm_monedas;
+    }
     
     //se utiliza en catalogo  de productos y entradas de mercancias
     @Override
@@ -2861,6 +2881,18 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("precio_8",StringHelper.roundDouble(rs.getDouble("precio_8"), 2));
                     row.put("precio_9",StringHelper.roundDouble(rs.getDouble("precio_9"), 2));
                     row.put("precio_10",StringHelper.roundDouble(rs.getDouble("precio_10"), 2));
+                    
+                    row.put("id_mon1",String.valueOf(rs.getInt("gral_mon_id_pre1")));
+                    row.put("id_mon2",String.valueOf(rs.getInt("gral_mon_id_pre2")));
+                    row.put("id_mon3",String.valueOf(rs.getInt("gral_mon_id_pre3")));
+                    row.put("id_mon4",String.valueOf(rs.getInt("gral_mon_id_pre4")));
+                    row.put("id_mon5",String.valueOf(rs.getInt("gral_mon_id_pre5")));
+                    row.put("id_mon6",String.valueOf(rs.getInt("gral_mon_id_pre6")));
+                    row.put("id_mon7",String.valueOf(rs.getInt("gral_mon_id_pre7")));
+                    row.put("id_mon8",String.valueOf(rs.getInt("gral_mon_id_pre8")));
+                    row.put("id_mon9",String.valueOf(rs.getInt("gral_mon_id_pre9")));
+                    row.put("id_mon10",String.valueOf(rs.getInt("gral_mon_id_pre10")));
+                    
                     row.put("descuento_1",StringHelper.roundDouble(rs.getDouble("descuento_1"), 2));
                     row.put("descuento_2",StringHelper.roundDouble(rs.getDouble("descuento_2"), 2));
                     row.put("descuento_3",StringHelper.roundDouble(rs.getDouble("descuento_3"), 2));
@@ -7015,6 +7047,44 @@ public class InvSpringDao implements InvInterfaceDao{
     //-----Termina Métodos para el Aplicativo Control de Costos----------------------------------------------------------------
     
     
-    
+    //--Métodos para Aplicativo Actualizador de Precios---------------------------------------------------------------------------------
+    //metodo  para el grid y paginado
+    @Override
+    public ArrayList<HashMap<String, Object>> getInvActualizaPrecio_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        
+        if(orderBy.equals("id")) orderBy="descripcion";
+        
+        String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(prod_id integer, codigo character varying, descripcion character varying, unidad character varying, pres_id integer, presentacion character varying, moneda_id integer, moneda character varying, tc double precision, precio_minimo double precision) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
+        System.out.println("ControlCostos_PaginaGrid: "+sql_to_query);
+        
+        ArrayList<HashMap<String, Object>> hm125 = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(pageSize),new Integer(offset)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    //row.put("producto_id",String.valueOf(rs.getInt("producto_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    //row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("orden_compra",rs.getString("orden_compra"));
+                    row.put("factura_prov",rs.getString("factura_prov"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("costo",StringHelper.roundDouble(rs.getDouble("costo"),2));
+                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
+                    row.put("costo_importacion",StringHelper.roundDouble(rs.getDouble("costo_importacion"),2));
+                    row.put("costo_directo",StringHelper.roundDouble(rs.getDouble("costo_directo"),2));
+                    row.put("costo_referencia",StringHelper.roundDouble(rs.getDouble("costo_referencia"),2));
+                    row.put("precio_minimo",StringHelper.roundDouble(rs.getDouble("precio_minimo"),2));
+                    row.put("moneda_pm",rs.getString("moneda_pm"));
+                    return row;
+                }
+            }
+        );
+        return hm125;
+    }
+    //------------termina metodos para aplicativo Actualizador de Precios
     
 }

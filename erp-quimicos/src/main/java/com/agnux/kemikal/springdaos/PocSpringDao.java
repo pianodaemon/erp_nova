@@ -852,11 +852,11 @@ public class PocSpringDao implements PocInterfaceDao{
             +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
             +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
             +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
-            +"LEFT JOIN inv_pre ON (inv_pre.inv_prod_id=inv_prod.id AND inv_pre.inv_prod_presentacion_id=inv_prod_pres_x_prod.presentacion_id) "
+            +"LEFT JOIN inv_pre ON (inv_pre.inv_prod_id=inv_prod.id AND inv_pre.inv_prod_presentacion_id=inv_prod_pres_x_prod.presentacion_id AND inv_pre.borrado_logico=false) "
             +"WHERE  empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
         
         System.out.println("getPresentacionesProducto: "+sql_query);
-            
+        
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -1499,18 +1499,24 @@ public class PocSpringDao implements PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getCotizacion_Datos(Integer id) {
         String sql_query = ""
                 + "SELECT "
-                    + "id, "
-                    + "folio, "
-                    + "tipo, "
-                    + "observaciones, "
+                    + "poc_cot.id, "
+                    + "poc_cot.folio, "
+                    + "poc_cot.tipo, "
+                    + "poc_cot.observaciones, "
                     + "proceso_id, "
-                    + "incluye_img_desc, "
-                    + "tipo_cambio,"
-                    + "gral_mon_id, "
-                    + "to_char(momento_creacion,'yyyy-mm-dd') as fecha "
-                + "FROM poc_cot WHERE id=? ";
+                    + "poc_cot.incluye_img_desc, "
+                    + "poc_cot.tipo_cambio,"
+                    + "poc_cot.gral_mon_id, "
+                    + "to_char(poc_cot.momento_creacion,'yyyy-mm-dd') as fecha,"
+                    + "(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE  gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE  gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE  gral_empleados.apellido_materno END) AS nombre_usuario,"
+                    + "(CASE WHEN gral_puestos.titulo IS NULL THEN '' ELSE gral_puestos.titulo END) AS puesto_usuario "
+                + "FROM poc_cot "
+                + "LEFT JOIN gral_usr ON gral_usr.id=poc_cot.gral_usr_id_creacion "
+                + "LEFT JOIN  gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
+                + "LEFT JOIN  gral_puestos ON gral_puestos.id=gral_empleados.gral_puesto_id "
+                + " WHERE poc_cot.id=? ";
         
-        //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
+        System.out.println("getCotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm_cotizacion = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{new Integer(id)}, new RowMapper() {
@@ -1526,6 +1532,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("img_desc",String.valueOf(rs.getBoolean("incluye_img_desc")));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getString("tipo_cambio"),4));
                     row.put("fecha",rs.getString("fecha"));
+                    row.put("nombre_usuario",rs.getString("nombre_usuario"));
+                    row.put("puesto_usuario",rs.getString("puesto_usuario"));
+                    
                     return row;
                 }
             }
@@ -1544,7 +1553,15 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "cxc_clie.numero_control, "
                         + "cxc_clie.contacto, "
                         + "cxc_clie.lista_precio,"
-                        + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion "
+                        + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                        + "cxc_clie.calle,"
+                        + "cxc_clie.numero,"
+                        + "cxc_clie.colonia,"
+                        + "gral_mun.titulo AS municipio,"
+                        + "gral_edo.titulo AS estado,"
+                        + "gral_pais.titulo AS pais,"
+                        + "cxc_clie.cp,"
+                        + "(CASE WHEN cxc_clie.telefono1='' THEN cxc_clie.telefono2 ELSE cxc_clie.telefono1 END) AS telefono "
                     + "FROM poc_cot_clie "
                     + "JOIN cxc_clie ON cxc_clie.id=poc_cot_clie.cxc_clie_id "
                     + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
@@ -1566,6 +1583,14 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("direccion",rs.getString("direccion"));
                     row.put("contacto",rs.getString("contacto"));
                     row.put("lista_precio",String.valueOf(rs.getInt("lista_precio")));
+                    row.put("calle",rs.getString("calle"));
+                    row.put("numero",rs.getString("numero"));
+                    row.put("colonia",rs.getString("colonia"));
+                    row.put("municipio",rs.getString("municipio"));
+                    row.put("estado",rs.getString("estado"));
+                    row.put("pais",rs.getString("pais"));
+                    row.put("cp",rs.getString("cp"));
+                    row.put("telefono",rs.getString("telefono"));
                     return row;
                 }
             }
@@ -1585,7 +1610,15 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "crm_prospectos.numero_control, "
                         + "crm_prospectos.contacto, "
                         + "0::integer AS lista_precio,"
-                        + "crm_prospectos.calle||' '||crm_prospectos.numero||', '||crm_prospectos.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||crm_prospectos.cp as direccion "
+                        + "crm_prospectos.calle||' '||crm_prospectos.numero||', '||crm_prospectos.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||crm_prospectos.cp as direccion, "
+                        + "crm_prospectos.calle,"
+                        + "crm_prospectos.numero,"
+                        + "crm_prospectos.colonia,"
+                        + "gral_mun.titulo AS municipio,"
+                        + "gral_edo.titulo AS estado,"
+                        + "gral_pais.titulo AS pais,"
+                        + "crm_prospectos.cp,"
+                        + "(CASE WHEN crm_prospectos.telefono1='' THEN crm_prospectos.telefono2 ELSE crm_prospectos.telefono1 END) AS telefono "
                     + "FROM poc_cot_prospecto "
                     + "JOIN crm_prospectos ON crm_prospectos.id=poc_cot_prospecto.crm_prospecto_id "
                     + "JOIN gral_pais ON gral_pais.id = crm_prospectos.pais_id "
@@ -1607,6 +1640,15 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("direccion",rs.getString("direccion"));
                     row.put("contacto",rs.getString("contacto"));
                     row.put("lista_precio",String.valueOf(rs.getInt("lista_precio")));
+                    row.put("calle",rs.getString("calle"));
+                    row.put("numero",rs.getString("numero"));
+                    row.put("colonia",rs.getString("colonia"));
+                    row.put("municipio",rs.getString("municipio"));
+                    row.put("estado",rs.getString("estado"));
+                    row.put("pais",rs.getString("pais"));
+                    row.put("cp",rs.getString("cp"));
+                    row.put("telefono",rs.getString("telefono"));
+                    
                     return row;
                 }
             }
@@ -1617,7 +1659,7 @@ public class PocSpringDao implements PocInterfaceDao{
     
 
     @Override
-    public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id, String dirImgProd) {
+    public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id) {
         String sql_query = ""
                 + "SELECT  "
                     + "poc_cot_detalle.id as id_detalle, "
@@ -1632,11 +1674,13 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot_detalle.cantidad, "
                     + "poc_cot_detalle.precio_unitario, "
                     + "poc_cot_detalle.gral_mon_id as moneda_id, "
+                    + "gral_mon.descripcion_abr AS moneda_abr, "
                     + "(poc_cot_detalle.cantidad * poc_cot_detalle.precio_unitario) AS importe "
                 + "FROM poc_cot_detalle  "
                 + "LEFT JOIN inv_prod on inv_prod.id = poc_cot_detalle.inv_prod_id  "
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id  "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_cot_detalle.inv_presentacion_id  "
+                + "LEFT JOIN gral_mon on gral_mon.id = poc_cot_detalle.gral_mon_id  "
                 + "WHERE poc_cot_detalle.poc_cot_id= ? "
                 + "ORDER BY poc_cot_detalle.id";
         
@@ -1655,9 +1699,10 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("presentacion_id",rs.getString("presentacion_id"));
                     row.put("presentacion",rs.getString("presentacion"));
-                    row.put("cantidad",rs.getString("cantidad"));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),2));
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    row.put("moneda_abr",rs.getString("moneda_abr"));
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2));
                     return row;
                 }

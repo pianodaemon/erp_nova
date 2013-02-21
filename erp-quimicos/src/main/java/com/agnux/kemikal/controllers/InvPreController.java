@@ -117,7 +117,7 @@ public class InvPreController {
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProductoTiposJson(
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ) {
+        ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
@@ -221,14 +221,18 @@ public class InvPreController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> datosInvPre = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         
         if( id != 0  ){
             datosInvPre = this.getInvDao().getInvPre_Datos(id);
             presentaciones=this.getInvDao().getProducto_PresentacionesON(Integer.parseInt(datosInvPre.get(0).get("inv_prod_id")));
         }
         
+        monedas=this.getInvDao().getMonedas2();
+        
         jsonretorno.put("InvPre", datosInvPre);
         jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Monedas", monedas);
         
         
         return jsonretorno;
@@ -360,8 +364,20 @@ public class InvPreController {
             @RequestParam(value="select_tipo_redondeo8", required=false) String select_tipo_redondeo8,
             @RequestParam(value="select_tipo_redondeo9", required=false) String select_tipo_redondeo9,
             @RequestParam(value="select_tipo_redondeo10", required=false) String select_tipo_redondeo10,
-            Model model,@ModelAttribute("user") UserSessionData user
-            ) {
+            
+            @RequestParam(value="select_moneda1", required=false) String select_moneda1,
+            @RequestParam(value="select_moneda2", required=false) String select_moneda2,
+            @RequestParam(value="select_moneda3", required=false) String select_moneda3,
+            @RequestParam(value="select_moneda4", required=false) String select_moneda4,
+            @RequestParam(value="select_moneda5", required=false) String select_moneda5,
+            @RequestParam(value="select_moneda6", required=false) String select_moneda6,
+            @RequestParam(value="select_moneda7", required=false) String select_moneda7,
+            @RequestParam(value="select_moneda8", required=false) String select_moneda8,
+            @RequestParam(value="select_moneda9", required=false) String select_moneda9,
+            @RequestParam(value="select_moneda10", required=false) String select_moneda10,
+            
+        Model model,@ModelAttribute("user") UserSessionData user
+        ) {
 
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
@@ -401,6 +417,17 @@ public class InvPreController {
         valor_default_l8 = StringHelper.removerComas(valor_default_l8);
         valor_default_l9 = StringHelper.removerComas(valor_default_l9);
         valor_default_l10 = StringHelper.removerComas(valor_default_l10);
+        
+        select_moneda1 = StringHelper.verificarSelect(select_moneda1);
+        select_moneda2 = StringHelper.verificarSelect(select_moneda2);
+        select_moneda3 = StringHelper.verificarSelect(select_moneda3);
+        select_moneda4 = StringHelper.verificarSelect(select_moneda4);
+        select_moneda5 = StringHelper.verificarSelect(select_moneda5);
+        select_moneda6 = StringHelper.verificarSelect(select_moneda6);
+        select_moneda7 = StringHelper.verificarSelect(select_moneda7);
+        select_moneda8 = StringHelper.verificarSelect(select_moneda8);
+        select_moneda9 = StringHelper.verificarSelect(select_moneda9);
+        select_moneda10 = StringHelper.verificarSelect(select_moneda10);
         
         
         if( id.equals("0") ){
@@ -485,7 +512,17 @@ public class InvPreController {
                 select_tipo_redondeo8+"___"+
                 select_tipo_redondeo9+"___"+
                 select_tipo_redondeo10+"___"+
-                select_presentacion;
+                select_presentacion+"___"+
+                select_moneda1+"___"+
+                select_moneda2+"___"+
+                select_moneda3+"___"+
+                select_moneda4+"___"+
+                select_moneda5+"___"+
+                select_moneda6+"___"+
+                select_moneda7+"___"+
+                select_moneda8+"___"+
+                select_moneda9+"___"+
+                select_moneda10;
         
         succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
