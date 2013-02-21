@@ -119,8 +119,8 @@
                                                     </select>
                                                 </td>
                                                 <td>&nbsp;</td>
-                                                <td>Ver como:</td>
-                                                <td><select name="select_tipo" style="width:165px;"></select></td>
+                                                <td></td>
+                                                <input type="hidden" name="select_tipo" style="width:80px;"><!--<select name="select_tipo" style="width:120px;"></select>-->
                                             </tr>
                                             <tr>
                                                 <td colspan="18">&nbsp;</td>
@@ -307,8 +307,8 @@
                                                     </select>
                                                 </td>
                                                 <td>&nbsp;</td>
-                                                <td>Ver como:</td>
-                                                <td><select name="select_tipo" style="width:100px;"></select></td>
+                                                <td></td>
+                                                <input type="hidden" name="select_tipo" style="width:80px;"><!--<select name="select_tipo" style="width:120px;"></select>-->
                                             </tr>
                                             <tr>
                                                 <td colspan="18">&nbsp;</td>
@@ -430,8 +430,7 @@
         <form id="formaCrmRegistroCasos" action="edit.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal casos_div_one"  style="display:none;" title="">
-                
-                    <input type="hidden" name="select_tipo">
+                    
                     <input type="hidden" name="etapa">
                 
 					
@@ -461,15 +460,17 @@
                                             <tr>
                                                <td colspan="18">&nbsp;</td>                      
                                             </tr>
-                                            
-                                           
                                             <tr>
                                                 <td width="90px">&nbsp;Agente</td>
-                                                <td colspan="4">
+                                                <td >
                                                     <select name="select_agente" style="width:230px;">
                                                         <option value="0" selected="yes">--Seleccione Agente--</option>
                                                     </select>
                                                 </td>
+                                                <td colspan="2">&nbsp;&nbsp;&nbsp;</td>
+                                                <td colspan="2"></td>
+                                                <td><input type="hidden" name="select_tipo" style="width:80px;"><!--<select name="select_tipo" style="width:120px;"></select>--></td>
+                                                <td>&nbsp;&nbsp;&nbsp;</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="18">&nbsp;</td>
@@ -487,8 +488,6 @@
                                                 <td><select name="estatus" style="width:120px;"></select></td>
                                                 <td><input type="button" name="buscar" value="Consultar" style="width:80px; border-radius:5px;"</td>
                                                 
-                                                
-                                                
                                             </tr>
                                             <tr>
                                                 <td colspan="18">&nbsp;</td>
@@ -500,13 +499,13 @@
                                                             <table border="0" width="100%">
                                                                 <tr>
                                                                     <td>&nbsp;% Facturaci&oacute;n</td>
-                                                                    <td><input type="text" name="metas" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="text" name="casos_facturacion" style="width:70px;" readOnly="true"></td>
                                                                     <td></td>
                                                                     <td>% Producto&nbsp;</td>
-                                                                    <td><input type="text" name="totales" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="text" name="casos_producto" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;</td>
                                                                     <td>% Garant&iacute;a</td>
-                                                                    <td><input type="text" name="porcentaje" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="text" name="casos_garantia" style="width:70px;" readOnly="true"></td>
                                                
                                                                 </tr>
                                                                 <tr>
@@ -514,13 +513,13 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td>&nbsp;% Distribuci&oacute;n</td>
-                                                                    <td><input type="text" name="metas" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="text" name="casos_distribucion" style="width:70px;" readOnly="true"></td>
                                                                     <td></td>
                                                                     <td>% Da&ntilde;os&nbsp;</td>
-                                                                    <td><input type="text" name="totales" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="text" name="casos_danos" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;</td>
                                                                     <td>% Devoluciones</td>
-                                                                    <td><input type="text" name="porcentaje" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="text" name="casos_devoluciones" style="width:70px;" readOnly="true"></td>
                                                
                                                                 </tr>
                                                                 <tr>
@@ -528,10 +527,10 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td>&nbsp;% Cobranza</td>
-                                                                    <td><input type="text" name="metas" style="width:70px;" readOnly="true" ></td>
+                                                                    <td><input type="text" name="casos_cobranza" style="width:70px;" readOnly="true" ></td>
                                                                     <td></td>
                                                                     <td>% Varios&nbsp;</td>
-                                                                    <td><input type="text" name="metas" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="text" name="casos_varios" style="width:70px;" readOnly="true"></td>
                                                                     <td></td>
                                                                     
                                                                 </tr>
