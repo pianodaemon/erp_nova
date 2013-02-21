@@ -7055,7 +7055,7 @@ public class InvSpringDao implements InvInterfaceDao{
         if(orderBy.equals("id")) orderBy="descripcion";
         
         String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(prod_id integer, codigo character varying, descripcion character varying, unidad character varying, pres_id integer, presentacion character varying, moneda_id integer, moneda character varying, tc double precision, precio_minimo double precision) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
-        System.out.println("ControlCostos_PaginaGrid: "+sql_to_query);
+        System.out.println("getInvActualizaPrecio: "+sql_to_query);
         
         ArrayList<HashMap<String, Object>> hm125 = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -7063,22 +7063,16 @@ public class InvSpringDao implements InvInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
-                    //row.put("producto_id",String.valueOf(rs.getInt("producto_id")));
+                    row.put("prod_id",String.valueOf(rs.getInt("prod_id")));
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
-                    //row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
+                    row.put("pres_id",String.valueOf(rs.getInt("pres_id")));
                     row.put("presentacion",rs.getString("presentacion"));
-                    row.put("orden_compra",rs.getString("orden_compra"));
-                    row.put("factura_prov",rs.getString("factura_prov"));
+                    row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
                     row.put("moneda",rs.getString("moneda"));
-                    row.put("costo",StringHelper.roundDouble(rs.getDouble("costo"),2));
-                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
-                    row.put("costo_importacion",StringHelper.roundDouble(rs.getDouble("costo_importacion"),2));
-                    row.put("costo_directo",StringHelper.roundDouble(rs.getDouble("costo_directo"),2));
-                    row.put("costo_referencia",StringHelper.roundDouble(rs.getDouble("costo_referencia"),2));
+                    row.put("tc",StringHelper.roundDouble(rs.getDouble("tc"),2));
                     row.put("precio_minimo",StringHelper.roundDouble(rs.getDouble("precio_minimo"),2));
-                    row.put("moneda_pm",rs.getString("moneda_pm"));
                     return row;
                 }
             }

@@ -1617,6 +1617,83 @@ public class CrmSpringDao implements CrmInterfaceDao{
         return hm_registro_varios;  
     }
     
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getContactos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc, Integer id_empresa) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+        String sql_to_query = "SELECT crm_contactos.id, crm_contactos.nombre||' '||crm_contactos.apellido_paterno||' '||"
+                + "crm_contactos.apellido_materno as contacto "
+                + ",(CASE WHEN tipo_contacto=1 THEN 'Cliente' ELSE 'Prospecto' END) as tipo_contacto "                              
+                +"FROM crm_contactos "                        
+                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = crm_contactos.id "
+                +"WHERE crm_contactos.borrado_logico=false "
+                +"and crm_contactos.gral_emp_id= " +id_empresa
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("tipo_contacto",rs.getString("tipo_contacto"));
+                    row.put("contacto",rs.getString("contacto"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getContacto_Datos(Integer id) {
+        
+        String sql_to_query = "SELECT crm_contactos.*, ("
+                + "CASE WHEN tipo_contacto=1 THEN  "
+                + "(select tmp_crmcli.cxc_clie_id||'___'||cxc_clie.rfc||'___'||cxc_clie.razon_social as cliente from "
+                + "(select * from crm_contacto_cli where crm_contactos_id=crm_contactos.id) as tmp_crmcli "
+                + "join cxc_clie on cxc_clie.id=tmp_crmcli.cxc_clie_id limit 1) "
+                + "ELSE "
+                + "(select tmp_crmcli.crm_prospectos_id||'___'||crm_prospectos.rfc||'___'||crm_prospectos.razon_social as cliente "
+                + "from (select * from crm_contacto_pro where crm_contactos_id=crm_contactos.id) as tmp_crmcli join "
+                + "crm_prospectos on crm_prospectos.id=tmp_crmcli.crm_prospectos_id limit 1 ) "
+                + "END) cliente FROM crm_contactos WHERE id="+id;
+        
+        ArrayList<HashMap<String, String>> dato_datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("apellido_paterno",rs.getString("apellido_paterno"));
+                    row.put("apellido_materno",rs.getString("apellido_materno"));
+                    row.put("telefono1",rs.getString("telefono1"));
+                    row.put("telefono2",rs.getString("telefono2"));
+                    row.put("fax",rs.getString("fax"));
+                    row.put("telefono_directo",rs.getString("telefono_directo"));
+                    row.put("email",rs.getString("email")); 
+                    row.put("email2",rs.getString("email2")); 
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("cliente",rs.getString("cliente"));
+                    
+                    row.put("tipo_contacto",String.valueOf(rs.getInt("tipo_contacto")));
+                    row.put("gral_emp_id",String.valueOf(rs.getInt("gral_emp_id")));
+                    row.put("gral_suc_id",String.valueOf(rs.getInt("gral_suc_id")));
+                    
+                    return row;
+                }
+            }
+        );
+        return dato_datos;
+    }
 
 }
 

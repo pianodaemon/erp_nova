@@ -95,12 +95,11 @@ public class InvActualizadorPreciosController {
         
         //infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("codigo", "C&oacute;digo:90");
-        infoConstruccionTabla.put("descripcion","Descripci&oacute;n:150");
+        infoConstruccionTabla.put("descripcion","Descripci&oacute;n:200");
         infoConstruccionTabla.put("unidad", "Unidad:80");
         infoConstruccionTabla.put("presentacion", "Presentaci&oacute;n:100");
-        infoConstruccionTabla.put("precio_minimo", "P.M..:90");
-        infoConstruccionTabla.put("moneda_pm", "Moneda&nbsp;P.M.:90");
-        
+        infoConstruccionTabla.put("precio_minimo", "Precio M&iacute;nimo:110");
+        infoConstruccionTabla.put("moneda", "Moneda:80");
         
         ModelAndView x = new ModelAndView("invactualizaprecios/startup", "title", "Actualizador de Precios a partir del Precio M&iacute;nimo");
         
@@ -186,7 +185,7 @@ public class InvActualizadorPreciosController {
         DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags,id_user_cod);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data",this.getInvDao().getInvControlCostos_PaginaGrid(data_string, offset, items_por_pag, orderby, desc) );
+        jsonretorno.put("Data",this.getInvDao().getInvActualizaPrecio_PaginaGrid(data_string, offset, items_por_pag, orderby, desc) );
         
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
@@ -232,7 +231,56 @@ public class InvActualizadorPreciosController {
     }
     
     
+    //obtiene los Familias del producto seleccionado
+    @RequestMapping(method = RequestMethod.POST, value="/getSubFamiliasByFamProd.json")
+    //public @ResponseBody HashMap<java.lang.String,java.lang.Object> getProveedorJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getSubFamiliasByFamProdJson(
+            @RequestParam(value="fam", required=true) String familia_id,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getSubFamiliasByFamProdJson de {0}", InvControlCostosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> subfamilias = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        subfamilias = this.getInvDao().getProducto_Subfamilias(id_empresa,familia_id );
+        
+        jsonretorno.put("SubFamilias", subfamilias);
+        
+        return jsonretorno;
+    }
     
+    //obtiene los Familias del producto seleccionado
+    @RequestMapping(method = RequestMethod.POST, value="/getFamiliasByTipoProd.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getFamiliasByTipoProdJson(
+            @RequestParam(value="tipo_prod", required=true) String tipo_prod,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getFamiliasByTipoProdJson de {0}", InvControlCostosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> familias = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        familias = this.getInvDao().getInvProdSubFamiliasByTipoProd(id_empresa, tipo_prod);
+        
+        jsonretorno.put("Familias", familias);
+        
+        return jsonretorno;
+    }
     
     
     

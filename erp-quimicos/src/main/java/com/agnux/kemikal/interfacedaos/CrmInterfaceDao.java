@@ -96,4 +96,7 @@ public interface CrmInterfaceDao {
     public ArrayList<HashMap<String, String>> getBuscadorOportunidades(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa);
    
     
+    public ArrayList<HashMap<String, Object>> getContactos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getContacto_Datos(Integer id);
+    
 }
