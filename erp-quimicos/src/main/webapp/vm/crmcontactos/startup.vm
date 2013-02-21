@@ -7,10 +7,12 @@
 		
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/crmcontactos/formaCrmContactos.css" type="text/css" />
-		
+        <link rel="stylesheet" href="../../css/modalbox/crmcontactos/formaBuscaCliente_Prospecto.css" type="text/css" />
+        
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/crmcontactos/modalboxCrmContactos.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/crmcontactos/modalboxBuscaCliente_Prospecto.js"></script>
         <script type="text/javascript" src="../../js/implements/crmcontactos/index.js" ></script>
         
         #include("${layoutmenu}")
@@ -34,23 +36,31 @@
         <!--Esta tabla va  en la barra de buscador -->
 		<table border="0" class="tabla_buscador" style="display:none">
 			<tr>
-			   <td colspan="9">&nbsp;&nbsp;</td>
+			   <td colspan="12">&nbsp;&nbsp;</td>
 			</tr>
 			
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>Descripcion</td>
+				<td>Nombre</td>
 				<td width="10">&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="busqueda_titulo" style="width:150px;"></td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td><INPUT TYPE="text" name="busqueda_nombre" style="width:150px;"></td>
+                                <td width="10">&nbsp;&nbsp;</td>
+				<td>Tipo contacto</td>
 				<td width="10">&nbsp;&nbsp;</td>
+                                <td>
+                                    <select name="busquedatipo_contacto" style="width:145px;" >
+                                        <option value="1">Cliente</option>
+                                        <option value="2">Prospecto</option>
+                                    </select>
+                                </td>
+                                <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td ><INPUT TYPE="buttrazon_socialon" value="Limpiar"></td>
+				<td ><INPUT TYPE="button" value="Limpiar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 			<tr>
-				<td colspan="9">&nbsp;&nbsp;</td>
+				<td colspan="12">&nbsp;&nbsp;</td>
 			</tr>
 		</table>
         <table class="acciones">
@@ -121,13 +131,13 @@
                                                     <table>
                                                         <tr>
                                                             <td>
-                                                                <td width="80">RFC</td>
+                                                                <td width="90">RFC</td>
                                                                 <td width="110">
                                                                     <INPUT TYPE="text" name="rfc" style="width:100px;">
                                                                     <INPUT TYPE="hidden" name="id_cliente" value="0" >
                                                                 </td>
                                                                 <td width="60"><a  href="busca_cliente">(Buscar)</a></td>
-                                                                <td width="85">Razon Social</td>
+                                                                <td width="83">Razon Social</td>
                                                                 <td width="400"><INPUT TYPE="text" name="razon_social" style="width:395px;"></td>
                                                             </td>
                                                         </tr>
@@ -139,10 +149,10 @@
                                                 <td width="5"></td>
                                                 <td width="100">Nombre</td>
                                                 <td width="150"><INPUT TYPE="text" name="nombre" style="width:145px;"></td>
-                                                <td width="25"></td>
+                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombre"></div></td>
                                                 <td width="100">Apellido Paterno</td>
                                                 <td width="150"><INPUT TYPE="text" name="apellido_paterno" style="width:145px;"></td>
-                                                <td width="25"></td>
+                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_apellido_materno"></div></td>
                                                 <td width="100">Apellido Materno</td>
                                                 <td width="150"><INPUT TYPE="text" name="apellido_materno" style="width:145px;"></td>
                                                 <td width="25"></td>
@@ -155,7 +165,7 @@
                                                 <td width="5"></td>
                                                 <td width="100">Telefono 1</td>
                                                 <td width="150"><INPUT TYPE="text" name="telefono_1" style="width:145px;"></td>
-                                                <td width="25"></td>
+                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_telefono_1"></div></td>
                                                 <td width="100">Telefono 2</td>
                                                 <td width="150"><INPUT TYPE="text" name="telefono_2" style="width:145px;"></td>
                                                 <td width="25"></td>
@@ -174,10 +184,33 @@
                                                 <td width="25"></td>
                                                 <td width="100">Correo 1</td>
                                                 <td width="150"><INPUT TYPE="text" name="correo_1" style="width:145px;"></td>
-                                                <td width="25"></td>
+                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_correo_1"></div></td>
                                                 <td width="100">Correo 2</td>
                                                 <td width="150"><INPUT TYPE="text" name="correo_2" style="width:145px;"></td>
                                                 <td width="25"></td>
+                                                <td width="5"></td>
+                                            </tr>
+                                            <tr>
+                                               <td colspan="11">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="5"></td>
+                                                <td width="100">Observaciones</td>
+                                                <td width="150"></td>
+                                                <td width="25"></td>
+                                                <td width="100"></td>
+                                                <td width="150"></td>
+                                                <td width="25"></td>
+                                                <td width="100"></td>
+                                                <td width="150"></td>
+                                                <td width="25"></td>
+                                                <td width="5"></td>
+                                            </tr>
+                                            <tr>
+                                                <td width="5"></td>
+                                                <td colspan="8">
+                                                    <textarea name="observaciones" rows="4" cols="60" style="width:660px; resize:none;"></textarea>
+                                                </td>
                                                 <td width="5"></td>
                                             </tr>
                                             <tr>
@@ -187,9 +220,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="fixed column" id="botones" style="width:359px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:760px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
                                 <table border="0">
-                                        <tr><td colspan="4" height="7"></td></tr>
+                                        <tr><td colspan="10" height="7"></td></tr>
                                         <tr>
                                             <td width="559"></td>
                                             <td>
@@ -209,3 +242,116 @@
 </html>	
 
 
+
+
+
+
+
+
+<!-- Buscador de contactos -->
+<div class="buscador_clientes_prospectos" style="display:none;">	
+	<table width="100%" border="0" class="formaBusqueda_cliente_prospecto">
+		<tr>
+			<td>
+				<div class="div_dos_buscacliente_prospecto">
+					<table width="100%" border="0">
+						<thead>
+							<tr>
+								<td colspan="7" height="50" valign="top"><div class="titulo_buscacliente_prospecto" width="100%"><strong>Buscador</strong></div></td>
+							</tr>
+						</thead>
+						
+						<tbody>
+							<tr>
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff;"></td>
+								<td colspan="3" style="background:#ffffff;" width="500">
+									
+									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+										<tr>
+											<td colspan="7" width="575" height="10"></td>
+										</tr>
+										
+                                                                                <tr>
+											<td width="100">RFC :</td>
+                                                                                        <td width="25">&nbsp;</td>
+											<td width="350" ><INPUT TYPE="text" name="buscador_rfc" style="width:200px;"></td>
+											<td width="25"></td>
+                                                                                        <td width="25"></td>
+                                                                                        <td width="25"></td>
+                                                                                        <td width="25"></td>
+											
+										</tr>
+                                                                                <tr>
+											<td colspan="7" width="575" height="10"></td>
+										</tr>
+										<tr>
+											<td width="100">Razon&nbsp;Social</td>
+                                                                                        <td >&nbsp;</td>
+											<td width="350" colspan="4"><INPUT TYPE="text" name="buscador_razon_social" style="width:350px;"></td>
+											<td width="25" align="right">
+												<INPUT TYPE="button" id="busca_contacto_modalbox" class="onmouseOutBuscar">
+											</td>
+											
+										</tr>
+										
+										<tr>
+											<td colspan="7" width="575" height="10"></td>
+										</tr>
+									</table>
+									
+								</td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr style="font-size:13px;">
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff"></td>
+								
+								<td width="280" style="background:#A8A9AB;">No.&nbsp;Control</td>
+								<td width="210" style="background:#A8A9AB;">Razon&nbsp;Social</td>
+								<td width="110" style="background:#A8A9AB;">RFC</td>
+								
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr>
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff"></td>
+								<td style="background:#ffffff; border: solid 1px #313E74;" colspan="3" width="600">
+									<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+										<table  border="0" id="tabla_resultado" width="600" style="font-size:12px;">
+											<!--aqui van los resultados de la busqueda-->
+										</table>
+									</div>
+								</td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr>
+								<td width="10"></td>
+								<td width="10" colspan="5" height="4" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr>
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff" colspan="3"></td>
+								<td width="110" style="background:#ffffff" align="right">
+									<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+								</td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+							<tr>
+								<td width="10"></td>
+								<td width="10" colspan="5" height="6" style="background:#ffffff"></td>
+								<td width="10"></td>
+							</tr>
+						</tbody>
+						
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
