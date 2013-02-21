@@ -387,7 +387,7 @@ $(function() {
 	
 	
 	//buscador de clientes
-	$busca_clientes = function($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, razon_social_cliente ){
+	$busca_clientes = function($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, razon_social_cliente, numero_control ){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscacliente();
 		var $dialogoc =  $('#forma-buscacliente-window');
@@ -421,19 +421,35 @@ $(function() {
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
-		var seleccionado='';
-		if(razon_social_cliente != ''){
-			//asignamos la Razon Social del Cliente al campo Nombre
-			$cadena_buscar.val(razon_social_cliente);
-			seleccionado='selected="yes"';
-		}
-		
+		var ncontrol_selec=0;
 		var html = '';
 		$select_filtro_por.children().remove();
 		html='<option value="0">[-- Opcion busqueda --]</option>';
-		html+='<option value="1">No. de control</option>';
+		
+		if(numero_control != ''){
+			//asignamos el numero de control al campo de busqueda
+			$cadena_buscar.val(numero_control);
+			ncontrol_selec=1;
+			if(razon_social_cliente == ''){
+				html+='<option value="1" selected="yes">No. de control</option>';
+			}else{
+				html+='<option value="1">No. de control</option>';
+			}
+		}else{
+			html+='<option value="1">No. de control</option>';
+		}
 		html+='<option value="2">RFC</option>';
-		html+='<option value="3" '+seleccionado+'>Razon social</option>';
+		if(razon_social_cliente != ''){
+			//asignamos la Razon Social del Cliente al campo Nombre
+			$cadena_buscar.val(razon_social_cliente);
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}else{
+			if(razon_social_cliente == '' && numero_control == ''){
+				html+='<option value="3" selected="yes">Razon social</option>';
+			}else{
+				html+='<option value="3">Razon social</option>';
+			}
+		}
 		html+='<option value="4">CURP</option>';
 		html+='<option value="5">Alias</option>';
 		$select_filtro_por.append(html);
@@ -507,7 +523,7 @@ $(function() {
 					var id_termino=$(this).find('#terminos_id').val();
 					var id_vendedor=$(this).find('#vendedor_id').val();
 					//almacena el valor de la lista
-					var $lista_precios=$(this).find('#lista_precios').val();
+					var num_lista_precio =$(this).find('#lista_precios').val();
 					var id_metodo_de_pago=$(this).find('#metodo_id').val();
 					var tiene_dir_fiscal=$(this).find('#tiene_df').val();
 					
@@ -521,28 +537,35 @@ $(function() {
 						$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
 					}
 					
-					if($lista_precios>0){
+					//carga el select de monedas  con la moneda del cliente seleccionada por default
+					var moneda_hmtl = '';
+					if(parseInt(num_lista_precio)>0){
 						//aquí se arma la cadena json para traer la moneda de la lista de precio
 						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaListaCliente.json';
-						$arreglo2 = { 'lista_precio':$lista_precios }
-						$.post(input_json2,$arreglo2,function(moneda_lista){
-							$.each(moneda_lista['listaprecio'],function(entryIndex ,monedalista){
-								id_moneda = monedalista['moneda_id'];
+						$arreglo2 = { 'lista_precio':num_lista_precio }
+						$.post(input_json2,$arreglo2,function(entry2){
+							id_moneda=entry2['listaprecio'][0]['moneda_id'];
+							$select_moneda.children().remove();
+							$.each(array_monedas ,function(entryIndex,moneda){
+								if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+									moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+								}else{
+									//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+								}
 							});
+							$select_moneda.append(moneda_hmtl);
 						});
+					}else{
+						$select_moneda.children().remove();
+						$.each(array_monedas ,function(entryIndex,moneda){
+							if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+								moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+							}else{
+								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+							}
+						});
+						$select_moneda.append(moneda_hmtl);
 					}
-					
-					//carga el select de monedas  con la moneda del cliente seleccionada por default
-					$select_moneda.children().remove();
-					var moneda_hmtl = '';
-					$.each(array_monedas ,function(entryIndex,moneda){
-						if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-						}else{
-							moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-						}
-					});
-					$select_moneda.append(moneda_hmtl);
 					
 					//carga select de condiciones con los dias de Credito default del Cliente
 					$select_condiciones.children().remove();
@@ -554,8 +577,7 @@ $(function() {
 							hmtl_condiciones += '<option value="' + condicion['id'] + '" >' + condicion['descripcion'] + '</option>';
 						}
 					});
-					$select_condiciones.append(hmtl_condiciones);					
-					
+					$select_condiciones.append(hmtl_condiciones);
 					
 					//carga select de vendedores
 					$select_vendedor.children().remove();
@@ -687,7 +709,7 @@ $(function() {
 	
 	
 	//buscador de productos
-	$busca_productos = function(sku_buscar){
+	$busca_productos = function(sku_buscar, descripcion){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
@@ -728,15 +750,23 @@ $(function() {
 		$.post(input_json_tipos,$arreglo,function(data){
 			//Llena el select tipos de productos en el buscador
 			$select_tipo_producto.children().remove();
-			var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
+			var prod_tipos_html = '<option value="0">[--Seleccionar Tipo--]</option>';
 			$.each(data['prodTipos'],function(entryIndex,pt){
-				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+				if(parseInt( pt['id']) == 1 ){
+					prod_tipos_html += '<option value="' + pt['id'] + '"  selected="yes">' + pt['titulo'] + '</option>';
+				}else{
+					prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+				}
 			});
 			$select_tipo_producto.append(prod_tipos_html);
 		});
 		
 		//Aqui asigno al campo sku del buscador si el usuario ingresó un sku antes de hacer clic en buscar en la ventana principal
 		$campo_sku.val(sku_buscar);
+		
+		//asignamos la descripcion del producto, si el usuario capturo la descripcion antes de abrir el buscador
+		$campo_descripcion.val(descripcion);
+		
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -1342,7 +1372,7 @@ $(function() {
 		$no_cuenta.attr('disabled','-1');
 		$etiqueta_digit.attr('disabled','-1');
 		$folio.css({'background' : '#F0F0F0'});
-		$nocliente.css({'background' : '#F0F0F0'});
+		//$nocliente.css({'background' : '#F0F0F0'});
 		$dir_cliente.css({'background' : '#F0F0F0'});
 		
 		//quitar enter a todos los campos input
@@ -1513,7 +1543,7 @@ $(function() {
 			//buscador de clientes
 			$busca_cliente.click(function(event){
 				event.preventDefault();
-				$busca_clientes($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, entry['Monedas'], entry['Condiciones'],entry['Vendedores'], entry['MetodosPago'], $no_cuenta, $etiqueta_digit, $razon_cliente.val());
+				$busca_clientes($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, entry['Monedas'], entry['Condiciones'],entry['Vendedores'], entry['MetodosPago'], $no_cuenta, $etiqueta_digit, $razon_cliente.val(), $nocliente.val());
 			});
 			
 			
@@ -1522,6 +1552,13 @@ $(function() {
 		
 		//asignar evento keypress al campo Razon Social del cliente
 		$razon_cliente.keypress(function(e){
+			if(e.which==13 ) {
+				$busca_cliente.trigger('click');
+			}
+		});
+		
+		//asignar evento keypress al campo Numero de Control del cliente
+		$nocliente.keypress(function(e){
 			if(e.which==13 ) {
 				$busca_cliente.trigger('click');
 			}
@@ -1667,7 +1704,7 @@ $(function() {
 		//buscador de productos
 		$busca_sku.click(function(event){
 			event.preventDefault();
-			$busca_productos($sku_producto.val());
+			$busca_productos($sku_producto.val(), $nombre_producto.val());
 		});
 		
 		//agregar producto al grid
@@ -1680,6 +1717,14 @@ $(function() {
 		$sku_producto.keypress(function(e){
 			if(e.which == 13){
 				$agregar_producto.trigger('click');
+				return false;
+			}
+		});
+		
+		//desencadena clic del href Buscar Producto al pulsar enter en el campo Nombre del producto
+		$nombre_producto.keypress(function(e){
+			if(e.which == 13){
+				$busca_sku.trigger('click');
 				return false;
 			}
 		});
@@ -2551,7 +2596,7 @@ $(function() {
 				//buscador de productos
 				$busca_sku.click(function(event){
 					event.preventDefault();
-					$busca_productos($sku_producto.val());
+					$busca_productos($sku_producto.val(), $nombre_producto.val());
 				});
 				
 				//agregar producto al grid
@@ -2569,8 +2614,14 @@ $(function() {
 					}
 				});
 				
-				
-				
+				//desencadena clic del href Buscar Producto al pulsar enter en el campo Nombre del producto
+				$nombre_producto.keypress(function(e){
+					if(e.which == 13){
+						$busca_sku.trigger('click');
+						return false;
+					}
+				});
+						
 				
 				$cancelar_pedido.click(function(e){
 					$accion_proceso.attr({'value' : "cancelar"});

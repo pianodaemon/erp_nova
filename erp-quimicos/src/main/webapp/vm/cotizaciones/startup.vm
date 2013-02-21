@@ -247,10 +247,10 @@
                                                                 <td width="10"></td>
                                                                 <td width="80">C&oacute;digo&nbsp;producto</td>
                                                                 <td width="125"><input type="text" name="sku_producto" style="width:120px;"></td>
-                                                                <td width="50"><a  href="busca_sku">(Buscar)</a></td>
+                                                                <td width="50"><a  href="agregar_producto">(Agregar)</a></td>
                                                                 <td width="45">Nombre</td>
-                                                                <td width="355"><input type="text" name="nombre_producto" style="width:350px;" readOnly="true"></td>
-                                                                <td width="60"><a  href="agregar_producto">(Agregar)</a></td>
+                                                                <td width="355"><input type="text" name="nombre_producto" style="width:350px;"></td>
+                                                                <td width="60"><a  href="busca_sku">(Buscar)</a></td>
                                                                 <td width="20"></td>
                                                                 <td width="90"></td>
                                                                 <td width="20"></td>

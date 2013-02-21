@@ -447,9 +447,9 @@ $(function() {
 	
 	
 	
-
+	
 	//buscador de productos
-	$busca_productos = function(sku_buscar){
+	$busca_productos = function(sku_buscar, descripcion){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
@@ -491,9 +491,13 @@ $(function() {
 		$.post(input_json_tipos,$arreglo,function(data){
 			//Llena el select tipos de productos en el buscador
 			$select_tipo_producto.children().remove();
-			var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
+			var prod_tipos_html = '<option value="0">[--Seleccionar Tipo--]</option>';
 			$.each(data['prodTipos'],function(entryIndex,pt){
-				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+				if(parseInt(pt['id'])==1){
+					prod_tipos_html += '<option value="' + pt['id'] + '" selected="yes">' + pt['titulo'] + '</option>';
+				}else{
+					prod_tipos_html += '<option value="' + pt['id'] + '" >' + pt['titulo'] + '</option>';
+				}
 			});
 			$select_tipo_producto.append(prod_tipos_html);
 		});
@@ -501,6 +505,9 @@ $(function() {
 		
 		//Aqui asigno al campo sku del buscador si el usuario ingresó un sku antes de hacer clic en buscar en la ventana principal
 		$campo_sku.val(sku_buscar);
+		
+		$campo_descripcion.val(descripcion);
+		
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -1242,7 +1249,7 @@ $(function() {
 		//buscador de productos
 		$busca_sku.click(function(event){
 			event.preventDefault();
-			$busca_productos($sku_producto.val());
+			$busca_productos($sku_producto.val(), $nombre_producto.val());
 		});
 		
 		/*
@@ -1264,6 +1271,16 @@ $(function() {
 				return false;
 			}
 		});
+		
+		
+		//desencadena clic del href Buscar producto al pulsar enter en el campo Nombre del producto
+		$nombre_producto.keypress(function(e){
+			if(e.which == 13){
+				$busca_sku.trigger('click');
+				return false;
+			}
+		});
+		
 		
 		//desencadena clic del href Buscar cliente al pulsar enter en el campo numero de control del cliente
 		$nocontrolcliente.keypress(function(e){
@@ -1438,7 +1455,7 @@ $(function() {
 				
 				$select_moneda2.hide();
 				//ocultar boton de generar pdf. Solo debe estar activo en editar
-				$boton_genera_pdf.hide();
+				//$boton_genera_pdf.hide();
 				//$descripcion_larga.hide();
 				$tr_tipo.hide();
 				$no_control_cliente.attr('readonly',true);
@@ -1656,7 +1673,7 @@ $(function() {
 				//buscador de productos
 				$busca_sku.click(function(event){
 					event.preventDefault();
-					$busca_productos($sku_producto.val());
+					$busca_productos($sku_producto.val(), $nombre_producto.val());
 				});
 				
 				
@@ -1669,11 +1686,21 @@ $(function() {
 					}
 				});
 				
+		
+				//desencadena clic del href Buscar producto al pulsar enter en el campo Nombre del producto
+				$nombre_producto.keypress(function(e){
+					if(e.which == 13){
+						$busca_sku.trigger('click');
+						return false;
+					}
+				});
+		
+				
 				//alert($descripcion_larga.val());
 				$boton_genera_pdf.click(function(event){
-					var seleccionado=0;
+					var seleccionado="false";
 					if($check_descripcion_larga.is(':checked')){
-						seleccionado=1;
+						seleccionado="true";
 					}
 					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getGeneraPdfCotizacion/'+$id_cotizacion.val()+'/'+seleccionado+'/'+iu+'/out.json';

@@ -13,7 +13,7 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/invcontrolcostos";
+	var controller = $contextpath.val()+"/controllers/invactualizaprecios";
 	
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -218,38 +218,38 @@ $(function() {
 	
 	
 	$tabs_li_funxionalidad = function(){
-		var $select_prod_tipo = $('#forma-invcontrolcostos-window').find('select[name=prodtipo]');
-		$('#forma-invcontrolcostos-window').find('#submit').mouseover(function(){
-			$('#forma-invcontrolcostos-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+		var $select_prod_tipo = $('#forma-invactualizaprecios-window').find('select[name=prodtipo]');
+		$('#forma-invactualizaprecios-window').find('#submit').mouseover(function(){
+			$('#forma-invactualizaprecios-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 		});
-		$('#forma-invcontrolcostos-window').find('#submit').mouseout(function(){
-			$('#forma-invcontrolcostos-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
-		});
-		
-		$('#forma-invcontrolcostos-window').find('#boton_cancelar').mouseover(function(){
-			$('#forma-invcontrolcostos-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
-		});
-		$('#forma-invcontrolcostos-window').find('#boton_cancelar').mouseout(function(){
-			$('#forma-invcontrolcostos-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
+		$('#forma-invactualizaprecios-window').find('#submit').mouseout(function(){
+			$('#forma-invactualizaprecios-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
 		});
 		
-		$('#forma-invcontrolcostos-window').find('#close').mouseover(function(){
-			$('#forma-invcontrolcostos-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		$('#forma-invactualizaprecios-window').find('#boton_cancelar').mouseover(function(){
+			$('#forma-invactualizaprecios-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
 		});
-		$('#forma-invcontrolcostos-window').find('#close').mouseout(function(){
-			$('#forma-invcontrolcostos-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		$('#forma-invactualizaprecios-window').find('#boton_cancelar').mouseout(function(){
+			$('#forma-invactualizaprecios-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
 		});
 		
-		$('#forma-invcontrolcostos-window').find(".contenidoPes").hide(); //Hide all content
-		$('#forma-invcontrolcostos-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-		$('#forma-invcontrolcostos-window').find(".contenidoPes:first").show(); //Show first tab content
+		$('#forma-invactualizaprecios-window').find('#close').mouseover(function(){
+			$('#forma-invactualizaprecios-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		});
+		$('#forma-invactualizaprecios-window').find('#close').mouseout(function(){
+			$('#forma-invactualizaprecios-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		});
+		
+		$('#forma-invactualizaprecios-window').find(".contenidoPes").hide(); //Hide all content
+		$('#forma-invactualizaprecios-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+		$('#forma-invactualizaprecios-window').find(".contenidoPes:first").show(); //Show first tab content
 		
 		//On Click Event
-		$('#forma-invcontrolcostos-window').find("ul.pestanas li").click(function() {
-			$('#forma-invcontrolcostos-window').find(".contenidoPes").hide();
-			$('#forma-invcontrolcostos-window').find("ul.pestanas li").removeClass("active");
+		$('#forma-invactualizaprecios-window').find("ul.pestanas li").click(function() {
+			$('#forma-invactualizaprecios-window').find(".contenidoPes").hide();
+			$('#forma-invactualizaprecios-window').find("ul.pestanas li").removeClass("active");
 			var activeTab = $(this).find("a").attr("href");
-			$('#forma-invcontrolcostos-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$('#forma-invactualizaprecios-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
 			$(this).addClass("active");
 			return false;
 		});
@@ -461,13 +461,13 @@ $(function() {
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
 					//asignar a los campos correspondientes el sku y y descripcion
-					$('#forma-invcontrolcostos-window').find('input[name=id_producto]').val($(this).find('#id_prod_buscador').val());
-					$('#forma-invcontrolcostos-window').find('input[name=producto]').val($(this).find('span.titulo_prod_buscador').html());
+					$('#forma-invactualizaprecios-window').find('input[name=id_producto]').val($(this).find('#id_prod_buscador').val());
+					$('#forma-invactualizaprecios-window').find('input[name=producto]').val($(this).find('span.titulo_prod_buscador').html());
 					//elimina la ventana de busqueda
 					var remove = function() { $(this).remove(); };
 					$('#forma-buscaproducto-overlay').fadeOut(remove);
 					//asignar el enfoque al campo sku del producto
-					$('#forma-invcontrolcostos-window').find('input[name=producto]').focus();
+					$('#forma-invactualizaprecios-window').find('input[name=producto]').focus();
 				});
 			});
 		});
@@ -565,16 +565,16 @@ $(function() {
 		event.preventDefault();
 		var id_to_show = 0;
 		
-		$(this).modalPanel_invcontrolcostos();
+		$(this).modalPanel_invactualizaprecios();
 		
-		var form_to_show = 'formainvcontrolcostos00';
+		var form_to_show = 'formainvactualizaprecios00';
 		$('#' + form_to_show).each (function(){this.reset();});
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-invcontrolcostos-window').css({ "margin-left": -425, 	"margin-top": -230 });
+		$('#forma-invactualizaprecios-window').css({ "margin-left": -425, 	"margin-top": -230 });
 		
-		$forma_selected.prependTo('#forma-invcontrolcostos-window');
+		$forma_selected.prependTo('#forma-invactualizaprecios-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		
 		$tabs_li_funxionalidad();
@@ -584,49 +584,49 @@ $(function() {
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 					};
 		
-		var $identificador = $('#forma-invcontrolcostos-window').find('input[name=identificador]');
-		var $folio = $('#forma-invcontrolcostos-window').find('input[name=folio]');
-		var $id_producto = $('#forma-invcontrolcostos-window').find('input[name=id_producto]');
-		var $producto = $('#forma-invcontrolcostos-window').find('input[name=producto]');
-		var $buscar_producto = $('#forma-invcontrolcostos-window').find('#buscar_producto');
+		var $identificador = $('#forma-invactualizaprecios-window').find('input[name=identificador]');
+		var $folio = $('#forma-invactualizaprecios-window').find('input[name=folio]');
+		var $id_producto = $('#forma-invactualizaprecios-window').find('input[name=id_producto]');
+		var $producto = $('#forma-invactualizaprecios-window').find('input[name=producto]');
+		var $buscar_producto = $('#forma-invactualizaprecios-window').find('#buscar_producto');
 		
-		var $select_tipo_prod = $('#forma-invcontrolcostos-window').find('select[name=select_tipo_prod]');
-		var $select_marca = $('#forma-invcontrolcostos-window').find('select[name=select_marca]');
-		var $select_familia = $('#forma-invcontrolcostos-window').find('select[name=select_familia]');
-		var $select_subfamilia = $('#forma-invcontrolcostos-window').find('select[name=select_subfamilia]');
-		var $select_presentacion = $('#forma-invcontrolcostos-window').find('select[name=select_presentacion]');
-		var $tipo_cambio = $('#forma-invcontrolcostos-window').find('input[name=tipo_cambio]');
+		var $select_tipo_prod = $('#forma-invactualizaprecios-window').find('select[name=select_tipo_prod]');
+		var $select_marca = $('#forma-invactualizaprecios-window').find('select[name=select_marca]');
+		var $select_familia = $('#forma-invactualizaprecios-window').find('select[name=select_familia]');
+		var $select_subfamilia = $('#forma-invactualizaprecios-window').find('select[name=select_subfamilia]');
+		var $select_presentacion = $('#forma-invactualizaprecios-window').find('select[name=select_presentacion]');
+		var $tipo_cambio = $('#forma-invactualizaprecios-window').find('input[name=tipo_cambio]');
 		
-		//var $check_costo_ultimo = $('#forma-invcontrolcostos-window').find('input[name=check_costo_ultimo]');
-		//var $check_costo_promedio = $('#forma-invcontrolcostos-window').find('input[name=check_costo_promedio]');
-		var $radio_costo_ultimo = $('#forma-invcontrolcostos-window').find('.radio_costo_ultimo');
-		var $radio_costo_promedio = $('#forma-invcontrolcostos-window').find('.radio_costo_promedio');
+		//var $check_costo_ultimo = $('#forma-invactualizaprecios-window').find('input[name=check_costo_ultimo]');
+		//var $check_costo_promedio = $('#forma-invactualizaprecios-window').find('input[name=check_costo_promedio]');
+		var $radio_costo_ultimo = $('#forma-invactualizaprecios-window').find('.radio_costo_ultimo');
+		var $radio_costo_promedio = $('#forma-invactualizaprecios-window').find('.radio_costo_promedio');
 		
-		var $costo_importacion = $('#forma-invcontrolcostos-window').find('input[name=costo_importacion]');
-		var $costo_directo = $('#forma-invcontrolcostos-window').find('input[name=costo_directo]');
-		var $precio_minimo = $('#forma-invcontrolcostos-window').find('input[name=precio_minimo]');
-		var $check_simulacion = $('#forma-invcontrolcostos-window').find('input[name=check_simulacion]');
-		var $calculo_simulacion = $('#forma-invcontrolcostos-window').find('input[name=calculo_simulacion]');
+		var $costo_importacion = $('#forma-invactualizaprecios-window').find('input[name=costo_importacion]');
+		var $costo_directo = $('#forma-invactualizaprecios-window').find('input[name=costo_directo]');
+		var $precio_minimo = $('#forma-invactualizaprecios-window').find('input[name=precio_minimo]');
+		var $check_simulacion = $('#forma-invactualizaprecios-window').find('input[name=check_simulacion]');
+		var $calculo_simulacion = $('#forma-invactualizaprecios-window').find('input[name=calculo_simulacion]');
 		
 		
-		var $busqueda = $('#forma-invcontrolcostos-window').find('#busqueda');
-		var $pdf = $('#forma-invcontrolcostos-window').find('#pdf');
-		var $excel = $('#forma-invcontrolcostos-window').find('#excel');
-		var $aplicar = $('#forma-invcontrolcostos-window').find('#aplicar');
+		var $busqueda = $('#forma-invactualizaprecios-window').find('#busqueda');
+		var $pdf = $('#forma-invactualizaprecios-window').find('#pdf');
+		var $excel = $('#forma-invactualizaprecios-window').find('#excel');
+		var $aplicar = $('#forma-invactualizaprecios-window').find('#aplicar');
 		
 		//tabla contenedor del listado de productos
-		var $grid_productos = $('#forma-invcontrolcostos-window').find('#grid_productos');
-		var $etiqueta_encabezado_tipo_costo = $('#forma-invcontrolcostos-window').find('#tipo_costo');
+		var $grid_productos = $('#forma-invactualizaprecios-window').find('#grid_productos');
+		var $etiqueta_encabezado_tipo_costo = $('#forma-invactualizaprecios-window').find('#tipo_costo');
 		
 		
 		
-		var $cerrar_plugin = $('#forma-invcontrolcostos-window').find('#close');
-		var $cancelar_plugin = $('#forma-invcontrolcostos-window').find('#boton_cancelar');
-		var $submit_actualizar = $('#forma-invcontrolcostos-window').find('#submit');
+		var $cerrar_plugin = $('#forma-invactualizaprecios-window').find('#close');
+		var $cancelar_plugin = $('#forma-invactualizaprecios-window').find('#boton_cancelar');
+		var $submit_actualizar = $('#forma-invactualizaprecios-window').find('#submit');
 		
 		
 		//quitar enter a todos los campos input
-		$('#forma-invcontrolcostos-window').find('input').keypress(function(e){
+		$('#forma-invactualizaprecios-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
 				return false;
 			}
@@ -663,20 +663,20 @@ $(function() {
 			if ( data['success'] == "true" ){
 				jAlert("Los datos de guardaron con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
-				$('#forma-invcontrolcostos-overlay').fadeOut(remove);
+				$('#forma-invactualizaprecios-overlay').fadeOut(remove);
 				$pdf.trigger('click');
 				//$get_datos_grid();
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
-				//$('#forma-invcontrolcostos-window').find('.div_one').css({'height':'545px'});//sin errores
-				$('#forma-invcontrolcostos-window').find('.invcontrolcostos_div_one').css({'height':'578px'});//con errores
-				$('#forma-invcontrolcostos-window').find('div.interrogacion').css({'display':'none'});
+				//$('#forma-invactualizaprecios-window').find('.div_one').css({'height':'545px'});//sin errores
+				$('#forma-invactualizaprecios-window').find('.invactualizaprecios_div_one').css({'height':'578px'});//con errores
+				$('#forma-invactualizaprecios-window').find('div.interrogacion').css({'display':'none'});
 				
 				$grid_productos.find('#cant').css({'background' : '#ffffff'});
 				$grid_productos.find('#cost').css({'background' : '#ffffff'});
 				
-				$('#forma-invcontrolcostos-window').find('#div_warning_grid').css({'display':'none'});
-				$('#forma-invcontrolcostos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+				$('#forma-invactualizaprecios-window').find('#div_warning_grid').css({'display':'none'});
+				$('#forma-invactualizaprecios-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 				
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
@@ -685,7 +685,7 @@ $(function() {
 					longitud = tmp.split(':');
 					
 					if( longitud.length > 1 ){
-						$('#forma-invcontrolcostos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						$('#forma-invactualizaprecios-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -928,7 +928,7 @@ $(function() {
 		
 		//al darle aplicar en Simulacion, ejecutamos el click del boton Busqueda
 		$aplicar.click(function(event){
-			$('#forma-invcontrolcostos-window').find('div.interrogacion').css({'display':'none'});//desaparecer los warning
+			$('#forma-invactualizaprecios-window').find('div.interrogacion').css({'display':'none'});//desaparecer los warning
 			var ejecutar=false;
 			//indica que la busqueda se ejecuta desde el Boton APLICAR, 
 			//por lo tanto debe hacer calculos de simulacion
@@ -941,7 +941,7 @@ $(function() {
 					}else{
 						ejecutar=false;
 						//visualizar el warning
-						$('#forma-invcontrolcostos-window').find('img[rel=warning_tipocambio]')
+						$('#forma-invactualizaprecios-window').find('img[rel=warning_tipocambio]')
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({tooltipId: "easyTooltip2",content: "El Tipo de Cambio debe ser mayor que cero para la Simulaci&oacute;n."});
@@ -955,7 +955,7 @@ $(function() {
 							jAlert("El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero.", 'Atencion!');
 							
 							//visualizar el warning
-							$('#forma-invcontrolcostos-window').find('img[rel=warning_preciominimo]')
+							$('#forma-invactualizaprecios-window').find('img[rel=warning_preciominimo]')
 							.parent()
 							.css({'display':'block'})
 							.easyTooltip({tooltipId: "easyTooltip2",content: "El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero."});
@@ -1032,7 +1032,7 @@ $(function() {
 					jAlert("El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero.", 'Atencion!');
 					
 					//visualizar el warning
-					$('#forma-invcontrolcostos-window').find('img[rel=warning_preciominimo]')
+					$('#forma-invactualizaprecios-window').find('img[rel=warning_preciominimo]')
 					.parent()
 					.css({'display':'block'})
 					.easyTooltip({tooltipId: "easyTooltip2",content: "El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero."});
@@ -1048,13 +1048,13 @@ $(function() {
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
-			$('#forma-invcontrolcostos-overlay').fadeOut(remove);
+			$('#forma-invactualizaprecios-overlay').fadeOut(remove);
 		});
 		
 		//boton cancelar y cerrar plugin
 		$cancelar_plugin.click(function(event){
 			var remove = function() {$(this).remove();};
-			$('#forma-invcontrolcostos-overlay').fadeOut(remove);
+			$('#forma-invactualizaprecios-overlay').fadeOut(remove);
 		});
 		
 	});
@@ -1064,22 +1064,22 @@ $(function() {
 	
 	
 	
-	var carga_formainvcontrolcostos00_for_datagrid00 = function(id_to_show, accion_mode){
+	var carga_formainvactualizaprecios00_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui no hay nada
 	}
 	
 	
 	$get_datos_grid = function(){
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllCostos.json';
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllPminProductos.json';
 		
 		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 		
-		$arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllCostos.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+		$arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllPminProductos.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
 		
 		$.post(input_json,$arreglo,function(data){
 			//pinta_grid			
 			//aqui se utiliza el mismo datagrid que prefacturas. Solo muesta icono de detalles, el de eliminar No
-			$.fn.tablaOrdenablePrefacturas(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formainvcontrolcostos00_for_datagrid00);
+			$.fn.tablaOrdenablePrefacturas(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formainvactualizaprecios00_for_datagrid00);
 			
 			//resetea elastic, despues de pintar el grid y el slider
 			Elastic.reset(document.getElementById('lienzo_recalculable'));

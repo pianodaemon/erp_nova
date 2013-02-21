@@ -169,7 +169,7 @@
                                                                 <td width="120">
                                                                     <input type="hidden" name="id_cliente" value="">
                                                                     <input type="hidden" name="id_df" value="1">
-                                                                    <input type="text" name="nocliente" style="width:120px;" readOnly="true">
+                                                                    <input type="text" name="nocliente" style="width:120px;" >
                                                                 </td>
                                                                 <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocliente"></div></td>
                                                                 <td width="90" align="right"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
@@ -370,10 +370,10 @@
                                                                 <td width="10"></td>
                                                                 <td width="70">C&oacute;digo&nbsp;producto</td>
                                                                 <td width="125"><input type="text" name="sku_producto" style="width:120px;"></td>
-                                                                <td width="50"><a  href="busca_sku">(Buscar)</a></td>
+                                                                <td width="50"><a href="agregar_producto">(Agregar)</a></td>
                                                                 <td width="45">Nombre</td>
-                                                                <td width="300"><input type="text" name="nombre_producto" style="width:300px;" readOnly="true"></td>
-                                                                <td width="55"><a  href="agregar_producto">(Agregar)</a></td>
+                                                                <td width="300"><input type="text" name="nombre_producto" style="width:300px;"></td>
+                                                                <td width="55"><a href="busca_sku">(Buscar)</a></td>
                                                                 <td width="15"></td>
                                                                 <td width="60" align="right">
 																	<input type="button" id="descargarpdf" value="PDF" style="width:50px; font-weight: bold;">

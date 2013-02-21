@@ -63,9 +63,9 @@
 					</select>
 				</td>
 				<td width="10"></td>
-				<td><INPUT TYPE="text" name="busqueda_codigo" style="width:100px;"></td>
+				<td><input type="text" name="busqueda_codigo" style="width:100px;"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="busqueda_descripcion" style="width:150px;"></td>
+				<td><input type="text" name="busqueda_descripcion" style="width:150px;"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="150">
 					<select name="busqueda_select_pres" style="width:150px;">
@@ -74,9 +74,9 @@
 				</td>
 				
 				<td width="20"></td>
-				<td><INPUT TYPE="button" value="Buscar"></td>
+				<td><input type="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td ><INPUT TYPE="button" value="Limpiar"></td>
+				<td ><input type="button" value="Limpiar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 		</table>
@@ -153,12 +153,12 @@
 													<input type="hidden" name="producto_id">
 													<input type="text" name="productosku" style="width:90px;">
 												</td>
-												<td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_productosku"></div></td>
+												<td width="10"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_productosku"></div></td>
 												<td width="60">&nbsp;<a href="busca_producto">(Buscar)</a></td>
-												<td width="240"><INPUT TYPE="text" name="producto_descripcion" style="width:240px;"></td>
+												<td width="240"><input type="text" name="producto_descripcion" style="width:240px;"></td>
 												<td width="10">&nbsp;</td>
 												<td width="80">
-													<INPUT TYPE="text" name="producto_unidad" style="width:80px;" readOnly="true">
+													<input type="text" name="producto_unidad" style="width:80px;" readOnly="true">
 												</td>
 												<td width="10">&nbsp;</td>
 												<td width="120">
@@ -166,7 +166,7 @@
 														<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>
 													</select>
 												</td>
-												<td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
+												<td width="10"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
 												<td width="5"></td>
 											</tr>
 											
@@ -194,139 +194,114 @@
 														<div id="tabx-10" class="contenidoPes_internas">
 															<table border="0" class="gral">
 																<tr>
-																	<td width="5"></td>
-																	<td width="50">Lista 1</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista1" style="width:80px;">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 1</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto1" style="width:50px;">
-																	</td>
+																	<td width="40">Lista&nbsp;1</td>
+																	<td width="70"><input type="text" name="lista1" style="width:70px;"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda1" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda1"></div></td>
+																	<td width="55">Descto.&nbsp;1</td>
+																	<td width="50"><input type="text" name="descto1" style="width:50px;"></td>
 																	<td width="5">%</td>
-																	<td width="60">&nbsp;</td>
-																	<td width="50">Lista 6</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista6" style="width:80px;">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 6</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto6" style="width:50px;">
-																	</td>
+																	<td width="40">&nbsp;</td>
+																	<td width="40">Lista&nbsp;6</td>
+																	<td width="70"><input type="text" name="lista6" style="width:70px;"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda6" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda6"></div></td>
+																	<td width="55">Descto.&nbsp;6</td>
+																	<td width="50"><input type="text" name="descto6" style="width:50px;"></td>
 																	<td width="5">%</td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
-																	<td colspan="15">&nbsp;</td>
+																	<td colspan="18">&nbsp;</td>
 																</tr>
 																<tr>
-																	<td width="5"></td>
-																	<td width="50">Lista 2</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista2" style="width:80px;">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 2</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto2" style="width:50px;">
-																	</td>
+																	<td width="40">Lista&nbsp;2</td>
+																	<td width="70"><input type="text" name="lista2" style="width:70px;"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda2" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda2"></div></td>
+																	<td width="55">Descto.&nbsp;2</td>
+																	<td width="50"><input type="text" name="descto2" style="width:50px;"></td>
 																	<td width="5">%</td>
-																	<td width="60">&nbsp;</td>
-																	<td width="50">Lista 7</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista7" style="width:80px;">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 7</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto7" style="width:50px;">
-																	</td>
+																	<td width="40">&nbsp;</td>
+																	<td width="40">Lista&nbsp;7</td>
+																	<td width="70"><input type="text" name="lista7" style="width:70px;"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda7" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda7"></div></td>
+																	<td width="55">Descto.&nbsp;7</td>
+																	<td width="50"><input type="text" name="descto7" style="width:50px;"></td>
 																	<td width="5">%</td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
-																	<td colspan="15">&nbsp;</td>
+																	<td colspan="18">&nbsp;</td>
 																</tr>
 																<tr>
-																	<td width="5"></td>
-																	<td width="50">Lista 3</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista3" style="width:80px;">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 3</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto3" style="width:50px;">
-																	</td>
+																	<td width="40">Lista&nbsp;3</td>
+																	<td width="70"><input type="text" name="lista3" style="width:70px;"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda3" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda3"></div></td>
+																	<td width="55">Descto.&nbsp;3</td>
+																	<td width="50"><input type="text" name="descto3" style="width:50px;"></td>
 																	<td width="5">%</td>
-																	<td width="60">&nbsp;</td>
-																	<td width="50">Lista 8</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista8" style="width:80px;">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 8</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto8" style="width:50px;">
-																	</td>
+																	<td width="40">&nbsp;</td>
+																	<td width="40">Lista&nbsp;8</td>
+																	<td width="70"><input type="text" name="lista8" style="width:70px;"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda8" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda8"></div></td>
+																	<td width="55">Descto.&nbsp;8</td>
+																	<td width="50"><input type="text" name="descto8" style="width:50px;"></td>
 																	<td width="5">%</td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
-																	<td colspan="15">&nbsp;</td>
+																	<td colspan="18">&nbsp;</td>
 																</tr>
 																<tr>
-																	<td width="5"></td>
-																	<td width="50">Lista 4</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista4" style="width:80px;">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 4</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto4" style="width:50px;">
-																	</td>
+																	<td width="40">Lista&nbsp;4</td>
+																	<td width="70"><input type="text" name="lista4" style="width:70px;"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda4" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda4"></div></td>
+																	<td width="55">Descto.&nbsp;4</td>
+																	<td width="50"><input type="text" name="descto4" style="width:50px;"></td>
 																	<td width="5">%</td>
-																	<td width="60">&nbsp;</td>
-																	<td width="50">Lista 9</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista9" style="width:80px;">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 9</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto9" style="width:50px;">
-																	</td>
+																	<td width="40">&nbsp;</td>
+																	<td width="40">Lista&nbsp;9</td>
+																	<td width="70"><input type="text" name="lista9" style="width:70px;"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda9" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda9"></div></td>
+																	<td width="55">Descto.&nbsp;9</td>
+																	<td width="50"><input type="text" name="descto9" style="width:50px;"></td>
 																	<td width="5">%</td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
-																	<td colspan="15">&nbsp;</td>
+																	<td colspan="18">&nbsp;</td>
 																</tr>
 																<tr>
-																	<td width="5"></td>
-																	<td width="50">Lista 5</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista5" style="width:80px;">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 5</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto5" style="width:50px;height:14px">
-																	</td>
+																	<td width="40">Lista&nbsp;5</td>
+																	<td width="70"><input type="text" name="lista5" style="width:70px;"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda5" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda5"></div></td>
+																	<td width="55">Descto.&nbsp;5</td>
+																	<td width="50"><input type="text" name="descto5" style="width:50px;height:14px"></td>
 																	<td width="5">%</td>
-																	<td width="60">&nbsp;</td>
-																	<td width="50">Lista 10</td>
-																	<td width="80">
-																		<INPUT TYPE="text" name="lista10" style="width:80px;height:14px">
-																	</td>
-																	<td width="15">&nbsp;</td>
-																	<td width="65">Descto. 10</td>
-																	<td width="50">
-																		<INPUT TYPE="text" name="descto10" style="width:50px;height:14px">
-																	</td>
+																	<td width="40">&nbsp;</td>
+																	<td width="40">Lista&nbsp;10</td>
+																	<td width="70"><input type="text" name="lista10" style="width:70px;height:14px"></td>
+																	<td width="5">&nbsp;</td>
+																	<td width="45"><select name="select_moneda10" style="width:45px;"></select></td>
+																	<td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda10"></div></td>
+																	<td width="55">Descto.&nbsp;10</td>
+																	<td width="50"><input type="text" name="descto10" style="width:50px;height:14px"></td>
 																	<td width="5">%</td>
 																	<td width="5"></td>
 																</tr>
@@ -354,11 +329,11 @@
 																	<td width="5"></td>
 																	<td width="100">Base&nbsp;del&nbsp;Precio</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio1" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio1"></div></td>
+																	<td width="180"><select name="select_base_precio1" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio1"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio2" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio2"></div></td>
+																	<td width="180"><select name="select_base_precio2" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio2"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -368,11 +343,11 @@
 																	<td width="5"></td>
 																	<td width="100">Valor&nbsp;Default</td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l1" style="width:180px; text-align:right;"></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl1"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l1" style="width:180px; text-align:right;"></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl1"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l2" style="width:180px; text-align:right;"></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl2"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l2" style="width:180px; text-align:right;"></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl2"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -382,11 +357,11 @@
 																	<td width="5"></td>
 																	<td width="100">Operaci&oacute;n&nbsp;para&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion1" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion1"></div></td>
+																	<td width="180"><select name="select_operacion1" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion1"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion2" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion2"></div></td>
+																	<td width="180"><select name="select_operacion2" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion2"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -396,11 +371,11 @@
 																	<td width="5"></td>
 																	<td width="100">Forma&nbsp;de&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo1" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo1"></div></td>
+																	<td width="180"><select name="select_forma_calculo1" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo1"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo2" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo2"></div></td>
+																	<td width="180"><select name="select_forma_calculo2" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo2"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -410,11 +385,11 @@
 																	<td width="5"></td>
 																	<td width="100">Tipo&nbsp;de&nbsp;Redondeo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo1" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo1"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo1" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo1"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo2" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo2"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo2" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo2"></div></td>
 																	<td width="5"></td>
 																</tr>
 																
@@ -443,11 +418,11 @@
 																	<td width="5"></td>
 																	<td width="100">Base&nbsp;del&nbsp;Precio</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio3" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio3"></div></td>
+																	<td width="180"><select name="select_base_precio3" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio3"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio4" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio4"></div></td>
+																	<td width="180"><select name="select_base_precio4" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio4"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -457,11 +432,11 @@
 																	<td width="5"></td>
 																	<td width="100">Valor&nbsp;Default</td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l3" style="width:180px; text-align:right;"></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl3"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l3" style="width:180px; text-align:right;"></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl3"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l4" style="width:180px; text-align:right;"></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl4"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l4" style="width:180px; text-align:right;"></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl4"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -471,11 +446,11 @@
 																	<td width="5"></td>
 																	<td width="100">Operaci&oacute;n&nbsp;para&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion3" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion3"></div></td>
+																	<td width="180"><select name="select_operacion3" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion3"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion4" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion4"></div></td>
+																	<td width="180"><select name="select_operacion4" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion4"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -485,11 +460,11 @@
 																	<td width="5"></td>
 																	<td width="100">Forma&nbsp;de&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo3" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo3"></div></td>
+																	<td width="180"><select name="select_forma_calculo3" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo3"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo4" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo4"></div></td>
+																	<td width="180"><select name="select_forma_calculo4" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo4"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -499,11 +474,11 @@
 																	<td width="5"></td>
 																	<td width="100">Tipo&nbsp;de&nbsp;Redondeo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo3" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo3"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo3" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo3"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo4" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo4"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo4" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo4"></div></td>
 																	<td width="5"></td>
 																</tr>
 																
@@ -533,11 +508,11 @@
 																	<td width="5"></td>
 																	<td width="100">Base&nbsp;del&nbsp;Precio</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio5" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio5"></div></td>
+																	<td width="180"><select name="select_base_precio5" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio5"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio6" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio6"></div></td>
+																	<td width="180"><select name="select_base_precio6" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio6"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -547,11 +522,11 @@
 																	<td width="5"></td>
 																	<td width="100">Valor&nbsp;Default</td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l5" style="width:180px; text-align:right;"></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl5"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l5" style="width:180px; text-align:right;"></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl5"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l6" style="width:180px; text-align:right;"></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl6"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l6" style="width:180px; text-align:right;"></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl6"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -561,11 +536,11 @@
 																	<td width="5"></td>
 																	<td width="100">Operaci&oacute;n&nbsp;para&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion5" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion5"></div></td>
+																	<td width="180"><select name="select_operacion5" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion5"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion6" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion6"></div></td>
+																	<td width="180"><select name="select_operacion6" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion6"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -575,11 +550,11 @@
 																	<td width="5"></td>
 																	<td width="100">Forma&nbsp;de&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo5" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo5"></div></td>
+																	<td width="180"><select name="select_forma_calculo5" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo5"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo6" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo6"></div></td>
+																	<td width="180"><select name="select_forma_calculo6" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo6"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -589,11 +564,11 @@
 																	<td width="5"></td>
 																	<td width="100">Tipo&nbsp;de&nbsp;Redondeo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo5" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo5"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo5" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo5"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo6" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo6"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo6" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo6"></div></td>
 																	<td width="5"></td>
 																</tr>
 																
@@ -621,11 +596,11 @@
 																	<td width="5"></td>
 																	<td width="100">Base&nbsp;del&nbsp;Precio</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio7" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio7"></div></td>
+																	<td width="180"><select name="select_base_precio7" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio7"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio8" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio8"></div></td>
+																	<td width="180"><select name="select_base_precio8" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio8"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -635,11 +610,11 @@
 																	<td width="5"></td>
 																	<td width="100">Valor&nbsp;Default</td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l7" style="width:180px; text-align:right;"></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl7"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l7" style="width:180px; text-align:right;"></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl7"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l8" style="width:180px; text-align:right;"></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl8"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l8" style="width:180px; text-align:right;"></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl8"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -649,11 +624,11 @@
 																	<td width="5"></td>
 																	<td width="100">Operaci&oacute;n&nbsp;para&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion7" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion7"></div></td>
+																	<td width="180"><select name="select_operacion7" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion7"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion8" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion8"></div></td>
+																	<td width="180"><select name="select_operacion8" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion8"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -663,11 +638,11 @@
 																	<td width="5"></td>
 																	<td width="100">Forma&nbsp;de&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo7" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo7"></div></td>
+																	<td width="180"><select name="select_forma_calculo7" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo7"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo8" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo8"></div></td>
+																	<td width="180"><select name="select_forma_calculo8" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo8"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -677,11 +652,11 @@
 																	<td width="5"></td>
 																	<td width="100">Tipo&nbsp;de&nbsp;Redondeo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo7" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo7"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo7" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo7"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo8" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo8"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo8" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo8"></div></td>
 																	<td width="5"></td>
 																</tr>
 																
@@ -709,11 +684,11 @@
 																	<td width="5"></td>
 																	<td width="100">Base&nbsp;del&nbsp;Precio</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio9" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio9"></div></td>
+																	<td width="180"><select name="select_base_precio9" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio9"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_base_precio10" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio10"></div></td>
+																	<td width="180"><select name="select_base_precio10" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_baseprecio10"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -723,11 +698,11 @@
 																	<td width="5"></td>
 																	<td width="100">Valor&nbsp;Default</td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l9" style="width:180px; text-align:right;"></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl9"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l9" style="width:180px; text-align:right;"></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl9"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><INPUT TYPE="text" name="valor_default_l10" style="width:180px; text-align:right;"></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl10"></div></td>
+																	<td width="180"><input type="text" name="valor_default_l10" style="width:180px; text-align:right;"></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_valordefaultl10"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -737,11 +712,11 @@
 																	<td width="5"></td>
 																	<td width="100">Operaci&oacute;n&nbsp;para&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion9" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion9"></div></td>
+																	<td width="180"><select name="select_operacion9" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion9"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_operacion10" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion10"></div></td>
+																	<td width="180"><select name="select_operacion10" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operacion10"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -751,11 +726,11 @@
 																	<td width="5"></td>
 																	<td width="100">Forma&nbsp;de&nbsp;C&aacute;lculo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo9" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo9"></div></td>
+																	<td width="180"><select name="select_forma_calculo9" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo9"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_forma_calculo10" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo10"></div></td>
+																	<td width="180"><select name="select_forma_calculo10" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_formacalculo10"></div></td>
 																	<td width="5"></td>
 																</tr>
 																<tr>
@@ -765,11 +740,11 @@
 																	<td width="5"></td>
 																	<td width="100">Tipo&nbsp;de&nbsp;Redondeo</td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo9" style="width:180px;"></SELECT></td>
-																	<td width="90"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo9"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo9" style="width:180px;"></select></td>
+																	<td width="90"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo9"></div></td>
 																	<td width="5"></td>
-																	<td width="180"><SELECT NAME="select_tipo_redondeo10" style="width:180px;"></SELECT></td>
-																	<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo10"></div></td>
+																	<td width="180"><select name="select_tipo_redondeo10" style="width:180px;"></select></td>
+																	<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_tiporedondeo10"></div></td>
 																	<td width="5"></td>
 																</tr>
 																
@@ -845,13 +820,13 @@
 										</tr>
 										<tr>
 											<td width="70">C&oacute;digo&nbsp;</td>
-											<td width="120"><INPUT TYPE="text" name="campo_sku" style="width:120px;"></td>
+											<td width="120"><input type="text" name="campo_sku" style="width:120px;"></td>
 											<td width="25"></td>
 											<td width="90">Tipo&nbsp;de&nbsp;Producto</td>
 											<td width="200">
-												<SELECT NAME="tipo_producto" style="width:180px;">
-													<OPTION value="0" selected="yes">[--Seleccionar Tipo--]</OPTION>
-												</SELECT>
+												<select name="tipo_producto" style="width:180px;">
+													<option value="0" selected="yes">[--Seleccionar Tipo--]</option>
+												</select>
 											</td>
 											<td width="25"></td>
 											<td width="90"></td>
@@ -861,10 +836,10 @@
 										</tr>
 										<tr>
 											<td width="70">Descripci&oacute;n</td>
-											<td width="400" colspan="4"><INPUT TYPE="text" name="campo_descripcion" style="width:415px;"></td>
+											<td width="400" colspan="4"><input type="text" name="campo_descripcion" style="width:415px;"></td>
 											<td width="25"></td>
 											<td width="90" align="right">
-												<INPUT TYPE="button" id="busca_producto_modalbox" class="onmouseOutBuscar">
+												<input type="button" id="busca_producto_modalbox" class="onmouseOutBuscar">
 											</td>
 										</tr>
 									</table>
@@ -920,7 +895,7 @@
 								<td width="280" style="background:#ffffff"></td>
 								<td width="90" style="background:#ffffff"></td>
 								<td width="110" style="background:#ffffff" align="right">
-									<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+									<input type="button" id="cencela" class="onmouseOutCancelar">
 								</td>
 								
 								<td width="10" style="background:#ffffff"></td>

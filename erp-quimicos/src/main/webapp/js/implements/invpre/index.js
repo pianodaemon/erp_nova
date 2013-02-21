@@ -482,6 +482,26 @@ $(function() {
 	}
         
         
+	//carga los campos select con los datos que recibe como parametro
+	$carga_campos_select_moneda = function($campo_select, arreglo_elementos, elemento_seleccionado, texto_elemento_cero){
+		$campo_select.children().remove();
+		var select_html = '';
+		
+		if(texto_elemento_cero != ""){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
+		
+		$.each(arreglo_elementos,function(entryIndex,elemento){
+			if( parseInt(elemento['id']) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + elemento['id'] + '" selected="yes">' + elemento['descripcion_abr'] + '</option>';
+			}else{
+				select_html += '<option value="' + elemento['id'] + '" >' + elemento['descripcion_abr'] + '</option>';
+			}
+		});
+		$campo_select.append(select_html);
+	}
+        
+        
 	$aplicar_accion_focus_blur_y_solo_numeros = function($lista1,$lista2,$lista3,$lista4,$lista5,$lista6,$lista7,$lista8,$lista9,$lista10,$descto1,$descto2,$descto3,$descto4,$descto5,$descto6,$descto7,$descto8,$descto9,$descto10,$valor_default_l1,$valor_default_l2,$valor_default_l3,$valor_default_l4,$valor_default_l5,$valor_default_l6,$valor_default_l7,$valor_default_l8,$valor_default_l9,$valor_default_l10	){
 		/*para que permita solo numeros*/
 		$permitir_solo_numeros($lista1);
@@ -652,6 +672,16 @@ $(function() {
 		var $lista8 = $('#forma-invpre-window').find('input[name=lista8]');
 		var $lista9 = $('#forma-invpre-window').find('input[name=lista9]');
 		var $lista10 = $('#forma-invpre-window').find('input[name=lista10]');
+		var $select_moneda1 = $('#forma-invpre-window').find('select[name=select_moneda1]');
+		var $select_moneda2 = $('#forma-invpre-window').find('select[name=select_moneda2]');
+		var $select_moneda3 = $('#forma-invpre-window').find('select[name=select_moneda3]');
+		var $select_moneda4 = $('#forma-invpre-window').find('select[name=select_moneda4]');
+		var $select_moneda5 = $('#forma-invpre-window').find('select[name=select_moneda5]');
+		var $select_moneda6 = $('#forma-invpre-window').find('select[name=select_moneda6]');
+		var $select_moneda7 = $('#forma-invpre-window').find('select[name=select_moneda7]');
+		var $select_moneda8 = $('#forma-invpre-window').find('select[name=select_moneda8]');
+		var $select_moneda9 = $('#forma-invpre-window').find('select[name=select_moneda9]');
+		var $select_moneda10 = $('#forma-invpre-window').find('select[name=select_moneda10]');
 		var $descto1 = $('#forma-invpre-window').find('input[name=descto1]');
 		var $descto2 = $('#forma-invpre-window').find('input[name=descto2]');
 		var $descto3 = $('#forma-invpre-window').find('input[name=descto3]');
@@ -734,6 +764,32 @@ $(function() {
 		$producto_id.attr({'value' : 0});
 		$producto_unidad.css({'background' : '#F0F0F0'});
 		
+		var elemento_seleccionado = 0;
+		var cadena_elemento_cero ="";
+		
+		
+		//quitar enter a todos los campos input
+		$('#forma-invpre-window').find('input[name=producto_descripcion]').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
+		
+		//quitar enter a todos los campos input
+		$('#forma-invpre-window').find('input[name=productosku]').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
+		
+		//quitar enter a todos los campos input
+		$('#forma-invpre-window').find('input[name=producto_unidad]').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
+		
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == 'true' ){
 				var remove = function() {$(this).remove();};
@@ -763,10 +819,52 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
+		
+		
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInvPre.json';
+		$arreglo = {'id':id_to_show};
+		
+		$.post(input_json,$arreglo,function(entry){
+			//cargar selects de Monedas
+			elemento_seleccionado = 0;
+			cadena_elemento_cero ="[----]";
+			$carga_campos_select_moneda($select_moneda1, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			$carga_campos_select_moneda($select_moneda2, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			$carga_campos_select_moneda($select_moneda3, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			$carga_campos_select_moneda($select_moneda4, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			$carga_campos_select_moneda($select_moneda5, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			$carga_campos_select_moneda($select_moneda6, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			$carga_campos_select_moneda($select_moneda7, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			$carga_campos_select_moneda($select_moneda8, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			$carga_campos_select_moneda($select_moneda9, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			$carga_campos_select_moneda($select_moneda10, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			
+		});//termina llamada json
+		
+		
+		
 		$buscar_producto.click(function(event){
 			event.preventDefault();
 			$busca_productos($select_presentacion, $productosku.val(), $producto_descripcion.val());
 		})
+		
+		
+		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
+		$productosku.keypress(function(e){
+			if(e.which == 13){
+				$buscar_producto.trigger('click');
+				return false;
+			}
+		});
+		
+		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
+		$producto_descripcion.keypress(function(e){
+			if(e.which == 13){
+				$buscar_producto.trigger('click');
+				return false;
+			}
+		});		
+		
 		
 		//inicializa campos en cero
 		$inicializa_valores($lista1,$lista2,$lista3,$lista4,$lista5,$lista6,$lista7,$lista8,$lista9,$lista10,$descto1,$descto2,$descto3,$descto4,$descto5,$descto6,$descto7,$descto8,$descto9,$descto10,$valor_default_l1,$valor_default_l2,$valor_default_l3,$valor_default_l4,$valor_default_l5,$valor_default_l6,$valor_default_l7,$valor_default_l8,$valor_default_l9,$valor_default_l10);
@@ -775,8 +873,8 @@ $(function() {
 		$aplicar_accion_focus_blur_y_solo_numeros($lista1,$lista2,$lista3,$lista4,$lista5,$lista6,$lista7,$lista8,$lista9,$lista10,$descto1,$descto2,$descto3,$descto4,$descto5,$descto6,$descto7,$descto8,$descto9,$descto10,$valor_default_l1,$valor_default_l2,$valor_default_l3,$valor_default_l4,$valor_default_l5,$valor_default_l6,$valor_default_l7,$valor_default_l8,$valor_default_l9,$valor_default_l10);
 		
 		//cargar selects de precio base
-		var elemento_seleccionado = 0;
-		var cadena_elemento_cero ="[--Seleccionar Lista--]";
+		elemento_seleccionado = 0;
+		cadena_elemento_cero ="[--Seleccionar Lista--]";
 		$carga_campos_select($select_base_precio1, array_base_precio,elemento_seleccionado, cadena_elemento_cero);
 		$carga_campos_select($select_base_precio2, array_base_precio,elemento_seleccionado, cadena_elemento_cero);
 		$carga_campos_select($select_base_precio3, array_base_precio,elemento_seleccionado, cadena_elemento_cero);
@@ -834,20 +932,7 @@ $(function() {
 		$carga_campos_select($select_tipo_redondeo10, array_tipo_redondeo,elemento_seleccionado, cadena_elemento_cero);	
 		
 		
-		
-		/*
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInvPre.json';
-		$arreglo = {'id':id_to_show};
-		$.post(input_json,$arreglo,function(entry){
-			//Alimentando los campos select de secciones
-			$seccion.children().remove();
-			var seccion_hmtl = '<option value="0" selected="yes">[--Seleccionar una seccion--]</option>';
-			$.each(entry['Secciones'],function(entryIndex,seccion){
-				seccion_hmtl += '<option value="' + seccion['id'] + '"  >' + seccion['titulo'] + '</option>';
-			});
-			$seccion.append(seccion_hmtl);
-		});//termina llamada json
-		*/
+
 		
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
@@ -901,7 +986,6 @@ $(function() {
 			
 			$tabs_li_funxionalidad();
 			
-			
 			var $campo_id = $('#forma-invpre-window').find('input[name=identificador]');
 			var $producto_id = $('#forma-invpre-window').find('input[name=producto_id]');
 			var $productosku = $('#forma-invpre-window').find('input[name=productosku]');
@@ -918,6 +1002,16 @@ $(function() {
 			var $lista7 = $('#forma-invpre-window').find('input[name=lista7]');
 			var $lista8 = $('#forma-invpre-window').find('input[name=lista8]');
 			var $lista9 = $('#forma-invpre-window').find('input[name=lista9]');
+			var $select_moneda1 = $('#forma-invpre-window').find('select[name=select_moneda1]');
+			var $select_moneda2 = $('#forma-invpre-window').find('select[name=select_moneda2]');
+			var $select_moneda3 = $('#forma-invpre-window').find('select[name=select_moneda3]');
+			var $select_moneda4 = $('#forma-invpre-window').find('select[name=select_moneda4]');
+			var $select_moneda5 = $('#forma-invpre-window').find('select[name=select_moneda5]');
+			var $select_moneda6 = $('#forma-invpre-window').find('select[name=select_moneda6]');
+			var $select_moneda7 = $('#forma-invpre-window').find('select[name=select_moneda7]');
+			var $select_moneda8 = $('#forma-invpre-window').find('select[name=select_moneda8]');
+			var $select_moneda9 = $('#forma-invpre-window').find('select[name=select_moneda9]');
+			var $select_moneda10 = $('#forma-invpre-window').find('select[name=select_moneda10]');
 			var $lista10 = $('#forma-invpre-window').find('input[name=lista10]');
 			var $descto1 = $('#forma-invpre-window').find('input[name=descto1]');
 			var $descto2 = $('#forma-invpre-window').find('input[name=descto2]');
@@ -1004,6 +1098,28 @@ $(function() {
 			$productosku.attr('readonly',true);
 			$producto_descripcion.attr('readonly',true);
 			
+			
+			//quitar enter a todos los campos input
+			$('#forma-invpre-window').find('input[name=producto_descripcion]').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
+			
+			//quitar enter a todos los campos input
+			$('#forma-invpre-window').find('input[name=productosku]').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
+			
+			//quitar enter a todos los campos input
+			$('#forma-invpre-window').find('input[name=producto_unidad]').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
+			
 			if(accion_mode == 'edit'){
                                 
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInvPre.json';
@@ -1073,6 +1189,21 @@ $(function() {
 					$lista8.attr({'value' : $(this).agregar_comas(parseFloat(entry['InvPre']['0']['precio_8']).toFixed(2))});
 					$lista9.attr({'value' : $(this).agregar_comas(parseFloat(entry['InvPre']['0']['precio_9']).toFixed(2))});
 					$lista10.attr({'value' : $(this).agregar_comas(parseFloat(entry['InvPre']['0']['precio_10']).toFixed(2))});
+					
+					//cargar selects de Monedas
+					var elemento_seleccionado = 0;
+					var cadena_elemento_cero ="";
+					$carga_campos_select_moneda($select_moneda1, entry['Monedas'],entry['InvPre']['0']['id_mon1'], cadena_elemento_cero);
+					$carga_campos_select_moneda($select_moneda2, entry['Monedas'],entry['InvPre']['0']['id_mon2'], cadena_elemento_cero);
+					$carga_campos_select_moneda($select_moneda3, entry['Monedas'],entry['InvPre']['0']['id_mon3'], cadena_elemento_cero);
+					$carga_campos_select_moneda($select_moneda4, entry['Monedas'],entry['InvPre']['0']['id_mon4'], cadena_elemento_cero);
+					$carga_campos_select_moneda($select_moneda5, entry['Monedas'],entry['InvPre']['0']['id_mon5'], cadena_elemento_cero);
+					$carga_campos_select_moneda($select_moneda6, entry['Monedas'],entry['InvPre']['0']['id_mon6'], cadena_elemento_cero);
+					$carga_campos_select_moneda($select_moneda7, entry['Monedas'],entry['InvPre']['0']['id_mon7'], cadena_elemento_cero);
+					$carga_campos_select_moneda($select_moneda8, entry['Monedas'],entry['InvPre']['0']['id_mon8'], cadena_elemento_cero);
+					$carga_campos_select_moneda($select_moneda9, entry['Monedas'],entry['InvPre']['0']['id_mon9'], cadena_elemento_cero);
+					$carga_campos_select_moneda($select_moneda10, entry['Monedas'],entry['InvPre']['0']['id_mon10'], cadena_elemento_cero);
+					
 					$descto1.attr({'value' : $(this).agregar_comas(parseFloat(entry['InvPre']['0']['descuento_1']).toFixed(2))});
 					$descto2.attr({'value' : $(this).agregar_comas(parseFloat(entry['InvPre']['0']['descuento_2']).toFixed(2))});
 					$descto3.attr({'value' : $(this).agregar_comas(parseFloat(entry['InvPre']['0']['descuento_3']).toFixed(2))});
@@ -1098,7 +1229,7 @@ $(function() {
 					
 					
 					//cargar selects de precio base
-					var cadena_elemento_cero ="[--Seleccionar Lista--]";
+					cadena_elemento_cero ="[--Seleccionar Lista--]";
 					$carga_campos_select($select_base_precio1, array_base_precio,entry['InvPre']['0']['base_precio_1'], cadena_elemento_cero);
 					$carga_campos_select($select_base_precio2, array_base_precio,entry['InvPre']['0']['base_precio_2'], cadena_elemento_cero);
 					$carga_campos_select($select_base_precio3, array_base_precio,entry['InvPre']['0']['base_precio_3'], cadena_elemento_cero);
@@ -1123,7 +1254,7 @@ $(function() {
 					$carga_campos_select($select_operacion8, array_operacion_calculo,entry['InvPre']['0']['operacion_precio_8'], cadena_elemento_cero);
 					$carga_campos_select($select_operacion9, array_operacion_calculo,entry['InvPre']['0']['operacion_precio_9'], cadena_elemento_cero);
 					$carga_campos_select($select_operacion10, array_operacion_calculo,entry['InvPre']['0']['operacion_precio_10'], cadena_elemento_cero);
-		
+					
 					
 					//cargar selects de Forma de calculo
 					cadena_elemento_cero ="[--Seleccionar Forma--]";
