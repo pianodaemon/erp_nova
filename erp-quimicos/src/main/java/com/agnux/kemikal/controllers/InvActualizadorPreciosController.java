@@ -58,7 +58,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @SessionAttributes({"user"})
 @RequestMapping("/invactualizaprecios/")
 public class InvActualizadorPreciosController {
-    private static final Logger log  = Logger.getLogger(InvControlCostosController.class.getName());
+    private static final Logger log  = Logger.getLogger(InvActualizadorPreciosController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
@@ -90,7 +90,7 @@ public class InvActualizadorPreciosController {
             @ModelAttribute("user") UserSessionData user
             )throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", InvSeccionesController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", InvActualizadorPreciosController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         //infoConstruccionTabla.put("id", "Acciones:90");
@@ -156,9 +156,8 @@ public class InvActualizadorPreciosController {
         String subfamilia = StringHelper.isNullString(String.valueOf(has_busqueda.get("subfamilia")));
         String marca = StringHelper.isNullString(String.valueOf(has_busqueda.get("marca")));
         String presentacion = StringHelper.isNullString(String.valueOf(has_busqueda.get("presentacion")));
+        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
         String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
-        String ano = StringHelper.isNullString(String.valueOf(has_busqueda.get("ano")));
-        String mes = StringHelper.isNullString(String.valueOf(has_busqueda.get("mes")));
         
         
         String tipo_costo="1";//calculo a partir del ultimo costo
@@ -173,7 +172,16 @@ public class InvActualizadorPreciosController {
         //se tomo la decision de utilizar el mismo proc porque se hace varios calculos y asi evitamos volver a construir codigo para el grid
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
-        String data_string = app_selected+"___"+id_usuario+"___"+tipo_producto+"___"+marca+"___"+familia+"___"+subfamilia+"___"+producto+"___"+presentacion+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tipo_cambio+"___"+ano+"___"+mes;
+        String data_string = 
+                app_selected+"___"+
+                id_usuario+"___"+
+                tipo_producto+"___"+
+                marca+"___"+
+                familia+"___"+
+                subfamilia+"___"+
+                codigo+"___"+
+                producto+"___"+
+                presentacion;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getInvDao().countAll(data_string);
@@ -207,6 +215,7 @@ public class InvActualizadorPreciosController {
         ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> marcas = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> familias = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> subfamilias = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
@@ -219,12 +228,20 @@ public class InvActualizadorPreciosController {
         marcas = this.getInvDao().getProducto_Marcas(id_empresa);
         familias = this.getInvDao().getInvProdSubFamiliasByTipoProd(id_empresa, id_tipo_producto);
         
+        String familia_id = "0";
+        if(familias.size()>0){
+            familia_id = familias.get(0).get("id");
+        }
+        
+        subfamilias = this.getInvDao().getProducto_Subfamilias(id_empresa,familia_id );
+        
         //Se le pasa como parametro el cero para que devuelva todas las presentaciones 
         presentaciones = this.getInvDao().getProducto_Presentaciones(0);
         
         jsonretorno.put("Anios", this.getInvDao().getInvControlCostos_Anios());
         jsonretorno.put("Marcas", marcas);
         jsonretorno.put("Familias", familias);
+        jsonretorno.put("SubFamilias", subfamilias);
         jsonretorno.put("ProdTipos", tiposProducto);
         jsonretorno.put("Presentaciones", presentaciones);
         return jsonretorno;
@@ -240,7 +257,7 @@ public class InvActualizadorPreciosController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getSubFamiliasByFamProdJson de {0}", InvControlCostosController.class.getName());
+        log.log(Level.INFO, "Ejecutando getSubFamiliasByFamProdJson de {0}", InvActualizadorPreciosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> subfamilias = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -265,7 +282,7 @@ public class InvActualizadorPreciosController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getFamiliasByTipoProdJson de {0}", InvControlCostosController.class.getName());
+        log.log(Level.INFO, "Ejecutando getFamiliasByTipoProdJson de {0}", InvActualizadorPreciosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> familias = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -283,7 +300,124 @@ public class InvActualizadorPreciosController {
     }
     
     
-    
+    //crear y editar
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="identificador", required=true) String id,
+            @RequestParam(value="tipo_producto", required=true) String tipo_producto,
+            @RequestParam(value="familia", required=true) String familia,
+            @RequestParam(value="subfamilia", required=true) String subfamilia,
+            @RequestParam(value="presentacion", required=true) String presentacion,
+            @RequestParam(value="codigo", required=true) String codigo,
+            @RequestParam(value="producto", required=true) String producto,
+            @RequestParam(value="marca", required=true) String marca,
+            @RequestParam(value="lista1", required=false) String lista1,
+            @RequestParam(value="lista2", required=false) String lista2,
+            @RequestParam(value="lista3", required=false) String lista3,
+            @RequestParam(value="lista4", required=false) String lista4,
+            @RequestParam(value="lista5", required=false) String lista5,
+            @RequestParam(value="lista6", required=false) String lista6,
+            @RequestParam(value="lista7", required=false) String lista7,
+            @RequestParam(value="lista8", required=false) String lista8,
+            @RequestParam(value="lista9", required=false) String lista9,
+            @RequestParam(value="lista10", required=false) String lista10,
+            @RequestParam(value="descto1", required=false) String descto1,
+            @RequestParam(value="descto2", required=false) String descto2,
+            @RequestParam(value="descto3", required=false) String descto3,
+            @RequestParam(value="descto4", required=false) String descto4,
+            @RequestParam(value="descto5", required=false) String descto5,
+            @RequestParam(value="descto6", required=false) String descto6,
+            @RequestParam(value="descto7", required=false) String descto7,
+            @RequestParam(value="descto8", required=false) String descto8,
+            @RequestParam(value="descto9", required=false) String descto9,
+            @RequestParam(value="descto10", required=false) String descto10,
+            @RequestParam(value="check_aplicar_descto", required=false) String aplicar_descto,
+            Model model,@ModelAttribute("user") UserSessionData user
+        ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        HashMap<String, String> succes = new HashMap<String, String>();
+        Integer app_selected = 126;
+        String command_selected = "update";
+        Integer id_usuario= user.getUserId();//variable para el id  del usuario
+        String extra_data_array = "'sin datos'";
+        String actualizo = "0";
+        
+        lista1 = StringHelper.removerComas(lista1);
+        lista2 = StringHelper.removerComas(lista2);
+        lista3 = StringHelper.removerComas(lista3);
+        lista4 = StringHelper.removerComas(lista4);
+        lista5 = StringHelper.removerComas(lista5);
+        lista6 = StringHelper.removerComas(lista6);
+        lista7 = StringHelper.removerComas(lista7);
+        lista8 = StringHelper.removerComas(lista8);
+        lista9 = StringHelper.removerComas(lista9);
+        lista10 = StringHelper.removerComas(lista10);
+        descto1 = StringHelper.removerComas(descto1);
+        descto2 = StringHelper.removerComas(descto2);
+        descto3 = StringHelper.removerComas(descto3);
+        descto4 = StringHelper.removerComas(descto4);
+        descto5 = StringHelper.removerComas(descto5);
+        descto6 = StringHelper.removerComas(descto6);
+        descto7 = StringHelper.removerComas(descto7);
+        descto8 = StringHelper.removerComas(descto8);
+        descto9 = StringHelper.removerComas(descto9);
+        descto10 = StringHelper.removerComas(descto10);
+        
+        aplicar_descto = StringHelper.verificarCheckBox(aplicar_descto);
+        
+        if( id.equals("0") ){
+            command_selected = "update";
+        }else{
+            //command_selected = "edit";
+        }
+        
+        String data_string = 
+                app_selected+"___"+
+                command_selected+"___"+
+                id_usuario+"___"+
+                tipo_producto+"___"+
+                familia+"___"+
+                subfamilia+"___"+
+                presentacion+"___%"+
+                codigo+"%___%"+
+                producto+"%___"+
+                aplicar_descto+"___"+
+                lista1+"___"+
+                lista2+"___"+
+                lista3+"___"+
+                lista4+"___"+
+                lista5+"___"+
+                lista6+"___"+
+                lista7+"___"+
+                lista8+"___"+
+                lista9+"___"+
+                lista10+"___"+
+                descto1+"___"+
+                descto2+"___"+
+                descto3+"___"+
+                descto4+"___"+
+                descto5+"___"+
+                descto6+"___"+
+                descto7+"___"+
+                descto8+"___"+
+                descto9+"___"+
+                descto10+"___"+
+                marca;
+        
+        succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        if( String.valueOf(succes.get("success")).equals("true") ){
+            actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
+        }
+        
+        jsonretorno.put("success",String.valueOf(succes.get("success")));
+        
+        log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
+
     
     
     

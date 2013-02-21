@@ -1189,7 +1189,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     +" AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
                             +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id;";
-        
+        System.out.println("BuscarCliente: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
