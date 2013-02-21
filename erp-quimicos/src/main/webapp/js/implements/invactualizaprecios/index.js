@@ -22,7 +22,7 @@ $(function() {
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Control de Costos');
+	$('#barra_titulo').find('#td_titulo').append('Actualizador de Precios a partir de Precio M&iacute;nimo');
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
