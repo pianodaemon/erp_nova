@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>${title}</title>
-        
+
         #include("${layoutheader}")
-        
+
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/com_requisicion/formaCom_requisicion.css" type="text/css" />
 
@@ -13,31 +13,31 @@
         <link rel="stylesheet" href="../../css/modalbox/comordencompra/formaBuscapresentaciones.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/comordencompra/formaBuscaproducto.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/comordencompra/formaCancelaEmision.css" type="text/css" />
-        
+
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
 	<script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
-		
+
         <script type="text/javascript" src="../../js/components/modalbox/cxprepantiguedadsaldos/modalboxBuscaproveedor.js"></script>
-		
+
         <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxBuscapresentacion.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxBuscaproducto.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxCancelaEmision.js"></script>
-      
-                                                  
+
+
         <script type="text/javascript" src="../../js/components/modalbox/com_requisicion/modalboxCom_requisicion.js"></script>
         <script type="text/javascript" src="../../js/implements/com_requisicion/index.js" ></script>
-        
-        
-        
+
+
+
         #include("${layoutmenu}")
-        
+
         <input type="hidden" name="contextpath" value="$url">
         <input type="hidden" name="user" value="$username">
         <input type="hidden" name="iu" value="$iu">
         <input type="hidden" name="emp" value="$empresa">
         <input type="hidden" name="suc" value="$sucursal">
-        
+
         <!--Esta tabla va  en la barra de acciones -->
 		<table class="table_acciones" style="display:none" border="0">
 			<tr>
@@ -47,8 +47,8 @@
 				<td height="30"><a href="visualiza_buscador" class="tooltip"><div class="onmouseOutVisualizaBuscador" id="vbuscador"></div><span>Busqueda</span></a> </td>
 			</tr>
 		</table>
-        
-        
+
+
         <!--Esta tabla va  en la barra de buscador -->
 		<table border="0" class="tabla_buscador" style="display:none">
 			<tr>
@@ -69,7 +69,7 @@
 				<td ></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;</td>
 			</tr>
-			
+
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="100"><INPUT TYPE="text" name="busqueda_folio" style="width:100px;"></td>
@@ -88,9 +88,9 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 		</table>
-        
-        
-        
+
+
+
         <!--  otra parte -->
         <table class="acciones" >
 			<!--
@@ -110,13 +110,13 @@
                 <td ></td>
             </tr>
         </table>
-		
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
         <!--form for comcompras -->
         <form id="formacom_requisicion" action="edit.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
@@ -132,7 +132,7 @@
                 <input type="hidden" name="cta_mn">
                 <input type="hidden" name="cta_usd">-->
 
-					
+
                     <div id="div_two" title="" class="com_requisicion_div_two">
                         <div class="columns on-2">
                             <div class="fixed column" style="width:700px; padding-left:6px;"><strong>Requisici&oacute;n </strong></div>
@@ -141,8 +141,8 @@
                             </div>
                         </div>
                     </div>
-                    
-                    
+
+
                     <div id="div_three" title="" class="com_requisicion_div_three">
                         <div class="columns" >
                             <div class=" fixed column">
@@ -154,10 +154,10 @@
                         <div class="columns" style="background:#731F6C;">
                             <div class="container" style="background:white;">
                                 <div class="fixed column" class="content_x" >
-									
+
                                     <div id="tabx-1" class="contenidoPes" >
-										
-										
+
+
                                         <table border="0" bordercolor="red" style="margin:0; padding:0;">
                                                 <tr>
                                                     <td >&nbsp;</td>
@@ -166,7 +166,7 @@
                                                     <td >&nbsp;</td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="4"> 
+                                                    <td colspan="4">
                                                         <table border="0" bordercolor="blue" >
                                                             <tr>
                                                                 <td >F&oacute;lio&nbsp;</td>
@@ -185,7 +185,7 @@
                                                             <tr>
                                                                 <td >Fecha&nbsp;compromiso</td>
                                                                 <td width="125"><INPUT TYPE="text" name="fecha_compromiso" style="width:120px;"></td>
-                                                                <td >&nbsp;</td>
+                                                                <td ><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha_compromiso"></div></td>
                                                                 <td rowspan="3">
                                                                     <textarea name="observaciones"   cols="70" style="width:350px; resize: none;"></textarea>
                                                                 </td >
@@ -203,7 +203,7 @@
                                                 </tr>
 
                                                 <tr>
-                                                    <td colspan="5" align="right">   
+                                                    <td colspan="5" align="right">
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -219,15 +219,15 @@
                                                                 <td width="300"><INPUT TYPE="text" name="nombre_producto" style="width:300px;" readOnly="true"></td>
                                                                 <td width="55"><a  href="agregar_producto">(Agregar)</a></td>
                                                                 <td width="15"></td>
-                                                                
+
                                                             </tr>
                                                         </table>
                                                     </td>
                                                 </tr>
-												
+
                                                 <tr class="registros">
                                                     <td colspan="5" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
-														
+
                                                             <table >
                                                                     <thead>
                                                                             <tr class="registros_pagos">
@@ -240,22 +240,22 @@
                                                                             </tr>
                                                                     </thead>
                                                             </table>
-                                                            <div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">	
+                                                            <div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">
                                                                     <table >
                                                                             <tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
 
                                                                             </tbody>
                                                                     </table>
                                                             </div>
-                                                        
+
                                                     </td>
                                                 </tr>
-												
+
                                                 <tr>
                                                     <td colspan="3" width="500"  align="left" valign="top">
 
                                                         <div id="div_warning_grid" style="display:none;">
-															
+
                                                             <table border ="0">
                                                                 <tr>
                                                                     <td width="10"></td>
@@ -272,7 +272,7 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td width="10"></td>
-                                                                    <td colspan="5"> 
+                                                                    <td colspan="5">
                                                                         <div align="left" style="width:600px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
                                                                             <table id="grid_warning" border="0" style="width:575px;">
                                                                                 <!-- Aqui se muestran los warning
@@ -287,7 +287,7 @@
 
                                                     </td>
                                                     <td align="right" valign="top" style="font-weight: bold;">
-                                                        
+
                                                     </td>
                                                 </tr>
 
@@ -311,21 +311,21 @@
                                                 <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
                                         </tr>
                                     </table>
-                                
+
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
         </form>
-        
-        
-        
+
+
+
         #include("${layoutfooter}")
-        
-        
+
+
     </body>
-</html>	
+</html>
 
 
 
@@ -339,7 +339,7 @@
 		<div class="columns" style="background:#731F6C;">
 			<div class="container" style="background:white;">
 				<div class="fixed column" class="content_x" >
-					
+
 
 					<table width="100%" border="0">
 							<tr>
@@ -360,11 +360,11 @@
 									</table>
 								</td>
 							</tr>
-							
+
 							<tr>
 								<td width="290" height="12" style="background:#ffffff"></td>
 							</tr>
-							
+
 							<tr>
 								<td width="290" style="background:#ffffff;">
 									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
@@ -377,19 +377,19 @@
 									</table>
 								</td>
 							</tr>
-						
+
 					</table>
 
 
 				</div>
 			</div>
-			
+
 		</div>
 	</div>
-	
+
 </div>
 </form>
-<div class="buscador_proveedores" style="display:none;">	
+<div class="buscador_proveedores" style="display:none;">
     <table width="100%" border="0" class="formaBusqueda_proveedores">
             <tr>
                     <td>
@@ -506,7 +506,7 @@
 
 
 
-<div class="buscador_clientes" style="display:none;">	
+<div class="buscador_clientes" style="display:none;">
 	<table width="100%" border="0" class="formaBusqueda_clientes">
 		<tr>
 			<td>
@@ -517,13 +517,13 @@
 								<td colspan="8" height="50" valign="top"><div class="titulo_clientes" width="100%"><strong>Buscador de Proveedores</strong></div></td>
 							</tr>
 						</thead>
-						
+
 						<tbody>
 							<tr>
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff;"></td>
 								<td colspan="3" style="background:#ffffff;" width="600">
-									
+
 									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
 										<tr>
 											<td colspan="7" width="600" height="10"></td>
@@ -539,9 +539,9 @@
 												<INPUT TYPE="button" id="busca_cliente_modalbox" class="onmouseOutBuscar">
 											</td>
 										</tr>
-										
+
 									</table>
-									
+
 								</td>
 								<td width="10" style="background:#ffffff"></td>
 								<td width="10"></td>
@@ -550,16 +550,16 @@
 							<tr style="font-size:13px;">
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
-								
+
 								<td width="80"  style="background:#A8A9AB;">No. control</td>
 								<td width="140"  style="background:#A8A9AB;">RFC</td>
 								<td width="380"  style="background:#A8A9AB;">Razon social</td>
-								
+
 								<td width="10" style="background:#ffffff"></td>
 								<td width="10"></td>
 							</tr>
-							
-							
+
+
 							<tr>
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
@@ -588,14 +588,14 @@
 							<tr>
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
-								
+
 								<td width="80" style="background:#ffffff"></td>
 								<td width="140" style="background:#ffffff"></td>
 								<td width="380" style="background:#ffffff" align="right">
 									<!--<a href="cencela" style="font-size:13px;">Cancelar</a>-->
 									<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
 								</td>
-								
+
 								<td width="10" style="background:#ffffff"></td>
 								<td width="10"></td>
 							</tr>
@@ -605,7 +605,7 @@
 								<td width="10"></td>
 							</tr>
 						</tbody>
-						
+
 					</table>
 				</div>
 			</td>
@@ -616,7 +616,7 @@
 
 
 
-<div class="buscador_productos" style="display:none;">	
+<div class="buscador_productos" style="display:none;">
 	<table width="100%" border="0" class="formaBusqueda_productos">
 		<tr>
 			<td>
@@ -627,13 +627,13 @@
 								<td colspan="8" height="50" valign="top"><div class="titulo_productos" width="100%"><strong>Buscador de productos</strong></div></td>
 							</tr>
 						</thead>
-						
+
 						<tbody>
 							<tr>
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff;"></td>
 								<td colspan="4" style="background:#ffffff;" width="600">
-									
+
 									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
 										<tr>
 											<td colspan="7" width="600" height="10"></td>
@@ -663,25 +663,25 @@
 											</td>
 										</tr>
 									</table>
-									
+
 								</td>
 								<td width="10" style="background:#ffffff"></td>
 								<td width="10"></td>
 							</tr>
-							
+
 							<tr style="font-size:13px;">
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
-								
+
 								<td width="120" style="background:#A8A9AB;">C&oacute;digo&nbsp;</td>
 								<td width="280" style="background:#A8A9AB;">Nombre</td>
 								<td width="90" style="background:#A8A9AB;">Unidad</td>
 								<td width="110" style="background:#A8A9AB;">Tipo</td>
-								
+
 								<td width="10" style="background:#ffffff"></td>
 								<td width="10"></td>
 							</tr>
-							
+
 							<tr>
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
@@ -711,14 +711,14 @@
 							<tr>
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
-								
+
 								<td width="120"  style="background:#ffffff"></td>
 								<td width="280" style="background:#ffffff"></td>
 								<td width="90" style="background:#ffffff"></td>
 								<td width="110" style="background:#ffffff" align="right">
 									<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
 								</td>
-								
+
 								<td width="10" style="background:#ffffff"></td>
 								<td width="10"></td>
 							</tr>
@@ -728,7 +728,7 @@
 								<td width="10"></td>
 							</tr>
 						</tbody>
-						
+
 					</table>
 				</div>
 			</td>
@@ -758,7 +758,7 @@
 								<td width="10" style="background:#ffffff"></td>
 								<td width="10"></td>
 							</tr>
-							
+
 							<tr style="font-size:13px;">
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
@@ -769,7 +769,7 @@
 								<td width="10" style="background:#ffffff"></td>
 								<td width="10"></td>
 							</tr>
-							
+
 							<tr>
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
@@ -811,7 +811,7 @@
 				</div>
 			</td>
 		</tr>
-	</table>	
+	</table>
 </div>
 
 
@@ -825,7 +825,7 @@
 		<div class="columns" style="background:#731F6C;">
 			<div class="container" style="background:white;">
 				<div class="fixed column" class="content_x" >
-					
+
 					<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
 						<tr>
 							<td width="10" height="10"></td>
@@ -844,7 +844,7 @@
 						<tr>
 							<td colspan="5" width="390" height="10"></td>
 						</tr>
-						
+
 						<tr>
 							<td width="10"></td>
 							<td colspan="4" width="380" height="10" style="font-size:13px;">Motivo de cancelaci&oacuten</td>
@@ -856,11 +856,11 @@
 							</td>
 							<td width="10"></td>
 						</tr>
-						
+
 						<tr>
 							<td colspan="5" width="390" height="10"></td>
 						</tr>
-						
+
 						<tr>
 							<td width="10"></td>
 							<td width="120" align="center" colspan="2">
@@ -871,14 +871,14 @@
 							</td>
 							<td width="10"></td>
 						</tr>
-						
+
 					</table>
-					
+
 				</div>
 			</div>
-			
+
 		</div>
 	</div>
-	
+
 </div>
 </form>
