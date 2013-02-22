@@ -14,13 +14,13 @@ public interface CxcInterfaceDao {
     public String selectFunctionForThisApp(String campos_data, String extra_data_array);
     public String selectFunctionForCxcAdmProcesos(String campos_data, String extra_data_array);
     public int countAll(String data_string);
-    
+
     public ArrayList<HashMap<String, Object>> getPaises();
     public ArrayList<HashMap<String, Object>> getEntidadesForThisPais(String id_pais);
     public ArrayList<HashMap<String, Object>> getLocalidadesForThisEntidad(String id_pais,String id_entidad);
     public ArrayList<HashMap<String, Object>> getMonedas();
     public ArrayList<HashMap<String, Object>> getImpuestos();
-    
+
     //catalogo de clientes
     public ArrayList<HashMap<String, Object>> getClientes_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getCliente_Datos(Integer id);
@@ -40,7 +40,7 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, Object>> getCliente_CuentasMayor(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCliente_CuentasContables(Integer cta_mayor, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa );
     public ArrayList<HashMap<String, Object>> getCliente_DatosContabilidad(Integer id);
-    
+
     //carteras
     public ArrayList<HashMap<String, Object>> getCartera_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getCartera_TipoMovimiento();
@@ -62,88 +62,89 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, String>> getCartera_DatosReporteDepositos(String fecha_inicial, String fecha_final, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCartera_PagosAplicados(Integer id_pago, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCartera_PagosDatosHeader(Integer id_pago, Integer id_empresa);
-    
-    
-    //reporte de cobranza por agente 
+
+
+    //reporte de cobranza por agente
     public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCartera_DatosReporteCobranzaAgente(Integer id_agente,String fecha_inicial,String fecha_final, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCartera_DatosReporteVentaxAgente(Integer id_agente,String fecha_inicial,String fecha_final, Integer id_empresa);
-    
+
     //atalogo de agentes
     public ArrayList<HashMap<String, Object>> getAgente_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getUsuarios(Integer id_empresa, Integer usuario_agente);
     public ArrayList<HashMap<String, String>> getAgente_Datos(Integer id_agente);
     public ArrayList<HashMap<String, String>> getAgente_Regiones();
-    
+
     //reporte de pronostico de Cobranza
     public ArrayList<HashMap<String, String>> getPronosticoDeCobranza(String num_semanas, String opcion_seleccionada, Integer id_empresa);
-    
+
     //reporte de ventas netas por cliente
     public ArrayList<HashMap<String, String>> getVentasNetasxCliente(String fecha_inicial, String fecha_final, Integer id_empresa);
-    
+
     //reporte de venta netas por producto factura
     //reporte de venta netas por producto factura
-    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia,Integer tipo_costo);
+    //public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia,Integer tipo_costo);
+    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia,Integer tipo_costo,Integer id_agente);
     public ArrayList<HashMap<String, String>> getProductoTipos();
     public ArrayList<HashMap<String, String>> getLineas();
     public ArrayList<HashMap<String, String>> getMarcas();
     public ArrayList<HashMap<String, String>> getFamilias();
     public ArrayList<HashMap<String, String>> getSubfamilias(Integer id_familia);
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
-    
+
     //catalogo de Clientes Clasificacion 1
     public ArrayList<HashMap<String, Object>> getClientsClasif1_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getClientsClasif1_Datos(Integer id);
-    
-    
+
+
     //catalogo de Clientes Clasificacion 2
     public ArrayList<HashMap<String, Object>> getClientsClasif2_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getClientsClasif2_Datos(Integer id);
-    
-    
+
+
     //catalogo de Clientes Clasificacion 3
     public ArrayList<HashMap<String, Object>> getClientsClasif3_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getClientsClasif3_Datos(Integer id);
-    
-    
+
+
     //catalogo de Zonas de Clientes
     public ArrayList<HashMap<String, Object>> getclientsZonas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getClientsZonas_Datos(Integer id);
-    
-    
+
+
     //catalogo de grupos de Clientes
     public ArrayList<HashMap<String, Object>> getClientsGrupos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getClientsGrupos_Datos(Integer id);
-    
-    
+
+
     //catalogo de tipo de movimientos de Clientes
     public ArrayList<HashMap<String, Object>> getClientstMovimientos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getClientstMovimientos_Datos(Integer id);
-    
+
     public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldos(Integer tipo, Integer id_cliente, Integer id_empresa);
-    
-    
+
+
     public ArrayList<HashMap<String,String>> getEstadisticaVentas(Integer mes_in,Integer mes_fin,Integer id_empresa);
-    
+
     //reporte de estadistico de ventas por producto
     public ArrayList<HashMap<String,String>> getEstadisticaVentasProducto(Integer mes_in,Integer mes_fin,Integer tipo_producto, Integer familia,Integer subfamilia,Integer id_empresa);
     public ArrayList<HashMap<String,String>> getFamilias(Integer tipo_producto, Integer id_empresa);
     public ArrayList<HashMap<String,String>> getSubFamilias(Integer familia_id);
-    
+
     //Aplicativo de programacion de rutas
     public ArrayList<HashMap<String,String>>getProgramacionPagos_FacturasRevision(Integer cliente,String dia_fecha,Integer empresa_id);
     public ArrayList<HashMap<String,String>>getProgramacionPagos_FacturasCobro(Integer cliente,String dia_fecha,Integer empresa_id);
     public ArrayList<HashMap<String, Object>> getProgramacionPagos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getProgramacionPagos_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getProgramacionPagos_Facturas(Integer id);
-    
-    
+
+
     //reporte Cobranza Diaria
     public ArrayList<HashMap<String, String>> getCobranzaDiaria(String fecha_inicial, String fecha_final,Integer cliente, Integer id_empresa);
-    
+
     //reporte Anticipos no Autorizados
     public ArrayList<HashMap<String, String>> getAnticiposnoAplicados(String fecha_inicial, String fecha_final, Integer cliente, Integer id_empresa);
-    
+
     //catalogo de direcciones fiscales de clientes
     public ArrayList<HashMap<String, Object>> getClientsDf_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getClientsDf_Datos(Integer id);
