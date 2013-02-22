@@ -495,7 +495,7 @@ $(function() {
 			if( parseInt(elemento['id']) == parseInt(elemento_seleccionado) ){
 				select_html += '<option value="' + elemento['id'] + '" selected="yes">' + elemento['descripcion_abr'] + '</option>';
 			}else{
-				select_html += '<option value="' + elemento['id'] + '" >' + elemento['descripcion_abr'] + '</option>';
+				//select_html += '<option value="' + elemento['id'] + '" >' + elemento['descripcion_abr'] + '</option>';
 			}
 		});
 		$campo_select.append(select_html);
