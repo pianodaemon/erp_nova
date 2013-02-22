@@ -71,8 +71,8 @@ $(function() {
             opciones_html+='<option value="1">Registro Visitas</option>';
             opciones_html+='<option value="2">Registro Llamadas</option>';
             opciones_html+='<option value="3">Registro Casos</option>';
-            //opciones_html+='<option value="4">Registro Oportunidades</option>';
-            //opciones_html+='<option value="5">Contactos/Prospectos/Clientes</option>';
+            opciones_html+='<option value="4">Registro Oportunidades</option>';
+            opciones_html+='<option value="5">Contactos/Prospectos/Clientes</option>';
          $select_opciones.append(opciones_html);
          
          //valida la fecha seleccionada
@@ -181,64 +181,21 @@ $(function() {
             
             $select_tipo.val(0);
             
-            var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
+                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
 		var parametros={
                     
                     iu: $('#lienzo_recalculable').find('input[name=iu]').val()
                 }
-             $.post(input_json,parametros,function(entry){
-            /*     
-            //cargar select del Mes inicial
-               $mes_inicial.children().remove();
-               var select_html = '';
-               for(var i in array_meses){
-                       if(parseInt(i) == 1 ){
-                               select_html += '<option value="' + i + '" selected="yes">' + array_meses[i] + '</option>';	
-                       }else{
-                               select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
-                       }
-               }
-               $mes_inicial.append(select_html);
-               
-               //mes final
-               $mes_final.children().remove();
-               var select_html = '';
-               for(var i in array_meses){
-                       if(parseInt(i) == 1 ){
-                               select_html += '<option value="' + i + '" selected="yes">' + array_meses[i] + '</option>';	
-                       }else{
-                               select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
-                       }
-               }
-               $mes_final.append(select_html);
-               
-               //validando que el mes final no sea menor que el mes inicial
-                
-                $mes_inicial.change(function(){
-			var valor_mes = $(this).val();
-			
-			//cargar select del Mes Final
-			var i=parseInt(valor_mes);
-			var select_html='';
-			$mes_final.children().remove();
-			while (i<=12){
-				select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';
-				i=i+1;
-			}
-			$mes_final.append(select_html);
-			
-			//$div_reporte_estadisticasventas.children().remove();
-		});*/
-                
-                //Alimentando los campos select_agente
-                $select_agente.children().remove();
+                $.post(input_json,parametros,function(entry){
+                 
+                    //Alimentando los campos select_agente
+                    $select_agente.children().remove();
                     var motivo_hmtl = '';
                     $.each(entry['Agentes'],function(entryIndex,motivo){
                             motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
                     });
                     $select_agente.append(motivo_hmtl);
-
-
+                    
                 });//fin json
                 $fecha_inicial.click(function (s){
 			var a=$('div.datepicker');
@@ -825,7 +782,7 @@ $(function() {
                     $select_agente.children().remove();
                     var motivo_hmtl = '';
                     $.each(entry['Agentes'],function(entryIndex,motivo){
-                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
+                        motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
                     });
                     $select_agente.append(motivo_hmtl);
             
@@ -837,16 +794,33 @@ $(function() {
                 status_html +='<option value="1" selected="yes">Inicial</option>';
                 status_html +='<option value="2" >Calificacion</option>';
                 status_html +='<option value="3" >Necesidad Analisis</option>';
-                status_html +='<option value="4" >Cotizacion</option>';
-                status_html +='<option value="5" >Cotizacion</option>';
-                status_html +='<option value="6" >Ganadas</option>';
-                status_html +='<option value="4" >Perdidas</option>';
+                status_html +='<option value="4" >Cotizaci&oacute;n</option>';
+                status_html +='<option value="5" >Negociaci&oacute;n/Revisi&oacute;n</option>';
+                status_html +='<option value="6" >Cerrado</option>';
+                status_html +='<option value="7" >Ganadas</option>';
+                status_html +='<option value="8" >Perdidas</option>';
             $select_etapa.append(status_html);
-             
-             $fecha_inicial.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-            });
+             var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
+		var parametros={
+                    
+                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
+                }
+                $.post(input_json,parametros,function(entry){
+                 
+                    //Alimentando los campos select_agente
+                    $select_agente.children().remove();
+                    var motivo_hmtl = '';
+                    $.each(entry['Agentes'],function(entryIndex,motivo){
+                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
+                    });
+                    $select_agente.append(motivo_hmtl);
+                    
+                });//fin json
+                
+                $fecha_inicial.click(function (s){
+                    var a=$('div.datepicker');
+                    a.css({'z-index':100});
+                });
 			
 		$fecha_inicial.DatePicker({
 			format:'Y-m-d',
