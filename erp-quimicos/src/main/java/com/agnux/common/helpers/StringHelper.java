@@ -371,6 +371,17 @@ public class StringHelper {
         return cadena_retorno;
     }
     
+    //asignar valor cero si un campo numerico viene vacio
+    public static String asignarCero(String campo) {
+        String cadena_retorno="0";
+        if(!campo.equals("") && campo != null){
+            cadena_retorno=campo;
+        }
+        
+        return cadena_retorno;
+    }
+    
+    
     
     public static String isNullString(String str){
         if(str.equals(null)){

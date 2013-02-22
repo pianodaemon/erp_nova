@@ -14,8 +14,8 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
+import com.agnux.kemikal.reportes.PdfInvActualizaPrecio;
 import com.agnux.kemikal.reportes.PdfInvControlCosto;
-import com.agnux.kemikal.reportes.PdfOrdenSalida;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -32,7 +32,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -146,6 +145,7 @@ public class InvActualizadorPreciosController {
         
         //aplicativo Actualizador lista de Precios a partir de Precio Minimo
         Integer app_selected = 126;
+        String command_selected="paginado";
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -159,14 +159,6 @@ public class InvActualizadorPreciosController {
         String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
         String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
         
-        
-        String tipo_costo="1";//calculo a partir del ultimo costo
-        String importacion="0";
-        String directo="0";
-        String pminimo="0";
-        String simulacion="false";
-        String tipo_cambio="0";
-        
         //esta parte no es igual a todos los aplicativos porque se cambia el procedimiento de busqueda,
         //Se utiliza el mismo procedimiento que se utiliza en el plugin de Control de Costos.
         //se tomo la decision de utilizar el mismo proc porque se hace varios calculos y asi evitamos volver a construir codigo para el grid
@@ -175,6 +167,7 @@ public class InvActualizadorPreciosController {
         String data_string = 
                 app_selected+"___"+
                 id_usuario+"___"+
+                command_selected+"___"+
                 tipo_producto+"___"+
                 marca+"___"+
                 familia+"___"+
@@ -343,6 +336,29 @@ public class InvActualizadorPreciosController {
         String extra_data_array = "'sin datos'";
         String actualizo = "0";
         
+        //verificar que no vengan vacios, si viene vacios se les asigna un cero
+        lista1 = StringHelper.asignarCero(lista1);
+        lista2 = StringHelper.asignarCero(lista2);
+        lista3 = StringHelper.asignarCero(lista3);
+        lista4 = StringHelper.asignarCero(lista4);
+        lista5 = StringHelper.asignarCero(lista5);
+        lista6 = StringHelper.asignarCero(lista6);
+        lista7 = StringHelper.asignarCero(lista7);
+        lista8 = StringHelper.asignarCero(lista8);
+        lista9 = StringHelper.asignarCero(lista9);
+        lista10 = StringHelper.asignarCero(lista10);
+        descto1 = StringHelper.asignarCero(descto1);
+        descto2 = StringHelper.asignarCero(descto2);
+        descto3 = StringHelper.asignarCero(descto3);
+        descto4 = StringHelper.asignarCero(descto4);
+        descto5 = StringHelper.asignarCero(descto5);
+        descto6 = StringHelper.asignarCero(descto6);
+        descto7 = StringHelper.asignarCero(descto7);
+        descto8 = StringHelper.asignarCero(descto8);
+        descto9 = StringHelper.asignarCero(descto9);
+        descto10 = StringHelper.asignarCero(descto10);
+        
+        //remover comas de las cantidades
         lista1 = StringHelper.removerComas(lista1);
         lista2 = StringHelper.removerComas(lista2);
         lista3 = StringHelper.removerComas(lista3);
@@ -421,6 +437,180 @@ public class InvActualizadorPreciosController {
     
     
     
+    //crear pdf de Actualizacion de Precios
+    @RequestMapping(method = RequestMethod.POST, value="/getGenerarPdf.json")
+    public @ResponseBody HashMap<String,String> getGenerarPdfJson(
+            @RequestParam(value="tipo_producto", required=true) String tipo_producto,
+            @RequestParam(value="marca", required=true) String marca,
+            @RequestParam(value="familia", required=true) String familia,
+            @RequestParam(value="subfamilia", required=true) String subfamilia,
+            @RequestParam(value="codigo", required=true) String codigo,
+            @RequestParam(value="producto", required=true) String producto,
+            @RequestParam(value="presentacion", required=true) String presentacion,
+            @RequestParam(value="lista1", required=false) String lista1,
+            @RequestParam(value="lista2", required=false) String lista2,
+            @RequestParam(value="lista3", required=false) String lista3,
+            @RequestParam(value="lista4", required=false) String lista4,
+            @RequestParam(value="lista5", required=false) String lista5,
+            @RequestParam(value="lista6", required=false) String lista6,
+            @RequestParam(value="lista7", required=false) String lista7,
+            @RequestParam(value="lista8", required=false) String lista8,
+            @RequestParam(value="lista9", required=false) String lista9,
+            @RequestParam(value="lista10", required=false) String lista10,
+            @RequestParam(value="descto1", required=false) String descto1,
+            @RequestParam(value="descto2", required=false) String descto2,
+            @RequestParam(value="descto3", required=false) String descto3,
+            @RequestParam(value="descto4", required=false) String descto4,
+            @RequestParam(value="descto5", required=false) String descto5,
+            @RequestParam(value="descto6", required=false) String descto6,
+            @RequestParam(value="descto7", required=false) String descto7,
+            @RequestParam(value="descto8", required=false) String descto8,
+            @RequestParam(value="descto9", required=false) String descto9,
+            @RequestParam(value="descto10", required=false) String descto10,
+            @RequestParam(value="actualizar_descto", required=false) String actualizar_descto,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+            log.log(Level.INFO, "Ejecutando getGenerarPdfJson de {0}", InvActualizadorPreciosController.class.getName());
+            HashMap<String, String> jsonretorno = new HashMap<String,String>();
+            HashMap<String, String> userDat = new HashMap<String, String>();
+            HashMap<String, String> datos = new HashMap<String, String>();
+            HashMap<String, String> datos_actualizacion = new HashMap<String, String>();
+            ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
+            Integer app_selected = 126; //Control de Costos
+            String command_selected="reporte";
+            String existe ="false";
+            String dirSalidas = "";
+            
+            System.out.println("Generando PDF de Actualización de Precios");
+            
+            //decodificar id de usuario
+            Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+            userDat = this.getHomeDao().getUserById(id_usuario);
+            Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+            
+            //cadena de parametros de la busqueda
+            String data_string = 
+            app_selected+"___"+
+            id_usuario+"___"+
+            command_selected+"___"+
+            tipo_producto+"___"+
+            marca+"___"+
+            familia+"___"+
+            subfamilia+"___"+
+            codigo+"___"+
+            producto+"___"+
+            presentacion;
+            
+            String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+            String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+            
+            //obtener el directorio temporal
+            String dir_tmp = this.getGralDao().getTmpDir();
+            File file_dir_tmp = new File(dir_tmp);
+            String file_name = "actualizacion_precios.pdf";
+            
+            //ruta de archivo de salida
+            String fileout = file_dir_tmp +"/"+  file_name;
+            
+            String nombreMes= TimeHelper.ConvertNumToMonth(Integer.parseInt(TimeHelper.getMesActual()));
+            
+            SimpleDateFormat formato = new SimpleDateFormat("'Impreso el' d 'de "+nombreMes+" del ' yyyy 'a las' HH:mm:ss 'hrs.'");
+            String impreso_en = formato.format(new Date());
+            
+            datos.put("titulo_reporte", "Reporte de Actualización de Precios");
+            datos.put("periodo", impreso_en);
+            datos.put("empresa", razon_social_empresa);
+            datos.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
+            datos.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+            
+            datos_actualizacion.put("lista1", lista1);
+            datos_actualizacion.put("lista2", lista2);
+            datos_actualizacion.put("lista3", lista3);
+            datos_actualizacion.put("lista4", lista4);
+            datos_actualizacion.put("lista5", lista5);
+            datos_actualizacion.put("lista6", lista6);
+            datos_actualizacion.put("lista7", lista7);
+            datos_actualizacion.put("lista8", lista8);
+            datos_actualizacion.put("lista9", lista9);
+            datos_actualizacion.put("lista10", lista10);
+            datos_actualizacion.put("descto1", descto1);
+            datos_actualizacion.put("descto2", descto2);
+            datos_actualizacion.put("descto3", descto3);
+            datos_actualizacion.put("descto4", descto4);
+            datos_actualizacion.put("descto5", descto5);
+            datos_actualizacion.put("descto6", descto6);
+            datos_actualizacion.put("descto7", descto7);
+            datos_actualizacion.put("descto8", descto8);
+            datos_actualizacion.put("descto9", descto9);
+            datos_actualizacion.put("descto10", descto10);
+            datos_actualizacion.put("actualizar_descto", actualizar_descto);
+            
+            productos = this.getInvDao().selectFunctionForInvReporte(app_selected, data_string);
+            
+            //instancia a la clase, aqui se le pasa los parametros al constructor
+            PdfInvActualizaPrecio pdfPrecioActualizado = new PdfInvActualizaPrecio(datos, datos_actualizacion, productos, fileout);
+            try {
+                //metodo que construye el pdf
+                pdfPrecioActualizado.ViewPDF();
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(InvActualizadorPreciosController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            System.out.println("Ruta: " + fileout);
+            File file = new File(fileout);
+            if (file.exists()){
+                existe="true";
+            }
+            
+            String cad[]=file_name.split("\\.");
+            
+            
+            jsonretorno.put("generado", existe);
+            jsonretorno.put("file_name", cad[0]);
+            
+            return jsonretorno;
+    }
+    
+    
+    
+    
+    
+    
+    //genera reporte de Actualizalcion de Precios
+    @RequestMapping(value = "/getDescargaPdf/{cadena}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getPdfReporteCostos(
+                @PathVariable("cadena") String cadena,
+                HttpServletRequest request, 
+                HttpServletResponse response, 
+                Model model
+        )throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
+        
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+        File file_dir_tmp = new File(dir_tmp);
+        String file_name = cadena+".pdf";
+        
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+        
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        int size = (int) file.length(); // Tamaño del archivo
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        response.setBufferSize(size);
+        response.setContentLength(size);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        FileCopyUtils.copy(bis, response.getOutputStream());  	
+        response.flushBuffer();
+        
+        FileHelper.delete(fileout);
+        
+        return null;        
+    }
+
     
     
     

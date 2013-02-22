@@ -136,6 +136,79 @@ public class InvSpringDao implements InvInterfaceDao{
         }
         
         
+        //este es para el reporte de Actualizacion de Precios
+        if(id_app==126){
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
+                    + "codigo character varying,"
+                    + "descripcion character varying,"
+                    + "unidad character varying,"
+                    + "presentacion character varying,"
+                    + "moneda character varying,"
+                    + "precio_minimo double precision,"
+                    + "precio_1 double precision,"
+                    + "precio_2 double precision,"
+                    + "precio_3 double precision,"
+                    + "precio_4 double precision,"
+                    + "precio_5 double precision,"
+                    + "precio_6 double precision,"
+                    + "precio_7 double precision,"
+                    + "precio_8 double precision,"
+                    + "precio_9 double precision,"
+                    + "precio_10 double precision,"
+                    + "mon1 character varying,"
+                    + "mon2 character varying,"
+                    + "mon3 character varying,"
+                    + "mon4 character varying,"
+                    + "mon5 character varying,"
+                    + "mon6 character varying,"
+                    + "mon7 character varying,"
+                    + "mon8 character varying,"
+                    + "mon9 character varying,"
+                    + "mon10 character varying) ORDER BY descripcion;";
+            System.out.println("InvReporte: "+sql_to_query);
+            
+            ArrayList<HashMap<String, String>> hm126 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_to_query,
+                new Object[]{}, new RowMapper(){
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        HashMap<String, String> row = new HashMap<String, String>();
+                       
+                        row.put("codigo",rs.getString("codigo"));
+                        row.put("descripcion",rs.getString("descripcion"));
+                        row.put("unidad",rs.getString("unidad"));
+                        row.put("presentacion",rs.getString("presentacion"));
+                        row.put("moneda",rs.getString("moneda"));
+                        row.put("precio_minimo",StringHelper.roundDouble(rs.getDouble("precio_minimo"),2));
+                        row.put("precio_1",StringHelper.roundDouble(rs.getDouble("precio_1"),2));
+                        row.put("precio_2",StringHelper.roundDouble(rs.getDouble("precio_2"),2));
+                        row.put("precio_3",StringHelper.roundDouble(rs.getDouble("precio_3"),2));
+                        row.put("precio_4",StringHelper.roundDouble(rs.getDouble("precio_4"),2));
+                        row.put("precio_5",StringHelper.roundDouble(rs.getDouble("precio_5"),2));
+                        row.put("precio_6",StringHelper.roundDouble(rs.getDouble("precio_6"),2));
+                        row.put("precio_7",StringHelper.roundDouble(rs.getDouble("precio_7"),2));
+                        row.put("precio_8",StringHelper.roundDouble(rs.getDouble("precio_8"),2));
+                        row.put("precio_9",StringHelper.roundDouble(rs.getDouble("precio_9"),2));
+                        row.put("precio_10",StringHelper.roundDouble(rs.getDouble("precio_10"),2));
+                        row.put("mon1",rs.getString("mon1"));
+                        row.put("mon2",rs.getString("mon2"));
+                        row.put("mon3",rs.getString("mon3"));
+                        row.put("mon4",rs.getString("mon4"));
+                        row.put("mon5",rs.getString("mon5"));
+                        row.put("mon6",rs.getString("mon6"));
+                        row.put("mon7",rs.getString("mon7"));
+                        row.put("mon8",rs.getString("mon8"));
+                        row.put("mon9",rs.getString("mon9"));
+                        row.put("mon10",rs.getString("mon10"));
+                        return row;
+                    }
+                }
+            );
+            data=hm126;
+        }
+        
+        
+        
         return data;
     }
     
