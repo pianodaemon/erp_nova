@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>${title}</title>
-        
+
         #include("${layoutheader}")
-        
+
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/comcompraautorizacion/formaComComprasAutoriza.css" type="text/css" />
         <!--  js for this catalogo -->
@@ -12,15 +12,15 @@
         <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/comcompraautorizacion/modalboxComComprasAutoriza.js"></script>
         <script type="text/javascript" src="../../js/implements/comcompraautorizacion/index.js" ></script>
-       
+
         #include("${layoutmenu}")
-        
+
         <input type="hidden" name="contextpath" value="$url">
         <input type="hidden" name="user" value="$username">
         <input type="hidden" name="iu" value="$iu">
         <input type="hidden" name="emp" value="$empresa">
         <input type="hidden" name="suc" value="$sucursal">
-        
+
         <!--Esta tabla va  en la barra de acciones -->
 		<table class="table_acciones" style="display:none" border="0">
                     <tr>
@@ -48,7 +48,7 @@
                             <td ></td>
                             <td width="10">&nbsp;&nbsp;&nbsp;</td>
 			</tr>
-			
+
 			<tr>
                             <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
                             <td width="100"><INPUT TYPE="text" name="busqueda_folio" style="width:100px;"></td>
@@ -67,9 +67,9 @@
                             <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 		</table>
-        
-        
-        
+
+
+
         <!--  otra parte -->
         <table class="acciones" >
 			<!--
@@ -89,7 +89,7 @@
                 <td ></td>
             </tr>
         </table>
-			
+
         <!--form for poccomprasautoriza -->
         <form id="formacomcomprasautoriza00" action="edit.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
@@ -99,7 +99,7 @@
                 <input type="hidden" name="tasa_ret_immex">
                 <input type="hidden" name="total_tr">
                 <input type="hidden" name="accion_proceso">
-					
+
                     <div id="div_two" title="" class="comcomprasautoriza_div_two">
                         <div class="columns on-2">
                             <div class="fixed column" style="width:873px; padding-left:6px;"><strong>Autorizaci&oacute;n de Orden de Compras</strong></div>
@@ -108,8 +108,8 @@
                             </div>
                         </div>
                     </div>
-                    
-                    
+
+
                     <div id="div_three" title="" class="comcomprasautoriza_div_three">
                         <div class="columns" >
                             <div class=" fixed column">
@@ -121,7 +121,7 @@
                         <div class="columns" style="background:#731F6C;">
                             <div class="container" style="background:white;">
                                 <div class="fixed column" class="content_x" >
-                                    <div id="tabx-1" class="contenidoPes" >						
+                                    <div id="tabx-1" class="contenidoPes" >
                                         <table border="0" style="margin:0; padding:0;">
                                                 <tr>
                                                     <td width="520"></td>
@@ -160,21 +160,21 @@
                                                                 <td width="90"></td>
                                                                 <td width="75"></td>
                                                                 <td width="15"></td>
-                                                            </tr>      
+                                                            </tr>
                                                             <tr><td colspan="10" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Razon&nbsp;social</td>
                                                                 <td colspan="8" width="405"><INPUT TYPE="text" name="razonproveedor" style="width:405px;" readOnly="true"></td>
                                                             </tr>
-                                                            
+
                                                         </table>
-														
+
                                                     </td>
-                                                    							
+
                                                     <td width="10"></td>
                                                     <!--<td width="60"></td>-->
-													
+
                                                     <td width="350" colspan="2" valign="top" >
                                                         <table border="0">
                                                             <tr>
@@ -190,14 +190,14 @@
                                                                 </td>
                                                                 <td width="10"></td>
                                                             </tr>
-															
+
                                                         </table>
                                                     </td>
                                                 </tr>
-												
+
                                                 <tr>
-                                                    <td colspan="4">   
-                                                        <table border="0" class="gral"> 
+                                                    <td colspan="4">
+                                                        <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10" height="3"></td>
                                                                 <td width="70"></td>
@@ -216,7 +216,7 @@
                                                                 <td></td>
                                                                 <td width="75"></td>
                                                                 <td width="25"></td>
-                                                            </tr>							    
+                                                            </tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="70">Moneda</td>
@@ -234,12 +234,12 @@
                                                                     <INPUT TYPE="text" name="tipo_cambio_original" style="display:none">
                                                                 </td>
                                                                 <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tc"></div></td>
-																
+
                                                                 <td width="75" style="text-aling:rigth;">Grupo</td>
                                                                 <td>&nbsp;&nbsp;</td>
                                                                 <td>
-                                                                    <INPUT TYPE="text" name="grupo" style="width:75px;">
-                                                                    
+                                                                    <INPUT TYPE="text" name="grupo" style="width:75px;" readOnly="true">
+
                                                                 </td>
                                                                 <td width="30"></td>
                                                                 <td width="90" colspan="2">T&eacute;rminos&nbsp;de&nbsp;pago</td>
@@ -250,26 +250,26 @@
                                                                 </td>
                                                                 <td width="25"></td>
                                                             </tr>
-                                                            
+
                                                             <tr><td colspan="17" height="5"></td></tr>
-                                                            
+
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="80">Consignado a:</td>
+                                                                <td width="80">Consignado&nbsp;a:</td>
                                                                 <td width="270" colspan="5">
-                                                                    <INPUT TYPE="text" name="consigandoA" style="width:270px;">
-                                                                    
+                                                                    <INPUT TYPE="text" name="consigandoA" style="width:270px;" readOnly="true">
+
                                                                 </td>
                                                                 <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_transporte"></div></td>
-                                                                <td width="75">Via Embarque</td>
+                                                                <td width="75">Via&nbsp;Embarque</td>
                                                                 <td>&nbsp;&nbsp;</td>
                                                                 <td>
                                                                     <SELECT NAME="via_envarque" style="width:120px" title="Via embarque"></SELECT>
                                                                 </td>
                                                                 <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_viaembarque"></div></td>
-                                                                
+
                                                                 <td width="25"></td>
-                                                            </tr>      
+                                                            </tr>
                                                             <tr>
                                                                 <td colspan="17" height="5"></td>
                                                             </tr>
@@ -277,20 +277,20 @@
                                                                 <td width="10"></td>
                                                                 <td width="80"></td>
                                                                 <td width="474" colspan="9">
-                                                                
+
                                                                 </td>
                                                                 <td width="30"><div class="interrogacion">
-                                                                    
+
                                                                 <td width="90" colspan="2"></td>
                                                                 <td>&nbsp;&nbsp;</td>
                                                                 <td width="140"></td>
                                                                 <td width="25"></td>
                                                             </tr>
-                                                         							    
+
                                                         </table>
                                                     </td>
                                                 </tr>
-                                                
+
                                                 <tr>
                                                     <td colspan="4">
                                                         <table border="0" class="gral">
@@ -319,9 +319,9 @@
                                                             </tr>
                                                         </table>
                                                     </td>
-                                                </tr>						
+                                                </tr>
                                                 <tr class="registros">
-                                                    <td colspan="4" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">							
+                                                    <td colspan="4" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
                                                         <table >
                                                                 <thead>
                                                                     <tr class="registros_pagos">
@@ -336,19 +336,19 @@
                                                                     </tr>
                                                                 </thead>
                                                         </table>
-                                                        <div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">	
+                                                        <div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">
                                                             <table class="tabla_facturas">
                                                                     <tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
                                                                     </tbody>
                                                             </table>
                                                         </div>
                                                     </td>
-                                                </tr>						
+                                                </tr>
                                                 <tr>
                                                     <td colspan="3" width="620"  align="left" valign="top">
 
                                                         <div id="div_warning_grid" style="display:none;">
-															
+
                                                             <table border ="0">
                                                                 <tr>
                                                                     <td width="10"></td>
@@ -365,7 +365,7 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td width="10"></td>
-                                                                    <td colspan="5"> 
+                                                                    <td colspan="5">
                                                                         <div align="left" style="width:600px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
                                                                             <table id="grid_warning" border="0" style="width:575px;"">
                                                                                 <!-- Aqui se muestran los warning
@@ -391,7 +391,7 @@
                                                                 <td width="60">Impuesto</td>
                                                                 <td width="120"><INPUT TYPE="text" name="impuesto" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
                                                             </tr>
-                                                            
+
                                                             <tr>
                                                                 <td width="80"></td>
                                                                 <td width="60">Total</td>
@@ -416,14 +416,14 @@
                                         </tr>
                                 </table>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
         </form>
         #include("${layoutfooter}")
     </body>
-</html>	
+</html>
 
 <form id="formaGeneraInforme" action="edit.json" method="POST" >
 <div id="div_one" class="panelcito_modal generainforme_div_one"  style="display:none;" title="">
@@ -470,13 +470,13 @@
                             </tr>
                         </table>
                     </div>
-                </div>	
+                </div>
             </div>
 	</div>
     </div>
 </form>
 
-<div class="buscador_clientes" style="display:none;">	
+<div class="buscador_clientes" style="display:none;">
 	<table width="100%" border="0" class="formaBusqueda_clientes">
 		<tr>
                     <td>
@@ -571,7 +571,7 @@
 	</table>
 </div>
 
-<div class="buscador_productos" style="display:none;">	
+<div class="buscador_productos" style="display:none;">
 	<table width="100%" border="0" class="formaBusqueda_productos">
 		<tr>
                 <td>
@@ -710,7 +710,7 @@
                                                             <td width="10" style="background:#ffffff"></td>
                                                             <td width="10"></td>
 							</tr>
-							
+
 							<tr style="font-size:13px;">
                                                             <td width="10"></td>
                                                             <td width="10" style="background:#ffffff"></td>
@@ -721,7 +721,7 @@
                                                             <td width="10" style="background:#ffffff"></td>
                                                             <td width="10"></td>
 							</tr>
-							
+
 							<tr>
                                                             <td width="10"></td>
                                                             <td width="10" style="background:#ffffff"></td>
@@ -763,7 +763,7 @@
 				</div>
 			</td>
 		</tr>
-	</table>	
+	</table>
 </div>
 
 
@@ -777,7 +777,7 @@
 		<div class="columns" style="background:#731F6C;">
 			<div class="container" style="background:white;">
 				<div class="fixed column" class="content_x" >
-					
+
 					<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
 						<tr>
                                                     <td width="10" height="10"></td>
@@ -796,7 +796,7 @@
 						<tr>
                                                     <td colspan="5" width="390" height="10"></td>
 						</tr>
-						
+
 						<tr>
                                                     <td width="10"></td>
                                                     <td colspan="4" width="380" height="10" style="font-size:13px;">Motivo de cancelaci&oacuten</td>
@@ -808,11 +808,11 @@
                                                     </td>
                                                     <td width="10"></td>
 						</tr>
-						
+
 						<tr>
                                                     <td colspan="5" width="390" height="10"></td>
 						</tr>
-						
+
 						<tr>
                                                     <td width="10"></td>
                                                     <td width="120" align="center" colspan="2">
@@ -823,14 +823,14 @@
                                                     </td>
                                                     <td width="10"></td>
 						</tr>
-						
+
 					</table>
-					
+
 				</div>
 			</div>
-			
+
 		</div>
 	</div>
-	
+
 </div>
 </form>
