@@ -1,16 +1,16 @@
-$(function() {	
+$(function() {
         var config =  {
-                    tituloApp: 'Estadistico de Compras' ,                 
+                    tituloApp: 'Estadistico de Compras' ,
                     contextpath : $('#lienzo_recalculable').find('input[name=contextpath]').val(),
-                    
+
                     userName : $('#lienzo_recalculable').find('input[name=user]').val(),
                     ui : $('#lienzo_recalculable').find('input[name=iu]').val(),
-                    
-                    
+
+
                     empresa:$('#lienzo_recalculable').find('input[name=emp]').val(),
                     sucursal:$('#lienzo_recalculable').find('input[name=suc]').val(),
-                    
-                   
+
+
                     getUrlForGetAndPost : function(){
                         var url = document.location.protocol + '//' + document.location.host + this.getController();
                         return url;
@@ -23,14 +23,14 @@ $(function() {
                     getUi: function(){
                         return this.ui;
                     },
-                    
+
                     getEmpresa: function(){
                         return this.empresa;
                     },
                     getSucursal: function(){
                         return this.sucursal;
                     },
-                    
+
                     getTituloApp: function(){
                         return this.tituloApp;
                     },
@@ -40,9 +40,9 @@ $(function() {
                         return this.contextpath + "/controllers/repestadisticocompras";
                         //  return this.controller;
                     }
-                
+
         };
-  
+
 
 		$('#header').find('#header1').find('span.emp').text(config.getEmpresa());
 		$('#header').find('#header1').find('span.suc').text(config.getSucursal());
@@ -55,7 +55,7 @@ $(function() {
 		$('#barra_titulo').find('#td_titulo').append(config.getTituloApp());
 		$('#barra_acciones').hide();
 
-		//barra para el buscador 
+		//barra para el buscador
 		$('#barra_buscador').hide();
 
 		var $select_tipo_reporte = $('#lienzo_recalculable').find('div.repestadisticocompras').find('table#fechas tr td').find('select[name=ventas]');
@@ -68,17 +68,17 @@ $(function() {
 		var $Nombre_Proveedor= $('#lienzo_recalculable').find('div.repestadisticocompras').find('table#fechas tr td').find('input[name=nombreproveedor]');
 		var $Nombre_Producto= $('#lienzo_recalculable').find('div.repestadisticocompras').find('table#fechas tr td').find('input[name=nombreproducto]');
 		var $id_proveedor_edo_cta = $('#lienzo_recalculable').find('div.repestadisticocompras').find('input[name=id_proveedor_edo_cta]');
-		  
-		
+
+
 		var $Buscar_proveedor= $('#lienzo_recalculable').find('div.repestadisticocompras').find('table#fechas tr td').find('a[href*=busca_proveedor]');
 		var $Buscar_productos= $('#lienzo_recalculable').find('div.repestadisticocompras').find('table#fechas tr td').find('a[href*=busca_producto]');
 		var $div_ventas_netas_productofactura= $('#ventasnetasproductofactura');
-                    
+
 			$fecha_inicial.attr({'readOnly':true});
 			$fecha_final.attr({'readOnly':true});
 			$Nombre_Proveedor.attr({'readOnly':true});
 			$Nombre_Producto.attr({'readOnly':true});
-	
+
 				//valida la fecha seleccionada
 				function mayor(fecha, fecha2){
 					var xMes=fecha.substring(5, 7);
@@ -109,7 +109,7 @@ $(function() {
 							}
 					}
 				}
-	
+
 				//muestra la fecha actual
 				var mostrarFecha = function mostrarFecha(){
 						var ahora = new Date();
@@ -119,7 +119,7 @@ $(function() {
 						mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
 						var diaActual = ahora.getDate();
 						diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-						var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
+						var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
 						return Fecha;
 				}
 		//----------------------------------------------------------------
@@ -148,13 +148,13 @@ $(function() {
                                 jAlert("Fecha no valida",'! Atencion');
                                 $fecha_inicial.val(mostrarFecha());
                             }else{
-                                $fecha_inicial.DatePickerHide();	
+                                $fecha_inicial.DatePickerHide();
                             }
                         }
                     }
                 });
-        
-    
+
+
                 $fecha_inicial.click(function (s){
                     var a=$('div.datepicker');
                     a.css({'z-index':100});
@@ -187,14 +187,14 @@ $(function() {
                                             jAlert("Fecha no valida",'! Atencion');
                                             $fecha_final.val(mostrarFecha());
                             }else{
-                                            $fecha_final.DatePickerHide();	
+                                            $fecha_final.DatePickerHide();
                             }
                         }
                     }
             });
-        
-        
-        
+
+
+
             $fecha_final.DatePicker({
                 format:'Y-m-d',
                 date: $(this).val(),
@@ -219,12 +219,12 @@ $(function() {
                             jAlert("Fecha no valida",'! Atencion');
                             $fecha_final.val(mostrarFecha());
                         }else{
-                            $fecha_final.DatePickerHide();	
+                            $fecha_final.DatePickerHide();
                         }
                     }
                 }
             });
-   
+
             $fecha_final.click(function (s){
                             var a=$('div.datepicker');
                             a.css({'z-index':100});
@@ -232,7 +232,7 @@ $(function() {
 
 
             mostrarFecha($fecha_final.val());
-	
+
             //buscador de productos
             busca_productos = function(sku_buscar){
                 $(this).modalPanel_Buscaproducto();
@@ -286,7 +286,7 @@ $(function() {
                     //event.preventDefault();
                     $tabla_resultados.children().remove();
                     var restful_json_service = config.getUrlForGetAndPost()+'/get_buscador_productos.json';
-                    arreglo_parametros = {    	
+                    arreglo_parametros = {
                             sku:$campo_sku.val(),
                             tipo:$select_tipo_producto.val(),
                             descripcion:$campo_descripcion.val(),
@@ -354,7 +354,7 @@ $(function() {
                                 $('#forma-buscaproducto-overlay').fadeOut(remove);
                 });
             }//termina buscador de productos
-    
+
             //click generar reporte de pronostico de Cobranza
             $genera_reporte_ventas_netasproductofactura.click(function(event){
                     event.preventDefault();
@@ -374,13 +374,13 @@ $(function() {
                             jAlert("Debe elegir el rango la fecha inicial y su fecha final par la busqueda","Atencion!!!")
                     }
             });
-		
+
             $Buscar_productos.click(function(event){
                     event.preventDefault();
                     busca_productos();
             });
-    
-    
+
+
             $busca_proveedores = function(){
                     $(this).modalPanel_Buscaprov();
                     var $dialogoc =  $('#forma-buscaproveedor-window');
@@ -417,7 +417,7 @@ $(function() {
                 $buscar_plugin_proveedor.click(function(event){
                         //event.preventDefault();
                         var restful_json_service = config.getUrlForGetAndPost() + '/getBuscaProveedores.json'
-                        $arreglo = {    
+                        $arreglo = {
                                         rfc:$campo_rfc.val(),
                                         email:$campo_email.val(),
                                         nombre:$campo_nombre.val(),
@@ -478,17 +478,17 @@ $(function() {
                 $busca_proveedores();//llamada a la funcion que busca proveedores
         });
 
-                            
+
         $Buscar_estadistico_compras.click(function(event){
             event.preventDefault();
             if($fecha_inicial.val()=='' || $fecha_final.val()==''){
-                
+
                 jAlert("Seleccione una rango de fechas",'Atencion!');
-                
+
             }else{
                 $div_ventas_netas_productofactura.children().remove();
                 if ($select_tipo_reporte.val() == 1 || $select_tipo_reporte.val() == 2){
-			
+
                         var arreglo_parametros = {	tipo_reporte: $select_tipo_reporte.val(),
                                                         proveedor: $Nombre_Proveedor.val(),
                                                         producto: $Nombre_Producto.val(),
@@ -501,14 +501,14 @@ $(function() {
                         var proveedor="";
                         $.post(restful_json_service,arreglo_parametros,function(entry){
                         var body_tabla = entry;
-			
-                            
-                            
-                        
+
+
+
+
 			//var footer_tabla = entry['Totales'];
 			var header_tabla = {
                                         clave_proveedor     :'Clave',
-                                        proveedor           :'Proveedor',				
+                                        proveedor           :'Proveedor',
                                         codigo_producto     :'Codigo',
                                         producto            :'Producto',
                                         factura             :'Factura',
@@ -523,72 +523,72 @@ $(function() {
                                         moneda_compra_neta  :'',
                                         compra_neta_mn      :'Compra Neta en M.N.'
 			};
-			
+
 			var header_clave_codigo="";
 			var header_producto_proveedor="";
-                        
+
 			if(parseInt($select_tipo_reporte.val())==1){
 				header_clave_codigo="Clave";
 				header_producto_proveedor="Proveedor";
 			}
-			
+
                         if(parseInt($select_tipo_reporte.val())==2){
 				header_clave_codigo="Codigo";
 				header_producto_proveedor="Producto";
-			}			
-			
+			}
+
 			var html_reporte = '<table id="reporte">';
 			var html_fila_vacia='';
 			var html_footer = '';
-			
+
 			html_reporte +='<thead> <tr>';
 			for(var key in header_tabla){
 				var attrValue = header_tabla[key];
 				if(attrValue == header_clave_codigo){
-					html_reporte +='<td width="80px" align="left">'+attrValue+'</td>'; 
+					html_reporte +='<td width="80px" align="left">'+attrValue+'</td>';
 				}
-				
+
 				if(attrValue == header_producto_proveedor){
-					html_reporte +='<td width="200px" align="left">'+attrValue+'</td>'; 
+					html_reporte +='<td width="200px" align="left">'+attrValue+'</td>';
 				}
-				
+
 				if(attrValue == "Factura"){
-					html_reporte +='<td width="90px" align="left">'+attrValue+'</td>'; 
+					html_reporte +='<td width="90px" align="left">'+attrValue+'</td>';
 				}
-				
+
 				if(attrValue == "Fecha"){
-					html_reporte +='<td width="80px" align="left">'+attrValue+'</td>'; 
+					html_reporte +='<td width="80px" align="left">'+attrValue+'</td>';
 				}
 				if(attrValue == "Unidad"){
-					html_reporte +='<td width="70px" align="left">'+attrValue+'</td>'; 
-				}				
+					html_reporte +='<td width="70px" align="left">'+attrValue+'</td>';
+				}
 				if(attrValue == "Cantidad"){
-					html_reporte +='<td width="80px" align="left">'+attrValue+'</td>'; 
+					html_reporte +='<td width="80px" align="left">'+attrValue+'</td>';
 				}
-				
+
 				if(attrValue == ''){
-					html_reporte +='<td width="10px" align="right" >'+attrValue+'</td>'; 
+					html_reporte +='<td width="10px" align="right" >'+attrValue+'</td>';
 				}
-				
+
 				if(attrValue == "Costo Unitario"){
-					html_reporte +='<td width="90px" align="left" id="monto">'+attrValue+'</td>'; 
+					html_reporte +='<td width="90px" align="left" id="monto">'+attrValue+'</td>';
 				}
-				
+
 				if(attrValue == "Moneda"){
-					html_reporte +='<td width="60px" align="left">'+attrValue+'</td>'; 
+					html_reporte +='<td width="60px" align="left">'+attrValue+'</td>';
 				}
-				
+
 				if(attrValue == "Tipo Cambio"){
-					html_reporte +='<td width="80px" align="left"  id="monto">'+attrValue+'</td>'; 
+					html_reporte +='<td width="80px" align="left"  id="monto">'+attrValue+'</td>';
 				}
-				
+
 				if(attrValue == "Compra Neta en M.N."){
-					html_reporte +='<td width="130px" align="left" id="monto">'+attrValue+'</td>'; 
+					html_reporte +='<td width="130px" align="left" id="monto">'+attrValue+'</td>';
 				}
 
 			}
 			html_reporte +='</tr> </thead>';
-				
+
 			html_fila_vacia +='<tr>';
 			html_fila_vacia +='<td width="80px" align="left"  id="sin_borde" height="10"></td>';
 			html_fila_vacia +='<td width="200px" align="left"  id="sin_borde"></td>';
@@ -604,19 +604,19 @@ $(function() {
 			html_fila_vacia +='<td width="10px" align="right" id="sin_borde"></td>';
 			html_fila_vacia +='<td width="130px" align="right" id="sin_borde"></td>';
 			html_fila_vacia +='</tr>';
-			
+
 			var simbolo_moneda="";
 			//esta variable toma el campo de ordenamiento dependiendo del tipo de reporte
 			var campo_ordenamiento_actual="";
-			
+
 			//inicializar variables
 			var suma_parcial=0.0;//esta variable es para las sumas parciales, puede ser por producto o proveedor dependiento del tipo de reporte
 			var suma_general=0.0;
 			var suma_cantidad_unidad=0.0;
-                        
+
                                 if(parseInt(body_tabla.length)>0){
 
-                                        var campo_proveedor_producto_actual="";
+                                        campo_proveedor_producto_actual="";
                                         var unidad="";
                                         //estas dos variables indican el indice que debe tomar del arreglo dependiendo del timpo de reporte
                                         var campo_clave_codigo="";
@@ -631,7 +631,7 @@ $(function() {
                                                 campo_proveedor_producto_actual=body_tabla[0]["razon_social"];
                                                 unidad=body_tabla[0]["unidad"];
                                         }
-                                       
+
                                         html_reporte +='<tr id="tr_totales"><td align="left" colspan="13">'+campo_proveedor_producto_actual+'</td></tr>';
                                         for(var i=0; i<body_tabla.length; i++){
 
@@ -769,24 +769,24 @@ $(function() {
                                 html_footer +='<td align="left" id="simbolo_moneda">$</td>';
                                 html_footer +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(suma_general).toFixed(2))+'</td>';
                                 html_footer +='</tr>';
-							
+
                                 html_reporte +='<tfoot>';
                                         html_reporte += html_footer;
                                 html_reporte +='</tfoot>';
 
                                 html_reporte += '</table>';
-						
-                                $div_ventas_netas_productofactura.append(html_reporte); 
+
+                                $div_ventas_netas_productofactura.append(html_reporte);
 
                                 var height2 = $('#cuerpo').css('height');
-                                var alto = parseInt(height2)-300;
+                                var alto = parseInt(height2)-350;
                                 var pix_alto=alto+'px';
                                 $('#reporte').tableScroll({height:parseInt(pix_alto)});
-                        
-                        });//fin del jsonnnnn  
+
+                        });//fin del jsonnnnn
                 }
-                
-                
+
+
                 //MUESTRA LOS PRODUCTOS SUMARIZADO
                        if ($select_tipo_reporte.val() == 3 || $select_tipo_reporte.val() == 4 ){
                         $div_ventas_netas_productofactura.children().remove();
@@ -796,9 +796,9 @@ $(function() {
                         var fecha_inicial = $fecha_inicial.val();
                         var fecha_final = $fecha_final.val();
                         var usuario = config.getUi();
-			
-			if(fecha_inicial != "" && fecha_final != ""){ 
-				var arreglo_parametros = {	
+
+			if(fecha_inicial != "" && fecha_final != ""){
+				var arreglo_parametros = {
                                     tipo_reporte: $select_tipo_reporte.val(),
                                     proveedor: $Nombre_Proveedor.val(),
                                     producto: $Nombre_Producto.val(),
@@ -806,21 +806,21 @@ $(function() {
                                     fecha_final: $fecha_final.val(),
                                     iu:config.getUi()
                                 };
-		
+
                                 var restful_json_service = config.getUrlForGetAndPost() + '/getEstadisticoCompras/out.json'
-				
+
                                 var unidad="";
                                 var cantidad=0.0;
-                                
+
                                 var compra_neta=0.0;
                                 var contador_costo_unitario=0;
                                 var costo_unitario=0.0;
                                 var costo_promedio=0.0;
                                 var indice_extraido = "";
-				
+
 				$.post(restful_json_service,arreglo_parametros,function(entry){
-					var body_tabla = entry; 
-                                        
+					var body_tabla = entry;
+
 					var header_tabla = {
                                                             Producto    :'Producto',
                                                             proveedor    :'Proveedor',
@@ -835,98 +835,98 @@ $(function() {
 					var totalpesos = 0.0;
 					var totalxproducto= 0.0;
 					var tmp = 0;
-                                         
+
                                         var suma_general=0.0;
                                         var producto_proveedor = "";
                                         var html_footer ="";
 					var html_comprasnetas = '<table id="ventas" width="100%" >';
 
                                                 html_comprasnetas +='<thead> <tr>';
-                                                
-                                                
+
+
 						for(var key in header_tabla){
 							var attrValue = header_tabla[key];
-                                                        //html_ventasnetas +='<td  align="left">'+attrValue+'</td>'; 
+                                                        //html_ventasnetas +='<td  align="left">'+attrValue+'</td>';
                                                         if($select_tipo_reporte.val() == 3){
                                                             if(attrValue == "Producto"){
-                                                                    html_comprasnetas +='<td  width="50px" align="left" >'+attrValue+'</td>'; 
+                                                                    html_comprasnetas +='<td  width="50px" align="left" >'+attrValue+'</td>';
                                                             }
                                                         }
                                                         if($select_tipo_reporte.val() == 4){
                                                             if(attrValue == "Proveedor"){
-                                                                    html_comprasnetas +='<td  width="50px" align="left" >'+attrValue+'</td>'; 
+                                                                    html_comprasnetas +='<td  width="50px" align="left" >'+attrValue+'</td>';
                                                             }
                                                         }
-                                                        
+
 							if(attrValue == "Unidad"){
-								html_comprasnetas +='<td  align="right" >'+attrValue+'</td>'; 
+								html_comprasnetas +='<td  align="right" >'+attrValue+'</td>';
 							}
 							if(attrValue == "Cantidad"){
-								html_comprasnetas +='<td  align="right" >'+attrValue+'</td>'; 
+								html_comprasnetas +='<td  align="right" >'+attrValue+'</td>';
 							}
 							if(attrValue == ""){
-								html_comprasnetas +='<td width="8px" align="right" >'+attrValue+'</td>'; 
+								html_comprasnetas +='<td width="8px" align="right" >'+attrValue+'</td>';
 							}
 							if(attrValue == "P.Promedio"){
-								html_comprasnetas +='<td   align="right" >'+attrValue+'</td>'; 
+								html_comprasnetas +='<td   align="right" >'+attrValue+'</td>';
 							}
-							
+
 							if(attrValue == "V.Total"){
-								html_comprasnetas +='<td  align="right" >'+attrValue+'</td>'; 
+								html_comprasnetas +='<td  align="right" >'+attrValue+'</td>';
 							}
 						}
                                                 html_comprasnetas +='</tr> </thead>';
-                                                                
-                                                
+
+
                                                 if(parseInt(body_tabla.length) > 0){
                                                     if($select_tipo_reporte.val() == 3){
                                                             producto_proveedor = body_tabla[0]["producto"];
                                                             unidad = body_tabla[0]["unidad"];
                                                             indice_extraido="producto";
                                                     }
-                                                    
+
                                                     if($select_tipo_reporte.val() == 4){
-                                                            producto_proveedor = body_tabla[0]["razon_social"];        
+                                                            producto_proveedor = body_tabla[0]["razon_social"];
                                                             indice_extraido="razon_social";
                                                             unidad = body_tabla[0]["unidad"];
                                                     }
                                                 }
-                                                               
-                                                               
-                                                 
+
+
+
                                                 for(var i=0; i<body_tabla.length; i++){
                                                     if(producto_proveedor ==  body_tabla[i][indice_extraido] ){
                                                         if(unidad == body_tabla[i]["unidad"]){
-                                                        
+
                                                             cantidad                =cantidad + parseFloat(body_tabla[i]["cantidad"]);
                                                             costo_unitario          =costo_unitario +parseFloat(body_tabla[i]["precio_unitario"]);
                                                             compra_neta             = compra_neta+parseFloat(body_tabla[i]["total_pesos"]);
                                                             contador_costo_unitario =contador_costo_unitario+1;
                                                             costo_promedio=costo_unitario/contador_costo_unitario;
                                                             suma_general =suma_general +parseFloat(body_tabla[i]["total_pesos"]);
-                                                            
-                                                           
+
+
                                                         }else{
-                                                             
+
                                                             html_comprasnetas +='<tr>';
-                                                                        html_comprasnetas +='<td width="300px" align="left" >'+producto_proveedor+'</td>'; 
+                                                                        html_comprasnetas +='<td width="300px" align="left" >'+producto_proveedor+'</td>';
                                                                         html_comprasnetas +='<td  align="right" >'+unidad+'</td>';
                                                                         html_comprasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(cantidad).toFixed(2))+'</td>';
-                                                                        html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>'; 
+                                                                        html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
                                                                         html_comprasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(costo_promedio).toFixed(2))+'</td>';
-                                                                        html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>'; 
+                                                                        html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
                                                                         html_comprasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(compra_neta).toFixed(2))+'</td>';
                                                              html_comprasnetas +='</tr>';
-                                                        
-                                                        
+
+
                                                             //reinicio varibles
                                                             cantidad                =0.0;
                                                             costo_unitario          =0.0;
                                                             compra_neta             = 0.0;
                                                             contador_costo_unitario =0.0;
                                                             costo_promedio=0.0;
-                                                            
-                                                            //producto_proveedor      =body_tabla[i][indice_extraido]; 
+
+                                                            //producto_proveedor      =body_tabla[i][indice_extraido];
                                                             //unidad                  =body_tabla[i]["unidad"];
                                                             cantidad                =cantidad + parseFloat(body_tabla[i]["cantidad"]);
                                                             costo_unitario          =costo_unitario +parseFloat(body_tabla[i]["precio_unitario"]);
@@ -934,24 +934,24 @@ $(function() {
                                                             contador_costo_unitario =contador_costo_unitario+1;
                                                             costo_promedio=costo_unitario/contador_costo_unitario;
                                                             suma_general =suma_general +parseFloat(body_tabla[i]["total_pesos"]);
-                                                            
+
                                                         }
-                                                        producto_proveedor      =body_tabla[i][indice_extraido]; 
+                                                        producto_proveedor      =body_tabla[i][indice_extraido];
                                                         unidad                  =body_tabla[i]["unidad"];
-                                                        
-                                                        
-                                                        
-                                                       
+
+
+
+
                                                     }else{
-                                                        
+
                                                         //entra aqu cuando el proveedor es diferente   pintala sumatoria delproveedorr anterior
                                                        html_comprasnetas +='<tr>';
-                                                                        html_comprasnetas +='<td width="300px" align="left" >'+producto_proveedor+'</td>'; 
+                                                                        html_comprasnetas +='<td width="300px" align="left" >'+producto_proveedor+'</td>';
                                                                         html_comprasnetas +='<td  align="right" >'+unidad+'</td>';
                                                                         html_comprasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(cantidad).toFixed(2))+'</td>';
-                                                                        html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>'; 
+                                                                        html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
                                                                         html_comprasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(costo_promedio).toFixed(2))+'</td>';
-                                                                        html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>'; 
+                                                                        html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
                                                                         html_comprasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(compra_neta).toFixed(2))+'</td>';
                                                         html_comprasnetas +='</tr>';
                                                         //fin del primer proveedor
@@ -962,37 +962,37 @@ $(function() {
                                                         contador_costo_unitario =0.0;
                                                         costo_promedio=0.0;
                                                         //pint al nuevo proveedor
-                              
-                                                        
+
+
                                                         cantidad                =cantidad + parseFloat(body_tabla[i]["cantidad"]);
                                                         costo_unitario          =costo_unitario +parseFloat(body_tabla[i]["precio_unitario"]);
                                                         compra_neta             = compra_neta+parseFloat(body_tabla[i]["total_pesos"]);
                                                         contador_costo_unitario =contador_costo_unitario+1;
                                                         costo_promedio=costo_unitario/contador_costo_unitario;
                                                         suma_general =suma_general +parseFloat(body_tabla[i]["total_pesos"]);
-                                                         
-                                                         
 
-                                                        
-                                                    
+
+
+
+
                                                     }
-                                                    producto_proveedor      =body_tabla[i][indice_extraido]; 
+                                                    producto_proveedor      =body_tabla[i][indice_extraido];
                                                     unidad                  =body_tabla[i]["unidad"];
-                                                    
+
                                                 }
                                                         html_comprasnetas +='<tr>';
-                                                                 html_comprasnetas +='<td width="300px" align="left" >'+producto_proveedor+'</td>'; 
+                                                                 html_comprasnetas +='<td width="300px" align="left" >'+producto_proveedor+'</td>';
                                                                  html_comprasnetas +='<td  align="right" >'+unidad+'</td>';
                                                                  html_comprasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(cantidad).toFixed(2))+'</td>';
-                                                                 html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>'; 
+                                                                 html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
                                                                  html_comprasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(costo_promedio).toFixed(2))+'</td>';
-                                                                 html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>'; 
+                                                                 html_comprasnetas +='<td widht="5px" align="right">'+"$"+'</td>';
                                                                  html_comprasnetas +='<td  align="right" >'+$(this).agregar_comas(parseFloat(compra_neta).toFixed(2))+'</td>';
-                                                        html_comprasnetas +='</tr>'; 
-                                                        
+                                                        html_comprasnetas +='</tr>';
+
                                                         html_footer +='<tr id="tr_totales">';
                                                         html_footer +='<td width="500px" id="sin_borde_derecho">&nbsp;</td>';
-                                                        
+
                                                         html_footer +='<td lign="right" id="sin_borde">&nbsp;</td>';
                                                         html_footer +='<td lign="right" id="sin_borde">&nbsp;</td>';
                                                         html_footer +='<td widht="5px"  align="right" id="sin_borde"></td>';
@@ -1005,27 +1005,27 @@ $(function() {
                                                         html_comprasnetas +='<tfoot>';
                                                                 html_comprasnetas += html_footer;
                                                         html_comprasnetas +='</tfoot>';
-                                                       
+
                                                         html_comprasnetas += '</table>';
 
-                                                $div_ventas_netas_productofactura.append(html_comprasnetas); 
+                                                $div_ventas_netas_productofactura.append(html_comprasnetas);
                                                 var height2 = $('#cuerpo').css('height');
-                                                var alto = parseInt(height2)-250;
+                                                var alto = parseInt(height2)-350;
                                                 var pix_alto=alto+'px';
                                                 $('#ventas').tableScroll({height:parseInt(pix_alto)});
 				});
 			}else{
 				jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
 			}
-                        
+
                 }//FIN DE LA VISTA DE PRODUCTO SUMARIZADOs
-                
+
             }
-       
-	});//fin del evento click al mostrar el reporte en pantalla 
-});   
-       
-        
-        
-        
-    
+
+	});//fin del evento click al mostrar el reporte en pantalla
+});
+
+
+
+
+
