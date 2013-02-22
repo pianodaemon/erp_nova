@@ -20,26 +20,26 @@ import org.springframework.jdbc.core.RowMapper;
 
 public class CxcSpringDao implements CxcInterfaceDao{
     private JdbcTemplate jdbcTemplate;
-    
+
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }
-    
+
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public HashMap<String, String> selectFunctionValidateAaplicativo(String data, Integer idApp, String extra_data_array) {
         String sql_to_query = "select erp_fn_validaciones_por_aplicativo from erp_fn_validaciones_por_aplicativo('"+data+"',"+idApp+",array["+extra_data_array+"]);";
         //System.out.println("Validacion:"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -51,9 +51,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public String selectFunctionForThisApp(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from gral_adm_catalogos('"+campos_data+"',array["+extra_data_array+"]);";
@@ -63,40 +63,40 @@ public class CxcSpringDao implements CxcInterfaceDao{
         valor_retorno = update.get("gral_adm_catalogos").toString();
         return valor_retorno;
     }
-    
-    
+
+
     //metodo que utiliza el procedimiento cxc_adm_procesos
     @Override
     public String selectFunctionForCxcAdmProcesos(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from cxc_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
-        
+
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
         valor_retorno = update.get("cxc_adm_procesos").toString();
         return valor_retorno;
     }
-    
-    
+
+
     @Override
     public int countAll(String data_string) {
         String sql_busqueda = "select id from gral_bus_catalogos('"+data_string+"') as foo (id integer)";
         String sql_to_query = "select count(id)::int as total from ("+sql_busqueda+") as subt";
-        
+
         int rowCount = this.getJdbcTemplate().queryForInt(sql_to_query);
         return rowCount;
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getClientes_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT "
 				+"cxc_clie.id, "
 				+"cxc_clie.numero_control, "
@@ -108,12 +108,12 @@ public class CxcSpringDao implements CxcInterfaceDao{
 			+"LEFT JOIN cxc_clie_clases ON cxc_clie_clases.id = cxc_clie.clienttipo_id "
                         +"JOIN ("+sql_busqueda+") as subt on subt.id=cxc_clie.id "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -128,15 +128,15 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_Datos(Integer id) {
-        
+
         String sql_query = ""
                 + "SELECT "
                     +"cxc_clie.id as id_cliente, "
@@ -223,12 +223,12 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     +"cxc_clie.fac_metodos_pago_id "
             +"FROM cxc_clie "
             +"WHERE cxc_clie.borrado_logico=false AND cxc_clie.id=?;";
-        
+
         System.out.println("Ejecutando getCliente_Datos:"+ sql_query);
         System.out.println("IdCliente: "+id);
-        
+
         ArrayList<HashMap<String, Object>> cliente = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -288,7 +288,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("contacto_compras_telefono1",rs.getString("contacto_compras_telefono1"));
                     row.put("contacto_compras_extension1",rs.getString("contacto_compras_extension1"));
                     row.put("contacto_compras_fax",rs.getString("contacto_compras_fax"));
-                    row.put("contacto_compras_telefono2",rs.getString("contacto_compras_telefono2"));                    
+                    row.put("contacto_compras_telefono2",rs.getString("contacto_compras_telefono2"));
                     row.put("contacto_compras_extension2",rs.getString("contacto_compras_extension2"));
                     row.put("contacto_compras_email",rs.getString("contacto_compras_email"));
                     row.put("contacto_pagos_nombre",rs.getString("contacto_pagos_nombre"));
@@ -301,10 +301,10 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("contacto_pagos_pais_id",rs.getString("contacto_pagos_pais_id"));
                     row.put("contacto_pagos_estado_id",rs.getString("contacto_pagos_estado_id"));
                     row.put("contacto_pagos_municipio_id",rs.getString("contacto_pagos_municipio_id"));
-                    row.put("contacto_pagos_telefono1",rs.getString("contacto_pagos_telefono1"));                    
+                    row.put("contacto_pagos_telefono1",rs.getString("contacto_pagos_telefono1"));
                     row.put("contacto_pagos_extension1",rs.getString("contacto_pagos_extension1"));
                     row.put("contacto_pagos_fax",rs.getString("contacto_pagos_fax"));
-                    row.put("contacto_pagos_telefono2",rs.getString("contacto_pagos_telefono2"));                    
+                    row.put("contacto_pagos_telefono2",rs.getString("contacto_pagos_telefono2"));
                     row.put("contacto_pagos_extension2",rs.getString("contacto_pagos_extension2"));
                     row.put("contacto_pagos_email",rs.getString("contacto_pagos_email"));
                     row.put("empresa_immex",String.valueOf(rs.getBoolean("empresa_immex")));
@@ -315,22 +315,22 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
                     row.put("lista_precio",String.valueOf(rs.getInt("lista_precio")));
                     row.put("metodo_pago_id",String.valueOf(rs.getInt("fac_metodos_pago_id")));
-                    
+
                     return row;
                 }
             }
         );
         return cliente;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //obtiene datos de configuracion de Cuentas Contables
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_DatosContabilidad(Integer id) {
-        
+
         String sql_query = ""
                 + "SELECT "
                     +"cxc_clie.id as id_cliente, "
@@ -376,16 +376,16 @@ public class CxcSpringDao implements CxcInterfaceDao{
             +"LEFT JOIN ctb_cta AS tbl_cta_comp ON tbl_cta_comp.id=cxc_clie.ctb_cta_id_comple "
             +"LEFT JOIN ctb_cta AS tbl_cta_ac_comp ON tbl_cta_ac_comp.id=cxc_clie.ctb_cta_id_activo_comple "
             +"WHERE cxc_clie.borrado_logico=false AND cxc_clie.id=?;";
-        
+
         System.out.println("getCliente_DatosContabilidad: "+ sql_query);
         ArrayList<HashMap<String, Object>> contab = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id_cliente",rs.getInt("id_cliente"));
-                    
+
                     row.put("ac_id_cta",rs.getString("ac_id_cta"));
                     row.put("ac_cta",rs.getString("ac_cta"));
                     row.put("ac_subcta",rs.getString("ac_subcta"));
@@ -393,7 +393,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("ac_sssubcta",rs.getString("ac_sssubcta"));
                     row.put("ac_ssssubcta",rs.getString("ac_ssssubcta"));
                     row.put("ac_descripcion",rs.getString("ac_descripcion"));
-                    
+
                     row.put("ing_id_cta",rs.getString("ing_id_cta"));
                     row.put("ing_cta",rs.getString("ing_cta"));
                     row.put("ing_subcta",rs.getString("ing_subcta"));
@@ -401,7 +401,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("ing_sssubcta",rs.getString("ing_sssubcta"));
                     row.put("ing_ssssubcta",rs.getString("ing_ssssubcta"));
                     row.put("ing_descripcion",rs.getString("ing_descripcion"));
-                            
+
                     row.put("ietu_id_cta",rs.getString("ietu_id_cta"));
                     row.put("ietu_cta",rs.getString("ietu_cta"));
                     row.put("ietu_subcta",rs.getString("ietu_subcta"));
@@ -409,7 +409,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("ietu_sssubcta",rs.getString("ietu_sssubcta"));
                     row.put("ietu_ssssubcta",rs.getString("ietu_ssssubcta"));
                     row.put("ietu_descripcion",rs.getString("ietu_descripcion"));
-                    
+
                     row.put("comp_id_cta",rs.getString("comp_id_cta"));
                     row.put("comp_cta",rs.getString("comp_cta"));
                     row.put("comp_subcta",rs.getString("comp_subcta"));
@@ -417,7 +417,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("comp_sssubcta",rs.getString("comp_sssubcta"));
                     row.put("comp_ssssubcta",rs.getString("comp_ssssubcta"));
                     row.put("comp_descripcion",rs.getString("comp_descripcion"));
-                    
+
                     row.put("ac_comp_id_cta",rs.getString("ac_comp_id_cta"));
                     row.put("ac_comp_cta",rs.getString("ac_comp_cta"));
                     row.put("ac_comp_subcta",rs.getString("ac_comp_subcta"));
@@ -425,23 +425,23 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("ac_comp_sssubcta",rs.getString("ac_comp_sssubcta"));
                     row.put("ac_comp_ssssubcta",rs.getString("ac_comp_ssssubcta"));
                     row.put("ac_comp_descripcion",rs.getString("ac_comp_descripcion"));
-                    
+
                     return row;
                 }
             }
         );
         return contab;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getPaises() {
         //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
         String sql_to_query = "SELECT DISTINCT id as cve_pais, titulo as pais_ent FROM gral_pais;";
-        
+
         ArrayList<HashMap<String, Object>> pais = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -456,9 +456,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return pais;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getEntidadesForThisPais(String id_pais) {
         //String sql_to_query = "SELECT DISTINCT cve_ent ,nom_ent FROM municipios where cve_pais='"+id_pais+"' order by nom_ent;";
@@ -478,16 +478,16 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
 
     @Override
     public ArrayList<HashMap<String, Object>> getLocalidadesForThisEntidad(String id_pais, String id_entidad) {
         //String sql_to_query = "SELECT DISTINCT cve_mun ,nom_mun FROM municipios where cve_ent='"+id_entidad+"' and cve_pais='"+id_pais+"' order by nom_mun;";
         String sql_to_query = "SELECT id as cve_mun, titulo as nom_mun FROM gral_mun WHERE estado_id="+id_entidad+" and pais_id="+id_pais+" order by nom_mun;";
-        
+
         //System.out.println("Ejecutando query loc_for_this_entidad: "+sql_to_query);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -502,14 +502,14 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene  tosas la direcciones de consignacion del cliente
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_DirConsignacion(Integer id_cliente) {
-        
+
         String sql_query = "SELECT erp_clients_consignacions.calle, "
                                 + "erp_clients_consignacions.numero, "
                                 + "erp_clients_consignacions.colonia, "
@@ -531,7 +531,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
 
         //System.out.println("Ejecutando query_dir_consignacion: "+sql_query);
         ArrayList<HashMap<String, Object>> direcciones = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id_cliente)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -555,10 +555,10 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return direcciones;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getMonedas() {
         String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
@@ -577,9 +577,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_monedas;
     }
-    
-    
-    
+
+
+
     //obtiene los tipos de cliente
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_Tipos() {
@@ -599,18 +599,18 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_tclient;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public HashMap<String, String> getCliente_ValidaDirConsignacion(String data_string) {
         String sql_to_query = "select * from erp_fn_validaciones_dir_consignacion_cliente('"+data_string+"');";
         //System.out.println("Validacion:"+sql_to_query);
-        
+
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -622,10 +622,10 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_Vendedores(Integer id_empresa) {
         //String sql_to_query = "SELECT id,nombre_pila||' '||apellido_paterno||' '||apellido_materno AS nombre_vendedor FROM erp_empleados WHERE borrado_logico=FALSE  AND vendedor=TRUE;";
@@ -650,10 +650,10 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_vendedor;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_Condiciones() {
         String sql_to_query = "SELECT id,descripcion FROM cxc_clie_credias WHERE borrado_logico=FALSE;";
@@ -672,9 +672,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_termino;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_Zonas() {
         String sql_to_query = "SELECT id, titulo AS nombre_zona FROM cxc_clie_zonas WHERE borrado_logico=FALSE ORDER BY id;";
@@ -693,9 +693,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return zonas;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_Grupos() {
         String sql_to_query = "SELECT id, titulo AS nombre_grupo FROM cxc_clie_grupos WHERE borrado_logico=FALSE ORDER BY id;";
@@ -714,9 +714,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return grupos;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_Clasificacion1() {
         String sql_to_query = "SELECT id, titulo AS clasificacion1 FROM cxc_clie_clas1 ORDER BY id;";
@@ -735,7 +735,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return clasif1;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_Clasificacion2() {
         String sql_to_query = "SELECT id, titulo AS clasificacion2 FROM cxc_clie_clas2 ORDER BY id;";
@@ -754,7 +754,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return clasif2;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_Clasificacion3() {
         String sql_to_query = "SELECT id, titulo AS clasificacion3 FROM cxc_clie_clas3 ORDER BY id;";
@@ -774,8 +774,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         return clasif3;
     }
 
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getImpuestos() {
         String sql_to_query = "SELECT id, descripcion, iva_1 FROM gral_imptos WHERE borrado_logico=FALSE;";
@@ -795,8 +795,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_ivas;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_InicioCredito() {
         String sql_to_query = "SELECT id, titulo FROM cxc_clie_creapar ORDER BY id;";
@@ -815,8 +815,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_TiposEmbarque() {
         String sql_to_query = "SELECT id, titulo FROM cxc_clie_tipos_embarque ORDER BY id;";
@@ -835,9 +835,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getMetodosPago() {
         String sql_to_query = "SELECT id, titulo FROM fac_metodos_pago WHERE borrado_logico=false;";
@@ -856,15 +856,15 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCliente_CuentasMayor(Integer id_empresa) {
         String sql_query = "SELECT id, titulo FROM ctb_may_clases ORDER BY id;";
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -877,45 +877,45 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     //metodo para el buscador de cuentas contables
     @Override
     public ArrayList<HashMap<String, String>> getCliente_CuentasContables(Integer cta_mayor, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa) {
-        
+
         String where="";
 	if(cta_mayor != 0){
             where+=" AND ctb_cta.cta_mayor="+cta_mayor+" ";
 	}
-        
+
 	if(!clasifica.equals("")){
             where+=" AND ctb_cta.clasifica="+clasifica+" ";
 	}
-        
+
 	if(!cta.equals("")){
             where+=" AND ctb_cta.cta="+cta+" ";
 	}
-        
+
 	if(!scta.equals("")){
             where+=" AND ctb_cta.subcta="+scta+" ";
 	}
-        
+
 	if(!sscta.equals("")){
             where+=" AND ctb_cta.ssubcta="+sscta+" ";
 	}
-        
+
 	if(!ssscta.equals("")){
             where+=" AND ctb_cta.sssubcta="+ssscta+" ";
 	}
-        
+
 	if(!sssscta.equals("")){
             where+=" AND ctb_cta.ssssubcta="+sssscta+" ";
 	}
-        
+
 	if(!descripcion.equals("")){
             where+=" AND ctb_cta.ssssubcta ilike '%"+descripcion+"%'";
 	}
-        
+
         String sql_query = ""
                 + "SELECT DISTINCT "
                     + "ctb_cta.id, "
@@ -940,10 +940,10 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 + "WHERE ctb_cta.borrado_logico=false  "
                 + "AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? "+ where +" "
                 + "ORDER BY ctb_cta.id;";
-        
-        
+
+
         System.out.println("getCliente_CuentasContables: "+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id_empresa), new Integer(detalle)}, new RowMapper() {
@@ -968,20 +968,20 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
-        
+
         String sql_busqueda = "select DISTINCT id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = ""
                 + "SELECT erp_pagos.id,  "
                     +"erp_pagos.numero_transaccion,  "
@@ -998,12 +998,12 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 +"LEFT JOIN (SELECT DISTINCT pago_id FROM erp_pagos_detalles WHERE cancelacion=FALSE) AS tbl_pag_det ON tbl_pag_det.pago_id=erp_pagos.id "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=erp_pagos.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         //System.out.println("data_string: "+data_string+ "\noffset:"+offset+ " pageSize: "+pageSize+" orderBy:"+orderBy+" asc:"+asc);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1021,11 +1021,11 @@ public class CxcSpringDao implements CxcInterfaceDao{
             }
         );
         return hm;
-        
+
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_TipoMovimiento() {
         String sql_to_query = "SELECT id, titulo FROM erp_pagos_tipo_movimiento WHERE borrado_logico=false ORDER BY id ASC;";
@@ -1044,9 +1044,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_tm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_FormasPago() {
         String sql_to_query = "SELECT id, titulo FROM  erp_pagos_formas WHERE borrado_logico=false ORDER BY id ASC;";
@@ -1064,10 +1064,10 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_forma_pago;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getBancos(Integer id_empresa) {
         String sql_to_query = ""
@@ -1077,7 +1077,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     + "from tes_ban "
                 +"where borrado_logico=false and gral_emp_id="+id_empresa
                 +" order by titulo ASC;";
-        
+
         ArrayList<HashMap<String, Object>> hm_bancos = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1092,8 +1092,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_bancos;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_BancosEmpresa(Integer id_empresa) {
         String sql_to_query = ""
@@ -1117,8 +1117,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_bancos_friser;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getTipoCambioActual() {
         String sql_to_query = "Select valor from erp_monedavers where moneda_id=2 order by momento_creacion DESC limit 1;";
@@ -1136,14 +1136,14 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_tipoCambio;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
         String where="";
-        
+
 	if(filtro == 1){
 		where=" AND cxc_clie.numero_control ilike '%"+cadena+"%'";
 	}
@@ -1153,20 +1153,20 @@ public class CxcSpringDao implements CxcInterfaceDao{
 	if(filtro == 3){
 		where=" AND cxc_clie.razon_social ilike '%"+cadena+"%'";
 	}
-        
+
 	if(filtro == 4){
 		where=" AND cxc_clie.curp ilike '%"+cadena+"%'";
 	}
 	if(filtro == 5){
 		where=" AND cxc_clie.alias ilike '%"+cadena+"%'";
 	}
-	
+
         if(id_sucursal==0){
             where +="";
         }else{
             where +=" AND sucursal_id="+id_sucursal;
         }
-        
+
 	String sql_query = "SELECT "
                                     +"sbt.id,"
                                     +"sbt.numero_control,"
@@ -1191,7 +1191,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                             +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id;";
         System.out.println("BuscarCliente: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1203,16 +1203,16 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("direccion",rs.getString("direccion"));
                     row.put("moneda_id",rs.getString("moneda_id"));
                     row.put("moneda",rs.getString("moneda"));
-                    
+
                     return row;
                 }
             }
         );
         return hm_cli;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_CtaBanco(Integer id_moneda, Integer id_banco) {
         //String sql_to_query = "SELECT id ,titulo FROM erp_cuentas where banco_id="+id_banco;
@@ -1233,9 +1233,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_cuentas;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_BancosXMoneda(Integer id_moneda,Integer id_empresa) {
         String sql_to_query = "SELECT distinct id, titulo FROM tes_ban "
@@ -1256,11 +1256,11 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_cm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //obtiene la suma de los anticipos en pesos
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_SumaAnticiposMN(Integer id_cliente) {
@@ -1268,7 +1268,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                         + "FROM (SELECT sum(anticipo_actual) as suma "
                         + "FROM cxc_ant "
                         + "WHERE cliente_id="+id_cliente+" AND moneda_id=1 AND borrado_logico=false) AS stbla;";
-        
+
         //System.out.println("Buscando cuentas: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm_mn = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1283,8 +1283,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_mn;
     }
-    
-    
+
+
     //obtiene la suma de los anticipos en dolares
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_SumaAnticiposUSD(Integer id_cliente) {
@@ -1306,10 +1306,10 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_usd;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_Anticipos(Integer id_cliente) {
         String sql_to_query = "SELECT (CASE WHEN moneda_id=1 THEN 'M.N.' ELSE 'USD' END ) AS denominacion, "
@@ -1335,13 +1335,13 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_anticipos;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_Facturas(Integer id_cliente) {
         //ArrayList<HashMap<String, Object>>  segmento_trabajando = new ArrayList<HashMap<String, Object>>();
-        
+
         String sql_to_query = ""
                 + "SELECT "
                         + "erp_h_facturas.serie_folio as numero_factura, "
@@ -1357,7 +1357,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     + "AND erp_h_facturas.cancelacion=FALSE "
                     + "AND erp_h_facturas.pagado=FALSE "
                     + "ORDER BY erp_h_facturas.id;";
-        
+
         System.out.println("getCartera_Facturas:: "+sql_to_query);
         ArrayList<HashMap<String, Object>> facturas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1371,18 +1371,18 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("monto_pagado",StringHelper.roundDouble(rs.getDouble("monto_pagado"),2));
                     row.put("fecha_facturacion",rs.getString("fecha_facturacion"));
                     row.put("fecha_ultimo_pago",rs.getString("fecha_ultimo_pago"));
-                    
+
                     return row;
-                    
+
                 }
             }
         );
-        
+
         return facturas;
     }
-    
-    
-    
+
+
+
     //obtiene las facturas para el buscador de facturas a cancelar
     @Override
     public ArrayList<HashMap<String, String>> getCartera_FacturasCancelar(String num_transaccion,String factura, Integer id_cliente) {
@@ -1390,16 +1390,16 @@ public class CxcSpringDao implements CxcInterfaceDao{
         if(num_transaccion.equals("")==false) {
             cadWhere += " AND erp_pagos.numero_transaccion = "+num_transaccion;
         }
-        
+
         String sql_to_query = "SELECT DISTINCT erp_pagos.id, "
                                     + "erp_pagos.numero_transaccion, "
                                     + "erp_pagos.observaciones "
                             + "FROM erp_pagos  "
                             + "JOIN erp_pagos_detalles ON erp_pagos_detalles.pago_id = erp_pagos.id  "
-                            + "WHERE erp_pagos.cliente_id="+id_cliente + " " + cadWhere                            
+                            + "WHERE erp_pagos.cliente_id="+id_cliente + " " + cadWhere
                             + " AND erp_pagos_detalles.serie_folio ILIKE '%"+factura+"%'  "
                             + " AND erp_pagos_detalles.cancelacion = FALSE; ";
-        
+
         System.out.println("Obteniendo datos para el buscador de facturas a cancelar: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm_fact_cancel = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1414,26 +1414,26 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        
-        
+
+
         ArrayList<HashMap<String, String>> hm_retorno = new ArrayList<HashMap<String, String>>();
-        
+
         for (int x=0; x<=hm_fact_cancel.size()-1;x++){
             HashMap<String,Object> registro = hm_fact_cancel.get(x);
             HashMap<String,String> facturas = ObtieneFacturasTransaccion(Integer.parseInt(registro.get("id").toString()));
             HashMap<String, String> reg = new HashMap<String, String>();
-            
+
             reg.put("numero_transaccion",registro.get("numero_transaccion").toString());
             reg.put("observaciones",registro.get("observaciones").toString());
             reg.put("serie_folio",facturas.get("facturas").toString());
             reg.put("momento_creacion",facturas.get("momento_pago").toString());
-                    
+
             hm_retorno.add(reg);
         }
-        
+
         return hm_retorno;
     }
-    
+
     //obtiene las facturas de una transaccion en especifico
     private HashMap<String, String> ObtieneFacturasTransaccion(Integer id_pago) {
         String sql_to_query = ""
@@ -1460,21 +1460,21 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        
+
         for (int x=0; x<=hm_trans.size()-1;x++){
             HashMap<String,Object> registro = hm_trans.get(x);
             facturas = facturas + registro.get("serie_folio").toString()+",";
             momento_pago = registro.get("momento_pago").toString();
         }
-        
+
         retorno.put("facturas",facturas.substring(0,facturas.length()-1));
         retorno.put("momento_pago",momento_pago);
         return retorno;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene facturas de un numero de transaccion en especifico
     //para el grid de cancelacion
     @Override
@@ -1492,7 +1492,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                             +"JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id "
                             +"WHERE erp_pagos_detalles.cancelacion=FALSE "
                             + "AND erp_pagos.numero_transaccion = "+num_transaccion+";";
-                            
+
         System.out.println("getCartera_FacturasTransaccion:: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm_fact = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1514,8 +1514,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         return hm_fact;
     }
 
-    
-    
+
+
     //obtiene los 50 ultimos numeros de transaccion de un cliente
     //para el grid de cancelacion
     @Override
@@ -1528,7 +1528,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 + "JOIN erp_pagos_detalles ON erp_pagos_detalles.pago_id=erp_pagos.id  "
                 + "WHERE erp_pagos.cliente_id="+id_cliente+" AND erp_pagos_detalles.cancelacion=FALSE "
                 + "ORDER BY erp_pagos.id LIMIT 50;";
-        
+
         System.out.println("Buscando numeros de transaccion del cliente: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1542,14 +1542,14 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        
+
         ArrayList<HashMap<String, String>> hm_retorno = new ArrayList<HashMap<String, String>>();
-        
+
         for (int x=0; x<=hm.size()-1;x++){
             HashMap<String,Object> registro = hm.get(x);
             HashMap<String,String> facturas = ObtieneFacturasTransaccion(Integer.parseInt(registro.get("id").toString()));
             HashMap<String, String> reg = new HashMap<String, String>();
-            
+
             reg.put("numero_transaccion", registro.get("numero_transaccion").toString());
             reg.put("facturas", facturas.get("facturas").toString());
             reg.put("momento_pago", facturas.get("momento_pago").toString());
@@ -1557,12 +1557,12 @@ public class CxcSpringDao implements CxcInterfaceDao{
         }
         return hm_retorno;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getCartera_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte,Integer id_empresa,Integer id_agente) {
-        
+
         String cadena_where="";
         if(tipo_reporte==1){
             cadena_where=" AND erp_h_facturas.cliente_id = "+id_cliente;
@@ -1570,7 +1570,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
         if(tipo_reporte==2){
             cadena_where=" AND erp_h_facturas.cxc_agen_id = "+id_agente;
         }
-        
+
         String sql_to_query = ""
         + "SELECT cliente, "
                 + "denominacion, "
@@ -1599,11 +1599,11 @@ public class CxcSpringDao implements CxcInterfaceDao{
                         + "AND erp_h_facturas.empresa_id="+ id_empresa + " "
                         + "AND erp_h_facturas.moneda_id ="+ id_moneda
         + ") as sbt  "
-        + "ORDER BY sbt.moneda_id, sbt.cliente,sbt.serie_folio;"; 
-         
-        
-        
-        
+        + "ORDER BY sbt.moneda_id, sbt.cliente,sbt.serie_folio;";
+
+
+
+
         System.out.println("getCartera_DatosReporteEdoCta  : "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1626,13 +1626,13 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_facturas;
     }
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getCartera_DatosReporteDepositos(String fecha_inicial, String fecha_final, Integer id_empresa) {
         String sql_to_query = ""
@@ -1694,7 +1694,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 + ") as sbt2 "
                 + "group by banco,moneda_cuenta,no_cuenta,fecha_deposito,fecha_ordenamiento "
                 + "order by banco,no_cuenta,fecha_ordenamiento;";
-        
+
         System.out.println("Buscando depositos: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_depositos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1718,11 +1718,11 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_depositos;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getCartera_PagosDatosHeader(Integer id_pago, Integer id_empresa) {
             String sql_to_query = ""
@@ -1745,7 +1745,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     + "LEFT JOIN cxc_clie ON cxc_clie.id=erp_pagos.cliente_id  "
                     + "LEFT JOIN tes_che ON tes_che.id=erp_pagos.numerocuenta_id "
                     + "WHERE erp_pagos.id="+ id_pago;
-            
+
         //System.out.println("Buscando datos para reporte aplicacion de pago: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1769,13 +1769,13 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getCartera_PagosAplicados(Integer id_pago, Integer id_empresa) {
             String sql_to_query = ""
@@ -1797,7 +1797,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 + "LEFT JOIN erp_h_facturas ON erp_h_facturas.serie_folio=erp_pagos_detalles.serie_folio  "
                 + "LEFT JOIN gral_mon ON gral_mon.id=erp_h_facturas.moneda_id  "
                 + "WHERE erp_pagos.id="+ id_pago;
-            
+
         //System.out.println("Buscando datos para reporte aplicacion de pago: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1817,12 +1817,12 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene todos los agentes de la empresa
     @Override
     public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa) {
@@ -1832,7 +1832,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                 +"JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id "
                                 +"JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
                                 +"WHERE gral_suc.empresa_id="+id_empresa+" ORDER BY cxc_agen.id;";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_vendedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1848,17 +1848,17 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_vendedor;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getCartera_DatosReporteCobranzaAgente(Integer id_agente,String fecha_inicial, String fecha_final, Integer id_empresa) {
         String where="";
         if(id_agente!=0){
             where=" AND erp_h_facturas.cxc_agen_id="+id_agente;
         }
-        
+
         String sql_to_query = " "
              + "SELECT sbt.numero_agente, "
                  +"sbt.nombre_agente, "
@@ -1910,8 +1910,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
                       +"AND to_char(erp_h_facturas.fecha_ultimo_pago,'yyyymmdd')::integer between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer  "
                       +"AND erp_h_facturas.empresa_id="+id_empresa+" order by nombre_agente asc,moneda_factura, numero_dias_pago asc "//order by nombre_agente asc,moneda_factura, serie_folio asc
               +")AS sbt ";
-        
-        
+
+
 	 System.out.println("DatosReporteCobranzaAgente:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_cobranza_agente = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1937,18 +1937,18 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_cobranza_agente;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getCartera_DatosReporteVentaxAgente(Integer id_agente, String fecha_inicial, String fecha_final, Integer id_empresa) {
-        
+
         String where="";
-        
+
         if(id_agente!=0){
             where=" AND fac_docs.cxc_agen_id="+id_agente;
         }
-        
+
             String sql_to_query = ""
                       + " SELECT  cxc_agen.id AS numero_agente,   "
                       + " cxc_agen.nombre AS nombre_agente,  "
@@ -1983,26 +1983,26 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("iva",rs.getString("iva"));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"), 2));
                     row.put("moneda_factura",rs.getString("moneda_factura"));
-                    
-                    
+
+
                     return row;
                 }
             }
         );
         return hm_venta_agente;
-    }    
-    
-    
+    }
 
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getAgente_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT cxc_agen.id, "
                                 +"gral_usr.username AS usuario,  "
                                 +"cxc_agen.nombre, "
@@ -2012,10 +2012,10 @@ public class CxcSpringDao implements CxcInterfaceDao{
                         +"JOIN gral_reg ON gral_reg.id=cxc_agen.gral_reg_id "
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_agen.id "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2028,21 +2028,21 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getUsuarios(Integer id_empresa, Integer usuario_agente) {
-        
+
         String where_usuario="";
         if(usuario_agente != 0 ){
             where_usuario = " OR gral_usr.id ="+usuario_agente;
         }
-        
+
         String sql_to_query = "SELECT gral_usr.id, "
                     + "gral_usr.username,"
                     + "gral_usr.nombre_pila||' '||gral_usr.apellido_paterno||' '||gral_usr.apellido_materno AS nombre_usuario "
@@ -2051,9 +2051,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 + "JOIN gral_usr ON gral_usr.id = gral_usr_suc.gral_usr_id "
                 + "WHERE gral_usr.id NOT IN ( SELECT gral_usr_id FROM  cxc_agen WHERE borrado_logico=FALSE) "
                 + "AND borrado_logico=FALSE AND gral_suc.empresa_id="+id_empresa+" "+where_usuario;
-        
+
         //System.out.println(sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm_users = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2069,13 +2069,13 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_users;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getAgente_Datos(Integer id_agente) {
         String sql_to_query = "SELECT id, nombre, comision, gral_reg_id, gral_usr_id FROM cxc_agen WHERE id ="+id_agente;
-        
+
         ArrayList<HashMap<String, String>> hm_users = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2093,13 +2093,13 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_users;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getAgente_Regiones() {
         String sql_to_query = "SELECT id, titulo FROM gral_reg WHERE borrado_logico=FALSE;";
-        
+
         ArrayList<HashMap<String, String>> hm_reg = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2114,9 +2114,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_reg;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getPronosticoDeCobranza(String num_semanas, String opcion_seleccionada, Integer id_empresa) {
         String sql_to_query = "select * from repPronostico_semanas_proximas('"+num_semanas+"',"+id_empresa+") as foo( "
@@ -2138,11 +2138,11 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                 + " lunes_proximo text, "
                                 + " viernes_proximo text, "
                                 + " total double precision ); ";
-        
+
         System.out.println("sql_to_query:"+ sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_to_query, 
+                sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2164,13 +2164,13 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
 
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getVentasNetasxCliente(String fecha_inicial, String fecha_final,Integer id_empresa) {
            String sql_to_query = " SELECT * "
@@ -2180,7 +2180,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                 + " sum(totalporfactura)as Tventa_neta    "
                                 + " from  (  "
                                         +  " SELECT  cxc_clie.numero_control,  "
-                                        + " cxc_clie.razon_social AS cliente, " 
+                                        + " cxc_clie.razon_social AS cliente, "
                                         + " '$'::character varying as pesos,  "
                                         + " (CASE WHEN fac_docs.moneda_id=1  "
                                         + " THEN fac_docs.subtotal * 1  "
@@ -2206,9 +2206,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     + " order by tventa_neta desc ";
 
        System.out.println("sql_to_query:"+ sql_to_query);
-          
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_to_query, 
+                sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2223,17 +2223,18 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //reporte de ventas netas
+     //reporte de ventas netas
     @Override
-    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa,Integer id_linea,Integer  id_marca, Integer id_familia,Integer id_subfamilia,Integer tipo_costo) {
-    String sql_to_query = "select * from repventasnetasproductofactura("+tipo_reporte+",'"+cliente+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+","+id_linea+","+id_marca+","+id_familia+","+id_subfamilia+","+tipo_costo+") as foo( "
-                                    + " numero_control character varying, "        
+    public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte, String cliente,String producto, String fecha_inicial, String fecha_final,Integer id_empresa,Integer id_linea,Integer  id_marca, Integer id_familia,Integer id_subfamilia,Integer tipo_costo, Integer id_agente) {
+    String sql_to_query = "select * from repventasnetasproductofactura("+tipo_reporte+",'"+cliente+"','"+producto+"','"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+","+id_linea+","+id_marca+","+id_familia+","+id_subfamilia+","+tipo_costo+","+id_agente+") as foo( "
+                                    + " numero_control character varying, "
                                     + " razon_social character varying, "
                                     + " codigo character varying, "
                                     + " producto character varying, "
@@ -2242,24 +2243,24 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     + " cantidad double precision, "
                                     + " precio_unitario double precision, "
                                     + " moneda text, "
-                                    + " tipo_cambio double precision,  " 
+                                    + " tipo_cambio double precision,  "
                                     + " venta_pesos double precision,  "
                                     + " costo double precision,  "
                                     + " fecha_factura text,"
-                                    
+
                                     + "id_presentacion Integer, "
                                     + "presentacion character varying"
                                     + "); ";
 
        System.out.println("getVentasNetasProductoFactura:"+ sql_to_query);
-          
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_to_query, 
+                sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                   
+
                     row.put("numero_control",rs.getString("numero_control"));
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("codigo",rs.getString("codigo"));
@@ -2273,15 +2274,18 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("venta_pesos",rs.getString("venta_pesos"));
                     row.put("costo",rs.getString("costo"));
                     row.put("fecha_factura",rs.getString("fecha_factura"));
-                    
+
+                    row.put("id_presentacion",rs.getString("id_presentacion"));
+                    row.put("presentacion",rs.getString("presentacion"));
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
 
     //obtiene tipos de productos
     @Override
@@ -2299,7 +2303,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 }
             }
         );
-        
+
         return hm_tp;
     }
     //obtiene las lineas de los  productos
@@ -2375,7 +2379,7 @@ String sql_query = " select id,identificador_familia_padre,titulo from( "
                         +"  titulo, descripcion, "
                         +"  borrado_logico "
                         +"  from inv_prod_familias "
-                        +"  where  identificador_familia_padre="+id_familia 
+                        +"  where  identificador_familia_padre="+id_familia
                 +"  )as sbt "
                 +"  where  sbt.id  != sbt.identificador_familia_padre";
     System.out.println("cargando subfamilias:   "+ sql_query);
@@ -2394,13 +2398,13 @@ ArrayList<HashMap<String, String>> subfamilias = (ArrayList<HashMap<String, Stri
 
 return subfamilias;
 }
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
     //buscador de productos
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa) {
@@ -2414,7 +2418,7 @@ return subfamilias;
 	if(!descripcion.equals("")){
 		where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
 	}
-        
+
         String sql_to_query = ""
                 + "SELECT "
 				+"inv_prod.id,"
@@ -2429,7 +2433,7 @@ return subfamilias;
                 + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                 + "WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2448,24 +2452,24 @@ return subfamilias;
             }
         );
         return hm_datos_productos;
-    }    
-    
-    
-    
-    
-    
-    
+    }
+
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getClientsClasif1_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT cxc_clie_clas1.id, cxc_clie_clas1.titulo FROM cxc_clie_clas1 "
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_clie_clas1.id "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2476,17 +2480,17 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getClientsClasif1_Datos(Integer id) {
         String sql_query = "SELECT id, titulo FROM cxc_clie_clas1 WHERE id = ?;";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2499,19 +2503,19 @@ return subfamilias;
         );
         return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getClientsClasif2_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT cxc_clie_clas2.id, cxc_clie_clas2.titulo FROM cxc_clie_clas2 "
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_clie_clas2.id "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2522,17 +2526,17 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getClientsClasif2_Datos(Integer id) {
         String sql_query = "SELECT id, titulo FROM cxc_clie_clas2 WHERE id = ?;";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2545,19 +2549,19 @@ return subfamilias;
         );
         return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getClientsClasif3_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT cxc_clie_clas3.id, cxc_clie_clas3.titulo FROM cxc_clie_clas3 "
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_clie_clas3.id "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2568,17 +2572,17 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getClientsClasif3_Datos(Integer id) {
         String sql_query = "SELECT id, titulo FROM cxc_clie_clas3 WHERE id = ?;";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2591,20 +2595,20 @@ return subfamilias;
         );
         return hm;
     }
-    
-    
+
+
 	@Override
     public ArrayList<HashMap<String, Object>> getclientsZonas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         //throw new UnsupportedOperationException("Not supported yet.");
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT cxc_clie_zonas.id, cxc_clie_zonas.titulo FROM cxc_clie_zonas "
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_clie_zonas.id where cxc_clie_zonas.borrado_logico = false or cxc_clie_zonas.borrado_logico is null  "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2615,16 +2619,16 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-        
+
+
     @Override
     public ArrayList<HashMap<String, String>> getClientsZonas_Datos(Integer id) {
         //throw new UnsupportedOperationException("Not supported yet.");
         String sql_query = "SELECT id, titulo FROM cxc_clie_zonas WHERE id = ?;";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2637,21 +2641,21 @@ return subfamilias;
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getClientsGrupos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         //throw new UnsupportedOperationException("Not supported yet.");
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT cxc_clie_grupos.id, cxc_clie_grupos.titulo FROM cxc_clie_grupos "
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_clie_grupos.id where cxc_clie_grupos.borrado_logico = false  "
                         +"order by "+orderBy+" "+asc+"  limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2662,9 +2666,9 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, String>> getClientsGrupos_Datos(Integer id) {
         //throw new UnsupportedOperationException("Not supported yet.");
@@ -2683,23 +2687,23 @@ return subfamilias;
         );
         return hm;
     }
-    
 
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getClientstMovimientos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         //throw new UnsupportedOperationException("Not supported yet.");
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT cxc_mov_tipos.id, cxc_mov_tipos.titulo,cxc_mov_tipos.descripcion,gral_mon.descripcion_abr as moneda "
                                + " FROM cxc_mov_tipos "
                                + " JOIN gral_mon on gral_mon.id= cxc_mov_tipos.moneda_id "
                         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_mov_tipos.id "
                         +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2712,17 +2716,17 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getClientstMovimientos_Datos(Integer id) {
         String sql_query = "SELECT id, titulo,descripcion,moneda_id   FROM cxc_mov_tipos WHERE id =" +id;
         System.out.print(sql_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2731,7 +2735,7 @@ return subfamilias;
                     row.put("titulo",rs.getString("titulo"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("id_moneda",rs.getString("moneda_id"));
-                    
+
                     return row;
                 }
             }
@@ -2740,21 +2744,21 @@ return subfamilias;
     }
 
 
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 	@Override
     public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldos(Integer tipo, Integer id_cliente, Integer id_empresa) {
         String where_cliente="";
-        
+
         if(tipo == 1){
             where_cliente = " AND cxc_clie.id="+id_cliente;
         }
-        
-        
+
+
         String sql_to_query = ""
             + "SELECT cliente,"
                     + "clave_cliente,"
@@ -2818,11 +2822,11 @@ return subfamilias;
                 + ") AS sbt "
         + ") AS sbt2 "
                 + "ORDER BY cliente, moneda_factura asc,factura";//cliente,moneda_factura;";
-        
+
         System.out.println("getDatos_ReporteAntiguedadSaldos: "+sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_to_query, 
+                sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2854,19 +2858,19 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
 
-    
 
 
 
-    // obtiene el SQL de estadisticas anuales de ventas 
+
+    // obtiene el SQL de estadisticas anuales de ventas
     @Override
     public ArrayList<HashMap<String, String>> getEstadisticaVentas(Integer mes_in,Integer mes_fin,Integer id_empresa) {
-        
+
         String where="";
-       
+
        String sql_to_query=""+"SELECT razon_social, "
                                     +"sum(enero) as enero, "
                                     +"sum(febrero) as febrero, "
@@ -2880,7 +2884,7 @@ return subfamilias;
                                     +"sum(octubre) as octubre, "
                                     +"sum(noviembre) as noviembre, "
                                     +"sum(diciembre) as diciembre, "
-                                    +"sum(enero)+sum(febrero)+sum(marzo)+sum(abril)+sum(mayo)+sum(junio)+sum(julio)+sum(agosto)+sum(septiembre)+sum(octubre)+sum(noviembre)+sum(diciembre)  as suma_total "		
+                                    +"sum(enero)+sum(febrero)+sum(marzo)+sum(abril)+sum(mayo)+sum(junio)+sum(julio)+sum(agosto)+sum(septiembre)+sum(octubre)+sum(noviembre)+sum(diciembre)  as suma_total "
                             +"FROM( SELECT razon_social, "
                                         +"(CASE WHEN mes=1 THEN subtotal ELSE 0 END) AS enero, "
                                         +"(CASE WHEN mes=2 THEN subtotal ELSE 0 END) AS febrero, "
@@ -2910,7 +2914,7 @@ return subfamilias;
                             +")as sbt2 "
                             +"GROUP BY razon_social ";
         System.out.println("Generando Consulta Estadisticas:"+sql_to_query+"");
-        
+
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2931,7 +2935,7 @@ return subfamilias;
                     row.put("noviembre",StringHelper.roundDouble(rs.getString("noviembre"),2));
                     row.put("diciembre",StringHelper.roundDouble(rs.getString("diciembre"),2));
                     row.put("suma_total",StringHelper.roundDouble(rs.getDouble("suma_total"), 2));
-                    
+
                     return row;
                 }
             }
@@ -2942,23 +2946,23 @@ return subfamilias;
 
 
 
-// obtiene el SQL de estadisticas anuales de ventas 
+// obtiene el SQL de estadisticas anuales de ventas
     @Override
     public ArrayList<HashMap<String, String>> getEstadisticaVentasProducto(Integer mes_in,Integer mes_fin,Integer tipo_producto, Integer familia,Integer subfamilia,Integer id_empresa) {
         String where="";
-        
+
         if(tipo_producto != 0){
             where=" AND inv_prod.tipo_de_producto_id="+tipo_producto+" ";
         }
-        
+
         if(familia != 0){
             where=" AND inv_prod.inv_prod_familia_id="+familia+" ";
         }
-        
+
         if(subfamilia != 0){
             where=" AND inv_prod.subfamilia_id="+subfamilia+" ";
         }
-        
+
        String sql_to_query=""+"SELECT descripcion, "
                                     +"sum(enero) as enero, "
                                     +"sum(febrero) as febrero, "
@@ -2972,7 +2976,7 @@ return subfamilias;
                                     +"sum(octubre) as octubre, "
                                     +"sum(noviembre) as noviembre, "
                                     +"sum(diciembre) as diciembre, "
-                                    +"sum(enero)+sum(febrero)+sum(marzo)+sum(abril)+sum(mayo)+sum(junio)+sum(julio)+sum(agosto)+sum(septiembre)+sum(octubre)+sum(noviembre)+sum(diciembre)  as suma_total "		
+                                    +"sum(enero)+sum(febrero)+sum(marzo)+sum(abril)+sum(mayo)+sum(junio)+sum(julio)+sum(agosto)+sum(septiembre)+sum(octubre)+sum(noviembre)+sum(diciembre)  as suma_total "
                             +"FROM( SELECT descripcion, "
                                         +"(CASE WHEN mes=1 THEN subtotal ELSE 0 END) AS enero, "
                                         +"(CASE WHEN mes=2 THEN subtotal ELSE 0 END) AS febrero, "
@@ -3005,9 +3009,9 @@ return subfamilias;
                                     +") AS sbt "
                             +")as sbt2 "
                             +"GROUP BY descripcion ";
-       
+
         System.out.println("Generando Consulta Estadisticas:"+sql_to_query+"");
-        
+
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -3028,16 +3032,16 @@ return subfamilias;
                     row.put("noviembre",StringHelper.roundDouble(rs.getString("noviembre"),2));
                     row.put("diciembre",StringHelper.roundDouble(rs.getString("diciembre"),2));
                     row.put("suma_total",StringHelper.roundDouble(rs.getDouble("suma_total"), 2));
-                    
+
                     return row;
                 }
             }
         );
         return hm_facturas;
     }
-    
-   //alimenta al select de familias 
-    
+
+   //alimenta al select de familias
+
     @Override
     public ArrayList<HashMap<String, String>> getFamilias(Integer tipo_producto,Integer id_empresa){
         String sql_to_query =""
@@ -3048,7 +3052,7 @@ return subfamilias;
                 +"WHERE inv_prod_familias.inv_prod_tipo_id="+tipo_producto+" "
                 + "AND inv_prod_familias.gral_emp_id="+id_empresa+" "
                 + "AND inv_prod_familias.id=inv_prod_familias.identificador_familia_padre ";
-        
+
         ArrayList<HashMap<String,String>> html_familia =(ArrayList<HashMap<String,String>>) this.jdbcTemplate.query(
             sql_to_query,new Object[]{},new RowMapper(){
              @Override
@@ -3056,14 +3060,14 @@ return subfamilias;
                  HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("descripcion",String.valueOf(rs.getString("descripcion")));
-                    return row; 
+                    return row;
              }
             }
         );
-        
+
         return html_familia;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, String>> getSubFamilias(Integer familia_id){
         String sql_to_query =""
@@ -3073,7 +3077,7 @@ return subfamilias;
                 +"FROM inv_prod_familias "
                 +"WHERE inv_prod_familias.identificador_familia_padre="+familia_id+" "
                 +"AND inv_prod_familias.id != inv_prod_familias.identificador_familia_padre;";
-        
+
         ArrayList<HashMap<String,String>> html_subfamilia =(ArrayList<HashMap<String,String>>) this.jdbcTemplate.query(
             sql_to_query,new Object[]{},new RowMapper(){
              @Override
@@ -3081,19 +3085,19 @@ return subfamilias;
                  HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("descripcion",String.valueOf(rs.getString("descripcion")));
-                    return row; 
+                    return row;
              }
             }
         );
-        
+
         return html_subfamilia;
-                
+
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //alimenta al grid de facturas a revision
     @Override
     public ArrayList<HashMap<String,String>> getProgramacionPagos_FacturasRevision(Integer id_cliente,String fecha,Integer id_empresa){
@@ -3101,7 +3105,7 @@ return subfamilias;
 	if(id_cliente!=0){
 		where=" AND cxc_clie.id="+id_cliente;
 	}
-	
+
         String sql_to_query=""
                 + "SELECT "
                     + "erp_h_facturas.id AS id_erp_h_fac,"
@@ -3118,9 +3122,9 @@ return subfamilias;
                 + "AND erp_h_facturas.cancelacion=false "
                 + "AND cxc_clie.dia_revision = to_char('"+fecha+"'::DATE,'d')::smallint "+where+" "
                 + "ORDER BY cxc_clie.razon_social, erp_h_facturas.momento_facturacion ";
-        
+
         System.out.println("Obtiene fac revision:"+sql_to_query);
-        
+
         ArrayList<HashMap<String,String>> facturas =(ArrayList<HashMap<String,String>>) this.jdbcTemplate.query(
             sql_to_query,new Object[]{},new RowMapper(){
              @Override
@@ -3132,23 +3136,23 @@ return subfamilias;
                     row.put("cliente",rs.getString("cliente"));
                     row.put("saldo_factura",StringHelper.roundDouble(rs.getString("saldo_factura"),2));
                     row.put("revision_cobro",rs.getString("revision_cobro"));
-                    return row; 
+                    return row;
              }
             }
         );
-        
+
         return facturas;
     };
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getProgramacionPagos_FacturasCobro(Integer id_cliente, String fecha, Integer id_empresa) {
         String where = "";
 	if(id_cliente != 0){
 		where=" AND cxc_clie.id="+id_cliente;
 	}
-	
+
         String sql_to_query=""
                 + "SELECT "
                     + "erp_h_facturas.id AS id_erp_h_fac,"
@@ -3165,9 +3169,9 @@ return subfamilias;
                 + "AND cxc_clie.dia_pago = to_char('"+fecha+"'::DATE,'d')::smallint "+where+" "
                 + "AND to_char(erp_h_facturas.fecha_vencimiento, 'yyyymmdd')::integer <= to_char('"+fecha+"'::timestamp with time zone,'yyyymmdd')::integer "
                 + "ORDER BY cxc_clie.razon_social, erp_h_facturas.momento_facturacion ";
-        
+
         System.out.println("Obtiene fac cobro:"+sql_to_query);
-        
+
         ArrayList<HashMap<String,String>> facturas =(ArrayList<HashMap<String,String>>) this.jdbcTemplate.query(
             sql_to_query,new Object[]{},new RowMapper(){
              @Override
@@ -3179,21 +3183,21 @@ return subfamilias;
                     row.put("cliente",rs.getString("cliente"));
                     row.put("saldo_factura",StringHelper.roundDouble(rs.getString("saldo_factura"),2));
                     row.put("revision_cobro",rs.getString("revision_cobro"));
-                    return row; 
+                    return row;
              }
             }
         );
-        
+
         return facturas;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getProgramacionPagos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = ""
                 + "SELECT distinct cxc_fac_rev_cob.id, "
                         + "cxc_fac_rev_cob.folio, "
@@ -3201,10 +3205,10 @@ return subfamilias;
                         + "FROM cxc_fac_rev_cob "
                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_fac_rev_cob.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3216,10 +3220,10 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getProgramacionPagos_Datos(Integer id) {
         String sql_query = ""
@@ -3228,11 +3232,11 @@ return subfamilias;
                     + "folio, "
                     + "to_char(fecha_proceso,'yyyy-mm-dd') as fecha_proceso "
                 + "FROM cxc_fac_rev_cob WHERE id =" +id;
-        
+
         System.out.print(sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3240,17 +3244,17 @@ return subfamilias;
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("folio",rs.getString("folio"));
                     row.put("fecha_proceso",rs.getString("fecha_proceso"));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getProgramacionPagos_Facturas(Integer id) {
         String sql_query = ""
@@ -3283,11 +3287,11 @@ return subfamilias;
                     + "JOIN cxc_clie ON cxc_clie.id=erp_h_facturas.cliente_id "
                     + "WHERE cxc_fac_rev_cob_detalle.cxc_fac_rev_cob_id=" +id +" "
                 + ") AS sbt;";
-        
+
         System.out.print(sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3301,30 +3305,30 @@ return subfamilias;
                     row.put("revision_cobro",rs.getString("revision_cobro"));
                     row.put("seleccionado",rs.getString("seleccionado"));
                     row.put("actualizado",String.valueOf(rs.getBoolean("actualizado")));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //reporte de cobrabza diaria
     @Override
     public ArrayList<HashMap<String, String>> getCobranzaDiaria(String fecha_inicial, String fecha_final,Integer cliente,Integer id_empresa) {
         String where="";
-        
+
         if(cliente!=0){
             where = "  and erp_pagos.cliente_id=" +cliente;
         }
-        
+
         String sql_to_query = ""
                 + "SELECT   "
                         +" erp_h_facturas.serie_folio AS factura, "
-                        +" to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura, "    
+                        +" to_char(erp_h_facturas.momento_facturacion,'dd/mm/yyyy') AS fecha_factura, "
                         +" erp_pagos.cliente_id AS id_cliente, "
                         +" cxc_clie.razon_social AS cliente,  "
                         +" gral_mon.id as id_moneda_fac, "
@@ -3332,7 +3336,7 @@ return subfamilias;
                         +" gral_mon.descripcion_abr AS moneda_fac, "
                         +" erp_h_facturas.monto_total AS monto_factura, "
                         +" gral_mon.simbolo AS simbolo_moneda_aplicado,  "
-                        +" erp_pagos_detalles.cantidad AS pago_aplicado, " 
+                        +" erp_pagos_detalles.cantidad AS pago_aplicado, "
                         +" to_char(erp_pagos.fecha_deposito,'dd/mm/yyyy') AS fecha_pago, "
                         +" gra_mon_pago.id as id_moneda_pago, "
                         +" gra_mon_pago.simbolo AS simbolo_moneda_pago, "
@@ -3353,11 +3357,11 @@ return subfamilias;
                     + "AND erp_pagos_detalles.cancelacion=FALSE "+where
                     +" AND (to_char(erp_pagos.fecha_deposito,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
                     +" ORDER BY cxc_clie.razon_social, erp_pagos.fecha_deposito;";
-        
+
         System.out.println("getCobranzaDiaria:"+ sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_to_query, 
+                sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3381,20 +3385,20 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
-    }   
+        return hm;
+    }
 
-    
-    
+
+
     //reporte Anticipos no Autorizados
     @Override
     public ArrayList<HashMap<String, String>> getAnticiposnoAplicados(String fecha_inicial, String fecha_final, Integer cliente, Integer id_empresa) {
         String where="";
-        
+
         if(cliente!=0){
             where = "  and cxc_ant.cliente_id=" +cliente;
         }
-        
+
         String sql_to_query = "select cxc_ant.cliente_id, "
                 + "to_char(cxc_ant.fecha_anticipo_usuario,'yyyy-mm-dd') as fecha_anticipo, "
                 + "cxc_clie.razon_social as cliente, "
@@ -3407,10 +3411,10 @@ return subfamilias;
                 + ""+where+" "
                 + "and to_char(cxc_ant.fecha_anticipo_usuario,'yyyymmdd'):: integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer "
                 + "ORDER BY cxc_ant.fecha_anticipo_usuario ";
-        
-        
+
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_to_query, 
+                sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3418,27 +3422,27 @@ return subfamilias;
                     row.put("fecha_anticipo",rs.getString("fecha_anticipo"));
                     row.put("cliente_id",String.valueOf(rs.getInt("cliente_id")));
                     row.put("cliente",rs.getString("cliente"));
-                   
+
                     row.put("anticipo_inicial", StringHelper.roundDouble(rs.getString("anticipo_inicial"), 2));
-                   
+
                     row.put("anticipo_actual", StringHelper.roundDouble(rs.getString("anticipo_actual"), 2));
-                    
+
                     row.put("observaciones",rs.getString("observaciones"));
-                    
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     //**********************************************************************************************************************
     //METODOS PARA CATALOGO DE DIRECCIONES FISCALES DE CLIENTES
     @Override
     public ArrayList<HashMap<String, Object>> getClientsDf_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = ""
                 + "SELECT sbt1.id,"
                     + "sbt1.cliente,"
@@ -3467,12 +3471,12 @@ return subfamilias;
                 + ") as sbt1 "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=sbt1.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3486,10 +3490,10 @@ return subfamilias;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getClientsDf_Datos(Integer id) {
         String sql_query = ""
@@ -3518,12 +3522,12 @@ return subfamilias;
                 + "FROM cxc_clie_df "
                 + "JOIN cxc_clie ON cxc_clie.id=cxc_clie_df.cxc_clie_id "
                 + "WHERE cxc_clie_df.id=? AND cxc_clie_df.borrado_logico=false;";
-        
+
         System.out.println("Ejecutando getClientsDf_Datos:"+ sql_query);
         System.out.println("identificador: "+id);
-        
+
         ArrayList<HashMap<String, Object>> df = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3555,10 +3559,10 @@ return subfamilias;
         );
         return df;
     }
-    
+
     //AQUI TERMINA METODOS PARA CATALOGO DE DIRECCIONES FISCALES DE CLIENTES
     //**********************************************************************************************************************
 
 
-    
+
 }
