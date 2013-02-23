@@ -789,6 +789,7 @@ $(function() {
 			}
 		});
 		
+		$productosku.focus();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == 'true' ){
@@ -932,7 +933,7 @@ $(function() {
 		$carga_campos_select($select_tipo_redondeo10, array_tipo_redondeo,elemento_seleccionado, cadena_elemento_cero);	
 		
 		
-
+		
 		
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
@@ -1119,6 +1120,9 @@ $(function() {
 					return false;
 				}
 			});
+			
+			
+			$lista1.focus();//asignar el cursor al campo Lista 1 al cargar la ventana
 			
 			if(accion_mode == 'edit'){
                                 

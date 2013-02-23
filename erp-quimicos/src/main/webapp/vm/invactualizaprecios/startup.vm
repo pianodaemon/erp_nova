@@ -323,7 +323,7 @@
 																	<td width="5"></td>
 																	<td width="5"></td>
 																</tr>
-
+																
 																<tr>
 																	<td width="40">Lista&nbsp;5</td>
 																	<td width="50"><input type="text" name="lista5" style="width:50px;"></td>
@@ -357,8 +357,14 @@
 													<table border="0">
 														<tr>
 															<td width="25"></td>
-															<td width="100">Aplicar descuento</td>
+															<td width="110">Actualizar&nbsp;descuento</td>
 															<td width="20"><input type="checkbox" name="check_aplicar_descto"></td>
+															<td width="25"></td>
+															<td width="80"></td>
+															<td width="80"></td>
+															<td width="25"></td>
+															<td width="80"></td>
+															<td><input type="button" id="genera_pdf" value="Generar PDF" style="width:80px; font-weight: bold;"></td>
 														</tr>
 													</table>
 												</td>

@@ -2,7 +2,7 @@
 	$.fn.extend({
 		modalPanel_invactualizaprecios: function() {
 		    
-		    /*
+		    
 		    //Our function for hiding the modalbox
 			function modalHide() {
 				$(document).unbind("keydown", handleEscape);
@@ -19,7 +19,7 @@
 					modalHide();
 				}
 			}
-			*/
+			
 			
 			
 			//Create our overlay object
@@ -53,7 +53,7 @@
 					//e.preventDefault();
 					
 					//Activate a listener 
-					/*$(document).keydown(handleEscape);	*/
+					$(document).keydown(handleEscape);
 
 					//modalWindow.css({
 					//		"margin-left": -400,

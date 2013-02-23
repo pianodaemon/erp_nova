@@ -404,13 +404,6 @@ $(function() {
 		
 		$tabs_li_funxionalidad();
 		
-		/*
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosCalculoCosto.json';
-		$arreglo = {'identificador':id_to_show,
-					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-					};
-		*/
-		
 		var $identificador = $('#forma-invactualizaprecios-window').find('input[name=identificador]');
 		var $tipo_producto = $('#forma-invactualizaprecios-window').find('input[name=tipo_producto]');
 		var $familia = $('#forma-invactualizaprecios-window').find('input[name=familia]');
@@ -443,16 +436,20 @@ $(function() {
 		
 		var $check_aplicar_descto = $('#forma-invactualizaprecios-window').find('input[name=check_aplicar_descto]');
 		
+		var $genera_pdf = $('#forma-invactualizaprecios-window').find('#genera_pdf');
+		
 		var $cerrar_plugin = $('#forma-invactualizaprecios-window').find('#close');
 		var $cancelar_plugin = $('#forma-invactualizaprecios-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-invactualizaprecios-window').find('#submit');
 		
+		/*
 		//quitar enter a todos los campos input
 		$('#forma-invactualizaprecios-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
 				return false;
 			}
 		});
+		*/
 		
 		/*
 		$radio_costo_ultimo.attr('checked',  true );
@@ -551,6 +548,11 @@ $(function() {
 		$add_ceros($descto10);
 		
 		$identificador.val('0');
+		
+		/*
+		Aquí se asignan valores que vienen del buscador principal, 
+		estos seran utilizados para actualizar precios de productos que cumplan con estos filtros
+		*/
 		$tipo_producto.val($busqueda_select_tipo_prod.val());
 		$familia.val($busqueda_select_familia.val());
 		$subfamilia.val($busqueda_select_subfamilia.val());
@@ -559,13 +561,17 @@ $(function() {
 		$codigo.val($busqueda_codigo.val());
 		$producto.val($busqueda_producto.val());
 		
+		$genera_pdf.hide();
+		$lista1.focus();
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("Los precios se han actualizado con &eacute;xito", 'Atencion!');
 				//var remove = function() {$(this).remove();};
 				//$('#forma-invactualizaprecios-overlay').fadeOut(remove);
 				
-				//$pdf.trigger('click');
+				$genera_pdf.trigger('click');
+				$genera_pdf.show();
 				//$get_datos_grid();
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
@@ -602,34 +608,67 @@ $(function() {
 		},"json");//termina llamada json
 		*/
 		
-
 		
-		
-		
-		
-		
-		/*
-		$submit_actualizar.bind('click',function(){
-			var trCount = $("tr", $grid_productos).size();
-			if(parseInt(trCount) > 0){
-				if(parseFloat($precio_minimo.val()) > 0 ){
-					return true;
-				}else{
-					jAlert("El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero.", 'Atencion!');
-					
-					//visualizar el warning
-					$('#forma-invactualizaprecios-window').find('img[rel=warning_preciominimo]')
-					.parent()
-					.css({'display':'block'})
-					.easyTooltip({tooltipId: "easyTooltip2",content: "El porcentaje para el c&aacute;lculo del Precio M&iacute;nimo debe ser mayor que cero."});
-					return false;
-				}
-			}else{
-				jAlert("No hay datos para actualizar", 'Atencion!');
-				return false;
+		//Generar Pdf 
+		$genera_pdf.click(function(event){
+			var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+			var actualizar_descto="false";
+			
+			if($check_aplicar_descto.is(':checked')){
+				actualizar_descto="true";
 			}
+			
+			//aqui se construye la cadena con los parametros de la busqueda
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getGenerarPdf.json';
+			$arreglo = {
+						'tipo_producto': $tipo_producto.val(),
+						'marca': $marca.val(),
+						'familia': $familia.val(),
+						'subfamilia': $subfamilia.val(),
+						'codigo': $codigo.val(),
+						'producto': $producto.val(),
+						'presentacion': $presentacion.val(),
+						'lista1': $lista1.val(),
+						'lista2': $lista2.val(),
+						'lista3': $lista3.val(),
+						'lista4': $lista4.val(),
+						'lista5': $lista5.val(),
+						'lista6': $lista6.val(),
+						'lista7': $lista7.val(),
+						'lista8': $lista8.val(),
+						'lista9': $lista9.val(),
+						'lista10': $lista10.val(),
+						'descto1': $descto1.val(),
+						'descto2': $descto2.val(),
+						'descto3': $descto3.val(),
+						'descto4': $descto4.val(),
+						'descto5': $descto5.val(),
+						'descto6': $descto6.val(),
+						'descto7': $descto7.val(),
+						'descto8': $descto8.val(),
+						'descto9': $descto9.val(),
+						'descto10': $descto10.val(),
+						'actualizar_descto': actualizar_descto,
+						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+						};
+			
+			$.post(input_json,$arreglo,function(entry){
+				
+				if(entry['generado']=='true'){
+					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getDescargaPdf/'+entry['file_name']+'/out.json';
+					window.location.href=input_json;
+				}else{
+					jAlert("Error al generar el PDF.", 'Atencion!');
+				}
+				
+			},"json");//termina llamada json
+			
 		});
-		*/
+		
+		
+		
+		
+		
 		
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
