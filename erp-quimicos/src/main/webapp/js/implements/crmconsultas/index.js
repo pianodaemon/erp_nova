@@ -72,7 +72,7 @@ $(function() {
             opciones_html+='<option value="2">Registro Llamadas</option>';
             opciones_html+='<option value="3">Registro Casos</option>';
             opciones_html+='<option value="4">Registro Oportunidades</option>';
-            opciones_html+='<option value="5">Contactos/Prospectos/Clientes</option>';
+            //opciones_html+='<option value="5">Contactos/Prospectos/Clientes</option>';
          $select_opciones.append(opciones_html);
          
          //valida la fecha seleccionada
@@ -800,23 +800,7 @@ $(function() {
                 status_html +='<option value="7" >Ganadas</option>';
                 status_html +='<option value="8" >Perdidas</option>';
             $select_etapa.append(status_html);
-             var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
-		var parametros={
-                    
-                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                }
-                $.post(input_json,parametros,function(entry){
-                 
-                    //Alimentando los campos select_agente
-                    $select_agente.children().remove();
-                    var motivo_hmtl = '';
-                    $.each(entry['Agentes'],function(entryIndex,motivo){
-                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
-                    });
-                    $select_agente.append(motivo_hmtl);
-                    
-                });//fin json
-                
+             
                 $fecha_inicial.click(function (s){
                     var a=$('div.datepicker');
                     a.css({'z-index':100});
@@ -892,6 +876,22 @@ $(function() {
             
              //click para hacer la consulta
 		$consultar.click(function(event){ 
+                    
+                    $metas.attr({'value':''});
+                    $totales.attr({'value':''});
+                    $montos_meta.attr({'value':''});
+                    $total_montos_meta.attr({'value':''});
+                    $porciento_metas.attr({'value':''});
+                    $porciento_montos.attr({'value':''});
+                    $incial.attr({'value':''});
+                    $ganados.attr({'value':''});
+                    $perdidos.attr({'value':''});
+                    $visita.attr({'value':''});
+                    $seguimiento.attr({'value':''});
+                    $cotizacion.attr({'value':''});
+                    $negociacion.attr({'value':''});
+                    $cierre.attr({'value':''});
+                    
                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
                     $arreglo = {
                         
@@ -908,41 +908,40 @@ $(function() {
 
                     $.post(input_json,$arreglo,function(entry){
                         
-                        $metas.attr({'value':entry['Oportunidades']['0']['oportunidades_meta']});
-                        $totales.attr({'value':entry['Oportunidades']['0']['oportunidades_totales']});
-                        $montos_meta.attr({'value':entry['Oportunidades']['0']['montos_meta']});
-                        $total_montos_meta.attr({'value':entry['Oportunidades']['0']['montos_totales']});
-                        
-                        $porciento_metas.attr({'value':entry['Oportunidades']['0']['porciento_cumplidos']});
-                        $porciento_montos.attr({'value':entry['Oportunidades']['0']['porciento_montos']});
-                        $incial.attr({'value':entry['Oportunidades']['0']['inicial']});
-                        $visita.attr({'value':entry['Oportunidades']['0']['visita']});
-                        $ganados.attr({'value':entry['Oportunidades']['0']['ganados']});
-                        $perdidos.attr({'value':entry['Oportunidades']['0']['perdidos']});
-                        $seguimiento.attr({'value':entry['Oportunidades']['0']['seguimiento']});
-                        $cotizacion.attr({'value':entry['Oportunidades']['0']['cotizacion']});
-                        $cierre.attr({'value':entry['Oportunidades']['0']['cierre']});
-                        $negociacion.attr({'value':entry['Oportunidades']['0']['negociacion']})
-                       
+                        if(entry['Oportunidades'] != '' && entry['Oportunidades'] != null){
+                            $metas.attr({'value':entry['Oportunidades']['0']['metas_oport']});
+                            $totales.attr({'value':entry['Oportunidades']['0']['total_metas_oport']});
+                            $montos_meta.attr({'value':entry['Oportunidades']['0']['monto_metas_oport']});
+                            $total_montos_meta.attr({'value':entry['Oportunidades']['0']['total_montos_oport']});
 
-
-
-
+                            $porciento_metas.attr({'value':entry['Oportunidades']['0']['metas_cumplidas']});
+                            $porciento_montos.attr({'value':entry['Oportunidades']['0']['montos_cumplidos']});
+                            $incial.attr({'value':entry['Oportunidades']['0']['oport_inicial']});
+                            $visita.attr({'value':entry['Oportunidades']['0']['oport_seguimiento']});
+                            $ganados.attr({'value':entry['Oportunidades']['0']['oport_visitas']});
+                            $perdidos.attr({'value':entry['Oportunidades']['0']['oport_cotizacion']});
+                            $seguimiento.attr({'value':entry['Oportunidades']['0']['oport_negociacion']});
+                            $cotizacion.attr({'value':entry['Oportunidades']['0']['oport_cierre']});
+                            $cierre.attr({'value':entry['Oportunidades']['0']['oport_ganados']});
+                            $negociacion.attr({'value':entry['Oportunidades']['0']['oport_perdidos']});
+                        }else{
+                            jAlert("No se encontraron resultados.",'! Atencion');
+                        }
                     });
 		});
-
+                
                 
                 $cerrar_plugin.bind('click',function(){
                     var remove = function() {$(this).remove();};
                     $('#forma-oportunidades-overlay').fadeOut(remove);
                 });
-
+                
                 $cancelar_plugin.click(function(event){
                     var remove = function() {$(this).remove();};
                     $('#forma-oportunidades-overlay').fadeOut(remove);
 
                 });
-
+                
         }
         //fin de la forma Registro Oportunidades
         
@@ -1089,21 +1088,18 @@ $(function() {
                          'id':id_to_show,
                         'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                     }
-                   
-
+                    
                     $.post(input_json,$arreglo,function(entry){
-                        
-                        $metas.attr({'value':entry['Varios']['0']['prospectos_meta']});
-                        $totales.attr({'value':entry['Varios']['0']['total_contactos']});
-                        $porcentaje.attr({'value':entry['Varios']['0']['porcentaje_cumplido']});
-                        
-                        $contacto.attr({'value':entry['Varios']['0']['contactos']});
-                        
-                       
-
-
-
-
+                        if(entry['Varios'] != '' && entry['Varios'] != null){
+                            
+                            $metas.attr({'value':entry['Varios']['0']['prospectos_meta']});
+                            $totales.attr({'value':entry['Varios']['0']['total_contactos']});
+                            $porcentaje.attr({'value':entry['Varios']['0']['porcentaje_cumplido']});
+                            
+                            $contacto.attr({'value':entry['Varios']['0']['contactos']});
+                        }else{
+                            jAlert("No se encontraron resultados.",'! Atencion');
+                        }
                     });
 		});
 
