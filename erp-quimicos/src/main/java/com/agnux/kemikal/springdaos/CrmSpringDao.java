@@ -1378,9 +1378,9 @@ public class CrmSpringDao implements CrmInterfaceDao{
         
         if(!rfc.equals("%%")){
             if (valor == 0){
-                cadena_where = " and "+tabla+".rfc = "+rfc+"  " ;
+                cadena_where = " and "+tabla+".rfc ilike '"+rfc+"'  " ;
             } else{
-                cadena_where = cadena_where+" and "+tabla+".rfc = "+rfc+" " ;
+                cadena_where = cadena_where+" and "+tabla+".rfc ilike '"+rfc+"' " ;
             }
         
         }
@@ -1403,7 +1403,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
-                    row.put("numero_control",String.valueOf(rs.getInt("numero_control")));
+                    row.put("numero_control",String.valueOf(rs.getString("numero_control")));
                     row.put("rfc",rs.getString("rfc"));
                     row.put("razon_social",rs.getString("razon_social"));
                     
@@ -1548,21 +1548,11 @@ public class CrmSpringDao implements CrmInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorOportunidades(Integer id, Integer agente, Integer tipo_seleccion, Integer status, Integer etapa, String fecha_inicial, String fecha_final, Integer id_empresa) {
-         String query ="select * from crm_consultas("+id+","+agente+","+tipo_seleccion+","+status+","+etapa+",'"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+")as foo("
-                                                        +"cierre integer, "
-                                                        +"oportunidades_totales integer, "
-                                                        + "montos_totales double precision, "
-                                                        + "oportunidades_meta integer, "
-                                                        + "montos_meta double precision,"
-                                                        + "porciento_cumplido double precision, "
-                                                        + "porciento_montos double precision, "
-                                                        + "inicial integer, "
-                                                        + "visita integer, "
-                                                        + "seguimiento integer, "
-                                                        + "cotizacion integer, "
-                                                        + "negociacion integer, "
-                                                        + "ganadas integer, "
-                                                        + "perdidas integer)";
+         String query ="select * from crm_consultas("+id+","+agente+","+tipo_seleccion+","+status+","+etapa+",'"+fecha_inicial+"','"+fecha_final+"',"+id_empresa+")as foo(metas_oport integer,total_metas_oport integer,"
+                 + "monto_metas_oport double precision,total_montos_oport double precision, metas_cumplidas double precision,"
+                 + "montos_cumplidos double precision, oport_inicial double precision, oport_seguimiento double precision,"
+                 + "oport_visitas double precision, oport_cotizacion double precision, oport_negociacion double precision"
+                 + ",oport_cierre double precision, oport_ganados double precision, oport_perdidos double precision)";
 
         
             System.out.println("Resultados de la FUNCION___4____"+" "+query);
@@ -1572,22 +1562,21 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("oportunidades_totales",String.valueOf(rs.getInt("oportunidades_totales")));
-                    row.put("oportunidades_meta",String.valueOf(rs.getInt("oportunidades_meta")));
-                    row.put("montos_totales",StringHelper.roundDouble(rs.getDouble("montos_totales"),1));
-                    row.put("montos_meta",StringHelper.roundDouble(rs.getDouble("montos_meta"),1));
-                    row.put("inicial",String.valueOf(rs.getInt("inicial")));
-                    row.put("visita",String.valueOf(rs.getInt("visita")));
-                    row.put("seguimiento",String.valueOf(rs.getInt("seguimiento")));
-                    row.put("cotizacion",String.valueOf(rs.getInt("cotizacion")));
-                    row.put("negociacion",String.valueOf(rs.getInt("negociacion")));
-                    row.put("ganadas",String.valueOf(rs.getInt("ganadas")));
-                    row.put("perdidas",String.valueOf(rs.getInt("perdidas")));
-                    row.put("cierre",String.valueOf(rs.getInt("cierre")));
-                    row.put("porciento_cumplido",StringHelper.roundDouble(rs.getDouble("porciento_cumplido"),2));
-                    row.put("porciento_montos",StringHelper.roundDouble(rs.getDouble("porciento_montos"),2));
+                    row.put("metas_oport",String.valueOf(rs.getInt("metas_oport")));
+                    row.put("total_metas_oport",String.valueOf(rs.getInt("total_metas_oport")));
+                    row.put("monto_metas_oport",StringHelper.roundDouble(rs.getDouble("monto_metas_oport"),2));
+                    row.put("total_montos_oport",StringHelper.roundDouble(rs.getDouble("total_montos_oport"),2));
+                    row.put("metas_cumplidas",StringHelper.roundDouble(rs.getDouble("metas_cumplidas"),2));
+                    row.put("montos_cumplidos",StringHelper.roundDouble(rs.getDouble("montos_cumplidos"),2));
+                    row.put("oport_inicial",StringHelper.roundDouble(rs.getDouble("oport_inicial"),2));
+                    row.put("oport_seguimiento",StringHelper.roundDouble(rs.getDouble("oport_seguimiento"),2));
+                    row.put("oport_visitas",StringHelper.roundDouble(rs.getDouble("oport_visitas"),2));
+                    row.put("oport_cotizacion",StringHelper.roundDouble(rs.getDouble("oport_cotizacion"),2));
+                    row.put("oport_negociacion",StringHelper.roundDouble(rs.getDouble("oport_negociacion"),2));
+                    row.put("oport_cierre",StringHelper.roundDouble(rs.getDouble("oport_cierre"),2));
+                    row.put("oport_ganados",StringHelper.roundDouble(rs.getDouble("oport_ganados"),2));
+                    row.put("oport_perdidos",StringHelper.roundDouble(rs.getDouble("oport_perdidos"),2));
                     
-              
                     return row;
                 }
             }
