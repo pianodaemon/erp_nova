@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>${title}</title>
-        
+
         #include("${layoutheader}")
-		
+
         <!--  css for this catalogo -->
         <!--<link rel="stylesheet" href="../../css/modalbox/repinvexis/formaRepinvexis.css" type="text/css" />-->
 
@@ -14,14 +14,14 @@
         <script type="text/javascript" src="../../js/implements/reppronoscobranza/index.js" ></script>
         <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         #include("${layoutmenu}")
-        
-        
+
+
         <input type="hidden" name="contextpath" value="$url">
         <input type="hidden" name="user" value="$username">
         <input type="hidden" name="iu" value="$iu">
         <input type="hidden" name="emp" value="$empresa">
         <input type="hidden" name="suc" value="$sucursal">
-        
+
         <!--  otra parte -->
         <table class="acciones" >
             <tr>
@@ -41,7 +41,7 @@
                                 <td width="40">Opciones</td>
                                 <td width="10">&nbsp;&nbsp;</td>
                                 <td>
-                                    
+
                                     <SELECT NAME="cobranza" style="width:200px;">
                                         <option value="0" selected="yes">[--Seleccionar una opcion--]</option>
                                         <option value="1" >Resumen por semana</option>
@@ -85,9 +85,9 @@
 
                                         </tbody>
 
-                                        
-                                        
-                                              
+
+
+
 
 
 
@@ -101,29 +101,29 @@
             </tr>
         </table>
 	<div id="fechas">
-            
-        </div>	
+
+        </div>
         <div id="pronostico_cobranza">
-            
+
         </div>
         <div id="pronostico_cobranza_semana">
-            
+
         </div>
         <div id="pronostico_cobranza_semanas">
-            
-        </div>
-		
-        
-        
-		
-        
 
-        
-        
+        </div>
+
+
+
+
+
+
+
+
         #include("${layoutfooter}")
-        
-        
+
+
     </body>
-</html>	
+</html>
 
 
