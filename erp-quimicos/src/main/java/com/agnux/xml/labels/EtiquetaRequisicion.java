@@ -72,15 +72,12 @@ public final class EtiquetaRequisicion extends AgnuxXmlObject{
         producto.setAttribute("cantidad", datos_cuerpo.get("producto_cantidad").toString());
         producto.setAttribute("unidad", datos_cuerpo.get("producto_unidad").toString());
         lote.appendChild(producto);
-
+        
         Element caducidad = tmp.createElement("caducidad");
-        Text fecha_caducidad = tmp.createTextNode(datos_cuerpo.get("caducidad_fecha").toString());
-        caducidad.appendChild(fecha_caducidad);
+        caducidad.setAttribute("caducidad",datos_cuerpo.get("caducidad_fecha").toString());
+        //Text fecha_caducidad = tmp.createTextNode(datos_cuerpo.get("caducidad_fecha").toString());
+        //caducidad.appendChild(fecha_caducidad);
         lote.appendChild(caducidad);
-
-        
-        
-        
         
         tmp.getDocumentElement().appendChild(element);
         

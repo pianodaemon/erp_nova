@@ -64,10 +64,11 @@ public final class EtiquetaCompras extends AgnuxXmlObject{
         producto.setAttribute("codigo",datos_cuerpo.get("producto_codigo").toString());
         producto.setAttribute("nombre", datos_cuerpo.get("producto_nombre").toString());
         lote.appendChild(producto);
-
+        
         Element caducidad = tmp.createElement("caducidad");
-        Text fecha_caducidad = tmp.createTextNode(datos_cuerpo.get("caducidad_fecha").toString());
-        caducidad.appendChild(fecha_caducidad);
+        caducidad.setAttribute("caducidad",datos_cuerpo.get("caducidad_fecha").toString());
+        //Text fecha_caducidad = tmp.createTextNode(datos_cuerpo.get("caducidad_fecha").toString());
+        //caducidad.appendChild(fecha_caducidad);
         lote.appendChild(caducidad);
 
         tmp.getDocumentElement().appendChild(element);
