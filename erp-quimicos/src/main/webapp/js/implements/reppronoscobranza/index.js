@@ -663,10 +663,7 @@ $(function() {
 
 
         if(opcion_seleccionada==2 && numero_semanas != 0){
-            //$div_pronostico_cobranza_semanas.hide();
-            //$div_pronostico_cobranza.hide();
-            //$div_pronostico_cobranza_semana.show();
-            var html_footer="";
+
             $div_pronostico_cobranza_semana.children().remove();
             $div_fechas.children().remove();
             var arreglo_parametros = {
@@ -674,7 +671,7 @@ $(function() {
                 numero_semanas : $select_semanas.val(),
                 iu:config.getUi()
             };
-
+            var html_footer="";
             var restful_json_service = config.getUrlForGetAndPost() + '/getPronosticoDeCobranza.json'
             $.post(restful_json_service,arreglo_parametros,function(entry){
                 var body_tabla = entry;
@@ -698,21 +695,22 @@ $(function() {
 
                 var html_pronostico_semanas="";
 
-                var html_fechas = '<table id="fechas" width="60%"';
-                
+                var html_fechas = '<table id="fechas" width="60%">';
                 var salto=0;
                 for(var i=0; i<body_tabla.length; i++){
                     if(salto == 0){
                         html_fechas += '<tr align="right" >';
-                        html_fechas += '<td align="right">Del:&nbsp;&nbsp; &nbsp;</td>';
+                        html_fechas += '<td>Del:&nbsp;&nbsp; &nbsp;</td>';
                         html_fechas += '<td align="left" width="100px">'+body_tabla[i]["lunes_proximo"]+'</td>';
-                        html_fechas += '<td>Al:&nbsp;</td>';
+                        html_fechas += '<td>Al:&nbsp;&nbsp; &nbsp;</td>';
                         html_fechas += '<td align="left" width="100px">'+ body_tabla[i]["viernes_proximo"]+'</td>';
                         html_fechas += '<td width="500px">&nbsp;&nbsp; &nbsp;</td>';
+
                         html_fechas += '</tr>';
                         salto=1;
                     }
                 }
+
                 html_fechas += '</table">';
 
                 $div_fechas.append(html_fechas);
