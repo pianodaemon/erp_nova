@@ -21,6 +21,7 @@ public final class EtiquetaCompras extends AgnuxXmlObject{
         this.construyeNodoEtiqueta();
         this.construyeNodoCuerpo(datos_cuerpo);
     }
+    
     private void construyeNodoEtiqueta(){
     	Document tmp = this.getDb().newDocument();
         Element element = tmp.createElement("etiquetacompras");
