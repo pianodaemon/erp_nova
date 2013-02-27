@@ -6,7 +6,6 @@ package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.FileHelper;
-import com.agnux.kemikal.interfacedaos.CotizacionesInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCotizacion;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
@@ -14,9 +13,7 @@ import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.interfacedaos.ParametrosGeneralesInterfaceDao;
 import com.agnux.kemikal.interfacedaos.PocInterfaceDao;
-import com.agnux.kemikal.reportes.PDFCotizacionDescripcion;
 import com.itextpdf.text.DocumentException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -552,6 +549,9 @@ public class CotizacionesController {
         ArrayList<HashMap<String, String>> datosCliPros = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> lista_productos = new ArrayList<HashMap<String, String>>();
         
+        ArrayList<HashMap<String, String>> condiciones_comerciales = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> politicas_pago = new ArrayList<HashMap<String, String>>();
+        
         System.out.println("Generando PDF de Cotizacion");
         
         Integer app_selected = 12; //aplicativo Cotizaciones
@@ -589,6 +589,8 @@ public class CotizacionesController {
         datosEmisor.put("emp_estado", this.getGralDao().getEstadoDomicilioFiscalEmpresaEmisora(id_empresa));
         datosEmisor.put("emp_municipio", this.getGralDao().getMunicipioDomicilioFiscalEmpresaEmisora(id_empresa));
         datosEmisor.put("emp_cp", this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa));
+        datosEmisor.put("emp_pagina_web", this.getGralDao().getPaginaWebEmpresaEmisora(id_empresa));
+        datosEmisor.put("emp_telefono", this.getGralDao().getTelefonoEmpresaEmisora(id_empresa));
         
         HeaderFooter.put("titulo_reporte", "COTIZACIÓN");
         HeaderFooter.put("periodo", "");
@@ -628,7 +630,13 @@ public class CotizacionesController {
         datosReceptor.put("clieContacto", datosCliPros.get(0).get("contacto"));
         datosReceptor.put("clieRazonSocial", datosCliPros.get(0).get("razon_social"));
         
-        pdfCotizacion pdf = new pdfCotizacion(HeaderFooter, datosEmisor, datos,datosReceptor,lista_productos);
+        //obtiene las condiciones comerciales para la cotizacion
+        condiciones_comerciales = this.getPocDao().getCotizacion_CondicionesComerciales(id_empresa);
+        //obtiene las politicas de pago para la cotizacion
+        politicas_pago = this.getPocDao().getCotizacion_PolitizasPago(id_empresa);
+        
+        
+        pdfCotizacion pdf = new pdfCotizacion(HeaderFooter, datosEmisor, datos,datosReceptor,lista_productos, condiciones_comerciales, politicas_pago);
         pdf.ViewPDF();
         
         

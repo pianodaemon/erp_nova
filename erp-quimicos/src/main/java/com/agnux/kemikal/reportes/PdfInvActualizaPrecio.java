@@ -97,6 +97,7 @@ public class PdfInvActualizaPrecio {
         Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
         Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
+        Font smallFontBoldBlack = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.BLACK);
         Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
         
         PdfPTable tableAbreviaturas;
@@ -151,11 +152,14 @@ public class PdfInvActualizaPrecio {
             }
             
             
-            cell = new PdfPCell(new Paragraph("Porcentajes para actualizacion de Listas", smallBoldFont));
+            cell = new PdfPCell(new Paragraph("% para actualización de Listas", smallFontBoldBlack));
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setBorder(0);
+            //cell.setBackgroundColor(BaseColor.BLACK);
+            cell.setBorderWidthTop(1);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthLeft(1);
+            cell.setBorderWidthRight(0);
             cell.setColspan(4);
             table.addCell(cell);
             
@@ -230,11 +234,14 @@ public class PdfInvActualizaPrecio {
             table.addCell(cell);
             
             if(this.getActualizar_descto().equals("true")){
-                cell = new PdfPCell(new Paragraph("Porcentajes para actualizacion de Descuentos", smallBoldFont));
+                cell = new PdfPCell(new Paragraph("% para actualización de Descuentos", smallFontBoldBlack));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setBackgroundColor(BaseColor.BLACK);
-                cell.setBorder(0);
+                //cell.setBackgroundColor(BaseColor.BLACK);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(1);
+                cell.setBorderWidthRight(0);
                 cell.setColspan(4);
                 table.addCell(cell);
                 

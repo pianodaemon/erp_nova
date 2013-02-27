@@ -1402,10 +1402,9 @@ public class PocSpringDao implements PocInterfaceDao{
         String sql_query="SELECT "  
                         +"gral_mon_id_pre"+lista_precio+" as moneda_id "
                         + "FROM inv_pre "
-                        
                         + " LIMIT 1 ";
                            
-        System.out.println("Resultado de la Moneda de lista"+"___"+sql_query);
+        System.out.println("Resultado de la Moneda de lista: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_query, 
             new Object[]{}, new RowMapper() {
@@ -1413,8 +1412,6 @@ public class PocSpringDao implements PocInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
-                    
-                    
                     return row;
                 }
             }
@@ -1709,6 +1706,50 @@ public class PocSpringDao implements PocInterfaceDao{
             }
         );
         return hm_grid;
+    }
+    
+    
+    //obtiene las condiciones comerciales que se mostraran en el pdf de la cotizacion
+    @Override
+    public ArrayList<HashMap<String, String>> getCotizacion_CondicionesComerciales(Integer id_emp) {
+        String sql_query="SELECT id, descripcion FROM poc_cot_condiciones_com WHERE gral_emp_id="+id_emp+" AND borrado_logico=false ORDER BY id;";
+        
+        System.out.println("getCondicionesComerciales: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_query, 
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    //obtiene las politicas de pago para la cotizacion
+    @Override
+    public ArrayList<HashMap<String, String>> getCotizacion_PolitizasPago(Integer id_emp) {
+        String sql_query="SELECT id, descripcion FROM poc_cot_politicas_pago WHERE gral_emp_id="+id_emp+" AND borrado_logico=false ORDER BY id;";
+        
+        System.out.println("getPoliticasPago: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_query, 
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
     }
     
     

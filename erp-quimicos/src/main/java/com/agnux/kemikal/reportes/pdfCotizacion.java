@@ -41,6 +41,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 public class pdfCotizacion {
     private HashMap<String, String> datosHeaderFooter = new HashMap<String, String>();
     private ArrayList<HashMap<String, String>> lista_productos = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> condiciones_comerciales = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> politicas_pago = new ArrayList<HashMap<String, String>>();
     private String ruta_logo;
     private String file_out;
     private String dirImgProd;
@@ -64,6 +66,8 @@ public class pdfCotizacion {
     private String emisorEstado;
     private String emisorPais;
     private String emisorCp;
+    private String emisorPaginaWeb;
+    private String emisorTelefono;
     
     private String clieRazonSocial;
     private String clieCalle;
@@ -78,9 +82,11 @@ public class pdfCotizacion {
     private String clieContacto;
     
     //-----Ccostructor para hacer seters-------------
-    public pdfCotizacion(HashMap<String, String> HeaderFooter, HashMap<String, String> datosEmisor, HashMap<String, String> datos, HashMap<String, String> datosCliente, ArrayList<HashMap<String, String>> lista_productos) throws URISyntaxException {
+    public pdfCotizacion(HashMap<String, String> HeaderFooter, HashMap<String, String> datosEmisor, HashMap<String, String> datos, HashMap<String, String> datosCliente, ArrayList<HashMap<String, String>> lista_productos, ArrayList<HashMap<String, String>> condiciones_comerciales, ArrayList<HashMap<String, String>> politicas_pago) throws URISyntaxException {
         this.setDatosHeaderFooter(HeaderFooter);
         this.setLista_productos(lista_productos);
+        this.setCondiciones_comerciales(condiciones_comerciales);
+        this.setPoliticas_pago(politicas_pago);
         this.setRuta_logo(datos.get("ruta_logo"));
         this.setFile_out(datos.get("file_out"));
         this.setDirImgProd(datos.get("dirImagenes"));
@@ -105,6 +111,8 @@ public class pdfCotizacion {
         this.setEmisorPais(datosEmisor.get("emp_pais"));
         this.setEmisorRazonSocial(datosEmisor.get("emp_razon_social"));
         this.setEmisorRfc(datosEmisor.get("emp_rfc"));
+        this.setEmisorPaginaWeb(datosEmisor.get("emp_pagina_web"));
+        this.setEmisorTelefono(datosEmisor.get("emp_telefono"));
         
         this.setClieRazonSocial(datosCliente.get("clieRazonSocial"));
         this.setClieCalle(datosCliente.get("clieCalle"));
@@ -124,6 +132,7 @@ public class pdfCotizacion {
         try {
             Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
             Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
+            Font smallFontBold = new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.BLACK);
             Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
             Font smallBoldFontBlack = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.BLACK);
             Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
@@ -162,7 +171,6 @@ public class pdfCotizacion {
             //IMAGEN --> logo empresa
             cell = new PdfPCell(logopdf.addContent());
             cell.setBorder(0);
-            //cell.setRowspan(10);
             cell.setRowspan(9);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
@@ -185,30 +193,26 @@ public class pdfCotizacion {
             
             ////////////////////////////////////////////////////////////////////////////////
             //celda vacia
-            cell = new PdfPCell(new Paragraph(" ", smallFont));
+            cell = new PdfPCell(new Paragraph("DOMICILIO FISCAL", smallBoldFontBlack));
             cell.setBorder(0);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             tablaHeader.addCell(cell);
             
             //DOMICILIO FISCAL --> texto
-            cell = new PdfPCell(new Paragraph("DOMICILIO FISCAL", smallBoldFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            tablaHeader.addCell(cell);
-            
             cell = new PdfPCell(new Paragraph(
                     StringHelper.capitalizaString(this.getEmisorCalle()) + " " + 
                     StringHelper.capitalizaString(this.getEmisorNumero()) +  "\n" + 
-                    StringHelper.capitalizaString(this.getEmisorColonia()) + "\n" + 
-                    StringHelper.capitalizaString(this.getEmisorMunicipio()) + ", " + 
+                    StringHelper.capitalizaString(this.getEmisorColonia()) + ", "+
+                    StringHelper.capitalizaString(this.getEmisorMunicipio()) + "\n " + 
                     StringHelper.capitalizaString(this.getEmisorEstado())+ ", " + 
-                    StringHelper.capitalizaString(this.getEmisorPais()) + "\nC.P. " + 
-                    this.getEmisorCp() + 
-                    "    R.F.C.: " + StringHelper.capitalizaString(this.getEmisorRfc()), smallFont));
+                    StringHelper.capitalizaString(this.getEmisorPais()) + ", C.P. " + this.getEmisorCp() +"\n"+
+                    "TEL. "+ StringHelper.capitalizaString(this.getEmisorTelefono())+"\n"+
+                    "R.F.C.: " + StringHelper.capitalizaString(this.getEmisorRfc())+"\n"+
+                    this.getEmisorPaginaWeb(), smallFont));
             cell.setBorder(0);
-            cell.setRowspan(6);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setRowspan(7);
             tablaHeader.addCell(cell);
             
             
@@ -314,11 +318,9 @@ public class pdfCotizacion {
                 medidas = widths2;
             }
             
-            
             tablaPartidas = new PdfPTable(medidas);
             tablaPartidas.setKeepTogether(false);
             tablaPartidas.setHeaderRows(1);
-            
             
             cell = new PdfPCell(new Paragraph("Código",smallBoldFont));
             cell.setUseAscender(true);
@@ -475,20 +477,106 @@ public class pdfCotizacion {
             if (!this.getObservaciones().equals("")){
                 //tabla para las observaciones
                 PdfPTable tableObser = new PdfPTable(1);
+                /*
                 cell = new PdfPCell(new Paragraph("OBSERVACIONES", smallBoldFontBlack));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setBorder(0);
                 tableObser.addCell(cell);
-                
-                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getObservaciones()), smallFont));
+                */
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getObservaciones())+"\n\n", smallFont));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setBorder(0);
                 tableObser.addCell(cell);
-                        
+                
                 document.add(tableObser);
             }
+            
+            float [] widths3 = {0.2f,10};
+            if (this.getCondiciones_comerciales().size() > 0){
+                //tabla para las observaciones
+                PdfPTable tableCondicionesComerciales = new PdfPTable(widths3);
+                
+                Iterator it2;
+                it2 = this.getCondiciones_comerciales().iterator();
+                while(it2.hasNext()){
+                    HashMap<String,String> map = (HashMap<String,String>)it2.next();
+                    
+                    String condicion = esteAtributoSeDejoNulo(map.get("descripcion"));
+                    
+                    if(condicion.split(":")[0].trim().toUpperCase().equals("NOTA")){
+                        condicion += "\n";
+                        cell = new PdfPCell(new Paragraph(condicion, smallFont));
+                        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setBorder(0);
+                        cell.setColspan(2);
+                        tableCondicionesComerciales.addCell(cell);
+                    }else{
+                        cell = new PdfPCell(new Paragraph(".", smallBoldFontBlack));
+                        cell.setVerticalAlignment(Element.ALIGN_TOP);
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setBorder(0);
+                        tableCondicionesComerciales.addCell(cell);
+                        
+                        cell = new PdfPCell(new Paragraph(condicion, smallFont));
+                        cell.setVerticalAlignment(Element.ALIGN_TOP);
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setBorder(0);
+                        tableCondicionesComerciales.addCell(cell);
+                    }
+                    
+
+                }
+                document.add(tableCondicionesComerciales);
+            }
+            
+            if (this.getPoliticas_pago().size() > 0){
+                //tabla para las observaciones
+                PdfPTable tablePoliticasPago = new PdfPTable(widths3);
+                
+                //fila vacia
+                cell = new PdfPCell(new Paragraph("\n", smallBoldFontBlack));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(2);
+                tablePoliticasPago.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("POLITICAS DE PAGO\n", smallBoldFontBlack));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(2);
+                tablePoliticasPago.addCell(cell);
+                
+                Iterator it3;
+                it3 = this.getPoliticas_pago().iterator();
+                while(it3.hasNext()){
+                    HashMap<String,String> map = (HashMap<String,String>)it3.next();
+                    
+                    cell = new PdfPCell(new Paragraph(".", smallBoldFontBlack));
+                    cell.setVerticalAlignment(Element.ALIGN_TOP);
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell.setBorder(0);
+                    tablePoliticasPago.addCell(cell);
+                    
+                    String condicion = esteAtributoSeDejoNulo(map.get("descripcion"));
+                    cell = new PdfPCell(new Paragraph(condicion, smallFont));
+                    cell.setVerticalAlignment(Element.ALIGN_TOP);
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell.setBorder(0);
+                    tablePoliticasPago.addCell(cell);
+                }
+                document.add(tablePoliticasPago);
+            }
+            
+            
+            
+            
+            
+            
             
             
             
@@ -499,24 +587,26 @@ public class pdfCotizacion {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setBorder(0);
-            cell.setFixedHeight(20);
+            cell.setFixedHeight(30);
             tableElaboro.addCell(cell);
             
+            /*
             cell = new PdfPCell(new Paragraph("Elaborado por:", smallFont));
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setBorder(0);
             tableElaboro.addCell(cell);
+            */
             
-            cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getNombreUsuario()), smallFont));
+            cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getNombreUsuario()), smallFontBold));
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             tableElaboro.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getPuestoUsuario()), smallFont));
+            cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getPuestoUsuario()), smallFontBold));
             cell.setVerticalAlignment(Element.ALIGN_TOP);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             tableElaboro.addCell(cell);
             
@@ -794,7 +884,22 @@ public class pdfCotizacion {
    }//termina clase HeaderFooter
      
      
-     
+    public ArrayList<HashMap<String, String>> getCondiciones_comerciales() {
+        return condiciones_comerciales;
+    }
+
+    public void setCondiciones_comerciales(ArrayList<HashMap<String, String>> condiciones_comerciales) {
+        this.condiciones_comerciales = condiciones_comerciales;
+    }
+
+    public ArrayList<HashMap<String, String>> getPoliticas_pago() {
+        return politicas_pago;
+    }
+
+    public void setPoliticas_pago(ArrayList<HashMap<String, String>> politicas_pago) {
+        this.politicas_pago = politicas_pago;
+    }
+    
     public String getClieCalle() {
         return clieCalle;
     }
@@ -1063,5 +1168,21 @@ public class pdfCotizacion {
 
     public void setPuestoUsuario(String puestoUsuario) {
         this.puestoUsuario = puestoUsuario;
+    }
+    
+    public String getEmisorPaginaWeb() {
+        return emisorPaginaWeb;
+    }
+
+    public void setEmisorPaginaWeb(String emisorPaginaWeb) {
+        this.emisorPaginaWeb = emisorPaginaWeb;
+    }
+
+    public String getEmisorTelefono() {
+        return emisorTelefono;
+    }
+
+    public void setEmisorTelefono(String emisorTelefono) {
+        this.emisorTelefono = emisorTelefono;
     }
 }
