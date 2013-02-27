@@ -230,7 +230,7 @@
                                                                             <td width="95">Moneda</td>
                                                                             <td width="150"><SELECT NAME="moneda" style="width:150px;"></SELECT></td>
                                                                             <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda"></td>
-                                                                            <td width="80" class="fecha_nc">Fecha</td>
+                                                                            <td width="80" class="fecha_nc">Fecha Actual</td>
                                                                             <td width="180" class="fecha_nc">
                                                                                 <INPUT TYPE="text" name="fecha_pago" style="width:180px;" title="Ingrese la fecha del pago">
                                                                             </td>

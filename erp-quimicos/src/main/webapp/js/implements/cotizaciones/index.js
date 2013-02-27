@@ -333,6 +333,9 @@ $(function() {
 			}
             $select_filtro_por.append(html);
 			
+			
+			$cadena_buscar.focus();
+			
             //click buscar clientes
             $busca_cliente_modalbox.click(function(event){
                 //event.preventDefault();
@@ -427,6 +430,7 @@ $(function() {
                         var remove = function() {$(this).remove();};
                         $('#forma-buscacliente-overlay').fadeOut(remove);
                         //asignar el enfoque al campo sku del producto
+                        $('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
                     });
 					
                 });
@@ -441,6 +445,7 @@ $(function() {
                 //event.preventDefault();
                 var remove = function() {$(this).remove();};
                 $('#forma-buscacliente-overlay').fadeOut(remove);
+				$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').focus();
             });
 	}//termina buscador de clientes
 	
@@ -508,6 +513,7 @@ $(function() {
 		
 		$campo_descripcion.val(descripcion);
 		
+		$campo_sku.focus();//asignar enfoque al cargar plugin
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -576,6 +582,7 @@ $(function() {
 			//event.preventDefault();
 			var remove = function() {$(this).remove();};
 			$('#forma-buscaproducto-overlay').fadeOut(remove);
+			$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
 		});
 	}//termina buscador de productos
 	
@@ -685,6 +692,9 @@ $(function() {
 								event.preventDefault();
 								var remove = function() {$(this).remove();};
 								$('#forma-buscapresentacion-overlay').fadeOut(remove);
+								
+								//regresa el enfoque al campo sku para permitir ingresar uno nuevo
+								$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
 							});
 							
 						}else{
@@ -969,8 +979,13 @@ $(function() {
 				}
 			});
 			
+			//asignar enfoque al campo cantidad que se acaba de agregar
+			$grid_productos.find('.cant'+ tr).focus();
+			
 		}else{
 			jAlert("El producto: "+sku+" con presentacion: "+pres+" ya se encuentra en el listado, seleccione otro diferente.", 'Atencion!');
+			//regresa el enfoque al campo sku para permitir agregar otro diferente
+			$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
 		}
 		
 	}//termina agregar producto al grid
@@ -1143,6 +1158,7 @@ $(function() {
 		$('#forma-cotizacions-window').find('#div_botones').css({'width':'870px'});
 		$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'770px'});
 		
+		$nocontrolcliente.focus();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -1467,6 +1483,9 @@ $(function() {
 				$dir_cliente.css({'background' : '#F0F0F0'});
 				$contactocliente.css({'background' : '#F0F0F0'});
 				$fecha.css({'background' : '#F0F0F0'});
+				
+				$no_control_cliente.focus();
+				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 						jAlert("La cotizaci&oacute;n se guard&oacute; con exito", 'Atencion!');

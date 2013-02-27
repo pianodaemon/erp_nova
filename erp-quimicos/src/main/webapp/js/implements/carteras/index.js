@@ -542,7 +542,8 @@ $(function() {
             html+='<option value="5">Alias</option>';
             $select_filtro_por.append(html);
             
-            
+            $cadena_buscar.select();
+            $cadena_buscar.focus();
             
             //click buscar clientes
             $busca_cliente_modalbox.click(function(event){
@@ -596,6 +597,8 @@ $(function() {
 						   
 						   //habilitar select de tipo movimiento
 							$('#forma-carteras-window').find('select[name=tipo_mov]').removeAttr('disabled');//habilitar select
+							
+							$('#forma-carteras-window').find('select[name=tipo_mov]').focus();
                         }
                         if(parseInt(tipo)==2){
 							$('#forma-estadocuenta-window').find('input[name=id_cliente_edo_cta]').val($(this).find('#idclient').val());
@@ -613,7 +616,7 @@ $(function() {
                         $('#forma-buscacliente-overlay').fadeOut(remove);
                         //asignar el enfoque al campo sku del producto
                     });
-
+					
                 });
             });//termina llamada json
 			
@@ -623,10 +626,18 @@ $(function() {
 				$busca_cliente_modalbox.trigger('click');
 			}
 			
+			//ejecutar click al dar enter en campo cadena-buscar
+			$cadena_buscar.keypress(function(e){
+				if(e.which == 13){
+					$busca_cliente_modalbox.trigger('click');
+					return false;
+				}
+			});
 			
             $cancelar_plugin_busca_cliente.click(function(event){
                 var remove = function() {$(this).remove();};
                 $('#forma-buscacliente-overlay').fadeOut(remove);
+                $('#forma-carteras-window').find('input[name=cliente]').focus();
             });
 	}//termina buscador de clientes
 	
@@ -643,6 +654,7 @@ $(function() {
 				//alert($('#forma-carteras-window').find('select[name=tipo_mov]').val());
                 
                 var $identificador_cliente = $('#forma-carteras-window').find('input[name=identificador_cliente]');
+				var $rfccliente = $('#forma-carteras-window').find('input[name=rfccliente]');
                 var $cliente = $('#forma-carteras-window').find('input[name=cliente]');
                 var $monto_pago = $('#forma-carteras-window').find('input[name=monto_pago]');
                 
@@ -784,6 +796,9 @@ $(function() {
 				
 				
 				$campo_fecha.val(mostrarFecha());
+				$campo_fecha.css({'background' : '#F0F0F0'});
+				
+				/*
 				$campo_fecha.click(function (s){
 					var a=$('div.datepicker');
 					a.css({'z-index':100,});
@@ -820,7 +835,7 @@ $(function() {
 						};
 					}
 				});
-				
+				*/
 				
 				
 				var verificar_saldo=function(saldo,cantidad){
@@ -1416,6 +1431,7 @@ $(function() {
 				/*------------------------------------------------------------------------------------------------------------*/
 				
 				if(tipo_movimiento==1){
+					
 					//definir posicion de la ventana
 					$('#forma-carteras-window').css({"margin-left": -350,"margin-top": -230});
 					//definir alto de la ventana
@@ -1922,7 +1938,7 @@ $(function() {
 								}
 							}
 					});
-						
+					
 					
 				}//termina tipo movimiento 1 pagos
 				
@@ -2823,6 +2839,10 @@ $(function() {
 					}
 				});
             
+				
+				if(parseInt(tipo_movimiento)==1){
+					$monto_pago.focus();
+				}
         }//termina cambio de tipos de movimient0
         
         
@@ -2942,6 +2962,7 @@ $(function() {
 		
 		var $busca_cliente = $('#forma-carteras-window').find('a[href*=busca_cliente]');
 		var $razon_cliente = $('#forma-carteras-window').find('input[name=cliente]');
+		var $rfccliente = $('#forma-carteras-window').find('input[name=rfccliente]');
 		
 		var $cerrar_plugin = $('#forma-carteras-window').find('#close');
 		var $cancelar_plugin = $('#forma-carteras-window').find('#boton_cancelar');
@@ -2949,14 +2970,14 @@ $(function() {
 		var $registra_anticipo = $('#forma-carteras-window').find('#registra_anticipo');
         var $submit_registrar_cancelacion = $('#forma-carteras-window').find('#submit_cancel');
         
-        
-        
 		//deshabilitar select tipo movimiento, se habilita hasta que se seleccione un cliente
 		$select_tipo_movimiento.attr('disabled','-1');
         
         $submit_registrar_pago.hide();
         $submit_registrar_cancelacion.hide();
         $registra_anticipo.hide();
+		$rfccliente.css({'background' : '#F0F0F0'});
+		$razon_cliente.focus();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
