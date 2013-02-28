@@ -97,10 +97,11 @@ public class CompOrdenCompraController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", CompOrdenCompraController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("folio", "Orden Compra:100");
+        infoConstruccionTabla.put("folio", "Folio:80");
         infoConstruccionTabla.put("proveedor", "Proveedor:300");
         infoConstruccionTabla.put("total", "Monto:100");
         infoConstruccionTabla.put("denominacion", "Moneda:70");
+        infoConstruccionTabla.put("momento_creacion", "Fecha:80");
         infoConstruccionTabla.put("estado", "Estado:150");
         
         
@@ -152,11 +153,13 @@ public class CompOrdenCompraController {
         //variables para el buscador
         String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
         String proveedor = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("proveedor")))+"%";
+        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
+        String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+proveedor+"___"+fecha_inicial+"___"+fecha_final;
-        System.out.println("Datos parael filtro del grig"+data_string);
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+proveedor+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto;
+        
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getComDao().countAll(data_string);
         
@@ -358,7 +361,6 @@ public class CompOrdenCompraController {
             @RequestParam(value="id_orden_compra", required=true) Integer id_orden_compra,
             @RequestParam(value="id_proveedor", required=true) String id_proveedor,
             @RequestParam(value="select_moneda", required=true) String select_moneda,
-            @RequestParam(value="tasa_ret_immex", required=true) String tasa_ret_immex,
             @RequestParam(value="tipo_cambio", required=true) String tipo_cambio,
             @RequestParam(value="observaciones", required=true) String observaciones,
             @RequestParam(value="cancelado", required=true) String cancelado,

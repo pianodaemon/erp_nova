@@ -384,6 +384,9 @@ public class ComSpringDao  implements ComInterfaceDao {
         );
         return hm;
     }
+   
+   
+   
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa) {
         String where = "";
@@ -494,22 +497,22 @@ public class ComSpringDao  implements ComInterfaceDao {
 @Override
     public ArrayList<HashMap<String, Object>> getComOrdenCompra_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-                    String sql_to_query = "SELECT  "
-                    +" com_orden_compra.id,   "
-                    +" com_orden_compra.folio,   "
-                    +" cxp_prov.razon_social as proveedor,  "
-                    +" (CASE WHEN com_orden_compra.status=0 then 'ORDEN GENERADA' " 
-	            +" when com_orden_compra.status=1 then 'AUTORIZADO' "
-                    +" else 'CANCELADO'end ) as estado, "
-                    +" gral_mon.descripcion_abr AS denominacion,  "
-                    + "to_char(com_orden_compra.momento_creacion,'dd/mm/yyyy')as momento_creacion, "
-                    + "com_orden_compra.total "
+                    String sql_to_query = ""
+                            + "SELECT  "
+                        +" com_orden_compra.id,   "
+                        +" com_orden_compra.folio,   "
+                        +" cxp_prov.razon_social as proveedor,  "
+                        +" (CASE WHEN com_orden_compra.status=0 then 'ORDEN GENERADA' " 
+                        +" when com_orden_compra.status=1 then 'AUTORIZADO' else 'CANCELADO' end ) as estado, "
+                        +" gral_mon.descripcion_abr AS denominacion,  "
+                        + "to_char(com_orden_compra.momento_creacion,'dd/mm/yyyy')as momento_creacion, "
+                        + "com_orden_compra.total "
                     +" FROM com_orden_compra  "
-                    +" JOIN ("+sql_busqueda+") as subt on subt.id=com_orden_compra.id "
                     +" JOIN cxp_prov on cxp_prov.id = com_orden_compra.proveedor_id   "
                     +" JOIN gral_mon ON gral_mon.id=com_orden_compra.moneda_id   "
                     +" JOIN com_proceso on com_proceso.id = com_orden_compra.com_proceso_id   "
                     +" JOIN com_proceso_flujo on com_proceso_flujo.id = com_proceso.com_proceso_flujo_id "
+                    +" JOIN ("+sql_busqueda+") as subt on subt.id=com_orden_compra.id "
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
         System.out.println("getComOrdenCompra_PaginaGrid: "+sql_to_query);
@@ -525,7 +528,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("denominacion",rs.getString("denominacion"));
                     row.put("estado",rs.getString("estado"));
                     row.put("momento_creacion",rs.getString("momento_creacion"));
-                    row.put("total",StringHelper.roundDouble(String.valueOf(rs.getDouble("total")),2));
+                    row.put("total",StringHelper.AgregaComas(StringHelper.roundDouble(String.valueOf(rs.getDouble("total")),2)));
                     
                     return row;
                 }

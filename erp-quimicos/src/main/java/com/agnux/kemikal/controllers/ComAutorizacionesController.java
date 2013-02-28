@@ -468,10 +468,10 @@ public class ComAutorizacionesController {
         HashMap<String, String> datosOrdenCompra = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> conceptosOrdenCompra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-
+        
         //decodificar id de usuario
         System.out.println("id_usuario: "+id_usuario);
-
+        
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         String email_empresa = this.getGralDao().geteMailPurchasingEmpresaEmisora(id_empresa);
@@ -487,10 +487,12 @@ public class ComAutorizacionesController {
         datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
         String titulo_reporte2 = this.getGralDao().getTituloReporte(id_empresa, app_selected);
         System.out.println("ESTE ES EL QUERY DE TITULO DEL REPORTE: "+titulo_reporte2);
+        
         //obtener el directorio temporal
         String dir_tmp = this.getGralDao().getTmpDir();
         String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         File file_dir_tmp = new File(dir_tmp);
+        
         //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         datosOrdenCompra = this.getComDao().getDatosPDFOrdenCompra(id_ordenCompra);
         conceptosOrdenCompra = this.getComDao().getconceptosOrdenCompra(id_ordenCompra);
@@ -505,6 +507,7 @@ public class ComAutorizacionesController {
         String municipio_sucursal = this.getGralDao().getMunicipioSucursalEmisora(id_sucursal);
         String estado_sucursal = this.getGralDao().getEstadoSucursalEmisora(id_sucursal);
         String telefono_empresa = this.getGralDao().getTelefonoEmpresaEmisora(id_empresa);
+        
         //direccion de la empresa
         String direccion_empresa = calle +" #"+ numero +" "+ colonia +"";
         String mun_edo = municipio +", "+ Estado;

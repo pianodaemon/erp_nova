@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @RequestMapping("/invpre/")
 public class InvPreController {
     ResourceProject resource = new ResourceProject();
-    private static final Logger log  = Logger.getLogger(InvSeccionesController.class.getName());
+    private static final Logger log  = Logger.getLogger(InvPreController.class.getName());
     
     @Autowired
     @Qualifier("daoInv")
@@ -66,7 +66,7 @@ public class InvPreController {
             @ModelAttribute("user") UserSessionData user
             )throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", InvSeccionesController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", InvPreController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
@@ -214,18 +214,29 @@ public class InvPreController {
     @RequestMapping(method = RequestMethod.POST, value="/getInvPre.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getInvPreJson(
             @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
-        log.log(Level.INFO, "Ejecutando getInvSeccion de {0}", InvSeccionesController.class.getName());
+        log.log(Level.INFO, "Ejecutando getInvSeccion de {0}", InvPreController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosInvPre = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
         if( id != 0  ){
             datosInvPre = this.getInvDao().getInvPre_Datos(id);
             presentaciones=this.getInvDao().getProducto_PresentacionesON(Integer.parseInt(datosInvPre.get(0).get("inv_prod_id")));
+        }else{
+            //este es solo para obtener el id de la moneda de las listas
+            datosInvPre = this.getInvDao().getInvPre_MonedaListas(id_empresa);
         }
         
         monedas=this.getInvDao().getMonedas2();
@@ -544,7 +555,7 @@ public class InvPreController {
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         
@@ -556,7 +567,7 @@ public class InvPreController {
         String extra_data_array = "'sin datos'";
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
         
-        System.out.println("Ejecutando borrado logico de tipo poliza");
+        System.out.println("Ejecutando borrado logico de Precio");
         jsonretorno.put("success",String.valueOf( this.getInvDao().selectFunctionForThisApp(data_string,extra_data_array)) );
         
         return jsonretorno;

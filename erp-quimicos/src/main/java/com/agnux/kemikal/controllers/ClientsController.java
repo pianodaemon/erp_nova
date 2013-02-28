@@ -164,7 +164,7 @@ public class ClientsController {
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando get_clienteJson de {0}", ClientsController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
