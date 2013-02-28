@@ -166,6 +166,7 @@ public interface InvInterfaceDao {
     //catalogo tipos de invpre(inveprecios)
     public ArrayList<HashMap<String, Object>> getInvPreGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getInvPre_Datos(Integer id);
+    public ArrayList<HashMap<String, String>> getInvPre_MonedaListas(Integer id_empresa);
     
     
     //extrae todas la ssucursale para asignarlas a una zona
