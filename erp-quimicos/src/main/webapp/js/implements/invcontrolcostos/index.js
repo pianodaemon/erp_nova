@@ -72,6 +72,28 @@ $(function() {
 	});
 	
 	
+	
+	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
+	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
+		$campo.keypress(function(e){
+			if(e.which == 13){
+				$campo_ejecutar.trigger('click');
+				return false;
+			}
+		});
+	}
+	
+	$aplicar_evento_keypress($busqueda_select_tipo_prod, $buscar);
+	$aplicar_evento_keypress($busqueda_select_familia, $buscar);
+	$aplicar_evento_keypress($busqueda_select_subfamilia, $buscar);
+	$aplicar_evento_keypress($busqueda_select_marca, $buscar);
+	$aplicar_evento_keypress($busqueda_select_presentacion, $buscar);
+	$aplicar_evento_keypress($busqueda_producto, $buscar);
+	$aplicar_evento_keypress($busqueda_select_ano, $buscar);
+	$aplicar_evento_keypress($busqueda_select_mes, $buscar);
+	$aplicar_evento_keypress($campo_busqueda_folio, $buscar);
+	$aplicar_evento_keypress($campo_busqueda_oc, $buscar);
+	
 	//visualizar  la barra del buscador
 	TriggerClickVisializaBuscador = 0;
 	$visualiza_buscador.click(function(event){
@@ -101,9 +123,12 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		
+		$busqueda_select_tipo_prod.focus();
 	});
 	
-		
+	
+	
 	$cargar_datos_buscador_principal= function(){
 		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosBuscadorPrincipal.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
@@ -214,8 +239,10 @@ $(function() {
 		event.preventDefault();
 		//ejecutar la funcion cargar datos al hacer click en Limpiar
 		$cargar_datos_buscador_principal();
+		$busqueda_select_tipo_prod.focus();
 	});
 	
+	$busqueda_select_tipo_prod.focus();
 	
 	$tabs_li_funxionalidad = function(){
 		var $select_prod_tipo = $('#forma-invcontrolcostos-window').find('select[name=prodtipo]');
@@ -414,6 +441,7 @@ $(function() {
 		* */
 		
 		$campo_descripcion.val(producto);
+		$campo_sku.focus();
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -477,10 +505,16 @@ $(function() {
 			$buscar_plugin_producto.trigger('click');
 		}
 		
+		$aplicar_evento_keypress($campo_descripcion, $buscar_plugin_producto);
+		$aplicar_evento_keypress($campo_sku, $buscar_plugin_producto);
+		$aplicar_evento_keypress($select_tipo_producto, $buscar_plugin_producto);
+		
+		
 		$cancelar_plugin_busca_producto.click(function(event){
 			//event.preventDefault();
 			var remove = function() { $(this).remove(); };
 			$('#forma-buscaproducto-overlay').fadeOut(remove);
+			$('#forma-invcontrolcostos-window').find('input[name=producto]').focus();
 		});
 	}//termina buscador de productos
 
@@ -658,6 +692,7 @@ $(function() {
 		//$pdf
 		$excel.hide();//oculto por lo pronto mientras no se utiliza
 		$calculo_simulacion.val(0);
+		$select_tipo_prod.focus();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -853,7 +888,7 @@ $(function() {
 			$busca_productos($producto.val(), $select_tipo_prod.val(), $select_marca.val(), $select_familia.val(), $select_subfamilia.val() );
 		});
 		
-		
+		$aplicar_evento_keypress($producto, $buscar_producto);
 		
 		
 		$busqueda.click(function(event){
@@ -982,7 +1017,6 @@ $(function() {
 		
 		//descargar pdf 
 		$pdf.click(function(event){
-			
 			var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 			var tipo_costo=0;
 			var simulacion="false";
@@ -1020,8 +1054,11 @@ $(function() {
 			
 			
 		});
-				
-				
+		
+		
+		
+		
+		
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
@@ -1043,6 +1080,23 @@ $(function() {
 				return false;
 			}
 		});
+		
+		
+		$aplicar_evento_keypress($select_tipo_prod, $busqueda);
+		$aplicar_evento_keypress($select_marca, $busqueda);
+		$aplicar_evento_keypress($select_familia, $busqueda);
+		$aplicar_evento_keypress($select_subfamilia, $busqueda);
+		$aplicar_evento_keypress($select_presentacion, $busqueda);
+		$aplicar_evento_keypress($radio_costo_ultimo, $busqueda);
+		$aplicar_evento_keypress($radio_costo_promedio, $busqueda);
+		$aplicar_evento_keypress($busqueda, $busqueda);
+		$aplicar_evento_keypress($pdf, $pdf);
+		
+		$aplicar_evento_keypress($costo_importacion, $aplicar);
+		$aplicar_evento_keypress($costo_directo, $aplicar);
+		$aplicar_evento_keypress($precio_minimo, $aplicar);
+		$aplicar_evento_keypress($aplicar, $aplicar);
+		$aplicar_evento_keypress($submit_actualizar, $submit_actualizar);
 		
 		
 		//cerrar plugin

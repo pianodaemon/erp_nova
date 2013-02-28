@@ -114,11 +114,42 @@ $(function() {
 		$get_datos_grid();
 	});
 	
+	//desencadena clic del Boton Buscar al pulsar enter en el campo busqueda_select_tipo_prod del producto
+	$busqueda_select_tipo_prod.keypress(function(e){
+		if(e.which == 13){
+			$buscar.trigger('click');
+			return false;
+		}
+	});
 	
 	
+	//desencadena clic del Boton Buscar al pulsar enter en el campo busqueda_codigo del producto
+	$busqueda_codigo.keypress(function(e){
+		if(e.which == 13){
+			$buscar.trigger('click');
+			return false;
+		}
+	});
 	
 	
-		
+	//desencadena clic del Boton Buscar al pulsar enter en el campo busqueda_descripcion del producto
+	$busqueda_descripcion.keypress(function(e){
+		if(e.which == 13){
+			$buscar.trigger('click');
+			return false;
+		}
+	});
+
+
+	//desencadena clic del Boton Buscar al pulsar enter en el campo busqueda_select_pres del producto
+	$busqueda_select_pres.keypress(function(e){
+		if(e.which == 13){
+			$buscar.trigger('click');
+			return false;
+		}
+	});
+	
+	
 	$cargar_datos_buscador_principal= function(){
 		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosBuscadorPrincipal.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
@@ -154,13 +185,13 @@ $(function() {
 	$cargar_datos_buscador_principal();
 	
 	
-	
 	$limpiar.click(function(event){
 		event.preventDefault();
 		$busqueda_codigo.val('');
 		$busqueda_descripcion.val('');
 		$cargar_datos_buscador_principal();
 	});
+	
 	
 	/*
 	//visualizar  la barra del buscador
@@ -199,6 +230,7 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_codigo.focus();
 	});
 	
 	
@@ -295,7 +327,6 @@ $(function() {
 		});
 		$campo_sku.val("");
 		
-		
 		//buscar todos los tipos de productos
 		var input_json_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
@@ -315,6 +346,7 @@ $(function() {
 		
 		$campo_sku.val(sku);
 		$campo_descripcion.val(descripcion);
+		$campo_sku.focus();
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -347,7 +379,7 @@ $(function() {
 				});
 				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
 				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
-
+				
 				$('tr:odd' , $tabla_resultados).hover(function () {
 					$(this).find('td').css({background : '#FBD850'});
 				}, function() {
@@ -363,9 +395,6 @@ $(function() {
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
 					//asignar a los campos correspondientes el sku y y descripcion
-					$('#forma-entradamercancias-window').find('input[name=id_producto]').val($(this).find('#id_prod_buscador').val());
-					$('#forma-entradamercancias-window').find('input[name=sku_producto]').val($(this).find('span.sku_prod_buscador').html());
-					$('#forma-entradamercancias-window').find('input[name=titulo_producto]').val($(this).find('span.titulo_prod_buscador').html());
 					var id_producto = $(this).find('#id_prod_buscador').val();
 					$('#forma-invpre-window').find('input[name=producto_id]').val(id_producto);
 					$('#forma-invpre-window').find('input[name=productosku]').val($(this).find('span.sku_prod_buscador').html());
@@ -377,8 +406,8 @@ $(function() {
 					$arreglo = {'id_prod':id_producto,
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 							};
+					
 					$.post(input_json,$arreglo,function(entry){
-						
 						//verifica si el arreglo  retorno datos
 						if (entry['Presentaciones'].length > 0){
 							$select_presentacion.children().remove();
@@ -397,10 +426,9 @@ $(function() {
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
 					$('#forma-buscaproducto-overlay').fadeOut(remove);
-					//asignar el enfoque al campo sku del producto
-					$('#forma-entradamercancias-window').find('input[name=sku_producto]').focus();
+					
+					$('#forma-invpre-window').find('input[name=lista1]').focus();
 				});
-                                
 			});
 		});
 		
@@ -409,14 +437,42 @@ $(function() {
 			$buscar_plugin_producto.trigger('click');
 		}
 		
+		
+		//desencadena clic del boton Buscar producto al pulsar enter en el campo sku del producto
+		$campo_sku.keypress(function(e){
+			if(e.which == 13){
+				$buscar_plugin_producto.trigger('click');
+				return false;
+			}
+		});
+		
+		//desencadena clic del boton Buscar producto al pulsar enter en el campo_descripcion del producto
+		$campo_descripcion.keypress(function(e){
+			if(e.which == 13){
+				$buscar_plugin_producto.trigger('click');
+				return false;
+			}
+		});
+		
+		//desencadena clic del boton Buscar producto al pulsar enter sobre select_tipo_producto del producto
+		$select_tipo_producto.keypress(function(e){
+			if(e.which == 13){
+				$buscar_plugin_producto.trigger('click');
+				return false;
+			}
+		});
+		
 		$cancelar_plugin_busca_producto.click(function(event){
 			//event.preventDefault();
 			var remove = function() {$(this).remove();};
 			$('#forma-buscaproducto-overlay').fadeOut(remove);
+			
+			//asignar el enfoque al campo sku del producto
+			$('#forma-invpre-window').find('input[name=productosku]').focus();
 		});
 	}//termina buscador de productos
 	
-        
+	
 	$permitir_solo_numeros = function($campo){
 		//validar campo costo, solo acepte numeros y punto
 		$campo.keypress(function(e){
@@ -428,11 +484,11 @@ $(function() {
 			}
 		});
 	}
-        
+	
 	$add_ceros = function($campo){
 		$campo.val("0.00");
 	}
-
+	
 	$accion_focus = function($campo){
 		//quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
 		$campo.focus(function(e){
@@ -447,7 +503,7 @@ $(function() {
 			}
 		});
 	}
-        
+	
 	$accio_blur = function($campo){
 		//recalcula importe al perder enfoque el campo costo
 		$campo.blur(function(){
@@ -462,7 +518,6 @@ $(function() {
 			}else{
 				$(this).val('0.00');
 			}
-			
 		});
 	}
 	
@@ -823,21 +878,33 @@ $(function() {
 		
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInvPre.json';
-		$arreglo = {'id':id_to_show};
+		$arreglo = {
+					'id':id_to_show,
+					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+					};
 		
 		$.post(input_json,$arreglo,function(entry){
 			//cargar selects de Monedas
-			elemento_seleccionado = 0;
 			cadena_elemento_cero ="[----]";
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista1'];
 			$carga_campos_select_moneda($select_moneda1, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista2'];
 			$carga_campos_select_moneda($select_moneda2, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista3'];
 			$carga_campos_select_moneda($select_moneda3, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista4'];
 			$carga_campos_select_moneda($select_moneda4, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista5'];
 			$carga_campos_select_moneda($select_moneda5, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista6'];
 			$carga_campos_select_moneda($select_moneda6, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista7'];
 			$carga_campos_select_moneda($select_moneda7, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista8'];
 			$carga_campos_select_moneda($select_moneda8, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista9'];
 			$carga_campos_select_moneda($select_moneda9, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
+			elemento_seleccionado = entry['InvPre'][0]['moneda_lista10'];
 			$carga_campos_select_moneda($select_moneda10, entry['Monedas'],elemento_seleccionado, cadena_elemento_cero);
 			
 		});//termina llamada json
@@ -1127,7 +1194,7 @@ $(function() {
 			if(accion_mode == 'edit'){
                                 
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInvPre.json';
-				$arreglo = {'id':id_to_show};
+				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == 'true' ){

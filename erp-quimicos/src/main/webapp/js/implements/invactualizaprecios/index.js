@@ -70,6 +70,26 @@ $(function() {
 	});
 	
 	
+	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
+	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
+		$campo.keypress(function(e){
+			if(e.which == 13){
+				$campo_ejecutar.trigger('click');
+				return false;
+			}
+		});
+	}
+	
+	$aplicar_evento_keypress($busqueda_select_tipo_prod, $buscar);
+	$aplicar_evento_keypress($busqueda_select_familia, $buscar);
+	$aplicar_evento_keypress($busqueda_select_subfamilia, $buscar);
+	$aplicar_evento_keypress($busqueda_select_marca, $buscar);
+	$aplicar_evento_keypress($busqueda_select_presentacion, $buscar);
+	$aplicar_evento_keypress($busqueda_codigo, $buscar);
+	$aplicar_evento_keypress($busqueda_producto, $buscar);
+	$aplicar_evento_keypress($campo_busqueda_folio, $buscar);
+	$aplicar_evento_keypress($campo_busqueda_oc, $buscar);
+	
 	//visualizar  la barra del buscador
 	TriggerClickVisializaBuscador = 0;
 	$visualiza_buscador.click(function(event){
@@ -99,6 +119,7 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_select_tipo_prod.focus();
 	});
 	
 	$visualiza_buscador.trigger('click');
@@ -237,6 +258,7 @@ $(function() {
 		event.preventDefault();
 		//ejecutar la funcion cargar datos al hacer click en Limpiar
 		$cargar_datos_buscador_principal();
+		$busqueda_select_tipo_prod.focus();
 	});
 	
 	
