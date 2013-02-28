@@ -2614,11 +2614,12 @@ $(function() {
                         
             $.post(input_json,$arreglo,function(prod){
                 var res=0;
-                if(prod['Sku'][0] != null){
+                if(prod['Sku'][0] != null && prod['SubProcesos'][0] != null){
                     
                     unidad = prod['Sku'][0]['unidad'];
                     unidad_id = prod['Sku'][0]['unidad_id'];
                     densidad = prod['Sku'][0]['densidad'];
+                    
                     formulacion_id = prod['SubProcesos'][0]['pro_estruc_id'];
                     
                     $('#forma-proordenproduccion-window').find('input[name=id_formula]').val(formulacion_id);
@@ -2626,7 +2627,7 @@ $(function() {
                     //agrega productos a el grid de formulaciones
                     $add_grid_componente_orden(0,prod['Sku'][0]['id'],prod['Sku'][0]['sku'],prod['Sku'][0]['descripcion'],""       ,""    ,""          , 0, prod['SubProcesos'], 1, unidad, unidad_id, densidad);
                 }else{
-                    jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
+                    jAlert("El producto que intenta agregar no existe o no tiene formula, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
                 }
             },"json");
         }
