@@ -3032,8 +3032,55 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-
     
+    
+    /*
+    Éste método solo obtiene la moneda de la lista de precio. 
+    Si la lista de precio no tiene moneda, por default le asigna el 1
+     */
+     @Override
+     public ArrayList<HashMap<String, String>> getInvPre_MonedaListas(Integer id_empresa) {
+     String sql_to_query = ""
+             + "SELECT "
+                 + "(CASE WHEN gral_mon_id_pre1=0 OR gral_mon_id_pre1 IS NULL THEN 1 ELSE gral_mon_id_pre1 END) AS moneda_lista1,"
+                 + "(CASE WHEN gral_mon_id_pre2=0 OR gral_mon_id_pre2 IS NULL THEN 1 ELSE gral_mon_id_pre2 END) AS moneda_lista2,"
+                 + "(CASE WHEN gral_mon_id_pre3=0 OR gral_mon_id_pre3 IS NULL THEN 1 ELSE gral_mon_id_pre3 END) AS moneda_lista3,"
+                 + "(CASE WHEN gral_mon_id_pre4=0 OR gral_mon_id_pre4 IS NULL THEN 1 ELSE gral_mon_id_pre4 END) AS moneda_lista4,"
+                 + "(CASE WHEN gral_mon_id_pre5=0 OR gral_mon_id_pre5 IS NULL THEN 1 ELSE gral_mon_id_pre5 END) AS moneda_lista5,"
+                 + "(CASE WHEN gral_mon_id_pre6=0 OR gral_mon_id_pre6 IS NULL THEN 1 ELSE gral_mon_id_pre6 END) AS moneda_lista6,"
+                 + "(CASE WHEN gral_mon_id_pre7=0 OR gral_mon_id_pre7 IS NULL THEN 1 ELSE gral_mon_id_pre7 END) AS moneda_lista7,"
+                 + "(CASE WHEN gral_mon_id_pre8=0 OR gral_mon_id_pre8 IS NULL THEN 1 ELSE gral_mon_id_pre8 END) AS moneda_lista8,"
+                 + "(CASE WHEN gral_mon_id_pre9=0 OR gral_mon_id_pre9 IS NULL THEN 1 ELSE gral_mon_id_pre9 END) AS moneda_lista9,"
+                 + "(CASE WHEN gral_mon_id_pre10=0 OR gral_mon_id_pre10 IS NULL THEN 1 ELSE gral_mon_id_pre10 END) AS moneda_lista10 "
+             + "FROM inv_pre "
+             + "WHERE gral_emp_id="+id_empresa+" AND borrado_logico=FALSE LIMIT 1;";
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("moneda_lista1",String.valueOf(rs.getInt("moneda_lista1")));
+                    row.put("moneda_lista2",String.valueOf(rs.getInt("moneda_lista2")));
+                    row.put("moneda_lista3",String.valueOf(rs.getInt("moneda_lista3")));
+                    row.put("moneda_lista4",String.valueOf(rs.getInt("moneda_lista4")));
+                    row.put("moneda_lista5",String.valueOf(rs.getInt("moneda_lista5")));
+                    row.put("moneda_lista6",String.valueOf(rs.getInt("moneda_lista6")));
+                    row.put("moneda_lista7",String.valueOf(rs.getInt("moneda_lista7")));
+                    row.put("moneda_lista8",String.valueOf(rs.getInt("moneda_lista8")));
+                    row.put("moneda_lista9",String.valueOf(rs.getInt("moneda_lista9")));
+                    row.put("moneda_lista10",String.valueOf(rs.getInt("moneda_lista10")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+     
+     
+     
+     
     
      //catalogo de comisiones de articulos
     //Metodos para catalogo InvCom
