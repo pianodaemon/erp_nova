@@ -172,11 +172,11 @@
 									
                                     <div id="tabx-1" class="contenidoPes" >
 										
-										<table border="1" style="margin:0; padding:0;">
+										<table border="0" style="margin:0; padding:0;">
 											
 											<tr>
 												<td width="735" valign="top" colspan="6">
-													<table border="1" class="gral">
+													<table border="0" class="gral">
 														<tr>
 															<td width="10"></td>
 															<td width="80">Tipo&nbsp;producto</td>
@@ -336,7 +336,7 @@
 												</td>
 												<td width="10"></td>
 												<td width="300" colspan="2" style="border: solid 1px #313E74;" valign="top">
-													<table border="1">
+													<table border="0">
 														<tr>
 															<td width="50" height="10"></td>
 															<td width="110"></td>
