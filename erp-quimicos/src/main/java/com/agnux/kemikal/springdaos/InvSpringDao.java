@@ -940,7 +940,8 @@ public class InvSpringDao implements InvInterfaceDao{
 	String sql_to_query = "SELECT com_fac.id, "
 				+"com_fac.no_entrada as folio, "
 				+"cxp_prov.razon_social as proveedor, "
-				+"com_fac.orden_de_compra as orden_compra, "
+				+"(CASE WHEN com_fac.orden_de_compra IS NULL THEN '' ELSE com_fac.orden_de_compra END ) AS orden_compra, "
+                                +"(CASE WHEN com_fac.tipo_documento=1 THEN 'Factura' ELSE 'Remisi&oacute;n' END ) AS tipo_doc, "
 				+"com_fac.factura, "
 				+"to_char(com_fac.factura_fecha_expedicion,'dd/mm/yyyy') as fecha_factura, "
 				+"to_char(com_fac.momento_creacion,'dd/mm/yyyy') as fecha_entrada, "
@@ -963,6 +964,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("folio",rs.getString("folio"));
                     row.put("proveedor",rs.getString("proveedor"));
                     row.put("orden_compra",rs.getString("orden_compra"));
+                    row.put("tipo_doc",rs.getString("tipo_doc"));
                     row.put("factura",rs.getString("factura"));
                     row.put("fecha_factura",rs.getString("fecha_factura"));
                     row.put("fecha_entrada",rs.getString("fecha_entrada"));
