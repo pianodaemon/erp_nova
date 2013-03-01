@@ -307,22 +307,22 @@ public class InvEtiquetasController {
             String ip_cliente = request.getRemoteAddr();
             System.out.println("ip_cliente1: "+ip_cliente);
             ip_cliente = ip_cliente.replace(".", "");
-        
-        
+            
+            
             String arreglo[];
             arreglo = new String[cantidad.length];
             System.out.println("checando el id de de latabla etiquetas detalle::::::   ");
             
-            for(int i=0; i<cantidad.length; i++) { 
+            for(int i=0; i<cantidad.length; i++) {
                 arreglo[i]= "'"+ lote_interno[i]+"___" + cantidad[i]+"___" + producto_id[i]+"___" + lote_id[i]+"___" + cantidad_produccion[i]+"___" +inv_etiqueta_medidas_id[i]+"___"+etiqueta_detalle_id[i]+"'";
                 //System.out.println(arreglo[i]);
                 System.out.println("etiqueta_detalle_id:::    "+etiqueta_detalle_id[i]);  
-        }
-          
-          
+            }
+            
+            
             //serializar el arreglo
             String extra_data_array = StringUtils.join(arreglo, ",");
-        
+            
         if( id==0 ){
             command_selected = "new";
         }else {
@@ -345,39 +345,39 @@ public class InvEtiquetasController {
                                 datos_etiqueta = this.getInvDao().getDatosEtiquetaLote(Integer.parseInt(lote_id[i]), Integer.parseInt(tipo_de_producto_id[i]), Integer.parseInt(inv_etiqueta_medidas_id[i]));    
                                 String file_name = ip_cliente+"_"+ lote_interno[i]+"_"+c+".xml";
                                 datos_etiqueta.put("cuerpo_titulo", "Etiqueta_Compras");
-                               datos_etiqueta.put("nombre_archivo", file_name); 
+                                datos_etiqueta.put("nombre_archivo", file_name); 
                                 if (datos_etiqueta.size()<=0){
                                     System.out.println("No trajo datos");
                                 }else{
-                                file_xml = new EtiquetaCompras(datos_etiqueta);
-                                
-                                xml =new generandoxml(file_xml.getDoc());
-                                String  xmlString=xml.createxml(file_xml.getDoc());
+                                    file_xml = new EtiquetaCompras(datos_etiqueta);
 
-                                //obtener el directorio temporal
-                                String dir_tmp = this.getGralDao().getZebraDir();
+                                    xml =new generandoxml(file_xml.getDoc());
+                                    String  xmlString=xml.createxml(file_xml.getDoc());
 
-                                File file_dir_tmp = new File(dir_tmp);
-                                System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+                                    //obtener el directorio temporal
+                                    String dir_tmp = this.getGralDao().getZebraDir();
+                                    
+                                    File file_dir_tmp = new File(dir_tmp);
+                                    System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+                                    
+                                    
+                                    //ruta de archivo de salida
+                                    String ruta = file_dir_tmp +"/in";
+                                    String nombre_archivo = file_name;
+                                    //File file = new File(fileout);
 
-                                
-                                //ruta de archivo de salida
-                                String ruta = file_dir_tmp +"/in";
-                                String nombre_archivo = file_name;
-                                //File file = new File(fileout);
+                                    System.out.println("IMPRIMIENDO la Ruta:\n\n" + ruta);
+                                    System.out.println("IMPRIMIENDO el nombre del Archivo\n\n" + nombre_archivo);
+                                    System.out.println("IMPRIMIENDO Ruta completa\n\n" + ruta +"/"+nombre_archivo);
+                                    //System.out.println("IMPRIMIENDO EL  XML:\n\n" + xmlString);
+                                    //FileHelper.createFileWithText("/home/mi_compu/NetBeansProjects/Ejemploxml", "xmletiquetaproduccion_b", xmlString);
+                                    //FileHelper.createFileWithText(ruta,nombre_archivo, xmlString);
+                                    File file = new File(ruta+"/"+file_name);
 
-                                System.out.println("IMPRIMIENDO la Ruta:\n\n" + ruta);
-                                System.out.println("IMPRIMIENDO el nombre del Archivo\n\n" + nombre_archivo);
-                                System.out.println("IMPRIMIENDO Ruta completa\n\n" + ruta +"/"+nombre_archivo);
-                                //System.out.println("IMPRIMIENDO EL  XML:\n\n" + xmlString);
-                                //FileHelper.createFileWithText("/home/mi_compu/NetBeansProjects/Ejemploxml", "xmletiquetaproduccion_b", xmlString);
-                                //FileHelper.createFileWithText(ruta,nombre_archivo, xmlString);
-                                File file = new File(ruta+"/"+file_name);
-                    
-                                if(!file.exists()){
-                                    FileHelper.createFileWithText(ruta,file_name, xmlString);
-                                }
-                                
+                                    if(!file.exists()){
+                                        FileHelper.createFileWithText(ruta,file_name, xmlString);
+                                    }
+                                    
                                 }
                             }
                          }

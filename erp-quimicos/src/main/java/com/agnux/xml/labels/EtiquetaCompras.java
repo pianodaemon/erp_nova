@@ -53,17 +53,16 @@ public final class EtiquetaCompras extends AgnuxXmlObject{
         element.appendChild(impresora);
         
         
-        
-        
-        
         Element lote = tmp.createElement("lote");
         lote.setAttribute("proveedor", datos_cuerpo.get("lote_proveedor").toString());
         lote.setAttribute("interno", datos_cuerpo.get("lote_interno").toString());
         element.appendChild(lote);
-
+        
         Element producto = tmp.createElement("producto");
         producto.setAttribute("codigo",datos_cuerpo.get("producto_codigo").toString());
         producto.setAttribute("nombre", datos_cuerpo.get("producto_nombre").toString());
+        producto.setAttribute("cantidad",datos_cuerpo.get("producto_cantidad").toString());
+        producto.setAttribute("unidad",datos_cuerpo.get("producto_unidad").toString());
         lote.appendChild(producto);
         
         Element caducidad = tmp.createElement("caducidad");
@@ -71,7 +70,7 @@ public final class EtiquetaCompras extends AgnuxXmlObject{
         //Text fecha_caducidad = tmp.createTextNode(datos_cuerpo.get("caducidad_fecha").toString());
         //caducidad.appendChild(fecha_caducidad);
         lote.appendChild(caducidad);
-
+        
         tmp.getDocumentElement().appendChild(element);
         
         StringHelper.convertDocument2Utf8String(tmp);
