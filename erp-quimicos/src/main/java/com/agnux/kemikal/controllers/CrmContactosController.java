@@ -95,12 +95,16 @@ public class CrmContactosController {
         log.log(Level.INFO, "Ejecutando getContacto de {0}", CrmContactosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
         
         ArrayList<HashMap<String, String>> datosContacto = new ArrayList<HashMap<String, String>>(); 
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_agente = Integer.parseInt(userDat.get("empleado_id"));
         
         // Integer id = Integer.parseInt(userDat.get("id"));
         
@@ -109,8 +113,14 @@ public class CrmContactosController {
             datosContacto = this.getCrmDao().getContacto_Datos(id);
         }
         
+        extra = this.getCrmDao().getUserRol(id_usuario);
+        extra.put("id_agente", String.valueOf(id_agente));
+        arrayExtra.add(0,extra);
+        
        //datos motivos de llamada es lo que me trajo de la consulta y los pone en el json
        jsonretorno.put("Contacto", datosContacto);
+       jsonretorno.put("Extra", arrayExtra);
+       jsonretorno.put("Agentes", this.getCrmDao().getAgentes(id_empresa));
        return jsonretorno;
     }
    
@@ -140,8 +150,9 @@ public class CrmContactosController {
         //variables para el buscador
         String nombre = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("nombre")))+"%";
         String busquedatipo_contacto = String.valueOf(has_busqueda.get("busquedatipo_contacto"));
+        String busqueda_agente = String.valueOf(has_busqueda.get("busqueda_agente"));
         
-        String data_string = app_selected+"___"+id_usuario+"___"+nombre+"___"+busquedatipo_contacto;
+        String data_string = app_selected+"___"+id_usuario+"___"+nombre+"___"+busquedatipo_contacto+"___"+busqueda_agente;
         
         System.out.println("Esto es lo que busca "+"---->"+data_string);
         
@@ -159,11 +170,44 @@ public class CrmContactosController {
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getCrmDao().getContactos_PaginaGrid(data_string, offset, items_por_pag, orderby, desc,id_empresa));
         System.out.println("Me imprime ---->"+jsonretorno);   
+        
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
         return jsonretorno;
     }
+    
+    
+     //obtiene los Agentes para el Buscador pricipal del Aplicativo
+    @RequestMapping(method = RequestMethod.POST, value="/getAgentesParaBuscador.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getAgentesParaBuscador(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_agente = Integer.parseInt(userDat.get("empleado_id"));
+        
+        extra = this.getCrmDao().getUserRol(id_usuario);
+        extra.put("id_agente", String.valueOf(id_agente));
+        arrayExtra.add(0,extra);
+        
+        agentes = this.getCrmDao().getAgentes(id_empresa);
+        
+        jsonretorno.put("Extra", arrayExtra);
+        jsonretorno.put("Agentes", agentes);
+        return jsonretorno;
+    }
+    
     
     //obtiene los Contactos para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/get_buscador_cliente_prospecto.json")
@@ -214,6 +258,7 @@ public class CrmContactosController {
             @RequestParam(value="correo_1", required=true) String correo_1,
             @RequestParam(value="correo_2", required=true) String correo_2,
             @RequestParam(value="observaciones", required=true) String observaciones,
+            @RequestParam(value="select_agente", required=true) String agente,
             @ModelAttribute("user") UserSessionData user,
             Model model
             ) {
@@ -237,7 +282,7 @@ public class CrmContactosController {
         
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+tipo_contacto+"___"+folio
                 +"___"+id_cliente+"___"+nombre+"___"+apellido_paterno+"___"+apellido_materno+"___"+telefono_1
-                +"___"+telefono_2+"___"+fax+"___"+telefono_directo+"___"+correo_1+"___"+correo_2+"___"+observaciones;//6
+                +"___"+telefono_2+"___"+fax+"___"+telefono_directo+"___"+correo_1+"___"+correo_2+"___"+observaciones+"___"+agente;//6
         
         System.out.println("La cadena que se envia:"+"___"+data_string);
         

@@ -1682,6 +1682,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("cliente",rs.getString("cliente"));
                     
+                    row.put("gral_empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
                     row.put("tipo_contacto",String.valueOf(rs.getInt("tipo_contacto")));
                     row.put("gral_emp_id",String.valueOf(rs.getInt("gral_emp_id")));
                     row.put("gral_suc_id",String.valueOf(rs.getInt("gral_suc_id")));
