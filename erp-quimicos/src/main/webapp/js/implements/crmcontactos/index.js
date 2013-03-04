@@ -15,9 +15,9 @@ $(function() {
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
 	var controller = $contextpath.val()+"/controllers/crmcontactos";
         
-    //Barra para las acciones
-    $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
-    $('#barra_acciones').find('.table_acciones').css({'display':'block'});
+        //Barra para las acciones
+        $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
+        $('#barra_acciones').find('.table_acciones').css({'display':'block'});
 	
         var $new = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
@@ -48,17 +48,44 @@ $(function() {
 	var $cadena_busqueda = "";
 	var $busqueda_nombre = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_nombre]');
         var $busquedatipo_contacto = $('#barra_buscador').find('.tabla_buscador').find('select[name=busquedatipo_contacto]');
+        var $busqueda_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_agente]');
         
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limbuscarpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	
 	
-	
+	//esto se hace para reinicar los valores del select de agentes
+        var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+        $arreglo2 = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+        $.post(input_json2,$arreglo2,function(data){
+                //Alimentando los campos select_agente
+                $busqueda_agente.children().remove();
+                var agente_hmtl = '';
+                if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+                    agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+                }
+                
+                $.each(data['Agentes'],function(entryIndex,agente){
+                        if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+                            agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+                        }else{
+                            //si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+                            if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+                                agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+                            }
+                        }
+                });
+                $busqueda_agente.append(agente_hmtl);
+        });
+        
+        
+        
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
                 valor_retorno += "nombre" + signo_separador + $busqueda_nombre.val() + "|";
                 valor_retorno += "busquedatipo_contacto" + signo_separador + $busquedatipo_contacto.val() + "|";
+                valor_retorno += "busqueda_agente" + signo_separador + $busqueda_agente.val() + "|";
                 //valor_retorno += "descripcion" + signo_separador + $busqueda_titulo.val()+ "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
@@ -112,7 +139,24 @@ $(function() {
 		};
 	});
 	
-	
+	/*funcion para colorear la fila en la que pasa el puntero*/
+	$colorea_tr_grid = function($tabla){
+		$tabla.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+		$tabla.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+		
+		$('tr:odd' , $tabla).hover(function () {
+			$(this).find('td').css({background : '#FBD850'});
+		}, function() {
+			$(this).find('td').css({'background-color':'#e7e8ea'});
+		});
+		$('tr:even' , $tabla).hover(function () {
+			$(this).find('td').css({'background-color':'#FBD850'});
+		}, function() {
+			$(this).find('td').css({'background-color':'#FFFFFF'});
+		});
+	};
+        
+        
 	$tabs_li_funxionalidad = function(){
 		
 		$('#forma-crmcontactos-window').find('#submit').mouseover(function(){
@@ -229,7 +273,7 @@ $(function() {
 					$tabla_resultados.append(trr);
 				});
 				
-				//$colorea_tr_grid($tabla_resultados);
+				$colorea_tr_grid($tabla_resultados);
 				
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
@@ -287,6 +331,7 @@ $(function() {
             var $rfc = $('#forma-crmcontactos-window').find('input[name=rfc]');
             var $id_cliente = $('#forma-crmcontactos-window').find('input[name=id_cliente]');
             var $razon_social = $('#forma-crmcontactos-window').find('input[name=razon_social]');
+            var $select_agente = $('#forma-crmcontactos-window').find('select[name=select_agente]');
             
             var $nombre = $('#forma-crmcontactos-window').find('input[name=nombre]');
             var $apellido_paterno = $('#forma-crmcontactos-window').find('input[name=apellido_paterno]');
@@ -345,6 +390,26 @@ $(function() {
             
             //alert($('#lienzo_recalculable').find('input[name=iu]').val())
             $.post(input_json,parametros,function(entry){
+                
+                
+                $select_agente.children().remove();
+                var agente_hmtl = '';
+                if(parseInt(entry['Extra'][0]['exis_rol_admin']) > 0){
+                    agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+                }
+                
+                $.each(entry['Agentes'],function(entryIndex,agente){
+                    if(parseInt(agente['id'])==parseInt(entry['Extra'][0]['id_agente'])){
+                        agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+                    }else{
+                        //si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+                        if(parseInt(entry['Extra'][0]['exis_rol_admin']) > 0){
+                            agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+                        }
+                    }
+                });
+                $select_agente.append(agente_hmtl);
+                
                 
             });//termina llamada json
             
@@ -416,6 +481,7 @@ $(function() {
                         var $rfc = $('#forma-crmcontactos-window').find('input[name=rfc]');
                         var $id_cliente = $('#forma-crmcontactos-window').find('input[name=id_cliente]');
                         var $razon_social = $('#forma-crmcontactos-window').find('input[name=razon_social]');
+                        var $select_agente = $('#forma-crmcontactos-window').find('select[name=select_agente]');
                         
                         var $nombre = $('#forma-crmcontactos-window').find('input[name=nombre]');
                         var $apellido_paterno = $('#forma-crmcontactos-window').find('input[name=apellido_paterno]');
@@ -510,19 +576,32 @@ $(function() {
                                             $razon_social.val(entry['Contacto']['0']['cliente'].split("___")[2]);
                                         }
                                         
+                                        //Alimentando los campos select_agente
+					$select_agente.children().remove();
+					var agente_hmtl='';
+					$.each(entry['Agentes'],function(entryIndex,agente){
+                                            if(parseInt(agente['id'])==parseInt(entry['Contacto'][0]['gral_empleado_id'])){
+                                                agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+                                            }else{
+                                                agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+                                            }
+					});
+					$select_agente.append(agente_hmtl);
+                                        
+                                        
 				},"json");//termina llamada json
 				
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
-					var remove = function() { $(this).remove(); };
-					$('#forma-crmcontactos-overlay').fadeOut(remove);
+                                    var remove = function() { $(this).remove(); };
+                                    $('#forma-crmcontactos-overlay').fadeOut(remove);
 				});
 				
 				$cerrar_plugin.bind('click',function(){
-					var remove = function() { $(this).remove(); };
-					$('#forma-crmcontactos-overlay').fadeOut(remove);
-					$buscar.trigger('click');
+                                    var remove = function() { $(this).remove(); };
+                                    $('#forma-crmcontactos-overlay').fadeOut(remove);
+                                    $buscar.trigger('click');
 				});
                         }
 		}
