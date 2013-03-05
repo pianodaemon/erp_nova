@@ -67,7 +67,7 @@ $(function() {
 	html='<option value="0">[-- Opcion busqueda --]</option>';
 	html+='<option value="1">No. de control</option>';
 	html+='<option value="2">RFC</option>';
-	html+='<option value="3">Razon social</option>';
+	html+='<option value="3" selected="yes">Razon social</option>';
 	html+='<option value="4">CURP</option>';
 	$select_filtro_por.append(html);
 	
@@ -98,7 +98,16 @@ $(function() {
 	$limpiar.click(function(event){
 		event.preventDefault();
 		$campo_busqueda.val('');
-		$select_filtro_por.find('option[index=0]').attr('selected','selected');
+		var html2 = '';
+		$select_filtro_por.children().remove();
+		html2='<option value="0">[-- Opcion busqueda --]</option>';
+		html2+='<option value="1">No. de control</option>';
+		html2+='<option value="2">RFC</option>';
+		html2+='<option value="3" selected="yes">Razon social</option>';
+		html2+='<option value="4">CURP</option>';
+		$select_filtro_por.append(html2);
+		
+		$campo_busqueda.focus();
 	});
 	
 	
@@ -139,6 +148,7 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$campo_busqueda.focus();
 	});
 	
 	

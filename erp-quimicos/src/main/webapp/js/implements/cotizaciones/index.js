@@ -396,10 +396,7 @@ $(function() {
 						$('#forma-cotizacions-window').find('input[name=contactocliente]').val($(this).find('#contacto').val());
 						$('#forma-cotizacions-window').find('input[name=num_lista_precio]').val(lista_precio);
 						
-						var id_moneda = $('#forma-cotizacions-window').find('select[name=moneda]').val();
-						//$('#forma-cotizacions-window').find('select[name=moneda]').find('option[value="'+selecionado+'"]').removeAttr('selected');
-                        //$('#forma-cotizacions-window').find('select[name=moneda]').find('option[value="'+$(this).find('#id_moneda').val()+'"]').attr('selected','selected');
-						
+						var id_moneda = $(this).find('#id_moneda').val();
 						
 						if(parseInt(lista_precio)>0){
 							//aquí se arma la cadena json para traer la moneda de la lista de precio
@@ -411,6 +408,7 @@ $(function() {
 								});
 							});
 						}
+						
 						
 						//carga el select de monedas  con la moneda del cliente seleccionada por default
 						$('#forma-cotizacions-window').find('select[name=moneda]').children().remove();

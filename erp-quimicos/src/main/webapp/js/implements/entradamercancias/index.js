@@ -28,12 +28,15 @@ $(function() {
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 	
-	
 	var $cadena_busqueda = "";
+	var $select_busqueda_tipodoc = $('#barra_buscador').find('.tabla_buscador').find('select[name=select_busqueda_tipodoc]');
 	var $campo_busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
 	var $campo_busqueda_oc = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_oc]');
 	var $campo_busqueda_factura = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_factura]');
 	var $campo_busqueda_proveedor = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_proveedor]');
+	
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
+	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
 	
 	var tiposIva = new Array(); //este arreglo carga los select del grid cada que se agrega un nuevo producto
 	var Monedas = new Array(); 
@@ -41,15 +44,16 @@ $(function() {
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	
-	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
-		
 		var signo_separador = "=";
+		valor_retorno += "tipo_doc" + signo_separador + $select_busqueda_tipodoc.val() + "|";
 		valor_retorno += "folio" + signo_separador + $campo_busqueda_folio.val() + "|";
 		valor_retorno += "orden_compra" + signo_separador + $campo_busqueda_oc.val() + "|";
 		valor_retorno += "factura" + signo_separador + $campo_busqueda_factura.val() + "|";
-		valor_retorno += "proveedor" + signo_separador + $campo_busqueda_proveedor.val();
+		valor_retorno += "proveedor" + signo_separador + $campo_busqueda_proveedor.val() + "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
+		valor_retorno += "producto" + signo_separador + $busqueda_producto.val();
 		return valor_retorno;
 	};
 	
@@ -69,6 +73,16 @@ $(function() {
 		$campo_busqueda_oc.val('');
 		$campo_busqueda_factura.val('');
 		$campo_busqueda_proveedor.val(''); 
+		$busqueda_codigo.val('');
+		$busqueda_producto.val('');
+		
+		$select_busqueda_tipodoc.children().remove();
+		var prod_tipos_html = '<option value="0">[-Todos-]</option>';
+		prod_tipos_html += '<option value="1">Factura</option>';
+		prod_tipos_html += '<option value="2">Remisi&oacute;n</option>';
+		$select_busqueda_tipodoc.append(prod_tipos_html);
+		
+		$select_busqueda_tipodoc.focus();
 	});
 
 	//visualizar  la barra del buscador
@@ -100,6 +114,7 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$select_busqueda_tipodoc.focus();
 	});
 	
 	$tabs_li_funxionalidad = function(){
