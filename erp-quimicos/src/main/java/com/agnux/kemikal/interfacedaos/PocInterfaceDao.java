@@ -17,6 +17,7 @@ public interface PocInterfaceDao{
     public int countAll(String data_string);
     
     public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getBuscadorProspectos(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProductoTipos();
@@ -32,6 +33,7 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getPocPedido_Datos(Integer id_pedido);
     public ArrayList<HashMap<String, String>> getPocPedido_DatosGrid(Integer id_pedido);
     public ArrayList<HashMap<String, String>> getPocPedido_Almacenes(Integer id_sucursal);
+    public HashMap<String, String>  getPocPedido_Parametros(Integer id_emp, Integer id_suc);
     public ArrayList<HashMap<String, String>> getPocPedido_DireccionesFiscalesCliente(Integer id_cliente);
     public HashMap<String, String> getDatosPDF(Integer id_pedido);
     

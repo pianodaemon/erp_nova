@@ -95,8 +95,9 @@ public class EntradamercanciasController {
         infoConstruccionTabla.put("fecha_entrada","Fecha Entrada:100");
         infoConstruccionTabla.put("orden_compra", "Orden Compra:110");
         infoConstruccionTabla.put("proveedor", "Proveedor:250");
-        infoConstruccionTabla.put("factura", "Folio Documento:110");
-        infoConstruccionTabla.put("fecha_factura","Fecha Documento:110");
+        infoConstruccionTabla.put("tipo_doc", "Tipo Doc.:100");
+        infoConstruccionTabla.put("factura", "Folio Doc.:100");
+        infoConstruccionTabla.put("fecha_factura","Fecha Doc.:100");
         infoConstruccionTabla.put("estado","Estado:90");
         
         ModelAndView x = new ModelAndView("entradamercancias/startup", "title", "Facturas Compras");
@@ -145,13 +146,25 @@ public class EntradamercanciasController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
+        String tipoDoc = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo_doc")))+"";
         String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
         String orden_compra = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("orden_compra")))+"%";
         String factura = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("factura")))+"%";
         String proveedor = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("proveedor")))+"%";
+        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
+        String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
         
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+orden_compra+"___"+factura+"___"+proveedor;
+        String data_string = 
+                app_selected+"___"+
+                id_usuario+"___"+
+                folio+"___"+
+                orden_compra+"___"+
+                factura+"___"+
+                proveedor+"___"+
+                tipoDoc+"___"+
+                codigo+"___"+
+                producto;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getInvDao().countAll(data_string);

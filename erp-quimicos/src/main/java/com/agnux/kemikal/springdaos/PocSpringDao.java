@@ -288,6 +288,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "erp_proceso.proceso_flujo_id,"
                 + "poc_pedidos.moneda_id,"
                 + "gral_mon.descripcion as moneda,"
+                + "gral_mon.simbolo AS simbolo_moneda,"
                 + "poc_pedidos.observaciones,"
                 + "cxc_clie.id as cliente_id,"
                 + "cxc_clie.numero_control,"
@@ -341,6 +342,7 @@ public class PocSpringDao implements PocInterfaceDao{
         mappdf.put("proceso_flujo_id", mapdatosquery.get("proceso_flujo_id").toString());
         mappdf.put("moneda_id", mapdatosquery.get("moneda_id").toString() );
         mappdf.put("moneda", mapdatosquery.get("moneda").toString() );
+        mappdf.put("simbolo_moneda", mapdatosquery.get("simbolo_moneda").toString() );
         mappdf.put("observaciones", mapdatosquery.get("observaciones").toString() );
         mappdf.put("cliente_id", mapdatosquery.get("cliente_id").toString() );
         mappdf.put("numero_control", mapdatosquery.get("numero_control").toString() );
@@ -401,6 +403,34 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_monedas;
     }
+    
+    
+    
+    @Override
+    public HashMap<String, String> getPocPedido_Parametros(Integer id_emp, Integer id_suc) {
+        HashMap<String, String> mapDatos = new HashMap<String, String>();
+        String sql_query = "SELECT * FROM fac_par WHERE gral_emp_id="+id_emp+" AND gral_suc_id="+id_suc+";";
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
+        
+        mapDatos.put("gral_suc_id", String.valueOf(map.get("gral_suc_id")));
+        mapDatos.put("gral_suc_id_consecutivo", String.valueOf(map.get("gral_suc_id_consecutivo")));
+        mapDatos.put("cxc_mov_tipo_id", String.valueOf(map.get("cxc_mov_tipo_id")));
+        mapDatos.put("inv_alm_id", String.valueOf(map.get("inv_alm_id")));
+        mapDatos.put("gral_emp_id", String.valueOf(map.get("gral_emp_id")));
+        mapDatos.put("formato_pedido", String.valueOf(map.get("formato_pedido")));
+        mapDatos.put("permitir_pedido", String.valueOf(map.get("permitir_pedido")));
+        mapDatos.put("permitir_remision", String.valueOf(map.get("permitir_remision")));
+        mapDatos.put("permitir_cambio_almacen", String.valueOf(map.get("permitir_cambio_almacen")));
+        mapDatos.put("permitir_servicios", String.valueOf(map.get("permitir_servicios")));
+        mapDatos.put("permitir_articulos", String.valueOf(map.get("permitir_articulos")));
+        mapDatos.put("permitir_kits", String.valueOf(map.get("permitir_kits")));
+        
+        return mapDatos;
+    }
+
+    
+    
     
     
     //obtiene direcciones fiscales del cliente, esta dirección es la que se utilizará para facturar el pedido
@@ -671,6 +701,89 @@ public class PocSpringDao implements PocInterfaceDao{
     
     
     
+    //buscador de clientes
+    @Override
+    public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal) {
+	String sql_query = "SELECT "
+                                    +"sbt.id, "
+                                    +"sbt.numero_control, "
+                                    +"sbt.rfc, "
+                                    +"sbt.razon_social, "
+                                    +"sbt.direccion, "
+                                    +"sbt.moneda_id, "
+                                    +"gral_mon.descripcion as moneda, "
+                                    +"sbt.cxc_agen_id, "
+                                    +"sbt.terminos_id, "
+                                    +"sbt.empresa_immex, "
+                                    +"sbt.tasa_ret_immex, "
+                                    +"sbt.cta_pago_mn, "
+                                    +"sbt.cta_pago_usd, "
+                                    +"sbt.lista_precio, "
+                                    +"sbt.metodo_pago_id, "
+                                    +"tiene_dir_fiscal,"
+                                    +"sbt.contacto "
+                            +"FROM(SELECT cxc_clie.id, "
+                                            +"cxc_clie.numero_control, "
+                                            +"cxc_clie.rfc, "
+                                            +"cxc_clie.razon_social,"
+                                            +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                                            +"cxc_clie.moneda as moneda_id, "
+                                            +"cxc_clie.cxc_agen_id, "
+                                            +"cxc_clie.contacto, "
+                                            +"cxc_clie.dias_credito_id AS terminos_id, "
+                                            +"cxc_clie.empresa_immex, "
+                                            +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
+                                            + "cxc_clie.cta_pago_mn,"
+                                            + "cxc_clie.cta_pago_usd,  "
+                                            + "cxc_clie.lista_precio, "
+                                            + "cxc_clie.fac_metodos_pago_id AS metodo_pago_id, "
+                                            + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal "
+                                    +"FROM cxc_clie "
+                                    + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
+                                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                                    //+" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
+                                    +" WHERE empresa_id ="+id_empresa+" "
+                                    + " AND cxc_clie.borrado_logico=false "
+                                    + " AND cxc_clie.numero_control='"+no_control.toUpperCase()+"'"
+                            +") AS sbt "
+                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id LIMIT 1;";
+                            
+        System.out.println("getDatosClienteByNoCliente: "+sql_query);
+        
+        ArrayList<HashMap<String, String>> hm_cli = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("cxc_agen_id",rs.getString("cxc_agen_id"));
+                    row.put("terminos_id",rs.getString("terminos_id"));
+                    row.put("empresa_immex",String.valueOf(rs.getBoolean("empresa_immex")));
+                    row.put("tasa_ret_immex",StringHelper.roundDouble(String.valueOf(rs.getDouble("tasa_ret_immex")),2));
+                    row.put("cta_pago_mn",rs.getString("cta_pago_mn"));
+                    row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
+                    row.put("lista_precio",rs.getString("lista_precio"));
+                    row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
+                    row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
+                    row.put("contacto",rs.getString("contacto"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_cli;
+    }
+    
+    
     //Buscador de Prospectos
     //Se utiliza en cotizaciones, cuando el proyecto incluye modulo de CRM.
     //Varios de los campos se les asigna un valor por default, solo es para que sea igual que el de clientes 
@@ -695,7 +808,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "crm_prospectos.rfc, "
                     + "crm_prospectos.razon_social,"
                     + "crm_prospectos.calle||' '||crm_prospectos.numero||', '||crm_prospectos.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||crm_prospectos.cp as direccion, "
-                    + "1::integer AS moneda_id, "
+                    + "0::integer AS moneda_id, "
                     + "''::character varying AS moneda,"
                     + "0::integer AS cxc_agen_id, "
                     + "0::integer AS terminos_id, "

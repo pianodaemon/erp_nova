@@ -13,7 +13,8 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.PocInterfaceDao;
-import com.agnux.kemikal.reportes.PdfReportePocAutorizacionPedido;
+import com.agnux.kemikal.reportes.PdfPocPedidoFormato1;
+import com.agnux.kemikal.reportes.PdfPocPedidoFormato2;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -242,7 +243,7 @@ public class PocPedidosController {
             @RequestParam(value="filtro", required=true) Integer filtro,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -260,6 +261,34 @@ public class PocPedidosController {
         
         return jsonretorno;
     }
+    
+    
+    
+    //Buscador de clientes
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoClient.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataByNoClientJson(
+            @RequestParam(value="no_control", required=true) String no_control,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        
+        jsonretorno.put("Cliente", this.getPocDao().getDatosClienteByNoCliente(no_control, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
     
     
     //obtiene las Direcciones Fiscales del Cliente
@@ -489,9 +518,11 @@ public class PocPedidosController {
                 @PathVariable("iu") String id_user_cod,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
-                Model model)throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
+                Model model
+    )throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
         HashMap<String, String> datospedido_pdf = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> conceptos_pedido = new ArrayList<HashMap<String, String>>();
@@ -502,7 +533,6 @@ public class PocPedidosController {
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        System.out.println("id_usuario: "+id_usuario);
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -521,6 +551,9 @@ public class PocPedidosController {
         String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         
         File file_dir_tmp = new File(dir_tmp);
+        
+        //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf del pedido
+        parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
         
         datospedido_pdf = this.getPocDao().getDatosPDF(id_pedido);
         conceptos_pedido = this.getPocDao().getPocPedido_DatosGrid(id_pedido);
@@ -555,9 +588,17 @@ public class PocPedidosController {
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
-        //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
-        PdfReportePocAutorizacionPedido x = new PdfReportePocAutorizacionPedido(datosEncabezadoPie,datospedido_pdf,conceptos_pedido,razon_social_empresa,fileout,ruta_imagen);
         
+        if (parametros.get("formato_pedido").equals("1")){
+            //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
+            PdfPocPedidoFormato1 x = new PdfPocPedidoFormato1(datosEncabezadoPie,datospedido_pdf,conceptos_pedido,razon_social_empresa,fileout,ruta_imagen);
+        }else{
+            //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
+            PdfPocPedidoFormato2 x = new PdfPocPedidoFormato2(datosEncabezadoPie,datospedido_pdf,conceptos_pedido,razon_social_empresa,fileout,ruta_imagen);
+        }
+        
+        
+
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
