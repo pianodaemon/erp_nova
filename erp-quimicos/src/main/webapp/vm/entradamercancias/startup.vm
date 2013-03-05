@@ -45,29 +45,60 @@
 			<tr>
 				<td colspan="13">&nbsp;&nbsp;</td>
 			</tr>
+			
 			<tr>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>Folio&nbsp;entrada</td>
-				<td width="5">&nbsp;</td>
+				<td width="10"></td>
+				<td width="10">Tipo Documento</td>
+				<td width="15"></td>
+				<td width="70">Folio</td>
+				<td width="15"></td>
+				<td width="90">Orden Compra</td>
+				<td width="15"></td>
+				<td width="80">Folio Doc.</td>
+				<td width="15"></td>
+				<td width="170">Proveedor</td>
+				<td width="15"></td>
+				<td width="100">C&oacute;digo Producto</td>
+				<td width="15"></td>
+				<td width="180">Descripci&oacute;n Producto</td>
+				
+				<td width="30"></td>
+				<td></td>
+				<td width=10></td>
+				<td ></td>
+				<td width=10></td>
+			</tr>
+			
+			<tr>
+				<td width="10"></td>
+				<td>
+					<select name="select_busqueda_tipodoc" style="width:120px;">
+						<option value="0">[-Todos-]</option>
+						<option value="1">Factura</option>
+						<option value="2">Remisi&oacute;n</option>
+					</select>
+				</td>
+				<td width="15"></td>
 				<td><INPUT TYPE="text" name="busqueda_folio" style="width:70px;"></td>
-				<td width="8">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td >Orden&nbsp;compra</td>
-				<td width="5">&nbsp;</td>
-				<td><INPUT TYPE="text" name="busqueda_oc" style="width:70px;"></td>
-				<td width="8">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td >Factura</td>
-				<td width="5">&nbsp;</td>
-				<td><INPUT TYPE="text" name="busqueda_factura" style="width:70px;"></td>
-				<td width="8">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td >Proveedor</td>
-				<td width="5">&nbsp;</td>
+				<td width="15"></td>
+				<td><INPUT TYPE="text" name="busqueda_oc" style="width:90px;"></td>
+				<td width="15"></td>
+				<td><INPUT TYPE="text" name="busqueda_factura" style="width:80px;"></td>
+				<td width="15"></td>
 				<td><INPUT TYPE="text" name="busqueda_proveedor" style="width:170px;"></td>
-				<td width="25">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="15"></td>
+				<td width="100"><input type="text" name="busqueda_codigo" style="width:100px;"></td>
+				<td width="15"></td>
+				<td width="180"><input type="text" name="busqueda_producto" style="width:180px;"></td>
+				
+				<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
 				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td ><INPUT TYPE="button" value="Limpiar"></td>
 				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
+			
+			
 		</table>
 		
         <!--  otra parte -->

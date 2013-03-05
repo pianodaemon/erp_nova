@@ -169,10 +169,10 @@
                                                                 <td width="120">
                                                                     <input type="hidden" name="id_cliente" value="">
                                                                     <input type="hidden" name="id_df" value="1">
-                                                                    <input type="text" name="nocliente" style="width:120px;" >
+                                                                    <input type="text" name="nocliente" style="width:120px; border:1px solid #000;">
                                                                 </td>
                                                                 <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocliente"></div></td>
-                                                                <td width="90" align="right"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
+                                                                <td width="90"><a href="busca_cliente">(Buscar&nbsp;)</a></td>
                                                                 <td width="15"></td>
                                                                 <td width="90"><span>Folio&nbsp;del&nbsp;Pedido</span></td>
                                                                 <td width="75"><input type="text" name="folio" style="width:75px;" readOnly="true"></td>
@@ -369,11 +369,11 @@
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="70">C&oacute;digo&nbsp;producto</td>
-                                                                <td width="125"><input type="text" name="sku_producto" style="width:120px;"></td>
-                                                                <td width="50"><a href="agregar_producto">(Agregar)</a></td>
+                                                                <td width="125"><input type="text" name="sku_producto" style="width:120px; border:1px solid #000;"></td>
+                                                                <td width="70"><a href="agregar_producto">&nbsp;(Agregar)</a></td>
                                                                 <td width="45">Nombre</td>
-                                                                <td width="300"><input type="text" name="nombre_producto" style="width:300px;"></td>
-                                                                <td width="55"><a href="busca_sku">(Buscar)</a></td>
+                                                                <td width="280"><input type="text" name="nombre_producto" style="width:280px;"></td>
+                                                                <td width="55"><a href="busca_sku">&nbsp;(Buscar)</a></td>
                                                                 <td width="15"></td>
                                                                 <td width="60" align="right">
 																	<input type="button" id="descargarpdf" value="PDF" style="width:50px; font-weight: bold;">
@@ -644,6 +644,7 @@
 								<td width="10"></td>
 								<td width="10" style="background:#ffffff"></td>
 								<td style="background:#ffffff; border: solid 1px #454442;" colspan="3" width="600">
+									<!--<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">-->
 									<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
 										<table  border="0" id="tabla_resultado" width="580">
 											<!--aqui van los resultados de la busqueda-->
