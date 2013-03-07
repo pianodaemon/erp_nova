@@ -474,35 +474,7 @@ $(function() {
             $Nombre_Producto.focus();
         });
     }//termina buscador de productos
-
-    //click generar reporte de pronostico de Cobranza
-    $genera_reporte_ventas_netasproductofactura.click(function(event){
-        event.preventDefault();
-
-        var tipo_reporte=$select_tipo_reporte.val();
-        var tipo_costo =$select_tipo_costo.val();
-        var cliente=$Nombre_Cliente.val();
-        var producto=$Nombre_Producto.val();
-        var fecha_inicial = $fecha_inicial.val();
-        var fecha_final = $fecha_final.val();
-        var id_linea= $select_linea.val();
-        var id_marca= $select_marca.val();
-        var id_familia= $select_familia.val();
-        var id_subfamilia= $select_subfamilia.val();
-        var id_agente = $select_agente.val();
-        var usuario=config.getUi();
-        var cadena = tipo_reporte+"___"+cliente+"___"+producto+"___"+fecha_inicial+"___"+fecha_final+"___"+usuario+"___"+id_linea+"___"+id_marca+"___"+id_familia+"___"+id_subfamilia+"___"+tipo_costo+"___"+id_agente;
-
-        if(fecha_inicial != 0 && fecha_final !=0){
-            var input_json = config.getUrlForGetAndPost() + '/getrepventasnetasproductofactura/'+cadena+'/out.json';
-            window.location.href=input_json;
-        }else{
-			jAlert('Debe elegir el rango la fecha inicial y su fecha final par la busqueda.', 'Atencion!', function(r) { 
-				//$fecha_inicial.focus();
-				$('#lienzo_recalculable').find('input[name=fecha_inicial]').trigger('click');
-			});
-        }
-    });
+    
     
     
     
@@ -665,10 +637,40 @@ $(function() {
         busca_productos($Nombre_Producto);
     });
     
+    
+    
+    //click generar el PDF del reporte
+    $genera_reporte_ventas_netasproductofactura.click(function(event){
+        event.preventDefault();
 
+        var tipo_reporte=$select_tipo_reporte.val();
+        var tipo_costo =$select_tipo_costo.val();
+        var cliente=$Nombre_Cliente.val();
+        var producto=$Nombre_Producto.val();
+        var fecha_inicial = $fecha_inicial.val();
+        var fecha_final = $fecha_final.val();
+        var id_linea= $select_linea.val();
+        var id_marca= $select_marca.val();
+        var id_familia= $select_familia.val();
+        var id_subfamilia= $select_subfamilia.val();
+        var id_agente = $select_agente.val();
+        var usuario=config.getUi();
+        var cadena = tipo_reporte+"___"+cliente+"___"+producto+"___"+fecha_inicial+"___"+fecha_final+"___"+usuario+"___"+id_linea+"___"+id_marca+"___"+id_familia+"___"+id_subfamilia+"___"+tipo_costo+"___"+id_agente;
 
+        if(fecha_inicial != 0 && fecha_final !=0){
+            var input_json = config.getUrlForGetAndPost() + '/getrepventasnetasproductofactura/'+cadena+'/out.json';
+            window.location.href=input_json;
+        }else{
+			jAlert('Debe elegir el rango la fecha inicial y su fecha final par la busqueda.', 'Atencion!', function(r) { 
+				//$fecha_inicial.focus();
+				$('#lienzo_recalculable').find('input[name=fecha_inicial]').trigger('click');
+			});
+        }
+    });
+    
+    
+    
     obtiene_total_venta = function( tipo_reporte,arraysumatorias,cliente_producto){
-
         var total_venta = 0.0;
         $.each(arraysumatorias,function(entryIndex, reg){
             //alert("El registro cliente es igual Cliente ???...."+reg['cliente'] +"  =  "+ cliente);
@@ -930,7 +932,10 @@ $(function() {
                         });
                 });//fin del json
             }else{
-                jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
+				jAlert('Debe elegir el rango la Fecha Inicial y su Fecha Final par la Busqueda.', 'Atencion!', function(r) { 
+					//$fecha_inicial.focus();
+					$('#lienzo_recalculable').find('input[name=fecha_inicial]').trigger('click');
+				});
             }
         }
 
@@ -1181,7 +1186,10 @@ $(function() {
                 });
 
             }else{
-                jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
+				jAlert('Debe elegir el rango la Fecha Inicial y su Fecha Final par la Busqueda.', 'Atencion!', function(r) { 
+					//$fecha_inicial.focus();
+					$('#lienzo_recalculable').find('input[name=fecha_inicial]').trigger('click');
+				});
             }
         }
 
@@ -1410,7 +1418,10 @@ $(function() {
                         });
                 });
             }else{
-                jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
+				jAlert('Debe elegir el rango la Fecha Inicial y su Fecha Final par la Busqueda.', 'Atencion!', function(r) { 
+					//$fecha_inicial.focus();
+					$('#lienzo_recalculable').find('input[name=fecha_inicial]').trigger('click');
+				});
             }
         }//FIN DE LA VISTA DE PRODUCTO SUMARIZADO
 
@@ -1633,7 +1644,10 @@ $(function() {
                         });
                 });
             }else{
-                jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
+				jAlert('Debe elegir el rango la Fecha Inicial y su Fecha Final par la Busqueda.', 'Atencion!', function(r) { 
+					//$fecha_inicial.focus();
+					$('#lienzo_recalculable').find('input[name=fecha_inicial]').trigger('click');
+				});
             }
         }//FIN DE LA VISTA DE  SUMARIZADO POR CLIENTE
 
