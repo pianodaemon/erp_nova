@@ -119,7 +119,8 @@ public class RepVentasNetasProductoFacturaController {
         userDat = this.getHomeDao().getUserById(id_usuario);
 
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer id_sucursal = 0;
 
         jsonretorno.put("Clientes", this.getCxcDao().getBuscadorClientes(cadena, filtro, id_empresa, id_sucursal));
 
@@ -232,8 +233,8 @@ public class RepVentasNetasProductoFacturaController {
         log.log(Level.INFO, "Ejecutando getVentasNetasProductoFactura de {0}", RepVentasNetasProductoFacturaController.class.getName());
         HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-
-
+        
+        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         System.out.println("id_usuario: " + id_usuario);
@@ -241,7 +242,10 @@ public class RepVentasNetasProductoFacturaController {
         userDat = this.getHomeDao().getUserById(id_usuario);
 
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-
+        
+        cliente = "%"+cliente+"%";
+        producto = "%"+producto+"%";
+                
         ArrayList<HashMap<String, String>> z = this.getCxcDao().getVentasNetasProductoFactura(tipo_reporte, cliente, producto, fecha_inicial, fecha_final, id_empresa, id_linea, id_marca, id_familia, id_subfamilia, tipo_costo,id_agente);
 
         String razon_social = "";
@@ -361,10 +365,10 @@ public class RepVentasNetasProductoFacturaController {
 
                         //sumar primera cantidad del nuevo cliente
                         sumatoria_cantidad = sumatoria_cantidad + Double.parseDouble(registro.get("cantidad"));
-                        if (Integer.parseInt(registro.get("costo"))== 0){
+                        if (Double.parseDouble(registro.get("costo"))== 0){
                              costo=0.0;
                         }else{
-                        costo=Double.parseDouble(registro.get("costo"));
+                            costo=Double.parseDouble(registro.get("costo"));
                         }
                         sumatoria_costo = sumatoria_costo + costo;
                         sumatoria_venta = sumatoria_venta + Double.parseDouble(registro.get("venta_pesos"));
@@ -659,7 +663,7 @@ public class RepVentasNetasProductoFacturaController {
 
         String producto = "";
 
-        lista_ventasporproducto = this.getCxcDao().getVentasNetasProductoFactura(Integer.parseInt(arreglo[0]), arreglo[1], arreglo[2], arreglo[3], arreglo[4], id_empresa, Integer.parseInt(arreglo[6]), Integer.parseInt(arreglo[7]), Integer.parseInt(arreglo[8]), Integer.parseInt(arreglo[9]), Integer.parseInt(arreglo[10]),Integer.parseInt(arreglo[11]));
+        lista_ventasporproducto = this.getCxcDao().getVentasNetasProductoFactura(Integer.parseInt(arreglo[0]), "%"+arreglo[1]+"%", "%"+arreglo[2]+"%", arreglo[3], arreglo[4], id_empresa, Integer.parseInt(arreglo[6]), Integer.parseInt(arreglo[7]), Integer.parseInt(arreglo[8]), Integer.parseInt(arreglo[9]), Integer.parseInt(arreglo[10]),Integer.parseInt(arreglo[11]));
         // 1 .- Reporte Por Cliente  2.- Reporte por producto 3.- sumatoria por producto  4 .- sumatoria por cliente
         if (Integer.parseInt(arreglo[0]) == 1 || Integer.parseInt(arreglo[0]) == 4) {
             if (lista_ventasporproducto.size() > 0) {

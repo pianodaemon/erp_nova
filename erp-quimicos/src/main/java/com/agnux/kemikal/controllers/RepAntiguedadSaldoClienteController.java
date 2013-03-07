@@ -133,7 +133,8 @@ public class RepAntiguedadSaldoClienteController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer id_sucursal = 0;
         
         jsonretorno.put("Clientes", this.getCxcDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal));
         
@@ -146,7 +147,7 @@ public class RepAntiguedadSaldoClienteController {
     @RequestMapping(method = RequestMethod.POST, value="/getReporteAntiguedadSaldosCliente.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getReporteAntiguedadSaldosClienteJson(
             @RequestParam("tipo_reporte") Integer tipo_reporte,
-            @RequestParam("id_cliente") Integer id_cliente,
+            @RequestParam("cliente") String cliente,
             @RequestParam("fecha_corte") String fecha_corte,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
@@ -165,7 +166,7 @@ public class RepAntiguedadSaldoClienteController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         //obtiene los datos del reporte
-        lista_facturas = this.getCxcDao().getDatos_ReporteAntiguedadSaldos(tipo_reporte, id_cliente, id_empresa);
+        lista_facturas = this.getCxcDao().getDatos_ReporteAntiguedadSaldos(tipo_reporte, cliente, id_empresa);
         
         jsonretorno.put("Facturas", lista_facturas);
         
@@ -199,7 +200,7 @@ public class RepAntiguedadSaldoClienteController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
-        Integer id_cliente=Integer.parseInt(cadena.split("___")[0]);
+        String cliente=cadena.split("___")[0];
         Integer tipo_reporte=Integer.parseInt(cadena.split("___")[1]);
         String fecha_corte=cadena.split("___")[2];
         
@@ -217,12 +218,12 @@ public class RepAntiguedadSaldoClienteController {
         File file_dir_tmp = new File(dir_tmp);
         System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        String file_name = rfc_empresa+"_ant_saldo_clie_"+id_cliente+".pdf";
+        String file_name = rfc_empresa+"ant_saldo_clie.pdf";
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
         //obtiene los datos del reporte
-        lista_facturas = this.getCxcDao().getDatos_ReporteAntiguedadSaldos(tipo_reporte, id_cliente, id_empresa);
+        lista_facturas = this.getCxcDao().getDatos_ReporteAntiguedadSaldos(tipo_reporte, cliente, id_empresa);
         
         //instancia a la clase que construye el pdf de antiguedad de saldos de cuentas por Cobrar
         PdfCxcAntiguedadSaldos x = new PdfCxcAntiguedadSaldos(fileout, ruta_imagen, razon_social_empresa, fecha_corte,  lista_facturas);

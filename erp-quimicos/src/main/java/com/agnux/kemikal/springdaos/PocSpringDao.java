@@ -1531,7 +1531,7 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm; 
     }
-
+    
     @Override
     public ArrayList<HashMap<String, Object>> getCotizacion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_to_query="";
@@ -1546,10 +1546,12 @@ public class PocSpringDao implements PocInterfaceDao{
                     +"poc_cot.folio,"
                     + "(CASE WHEN poc_cot.tipo=1 THEN 'CLIENTE' ELSE 'PROSPECTO' END ) as tipo, "
                     +"cxc_clie.razon_social AS cliente,"
-                    +"to_char(poc_cot.momento_creacion,'dd/mm/yyyy') AS fecha_creacion "
+                    +"(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'dd/mm/yyyy') ELSE to_char(poc_cot.fecha::timestamp with time zone,'dd/mm/yyyy') END) AS fecha_creacion, "
+                    + "(CASE WHEN cxc_agen.nombre IS NULL THEN '' ELSE cxc_agen.nombre END ) AS nombre_agente "
             +"FROM poc_cot "
             +"JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id  "
             +"JOIN cxc_clie ON cxc_clie.id =  poc_cot_clie.cxc_clie_id  "
+            +"LEFT JOIN cxc_agen ON cxc_agen.id=poc_cot.cxc_agen_id  "
             +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot.id "
             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         }else{
@@ -1559,10 +1561,12 @@ public class PocSpringDao implements PocInterfaceDao{
                         +"poc_cot.folio,"
                         + "(CASE WHEN poc_cot.tipo=1 THEN 'CLIENTE' ELSE 'PROSPECTO' END ) as tipo, "
                         +"cxc_clie.razon_social AS cliente,"
-                        +"to_char(poc_cot.momento_creacion,'dd/mm/yyyy') AS fecha_creacion "
+                        +"(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'dd/mm/yyyy') ELSE to_char(poc_cot.fecha::timestamp with time zone,'dd/mm/yyyy') END) AS fecha_creacion, "
+                        + "(CASE WHEN cxc_agen.nombre IS NULL THEN '' ELSE cxc_agen.nombre END ) AS nombre_agente "
                 +"FROM poc_cot "
                 +"JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id  "
                 +"JOIN cxc_clie ON cxc_clie.id =  poc_cot_clie.cxc_clie_id  "
+                +"LEFT JOIN cxc_agen ON cxc_agen.id=poc_cot.cxc_agen_id  "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
             }else{
@@ -1571,12 +1575,14 @@ public class PocSpringDao implements PocInterfaceDao{
                         +"poc_cot.folio,"
                         + "(CASE WHEN poc_cot.tipo=1 THEN 'CLIENTE' ELSE 'PROSPECTO' END ) as tipo, "
                         +"(CASE WHEN poc_cot.tipo=1 THEN cxc_clie.razon_social ELSE crm_prospectos.razon_social END) AS cliente,"
-                        +"to_char(poc_cot.momento_creacion,'dd/mm/yyyy') AS fecha_creacion "
+                        +"(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'dd/mm/yyyy') ELSE to_char(poc_cot.fecha::timestamp with time zone,'dd/mm/yyyy') END) AS fecha_creacion, "
+                        + "(CASE WHEN cxc_agen.nombre IS NULL THEN '' ELSE cxc_agen.nombre END ) AS nombre_agente "
                 +"FROM poc_cot "
                 +"LEFT JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id  "
                 +"LEFT JOIN cxc_clie ON cxc_clie.id=poc_cot_clie.cxc_clie_id  "
                 +"LEFT JOIN poc_cot_prospecto ON poc_cot_prospecto.poc_cot_id=poc_cot.id  "
                 +"LEFT JOIN crm_prospectos ON crm_prospectos.id=poc_cot_prospecto.crm_prospecto_id "
+                +"LEFT JOIN cxc_agen ON cxc_agen.id=poc_cot.cxc_agen_id  "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";  
             }
@@ -1596,6 +1602,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("tipo",rs.getString("tipo"));
                     row.put("cliente",rs.getString("cliente"));
                     row.put("fecha",rs.getString("fecha_creacion"));
+                    row.put("nombre_agente",rs.getString("nombre_agente"));
                     return row;
                 }
             }
@@ -1617,7 +1624,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot.incluye_img_desc, "
                     + "poc_cot.tipo_cambio,"
                     + "poc_cot.gral_mon_id, "
-                    + "to_char(poc_cot.momento_creacion,'yyyy-mm-dd') as fecha,"
+                    + "poc_cot.cxc_agen_id, "
+                    + "(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'yyyy-mm-dd') ELSE to_char(poc_cot.fecha::timestamp with time zone,'yyyy-mm-dd') END) AS fecha,"
                     + "(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE  gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE  gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE  gral_empleados.apellido_materno END) AS nombre_usuario,"
                     + "(CASE WHEN gral_puestos.titulo IS NULL THEN '' ELSE gral_puestos.titulo END) AS puesto_usuario "
                 + "FROM poc_cot "
@@ -1642,6 +1650,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("img_desc",String.valueOf(rs.getBoolean("incluye_img_desc")));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getString("tipo_cambio"),4));
                     row.put("fecha",rs.getString("fecha"));
+                    row.put("agente_id",String.valueOf(rs.getInt("cxc_agen_id")));
                     row.put("nombre_usuario",rs.getString("nombre_usuario"));
                     row.put("puesto_usuario",rs.getString("puesto_usuario"));
                     

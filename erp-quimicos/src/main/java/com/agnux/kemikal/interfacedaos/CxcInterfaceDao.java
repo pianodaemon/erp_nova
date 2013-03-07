@@ -121,7 +121,7 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, Object>> getClientstMovimientos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getClientstMovimientos_Datos(Integer id);
 
-    public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldos(Integer tipo, Integer id_cliente, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldos(Integer tipo, String cliente, Integer id_empresa);
 
 
     public ArrayList<HashMap<String,String>> getEstadisticaVentas(Integer mes_in,Integer mes_fin,Integer id_empresa);

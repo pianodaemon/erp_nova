@@ -2247,7 +2247,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     + " venta_pesos double precision,  "
                                     + " costo double precision,  "
                                     + " fecha_factura text,"
-
+                                    
                                     + "id_presentacion Integer, "
                                     + "presentacion character varying"
                                     + "); ";
@@ -2267,12 +2267,12 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("producto",rs.getString("producto"));
                     row.put("factura",rs.getString("factura"));
                     row.put("unidad",rs.getString("unidad"));
-                    row.put("cantidad",rs.getString("cantidad"));
-                    row.put("precio_unitario",rs.getString("precio_unitario"));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
+                    row.put("precio_unitario",StringHelper.roundDouble(rs.getString("precio_unitario"),2));
                     row.put("moneda",rs.getString("moneda"));
-                    row.put("tipo_cambio",rs.getString("tipo_cambio"));
-                    row.put("venta_pesos",rs.getString("venta_pesos"));
-                    row.put("costo",rs.getString("costo"));
+                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getString("tipo_cambio"),4));
+                    row.put("venta_pesos",StringHelper.roundDouble(rs.getString("venta_pesos"),2));
+                    row.put("costo",StringHelper.roundDouble(rs.getString("costo"),2));
                     row.put("fecha_factura",rs.getString("fecha_factura"));
 
                     row.put("id_presentacion",rs.getString("id_presentacion"));
@@ -2750,15 +2750,15 @@ return subfamilias;
 
 
 
-	@Override
-    public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldos(Integer tipo, Integer id_cliente, Integer id_empresa) {
+    @Override
+    public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldos(Integer tipo, String cliente, Integer id_empresa) {
         String where_cliente="";
-
+        
         if(tipo == 1){
-            where_cliente = " AND cxc_clie.id="+id_cliente;
+            where_cliente = " AND cxc_clie.razon_social ILIKE '%"+cliente+"%'";
         }
-
-
+        
+        
         String sql_to_query = ""
             + "SELECT cliente,"
                     + "clave_cliente,"

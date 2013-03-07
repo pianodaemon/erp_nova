@@ -96,13 +96,14 @@ public class CotizacionesController {
         infoConstruccionTabla.put("folio", "Folio:90");
         
         if(user.getIncluyeCrm().equals("true")){
-            infoConstruccionTabla.put("tipo", "Tipo:100");
+            infoConstruccionTabla.put("tipo", "Tipo:90");
             infoConstruccionTabla.put("cliente", "Cliente/Prospecto:300");
         }else{
             infoConstruccionTabla.put("cliente", "Cliente:300");
         }
         
-        infoConstruccionTabla.put("fecha","Fecha:110");
+        infoConstruccionTabla.put("fecha","Fecha:90");
+        infoConstruccionTabla.put("nombre_agente","Agente de Ventas:250");
         
         ModelAndView x = new ModelAndView("cotizaciones/startup", "title", "Cotizaciones");
         
@@ -139,7 +140,8 @@ public class CotizacionesController {
            @RequestParam(value="input_json", required=true) String input_json,
            @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
            @RequestParam(value="iu", required=true) String id_user_cod,
-           Model modcel) {
+           Model modcel
+    ) {
            
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
@@ -158,8 +160,10 @@ public class CotizacionesController {
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
         String tipo = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo")))+"";
         String incluye_crm = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("incluye_crm")))+"";
+        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
+        String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+tipo+"___"+incluye_crm;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+tipo+"___"+incluye_crm+"___"+codigo+"___"+producto;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getPocDao().countAll(data_string);
@@ -198,6 +202,7 @@ public class CotizacionesController {
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
         HashMap<String, String> tc = new HashMap<String, String>();
@@ -228,6 +233,8 @@ public class CotizacionesController {
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getPocDao().getTipoCambioActual(), 4));
         tipoCambioActual.add(0,tc);
         
+        agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal);
+        
         jsonretorno.put("datosCotizacion", datosCotizacion);
         jsonretorno.put("DatosCP", DatosCliPros);
         jsonretorno.put("datosGrid", datosGrid);
@@ -235,6 +242,7 @@ public class CotizacionesController {
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Extras", arrayExtra);
         jsonretorno.put("Tc", tipoCambioActual);
+        jsonretorno.put("Agentes", agentes);
         
         return jsonretorno;
     }
@@ -372,7 +380,8 @@ public class CotizacionesController {
         @PathVariable("id") String id,
         @PathVariable("iu") String id_user,
         HttpServletResponse response, 
-        Model model) throws IOException {
+        Model model
+    ) throws IOException {
         ServletOutputStream out;
         
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -434,6 +443,8 @@ public class CotizacionesController {
             @RequestParam(value="check_descripcion_larga", required=false) String check_descripcion_larga,
             @RequestParam(value="tc", required=true) String tc,
             @RequestParam(value="moneda", required=true) String moneda_id,
+            @RequestParam(value="fecha", required=true) String fecha,
+            @RequestParam(value="select_agente", required=true) String select_agente,
             @RequestParam(value="total_tr", required=true) String total_tr,
             @RequestParam(value="iddetalle", required=true) String[] iddetalle,
             @RequestParam(value="eliminado", required=true) String[] eliminado,
@@ -483,7 +494,9 @@ public class CotizacionesController {
                     check_descripcion_larga + "___"+ 
                     observaciones.toUpperCase() + "___"+ 
                     tc+"___"+
-                    moneda_id;
+                    moneda_id+"___"+
+                    fecha+"___"+
+                    select_agente;
             
             succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
             

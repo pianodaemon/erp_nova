@@ -193,7 +193,7 @@ public class PdfRepVentasNetasProductoFactura {
 
 
 
-                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("tipo_cambio").toString(), 2)), smallFont));
+                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("tipo_cambio").toString(), 4)), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);

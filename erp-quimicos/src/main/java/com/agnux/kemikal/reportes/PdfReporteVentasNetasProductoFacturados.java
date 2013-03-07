@@ -83,7 +83,7 @@ public class PdfReporteVentasNetasProductoFacturados {
             String fecha_reporte = "DEL:      " + fi[2] + "/" + fi[1] + "/" + fi[0] + "      AL:      " + ff[2] + "/" + ff[1] + "/" + ff[0];
             this.setFecha_reporte(fecha_reporte);
             //codigo   producto, factura,   fecha, unidad  ,  cantidad , $ , precio_unitario, $ ,  venta_neta, moneda , $ tipo_camnbio
-            float[] widths = {1.7f, 10f, 1.6f, 2f, 1.3f, 1.2f, 0.5f, 1.2f, 0.5f, 1.2f, 1.4f, 1.2f,0.5f,1.2f,1.2f,1.2f,1.2f    };
+            float[] widths = {1.7f, 6f, 1.6f, 2f, 1.3f, 1.2f, 0.5f, 1.2f, 0.5f, 1.2f, 1.4f, 1.2f,0.5f,1.2f,1.2f,1.2f,1.2f    };
           //float[] widths = {1.7f, 5f, 1.7f, 2f, 1.7f, 1.5f, 0.5f, 1.5f, 0.5f, 2f, 1.5f, 1.5f, 0.5f,2f,2f,2f,2f    };
             tabla = new PdfPTable(widths);
             tabla.setKeepTogether(false);
@@ -194,7 +194,7 @@ public class PdfReporteVentasNetasProductoFacturados {
 
 
 
-                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("tipo_cambio").toString(), 2)), smallFont));
+                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("tipo_cambio").toString(), 4)), smallFont));
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     tabla.addCell(cell);
@@ -245,8 +245,8 @@ public class PdfReporteVentasNetasProductoFacturados {
                     cell.setBorder(0);
                     tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph("Total Cantidad: ", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell = new PdfPCell(new Paragraph("Total", smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(1);
                     tabla.addCell(cell);
 
@@ -260,8 +260,8 @@ public class PdfReporteVentasNetasProductoFacturados {
                     cell.setBorder(0);
                     tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph("Total por Producto: ", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell = new PdfPCell(new Paragraph("Total", smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(1);
                     tabla.addCell(cell);
 
@@ -443,8 +443,8 @@ public class PdfReporteVentasNetasProductoFacturados {
                     cell.setBorder(0);
                     tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph("Total Cantidad: ", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell = new PdfPCell(new Paragraph("Total", smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(1);
                     tabla.addCell(cell);
 
@@ -459,8 +459,8 @@ public class PdfReporteVentasNetasProductoFacturados {
                     cell.setBorder(0);
                     tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph("Total por Producto: ", smallFont));
-                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell = new PdfPCell(new Paragraph("Total ", smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setBorder(1);
                     tabla.addCell(cell);
 
