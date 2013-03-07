@@ -62,7 +62,7 @@
                                     <tr>
                                         <td>&nbsp;</td>
                                         <td>
-                                            <SELECT NAME="ventas" style="width:100px;">
+                                            <SELECT NAME="ventas" style="width:120px;">
                                                 <option value="1" selected="yes">Por Cliente</option>
                                                 <option value="2" >Por  Producto</option>
                                                 <option value="3" > + Producto</option>
@@ -75,14 +75,14 @@
                                         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                         <td>&nbsp;</td>
                                         <td>
-                                            <SELECT NAME="linea" style="width:100px;">
+                                            <SELECT NAME="linea" style="width:150px;">
                                                 <option value="0" selected="yes">[--Seleccionar Linea--]</option>
                                             </SELECT>
                                         </td>
                                         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                         <td>&nbsp;</td>
                                         <td>
-                                            <SELECT NAME="marca" style="width:100px;">
+                                            <SELECT NAME="marca" style="width:150px;">
                                               <option value="0" selected="yes">[--Seleccionar Marca--]</option>
                                             </SELECT>
                                         </td>
@@ -122,7 +122,7 @@
                                     <tr>
                                         <td>&nbsp;</td>
                                         <td>
-                                            <SELECT NAME="costo" style="width:100px;">
+                                            <SELECT NAME="costo" style="width:120px;">
                                                 <option value="1" selected="yes">Costo Promedio</option>
                                                 <option value="2" >Costo Referencia</option>
 
@@ -134,7 +134,7 @@
                                         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                         <td>&nbsp;</td>
                                         <td>
-                                            <SELECT NAME="familia" style="width:100px;">
+                                            <SELECT NAME="familia" style="width:150px;">
 
                                                 <option value="0" selected="yes">[--Seleccionar Familia--]</option>
                                             </SELECT>
@@ -142,7 +142,7 @@
                                         <td>&nbsp;&nbsp;&nbsp;</td>
                                         <td>&nbsp;</td>
                                         <td>
-                                           <SELECT NAME="subfamilia" style="width:100px;">
+                                           <SELECT NAME="subfamilia" style="width:150px;">
                                                 <option value="0" selected="yes">[--Seleccionar Subfamilia--]</option>
 
                                             </SELECT>

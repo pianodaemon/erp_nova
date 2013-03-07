@@ -4,26 +4,21 @@ $(function() {
     var config =  {
         tituloApp: 'Ventas Netas por Producto Desglosado por factura' ,
         contextpath : $('#lienzo_recalculable').find('input[name=contextpath]').val(),
-
         userName : $('#lienzo_recalculable').find('input[name=user]').val(),
         ui : $('#lienzo_recalculable').find('input[name=iu]').val(),
-
-
         empresa:$('#lienzo_recalculable').find('input[name=emp]').val(),
         sucursal:$('#lienzo_recalculable').find('input[name=suc]').val(),
-
-
+        
         getUrlForGetAndPost : function(){
             var url = document.location.protocol + '//' + document.location.host + this.getController();
             return url;
         },
+        
         getController: function(){
             return this.contextpath + "/controllers/repventasnetasproductofactura";
         //  return this.controller;
         },
-
-
-
+        
         getUserName: function(){
             return this.userName;
         },
@@ -31,7 +26,7 @@ $(function() {
         getUi: function(){
             return this.ui;
         },
-
+        
         getEmpresa: function(){
             return this.empresa;
         },
@@ -42,15 +37,19 @@ $(function() {
         getTituloApp: function(){
             return this.tituloApp;
         }
-
-
-
-
-
-
     };
 
-
+	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
+	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
+		$campo.keypress(function(e){
+			if(e.which == 13){
+				$campo_ejecutar.trigger('click');
+				return false;
+			}
+		});
+	}
+	
+	
     $('#header').find('#header1').find('span.emp').text(config.getEmpresa());
     $('#header').find('#header1').find('span.suc').text(config.getSucursal());
     $('#header').find('#header1').find('span.username').text(config.getUserName());
@@ -158,23 +157,15 @@ $(function() {
         });
     });
 
-    $fecha_inicial.attr({
-        'readOnly':true
-    });
-    $fecha_final.attr({
-        'readOnly':true
-    });
-    $Nombre_Cliente.attr({
-        'readOnly':true
-    });
-    $Nombre_Producto.attr({
-        'readOnly':true
-    });
+    $fecha_inicial.attr({'readOnly':true});
+    $fecha_final.attr({'readOnly':true});
+    //$Nombre_Cliente.attr({'readOnly':true});
+    //$Nombre_Producto.attr({'readOnly':true});
+    
     var $Buscar_clientes= $('#lienzo_recalculable').find('div.repventasnetasproductofactura').find('table#fechas tr td').find('a[href*=busca_cliente]');
     var $Buscar_productos= $('#lienzo_recalculable').find('div.repventasnetasproductofactura').find('table#fechas tr td').find('a[href*=busca_producto]');
     var $div_ventas_netas_productofactura= $('#ventasnetasproductofactura');
-
-
+    
     //valida la fecha seleccionada
     function mayor(fecha, fecha2){
         var xMes=fecha.substring(5, 7);
@@ -322,8 +313,8 @@ $(function() {
             }
         }
     });
-
-
+	
+	
     $fecha_final.click(function (s){
         var a=$('div.datepicker');
         a.css({
@@ -333,11 +324,9 @@ $(function() {
 
 
     mostrarFecha($fecha_final.val());
-
-
-
+    
     //buscador de productos
-    busca_productos = function(sku_buscar){
+    busca_productos = function($Nombre_Producto){
         $(this).modalPanel_Buscaproducto();
         var $dialogoc =  $('#forma-buscaproducto-window');
         $dialogoc.append($('div.buscador_productos').find('table.formaBusqueda_productos').clone());
@@ -386,8 +375,8 @@ $(function() {
             $select_tipo_producto.append(prod_tipos_html);
         });
 
-        //Aqui asigno al campo sku del buscador si el usuario ingresó un sku antes de hacer clic en buscar en la ventana principal
-        $campo_sku.val(sku_buscar);
+        //Aqui asigno al campo Descripcion del buscador si el usuario ingresó un sku antes de hacer clic en buscar en la ventana principal
+        $campo_descripcion.val($Nombre_Producto.val());
 
         //click buscar productos
         $buscar_plugin_producto.click(function(event){
@@ -460,22 +449,29 @@ $(function() {
                     $('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
 
                     $Nombre_Producto.val($(this).find('span.titulo_prod_buscador').html());
+                    
+                    $Nombre_Producto.focus();
                 });
 
             });//termina llamada json
         });
 
         //si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
-        if($campo_sku.val() != ''){
+        if($campo_descripcion.val() != ''){
             $buscar_plugin_producto.trigger('click');
         }
-
+        
+		$aplicar_evento_keypress($campo_sku, $buscar_plugin_producto);
+		$aplicar_evento_keypress($select_tipo_producto, $buscar_plugin_producto);
+		$aplicar_evento_keypress($campo_descripcion, $buscar_plugin_producto);
+		
         $cancelar_plugin_busca_producto.click(function(event){
             //event.preventDefault();
             var remove = function() {
                 $(this).remove();
             };
             $('#forma-buscaproducto-overlay').fadeOut(remove);
+            $Nombre_Producto.focus();
         });
     }//termina buscador de productos
 
@@ -501,25 +497,16 @@ $(function() {
             var input_json = config.getUrlForGetAndPost() + '/getrepventasnetasproductofactura/'+cadena+'/out.json';
             window.location.href=input_json;
         }else{
-            jAlert("Debe elegir el rango la fecha inicial y su fecha final par la busqueda","Atencion!!!")
+			jAlert('Debe elegir el rango la fecha inicial y su fecha final par la busqueda.', 'Atencion!', function(r) { 
+				//$fecha_inicial.focus();
+				$('#lienzo_recalculable').find('input[name=fecha_inicial]').trigger('click');
+			});
         }
     });
-
-
-    $Buscar_clientes.click(function(event){
-        event.preventDefault();
-        busca_clientes();
-
-    });
-
-
-    $Buscar_productos.click(function(event){
-        event.preventDefault();
-        busca_productos();
-    });
-
-
-    busca_clientes=function(){
+    
+    
+    
+    busca_clientes=function($Nombre_Cliente){
         $(this).modalPanel_Buscacliente();
         var $dialogoc =  $('#forma-buscacliente-window');
         //var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -551,19 +538,20 @@ $(function() {
         $cancelar_plugin_busca_cliente.mouseout(function(){
             $(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
         });
-
+		
         var html = '';
         $select_filtro_por.children().remove();
         html='<option value="0">[-- Opcion busqueda --]</option>';
         html+='<option value="1">No. de control</option>';
         html+='<option value="2">RFC</option>';
-        html+='<option value="3">Razon social</option>';
+        html+='<option value="3" selected="yes">Razon social</option>';
         html+='<option value="4">CURP</option>';
         html+='<option value="5">Alias</option>';
         $select_filtro_por.append(html);
-
-
-
+        
+        
+        $cadena_buscar.val($Nombre_Cliente.val());
+        
         //click buscar clientes
         $busca_cliente_modalbox.click(function(event){
             //var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_clientes.json';
@@ -636,21 +624,47 @@ $(function() {
                         $(this).remove();
                     };
                     $('#forma-buscacliente-overlay').fadeOut(remove);
+                    
+                    $Nombre_Cliente.focus();
                 //asignar el enfoque al campo sku del producto
                 });
 
             });
         });//termina llamada json
-
+		
+		
+		if($cadena_buscar.val() != ''){
+			$busca_cliente_modalbox.trigger('click');
+		}
+		
+		$aplicar_evento_keypress($cadena_buscar, $busca_cliente_modalbox);
+		$aplicar_evento_keypress($select_filtro_por, $busca_cliente_modalbox);
+		
         $cancelar_plugin_busca_cliente.click(function(event){
             var remove = function() {
                 $(this).remove();
             };
             $('#forma-buscacliente-overlay').fadeOut(remove);
+            
+            $Nombre_Cliente.focus();
         });
     }
 
 
+
+
+    $Buscar_clientes.click(function(event){
+        event.preventDefault();
+        busca_clientes($Nombre_Cliente);
+
+    });
+
+
+    $Buscar_productos.click(function(event){
+        event.preventDefault();
+        busca_productos($Nombre_Producto);
+    });
+    
 
 
     obtiene_total_venta = function( tipo_reporte,arraysumatorias,cliente_producto){
@@ -1624,6 +1638,24 @@ $(function() {
         }//FIN DE LA VISTA DE  SUMARIZADO POR CLIENTE
 
     });
+    
+    
+    
+    $aplicar_evento_keypress($select_tipo_reporte, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($select_tipo_costo, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($fecha_inicial, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($fecha_final, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($Nombre_Cliente, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($Nombre_Producto, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($select_linea, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($select_marca, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($select_familia, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($select_subfamilia, $Buscar_ventas_netasproductofactura);
+    $aplicar_evento_keypress($select_agente, $Buscar_ventas_netasproductofactura);
+    
+    var agent = '<option value= "0" >[--Todos--]</option>';
+    $select_agente.append(agent);
+    
 });
 
 

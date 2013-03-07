@@ -1,6 +1,6 @@
 (function($){
 	$.fn.extend({
-		modalPanel_Buscaproducto: function() {
+		modalPanel_Buscaproducto: function($nombre_producto) {
 		    
 		    //Our function for hiding the modalbox
 			function modalHide() {
@@ -16,6 +16,7 @@
 			function handleEscape(e) {
 				if (e.keyCode == 27) {
 					modalHide();
+					$nombre_producto.focus();
 				}
 			}
 			

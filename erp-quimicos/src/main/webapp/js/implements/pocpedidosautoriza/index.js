@@ -936,7 +936,7 @@ $(function() {
 						var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 						var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_pdf_pedido/'+id_pedido+'/'+iu+'/out.json';
 						window.location.href=input_json;
-
+						
 					}else{
 						jAlert("Nose esta enviandoel identificador  del pedido","Atencion!!!")
 					}

@@ -4,7 +4,7 @@ $(function() {
 	String.prototype.toCharCode = function(){
 	    var str = this.split(''), len = str.length, work = new Array(len);
 	    for (var i = 0; i < len; ++i){
-		work[i] = this.charCodeAt(i);
+			work[i] = this.charCodeAt(i);
 	    }
 	    return work.join(',');
 	};
@@ -20,17 +20,32 @@ $(function() {
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
     $('#barra_acciones').find('.table_acciones').css({'display':'block'});
-	var $new_cotizacion = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
+    var $new_cotizacion = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
+	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
+		$(this).removeClass("onmouseOutNewItem").addClass("onmouseOverNewItem");
+	});
+	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseout(function(){
+		$(this).removeClass("onmouseOverNewItem").addClass("onmouseOutNewItem");
+	});
+	
+	
+	$('#barra_acciones').find('.table_acciones').find('#vbuscador').mouseover(function(){
+		$(this).removeClass("onmouseOutVisualizaBuscador").addClass("onmouseOverVisualizaBuscador");
+	});
+	$('#barra_acciones').find('.table_acciones').find('#vbuscador').mouseout(function(){
+		$(this).removeClass("onmouseOverVisualizaBuscador").addClass("onmouseOutVisualizaBuscador");
+	});
+		
 	//aqui va el titulo del catalogo
 	$('#barra_titulo').find('#td_titulo').append('Cotizaciones');
 	
 	//barra para el buscador 
-	$('#barra_buscador').css({'height':'80px'});
-	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
-	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-	$('#barra_buscador').hide();
+	//$('#barra_buscador').css({'height':'0px'});
+	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));	
+	//$('#barra_buscador').find('.tabla_buscador').css({'display':'none'});
+	//$('#barra_buscador').hide();
 	
 	var $cadena_busqueda = "";
 	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
@@ -38,6 +53,8 @@ $(function() {
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
 	var $busqueda_select_tipo = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_tipo]');
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
+	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');	
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
@@ -46,14 +63,26 @@ $(function() {
 	//con esta variable se verifica si el erp incluye modulo de CRM
 	if($('#lienzo_recalculable').find('input[name=crm]').val()=='false'){
 		$('#barra_buscador').find('.tabla_buscador').find('#td_tipo').hide();
+		$busqueda_select_tipo.children().remove();
+			var html='<option value="1" selected="yes">Cliente</option>';
+		$busqueda_select_tipo.append(html);
+		$('#barra_buscador').find('.tabla_buscador').find('#etiqueta_tipo').text("Cliente");
+	}else{
+		$('#barra_buscador').find('.tabla_buscador').find('#etiqueta_tipo').text("Cliente/Prospecto");	
 	}
 	
 	
 	//cambiar el tipo
 	$busqueda_select_tipo.change(function(){
+		if(parseInt($(this).val())==0){
+			$('#barra_buscador').find('.tabla_buscador').find('#etiqueta_tipo').text("Cliente/Prospecto");
+		}
+		
 		if(parseInt($(this).val())==1){
 			$('#barra_buscador').find('.tabla_buscador').find('#etiqueta_tipo').text("Cliente");
-		}else{
+		}
+		
+		if(parseInt($(this).val())==2){
 			$('#barra_buscador').find('.tabla_buscador').find('#etiqueta_tipo').text("Prospecto");
 		}
 	});
@@ -66,7 +95,9 @@ $(function() {
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val()+ "|";
 		valor_retorno += "tipo" + signo_separador + $busqueda_select_tipo.val()+ "|";
-		valor_retorno += "incluye_crm" + signo_separador + $('#lienzo_recalculable').find('input[name=crm]').val();
+		valor_retorno += "incluye_crm" + signo_separador + $('#lienzo_recalculable').find('input[name=crm]').val() + "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
+		valor_retorno += "producto" + signo_separador + $busqueda_producto.val();
 		return valor_retorno;
 	};
         
@@ -85,18 +116,77 @@ $(function() {
 		$busqueda_cliente.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
+		$busqueda_codigo.val('');
+		$busqueda_producto.val('');
 		$busqueda_select_tipo.children().remove();
-			var html='<option value="1" selected="yes">Cliente</option>';
-			html +='<option value="2">Prospecto</option>';
-		$busqueda_select_tipo.append(html);
+		var html2="";
+		//con esta variable se verifica si el erp incluye modulo de CRM
+		if($('#lienzo_recalculable').find('input[name=crm]').val()=='false'){
+			html2='<option value="1" selected="yes">Cliente</option>';
+		}else{
+			html2 ='<option value="0" selected="yes">[-Tipo-]</option>';
+			html2+='<option value="1">Cliente</option>';
+			html2 +='<option value="2">Prospecto</option>';
+		}
+		$busqueda_select_tipo.append(html2);
+		
+		$busqueda_folio.focus();
 	});
 	
+	
+	TriggerClickVisializaBuscador = 0;
 	//visualizar  la barra del buscador
 	$visualiza_buscador.click(function(event){
 		event.preventDefault();
-         $('#barra_buscador').toggle( 'blind');
-	});	
-        
+		var alto=0;
+		if(TriggerClickVisializaBuscador==0){
+			 TriggerClickVisializaBuscador=1;
+			 var height2 = $('#cuerpo').css('height');
+			 //alert('height2: '+height2);
+			 
+			 alto = parseInt(height2)-220;
+			 var pix_alto=alto+'px';
+			 //alert('pix_alto: '+pix_alto);
+			 
+			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
+			 $('#barra_buscador').animate({height: '80px'}, 500);
+			 $('#cuerpo').css({'height': pix_alto});
+			 
+			 //alert($('#cuerpo').css('height'));
+		}else{
+			 TriggerClickVisializaBuscador=0;
+			 var height2 = $('#cuerpo').css('height');
+			 alto = parseInt(height2)+220;
+			 var pix_alto=alto+'px';
+			 
+			 $('#barra_buscador').animate({height:'0px'}, 500);
+			 $('#cuerpo').css({'height': pix_alto});
+		};
+		$busqueda_folio.focus();
+	});
+	
+	
+	
+	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
+	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
+		$campo.keypress(function(e){
+			if(e.which == 13){
+				$campo_ejecutar.trigger('click');
+				return false;
+			}
+		});
+	}
+	
+	$aplicar_evento_keypress($busqueda_folio, $buscar);
+	$aplicar_evento_keypress($busqueda_cliente, $buscar);
+	$aplicar_evento_keypress($busqueda_codigo, $buscar);
+	$aplicar_evento_keypress($busqueda_producto, $buscar);
+	$aplicar_evento_keypress($busqueda_fecha_inicial, $buscar);
+	$aplicar_evento_keypress($busqueda_fecha_final, $buscar);
+	$aplicar_evento_keypress($busqueda_select_tipo, $buscar);
+	
+	
+	
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada
 	function mayor(fecha, fecha2){
@@ -115,7 +205,7 @@ $(function() {
 					return(true);
 				}
 				if (xMes == yMes){
-					if (xDia > yDia){
+					if (xDia >= yDia){
 						return(true);
 					}else{
 						return(false);
@@ -182,7 +272,7 @@ $(function() {
 		var a=$('div.datepicker');
 		a.css({'z-index':100});
 	});
-        
+	
 	$busqueda_fecha_final.DatePicker({
 		format:'Y-m-d',
 		date: $(this).val(),
@@ -212,239 +302,237 @@ $(function() {
 			}
 		}
 	});
-        
-    
-            
-        
-        
-        
+	
+	
+	
+	
     //datos para el buscador
     //$arreglo = {}
     //var json_string = document.location.protocol + '//' + document.location.host + '/' + controller + '/data_buscador/out.json';
     //alimenta campos buscador
     
-
+	
 	
 	$tabs_li_funxionalidad = function(){
-            var $select_prod_tipo = $('#forma-cotizacions-window').find('select[name=prodtipo]');
-            $('#forma-cotizacions-window').find('#submit').mouseover(function(){
-                $('#forma-cotizacions-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
-            });
-            $('#forma-cotizacions-window').find('#submit').mouseout(function(){
-                $('#forma-cotizacions-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
-            });
-            
-            $('#forma-cotizacions-window').find('#boton_cancelar').mouseover(function(){
-                $('#forma-cotizacions-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
-            });
-            $('#forma-cotizacions-window').find('#boton_cancelar').mouseout(function(){
-                $('#forma-cotizacions-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
-            });
-            
-            $('#forma-cotizacions-window').find('#close').mouseover(function(){
-                $('#forma-cotizacions-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
-            });
-            $('#forma-cotizacions-window').find('#close').mouseout(function(){
-                $('#forma-cotizacions-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
-            });
+		var $select_prod_tipo = $('#forma-cotizacions-window').find('select[name=prodtipo]');
+		$('#forma-cotizacions-window').find('#submit').mouseover(function(){
+			$('#forma-cotizacions-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+		});
+		$('#forma-cotizacions-window').find('#submit').mouseout(function(){
+			$('#forma-cotizacions-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+		});
+		
+		$('#forma-cotizacions-window').find('#boton_cancelar').mouseover(function(){
+			$('#forma-cotizacions-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+		});
+		$('#forma-cotizacions-window').find('#boton_cancelar').mouseout(function(){
+			$('#forma-cotizacions-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
+		});
+		
+		$('#forma-cotizacions-window').find('#close').mouseover(function(){
+			$('#forma-cotizacions-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		});
+		$('#forma-cotizacions-window').find('#close').mouseout(function(){
+			$('#forma-cotizacions-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		});
 
-            $('#forma-cotizacions-window').find(".contenidoPes").hide(); //Hide all content
-            $('#forma-cotizacions-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-            $('#forma-cotizacions-window').find(".contenidoPes:first").show(); //Show first tab content
+		$('#forma-cotizacions-window').find(".contenidoPes").hide(); //Hide all content
+		$('#forma-cotizacions-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+		$('#forma-cotizacions-window').find(".contenidoPes:first").show(); //Show first tab content
 
-            //On Click Event
-            $('#forma-cotizacions-window').find("ul.pestanas li").click(function() {
-                $('#forma-cotizacions-window').find(".contenidoPes").hide();
-                $('#forma-cotizacions-window').find("ul.pestanas li").removeClass("active");
-                var activeTab = $(this).find("a").attr("href");
-                $('#forma-cotizacions-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
-                $(this).addClass("active");
-                return false;
-            });
+		//On Click Event
+		$('#forma-cotizacions-window').find("ul.pestanas li").click(function() {
+			$('#forma-cotizacions-window').find(".contenidoPes").hide();
+			$('#forma-cotizacions-window').find("ul.pestanas li").removeClass("active");
+			var activeTab = $(this).find("a").attr("href");
+			$('#forma-cotizacions-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$(this).addClass("active");
+			return false;
+		});
 	}
 	
 	
 	//buscador de clientes
 	$busca_clientes = function(tipo, no_control, cliente, array_monedas){
-            //limpiar_campos_grids();
-            $(this).modalPanel_Buscacliente();
-            var $dialogoc =  $('#forma-buscacliente-window');
-            //var $dialogoc.prependTo('#forma-buscaproduct-window');
-            $dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
-            $('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -200});
-
-            var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
-
-            //var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('a[href*=busca_cliente_modalbox]');
-            //var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('a[href*=cencela]');
-			var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
-			var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('#cencela');
-
-            var $cadena_buscar = $('#forma-buscacliente-window').find('input[name=cadena_buscar]');
-            var $select_filtro_por = $('#forma-buscacliente-window').find('select[name=filtropor]');
-            
-            //funcionalidad botones
-			$busca_cliente_modalbox.mouseover(function(){
-				$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
-			});
-			$busca_cliente_modalbox.mouseout(function(){
-				$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
-			});
-			   
-			$cancelar_plugin_busca_cliente.mouseover(function(){
-				$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
-			});
-			$cancelar_plugin_busca_cliente.mouseout(function(){
-				$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
-			});
-
-            if(parseInt(tipo)==1){
-				$('#forma-buscacliente-window').find('div.titulo_clientes').find('strong').text("Buscador de Clientes");
-			}else{
-				$('#forma-buscacliente-window').find('div.titulo_clientes').find('strong').text("Buscador de Prospectos");
-			}
-            
-            var html = '';
-            $select_filtro_por.children().remove();
-            html='<option value="0">[-- Opcion busqueda --]</option>';
-            
-            if(no_control!=''){
-				html+='<option value="1" selected="yes">No. de control</option>';
-				$cadena_buscar.val(no_control);
-			}else{
-				html+='<option value="1">No. de control</option>';
-			}
-            html+='<option value="2">RFC</option>';
-            if(cliente!=''){
+		//limpiar_campos_grids();
+		$(this).modalPanel_Buscacliente();
+		var $dialogoc =  $('#forma-buscacliente-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
+		$('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -200});
+		
+		var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
+		
+		//var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('a[href*=busca_cliente_modalbox]');
+		//var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('a[href*=cencela]');
+		var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
+		var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('#cencela');
+		
+		var $cadena_buscar = $('#forma-buscacliente-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscacliente-window').find('select[name=filtropor]');
+		
+		//funcionalidad botones
+		$busca_cliente_modalbox.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$busca_cliente_modalbox.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$cancelar_plugin_busca_cliente.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		$cancelar_plugin_busca_cliente.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		if(parseInt(tipo)==1){
+			$('#forma-buscacliente-window').find('div.titulo_clientes').find('strong').text("Buscador de Clientes");
+		}else{
+			$('#forma-buscacliente-window').find('div.titulo_clientes').find('strong').text("Buscador de Prospectos");
+		}
+		
+		var html = '';
+		$select_filtro_por.children().remove();
+		html='<option value="0">[-- Opcion busqueda --]</option>';
+		
+		if(no_control!=''){
+			html+='<option value="1" selected="yes">No. de control</option>';
+			$cadena_buscar.val(no_control);
+		}else{
+			html+='<option value="1">No. de control</option>';
+		}
+		html+='<option value="2">RFC</option>';
+		if(cliente!=''){
+			html+='<option value="3" selected="yes">Razon social</option>';
+			$cadena_buscar.val(cliente);
+		}else{
+			if(no_control=='' && cliente==''){
 				html+='<option value="3" selected="yes">Razon social</option>';
-				$cadena_buscar.val(cliente);
 			}else{
-				if(no_control=='' && cliente==''){
-					html+='<option value="3" selected="yes">Razon social</option>';
-				}else{
-					html+='<option value="3">Razon social</option>';
-				}
+				html+='<option value="3">Razon social</option>';
 			}
-			
-			if(parseInt(tipo)==1){
-				//estos dos filtros solo son para clientes, no para prospectos
-				html+='<option value="4">CURP</option>';
-				html+='<option value="5">Alias</option>';
-			}
-            $select_filtro_por.append(html);
-			
-			
-			$cadena_buscar.focus();
-			
-            //click buscar clientes
-            $busca_cliente_modalbox.click(function(event){
-                //event.preventDefault();
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorClienteProspecto.json';
-                $arreglo = {
-							'tipo':tipo,
-							'cadena':$cadena_buscar.val(),
-                            'filtro':$select_filtro_por.val(),
-                            'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                            }
-                var trr = '';
-                $tabla_resultados.children().remove();
-                $.post(input_json,$arreglo,function(entry){
-                    $.each(entry['Resultado'],function(entryIndex,cliente){
-						
-                        trr = '<tr>';
-                            trr += '<td width="80">';
-                                trr += '<input type="hidden" id="idclient" value="'+cliente['id']+'">';
-                                trr += '<input type="hidden" id="direccion" value="'+cliente['direccion']+'">';
-                                trr += '<input type="hidden" id="id_moneda" value="'+cliente['moneda_id']+'">';
-                                trr += '<input type="hidden" id="moneda" value="'+cliente['moneda']+'">';
-                                trr += '<input type="hidden" id="contacto" value="'+cliente['contacto']+'">';
-                                trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
-                                trr += '<input type="hidden" id="lista_precio" value="'+cliente['lista_precio']+'">';
-                            trr += '</td>';
-                            trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
-                            trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
-                        trr += '</tr>';
-						
-                        $tabla_resultados.append(trr);
-                    });
-					
-                    $tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
-                    $tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
-					
-                    $('tr:odd' , $tabla_resultados).hover(function () {
-                        $(this).find('td').css({background : '#FBD850'});
-                    }, function() {
-                            //$(this).find('td').css({'background-color':'#DDECFF'});
-                        $(this).find('td').css({'background-color':'#e7e8ea'});
-                    });
-                    $('tr:even' , $tabla_resultados).hover(function () {
-                        $(this).find('td').css({'background-color':'#FBD850'});
-                    }, function() {
-                        $(this).find('td').css({'background-color':'#FFFFFF'});
-                    });
-					
-                    //seleccionar un producto del grid de resultados
-                    $tabla_resultados.find('tr').click(function(){
-						var lista_precio=$(this).find('#lista_precio').val();
-						
-                        //asignar a los campos correspondientes el sku y y descripcion
-                        $('#forma-cotizacions-window').find('input[name=id_cliente]').val($(this).find('#idclient').val());
-                        $('#forma-cotizacions-window').find('input[name=nocontrolcliente]').val($(this).find('span.no_control').html());
-                        $('#forma-cotizacions-window').find('input[name=rfccliente]').val($(this).find('span.rfc').html());
-                        $('#forma-cotizacions-window').find('input[name=razoncliente]').val($(this).find('span.razon').html());
-                        $('#forma-cotizacions-window').find('input[name=dircliente]').val($(this).find('#direccion').val());
-						$('#forma-cotizacions-window').find('input[name=contactocliente]').val($(this).find('#contacto').val());
-						$('#forma-cotizacions-window').find('input[name=num_lista_precio]').val(lista_precio);
-						
-						var id_moneda = $(this).find('#id_moneda').val();
-						
-						if(parseInt(lista_precio)>0){
-							//aquí se arma la cadena json para traer la moneda de la lista de precio
-							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaLista.json';
-							$arreglo2 = { 'lista_precio':lista_precio }
-							$.post(input_json2,$arreglo2,function(moneda_lista){
-								$.each(moneda_lista['listaprecio'],function(entryIndex ,monedalista){
-									id_moneda = monedalista['moneda_id'];
-								});
-							});
+		}
+		
+		if(parseInt(tipo)==1){
+			//estos dos filtros solo son para clientes, no para prospectos
+			html+='<option value="4">CURP</option>';
+			html+='<option value="5">Alias</option>';
+		}
+		$select_filtro_por.append(html);
+		
+		
+		$cadena_buscar.focus();
+		
+		//click buscar clientes
+		$busca_cliente_modalbox.click(function(event){
+			//event.preventDefault();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorClienteProspecto.json';
+			$arreglo = {
+						'tipo':tipo,
+						'cadena':$cadena_buscar.val(),
+						'filtro':$select_filtro_por.val(),
+						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 						}
-						
-						
-						//carga el select de monedas  con la moneda del cliente seleccionada por default
-						$('#forma-cotizacions-window').find('select[name=moneda]').children().remove();
-						var moneda_hmtl = '';
-						$.each(array_monedas ,function(entryIndex,moneda){
-							if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-								moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-							}else{
-								if(parseInt(id_moneda)==0){
-									moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-								}
-							}
-						});
-						$('#forma-cotizacions-window').find('select[name=moneda]').append(moneda_hmtl);
-						
-                        //elimina la ventana de busqueda
-                        var remove = function() {$(this).remove();};
-                        $('#forma-buscacliente-overlay').fadeOut(remove);
-                        //asignar el enfoque al campo sku del producto
-                        $('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
-                    });
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Resultado'],function(entryIndex,cliente){
 					
-                });
-            });//termina llamada json
-			
-			//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
-			if($cadena_buscar.val() != ''){
-				$busca_cliente_modalbox.trigger('click');
-			}
-			
-            $cancelar_plugin_busca_cliente.click(function(event){
-                //event.preventDefault();
-                var remove = function() {$(this).remove();};
-                $('#forma-buscacliente-overlay').fadeOut(remove);
-				$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').focus();
-            });
+					trr = '<tr>';
+						trr += '<td width="80">';
+							trr += '<input type="hidden" id="idclient" value="'+cliente['id']+'">';
+							trr += '<input type="hidden" id="direccion" value="'+cliente['direccion']+'">';
+							trr += '<input type="hidden" id="id_moneda" value="'+cliente['moneda_id']+'">';
+							trr += '<input type="hidden" id="moneda" value="'+cliente['moneda']+'">';
+							trr += '<input type="hidden" id="contacto" value="'+cliente['contacto']+'">';
+							trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
+							trr += '<input type="hidden" id="lista_precio" value="'+cliente['lista_precio']+'">';
+						trr += '</td>';
+						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
+						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+				
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+						//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//seleccionar un producto del grid de resultados
+				$tabla_resultados.find('tr').click(function(){
+					var lista_precio=$(this).find('#lista_precio').val();
+					
+					//asignar a los campos correspondientes el sku y y descripcion
+					$('#forma-cotizacions-window').find('input[name=id_cliente]').val($(this).find('#idclient').val());
+					$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').val($(this).find('span.no_control').html());
+					$('#forma-cotizacions-window').find('input[name=rfccliente]').val($(this).find('span.rfc').html());
+					$('#forma-cotizacions-window').find('input[name=razoncliente]').val($(this).find('span.razon').html());
+					$('#forma-cotizacions-window').find('input[name=dircliente]').val($(this).find('#direccion').val());
+					$('#forma-cotizacions-window').find('input[name=contactocliente]').val($(this).find('#contacto').val());
+					$('#forma-cotizacions-window').find('input[name=num_lista_precio]').val(lista_precio);
+					
+					var id_moneda = $(this).find('#id_moneda').val();
+					
+					if(parseInt(lista_precio)>0){
+						//aquí se arma la cadena json para traer la moneda de la lista de precio
+						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaLista.json';
+						$arreglo2 = { 'lista_precio':lista_precio }
+						$.post(input_json2,$arreglo2,function(moneda_lista){
+							$.each(moneda_lista['listaprecio'],function(entryIndex ,monedalista){
+								id_moneda = monedalista['moneda_id'];
+							});
+						});
+					}
+					
+					
+					//carga el select de monedas  con la moneda del cliente seleccionada por default
+					$('#forma-cotizacions-window').find('select[name=moneda]').children().remove();
+					var moneda_hmtl = '';
+					$.each(array_monedas ,function(entryIndex,moneda){
+						if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+						}else{
+							if(parseInt(id_moneda)==0){
+								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+							}
+						}
+					});
+					$('#forma-cotizacions-window').find('select[name=moneda]').append(moneda_hmtl);
+					
+					//elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscacliente-overlay').fadeOut(remove);
+					//asignar el enfoque al campo sku del producto
+					$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
+				});
+				
+			});
+		});//termina llamada json
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_buscar.val() != ''){
+			$busca_cliente_modalbox.trigger('click');
+		}
+		
+		$cancelar_plugin_busca_cliente.click(function(event){
+			//event.preventDefault();
+			var remove = function() {$(this).remove();};
+			$('#forma-buscacliente-overlay').fadeOut(remove);
+			$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').focus();
+		});
 	}//termina buscador de clientes
 	
 	
@@ -676,7 +764,7 @@ $(function() {
 								var importe = 0;
 								var mon_id = $('#forma-cotizacions-window').find('select[name=moneda]').val();
 								
-								$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
+								//$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
 								
 								//aqui se pasan datos a la funcion que agrega el tr en el grid
 								$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas);
@@ -685,7 +773,7 @@ $(function() {
 								var remove = function() {$(this).remove();};
 								$('#forma-buscapresentacion-overlay').fadeOut(remove);
 							});
-
+							
 							$cancelar_plugin_busca_lotes_producto.click(function(event){
 								event.preventDefault();
 								var remove = function() {$(this).remove();};
@@ -696,21 +784,28 @@ $(function() {
 							});
 							
 						}else{
-							jAlert(entry['Presentaciones'][0]['exis_prod_lp'],'! Atencion');
+							jAlert(entry['Presentaciones'][0]['exis_prod_lp'], 'Atencion!', function(r) { 
+								$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
+							});
 						}
 						
-
 					}else{
-						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
-						$('#forma-cotizacions-window').find('input[name=titulo_producto]').val('');
+						jAlert('El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) { 
+							$('#forma-cotizacions-window').find('input[name=titulo_producto]').val('');
+							$('#forma-cotizacions-window').find('input[name=titulo_producto]').focus();
+						});
 					}
 				},"json");
-		
+				
 			}else{
-					jAlert("Es necesario ingresar un Sku de producto valido", 'Atencion!');
+				jAlert('Es necesario ingresar un Sku de producto valido.', 'Atencion!', function(r) { 
+					$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
+				});
 			}
 		}else{
-			jAlert("Es necesario seleccionar un Cliente", 'Atencion!');
+			jAlert('Es necesario seleccionar un Cliente.', 'Atencion!', function(r) { 
+				$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').focus();
+			});
 		}
 		
 	}//termina buscador dpresentaciones disponibles de un producto
@@ -770,10 +865,9 @@ $(function() {
 		
 	}//termina calcular totales
     */
-        
-        
-        
-        
+	
+	
+	
 	
 	
 	//agregar producto al grid
@@ -894,14 +988,20 @@ $(function() {
 			$grid_productos.find('.cant'+ tr).focus(function(e){
 				if($(this).val() == ' '){
 					$(this).val('');
+				}else{
+					if(parseInt($(this).val()) <=0 ){
+						$(this).val('');
+					}
 				}
 			});
 			
 			//recalcula importe al perder enfoque el campo cantidad
 			$grid_productos.find('.cant'+ tr).blur(function(){
 				if ($(this).val() == ''){
-					$(this).val(' ');
+					$(this).val(0);
 				}
+				$(this).val(parseFloat($(this).val()).toFixed(2));
+				
 				if( ($(this).val() != ' ') && ($(this).parent().parent().find('.precio'+ tr).val() != ' ') )
 				{   //calcula el importe
 					$(this).parent().parent().find('.import'+ tr).val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('.precio'+ tr).val()));
@@ -916,16 +1016,23 @@ $(function() {
 			$grid_productos.find('.precio'+ tr).focus(function(e){
 				if($(this).val() == ' '){
 					$(this).val('');
+				}else{
+					if(parseInt($(this).val()) <= 0 ){
+						$(this).val('');
+					}
 				}
 			});
             
 			//recalcula importe al perder enfoque el campo costo
 			$grid_productos.find('.precio'+ tr).blur(function(){
 				if ($(this).val() == ''){
-					$(this).val(' ');
+					$(this).val(0);
 				}
-				if( ($(this).val() != ' ') && ($(this).parent().parent().find('.cant'+ tr).val() != ' ') )
-				{   //calcula el importe
+				
+				$(this).val(parseFloat($(this).val()).toFixed(2));
+				
+				if( ($(this).val() != ' ') && ($(this).parent().parent().find('.cant'+ tr).val() != ' ') ){
+					//calcula el importe
 					$(this).parent().parent().find('.import'+ tr).val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('.cant'+ tr).val()));
 					//redondea el importe en dos decimales
 					$(this).parent().parent().find('.import'+ tr).val(Math.round(parseFloat($(this).parent().parent().find('.import'+ tr).val())*100)/100);
@@ -977,13 +1084,17 @@ $(function() {
 				}
 			});
 			
+			$('#forma-cotizacions-window').find('input[name=sku_producto]').val('');
+			$('#forma-cotizacions-window').find('input[name=nombre_producto]').val('');
+			
 			//asignar enfoque al campo cantidad que se acaba de agregar
 			$grid_productos.find('.cant'+ tr).focus();
 			
 		}else{
-			jAlert("El producto: "+sku+" con presentacion: "+pres+" ya se encuentra en el listado, seleccione otro diferente.", 'Atencion!');
-			//regresa el enfoque al campo sku para permitir agregar otro diferente
-			$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
+			jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+				$('#forma-cotizacions-window').find('input[name=nombre_producto]').val('');
+				$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
+			});
 		}
 		
 	}//termina agregar producto al grid
@@ -1083,6 +1194,7 @@ $(function() {
 		var $select_moneda2 = $('#forma-cotizacions-window').find('select[name=moneda2]');
 		var $tc = $('#forma-cotizacions-window').find('input[name=tc]');
 		var $fecha = $('#forma-cotizacions-window').find('input[name=fecha]');
+		var $select_agente = $('#forma-cotizacions-window').find('select[name=select_agente]');
 		
 		//var $campo_tc = $('#forma-cotizacions-window').find('input[name=tc]');
 		var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
@@ -1136,8 +1248,43 @@ $(function() {
 		$folio.css({'background' : '#F0F0F0'});
 		$dir_cliente.css({'background' : '#F0F0F0'});
 		$contactocliente.css({'background' : '#F0F0F0'});
-		$fecha.css({'background' : '#F0F0F0'});
+		//$fecha.css({'background' : '#F0F0F0'});
+		
 		$fecha.val(mostrarFecha());//mostrar la fecha actual
+		$fecha.click(function (s){
+			var a=$('div.datepicker');
+			a.css({'z-index':100});
+		});
+		
+		$fecha.DatePicker({
+			format:'Y-m-d',
+			date: $fecha.val(),
+			current: $fecha.val(),
+			starts: 1,
+			position: 'bottom',
+			locale: {
+				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+				weekMin: 'se'
+			},
+			onChange: function(formated, dates){
+				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+				$fecha.val(formated);
+				if (formated.match(patron) ){
+					var valida_fecha=mayor($fecha.val(),mostrarFecha());
+					
+					if (valida_fecha==true){
+						$fecha.DatePickerHide();
+					}else{
+						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+						$fecha.val(mostrarFecha());
+					}
+				}
+			}
+		});
 		
 		
 		$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'430px'});
@@ -1243,6 +1390,15 @@ $(function() {
 			$select_moneda2.append(moneda_hmtl);//este  esta oculto
 			
 			
+			//carga select de agentes
+			$select_agente.children().remove();
+			var agen_hmtl = '';
+			$.each(entry['Agentes'],function(entryIndex,agen){
+				agen_hmtl += '<option value="' + agen['id'] + '"  >' + agen['nombre_agente'] + '</option>';
+			});
+			$select_agente.append(agen_hmtl);
+			
+			
 			//buscador de clientes
 			$busca_cliente.click(function(event){
 				event.preventDefault();
@@ -1254,9 +1410,6 @@ $(function() {
 				event.preventDefault();
 				$buscador_presentaciones_producto($rfc_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos, entry['Monedas']);
 			});
-			
-
-			
 		},"json");//termina llamada json
 		
 		
@@ -1334,10 +1487,10 @@ $(function() {
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
 			$total_tr.val(trCount);
-			if(parseInt(trCount) > 0){                        
+			if(parseInt(trCount) > 0){
 				return true;
 			}else{
-				jAlert("No hay datos para actualizar", 'Atencion!');
+				jAlert('No hay datos para actualizar', 'Atencion!', function(r) { $sku_producto.focus(); });
 				return false;
 			}
 		});
@@ -1353,7 +1506,6 @@ $(function() {
 			var remove = function() {$(this).remove();};
 			$('#forma-cotizacions-overlay').fadeOut(remove);
 		});
-		
 	});
 	
 	
@@ -1435,7 +1587,7 @@ $(function() {
 				var $select_moneda2 = $('#forma-cotizacions-window').find('select[name=moneda2]');
 				var $tc = $('#forma-cotizacions-window').find('input[name=tc]');
 				var $fecha = $('#forma-cotizacions-window').find('input[name=fecha]');
-				
+				var $select_agente = $('#forma-cotizacions-window').find('select[name=select_agente]');
 				
 				var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
 				var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
@@ -1480,7 +1632,7 @@ $(function() {
 				$folio.css({'background' : '#F0F0F0'});
 				$dir_cliente.css({'background' : '#F0F0F0'});
 				$contactocliente.css({'background' : '#F0F0F0'});
-				$fecha.css({'background' : '#F0F0F0'});
+				//$fecha.css({'background' : '#F0F0F0'});
 				
 				$no_control_cliente.focus();
 				
@@ -1643,6 +1795,25 @@ $(function() {
 					
 					$busca_cliente.hide();
 					
+					
+					//carga select de agentes
+					$select_agente.children().remove();
+					var agen_hmtl = '';
+					$.each(entry['Agentes'],function(entryIndex,agen){
+						if(agen['id'] == entry['datosCotizacion']['0']['agente_id']){
+							agen_hmtl += '<option value="' + agen['id'] + '" selected="yes">' + agen['nombre_agente'] + '</option>';
+						}else{
+							agen_hmtl += '<option value="' + agen['id'] + '"  >' + agen['nombre_agente'] + '</option>';
+						}
+					});
+					/*
+					if (parseInt(entry['datosCotizacion']['0']['agente_id'])== 0){
+						agen_hmtl += '<option value="0">[--  --]</option>';
+					}
+					*/
+					$select_agente.append(agen_hmtl);
+					
+					
 					if(entry['datosGrid'] != null){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
 							var id_detalle=prod['id_detalle'];
@@ -1665,17 +1836,56 @@ $(function() {
 						});
 					}
 					
-					
-					
 					//agregar producto al grid
 					$agregar_producto.click(function(event){
 						event.preventDefault();
 						$buscador_presentaciones_producto($rfc_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos, entry['Monedas']);
 					});
 					
+					//$fecha.val(mostrarFecha());
+					$fecha.click(function (s){
+						var a=$('div.datepicker');
+						a.css({'z-index':100});
+					});
+					
+					$fecha.DatePicker({
+						format:'Y-m-d',
+						date: $fecha.val(),
+						current: $fecha.val(),
+						starts: 1,
+						position: 'bottom',
+						locale: {
+							days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+							daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+							daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+							months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+							weekMin: 'se'
+						},
+						onChange: function(formated, dates){
+							var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+							$fecha.val(formated);
+							if (formated.match(patron) ){
+								var valida_fecha=mayor($fecha.val(),mostrarFecha());
+								
+								if (valida_fecha==true){
+									$fecha.DatePickerHide();
+								}else{
+									jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+									$fecha.val(mostrarFecha());
+								}
+							}
+						}
+					});
+			
+					
+					
+					
 				});//termina llamada json
 				
 				
+				
+
 				/*
 				//seleccionar tipo de moneda
 				$select_moneda.change(function(){

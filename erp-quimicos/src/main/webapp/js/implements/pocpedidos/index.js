@@ -49,6 +49,8 @@ $(function() {
 	var $cadena_busqueda = "";
 	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
 	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
+	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');	
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
@@ -76,7 +78,9 @@ $(function() {
 		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
-		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val();
+		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val()+ "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
+		valor_retorno += "producto" + signo_separador + $busqueda_producto.val();
 		return valor_retorno;
 	};
     
@@ -93,6 +97,8 @@ $(function() {
 	$limpiar.click(function(event){
 		$busqueda_folio.val('');
 		$busqueda_cliente.val('');
+		$busqueda_codigo.val('');
+		$busqueda_producto.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
 		
@@ -143,6 +149,8 @@ $(function() {
 	
 	$aplicar_evento_keypress($busqueda_folio, $buscar);
 	$aplicar_evento_keypress($busqueda_cliente, $buscar);
+	$aplicar_evento_keypress($busqueda_codigo, $buscar);
+	$aplicar_evento_keypress($busqueda_producto, $buscar);
 	$aplicar_evento_keypress($busqueda_fecha_inicial, $buscar);
 	$aplicar_evento_keypress($busqueda_fecha_final, $buscar);
 	
@@ -983,7 +991,7 @@ $(function() {
 	//buscador de productos
 	$busca_productos = function(sku_buscar, descripcion){
 		//limpiar_campos_grids();
-		$(this).modalPanel_Buscaproducto();
+		$(this).modalPanel_Buscaproducto($('#forma-pocpedidos-window').find('input[name=nombre_producto]'));
 		var $dialogoc =  $('#forma-buscaproducto-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
 		$dialogoc.append($('div.buscador_productos').find('table.formaBusqueda_productos').clone());
@@ -1117,6 +1125,8 @@ $(function() {
 			$('#forma-buscaproducto-overlay').fadeOut(remove);
 			$('#forma-pocpedidos-window').find('input[name=nombre_producto]').focus();
 		});
+		
+		
 	}//termina buscador de productos
 	
 	
@@ -1212,7 +1222,7 @@ $(function() {
 								//llamada a la funcion que agrega el producto al grid
 								$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec);
 								
-								$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
+								//$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
 								
 								//elimina la ventana de busqueda
 								var remove = function() {$(this).remove();};
@@ -1224,22 +1234,29 @@ $(function() {
 								//event.preventDefault();
 								var remove = function() {$(this).remove();};
 								$('#forma-buscapresentacion-overlay').fadeOut(remove);
+								$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
 							});
 						}else{
-							jAlert(entry['Presentaciones'][0]['exis_prod_lp'],'! Atencion');
+							jAlert(entry['Presentaciones'][0]['exis_prod_lp'], 'Atencion!', function(r) { 
+								$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+							});
 						}
 					}else{
-						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
-						$('#forma-pocpedidos-window').find('input[name=titulo_producto]').val('');
+						jAlert('El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) { 
+							$('#forma-pocpedidos-window').find('input[name=titulo_producto]').val('');
+						});
 					}
 				});
 				
 			}else{
-					jAlert("Es necesario ingresar un Sku de producto valido", 'Atencion!');
+				jAlert('Es necesario ingresar un Sku de producto valido.', 'Atencion!', function(r) { 
+					$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+				});
 			}
 		}else{
-			jAlert("Es necesario seleccionar un Cliente", 'Atencion!');
-			//$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+			jAlert('Es necesario seleccionar un Cliente.', 'Atencion!', function(r) { 
+				$('#forma-pocpedidos-window').find('input[name=nocliente]').focus();
+			});
 		}
 		
 	}//termina buscador dpresentaciones disponibles de un producto
@@ -1545,12 +1562,18 @@ $(function() {
 				}
 			});
 			
+			//limpiar campos
+			$('#forma-pocpedidos-window').find('input[name=sku_producto]').val('');
+			$('#forma-pocpedidos-window').find('input[name=nombre_producto]').val('');
+			
 			//asignar el enfoque al campo catidad
 			$grid_productos.find('.cantidad'+ tr).focus();
 			
 		}else{
-			jAlert("El producto: "+sku+" con presentacion: "+pres+" ya se encuentra en el listado, seleccione otro diferente.", 'Atencion!');
-			$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+			jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+				$('#forma-pocpedidos-window').find('input[name=nombre_producto]').val('');
+				$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+			});
 		}
 		
 	}//termina agregar producto al grid
@@ -1873,7 +1896,9 @@ $(function() {
 							//por default asignamos cero para el campo id de Direccion Fiscal, esto significa que la direccion se tomara de la tabla de clientes
 							$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
 							
-							jAlert("Numero de cliente desconocido.", 'Atencion!');
+							jAlert('Numero de cliente desconocido.', 'Atencion!', function(r) { 
+								$('#forma-pocpedidos-window').find('input[name=nocliente]').focus(); 
+							});
 						}
 					},"json");//termina llamada json
 					
@@ -2053,7 +2078,8 @@ $(function() {
 				$total.val(quitar_comas($total.val()));
 				return true;
 			}else{
-				jAlert("No hay datos para actualizar", 'Atencion!');
+				//jAlert("No hay datos para actualizar", 'Atencion!');
+				jAlert('No hay datos para actualizar', 'Atencion!', function(r) { $sku_producto.focus(); });
 				return false;
 			}
 		});
@@ -2962,7 +2988,7 @@ $(function() {
 						window.location.href=input_json;
 
 					}else{
-						jAlert("Nose esta enviandoel identificador  del pedido","Atencion!!!")
+						jAlert("No se esta enviando el identificador  del pedido","Atencion!!!")
 					}
 				 });
                 
@@ -2976,7 +3002,9 @@ $(function() {
 						});
 						return true;
 					}else{
-						jAlert("No hay datos para actualizar", 'Atencion!');
+						jAlert('No hay datos para actualizar', 'Atencion!', function(r) { 
+							$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+						});
 						return false;
 					}
 				});
