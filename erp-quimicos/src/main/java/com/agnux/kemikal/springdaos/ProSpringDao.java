@@ -3966,10 +3966,10 @@ public class ProSpringDao implements ProInterfaceDao{
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccionv2("+id_producto+","+id_orden+","+id_subproceso+", 0)  as "
                 + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
                 + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
-                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer) order by elemento;";
+                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer, agregado boolean) order by elemento;";
         
         //and tmp_salida.cantidad_tmp=tmp_det.cantidad // se quito, por que no mostraba los lotes
-        //System.out.println("Ejecutando query de: "+ sql_to_query);
+        System.out.println("Ejecutando query de: "+ sql_to_query);
         
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -3993,6 +3993,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("inv_osal_id",String.valueOf(rs.getInt("inv_osal_id")));
                     row.put("inv_alm_id",String.valueOf(rs.getInt("inv_alm_id")));
                     row.put("gral_suc_id",String.valueOf(rs.getInt("gral_suc_id")));
+                    row.put("agregado",String.valueOf(rs.getBoolean("agregado")));
                     return row;
                 }
             }
@@ -4115,7 +4116,7 @@ public class ProSpringDao implements ProInterfaceDao{
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccionv2("+id_producto+","+id_orden+",1, 0)  as "
                 + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
                 + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
-                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer) order by elemento";
+                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer, agregado boolean) order by elemento";
         
         //System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -4132,6 +4133,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("cantidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad")),4));
                     row.put("cantidad_adicional",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad_adicional")),4));
                     row.put("lote",rs.getString("lote"));
+                    row.put("agregado",String.valueOf(rs.getDouble("agregado")));
                     return row;
                 }
             }
