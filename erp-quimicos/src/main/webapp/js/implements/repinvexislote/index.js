@@ -38,6 +38,16 @@ $(function() {
 		}
 	};
 	
+	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
+	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
+		$campo.keypress(function(e){
+			if(e.which == 13){
+				$campo_ejecutar.trigger('click');
+				return false;
+			}
+		});
+	}
+	
 	$('#header').find('#header1').find('span.emp').text(config.getEmp());
 	$('#header').find('#header1').find('span.suc').text(config.getSuc());
     $('#header').find('#header1').find('span.username').text(config.getUserName());
@@ -263,10 +273,15 @@ $(function() {
 			return false;
 		}
 	});
-
 	
 	
 	
+	$aplicar_evento_keypress($select_opciones, $buscar);
+	$aplicar_evento_keypress($select_almacen, $buscar);
+	$aplicar_evento_keypress($codigo_producto, $buscar);
+	$aplicar_evento_keypress($descripcion, $buscar);
+	$aplicar_evento_keypress($lote_interno, $buscar);
+	$codigo_producto.focus();
     
 });
 

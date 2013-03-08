@@ -49,11 +49,13 @@
 				<td width="5">&nbsp;</td>
 				<td id="td_tipo">Tipo</td>
 				<td width="5">&nbsp;</td>
-				<td width="245"><span id="etiqueta_tipo">Cliente</span></td>
+				<td width="180"><span id="etiqueta_tipo">Cliente</span></td>
 				<td width="15"></td>
 				<td width="100">C&oacute;digo Producto</td>
 				<td width="15"></td>
-				<td width="180">Descripci&oacute;n Producto</td>
+				<td width="150">Descripci&oacute;n Producto</td>
+				<td width="15"></td>
+				<td width="150">Agente</td>
 				<td width="20">&nbsp;</td>
 				<td colspan="5">Fecha de cotizaci&oacute;n</td>
 				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -74,17 +76,23 @@
 					</select>
 				</td>
 				<td width="5">&nbsp;</td>
-				<td width="245"><INPUT TYPE="text" name="busqueda_cliente" style="width:245px;"></td>
+				<td width="180"><INPUT TYPE="text" name="busqueda_cliente" style="width:180px;"></td>
 				<td width="15"></td>
 				<td width="100"><input type="text" name="busqueda_codigo" style="width:100px;"></td>
 				<td width="15"></td>
-				<td width="180"><input type="text" name="busqueda_producto" style="width:180px;"></td>
+				<td width="150"><input type="text" name="busqueda_producto" style="width:150px;"></td>
+				<td width="15"></td>
+				<td id="td_agente">
+					<select name="busqueda_select_agente" style="width:150px;">
+						<option value="0" selected="yes">[-Seleccionar Agente-]</option>
+					</select>
+				</td>
 				<td width="20">&nbsp;</td>
 				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-				<td width="80"><INPUT TYPE="text" name="busqueda_fecha_inicial" style="width:80px;" readOnly="true"></td>
+				<td width="75"><INPUT TYPE="text" name="busqueda_fecha_inicial" style="width:75px;" readOnly="true"></td>
 				<td width="5">al</td>
 				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-				<td width="80"><INPUT TYPE="text" name="busqueda_fecha_final" style="width:80px;" readOnly="true"></td>
+				<td width="75"><INPUT TYPE="text" name="busqueda_fecha_final" style="width:75px;" readOnly="true"></td>
 				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>

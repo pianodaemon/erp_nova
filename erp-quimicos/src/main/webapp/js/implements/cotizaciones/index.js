@@ -55,6 +55,7 @@ $(function() {
 	var $busqueda_select_tipo = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_tipo]');
 	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
 	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');	
+	var $busqueda_select_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_agente]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
@@ -97,7 +98,9 @@ $(function() {
 		valor_retorno += "tipo" + signo_separador + $busqueda_select_tipo.val()+ "|";
 		valor_retorno += "incluye_crm" + signo_separador + $('#lienzo_recalculable').find('input[name=crm]').val() + "|";
 		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
-		valor_retorno += "producto" + signo_separador + $busqueda_producto.val();
+		valor_retorno += "producto" + signo_separador + $busqueda_producto.val() + "|";
+		valor_retorno += "agente" + signo_separador + $busqueda_select_agente.val();
+		
 		return valor_retorno;
 	};
         
@@ -110,8 +113,38 @@ $(function() {
 		$cadena_busqueda = cadena.toCharCode();
 		$get_datos_grid();
 	});
-        
+	
+	//esta funcion carga los datos para el buscador del paginado
+	$cargar_datos_buscador_principal= function(){
+		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_lineas,$arreglo,function(data){
+			//Alimentando los campos select_agente
+			$busqueda_select_agente.children().remove();
+			var agente_hmtl = '';
+			if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+				agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+			}
+			
+			$.each(data['Agentes'],function(entryIndex,agente){
+				if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+					agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+				}else{
+					//si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador,
+					//por lo tanto hay que cargar todos los agentes en el select del buscador
+					if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+						agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+					}
+				}
+			});
+			$busqueda_select_agente.append(agente_hmtl);
+		});
+	}
+	
+	
 	$limpiar.click(function(event){
+		$cargar_datos_buscador_principal();
+		
 		$busqueda_folio.val('');
 		$busqueda_cliente.val('');
 		$busqueda_fecha_inicial.val('');
@@ -129,6 +162,7 @@ $(function() {
 			html2 +='<option value="2">Prospecto</option>';
 		}
 		$busqueda_select_tipo.append(html2);
+		$get_datos_grid();
 		
 		$busqueda_folio.focus();
 	});
@@ -165,6 +199,8 @@ $(function() {
 		$busqueda_folio.focus();
 	});
 	
+	//llamamos a la fucnion que carga datos para el buscador principal
+	$cargar_datos_buscador_principal();
 	
 	
 	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
@@ -184,6 +220,7 @@ $(function() {
 	$aplicar_evento_keypress($busqueda_fecha_inicial, $buscar);
 	$aplicar_evento_keypress($busqueda_fecha_final, $buscar);
 	$aplicar_evento_keypress($busqueda_select_tipo, $buscar);
+	$aplicar_evento_keypress($busqueda_select_agente, $buscar);
 	
 	
 	

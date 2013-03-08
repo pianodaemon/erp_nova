@@ -7,6 +7,16 @@ $(function() {
 	    return work.join(',');
 	};
 	
+	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
+	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
+		$campo.keypress(function(e){
+			if(e.which == 13){
+				$campo_ejecutar.trigger('click');
+				return false;
+			}
+		});
+	}
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
     var $username = $('#header').find('#header1').find('span.username');
@@ -77,7 +87,8 @@ $(function() {
 	$arreglo = {'iu':iu = $('#lienzo_recalculable').find('input[name=iu]').val()};
 	$.post(input_json,$arreglo,function(entry){
 		$select_almacen.children().remove();
-		var almacen_hmtl = '<option value="0" selected="yes">[--Seleccionar Almacen--]</option>';
+		//var almacen_hmtl = '<option value="0" selected="yes">[--Seleccionar Almacen--]</option>';
+		var almacen_hmtl = '';
 		$.each(entry['Almacenes'],function(entryIndex,alm){
 			almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
 		});
@@ -126,8 +137,11 @@ $(function() {
 		}
 	});
 	
-	
-    
+	$aplicar_evento_keypress($select_opciones, $buscar);
+	$aplicar_evento_keypress($select_almacen, $buscar);
+	$aplicar_evento_keypress($codigo_producto, $buscar);
+	$aplicar_evento_keypress($descripcion, $buscar);
+	$codigo_producto.focus();
 });
 
 

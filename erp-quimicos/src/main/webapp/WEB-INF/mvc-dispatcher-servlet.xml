@@ -1,6 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -54,14 +55,14 @@
         
         
         <!--Conexion a bd instance01 LOCAL-->
-        <!--
+        
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://localhost:5432/kathion" />
 	     <property name="username" value="ms" />
 	     <property name="password" value="ms" />
 	</bean>
-        -->
+        
         
         <!--Conexion a bd instance01 PRUEBA EN INTERNET es lo mismo para KATHION Y KEMIKAL-->
         <!--
@@ -72,14 +73,8 @@
 	     <property name="password" value="instance01" />
 	</bean>
         -->
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://saturno.agnux.com:5555/instance01" />
-	     <property name="username" value="instance01" />
-	     <property name="password" value="instance01" />
-	</bean>
-        -->
+        
+        
         <!--Conexion a bd saar SAAR-->
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -111,7 +106,6 @@
 	     <property name="password" value="pruebas" />
 	</bean>
         -->
-        
         
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

@@ -810,7 +810,7 @@ $(function() {
 					$campo_numeroguia.attr({ 'value' : entry['Datos']['0']['numero_guia'] });
 					$campo_expedicion.attr({ 'value' : entry['Datos']['0']['fecha_doc'] });
 					$campo_tc.attr({ 'value' : entry['Datos']['0']['tipo_cambio'] });
-					//$campo_observaciones.text(entry['Datos']['0']['observaciones']);
+					$campo_observaciones.text(entry['Datos']['0']['observaciones']);
 					
 					$hidden_id_proveedor.attr({ 'value' : entry['Datos']['0']['proveedor_id'] });
 					$campo_rfc_proveedor.attr({ 'value' : entry['Datos']['0']['rfc_proveedor'] });

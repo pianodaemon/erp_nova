@@ -163,6 +163,8 @@
 									
 									
 									
+									
+									
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Proveedores &raquo;</a>
 										<ul>
@@ -247,11 +249,16 @@
 												<a href="#" class="sub">Reportes&raquo;</a>
 												<ul>
 													<li class="topline"><a href="../invrepcomprasnetasporproducto/startup.agnux">Compras Netas por Producto</a></li>
-                                                                                                        <li class="topline"><a href="../repestadisticocompras/startup.agnux">Estadistico de Compras</a></li>
+													<li class="topline"><a href="../repestadisticocompras/startup.agnux">Estadistico de Compras</a></li>
 												</ul>
 											</li>
 										</ul>
 									</li>
+									
+									
+									
+									
+									
 									
 									<li class="accessible">
 											<a href="http://jdsharp.us" class="accessible">Inventarios &raquo;</a>
@@ -330,10 +337,10 @@
 													<li class="topline"><a href="../invordsubensamble/startup.agnux">Costos</a></li>
 													-->
 													<li class="topline"><a href="../invcontrolcostos/startup.agnux">Control de Costos</a></li>
-													
+													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar de Precios</a></li>
 													
 													<!--
-													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar de Precios</a></li>
+													
 													
 													
 													<li class="topline"><a href="#">Actualizar Precios</a></li>
@@ -357,7 +364,7 @@
 											<li>
 												<a href="#" class="sub">Descargas &raquo;</a>
 												<ul>
-													<li><a href="../gralfichatecnica/startup.agnux">Descarga Ficha Tecnica</a></li>
+													<li><a href="../gralfichatecnica/startup.agnux">Ficha Tecnica</a></li>
 												</ul>
 											</li>
 											
@@ -384,6 +391,9 @@
 											</li>
 										</ul>
 									</li>
+									
+									
+									
 									
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Bancos &raquo;</a>
@@ -448,6 +458,11 @@
 									</li>
 									
 									
+									
+									
+									
+									
+									<!--
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Contabilidad &raquo;</a>
 										<ul>
@@ -463,6 +478,10 @@
 											</li>
 										</ul>
 									</li>
+									-->
+									
+									
+									
 									
 									
 									<li class="accessible" >
@@ -474,6 +493,7 @@
 													<li class="topline"><a href="../crmformascontacto/startup.agnux">Formas&nbsp;de&nbsp;Contacto.</a></li>
 													<li class="topline"><a href="../crmmotivosllamadas/startup.agnux">Motivos&nbsp;de&nbsp;Llamadas.</a></li>
 													<li class="topline"><a href="../crmprospectos/startup.agnux">Prospectos</a></li>
+													<li class="topline"><a href="../crmcontactos/startup.agnux">Contactos</a></li>
 												</ul>
 											</li>
 											<li>
@@ -497,8 +517,11 @@
 										</ul>
 									</li>
 									
+                                    
+                                    
+                                    
                                                                         
-									<!-- Menu de produccion "NO BORRAR PORFAVOR, se enojara tu papa"  -->
+									<!-- Menu de produccion "NO BORRAR PORFAVOR, se enojara el papa de Paco"  -->
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Producci&oacute;n &raquo;</a>
 										<ul>
@@ -519,7 +542,7 @@
 													<li class="topline"><a href="../propreordenproduccion/startup.agnux">Preorden Producci&oacute;n</a></li>
 													<li class="topline"><a href="../proordenproduccion/startup.agnux">Orden Producci&oacute;n</a></li>
 
-													<li class="topline"><a href="../proformulasdesarrollo/startup.agnux">Formulas en Desarrollo</a></li>
+													<li class="topline"><a href="../proordensimulacion/startup.agnux">Simulaci&oacute;n de Producci&oacute;n</a></li>
 													
 													<!--
 													<li class="topline"><a href="#">Cancelaci&oacute;n</a></li>
@@ -540,9 +563,11 @@
 											-->
 										</ul>
 									</li>
-                                                                        
-                                                                        
-                                                                        
+									
+									
+									
+									
+									
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Configuraciones &raquo;</a>
 										<ul>

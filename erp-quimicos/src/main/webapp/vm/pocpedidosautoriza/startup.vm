@@ -43,6 +43,10 @@
 				<td width="100">Folio</td>
 				<td width="20"></td>
 				<td width="245">Cliente</td>
+				<td width="15"></td>
+				<td width="100">C&oacute;digo Producto</td>
+				<td width="15"></td>
+				<td width="180">Descripci&oacute;n Producto</td>
 				<td width="20">&nbsp;</td>
 				<td width="25"></td>
 				<td colspan="3">Fecha de creaci&oacute;n</td>

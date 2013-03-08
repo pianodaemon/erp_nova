@@ -158,7 +158,7 @@ $(function() {
     
 
 	//buscador de clientes
-	$busca_clientes = function(razon_cliente){
+	$busca_clientes = function($razon_cliente){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscacliente();
 		var $dialogoc =  $('#forma-buscacliente-window');
@@ -198,7 +198,7 @@ $(function() {
 		html+='<option value="5">Alias</option>';
 		$select_filtro_por.append(html);
 		
-		$cadena_buscar.val(razon_cliente);
+		$cadena_buscar.val($razon_cliente.val());
 		
 		
 		//click buscar clientes
