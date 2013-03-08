@@ -1876,6 +1876,22 @@ public class PocSpringDao implements PocInterfaceDao{
     
     
     
+    @Override
+    public HashMap<String, String> getUserRol(Integer id_user) {
+        HashMap<String, String> data = new HashMap<String, String>();
+        
+        //verificar si el usuario tiene  rol de ADMINISTTRADOR
+        //si exis es mayor que cero, el usuario si es ADMINISTRADOR
+        String sql_to_query = "SELECT count(gral_usr_id) AS exis_rol_admin FROM gral_usr_rol WHERE gral_usr_id="+id_user+" AND gral_rol_id=1;";
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        
+        data.put("exis_rol_admin",map.get("exis_rol_admin").toString().toUpperCase());
+        
+        return data;
+    }
+    
+    
     
     
 }

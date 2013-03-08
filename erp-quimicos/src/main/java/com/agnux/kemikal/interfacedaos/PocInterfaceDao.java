@@ -71,5 +71,6 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id_cot);
     public ArrayList<HashMap<String, String>> getCotizacion_CondicionesComerciales(Integer id_emp);
     public ArrayList<HashMap<String, String>> getCotizacion_PolitizasPago(Integer id_emp);
+    public HashMap<String, String> getUserRol(Integer id_user);
     
 }
