@@ -127,7 +127,7 @@ public class BeanFacturadorCfdiTimbre {
         String ruta_fichero_certificado = new String();
         ruta_fichero_certificado = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa())+ "/" + this.getGralDao().getCertificadoEmpresaEmisora(this.getId_empresa(), this.getId_sucursal());
         
-        System.out.println("Leyendo fichero: "+ ruta_fichero_certificado);
+        //System.out.println("Leyendo fichero: "+ ruta_fichero_certificado);
         
         //Datos Base del CFD ------- INICIO -----------------------------------
         
@@ -158,6 +158,7 @@ public class BeanFacturadorCfdiTimbre {
         this.setTotal(data.get("comprobante_attr_total"));
         this.setMoneda(data.get("comprobante_attr_moneda"));
         this.setTipoCambio(data.get("comprobante_attr_tc"));
+        //System.out.println("comprobante_attr_tc: "+String.valueOf(data.get("comprobante_attr_tc"))+" comprobante_attr_moneda:"+String.valueOf(data.get("comprobante_attr_moneda")) );
         
         this.setMetodoDePago(StringHelper.normalizaString(StringHelper.remueve_tildes(data.get("comprobante_attr_metododepago")).replace("'", "")));
         this.setLugar_expedicion(StringHelper.normalizaString(StringHelper.remueve_tildes( this.getGralDao().getMunicipioSucursalEmisora(this.getId_sucursal()).toUpperCase()+", "+this.getGralDao().getEstadoSucursalEmisora(this.getId_sucursal()).toUpperCase() ).replace("'", "")));
@@ -212,9 +213,9 @@ public class BeanFacturadorCfdiTimbre {
     
     public String start() throws Exception {
         String retorno="false";
-        
-            String comprobante_firmado = this.generarComprobanteFirmado();
             
+            String comprobante_firmado = this.generarComprobanteFirmado();
+            //System.out.println("timbrado_correcto: "+comprobante_firmado);
             //parser para el xml del cfdi
             BeanFromCfdTimbreXml pop = new BeanFromCfdTimbreXml(comprobante_firmado.getBytes("UTF-8"));
             
@@ -225,9 +226,10 @@ public class BeanFacturadorCfdiTimbre {
             //directorio de emitidos del fichero
             path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getRfc_emisor();
             ruta_fichero_schema = this.getGralDao().getXsdDir() + this.getGralDao().getFicheroXsdCfdi(this.getId_empresa(), this.getId_sucursal());
-            
+            //System.out.println("ruta_fichero_schema: "+ruta_fichero_schema);
             //nombre del fichero xml
             xml_file_name += pop.getSerie() + pop.getFolio()+".xml";
+            //System.out.println("xml_file_name: "+xml_file_name);
             
             File file_xml = new File(path_file+"/"+xml_file_name);
             
@@ -239,14 +241,15 @@ public class BeanFacturadorCfdiTimbre {
             boolean fichero_xml_ok = FileHelper.createFileWithText(path_file, xml_file_name, comprobante_firmado);
             
             if (fichero_xml_ok) {
-                
+                //System.out.println("fichero_xml_ok: "+fichero_xml_ok);
                 //Instancia del validador 
                 validarXml validacion = new validarXml( path_file+"/"+xml_file_name, ruta_fichero_schema);
-                
+                //System.out.println("validacion: "+validacion);
                 //Aquí se ejecuta la validación del xml contra el Esquema(xsd)
                 String success = validacion.validar();
                 
-                System.out.println("success: "+success);
+                //System.out.println("success: "+success);
+                
                 //error po numero de cuenta NA
                 //DOCUMENTO INVÁLIDO: org.xml.sax.SAXParseException; cvc-minLength-valid: El valor 'NA' con la longitud = '2' no es de faceta válida con respecto a minLength '4' para el tipo '#AnonType_NumCtaPagoComprobante'
                 
@@ -299,7 +302,8 @@ public class BeanFacturadorCfdiTimbre {
                             pop.getRfc_receptor()+" "+
                             serie_folio+" "+
                             refId;
-                    System.out.println("str_execute:"+str_execute);
+                    //System.out.println("str_execute:"+str_execute);
+                    
                     Process resultado = Runtime.getRuntime().exec(str_execute); 
                     
                     InputStream myInputStream=null;
@@ -314,7 +318,7 @@ public class BeanFacturadorCfdiTimbre {
                     }
                     myInputStream.close();
                     
-                    System.out.println("Resultado: "+sb.toString());
+                    //System.out.println("Resultado: "+sb.toString());
                     
                     if(sb.toString().equals("true")){
                         //:::Si llegó aquí es que el request al webservice nos devolvio correctamente el timbre fiscal::::::::
@@ -326,7 +330,7 @@ public class BeanFacturadorCfdiTimbre {
                         this.setSelloDigitalSat(pop2.getSelloSat());
                         this.setUuid(pop2.getUuid());
                         
-                        System.out.println("sello sat: "+this.getSelloDigitalSat());
+                        //System.out.println("sello sat: "+this.getSelloDigitalSat());
                         //Aqui va la rutina que guarda los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
                         String cadena_conceptos = this.getFacdao().formar_cadena_conceptos(pop.getListaConceptos());
                         String cadena_imp_trasladados = this.getFacdao().formar_cadena_traslados(pop.getTotalImpuestosTrasladados(),this.getTasaIva());
@@ -361,20 +365,40 @@ public class BeanFacturadorCfdiTimbre {
                                 Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
                                 String refacturar = this.getDatosExtras().get("refacturar");
                                 String id_moneda = this.getDatosExtras().get("moneda_id");
-
+                                
                                 data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+pop.getSerie()+"___"+pop.getFolio()+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
-
+                                
                                 //llamada al procedimiento que guarda los datos de la factura
                                 String ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
                                 
                                 retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
-
+                                
                                 break;
                                 
                                 
                             case NOTA_CREDITO:
-                                break;
+                                
+                                    /*
+                                    prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
+                                    refacturar = this.getDatosExtras().get("refacturar");
+                                    id_moneda = this.getDatosExtras().get("moneda_id");
+                                    
+                                    data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()
+                                            +"___"+pop.getSerie()+"___"+pop.getFolio()+"___"+no_aprobacion+"___"+pop.getTotal()+"___"
+                                            +pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()
+                                            +"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()
+                                            +"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos
+                                            +"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"
+                                            +metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
+                                    
+                                    //llamada al procedimiento que guarda los datos de la factura
+                                    ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+                                    */
+                            
+                            retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
 
+                            break;
+                                    
                         }
                     }
                     
@@ -925,6 +949,8 @@ public class BeanFacturadorCfdiTimbre {
          */
         public boolean isMontoDelaOperacionCorrecto(String cadena_a_validar) {
             boolean valor_retorno = false;
+            
+            System.err.println("cadena_a_validar:"+cadena_a_validar);
             BigDecimal numero_introducido = new BigDecimal(cadena_a_validar);
             BigDecimal numero_maximo = new BigDecimal("9999999999.99");
             BigDecimal numero_minimo = new BigDecimal("0");
@@ -945,7 +971,6 @@ public class BeanFacturadorCfdiTimbre {
                         }
                     }
                 }
-
             }
 
             return valor_retorno;
