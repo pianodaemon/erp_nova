@@ -1887,7 +1887,7 @@ $(function() {
                 });
                 
                 
-                /*Para que uestre el subgrid de el detalle de la formula, para este producto*/
+                /*Para que muestre el subgrid de el detalle de la formula, para este producto*/
                 $tabla_productos_orden.find('#ver_detalle'+ trCount).bind('click',function(event){
                     
                     $grid_parent = $(this).parent().parent().parent();
@@ -1961,7 +1961,7 @@ $(function() {
                                     //alert(prod['cantidad_adicional']);
                                     prod['cantidad'] = $calcula_cantidad_por_porducto(prod['cantidad'] , $cantidad.val());
                                     //                        function(id_reg, $id_prod, $id_prod_detalle,            $sku,         $descripcion,       $cantidad,          $con_lote,                  clase_tmp,  grid,       cantidad_adicional,             posicion,       subproceso_id, id_reg_parent)
-                                    $add_producto_eleemnto_detalle(prod['id'],$id_producto.val(), prod['inv_prod_id'], prod['sku'], prod['descripcion'], prod['cantidad'], prod['requiere_numero_lote'], $id_tabla, $grid_parent, prod['cantidad_adicional'], $posicion.val(), $subproceso_id.val(), $id_reg_parent.val(),prod['num_lote'], prod['id_reg_det'], prod['inv_osal_id'] , "", prod['inv_alm_id'], prod['gral_suc_id']);
+                                    $add_producto_eleemnto_detalle(prod['id'],$id_producto.val(), prod['inv_prod_id'], prod['sku'], prod['descripcion'], prod['cantidad'], prod['requiere_numero_lote'], $id_tabla, $grid_parent, prod['cantidad_adicional'], $posicion.val(), $subproceso_id.val(), $id_reg_parent.val(),prod['num_lote'], prod['id_reg_det'], prod['inv_osal_id'] , "", prod['inv_alm_id'], prod['gral_suc_id'], 0);
                                 });
                                 
                                 
@@ -2039,6 +2039,7 @@ $(function() {
                                             inv_osal_id = $(this).find('input[name=inv_osal_id]').val();
                                             almacen_id = $(this).find('select[name=almacen]').val();
                                             sucursal_id = $(this).find('select[name=sucursal]').val();
+                                            agregado = $(this).find('input[name=agregado]').val();
                                             //1___0___1483___12___d3da21c7-c4ba-49be-a241-9529336c5e75&&&1___0___158___0___2471c2a0-f253-4504-9bca-b7f843a5c72d&&&1___0___148___0___f84b5f6c-6cd4-45cb-a404-b532527f60e2&&&1___0___147___0___ &&&1___0___191___0___ &&&1___0___151___0___ &&&1___0___1493___0___ &&&1___0___1397___0___ &&&1___0___1390___0___ &&&1___0___374___0___ &&&1___0___378___0___ &&&1___0___1180___0___ &&&1___0___149___0___ &&&1___0___150___0___ &&&1___0___91___0___ &&&1___0___160___0___ &&&1___0___127___0___ &&&1___0___1483___0___ 
                                             
                                             if(eliminar_tmp != null && lote_tmp != null){
@@ -2046,10 +2047,10 @@ $(function() {
                                                     lotes_completos = 0;
                                                 }
                                                 
-                                                cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+id_prod_detalle_tmp+"___"+
+                                                cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+id_prod_detalle_tmp+"___"+ 
                                                     cantidad_elemento_tmp+"___"+cantidad_adicional_tmp+"___"+lote_tmp+"___"+//inv_osal_id
                                                     inv_prod_id_elemento_tmp+"___"+id_reg_parent+"___"+$subproceso_id.val()+
-                                                        "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"___"+sucursal_id+"$$$$";
+                                                        "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"___"+sucursal_id+"___"+agregado+"$$$$";
                                             }
                                             
                                         });
@@ -2202,7 +2203,7 @@ $(function() {
                                                  //prod['id'],
                                                  //$id_producto.val(), 
                                                  //prod['inv_prod_id'], prod['sku'], prod['descripcion'], prod['cantidad'], prod $id_tabla, $grid_parent, prod['cant $posicion$subproceso_id.$id_reg_parent.val(),prod['num_lote'], prod['id_reg_det'] 
-        $add_producto_eleemnto_detalle = function(id_reg, $id_prod, $id_prod_detalle, $sku, $descripcion, $cantidad, $con_lote, clase_tmp, grid, cantidad_adicional, posicion, subproceso_id, id_reg_parent, num_lote, id_reg_det, inv_osal_id, tipo_agregado, id_almacen, id_sucursal){
+        $add_producto_eleemnto_detalle = function(id_reg, $id_prod, $id_prod_detalle, $sku, $descripcion, $cantidad, $con_lote, clase_tmp, grid, cantidad_adicional, posicion, subproceso_id, id_reg_parent, num_lote, id_reg_det, inv_osal_id, tipo_agregado, id_almacen, id_sucursal, agregado){
             
             $tmp_tr = grid.find(clase_tmp);
             var trCount = $("tr", $tmp_tr).size();
@@ -2232,6 +2233,7 @@ $(function() {
                     tmp_html += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
                     tmp_html += '<input type="hidden" id="inv_osal_id" name="inv_osal_id" value="'+inv_osal_id+'">';
                     
+                    tmp_html += '<input type="hidden" id="agregado" name="agregado" value="'+agregado+'">';//campo para indicar que el producto, venia de la formula original o equivalente u no un agregado.(1->original, 0->agregado)
                     tmp_html += '<input type="hidden" id="id_reg_det" name="id_reg_det" value="'+id_reg_det+'">';
                     tmp_html += '<input type="hidden" id="delete" name="eliminar" value="1">';
                     tmp_html += '<input type="hidden" id="inv_prod_id_elemento" name="inv_prod_id_elemento" value="'+$id_prod +'">';
@@ -2429,6 +2431,7 @@ $(function() {
                 cantidad_elemento = 0;
                 cantidad_adicional = $tmp_this_tr.find('input[name=cantidad_adicional]').val();
                 id_subproceso = $tmp_this_tr.find('input[name=subproceso_id]').val();
+                agregado = $tmp_this_tr.find('input[name=agregado]').val();
                 
                 $tmp_this_tbody = $(this).parent().parent().parent().parent().find('#detalle_por_prod'+inv_prod_id_elemento+posicion);
                 
@@ -2449,6 +2452,7 @@ $(function() {
                     tmp_html += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
                     tmp_html += '<input type="hidden" id="inv_osal_id" name="inv_osal_id" value="0">';
                     
+                    tmp_html += '<input type="hidden" id="agregado" name="agregado" value="'+agregado+'">';//campo para indicar que el producto, venia de la formula original o equivalente u no un agregado.(0->original, 1->agregado)
                     tmp_html += '<input type="hidden" id="id_reg_det" name="id_reg_det" value="0">';
                     tmp_html += '<input type="hidden" id="delete" name="eliminar" value="1">';
                     tmp_html += '<input type="hidden" id="subproceso_id" name="subproceso_id" value="'+id_subproceso +'">';
@@ -2783,7 +2787,7 @@ $(function() {
                                         
                                         $add_producto_eleemnto_detalle(0,inv_prod_id_elemento.val(), id_prod, codigo, descripcion, 
                                         0, "", $id_tabla, $grid_parent, 0, trCount, subproceso_id.val(), id_reg_parent.val(),"", 
-                                        id_reg_det, inv_osal_id, "recuperado", 0, 0);
+                                        id_reg_det, inv_osal_id, "recuperado", 0, 0, 1);
                                         
                                     }
                                     
