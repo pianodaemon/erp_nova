@@ -6,6 +6,7 @@ package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.cfd.v2.BeanFacturador;
 import com.agnux.cfdi.BeanFacturadorCfdi;
+import com.agnux.cfdi.timbre.BeanFacturadorCfdiTimbre;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -68,6 +69,13 @@ public class FacDevolucionesController {
     @Qualifier("beanFacturadorCfdi")
     BeanFacturadorCfdi bfcfdi;
     
+    @Autowired
+    @Qualifier("beanFacturadorCfdiTf")
+    BeanFacturadorCfdiTimbre bfcfditf;
+    
+    public BeanFacturadorCfdiTimbre getBfcfditf() {
+        return bfcfditf;
+    }
     
     public HomeInterfaceDao getHomeDao() {
         return HomeDao;
@@ -263,9 +271,8 @@ public class FacDevolucionesController {
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="costo", required=false) String[] costo,
             @RequestParam(value="cantidad_dev", required=false) String[] cantidad_dev,
-            
             @ModelAttribute("user") UserSessionData user
-            ) {
+        ) throws Exception {
             
             System.out.println("Registrar Devolucion de Mercancia");
             HashMap<String, String> jsonretorno = new HashMap<String, String>();
@@ -309,6 +316,8 @@ public class FacDevolucionesController {
             Double sumaImpuesto = 0.0; //suma del iva
             Double impuestoRetenido = 0.0; //monto del iva retenido de acuerdo a la tasa de retencion immex
             Double sumaTotal = 0.0; //suma del subtotal + totalImpuesto
+            String select_tipo_documento = "0";
+            String refacturar = "false";
             
             userDat = this.getHomeDao().getUserById(id_usuario);
             Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -437,7 +446,7 @@ public class FacDevolucionesController {
                         
                         jsonretorno.put("folio",serieFolio);
                         
-                    }
+                    }//termina tipo CFD
                     
                     
                     
@@ -486,6 +495,87 @@ public class FacDevolucionesController {
                         
                         jsonretorno.put("folio",Serie+Folio);
                     }//termina tipo CFDI
+                    
+                    
+                    
+                    //tipo facturacion CFDITF
+                    if(tipo_facturacion.equals("cfditf")){
+                        System.out.println("::::::::::::Tipo CFDITF:::::::::::::::::..");
+                        
+                        data_string="";
+                        extra_data_array = "'sin datos'";
+                        command_selected="genera_nota_credito_cfditf";
+                        
+                        String Serie=this.getGralDao().getSerieNotaCredito(id_empresa, id_sucursal);
+                        String Folio=this.getGralDao().getFolioNotaCredito(id_empresa, id_sucursal);
+                        rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+                        
+                        //lista de conceptos para la Nota de Credito cfditf
+                        //listaConceptos = this.getFacdao().getNotaCreditoCfd_ListaConceptosXml(id_nota_credito);
+                        impRetenidos = this.getFacdao().getNotaCreditoCfd_ImpuestosRetenidosXml();
+                        impTrasladados = this.getFacdao().getNotaCreditoCfd_ImpuestosTrasladadosXml(id_sucursal);
+                        dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
+                        
+                        
+                        listaConceptos = this.getFacdao().getNotaCreditoCfdi_ListaConceptos(id_nota_credito);
+                        //dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
+                        
+                        //obtiene datos extras para el cfdi
+                        datosExtras = this.getFacdao().getNotaCreditoCfdi_DatosExtras(id_nota_credito, Serie, Folio);
+                        //impTrasladados = this.getFacdao().getNotaCreditoCfdi_ImpuestosTrasladados(id_nota_credito);
+                        //impRetenidos = this.getFacdao().getNotaCreditoCfdi_ImpuestosRetenidos(id_nota_credito);
+                        //leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
+                        //System.out.println("tipo_cambio: "+String.valueOf(datosExtras.get("tipo_cambio"))+" nombre_moneda:"+String.valueOf(datosExtras.get("nombre_moneda")) );
+                        dataCliente.put("comprobante_attr_tc", String.valueOf(datosExtras.get("tipo_cambio")));
+                        dataCliente.put("comprobante_attr_moneda", String.valueOf(datosExtras.get("nombre_moneda")));
+                        
+                        
+                        //estos son requeridos para cfditf
+                        datosExtras.put("prefactura_id", String.valueOf(id_nota_credito));
+                        datosExtras.put("tipo_documento", String.valueOf(select_tipo_documento));
+                        datosExtras.put("moneda_id", select_moneda);
+                        datosExtras.put("usuario_id", String.valueOf(id_usuario));
+                        datosExtras.put("empresa_id", String.valueOf(id_empresa));
+                        datosExtras.put("sucursal_id", String.valueOf(id_sucursal));
+                        datosExtras.put("refacturar",  refacturar);
+                        datosExtras.put("app_selected", String.valueOf(app_selected));
+                        datosExtras.put("command_selected", command_selected);
+                        datosExtras.put("extra_data_array", extra_data_array);
+                        
+                        
+                        //genera xml factura
+                        this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal);
+                        String timbrado_correcto = this.getBfcfditf().start();
+                        
+                        //System.out.println("timbrado_correcto:"+timbrado_correcto);
+                        
+                        /***********************************************/
+                        //aqui se checa si el xml fue validado correctamente
+                        //si fue correcto debe traer un valor "true", de otra manera trae un error y por lo tanto no se genera el pdf
+                        if(timbrado_correcto.equals("true")){
+                            
+                            //aqui se debe actializar el registro
+                            data_string = 
+                                app_selected+"___"+
+                                command_selected+"___"+
+                                id_usuario+"___"+
+                                id_nota_credito+"___"+
+                                Serie+Folio+"___"+
+                                fac_saldado;
+                            
+                            
+                            actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+                            
+                            //actualiza el folio de la Nota de Credito
+                            this.getGralDao().actualizarFolioNotaCredito(id_empresa, id_sucursal);
+                            
+                            jsonretorno.put("folio",Serie+Folio);
+                            
+                        }
+                        
+                        jsonretorno.put("folio",Serie+Folio);
+                    }//termina tipo CFDITF
+                    
                     
                     
                     
