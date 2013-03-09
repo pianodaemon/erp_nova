@@ -2309,7 +2309,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //obtiene la lista de conceptos para la NOTA DE CREDITO CFDI
+    //obtiene la lista de conceptos para la NOTA DE CREDITO CFDI y CFDITF
     @Override
     public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdi_ListaConceptos(Integer id_nota_credito) {
         
