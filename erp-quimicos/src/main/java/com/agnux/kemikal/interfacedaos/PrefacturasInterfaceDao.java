@@ -40,6 +40,7 @@ public interface PrefacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getMetodosPago();
     public ArrayList<HashMap<String, Integer>> getAnioInforme();
     public ArrayList<HashMap<String, Object>> get_buscador_clientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getProductoTipos();
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
     public ArrayList<HashMap<String, Object>> get_presentaciones_producto(String sku, Integer id_empresa);

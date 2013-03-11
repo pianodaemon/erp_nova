@@ -49,6 +49,7 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, Object>> getTipoCambioActual();
     public ArrayList<HashMap<String, Object>> getCartera_BancosEmpresa(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getBuscadorClientes(String cadena, Integer filtro,Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getCartera_CtaBanco(Integer id_moneda, Integer id_banco);
     public ArrayList<HashMap<String, Object>> getCartera_BancosXMoneda(Integer id_moneda, Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getCartera_SumaAnticiposMN(Integer id_cliente);

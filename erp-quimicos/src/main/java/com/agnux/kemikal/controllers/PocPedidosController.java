@@ -143,10 +143,11 @@ public class PocPedidosController {
         String cliente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cliente")))+"%";
         String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
         String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
+        String agente = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("agente")))+"";
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto+"___"+agente;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getPocDao().countAll(data_string);
@@ -166,6 +167,31 @@ public class PocPedidosController {
         
         return jsonretorno;
     }
+    
+    
+    //obtiene los Agentes para el Buscador pricipal del Aplicativo
+    @RequestMapping(method = RequestMethod.POST, value="/getAgentesParaBuscador.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getAgentesParaBuscador(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal);
+        
+        jsonretorno.put("Agentes", agentes);
+        return jsonretorno;
+    }
+    
 
     //Trae los datos del pedido
     @RequestMapping(method = RequestMethod.POST, value="/getPedido.json")
@@ -233,11 +259,6 @@ public class PocPedidosController {
     
     
     
-    
-    
-    
-    
-    
     //Buscador de clientes
     @RequestMapping(method = RequestMethod.POST, value="/getBuscadorClientes.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorClientesJson(
@@ -266,7 +287,7 @@ public class PocPedidosController {
     
     
     
-    //Buscador de clientes
+    //Obtener datos del cliente a partir del Numero de Control
     @RequestMapping(method = RequestMethod.POST, value="/getDataByNoClient.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataByNoClientJson(
             @RequestParam(value="no_control", required=true) String no_control,

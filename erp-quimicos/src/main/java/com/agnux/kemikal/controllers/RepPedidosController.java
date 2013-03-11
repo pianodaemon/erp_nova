@@ -198,7 +198,7 @@ public class RepPedidosController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        pedidos = this.getPedidDao().getReportePedidos(opcion,agente, cliente, fecha_inicial, fecha_final,id_empresa);
+        pedidos = this.getPedidDao().getReportePedidos(opcion,agente, cliente.toUpperCase(), fecha_inicial, fecha_final,id_empresa);
         
         
         for (int x=0; x<=pedidos.size()-1;x++){
@@ -297,7 +297,7 @@ public class RepPedidosController {
 //        Integer idcliente = Integer.parseInt(cliente);
        //(HashMap<String, String> datosEncabezadoPie, String fileout, ArrayList<HashMap<String, String>> lista_CobranzaDiaria, HashMap<String, String> datos)
         //pedidos = this.getPedidDao().getReportePedidos(arreglo[0],arreglo[1], arreglo[2], arreglo[3], arreglo[4],id_empresa);
-        pedidos = this.getPedidDao().getReportePedidos(opcion,agente, cliente, fecha_inicial, fecha_final,id_empresa);
+        pedidos = this.getPedidDao().getReportePedidos(opcion,agente, cliente.toUpperCase(), fecha_inicial, fecha_final,id_empresa);
         //getPedDaoDao().getCobranzaDiaria( arreglo[1], arreglo[2],idcliente,  id_empresa);
         
         //instancia a la clase que construye el pdf de Cobranza Diaria

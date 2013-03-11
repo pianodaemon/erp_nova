@@ -321,6 +321,41 @@ public class CotizacionesController {
     
     
     
+    //Buscador de clientes
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoControl.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataByNoControlJson(
+            @RequestParam(value="tipo", required=true) String tipo,
+            @RequestParam(value="no_control", required=true) String no_control,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        if(tipo.equals("1")){
+            //obtener datos de cliente
+            datos = this.getPocDao().getDatosClienteByNoCliente(no_control,id_empresa,id_sucursal);
+        }else{
+            //obtener datos de prospecto
+            datos = this.getPocDao().getDatosProspectoByNoControl(no_control,id_empresa,id_sucursal);
+        }
+        
+        jsonretorno.put("Resultado", datos);
+        
+        return jsonretorno;
+    }
+    
+    
     //obtiene los tipos de productos para el buscador de productos
     @RequestMapping(method = RequestMethod.POST, value="/getProductoTipos.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProductoTiposJson(

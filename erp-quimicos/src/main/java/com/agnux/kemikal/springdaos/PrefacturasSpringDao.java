@@ -515,6 +515,73 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     
     
     
+    //buscador de clientes
+    @Override
+    public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal) {
+	String sql_query = "SELECT "
+                                    +"sbt.id,"
+                                    +"sbt.numero_control,"
+                                    +"sbt.rfc,"
+                                    +"sbt.razon_social,"
+                                    +"sbt.direccion,"
+                                    +"sbt.moneda_id,"
+                                    +"gral_mon.descripcion as moneda, "
+                                    +"sbt.cxc_agen_id,"
+                                    +"sbt.terminos_id, "
+                                    +"sbt.empresa_immex, "
+                                    +"sbt.tasa_ret_immex, "
+                                    +"sbt.cta_pago_mn, "
+                                    +"sbt.cta_pago_usd "
+                            +"FROM(SELECT cxc_clie.id,"
+                                            +"cxc_clie.numero_control,"
+                                            +"cxc_clie.rfc, "
+                                            +"cxc_clie.razon_social,"
+                                            +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                                            +"cxc_clie.moneda as moneda_id, "
+                                            +"cxc_clie.cxc_agen_id, "
+                                            +"cxc_clie.dias_credito_id AS terminos_id, "
+                                            +"cxc_clie.empresa_immex, "
+                                            +"(CASE WHEN cxc_clie.tasa_ret_immex IS NULL THEN 0 ELSE cxc_clie.tasa_ret_immex/100 END) AS tasa_ret_immex, "
+                                            + "cxc_clie.cta_pago_mn,"
+                                            + "cxc_clie.cta_pago_usd  "
+                                    +"FROM cxc_clie "
+                                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                                    +" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
+                                    + " AND cxc_clie.borrado_logico=false  AND cxc_clie.numero_control='"+no_control.toUpperCase()+"'"
+                            +") AS sbt "
+                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id;";
+        
+        ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("cxc_agen_id",rs.getString("cxc_agen_id"));
+                    row.put("terminos_id",rs.getString("terminos_id"));
+                    row.put("empresa_immex",String.valueOf(rs.getBoolean("empresa_immex")));
+                    row.put("tasa_ret_immex",StringHelper.roundDouble(String.valueOf(rs.getDouble("tasa_ret_immex")),2));
+                    row.put("cta_pago_mn",rs.getString("cta_pago_mn"));
+                    row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
+                    return row;
+                }
+            }
+        );
+        return hm_cli;
+    }
+    
+    
+    
+    
     //obtiene tipos de productos
     @Override
     public ArrayList<HashMap<String, String>> getProductoTipos() {

@@ -131,10 +131,11 @@ public class ClientsController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
-        String cad_busqueda = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cadena_busqueda")))+"%";
-        String filtro_por = StringHelper.isNullString(String.valueOf(has_busqueda.get("filtro_por")));
+        String nocontrol = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("nocontrol")))+"";
+        String razonsoc = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("razonsoc")))+"%";
+        String rfc = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("rfc")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+cad_busqueda+"___"+filtro_por;
+        String data_string = app_selected+"___"+id_usuario+"___"+nocontrol.toUpperCase()+"___"+razonsoc+"___"+rfc;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCxcDao().countAll(data_string);

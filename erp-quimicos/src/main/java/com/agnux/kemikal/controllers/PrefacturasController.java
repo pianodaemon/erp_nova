@@ -190,8 +190,11 @@ public class PrefacturasController {
         String cliente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cliente")))+"%";
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
+        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
+        String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
+        String agente = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("agente")))+"";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final;
+        String data_string = app_selected+"___"+id_usuario+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto+"___"+agente;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getPdao().countAll(data_string);
@@ -209,6 +212,30 @@ public class PrefacturasController {
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
+        return jsonretorno;
+    }
+    
+    
+    //obtiene los Agentes para el Buscador pricipal del Aplicativo
+    @RequestMapping(method = RequestMethod.POST, value="/getAgentesParaBuscador.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAgentesParaBuscador(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, Object>> agentes = new ArrayList<HashMap<String, Object>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        agentes = this.getPdao().getVendedores(id_empresa, id_sucursal);
+        
+        jsonretorno.put("Agentes", agentes);
         return jsonretorno;
     }
     
@@ -311,6 +338,31 @@ public class PrefacturasController {
         return jsonretorno;
     }
     
+    
+    //Obtener datos del cliente a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoClient.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataByNoClientJson(
+            @RequestParam(value="no_control", required=true) String no_control,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        
+        jsonretorno.put("Cliente", this.getPdao().getDatosClienteByNoCliente(no_control, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
     
     
     

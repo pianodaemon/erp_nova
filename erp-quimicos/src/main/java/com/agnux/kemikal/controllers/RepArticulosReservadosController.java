@@ -134,18 +134,14 @@ public class RepArticulosReservadosController {
     }
     
     
-     //reporte Pronostico de Cobranza  "/getPronosticoDeCobranza/{opcion_seleccionada}/{numero_semanas}/{iu}/out.json"
-     //http://localhost:8080/erp-quimicos/controllers/reppronoscobranza/getPronosticoDeCobranza/0/4/NA==/out.json
-     //@RequestMapping(value = "/PDFgetKits{cod}/{desc}/{iu}/out.json", method = RequestMethod.GET ) 
-     @RequestMapping(value = "/getallArticulosReservados/{iu}/out.json", method = RequestMethod.GET ) 
+     @RequestMapping(value = "/getallArticulosReservados/{cod}/{desc}/{iu}/out.json", method = RequestMethod.GET ) 
      public ModelAndView PdfVentasNetasxCliente(
-//                @PathVariable("cod") String codigo,
-//                @PathVariable("desc") String descripcion,
-                //@PathVariable("iu") String id_user_cod,
-                @PathVariable("iu") String id_user,
-                HttpServletRequest request,
-                HttpServletResponse response, 
-                Model model)
+             @PathVariable("cod") String codigo,
+             @PathVariable("desc") String descripcion,
+             @PathVariable("iu") String id_user,
+             HttpServletRequest request,
+             HttpServletResponse response, 
+             Model model)
      throws ServletException, IOException, URISyntaxException, DocumentException {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -184,21 +180,18 @@ public class RepArticulosReservadosController {
         datosEncabezadoPie.put("codigo1", "");
         datosEncabezadoPie.put("codigo2","");
         
-        //obtiene los depositos del periodo indicado
-       String codigo="";
-       String descripcion="";
-       
-       
-       
-       //lista_kits = this.getPocDao().getKits( id_empresa,id_usuario,codigo,descripcion); //llama al dao
-         lista_articulos_reservados = this.getPocDao().getReporteArticulosReservados(id_empresa,id_usuario,codigo,descripcion);  //llamando al pocDao
-         
-         
+        if(codigo.equals("0")){
+            codigo="";
+        }
         
-        //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
+        if(descripcion.equals("0")){
+            descripcion="";
+        }
+        
+        lista_articulos_reservados = this.getPocDao().getReporteArticulosReservados(id_empresa,id_usuario,codigo,descripcion);  //llamando al pocDao
+         
+        //instancia a la clase que construye el pdf de la del reporte de Articulos Reservados
         PdfReporteArticulosReservados x = new PdfReporteArticulosReservados(datosEncabezadoPie, fileout,lista_articulos_reservados,datos);
-                //PdfReporteArticulosReservados(lista_articulos_reservados,razon_social_empresa,fileout);
-        
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
