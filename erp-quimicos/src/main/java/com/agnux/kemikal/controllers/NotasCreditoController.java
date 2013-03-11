@@ -20,9 +20,12 @@ import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -544,25 +547,38 @@ public class NotasCreditoController {
                         String Folio=this.getGralDao().getFolioNotaCredito(id_empresa, id_sucursal);
                         rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                         
+                        /***/
+                        //lista de conceptos para la Nota de Credito cfdi
+                        listaConceptos = this.getFacdao().getNotaCreditoCfdiTf_ListaConceptosXml(id_nota_credito);
+                        dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
+                        
+                        //obtiene datos extras para el cfdi
+                        datosExtras = this.getFacdao().getNotaCreditoCfdi_DatosExtras(id_nota_credito, Serie, Folio);
+                        impTrasladados = this.getFacdao().getNotaCreditoCfd_ImpuestosTrasladadosXml(id_sucursal);
+                        impRetenidos = this.getFacdao().getNotaCreditoCfd_ImpuestosRetenidosXml();
+                        //leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
+                        /***/
+                        
+                        /*
                         //lista de conceptos para la Nota de Credito cfditf
                         listaConceptos = this.getFacdao().getNotaCreditoCfd_ListaConceptosXml(id_nota_credito);
                         impRetenidos = this.getFacdao().getNotaCreditoCfd_ImpuestosRetenidosXml();
                         impTrasladados = this.getFacdao().getNotaCreditoCfd_ImpuestosTrasladadosXml(id_sucursal);
                         dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
-                        
+                        */
                         
                         //listaConceptos = this.getFacdao().getNotaCreditoCfdi_ListaConceptos(id_nota_credito);
                         //dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
-                        
+                        /*
                         //obtiene datos extras para el cfdi
                         datosExtras = this.getFacdao().getNotaCreditoCfdi_DatosExtras(id_nota_credito, Serie, Folio);
+                        */
                         //impTrasladados = this.getFacdao().getNotaCreditoCfdi_ImpuestosTrasladados(id_nota_credito);
                         //impRetenidos = this.getFacdao().getNotaCreditoCfdi_ImpuestosRetenidos(id_nota_credito);
                         //leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
                         //System.out.println("tipo_cambio: "+String.valueOf(datosExtras.get("tipo_cambio"))+" nombre_moneda:"+String.valueOf(datosExtras.get("nombre_moneda")) );
                         dataCliente.put("comprobante_attr_tc", String.valueOf(datosExtras.get("tipo_cambio")));
                         dataCliente.put("comprobante_attr_moneda", String.valueOf(datosExtras.get("nombre_moneda")));
-                        
                         
                         //estos son requeridos para cfditf
                         datosExtras.put("prefactura_id", String.valueOf(id_nota_credito));
@@ -728,13 +744,18 @@ public class NotasCreditoController {
             @RequestParam(value="motivo", required=true) String motivo_cancelacion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+            ) throws IOException {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
         Integer id_usuario=0;//aqui va el id del usuario
         
         //decodificar id de usuario
         id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         //aplicativo notas de credito
         Integer app_selected = 70;
@@ -749,10 +770,12 @@ public class NotasCreditoController {
         
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota+"___"+motivo_cancelacion.toUpperCase()+"___"+tipo_facturacion;
         
-        succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+        if(tipo_facturacion.equals("cfdi") || tipo_facturacion.equals("cfditf")){
+            succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+        }
         
         System.out.println("tipo_facturacion:::"+tipo_facturacion);
-        
+        serie_folio = this.getFacdao().getSerieFolioNotaCredito(id_nota);
         //tipo facturacion CFDI. Generar txt para buzon fiscal
         if(tipo_facturacion.equals("cfdi")){
             
@@ -778,23 +801,84 @@ public class NotasCreditoController {
         
         if(tipo_facturacion.equals("cfditf")){
             
-            if(succcess.split(":")[1].equals("true")){
-                
-                HashMap<String, String> data = new HashMap<String, String>();
-                serie_folio = succcess.split(":")[0];
-                
-                String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
-                BeanFromCfdiXml pop = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
-                
-                data.put("uuid", pop.getUuid());
-                data.put("emisor_rfc", pop.getEmisor_rfc());
-                data.put("receptor_rfc", pop.getReceptor_rfc());
-                
-                //generar archivo de texto para cfdi
-                this.getBcancelafdi().init(data, serie_folio);
-                this.getBcancelafdi().start();
-                
-                System.out.println("serie_folio:"+serie_folio + "    Cancelado:"+succcess.split(":")[1]);
+            //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+            //aqui inicia request al webservice
+            //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+            String rfcEmpresaEmisora = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+            String ruta_ejecutable_java = this.getGralDao().getJavaVmDir(id_empresa, id_sucursal);
+            //String ruta_ejecutable_java = "/home/agnux/jdk/bin/java";
+            String ruta_jarWebService = this.getGralDao().getCfdiTimbreJarWsDir()+"wscli.jar";
+            String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + rfcEmpresaEmisora+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(id_empresa,id_sucursal) ;
+            String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(id_empresa, id_sucursal);
+            String ruta_java_almacen_certificados = this.getGralDao().getJavaRutaCacerts(id_empresa, id_sucursal);
+            //String ruta_ejecutable_java = "/home/agnux/jdk/bin/java";
+            
+             
+            String directorioSolicitudesCfdiOut = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresaEmisora +"/"+ serie_folio+".xml";
+            //String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiTimbreEmitidosDir()+ "/"+ rfcEmpresaEmisora + "/"+serie_folio+".xml";
+            BeanFromCfdiXml pop = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
+            
+            String uuid = pop.getUuid();
+            String emisor_rfc = pop.getEmisor_rfc();
+            String receptor_rfc = pop.getReceptor_rfc();
+            
+            //Cancelacion timbrado diverza
+            String str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" cancelacfdi "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+emisor_rfc+" "+receptor_rfc+" "+uuid;
+            System.out.println("str_execute: "+str_execute);
+            Process resultado = null; 
+            
+            resultado = Runtime.getRuntime().exec(str_execute);
+                        
+                        
+            InputStream myInputStream=null;
+
+            myInputStream= resultado.getInputStream();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(myInputStream));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            myInputStream.close();
+            System.out.println("Resultado: "+sb.toString());
+                        
+            String result = "Error diverza";
+            Integer errorcode = Integer.parseInt(sb.toString());
+            switch(errorcode){
+                case 0:
+                    result = "Proceso realizado con exito.";
+                    break;
+                case 18:
+                    result = "No encontro el CFD a cancelar.";
+                    break;
+                case 19:
+                    result = "El CFD ya fue cancelado, previamente.";
+                    break;
+                default:
+                    result = "Error diverza";
+                    break;
+            }
+            System.out.println("result: "+result);
+            
+            if(sb.toString().equals("0")){
+                succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+                //tipo facturacion CFDI. Generar txt para buzon fiscal
+                if(succcess.split(":")[1].equals("true")){
+                    
+                    HashMap<String, String> data = new HashMap<String, String>();
+                    serie_folio = succcess.split(":")[0];
+                    
+                    data.put("uuid", pop.getUuid());
+                    data.put("emisor_rfc", pop.getEmisor_rfc());
+                    data.put("receptor_rfc", pop.getReceptor_rfc());
+                    
+                    //generar archivo de texto para cfdi
+                    this.getBcancelafdi().init(data, serie_folio);
+                    this.getBcancelafdi().start();
+                    
+                    System.out.println("serie_folio:"+serie_folio + "    Cancelado:"+succcess.split(":")[1]);
+                }
             }
         }
         
