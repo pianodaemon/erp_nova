@@ -144,8 +144,8 @@ public interface FacturasInterfaceDao {
     //public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro,Integer id_empresa, Integer id_sucursal);
     
     
-    
-    
+    /*Add by jpakoery, for nota de credito tf*/
+    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXml(Integer id_nota_credito);
     
     
 }
