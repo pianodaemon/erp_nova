@@ -2427,6 +2427,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     @Override
     public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdi_ImpuestosTrasladados(Integer id_nota_credito) {
         String sql_to_query = "SELECT impuesto,valor_impuesto FROM fac_nota_credito WHERE  id="+id_nota_credito+" AND impuesto >0 AND impuesto IS NOT NULL;";
+        System.out.println("sql_to_query imp tras:"+sql_to_query);
         
         ArrayList<LinkedHashMap<String, String>> tras = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -2452,6 +2453,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdi_ImpuestosRetenidos(Integer id_nota_credito) {
         String sql_to_query = "SELECT monto_retencion, tasa_retencion_immex as tasa FROM fac_nota_credito WHERE id="+id_nota_credito+"  AND monto_retencion >0 AND monto_retencion IS NOT NULL;";
         
+        System.out.println("sql_to_query retenidos:"+sql_to_query);
         ArrayList<LinkedHashMap<String, String>> ret = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2507,7 +2509,61 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    
+    @Override
+    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXml(Integer id_nota_credito) {
+        String sql_query = ""
+                + "SELECT "
+                    + "'1'::character varying AS no_identificacion,"
+                    + "1::double precision AS cantidad,"
+                    + "concepto AS descripcion, "
+                    + "'No aplica'::character varying AS unidad, "
+                    + "subtotal as valor_unitario,"
+                    + "subtotal as importe,"
+                    + "impuesto as importe_impuesto,"
+                    + "tasa_retencion_immex AS tasa_retencion, "
+                    + "''::character varying AS numero_aduana, "
+                    + "''::character varying AS fecha_aduana, "
+                    + "''::character varying AS aduana_aduana "
+                    + "FROM fac_nota_credito "
+                + "WHERE id="+id_nota_credito;
+                
+                
+        
+        //System.out.println(sql_query);
+        System.out.println("getListaConceptosXmlCfdiTimbreFiscal: "+sql_query);
+        
+        //System.out.println("noIdentificacion "+" | descripcion      "+" | cant"+" | precio_uni"+" | importe"+" | importe_imp"+" | valor_imp"+" | tasa_ret"  );
+        
+        ArrayList<LinkedHashMap<String, String>> hm_conceptos = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("noIdentificacion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("no_identificacion"))));
+                    row.put("cantidad",rs.getString("cantidad"));
+                    row.put("descripcion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("descripcion"))));
+                    row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("unidad"))));
+                    row.put("valorUnitario",StringHelper.roundDouble(rs.getDouble("valor_unitario"),2) );
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
+                    row.put("importe_impuesto",StringHelper.roundDouble(rs.getDouble("importe_impuesto"),2) );
+                    row.put("tasa_retencion",StringHelper.roundDouble(rs.getDouble("tasa_retencion"),2) );
+                    row.put("numero_aduana","");
+                    row.put("fecha_aduana","");
+                    row.put("aduana_aduana","");
+                    return row;
+                }
+            }
+        );
+        
+        try {
+            calcula_Totales_e_Impuestos(hm_conceptos);
+        } catch (SQLException ex) {
+            Logger.getLogger(FacturasSpringDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return hm_conceptos;
+    }
     
     
     
