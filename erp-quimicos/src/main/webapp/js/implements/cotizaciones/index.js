@@ -157,7 +157,7 @@ $(function() {
 		if($('#lienzo_recalculable').find('input[name=crm]').val()=='false'){
 			html2='<option value="1" selected="yes">Cliente</option>';
 		}else{
-			html2 ='<option value="0" selected="yes">[-Tipo-]</option>';
+			html2 ='<option value="0" selected="yes">[-Todos-]</option>';
 			html2+='<option value="1">Cliente</option>';
 			html2 +='<option value="2">Prospecto</option>';
 		}
@@ -203,24 +203,15 @@ $(function() {
 	$cargar_datos_buscador_principal();
 	
 	
-	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
-	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
-		$campo.keypress(function(e){
-			if(e.which == 13){
-				$campo_ejecutar.trigger('click');
-				return false;
-			}
-		});
-	}
-	
-	$aplicar_evento_keypress($busqueda_folio, $buscar);
-	$aplicar_evento_keypress($busqueda_cliente, $buscar);
-	$aplicar_evento_keypress($busqueda_codigo, $buscar);
-	$aplicar_evento_keypress($busqueda_producto, $buscar);
-	$aplicar_evento_keypress($busqueda_fecha_inicial, $buscar);
-	$aplicar_evento_keypress($busqueda_fecha_final, $buscar);
-	$aplicar_evento_keypress($busqueda_select_tipo, $buscar);
-	$aplicar_evento_keypress($busqueda_select_agente, $buscar);
+	//aplicar evento keypress a campos para ejecutar la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_tipo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_agente, $buscar);
 	
 	
 	
@@ -389,8 +380,68 @@ $(function() {
 	}
 	
 	
+	
+	
+	
+	
+	$agregarDatosClienteSeleccionado = function(array_monedas, array_agentes, num_lista_precio, id_cliente, numero_control, rfc_cliente, razon_social_cliente, dir_cliente, contacto_cliente, id_moneda_cliente, id_agente){
+		//asignar a los campos correspondientes el sku y y descripcion
+		$('#forma-cotizacions-window').find('input[name=id_cliente]').val(id_cliente);
+		$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').val(numero_control);
+		$('#forma-cotizacions-window').find('input[name=rfccliente]').val(rfc_cliente);
+		$('#forma-cotizacions-window').find('input[name=razoncliente]').val(razon_social_cliente);
+		$('#forma-cotizacions-window').find('input[name=dircliente]').val(dir_cliente);
+		$('#forma-cotizacions-window').find('input[name=contactocliente]').val(contacto_cliente);
+		$('#forma-cotizacions-window').find('input[name=num_lista_precio]').val(num_lista_precio);
+		
+		var id_moneda = id_moneda_cliente;
+		
+		if(parseInt(num_lista_precio)>0){
+			//aquí se arma la cadena json para traer la moneda de la lista de precio
+			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaLista.json';
+			$arreglo2 = { 'lista_precio':num_lista_precio }
+			$.post(input_json2,$arreglo2,function(moneda_lista){
+				$.each(moneda_lista['listaprecio'],function(entryIndex ,monedalista){
+					id_moneda = monedalista['moneda_id'];
+				});
+			});
+		}
+		
+		//carga el select de monedas  con la moneda del cliente seleccionada por default
+		$('#forma-cotizacions-window').find('select[name=moneda]').children().remove();
+		var moneda_hmtl = '';
+		$.each(array_monedas ,function(entryIndex,moneda){
+			if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+				moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+			}else{
+				if(parseInt(id_moneda)==0){
+					moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+				}
+			}
+		});
+		$('#forma-cotizacions-window').find('select[name=moneda]').append(moneda_hmtl);
+		
+		
+		//carga select de agentes dejando seleccionado por default el agente asignado al cliente
+		$('#forma-cotizacions-window').find('select[name=select_agente]').children().remove();
+		var agen_hmtl = '';
+		$.each(array_agentes,function(entryIndex,agen){
+			if(parseInt(agen['id']) == parseInt(id_agente)){
+				agen_hmtl += '<option value="' + agen['id'] + '" selected="yes">' + agen['nombre_agente'] + '</option>';
+			}else{
+				agen_hmtl += '<option value="' + agen['id'] + '"  >' + agen['nombre_agente'] + '</option>';
+			}
+		});
+		$('#forma-cotizacions-window').find('select[name=select_agente]').append(agen_hmtl);
+		
+	}
+	
+	
+	
+	
+	
 	//buscador de clientes
-	$busca_clientes = function(tipo, no_control, cliente, array_monedas){
+	$busca_clientes = function(tipo, no_control, cliente, array_monedas, array_agentes){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscacliente();
 		var $dialogoc =  $('#forma-buscacliente-window');
@@ -484,6 +535,7 @@ $(function() {
 							trr += '<input type="hidden" id="moneda" value="'+cliente['moneda']+'">';
 							trr += '<input type="hidden" id="contacto" value="'+cliente['contacto']+'">';
 							trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
+							trr += '<input type="hidden" id="id_agente" value="'+cliente['cxc_agen_id']+'">';
 							trr += '<input type="hidden" id="lista_precio" value="'+cliente['lista_precio']+'">';
 						trr += '</td>';
 						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
@@ -510,44 +562,17 @@ $(function() {
 				
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
-					var lista_precio=$(this).find('#lista_precio').val();
+					var num_lista_precio=$(this).find('#lista_precio').val();
+					var id_cliente = $(this).find('#idclient').val();
+					var numero_control = $(this).find('span.no_control').html();
+					var rfc_cliente = $(this).find('span.rfc').html();
+					var razon_social_cliente = $(this).find('span.razon').html();
+					var dir_cliente = $(this).find('#direccion').val();
+					var contacto_cliente = $(this).find('#contacto').val();
+					var id_moneda_cliente = $(this).find('#id_moneda').val();
+					var id_agente = $(this).find('#id_agente').val();
 					
-					//asignar a los campos correspondientes el sku y y descripcion
-					$('#forma-cotizacions-window').find('input[name=id_cliente]').val($(this).find('#idclient').val());
-					$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').val($(this).find('span.no_control').html());
-					$('#forma-cotizacions-window').find('input[name=rfccliente]').val($(this).find('span.rfc').html());
-					$('#forma-cotizacions-window').find('input[name=razoncliente]').val($(this).find('span.razon').html());
-					$('#forma-cotizacions-window').find('input[name=dircliente]').val($(this).find('#direccion').val());
-					$('#forma-cotizacions-window').find('input[name=contactocliente]').val($(this).find('#contacto').val());
-					$('#forma-cotizacions-window').find('input[name=num_lista_precio]').val(lista_precio);
-					
-					var id_moneda = $(this).find('#id_moneda').val();
-					
-					if(parseInt(lista_precio)>0){
-						//aquí se arma la cadena json para traer la moneda de la lista de precio
-						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaLista.json';
-						$arreglo2 = { 'lista_precio':lista_precio }
-						$.post(input_json2,$arreglo2,function(moneda_lista){
-							$.each(moneda_lista['listaprecio'],function(entryIndex ,monedalista){
-								id_moneda = monedalista['moneda_id'];
-							});
-						});
-					}
-					
-					
-					//carga el select de monedas  con la moneda del cliente seleccionada por default
-					$('#forma-cotizacions-window').find('select[name=moneda]').children().remove();
-					var moneda_hmtl = '';
-					$.each(array_monedas ,function(entryIndex,moneda){
-						if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-						}else{
-							if(parseInt(id_moneda)==0){
-								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-							}
-						}
-					});
-					$('#forma-cotizacions-window').find('select[name=moneda]').append(moneda_hmtl);
+					$agregarDatosClienteSeleccionado(array_monedas, array_agentes, num_lista_precio, id_cliente, numero_control, rfc_cliente, razon_social_cliente, dir_cliente, contacto_cliente, id_moneda_cliente, id_agente);
 					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -1378,7 +1403,9 @@ $(function() {
 						
 						if((tmp.split(':')[0].substring(0, 4) == 'cant') || (tmp.split(':')[0].substring(0, 6) == 'precio')){
 							$('#forma-cotizacions-window').find('#div_warning_grid').css({'display':'block'});
-							$campo_input = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
+							$campo_input = $grid_productos.find('.'+campo);
+							$campo_input.css({'background' : '#d41000'});
+							$campo_input.focus();
 							
 							var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();
 							var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
@@ -1439,7 +1466,7 @@ $(function() {
 			//buscador de clientes
 			$busca_cliente.click(function(event){
 				event.preventDefault();
-				$busca_clientes($select_tipo_cotizacion.val(), $nocontrolcliente.val(), $razon_cliente.val(), entry['Monedas']);
+				$busca_clientes($select_tipo_cotizacion.val(), $nocontrolcliente.val(), $razon_cliente.val(), entry['Monedas'], entry['Agentes']);
 			});
 			
 			//agregar producto al grid
@@ -1447,6 +1474,51 @@ $(function() {
 				event.preventDefault();
 				$buscador_presentaciones_producto($rfc_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos, entry['Monedas']);
 			});
+			
+			
+			//busca datos del cliente al pulsar enter sobre en campo numero de control
+			$nocontrolcliente.keypress(function(e){
+				$nocontrolcliente.keypress(function(e){
+					if(e.which == 13){
+						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoControl.json';
+						$arreglo2 = {'tipo':$select_tipo_cotizacion.val(), 'no_control':$nocontrolcliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+						
+						$.post(input_json2,$arreglo2,function(entry2){
+							if(parseInt(entry2['Resultado'].length) > 0 ){
+								var num_lista_precio = entry2['Resultado'][0]['lista_precio'];
+								var id_cliente = entry2['Resultado'][0]['id'];
+								var numero_control = entry2['Resultado'][0]['numero_control'];
+								var razon_social_cliente = entry2['Resultado'][0]['razon_social'];
+								var dir_cliente = entry2['Resultado'][0]['direccion'];
+								var id_moneda_cliente = entry2['Resultado'][0]['moneda_id'];
+								var id_agente = entry2['Resultado'][0]['cxc_agen_id'];
+								var rfc_cliente = entry2['Resultado'][0]['rfc'];
+								var contacto_cliente = entry2['Resultado'][0]['contacto'];
+								
+								$agregarDatosClienteSeleccionado(entry['Monedas'], entry['Agentes'], num_lista_precio, id_cliente, numero_control, rfc_cliente, razon_social_cliente, dir_cliente, contacto_cliente, id_moneda_cliente, id_agente);
+								
+							}else{
+								//limpiar campos
+								$('#forma-cotizacions-window').find('input[name=id_cliente]').val('');
+								$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').val('');
+								$('#forma-cotizacions-window').find('input[name=rfccliente]').val('');
+								$('#forma-cotizacions-window').find('input[name=razoncliente]').val('');
+								$('#forma-cotizacions-window').find('input[name=dircliente]').val('');
+								$('#forma-cotizacions-window').find('input[name=contactocliente]').val('');
+								$('#forma-cotizacions-window').find('input[name=num_lista_precio]').val('');
+								
+								jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
+									$nocontrolcliente.focus(); 
+								});
+								
+							}
+						},"json");//termina llamada json
+						
+						return false;
+					}
+				});
+			});
+			
 		},"json");//termina llamada json
 		
 		
@@ -1485,14 +1557,6 @@ $(function() {
 			}
 		});
 		
-		
-		//desencadena clic del href Buscar cliente al pulsar enter en el campo numero de control del cliente
-		$nocontrolcliente.keypress(function(e){
-			if(e.which == 13){
-				$busca_cliente.trigger('click');
-				return false;
-			}
-		});
 		
 		//desencadena clic del href Buscar cliente al pulsar enter en el campo razon social del cliente
 		$razon_cliente.keypress(function(e){

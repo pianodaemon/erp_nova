@@ -51,7 +51,7 @@ $(function() {
 	var $select_opciones = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=opciones]');
 	var $remision_facturada = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=remision]');
 	var $cliente = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=cliente]');
-        var $busca_cliente =$('#lienzo_recalculable').find('table#busqueda tr td').find('a[href*=busca_cliente]');
+	var $busca_cliente =$('#lienzo_recalculable').find('table#busqueda tr td').find('a[href*=busca_cliente]');
 	var $fecha_inicial = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=fecha_inicial]');
 	var $fecha_final = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=fecha_final]');
 	var $genera_reporte_remision_facturada = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[value$=Generar_PDF]');
@@ -68,7 +68,8 @@ $(function() {
 	
 	$fecha_inicial.attr('readonly',true);
 	$fecha_final.attr('readonly',true);
-     $cliente.attr('readonly',true);
+     //$cliente.attr('readonly',true);
+     
 	//valida la fecha seleccionada
 	function mayor(fecha, fecha2){
 		var xMes=fecha.substring(5, 7);
@@ -394,6 +395,8 @@ $(function() {
 				var pix_alto=alto+'px';
 				$('#remisiones_facturadas').tableScroll({height:parseInt(pix_alto)});
 			});
+			
+			$remision_facturada.focus();
 		}else{
 			jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
 		}
@@ -401,7 +404,7 @@ $(function() {
 	});
         
     //buscador de clientes
-	$busca_clientes = function(){
+	$busca_clientes = function($cliente){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscacliente();
 		var $dialogoc =  $('#forma-buscacliente-window');
@@ -436,12 +439,14 @@ $(function() {
 		html='<option value="0">[-- Opcion busqueda --]</option>';
 		html+='<option value="1">No. de control</option>';
 		html+='<option value="2">RFC</option>';
-		html+='<option value="3">Razon social</option>';
+		html+='<option value="3" selected="yes">Razon social</option>';
 		html+='<option value="4">CURP</option>';
 		html+='<option value="5">Alias</option>';
 		$select_filtro_por.append(html);
 		
+		$cadena_buscar.val($cliente.val());
 		
+		$cadena_buscar.focus();
 		
 		//click buscar clientes
 		$busca_cliente_modalbox.click(function(event){
@@ -494,14 +499,28 @@ $(function() {
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
 					$('#forma-buscacliente-overlay').fadeOut(remove);
+					
+					$cliente.focus();
+					
 				});
 			});
 		});//termina llamada json
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_buscar.val() != ''){
+			$busca_cliente_modalbox.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_cliente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_cliente_modalbox);
+		
 		
 		$cancelar_plugin_busca_cliente.click(function(event){
 			//event.preventDefault();
 			var remove = function() {$(this).remove();};
 			$('#forma-buscacliente-overlay').fadeOut(remove);
+			
+			$cliente.focus();
 		});
 	}//termina buscador de clientes
 	
@@ -512,19 +531,17 @@ $(function() {
 	//buscador de clientes
 	$busca_cliente.click(function(event){
 		event.preventDefault();
-		$busca_clientes();
+		$busca_clientes($cliente);
 	});
-        // fin del buscador de clientes
-        
-        
-        
-        
-        
-        
-        
-        
-        
 	
+	
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_opciones, $busqueda_reporte_remision_facturada);
+	$(this).aplicarEventoKeypressEjecutaTrigger($remision_facturada, $busqueda_reporte_remision_facturada);
+	$(this).aplicarEventoKeypressEjecutaTrigger($cliente, $busqueda_reporte_remision_facturada);
+	$(this).aplicarEventoKeypressEjecutaTrigger($fecha_inicial, $busqueda_reporte_remision_facturada);
+	$(this).aplicarEventoKeypressEjecutaTrigger($fecha_final, $busqueda_reporte_remision_facturada);
+	
+	$remision_facturada.focus();
 });   
         
         

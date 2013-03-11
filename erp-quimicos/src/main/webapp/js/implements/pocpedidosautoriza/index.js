@@ -40,8 +40,11 @@ $(function() {
 	var $cadena_busqueda = "";
 	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
 	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
+	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
+	var $busqueda_select_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_agente]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
 	
@@ -67,7 +70,10 @@ $(function() {
 		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
-		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val();
+		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
+		valor_retorno += "producto" + signo_separador + $busqueda_producto.val() + "|";
+		valor_retorno += "agente" + signo_separador + $busqueda_select_agente.val();
 		return valor_retorno;
 	};
     
@@ -81,11 +87,39 @@ $(function() {
 		$get_datos_grid();
 	});
 	
+	
+	//esta funcion carga los datos para el buscador del paginado
+	$cargar_datos_buscador_principal= function(){
+		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_lineas,$arreglo,function(data){
+			//Alimentando los campos select_agente
+			$busqueda_select_agente.children().remove();
+			var agente_hmtl = '<option value="0">[-Seleccionar Agente-]</option>';
+			$.each(data['Agentes'],function(entryIndex,agente){
+				agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+			});
+			$busqueda_select_agente.append(agente_hmtl);
+		});
+	}
+	
+	
+	//llamada a funcion
+	$cargar_datos_buscador_principal();
+	
 	$limpiar.click(function(event){
-		$busqueda_factura.val('');
+		$busqueda_folio.val('');
 		$busqueda_cliente.val('');
+		$busqueda_codigo.val('');
+		$busqueda_producto.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
+		//llamada a funcion al limpiar campos
+		$cargar_datos_buscador_principal();
+		
+		$busqueda_folio.focus();
+		$get_datos_grid();
+		
 	});
 	
 	
@@ -119,8 +153,17 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_folio.focus();
 	});
 	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_agente, $buscar);
 	
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada

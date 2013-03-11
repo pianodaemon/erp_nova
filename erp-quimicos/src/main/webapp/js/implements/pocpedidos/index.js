@@ -53,6 +53,7 @@ $(function() {
 	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');	
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
+	var $busqueda_select_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_agente]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
 	
@@ -80,7 +81,8 @@ $(function() {
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val()+ "|";
 		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
-		valor_retorno += "producto" + signo_separador + $busqueda_producto.val();
+		valor_retorno += "producto" + signo_separador + $busqueda_producto.val() + "|";
+		valor_retorno += "agente" + signo_separador + $busqueda_select_agente.val();
 		return valor_retorno;
 	};
     
@@ -94,6 +96,25 @@ $(function() {
 		$get_datos_grid();
 	});
 	
+	
+	//esta funcion carga los datos para el buscador del paginado
+	$cargar_datos_buscador_principal= function(){
+		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_lineas,$arreglo,function(data){
+			//Alimentando los campos select_agente
+			$busqueda_select_agente.children().remove();
+			var agente_hmtl = '<option value="0">[-Seleccionar Agente-]</option>';
+			$.each(data['Agentes'],function(entryIndex,agente){
+				agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+			});
+			$busqueda_select_agente.append(agente_hmtl);
+		});
+	}
+	
+	//llamada a funcion
+	$cargar_datos_buscador_principal();
+	
 	$limpiar.click(function(event){
 		$busqueda_folio.val('');
 		$busqueda_cliente.val('');
@@ -101,8 +122,12 @@ $(function() {
 		$busqueda_producto.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
+		//llamada a funcion al limpiar campos
+		$cargar_datos_buscador_principal();
 		
 		$busqueda_folio.focus();
+		
+		$get_datos_grid();
 	});
 	
 	
@@ -136,9 +161,9 @@ $(function() {
 		};
 		$busqueda_folio.focus();
 	});
-	
+	/*
 	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
-	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
+	$(this).aplicarEventoKeypressEjecutaTrigger = function($campo, $campo_ejecutar){
 		$campo.keypress(function(e){
 			if(e.which == 13){
 				$campo_ejecutar.trigger('click');
@@ -146,14 +171,16 @@ $(function() {
 			}
 		});
 	}
+	*/
 	
-	$aplicar_evento_keypress($busqueda_folio, $buscar);
-	$aplicar_evento_keypress($busqueda_cliente, $buscar);
-	$aplicar_evento_keypress($busqueda_codigo, $buscar);
-	$aplicar_evento_keypress($busqueda_producto, $buscar);
-	$aplicar_evento_keypress($busqueda_fecha_inicial, $buscar);
-	$aplicar_evento_keypress($busqueda_fecha_final, $buscar);
-	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_agente, $buscar);
 	
 	
 	//----------------------------------------------------------------
@@ -235,12 +262,12 @@ $(function() {
 			}
 		}
 	});
-        
+	
 	$busqueda_fecha_final.click(function (s){
 		var a=$('div.datepicker');
 		a.css({'z-index':100});
 	});
-        
+	
 	$busqueda_fecha_final.DatePicker({
 		format:'Y-m-d',
 		date: $(this).val(),
@@ -272,6 +299,7 @@ $(function() {
 	});
 	
     
+	$busqueda_folio.focus();
 	
 	$tabs_li_funxionalidad = function(){
             var $select_prod_tipo = $('#forma-pocpedidos-window').find('select[name=prodtipo]');
@@ -973,8 +1001,8 @@ $(function() {
 			$busca_cliente_modalbox.trigger('click');
 		}
 		
-		$aplicar_evento_keypress($cadena_buscar, $busca_cliente_modalbox);
-		$aplicar_evento_keypress($select_filtro_por, $busca_cliente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_cliente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_cliente_modalbox);
 		
 		$cancelar_plugin_busca_cliente.click(function(event){
 			//event.preventDefault();
@@ -1115,9 +1143,9 @@ $(function() {
 			$buscar_plugin_producto.trigger('click');
 		}
 		
-		$aplicar_evento_keypress($campo_sku, $buscar_plugin_producto);
-		$aplicar_evento_keypress($select_tipo_producto, $buscar_plugin_producto);
-		$aplicar_evento_keypress($campo_descripcion, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_producto, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $buscar_plugin_producto);
 		
 		$cancelar_plugin_busca_producto.click(function(event){
 			//event.preventDefault();
@@ -1733,7 +1761,8 @@ $(function() {
 						if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 5) == 'costo')){
 							
 							$('#forma-pocpedidos-window').find('#div_warning_grid').css({'display':'block'});
-							$campo_input = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
+							$campo_input = $grid_productos.find('.'+campo);
+							$campo_input.css({'background' : '#d41000'});
 							
 							var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();
 							var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
@@ -1896,7 +1925,7 @@ $(function() {
 							//por default asignamos cero para el campo id de Direccion Fiscal, esto significa que la direccion se tomara de la tabla de clientes
 							$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
 							
-							jAlert('Numero de cliente desconocido.', 'Atencion!', function(r) { 
+							jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
 								$('#forma-pocpedidos-window').find('input[name=nocliente]').focus(); 
 							});
 						}
@@ -1910,10 +1939,10 @@ $(function() {
 		
 		
 		//asignar evento keypress al campo Razon Social del cliente
-		$aplicar_evento_keypress($razon_cliente, $busca_cliente);
+		$(this).aplicarEventoKeypressEjecutaTrigger($razon_cliente, $busca_cliente);
 		
 		//asignar evento keypress al campo Numero de Control del cliente
-		//$aplicar_evento_keypress($nocliente, $busca_cliente);
+		//$(this).aplicarEventoKeypressEjecutaTrigger($nocliente, $busca_cliente);
 		
 		
 		//$fecha_compromiso.val(mostrarFecha());
@@ -2061,10 +2090,10 @@ $(function() {
 		});
 		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
-		$aplicar_evento_keypress($sku_producto, $agregar_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($sku_producto, $agregar_producto);
 		
 		//desencadena clic del href Buscar Producto al pulsar enter en el campo Nombre del producto
-		$aplicar_evento_keypress($nombre_producto, $busca_sku);
+		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_producto, $busca_sku);
 		
 		
 		

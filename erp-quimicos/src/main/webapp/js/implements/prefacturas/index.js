@@ -13,6 +13,7 @@ $(function() {
 				2:"Remisi&oacute;n",
 				3:"Factura&nbsp;de&nbsp;Remisi&oacute;n"
 			};
+	var arrayAgentes;
 	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
@@ -48,10 +49,12 @@ $(function() {
 	//$('#barra_buscador').hide();
 	
 	var $cadena_busqueda = "";
-	//var $busqueda_factura = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_factura]');
 	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
+	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
+	var $busqueda_select_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_agente]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
 	
@@ -69,15 +72,18 @@ $(function() {
 	$limpiar.mouseout(function(){
 		$(this).removeClass("onmouseOverLimpiar").addClass("onmouseOutLimpiar");
 	});
-	   
-            
+	
+	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
 		//valor_retorno += "factura" + signo_separador + $busqueda_factura.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
-		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val();
+		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
+		valor_retorno += "producto" + signo_separador + $busqueda_producto.val() + "|";
+		valor_retorno += "agente" + signo_separador + $busqueda_select_agente.val();
 		return valor_retorno;
 	};
     
@@ -91,11 +97,41 @@ $(function() {
 		$get_datos_grid();
 	});
 	
+	
+	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+		//Alimentando los campos select_agente
+		$busqueda_select_agente.children().remove();
+		var agente_hmtl = '<option value="0">[-Seleccionar Agente-]</option>';
+		$.each(data['Agentes'],function(entryIndex,agente){
+			agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_vendedor'] + '</option>';
+		});
+		$busqueda_select_agente.append(agente_hmtl);
+		
+		//asignamos el arreglo a una variable para utilizarla mas adelante
+		arrayAgentes = data['Agentes'];
+	});
+	
+	
+	
 	$limpiar.click(function(event){
-		$busqueda_factura.val('');
 		$busqueda_cliente.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
+		$busqueda_codigo.val('');
+		$busqueda_producto.val('');
+		
+		//Recargar select de agentes
+		$busqueda_select_agente.children().remove();
+		var agente_hmtl = '<option value="0">[-Seleccionar Agente-]</option>';
+		$.each(arrayAgentes,function(entryIndex,agente){
+			agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_vendedor'] + '</option>';
+		});
+		$busqueda_select_agente.append(agente_hmtl);
+		
+		//asignar el enfoque al limpiar campos
+		$busqueda_cliente.focus();
 	});
 	
 	
@@ -130,11 +166,20 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		//asignar el enfoque al visualizar el buscador
+		$busqueda_cliente.focus();
 	});
 	
 	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_agente, $buscar);
 	
-
+	
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada
 	function mayor(fecha, fecha2){
@@ -321,8 +366,67 @@ $(function() {
 	}
 	
 	
+	//funcion para agregar datos del cliente en la ventana de la prefactura
+	$agregarDatosClienteSeleccionado = function($select_moneda, $select_condiciones, $select_vendedor, array_monedas, array_condiciones, array_vendedores, id_moneda, id_termino, id_vendedor, id_cliente, no_control_cliente, razon_social_cliente, empresa_immex, tasa_immex, cuenta_mn, cuenta_usd, dir_cliente){
+		
+		//asignar a los campos correspondientes el sku y y descripcion
+		$('#forma-prefacturas-window').find('input[name=id_cliente]').val(id_cliente);
+		$('#forma-prefacturas-window').find('input[name=nocliente]').val(no_control_cliente);
+		$('#forma-prefacturas-window').find('input[name=razoncliente]').val(razon_social_cliente);
+		$('#forma-prefacturas-window').find('input[name=empresa_immex]').val(empresa_immex);
+		$('#forma-prefacturas-window').find('input[name=tasa_ret_immex]').val(tasa_immex);
+		$('#forma-prefacturas-window').find('input[name=cta_mn]').val(cuenta_mn);
+		$('#forma-prefacturas-window').find('input[name=cta_usd]').val(cuenta_usd);
+		$('#forma-prefacturas-window').find('input[name=dircliente]').val(dir_cliente);
+		
+		//carga el select de monedas  con la moneda del cliente seleccionada por default
+		$select_moneda.children().remove();
+		var moneda_hmtl = '';
+		$.each(array_monedas ,function(entryIndex,moneda){
+			if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+				moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+			}else{
+				//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+			}
+		});
+		$select_moneda.append(moneda_hmtl);
+		
+		//carga select de condiciones con los dias de Credito default del Cliente
+		$select_condiciones.children().remove();
+		var hmtl_condiciones= '';
+		$.each(array_condiciones, function(entryIndex,condicion){
+			if( parseInt(condicion['id']) == parseInt(id_termino) ){
+				hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes">' + condicion['descripcion'] + '</option>';
+			}else{
+				//hmtl_condiciones += '<option value="' + condicion['id'] + '" >' + condicion['descripcion'] + '</option>';
+			}
+		});
+		if(hmtl_condiciones == ''){
+			hmtl_condiciones = '<option value="0">[-Seleccionar Termino-]</option>';
+		}
+		$select_condiciones.append(hmtl_condiciones);
+		
+		//carga select de vendedores
+		$select_vendedor.children().remove();
+		var hmtl_vendedor= '';
+		$.each(array_vendedores,function(entryIndex,vendedor){
+			if( parseInt(vendedor['id']) == parseInt(id_vendedor) ){
+				hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_vendedor'] + '</option>';
+			}else{
+				//hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
+			}
+		});
+		if(hmtl_vendedor == ''){
+			hmtl_vendedor = '<option value="0">[-Seleccionar Agente-]</option>';
+		}
+		$select_vendedor.append(hmtl_vendedor);
+	}
+	
+	
+	
+	
 	//buscador de clientes
-	$busca_clientes = function($select_moneda,$select_condiciones,$select_vendedor, array_monedas, array_condiciones, array_vendedores ){
+	$busca_clientes = function($select_moneda,$select_condiciones,$select_vendedor, array_monedas, array_condiciones, array_vendedores, $razon_cliente, $no_cliente ){
             //limpiar_campos_grids();
             $(this).modalPanel_Buscacliente();
             var $dialogoc =  $('#forma-buscacliente-window');
@@ -355,14 +459,26 @@ $(function() {
             var html = '';
             $select_filtro_por.children().remove();
             html='<option value="0">[-- Opcion busqueda --]</option>';
-            html+='<option value="1">No. de control</option>';
+            
+            if($no_cliente.val() !='' && $razon_cliente.val()==''){
+				html+='<option value="1" selected="yes">No. de control</option>';
+				$cadena_buscar.val($no_cliente.val());
+			}else{
+				html+='<option value="1">No. de control</option>';
+			}
             html+='<option value="2">RFC</option>';
-            html+='<option value="3">Razon social</option>';
+            if($razon_cliente.val()!=''){
+				$cadena_buscar.val($razon_cliente.val());
+				html+='<option value="3" selected="yes">Razon social</option>';
+			}
+            if($no_cliente.val() =='' && $razon_cliente.val()==''){
+				html+='<option value="3" selected="yes">Razon social</option>';
+			}
             html+='<option value="4">CURP</option>';
             html+='<option value="5">Alias</option>';
             $select_filtro_por.append(html);
 			
-			
+			$cadena_buscar.focus();
 			
             //click buscar clientes
             $busca_cliente_modalbox.click(function(event){
@@ -414,74 +530,47 @@ $(function() {
                     
                     //seleccionar un producto del grid de resultados
                     $tabla_resultados.find('tr').click(function(){
-                        //asignar a los campos correspondientes el sku y y descripcion
-                        $('#forma-prefacturas-window').find('input[name=id_cliente]').val($(this).find('#idclient').val());
-                        $('#forma-prefacturas-window').find('input[name=nocliente]').val($(this).find('span.no_control').html());
-                        $('#forma-prefacturas-window').find('input[name=razoncliente]').val($(this).find('span.razon').html());
-						$('#forma-prefacturas-window').find('input[name=empresa_immex]').val($(this).find('#emp_immex').val());
-						$('#forma-prefacturas-window').find('input[name=tasa_ret_immex]').val($(this).find('#tasa_immex').val());
-						$('#forma-prefacturas-window').find('input[name=cta_mn]').val($(this).find('#cta_mn').val());
-						$('#forma-prefacturas-window').find('input[name=cta_usd]').val($(this).find('#cta_usd').val());						
-						
 						var id_moneda=$(this).find('#id_moneda').val();
 						var id_termino=$(this).find('#terminos_id').val();
 						var id_vendedor=$(this).find('#vendedor_id').val();
+                        var id_cliente = $(this).find('#idclient').val();
+                        var no_control_cliente = $(this).find('span.no_control').html();
+                        var razon_social_cliente = $(this).find('span.razon').html();
+						var empresa_immex = $(this).find('#emp_immex').val();
+						var tasa_immex = $(this).find('#tasa_immex').val();
+						var cuenta_mn = $(this).find('#cta_mn').val();
+						var cuenta_usd = $(this).find('#cta_usd').val();
+						var dir_cliente = $(this).find('#direccion').val();
 						
-						//carga el select de monedas  con la moneda del cliente seleccionada por default
-						$select_moneda.children().remove();
-						var moneda_hmtl = '';
-						$.each(array_monedas ,function(entryIndex,moneda){
-							if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-								moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-							}else{
-								//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-							}
-						});
-						$select_moneda.append(moneda_hmtl);
-						
-						//carga select de condiciones con los dias de Credito default del Cliente
-						$select_condiciones.children().remove();
-						var hmtl_condiciones= '';
-						$.each(array_condiciones, function(entryIndex,condicion){
-							if( parseInt(condicion['id']) == parseInt(id_termino) ){
-								hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes">' + condicion['descripcion'] + '</option>';
-							}else{
-								//hmtl_condiciones += '<option value="' + condicion['id'] + '" >' + condicion['descripcion'] + '</option>';
-							}
-						});
-						if(hmtl_condiciones == ''){
-							hmtl_condiciones = '<option value="0">[-Seleccionar Termino-]</option>';
-						}
-						$select_condiciones.append(hmtl_condiciones);
-						
-						//carga select de vendedores
-						$select_vendedor.children().remove();
-						var hmtl_vendedor= '';
-						$.each(array_vendedores,function(entryIndex,vendedor){
-							if( parseInt(vendedor['id']) == parseInt(id_vendedor) ){
-								hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_vendedor'] + '</option>';
-							}else{
-								//hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
-							}
-						});
-						if(hmtl_vendedor == ''){
-							hmtl_vendedor = '<option value="0">[-Seleccionar Agente-]</option>';
-						}
-						$select_vendedor.append(hmtl_vendedor);
-						
+						//llamada a la funcion que agrega datos del cliente a la ventana de la prefactura
+                        $agregarDatosClienteSeleccionado($select_moneda, $select_condiciones, $select_vendedor, array_monedas, array_condiciones, array_vendedores, id_moneda, id_termino, id_vendedor, id_cliente, no_control_cliente, razon_social_cliente, empresa_immex, tasa_immex, cuenta_mn, cuenta_usd, dir_cliente);
                         
                         //elimina la ventana de busqueda
                         var remove = function() {$(this).remove();};
                         $('#forma-buscacliente-overlay').fadeOut(remove);
-                        //asignar el enfoque al campo sku del producto
+                        
+                        //asignar el enfoque al campo Razon Social del Cliente
+                        $razon_cliente.focus();
                     });
                 });
             });//termina llamada json
+			
+			
+			//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda al cargar el plugin
+			if($cadena_buscar.val() != ''){
+				$busca_cliente_modalbox.trigger('click');
+			}
+			
+			$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_cliente_modalbox);
+			$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_cliente_modalbox);
 			
             $cancelar_plugin_busca_cliente.click(function(event){
                 //event.preventDefault();
                 var remove = function() {$(this).remove();};
                 $('#forma-buscacliente-overlay').fadeOut(remove);
+                
+                //asignar el enfoque al campo Razon Social del Cliente
+                $razon_cliente.focus();
             });
 	}//termina buscador de clientes
 	
@@ -1487,6 +1576,13 @@ $(function() {
 		var $cancelar_plugin = $('#forma-prefacturas-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-prefacturas-window').find('#submit');
 		
+		//quitar enter a todos los campos input
+		$('#forma-prefacturas-window').find('input').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
+		
 		$id_prefactura.val(0);//para nueva cotizacion el folio es 0
 		$id_df.val(1);
 		//$campo_factura.css({'background' : '#ffffff'});
@@ -1501,8 +1597,8 @@ $(function() {
 		$accion.val('new');
 		$etiqueta_digit.attr('disabled','-1');
 		$folio_pedido.css({'background' : '#F0F0F0'});
-		$no_cliente.css({'background' : '#F0F0F0'});
-		$razon_cliente.css({'background' : '#F0F0F0'});
+		//$no_cliente.css({'background' : '#F0F0F0'});
+		//$razon_cliente.css({'background' : '#F0F0F0'});
 		$dir_cliente.css({'background' : '#F0F0F0'});
 		
 		var respuestaProcesada = function(data){
@@ -1638,23 +1734,70 @@ $(function() {
 			//buscador de clientes
 			$busca_cliente.click(function(event){
 				event.preventDefault();
-				$busca_clientes( $select_moneda,$select_condiciones,$select_vendedor, entry['Monedas'], entry['Condiciones'],entry['Vendedores'] );
+				$busca_clientes( $select_moneda,$select_condiciones,$select_vendedor, entry['Monedas'], entry['Condiciones'],entry['Vendedores'], $razon_cliente, $no_cliente );
 			});
 			
 			//buscador de remisiones para agregar al grid
 			$agregar_remision.click(function(event){
 				event.preventDefault();
 				if(parseInt($id_cliente.val()) != 0){
-					
 					$busca_remisiones($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, $id_cliente.val(), entry['Monedas'], entry['MetodosPago'], $select_almacen, entry['Almacenes'] );
 				}else{
-					jAlert("Es necesario seleccionar un Cliente", 'Atencion!');
+					jAlert('Es necesario seleccionar un Cliente', 'Atencion!', function(r) { $agregar_remision.focus(); });
 				}
 			});
 			
+			
+			//ejecutar busqueda de cliente al pulsar enter sobre el campo No de control
+			$no_cliente.keypress(function(e){
+				if(e.which == 13){
+					var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoClient.json';
+					$arreglo2 = {'no_control':$no_cliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+					
+					$.post(input_json2,$arreglo2,function(entry2){
+						
+						if(parseInt(entry2['Cliente'].length) > 0 ){
+							var id_moneda = entry2['Cliente'][0]['moneda_id'];
+							var id_termino = entry2['Cliente'][0]['terminos_id'];
+							var id_vendedor = entry2['Cliente'][0]['cxc_agen_id'];
+							var id_cliente = entry2['Cliente'][0]['id'];
+							var no_control_cliente = entry2['Cliente'][0]['numero_control'];
+							var razon_social_cliente = entry2['Cliente'][0]['razon_social'];
+							var empresa_immex = entry2['Cliente'][0]['empresa_immex'];
+							var tasa_immex = entry2['Cliente'][0]['tasa_ret_immex'];
+							var cuenta_mn = entry2['Cliente'][0]['cta_pago_mn'];
+							var cuenta_usd = entry2['Cliente'][0]['cta_pago_usd'];
+							var dir_cliente = entry2['Cliente'][0]['direccion'];
+							
+							//llamada a la funcion que agrega datos del cliente a la ventana de la prefactura
+							$agregarDatosClienteSeleccionado($select_moneda, $select_condiciones, $select_vendedor, entry['Monedas'], entry['Condiciones'], entry['Vendedores'], id_moneda, id_termino, id_vendedor, id_cliente, no_control_cliente, razon_social_cliente, empresa_immex, tasa_immex, cuenta_mn, cuenta_usd, dir_cliente);
+							
+						}else{
+							//limpiar campos
+							$('#forma-prefacturas-window').find('input[name=id_cliente]').val('');
+							$('#forma-prefacturas-window').find('input[name=nocliente]').val('');
+							$('#forma-prefacturas-window').find('input[name=razoncliente]').val('');
+							$('#forma-prefacturas-window').find('input[name=empresa_immex]').val('');
+							$('#forma-prefacturas-window').find('input[name=tasa_ret_immex]').val('');
+							$('#forma-prefacturas-window').find('input[name=cta_mn]').val('');
+							$('#forma-prefacturas-window').find('input[name=cta_usd]').val('');
+							$('#forma-prefacturas-window').find('input[name=dircliente]').val('');
+							
+							jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
+								$('#forma-prefacturas-window').find('input[name=nocliente]').focus(); 
+							});
+						}
+					},"json");//termina llamada json
+					
+					return false;
+				}
+			});
+			
+			
 		},"json");//termina llamada json
 		
-		
+		//aplicar evento keypress para el campo Razon Social para que al pulsar enter sobre ella ejecute la busqueda de Cliente
+		$(this).aplicarEventoKeypressEjecutaTrigger($razon_cliente, $busca_cliente);
 		
 		
 		$tipo_cambio.keypress(function(e){
@@ -1708,7 +1851,7 @@ $(function() {
 				$total.val(quitar_comas($total.val()));
 				return true;
 			}else{
-				jAlert("No hay datos para actualizar", 'Atencion!');
+				jAlert('No hay datos para actualizar.', 'Atencion!', function(r) { $sku_producto.focus(); });
 				return false;
 			}
 		});
@@ -1724,6 +1867,9 @@ $(function() {
 			var remove = function() {$(this).remove();};
 			$('#forma-prefacturas-overlay').fadeOut(remove);
 		});
+		
+		//asignar el enfoque al campo Numero de Control del Cliente al cargar la ventana
+		$no_cliente.focus();
 		
 	});//termina nueva prefactura
 	
@@ -2450,6 +2596,8 @@ $(function() {
 				});
 				
 			}
+			
+			$observaciones.focus();
 		}
 	}
 	

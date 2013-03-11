@@ -56,28 +56,20 @@ $(function() {
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
     
 	var $cadena_busqueda = "";
-	var $campo_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=cadena_buscar]');
-	var $select_filtro_por = $('#barra_buscador').find('.tabla_buscador').find('select[name=filtropor]');
+	var $busqueda_nocontrol = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_nocontrol]');
+	var $busqueda_razon_social = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_razon_social]');
+	var $busqueda_rfc = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_rfc]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	
-	var html = '';
-	$select_filtro_por.children().remove();
-	html='<option value="0">[-- Opcion busqueda --]</option>';
-	html+='<option value="1">No. de control</option>';
-	html+='<option value="2">RFC</option>';
-	html+='<option value="3" selected="yes">Razon social</option>';
-	html+='<option value="4">CURP</option>';
-	$select_filtro_por.append(html);
-	
-	//alert($select_filtro_por.val());
 	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "cadena_busqueda" + signo_separador + $campo_busqueda.val() + "|";
-		valor_retorno += "filtro_por" + signo_separador + $select_filtro_por.val() + "|";
+		valor_retorno += "nocontrol" + signo_separador + $busqueda_nocontrol.val() + "|";
+		valor_retorno += "razonsoc" + signo_separador + $busqueda_razon_social.val() + "|";
+		valor_retorno += "rfc" + signo_separador + $busqueda_rfc.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
@@ -97,17 +89,10 @@ $(function() {
 	
 	$limpiar.click(function(event){
 		event.preventDefault();
-		$campo_busqueda.val('');
-		var html2 = '';
-		$select_filtro_por.children().remove();
-		html2='<option value="0">[-- Opcion busqueda --]</option>';
-		html2+='<option value="1">No. de control</option>';
-		html2+='<option value="2">RFC</option>';
-		html2+='<option value="3" selected="yes">Razon social</option>';
-		html2+='<option value="4">CURP</option>';
-		$select_filtro_por.append(html2);
-		
-		$campo_busqueda.focus();
+		$busqueda_nocontrol.val('');
+		$busqueda_razon_social.val('');
+		$busqueda_rfc.val('');
+		$busqueda_nocontrol.focus();
 	});
 	
 	
@@ -148,10 +133,13 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
-		$campo_busqueda.focus();
+		$busqueda_nocontrol.focus();
 	});
 	
-	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_nocontrol, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_razon_social, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_rfc, $buscar);
 	
 	
 	$tabs_li_funxionalidad = function(){
@@ -1044,6 +1032,9 @@ $(function() {
 			var remove = function() {$(this).remove();};
 			$('#forma-buscactacontable-overlay').fadeOut(remove);
 		});
+		
+		$campo_clasif.focus();
+		
 	}//termina buscador de Cuentas Contables
 	
 	
@@ -1890,10 +1881,8 @@ $(function() {
 			$('#forma-clients-overlay').fadeOut(remove);
 			$buscar.trigger('click');
 		});
-                
-                
-                
 		
+		$campo_rfc.focus();
 	});
 	
 	
@@ -3104,7 +3093,7 @@ $(function() {
 					$buscar.trigger('click');
 				});
                                 
-				
+				$campo_rfc.focus();
 			}
 		}
 	}

@@ -43,7 +43,13 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="100">Folio</td>
 				<td width="20"></td>
-				<td width="245">Cliente</td>
+				<td width="200">Cliente</td>
+				<td width="15"></td>
+				<td width="100">C&oacute;digo Producto</td>
+				<td width="15"></td>
+				<td width="150">Nombre Producto</td>
+				<td width="15"></td>
+				<td width="150">Agente</td>
 				<td width="20">&nbsp;</td>
 				<td width="25"></td>
 				<td colspan="3">Fecha de creaci&oacute;n</td>
@@ -59,7 +65,17 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="100"><INPUT TYPE="text" name="busqueda_folio" style="width:100px;"></td>
 				<td width="20"></td>
-				<td width="245"><INPUT TYPE="text" name="busqueda_cliente" style="width:245px;"></td>
+				<td width="200"><INPUT TYPE="text" name="busqueda_cliente" style="width:200px;"></td>
+				<td width="15"></td>
+				<td width="100"><input type="text" name="busqueda_codigo" style="width:100px;"></td>
+				<td width="15"></td>
+				<td width="150"><input type="text" name="busqueda_producto" style="width:150px;"></td>
+				<td width="15"></td>
+				<td id="td_agente">
+					<select name="busqueda_select_agente" style="width:150px;">
+						<option value="0" selected="yes">[-Seleccionar Agente-]</option>
+					</select>
+				</td>
 				<td width="20">&nbsp;</td>
 				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
 				<td width="90"><INPUT TYPE="text" name="busqueda_fecha_inicial" style="width:90px;" readOnly="true"></td>

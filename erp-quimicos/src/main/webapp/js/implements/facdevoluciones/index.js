@@ -7,6 +7,8 @@ $(function() {
 	    return work.join(',');
 	};
 	
+	var arrayAgentes;
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
     var $username = $('#header').find('#header1').find('span.username');
@@ -51,6 +53,9 @@ $(function() {
 	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
+	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
+	var $busqueda_select_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_agente]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
 	
@@ -76,7 +81,10 @@ $(function() {
 		valor_retorno += "factura" + signo_separador + $busqueda_factura.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
-		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val();
+		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val()+ "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
+		valor_retorno += "producto" + signo_separador + $busqueda_producto.val() + "|";
+		valor_retorno += "agente" + signo_separador + $busqueda_select_agente.val();
 		return valor_retorno;
 	};
     
@@ -90,16 +98,40 @@ $(function() {
 		$get_datos_grid();
 	});
 	
+	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+		//Alimentando los campos select_agente
+		$busqueda_select_agente.children().remove();
+		var agente_hmtl = '<option value="0">[-Seleccionar Agente-]</option>';
+		$.each(data['Agentes'],function(entryIndex,agente){
+			agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_vendedor'] + '</option>';
+		});
+		$busqueda_select_agente.append(agente_hmtl);
+		
+		//asignamos el arreglo a una variable para utilizarla mas adelante
+		arrayAgentes = data['Agentes'];
+	});
+	
 	$limpiar.click(function(event){
 		$busqueda_factura.val('');
 		$busqueda_cliente.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
+		$busqueda_codigo.val('');
+		$busqueda_producto.val('');
+		
+		//Recargar select de agentes
+		$busqueda_select_agente.children().remove();
+		var agente_hmtl = '<option value="0">[-Seleccionar Agente-]</option>';
+		$.each(arrayAgentes,function(entryIndex,agente){
+			agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_vendedor'] + '</option>';
+		});
+		$busqueda_select_agente.append(agente_hmtl);
+		
+		//asignar el enfoque al limpiar campos
+		$busqueda_factura.focus();
 	});
-	
-	
-	
-	
 	
 	
 	
@@ -133,9 +165,18 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		//asignar el enfoque a visualizar el buscador
+		$busqueda_factura.focus();
 	});
 	
-	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_factura, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_agente, $buscar);
 	
 
 	//----------------------------------------------------------------
@@ -397,6 +438,7 @@ $(function() {
 					$(this).parent().find('input[name=seleccionado]').val("1");
 					$(this).parent().parent().find('input[name=cantidad_dev]').css({'background' : '#ffffff'});
 					$(this).parent().parent().find('input[name=cantidad_dev]').attr("readonly", false);//habilitar campo
+					$(this).parent().parent().find('input[name=cantidad_dev]').focus();
 				}else{
 					$(this).parent().find('input[name=seleccionado]').val("0");
 					$(this).parent().parent().find('input[name=importe_dev]').val(0);
@@ -955,6 +997,7 @@ $(function() {
 					$('#forma-facdevoluciones-overlay').fadeOut(remove);
 				});
 				
+				$concepto.focus();
 			}
 		}
 	}

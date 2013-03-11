@@ -44,29 +44,20 @@ $(function() {
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 	
 	var $cadena_busqueda = "";
-	var $campo_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=cadena_buscar]');
-	var $select_filtro_por = $('#barra_buscador').find('.tabla_buscador').find('select[name=filtropor]');
-	
+	var $busqueda_nocontrol = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_nocontrol]');
+	var $busqueda_razon_social = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_razon_social]');
+	var $busqueda_rfc = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_rfc]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
-	
-	
-	var html = '';
-	$select_filtro_por.children().remove();
-	html='<option value="0">[-- Opcion busqueda --]</option>';
-	html+='<option value="1">No. de control</option>';
-	html+='<option value="2">RFC</option>';
-	html+='<option value="3">Razon social</option>';
-	html+='<option value="4">CURP</option>';
-	$select_filtro_por.append(html);
 	
 	//alert($select_filtro_por.val());
 	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "cadena_busqueda" + signo_separador + $campo_busqueda.val() + "|";
-		valor_retorno += "filtro_por" + signo_separador + $select_filtro_por.val() + "|";
+		valor_retorno += "nocontrol" + signo_separador + $busqueda_nocontrol.val() + "|";
+		valor_retorno += "razonsoc" + signo_separador + $busqueda_razon_social.val() + "|";
+		valor_retorno += "rfc" + signo_separador + $busqueda_rfc.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
@@ -86,8 +77,10 @@ $(function() {
 	
 	$limpiar.click(function(event){
 		event.preventDefault();
-		$campo_busqueda.val('');
-		$select_filtro_por.find('option[index=0]').attr('selected','selected');
+		$busqueda_nocontrol.val('');
+		$busqueda_razon_social.val('');
+		$busqueda_rfc.val('');
+		$busqueda_nocontrol.focus();
 	});
 	
 	
@@ -117,9 +110,13 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_nocontrol.focus();
 	});
 	
-	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_nocontrol, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_razon_social, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_rfc, $buscar);
 	
 	
 	$tabs_li_funxionalidad = function(){
@@ -164,7 +161,7 @@ $(function() {
 
 
 	//buscador de clientes
-	$busca_clientes = function(razon_social_cliente){
+	$busca_clientes = function(razon_social_cliente, numero_control){
 		$(this).modalPanel_Buscacliente();
 		var $dialogoc =  $('#forma-buscacliente-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -195,24 +192,28 @@ $(function() {
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
-		var seleccionado='';
-		if(razon_social_cliente != ''){
-			//asignamos la Razon Social del Cliente al campo Nombre
-			$cadena_buscar.val(razon_social_cliente);
-			seleccionado='selected="yes"';
-		}
 		
-		var html = '';
+		var html = '';		
 		$select_filtro_por.children().remove();
 		html='<option value="0">[-- Opcion busqueda --]</option>';
-		html+='<option value="1">No. de control</option>';
+		
+		if(numero_control !='' && razon_social_cliente==''){
+			html+='<option value="1" selected="yes">No. de control</option>';
+			$cadena_buscar.val(numero_control);
+		}else{
+			html+='<option value="1">No. de control</option>';
+		}
 		html+='<option value="2">RFC</option>';
-		html+='<option value="3" '+seleccionado+'>Razon social</option>';
+		if(razon_social_cliente!=''){
+			$cadena_buscar.val(razon_social_cliente);
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}
+		if(numero_control =='' && razon_social_cliente==''){
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}
 		html+='<option value="4">CURP</option>';
 		html+='<option value="5">Alias</option>';
 		$select_filtro_por.append(html);
-		
-		
 		
 		//click buscar clientes
 		$busca_cliente_modalbox.click(function(event){
@@ -266,7 +267,9 @@ $(function() {
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
 					$('#forma-buscacliente-overlay').fadeOut(remove);
-					//asignar el enfoque al campo sku del producto
+					
+					
+					$('#forma-clientsdf-window').find('input[name=cliente]').focus();
 				});
 
 			});
@@ -278,10 +281,17 @@ $(function() {
 			$busca_cliente_modalbox.trigger('click');
 		}
 		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_cliente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_cliente_modalbox);
+		
 		$cancelar_plugin_busca_cliente.click(function(event){
 			var remove = function() {$(this).remove();};
 			$('#forma-buscacliente-overlay').fadeOut(remove);
+			
+			$('#forma-clientsdf-window').find('input[name=cliente]').focus();
 		});
+		
+		$cadena_buscar.focus();
 	}//termina buscador de clientes
 
 	
@@ -328,7 +338,14 @@ $(function() {
 		var $cancelar_plugin = $('#forma-clientsdf-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-clientsdf-window').find('#submit');
 		
-		$nocontrol.css({'background' : '#DDDDDD'});
+		//quitar enter a todos los campos input
+		$('#forma-clientsdf-window').find('input').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
+		
+		//$nocontrol.css({'background' : '#DDDDDD'});
 		$rfc.css({'background' : '#DDDDDD'});
 		$identificador.attr({'value' : 0});
 		$id_cliente.attr({'value' : 0});
@@ -422,8 +439,45 @@ $(function() {
         //buscar cliente
         $busca_cliente.click(function(event){
 			event.preventDefault();
-			$busca_clientes($cliente.val());
+			$busca_clientes($cliente.val(), $nocontrol.val());
         });
+        
+        
+		//ejecutar busqueda de cliente al pulsar enter sobre el campo No de control
+		$nocontrol.keypress(function(e){
+			if(e.which == 13){
+				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoClient.json';
+				$arreglo2 = {'no_control':$nocontrol.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+				
+				$.post(input_json2,$arreglo2,function(entry2){
+					if(parseInt(entry2['Cliente'].length) > 0 ){
+						$('#forma-clientsdf-window').find('input[name=id_cliente]').val(entry2['Cliente'][0]['id']);
+						$('#forma-clientsdf-window').find('input[name=rfc]').val(entry2['Cliente'][0]['rfc']);
+						$('#forma-clientsdf-window').find('input[name=cliente]').val(entry2['Cliente'][0]['razon_social']);
+						$('#forma-clientsdf-window').find('input[name=nocontrol]').val(entry2['Cliente'][0]['numero_control']);
+					}else{
+						//limpiar campos
+						$('#forma-clientsdf-window').find('input[name=id_cliente]').val('');
+						$('#forma-clientsdf-window').find('input[name=rfc]').val('');
+						$('#forma-clientsdf-window').find('input[name=cliente]').val('');
+						$('#forma-clientsdf-window').find('input[name=nocontrol]').val('');
+						
+						jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
+							$('#forma-clientsdf-window').find('input[name=nocontrol]').focus(); 
+						});
+					}
+				},"json");//termina llamada json
+				
+				return false;
+			}
+		});
+		
+        
+        $(this).aplicarEventoKeypressEjecutaTrigger($cliente, $busca_cliente);
+        
+        
+        
+        
         
         $cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
@@ -434,7 +488,9 @@ $(function() {
 			var remove = function() {$(this).remove();};
 			$('#forma-clientsdf-overlay').fadeOut(remove);
 			$buscar.trigger('click');
-		});		
+		});
+		
+		$nocontrol.focus();
 	});
 	
 	
@@ -507,8 +563,12 @@ $(function() {
 			var $submit_actualizar = $('#forma-clientsdf-window').find('#submit');
 			
 			$nocontrol.css({'background' : '#DDDDDD'});
+			$cliente.css({'background' : '#DDDDDD'});
 			$rfc.css({'background' : '#DDDDDD'});
 			$busca_cliente.hide();
+			
+			$nocontrol.attr({ 'readOnly':true });
+			$cliente.attr({ 'readOnly':true });
 			
 			if(accion_mode == 'edit'){
                                 
@@ -653,6 +713,8 @@ $(function() {
 					$('#forma-clientsdf-overlay').fadeOut(remove);
 					$buscar.trigger('click');
 				});
+				
+				$calle.focus();
 			}
 		}
 	}

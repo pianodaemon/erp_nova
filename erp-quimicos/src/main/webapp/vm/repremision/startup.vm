@@ -40,10 +40,11 @@
 							<td width="20"></td>
 							<td width="100">Folio&nbsp;Remision</td>
 							<td width="20"></td>
-                                                        <td width="100">Estatus</td>
+							<td width="100">Estatus</td>
 							<td width="20"></td>
 							<!--<td width="245">Cliente</td>-->
-                                                        <td width="245" class="cliente">Cliente &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="busca_cliente" style="font-size:13px;">(Buscar)</a></td>
+							<td width="245" class="cliente">Cliente</td>
+							<td width="60"></td>
 							<td width="20">&nbsp;</td>
 							<td width="25"></td>
 							<td colspan="3">Fecha&nbsp;de&nbsp;Remisi&oacute;n</td>
@@ -60,15 +61,16 @@
 							<td width="20"></td>
 							<td width="100"><INPUT TYPE="text" name="remision" style="width:100px;"></td>
 							<td width="20"></td>
-                                                        <td width="130"><SELECT NAME="estatus" style="width:130px;" title="Filtros para el reporte de Remisi&oacute;n"></SELECT></td>
+							<td width="130"><SELECT NAME="estatus" style="width:130px;" title="Filtros para el reporte de Remisi&oacute;n"></SELECT></td>
 							<td width="20"></td>
 							<td width="245"><INPUT TYPE="text" name="cliente" style="width:245px;"></td>
+							<td width="60"><a href="busca_cliente" style="font-size:13px;">(Buscar)</a></td>
 							<td width="20">&nbsp;</td>
 							<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-							<td width="90"><INPUT TYPE="text" name="fecha_inicial" style="width:90px;" readOnly="true"></td>
+							<td width="80"><INPUT TYPE="text" name="fecha_inicial" style="width:80px;" readOnly="true"></td>
 							<td width="15"></td>
 							<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-							<td width="90"><INPUT TYPE="text" name="fecha_final" style="width:90px;" readOnly="true"></td>
+							<td width="80"><INPUT TYPE="text" name="fecha_final" style="width:80px;" readOnly="true"></td>
 							<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="60"><INPUT TYPE="button"  value="Buscar" style="width:60px;"></td>
 							<td ></td>

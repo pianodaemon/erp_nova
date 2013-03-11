@@ -1,5 +1,8 @@
 $(function() {
     var $nav_version = $(this).find('.navegadorcleinte');
+    var $username = $(this).find("input#usernameField");
+    var $password = $(this).find("input#passwordField");
+    
     var $submit_actualizar = $(this).find('#submit');
     var nom= navigator.userAgent.match(/Firefox/i)
     /*
@@ -15,4 +18,19 @@ $(function() {
         });
     }
     */
+   
+    $(this).click(function(event){
+        if( !$(this).find("input").is(":focus") ){
+            if($username.val() == ''){
+                $username.focus();
+            }else{
+                $password.focus();
+            }
+            
+        }
+    });
+    
+    
+   $username.focus();
+   
 });

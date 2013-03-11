@@ -42,23 +42,28 @@
 			</tr>
 			<tr>
 				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>Buscar</td>
+				<td>No. Control</td>
 				<td width=10>&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="cadena_buscar" style="width:200px;"></td>
+				<td>Razon Social</td>
 				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>Filtro por</td>
+				<td>RFC</td>
 				<td width=10>&nbsp;&nbsp;</td>
-				<td>
-					<SELECT NAME="filtropor" style="width:150px;">
-						<!--
-							<option value="0">[-- Opcion busqueda --]</option>
-							<option value="1">No. de control</option>
-							<option value="2">RFC</option>
-							<option value="3">Razon social</option>
-							<option value="4">CURP</option>
-						-->
-					</SELECT>
-				</td>
+				<td></td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td></td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td ></td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			</tr>
+			<tr>
+				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td><INPUT TYPE="text" name="busqueda_nocontrol" style="width:90px;"></td>
+				<td width=10>&nbsp;&nbsp;</td>
+				<td><INPUT TYPE="text" name="busqueda_razon_social" style="width:220px;"></td>
+				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td><INPUT TYPE="text" name="busqueda_rfc" style="width:150px;"></td>
+				<td width=10>&nbsp;&nbsp;</td>
+				<td></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -116,15 +121,19 @@
 										<table border="0">
 											<tr>
 												<td width="5"></td>
-												<td width="75">Cliente</td>
+												<td width="75">No.&nbsp;de&nbsp;Control</td>
 												<td width="5"></td>
-												<td colspan="7">
-													<INPUT TYPE="text" name="cliente" style="width:410px;">
-													<input type="hidden" name="id_cliente">
-												</td>
-												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cliente"></div></td>
+												<td width="150" colspan="2"><INPUT TYPE="text" name="nocontrol" style="width:150px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocontrol"></div></td>
 												<td width="5"></td>
-												<td colspan="3"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
+												<td width="70">RFC</td>
+												<td width="5"></td>
+												<td width="150"><input type="text" name="rfc" readOnly="true" style="width:150px;"></td>
+												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfc"></div></td>
+												<td width="5"></td>
+												<td width="75"></td>
+												<td width="5"></td>
+												<td width="150"></td>
 												<td width="25"></td>
 											</tr>
 											<tr>
@@ -145,24 +154,20 @@
 												<td width="150"></td>
 												<td width="25"></td>
 											</tr>
-											
 											<tr>
 												<td width="5"></td>
-												<td width="75">No.&nbsp;de&nbsp;Control</td>
+												<td width="75">Cliente</td>
 												<td width="5"></td>
-												<td width="150" colspan="2"><INPUT TYPE="text" name="nocontrol" readOnly="true" style="width:150px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocontrol"></div></td>
+												<td colspan="7">
+													<INPUT TYPE="text" name="cliente" style="width:410px;">
+													<input type="hidden" name="id_cliente">
+												</td>
+												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cliente"></div></td>
 												<td width="5"></td>
-												<td width="70">RFC</td>
-												<td width="5"></td>
-												<td width="150"><input type="text" name="rfc" readOnly="true" style="width:150px;"></td>
-												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfc"></div></td>
-												<td width="5"></td>
-												<td width="75"></td>
-												<td width="5"></td>
-												<td width="150"></td>
+												<td colspan="3"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
 												<td width="25"></td>
 											</tr>
+
 											<tr>
 												<td colspan="16">&nbsp;</td>
 											</tr>

@@ -47,7 +47,7 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="70">Folio</td>
 				<td width="5">&nbsp;</td>
-				<td id="td_tipo">Tipo</td>
+				<td id="td_tipo">Dirigido a</td>
 				<td width="5">&nbsp;</td>
 				<td width="180"><span id="etiqueta_tipo">Cliente</span></td>
 				<td width="15"></td>
@@ -70,7 +70,7 @@
 				<td width="5">&nbsp;</td>
 				<td id="td_tipo">
 					<select name="busqueda_select_tipo" style="width:90px;">
-						<option value="0" selected="yes">[-Tipo-]</option>
+						<option value="0" selected="yes">[-Todos-]</option>
 						<option value="1">Cliente</option>
 						<option value="2">Prospecto</option>
 					</select>

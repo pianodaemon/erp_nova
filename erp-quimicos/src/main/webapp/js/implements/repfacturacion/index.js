@@ -236,11 +236,6 @@ $(function() {
 	});
 	
 	
-	
-	
-	
-	
-	
 	$tabs_li_funxionalidad = function(){
 		var $select_prod_tipo = $('#forma-repfacturacion-window').find('select[name=prodtipo]');
 		$('#forma-repfacturacion-window').find('#submit').mouseover(function(){
@@ -384,8 +379,6 @@ $(function() {
 			$total.val($(this).agregar_comas( entry['datosFactura']['0']['total']));
 			$no_cuenta.val(entry['datosFactura']['0']['no_cuenta']);
 			$tipo_cambio.val( entry['datosFactura']['0']['tipo_cambio'] );
-			
-			
 			
 			//form pago 2=Tarjeta Credito, 3=Tarjeta Debito
 			if(parseInt(entry['datosFactura']['0']['fac_metodos_pago_id'])==2 || parseInt(entry['datosFactura']['0']['fac_metodos_pago_id']==3)){
@@ -535,10 +528,6 @@ $(function() {
 			}
 		});//termina llamada json
 		
-		
-		
-		
-		
 		//Ligamos el boton cancelar al evento click para eliminar la forma
 		$cancelar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
@@ -553,40 +542,18 @@ $(function() {
 	}
 
 	
-	
-	
-	
-	
-	
-	
-	
 	//aplica evento a  campos del grid
 	var aplicar_click_a_href = function($tabla){
 		$tabla.find('tr').each(function(){
-			
 			//aplicar click a los campso check del grid
 			$(this).find('a[href=ver_detalle]').click(function(event){
 				event.preventDefault();
-				
 				var id_factura = $(this).parent().find('input[name=fac]').val();
 				
 				ver_detalle_factura(id_factura);
-				
-				
-				
-				
-				
-				
 			});
-			
-
 		});
      }
-	
-	
-	
-	
-	
 	
 	
 	
@@ -596,6 +563,7 @@ $(function() {
 		$div_reporte_facturacion.children().remove();
 		var fecha_inicial = $fecha_inicial.val();
 		var fecha_final = $fecha_final.val();
+		
 		if(fecha_inicial != "" && fecha_final != ""){
 			
 			var arreglo_parametros = {	opcion: $select_opciones.val(),
@@ -754,11 +722,21 @@ $(function() {
 				var pix_alto=alto+'px';
 				$('#ventas').tableScroll({height:parseInt(pix_alto)});
 			});
+			
+			$factura.focus();
 		}else{
 			jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
 		}
-             
 	});
+	
+	
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_opciones, $busqueda_reporte_facturacion);
+	$(this).aplicarEventoKeypressEjecutaTrigger($factura, $busqueda_reporte_facturacion);
+	$(this).aplicarEventoKeypressEjecutaTrigger($ciente, $busqueda_reporte_facturacion);
+	$(this).aplicarEventoKeypressEjecutaTrigger($fecha_inicial, $busqueda_reporte_facturacion);
+	$(this).aplicarEventoKeypressEjecutaTrigger($fecha_final, $busqueda_reporte_facturacion);
+	
+	$factura.focus();
 	
 });   
         
