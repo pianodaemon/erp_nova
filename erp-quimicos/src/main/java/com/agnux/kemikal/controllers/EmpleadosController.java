@@ -38,45 +38,45 @@ import org.springframework.web.servlet.ModelAndView;
 public class EmpleadosController {
     private static final Logger log  = Logger.getLogger(EmpleadosController.class.getName());
     ResourceProject resource = new ResourceProject();
-    
+
     @Autowired
     @Qualifier("daoGral")
     private GralInterfaceDao gralDao;
-    
+
     public GralInterfaceDao getGralDao() {
         return gralDao;
     }
-    
+
     public void setGralDao(GralInterfaceDao gralDao) {
         this.gralDao = gralDao;
     }
-    
-    
+
+
     @Autowired
     @Qualifier("daoHome")
     private HomeInterfaceDao HomeDao;
-    
+
     public HomeInterfaceDao getHomeDao() {
         return HomeDao;
     }
-    
-    
+
+
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
-        
+
         log.log(Level.INFO, "Ejecutando starUp de {0}", EmpleadosController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
-        
+
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("clave", "No.Empleado:100");
         infoConstruccionTabla.put("nombre_empleado", "Nombre Empleado:250");
         infoConstruccionTabla.put("curp", "CURP:100");
         infoConstruccionTabla.put("titulo","Puesto:150");
-        
-        
+
+
         ModelAndView x = new ModelAndView("empleados/startup", "title", "Cat&aacute;logo de Empleados");
-        
+
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -85,20 +85,20 @@ public class EmpleadosController {
         x = x.addObject("username", user.getUserName());
         x = x.addObject("empresa", user.getRazonSocialEmpresa());
         x = x.addObject("sucursal", user.getSucursal());
-        
+
         String userId = String.valueOf(user.getUserId());
-        
+
         String codificado = Base64Coder.encodeString(userId);
-        
+
         //id de usuario codificado
         x = x.addObject("iu", codificado);
-        
+
         return x;
     }
-    
-    
-    
-    
+
+
+
+
     @RequestMapping(value="/getEmpleados.json", method = RequestMethod.POST)
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getEmpleadosJson(
            @RequestParam(value="orderby", required=true) String orderby,
@@ -110,57 +110,57 @@ public class EmpleadosController {
            @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
            @RequestParam(value="iu", required=true) String id_user_cod,
            Model modcel) {
-        
-        
+
+
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
-        
+
         //aplicativo de empleados
         Integer app_selected = 4;
-        
+
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        
+
         //variables para el buscador
         String cad_busqueda = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cadena_busqueda")))+"%";
         String filtro_por = StringHelper.isNullString(String.valueOf(has_busqueda.get("filtro_por")));
-        
+
         String data_string = app_selected+"___"+id_usuario+"___"+cad_busqueda+"___"+filtro_por;
-        
+
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getGralDao().countAll(data_string);
-        
+
         //calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
-        
+
         //variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
         DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags, id_user_cod);
-        
+
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
-        
+
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getGralDao().getEmpleados_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
-        
+
         return jsonretorno;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @RequestMapping(method = RequestMethod.POST, value="/get_empleado.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> get_empleadoJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
-        
+
         log.log(Level.INFO, "Ejecutando get_empleadosJson de {0}", EmpleadosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        
+
         ArrayList<HashMap<String, Object>> paises = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> entidades = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> localidades = new ArrayList<HashMap<String, Object>>();
@@ -179,23 +179,23 @@ public class EmpleadosController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
-        
+
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        
+
         if( id != 0  ){
             datoscliente = this.getGralDao().getEmpleados_Datos(id);
-            
+
             entidades = this.getGralDao().getEntidadesForThisPais(datoscliente.get(0).get("gral_pais_id").toString());
             localidades = this.getGralDao().getLocalidadesForThisEntidad(datoscliente.get(0).get("gral_pais_id").toString(), datoscliente.get(0).get("gral_edo_id").toString());
             categoria=this.getGralDao().getPuestoForCategoria(datoscliente.get(0).get("gral_puesto_id").toString());
             rols_edit=this.getGralDao().getRolsEdit(Integer.parseInt(datoscliente.get(0).get("id_usuario").toString()));
-            
+
         }
-        
+
         //valorIva= this.getCdao().getValoriva();
-        
+
         //monedas = this.getGralDao().getMonedas();
-        
+
         paises = this.getGralDao().getPaises();
         escolaridad=this.getGralDao().getEscolaridad(id_empresa);
         genero=this.getGralDao().getGeneroSexual();
@@ -206,7 +206,7 @@ public class EmpleadosController {
         sucursal=this.getGralDao().getSucursal(id_empresa);
         roles=this.getGralDao().getRoles();
         region=this.getGralDao().getRegion();
-        
+
         jsonretorno.put("Empleados", datoscliente);
         jsonretorno.put("Paises", paises);
         jsonretorno.put("Entidades", entidades);
@@ -222,12 +222,12 @@ public class EmpleadosController {
         jsonretorno.put("Sucursal",sucursal);
         jsonretorno.put("RolsEdit",rols_edit);
         jsonretorno.put("Region",region);
-        
-        
+
+
         return jsonretorno;
     }
-    
-  
+
+
  //obtiene  las localidades de una entidad
     @RequestMapping(method = RequestMethod.POST, value="/getLocalidades.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getLocalidadesJson(
@@ -235,44 +235,44 @@ public class EmpleadosController {
             @RequestParam(value="id_entidad", required=true) String id_entidad,
             Model model
             ) {
-        
+
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
-        
+
         jsonretorno.put("Localidades", this.getGralDao().getLocalidadesForThisEntidad(id_pais, id_entidad));
-        
+
         return jsonretorno;
     }
-    
-    
-    
+
+
+
     //obtiene el las entidades de un pais
     @RequestMapping(method = RequestMethod.POST, value="/getEntidades.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getEntidadesJson(
             @RequestParam(value="id_pais", required=true) String id_pais,
             Model model
             ) {
-        
+
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
-        
+
         jsonretorno.put("Entidades", this.getGralDao().getEntidadesForThisPais(id_pais));
-        
+
         return jsonretorno;
     }
-    
+
    //obtiene el las categorias de un puesto
     @RequestMapping(method = RequestMethod.POST, value="/getCategorias.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getCategoriasJson(
             @RequestParam(value="id_puesto", required=true) String id_puesto,
             Model model
             ) {
-        
+
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
-        
+
         jsonretorno.put("Categoria", this.getGralDao().getPuestoForCategoria(id_puesto));
-        
+
         return jsonretorno;
     }
-    
+
    //obtiene los roles de empleados
     @RequestMapping(method=RequestMethod.POST,value="/getRoles.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String,Object>>>getRolesJson(
@@ -284,19 +284,19 @@ public class EmpleadosController {
         //HashMap<String, String> userDat = new HashMap<String, String>();
        // Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         jsonretorno.put("Roles",this.getGralDao().getRoles());
-        
+
         return jsonretorno;
     }
-    
-    
-    
+
+
+
     //crear y editar un cliente
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador_empleado", required=true) Integer id_empleado,
             //@RequestParam(value="empleado_id", required=true) Integer empleado_id,
             @RequestParam(value="nombre", required=true) String nombre,
-            
+
             @RequestParam(value="appaterno", required=true) String appaterno,
             @RequestParam(value="apmaterno", required=true) String apmaterno,
             @RequestParam(value="imss", required=true) String imss,
@@ -341,6 +341,13 @@ public class EmpleadosController {
             @RequestParam(value="dias_comision",required=true)String dias_comision_agen,
             @RequestParam(value="dias_comision2",required=true)String dias_comision_agen2,
             @RequestParam(value="dias_comision3",required=true)String dias_comision_agen3,
+
+            @RequestParam(value="tipo_comision",required=true)Integer tipo_comision,
+            @RequestParam(value="monto_comision",required=true)Double monto_comision_agen,
+            @RequestParam(value="monto_comision2",required=true)Double monto_comision_agen2,
+            @RequestParam(value="monto_comision3",required=true)Double monto_comision_agen3,
+
+
             @RequestParam(value="region",required=true)String region_agen,
             Model model,@ModelAttribute("user") UserSessionData user
             ) {
@@ -353,40 +360,40 @@ public class EmpleadosController {
             String extra_data_array ="";
             String actualizo = "0";
             int contador=0;
-            
+
             for (int i=0; i<seleccionado.length; i++){
                 if(seleccionado[i].equals("1")){
                      contador++;
                 }
             }
-            
+
             arreglo = new String[contador];
             int contador2=0;
             for(int i=0;i<seleccionado.length;i++){
                 if(seleccionado[i].equals("1")){
                     arreglo[contador2]="'"+id_rols[i]+"'";
-                    
+
                     contador2++;
-                } 
-               
+                }
+
             }
             //serializar el arreglo
             extra_data_array = StringUtils.join(arreglo, ",");
-            
+
 
             HashMap<String, String> jsonretorno = new HashMap<String, String>();
-            
+
             HashMap<String, String> succes = new HashMap<String, String>();
-            
+
             if( id_empleado == 0 ){
                 command_selected = "new";
             }else{
                 command_selected = "edit";
             }
-            
+
             System.out.print("Esta imprimiento esto :"+" "+extra_data_array);
-            
-            String data_string = 
+
+            String data_string =
             app_selected //1
             +"___"+command_selected//2
             +"___"+id_usuario//3
@@ -434,30 +441,34 @@ public class EmpleadosController {
             +"___"+dias_comision_agen//45
             +"___"+dias_comision_agen2//46
             +"___"+dias_comision_agen3//47
-            +"___"+region_agen;//48
-            
-            
-           
-            
-            
+            +"___"+region_agen //$48
+            +"___"+tipo_comision //49
+            +"___"+monto_comision_agen//50
+            +"___"+monto_comision_agen2//51
+            +"___"+monto_comision_agen3;//52
+
+
+
+
+
             System.out.println("data_string: "+data_string);
-            
+
             succes = this.getGralDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
-            
+
             log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
             if( String.valueOf(succes.get("success")).equals("true") ){
                 actualizo = this.getGralDao().selectFunctionForThisApp(data_string, extra_data_array);
             }
-            
+
             jsonretorno.put("success",String.valueOf(succes.get("success")));
-            
+
             log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
         return jsonretorno;
     }
-    
-    
-    
-    
+
+
+
+
     //cambiar a borrado logico un registro
     @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
     public @ResponseBody HashMap<String, String> logicDeleteJson(
@@ -465,23 +476,23 @@ public class EmpleadosController {
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
-        
+
         System.out.println("Borrado logico de cliente");
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        
+
         Integer app_selected = 4;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
-        
+
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
-        
+
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
-        
+
         System.out.println("Ejecutando borrado logico de cliente");
         jsonretorno.put("success",String.valueOf( this.getGralDao().selectFunctionForThisApp(data_string,extra_data_array)) );
-        
+
         return jsonretorno;
     }
-    
+
 }
