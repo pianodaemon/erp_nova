@@ -29,7 +29,7 @@ $(function() {
     };
 
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
-    var $username = $('#header').find('#header1').find('span.username');
+        var $username = $('#header').find('#header1').find('span.username');
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 
 	$('#barra_acciones').hide();
@@ -243,16 +243,7 @@ $(function() {
         //click generar reporte de pronostico de Cobranza
         $genera_reporte_CobranzaAgente.click(function(event){
 			event.preventDefault();
-                        alert("Tipo comision:"+$select_tipo_comision.val());
-
-			/*var tipo_rep="";
-
-			if ($select_opciones.val()==1){
-				tipo_rep=" Cobranza  Por Agente"
-			}else{
-				tipo_rep=" ventas por  Agente"
-			}*/
-			var input_json = config.getUrlForGetAndPost() +'/reporte_cobranza_venta_agente/' +$select_opciones.val()+'/'+$select_agente.val()+'/'+$fecha_inicial.val()+'/'+$fecha_final.val()+'/'+$monto_inicial.val()+'/'+$monto_final.val()+'/'+$select_tipo_comision.val()+'/'+config.getUi()+'/out.json';
+                        var input_json = config.getUrlForGetAndPost() +'/reporte_cobranza_venta_agente/' +$select_opciones.val()+'/'+$select_agente.val()+'/'+$fecha_inicial.val()+'/'+$fecha_final.val()+'/'+$monto_inicial.val()+'/'+$monto_final.val()+'/'+$select_tipo_comision.val()+'/'+config.getUi()+'/out.json';
 			window.location.href=input_json;
         });
 
@@ -588,8 +579,8 @@ $(function() {
 
                                 total_comision = total_comision + parseFloat(body_tabla['datos_normales'][i]["comision_por_monto"]);
                                 subtotal =subtotal + parseFloat(body_tabla['datos_normales'][i]["subtotal"]);
-                                    numero_agente =body_tabla['datos_normales'][i]["numero_agente"];
-                                    denominacion = body_tabla['datos_normales'][i]["moneda_factura"];
+                                numero_agente =body_tabla['datos_normales'][i]["numero_agente"];
+                                denominacion = body_tabla['datos_normales'][i]["moneda_factura"];
                               }
                      }
 				    html_ventasnetas +='<tr>';
