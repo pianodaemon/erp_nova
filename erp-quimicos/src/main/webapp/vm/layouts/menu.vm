@@ -35,7 +35,7 @@
 											</li>
 										</ul>
 									</li>
-									
+
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Pedidos &raquo;</a>
 										<ul>
@@ -46,7 +46,7 @@
 													<li class="topline"><a href="../pocpedidosautoriza/startup.agnux">Autorizaci&oacute;n</a></li>
 												</ul>
 											</li>
-											
+
 											<li>
 												<a href="#" class="sub">Reportes&raquo;</a>
 												<ul>
@@ -55,16 +55,16 @@
 													<!--<li class="topline"><a href="#">Estadístico de Pedidos por Artículo</a></li>-->
 												</ul>
 											</li>
-											
+
 										</ul>
 									</li>
-									
+
 									<li class="accessible">
 										<a href="#" class="accessible">Facturaci&oacute;n &raquo;</a>
 										<ul>
 											<li id="4">
 												<a href="#" class="menulink">Procesos &raquo;</a>
-												
+
 												<ul>
 													<li class="topline"><a href="../prefacturas/startup.agnux">Facturaci&oacute;n</a></li>
 													<li class="topline"><a href="../facturas/startup.agnux">Consulta Cancelaci&oacute;n</a></li>
@@ -91,7 +91,7 @@
 
 										</ul>
 									</li>
-									
+
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Clientes &raquo;</a>
 											<ul>
@@ -115,15 +115,15 @@
 													-->
 												</ul>
 											</li>
-											
+
 											<!--esto se agrego, estaba en menu cunetas por cobrar-->
 											<li>
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../carteras/startup.agnux">Cobranza</a></li>
-													
+
 													<li class="topline"><a href="../notascredito/startup.agnux">Nota de Cr&eacute;dito</a></li>
-													
+
 													<li class="topline"><a href="../programacionrutas/startup.agnux">Programaci&oacute;n de Ruta</a></li>
 													<!--
 													<li class="topline"><a href="#">Movimientos</a></li>
@@ -146,7 +146,7 @@
 													<li class="topline"><a href="../repantiguedadsaldocliente/startup.agnux">Antig&uuml;edad de Saldos</a></li>
 													<li class="topline"><a href="../repestadisticasanualesventas/startup.agnux">Estad&iacute;stico de Ventas Anuales Cliente</a></li>
 													<li class="topline"><a href="../repestadisticaanualventasproducto/startup.agnux">Estad&iacute;stico de Ventas Anuales Producto</a></li>
-													
+
 													<!--esto se agrego, estaba en menu cunetas por cobrar-->
 													<!--
 													<li class="topline"><a href="#">Clientes</a></li>
@@ -160,11 +160,11 @@
 											</li>
 										</ul>
 									</li>
-									
-									
-									
-									
-									
+
+
+
+
+
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Proveedores &raquo;</a>
 										<ul>
@@ -179,7 +179,7 @@
 													<li class="topline"><a href="../proveedoresclasif3/startup.agnux">Clasificaci&oacute;n 3</a></li>
 													<li class="topline"><a href="../proveedoreszonas/startup.agnux">Zonas</a></li>
 													<li class="topline"><a href="../proveedoresgrupos/startup.agnux">Grupos</a></li>
-													
+
 												</ul>
 											</li>
 											<li>
@@ -188,7 +188,7 @@
 													<!--
 													<li class="topline"><a href="#">Captura de Movimiento</a></li>
 													-->
-													
+
 													<li class="topline"><a href="../proveedorespagos/startup.agnux">Pagos</a></li>
 													<li class="topline"><a href="../provnotascredito/startup.agnux">Nota de Cr&eacute;dito</a></li>
 													<li>
@@ -205,14 +205,14 @@
 													-->
 												</ul>
 											</li>
-											
+
 											<li>
 												<a href="#" class="sub">Reportes &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../repedoctaprov/startup.agnux">Estados de Cuenta</a></li>
 													<li class="topline"><a href="../repprogramacionpagos/startup.agnux">Programaci&oacute;n de pagos</a></li>
 													<li class="topline"><a href="../cxprepantiguedadsaldos/startup.agnux">Antig&uuml;edad de Saldos</a></li>
-													
+
 													<!--
 													<li class="topline"><a href="#">Saldo Mensual</a></li>
 													<li class="topline"><a href="#">Proveedores</a></li>
@@ -228,10 +228,10 @@
 											<li>
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
-													
+
 													<li class="topline"><a href="../com_requisicion/startup.agnux">Requisici&oacute;n</a></li>
 													<li class="topline"><a href="../com_oc_req/startup.agnux">Autorizaci&oacute;n de Requisicion</a></li>
-													
+
 													<li class="topline"><a href="../comordencompra/startup.agnux">Orden de Compra</a></li>
 													<li class="topline"><a href="../comcompraautorizacion/startup.agnux">Autorizaci&oacute;n de O. C.</a></li>
 													<li class="topline"><a href="../entradamercancias/startup.agnux">Facturas de Compras</a></li>
@@ -254,12 +254,12 @@
 											</li>
 										</ul>
 									</li>
-									
-									
-									
-									
-									
-									
+
+
+
+
+
+
 									<li class="accessible">
 											<a href="http://jdsharp.us" class="accessible">Inventarios &raquo;</a>
 											<ul>
@@ -285,7 +285,7 @@
 													<li class="topline"><a href="../invpre/startup.agnux">Precios</a></li>
 													<li class="topline"><a href="../invunidades/startup.agnux">Unidades</a></li>
 													<li class="topline"><a href="../invpresentaciones/startup.agnux">Presentaciones</a></li>
-													
+
 													<!--
 													<li class="topline"><a href="../invformulas/startup.agnux">F&oacute;rmulas</a></li>//esto se fue al menu produccion
 													<li class="topline"><a href="#">Impuestos</a></li>
@@ -306,7 +306,7 @@
 													<li class="topline"><a href="../traspasomercancias/startup.agnux">Traspaso</a></li>
 												</ul>
 											</li>
-											
+
 											<li>
 												<a href="#" class="sub">Captura Movimientos &raquo;</a>
 												<ul>
@@ -316,17 +316,17 @@
 												</ul>
 											</li>
 											-->
-											
+
 											<li>
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
-													
+
 													<li class="topline"><a href="../invordenentrada/startup.agnux">Orden de Entrada</a></li>
 													<li class="topline"><a href="../invordensalida/startup.agnux">Orden de Salida</a></li>
 													<li class="topline"><a href="../invajustes/startup.agnux">Ajustes</a></li>
 													<li class="topline"><a href="../invtraspasos/startup.agnux">Traspasos</a></li>
 													<li class="topline"><a href="../invordentras/startup.agnux">Orden de Traspaso</a></li>
-													
+
 													<!--
 													<li class="topline"><a href="../invordendev/startup.agnux">Orden de Devoluci&oacute;n</a></li>
 													-->
@@ -338,11 +338,11 @@
 													-->
 													<li class="topline"><a href="../invcontrolcostos/startup.agnux">Control de Costos</a></li>
 													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar de Precios</a></li>
-													
+
 													<!--
-													
-													
-													
+
+
+
 													<li class="topline"><a href="#">Actualizar Precios</a></li>
 													<li class="topline"><a href="#">Existencias F&iacute;sicas</a></li>
 													<li class="topline"><a href="#">Orden Devoluci&oacute;n</a></li>
@@ -360,14 +360,14 @@
 												</ul>
 											</li>
 											-->
-											
+
 											<li>
 												<a href="#" class="sub">Descargas &raquo;</a>
 												<ul>
 													<li><a href="../gralfichatecnica/startup.agnux">Ficha Tecnica</a></li>
 												</ul>
 											</li>
-											
+
 											<li>
 												<a href="#" class="sub">Reportes &raquo;</a>
 												<ul>
@@ -391,10 +391,10 @@
 											</li>
 										</ul>
 									</li>
-									
-									
-									
-									
+
+
+
+
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Bancos &raquo;</a>
 										<ul>
@@ -432,12 +432,12 @@
 											-->
 										</ul>
 									</li>
-									
-									
-									
-									
 
-									
+
+
+
+
+
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Rutas &raquo;</a>
 										<ul>
@@ -447,7 +447,7 @@
 													<li><a href="../logvehiculos/startup.agnux">Unidades</a></li>
 												</ul>
 											</li>
-											
+
 											<li>
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
@@ -456,12 +456,12 @@
 											</li>
 										</ul>
 									</li>
-									
-									
-									
-									
-									
-									
+
+
+
+
+
+
 									<!--
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Contabilidad &raquo;</a>
@@ -479,11 +479,11 @@
 										</ul>
 									</li>
 									-->
-									
-									
-									
-									
-									
+
+
+
+
+
 									<li class="accessible" >
 										<a href="http://jdsharp.us" class="accessible">CRM &raquo;</a>
 										<ul>
@@ -506,26 +506,33 @@
 													<li class="topline"><a href="../crmregistrocasos/startup.agnux">Registro de Casos</a></li>
 												</ul>
 											</li>
-											
+
 											<li>
 												<a href="#" class="sub">Consultas &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../crmconsultas/startup.agnux">Consultas</a></li>
-													
+
+												</ul>
+											</li>
+                                                                                        <li>
+												<a href="#" class="sub">Reportes</a>
+												<ul>
+													<li class="topline"><a href="../crmreportevisitas/startup.agnux">Reporte&nbspVisitas</a></li>
+
 												</ul>
 											</li>
 										</ul>
 									</li>
-									
-                                    
-                                    
-                                    
-                                                                        
+
+
+
+
+
 									<!-- Menu de produccion "NO BORRAR PORFAVOR, se enojara el papa de Paco"  -->
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Producci&oacute;n &raquo;</a>
 										<ul>
-											
+
 											<li>
 												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
 												<ul>
@@ -533,7 +540,7 @@
 													<li><a href="../proinstrumentosmedicion/startup.agnux">Instrumentos de Medici&oacute;n</a></li>
 												</ul>
 											</li>
-											
+
 											<li>
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
@@ -543,7 +550,7 @@
 													<li class="topline"><a href="../proordenproduccion/startup.agnux">Orden Producci&oacute;n</a></li>
 
 													<li class="topline"><a href="../proordensimulacion/startup.agnux">Simulaci&oacute;n de Producci&oacute;n</a></li>
-													
+
 													<!--
 													<li class="topline"><a href="#">Cancelaci&oacute;n</a></li>
 													<li class="topline"><a href="#">Nota Cargo/Cr&eacute;dito</a></li>
@@ -552,22 +559,22 @@
 													-->
 												</ul>
 											</li>
+
 											
-											<!--
-											<li>
+                                                                                        <li>
 												<a href="#" class="sub">Reportes&raquo;</a>
 												<ul>
-													<li class="topline"><a href="#">F&oacute;rmulas</a></li>
+													<!--<li class="topline"><a href="#">F&oacute;rmulas</a></li>-->
+                                                                                                        <li class="topline"><a href="../proreporteproduccion/startup.agnux">Produccion</a></li>
 												</ul>
 											</li>
-											-->
 										</ul>
 									</li>
-									
-									
-									
-									
-									
+
+
+
+
+
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Configuraciones &raquo;</a>
 										<ul>
@@ -585,24 +592,24 @@
 													<li><a href="../graldeptosturnos/startup.agnux">Turnos</a></li>
 												</ul>
 											</li>
-											
+
 											<li>
 												<a href="#" class="sub">Procesos &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../graldocs/startup.agnux">Actualizador C&oacute;digos ISO</a></li>
 													<li class="topline"><a href="../graltipocambio/startup.agnux">Actualizador Tipo Cambio</a></li>
-													
+
 												</ul>
 											</li>
-											
+
 										</ul>
 									</li>
-									
-									
-									
-									
-									
-									
+
+
+
+
+
+
 								</ul>
 								<!--
 								<script type="text/javascript">
@@ -634,16 +641,16 @@
 
 
 
-                <div id="barra_titulo" title="barra_titulo"> 
+                <div id="barra_titulo" title="barra_titulo">
                         <table><tr><td width="15" height="25"></td><td id="td_titulo"></td></tr></table>
                 </div>
 
                 <!--
-                <div id="barra_descarga_pdf">  </div> 
+                <div id="barra_descarga_pdf">  </div>
                 <div id="barra_descarga_xml">  </div>
                 -->
 
-                <div id="barra_genera_informe">  </div> 
+                <div id="barra_genera_informe">  </div>
                 <div id="barra_buscador">  </div>
 
 
