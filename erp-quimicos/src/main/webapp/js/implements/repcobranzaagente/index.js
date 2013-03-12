@@ -428,7 +428,7 @@ $(function() {
 					html_ventasnetas +='</tr>';
 
                     html_ventasnetas += '</table>';
-            }else{"Esta consulta n genero ningun resultado",'atencion!!!'}
+            }else{jAlert("Esta consulta n genero ningun resultado",'atencion!!!');}
                     $div_cobranza_agente.append(html_ventasnetas);
                     var height2 = $('#cuerpo').css('height');
                     var alto = parseInt(height2)-350;
