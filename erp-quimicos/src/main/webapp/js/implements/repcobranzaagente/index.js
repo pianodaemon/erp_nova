@@ -520,7 +520,7 @@ $(function() {
                     var denominacion = "";
                     var simbolo_moneda = ""
 
-
+        if (body_tabla['datos_normales'].length > 0 ){
                     numero_agente =body_tabla['datos_normales'][0]["numero_agente"];
                     denominacion = body_tabla['datos_normales'][0]["moneda_factura"];
                     html_ventasnetas +='<tr>';
@@ -601,7 +601,7 @@ $(function() {
                                     html_ventasnetas +='</tr>';
 
                     html_ventasnetas += '</table>';
-
+         }else{jAlert("Esta consulta no genero resultados"),'Atencion!!!'}
                     $div_cobranza_agente.append(html_ventasnetas);
                     var height2 = $('#cuerpo').css('height');
                     var alto = parseInt(height2)-350;
