@@ -67,7 +67,7 @@ public interface CxcInterfaceDao {
 
     //reporte de cobranza por agente
     public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa);
-    public ArrayList<HashMap<String, String>> getCartera_DatosReporteCobranzaAgente(Integer id_agente,String fecha_inicial,String fecha_final, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCartera_DatosReporteCobranzaAgente(Integer id_agente,String fecha_inicial,String fecha_final,Double monto_inicial,Double monto_final, Integer tipo_comision,Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCartera_DatosReporteVentaxAgente(Integer id_agente,String fecha_inicial,String fecha_final, Integer id_empresa);
 
     //atalogo de agentes
