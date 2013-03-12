@@ -2051,7 +2051,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     @Override
-    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfd_ImpuestosRetenidosXml() {
+    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfd_CfdiTf_ImpuestosRetenidosXml() {
         ArrayList<LinkedHashMap<String, String>>  impuestos = new ArrayList<LinkedHashMap<String, String>>();
         LinkedHashMap<String,String> impuesto = new LinkedHashMap<String,String>();
         impuesto.put("impuesto", "IVA");
@@ -2064,7 +2064,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     @Override
-    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfd_ImpuestosTrasladadosXml(Integer id_sucursal) {
+    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(Integer id_sucursal) {
         ArrayList<LinkedHashMap<String, String>>  impuestos = new ArrayList<LinkedHashMap<String, String>>();
         LinkedHashMap<String,String> impuesto = new LinkedHashMap<String,String>();
         impuesto.put("impuesto", "IVA");
@@ -2434,7 +2434,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             new Object[]{}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
                     row.put("impuesto","IVA");
                     row.put("importe",StringHelper.roundDouble(rs.getString("impuesto"),2));
                     row.put("tasa", StringHelper.roundDouble(rs.getString("valor_impuesto"),2));
@@ -2459,7 +2459,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             new Object[]{}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
                     row.put("impuesto","IVA");
                     row.put("importe",StringHelper.roundDouble(rs.getString("monto_retencion"),2));
                     row.put("tasa", StringHelper.roundDouble(rs.getString("tasa"),2));

@@ -239,7 +239,7 @@ public class BeanFacturadorCfdiTimbre {
             }
             
             boolean fichero_xml_ok = FileHelper.createFileWithText(path_file, xml_file_name, comprobante_firmado);
-            
+            //System.out.println("fichero_xml_ok :"+fichero_xml_ok);
             if (fichero_xml_ok) {
                 //System.out.println("fichero_xml_ok: "+fichero_xml_ok);
                 //Instancia del validador 
@@ -252,7 +252,7 @@ public class BeanFacturadorCfdiTimbre {
                 
                 //error po numero de cuenta NA
                 //DOCUMENTO INVÁLIDO: org.xml.sax.SAXParseException; cvc-minLength-valid: El valor 'NA' con la longitud = '2' no es de faceta válida con respecto a minLength '4' para el tipo '#AnonType_NumCtaPagoComprobante'
-                
+                //System.out.println("str_executex :"+success);
                 //si la validación es correcta
                 if(success.equals("true")){
                     
@@ -302,7 +302,7 @@ public class BeanFacturadorCfdiTimbre {
                             pop.getRfc_receptor()+" "+
                             serie_folio+" "+
                             refId;
-                    //System.out.println("str_execute:"+str_execute);
+                    //System.out.println("str_execute :"+str_execute);
                     
                     Process resultado = Runtime.getRuntime().exec(str_execute); 
                     

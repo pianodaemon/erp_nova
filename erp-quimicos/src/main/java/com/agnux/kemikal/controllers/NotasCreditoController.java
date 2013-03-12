@@ -441,8 +441,8 @@ public class NotasCreditoController {
                     if(tipo_facturacion.equals("cfd")){
                         System.out.println("::::::::::::Tipo CFD:::::::::::::::::..");
                         listaConceptos = this.getFacdao().getNotaCreditoCfd_ListaConceptosXml(id_nota_credito);
-                        impRetenidos = this.getFacdao().getNotaCreditoCfd_ImpuestosRetenidosXml();
-                        impTrasladados = this.getFacdao().getNotaCreditoCfd_ImpuestosTrasladadosXml(id_sucursal);
+                        impRetenidos = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosRetenidosXml();
+                        impTrasladados = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(id_sucursal);
                         dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
                         
                         
@@ -547,36 +547,15 @@ public class NotasCreditoController {
                         String Folio=this.getGralDao().getFolioNotaCredito(id_empresa, id_sucursal);
                         rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                         
-                        /***/
-                        //lista de conceptos para la Nota de Credito cfdi
-                        listaConceptos = this.getFacdao().getNotaCreditoCfdiTf_ListaConceptosXml(id_nota_credito);
-                        dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
-                        
-                        //obtiene datos extras para el cfdi
-                        datosExtras = this.getFacdao().getNotaCreditoCfdi_DatosExtras(id_nota_credito, Serie, Folio);
-                        impTrasladados = this.getFacdao().getNotaCreditoCfd_ImpuestosTrasladadosXml(id_sucursal);
-                        impRetenidos = this.getFacdao().getNotaCreditoCfd_ImpuestosRetenidosXml();
-                        //leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
-                        /***/
-                        
-                        /*
                         //lista de conceptos para la Nota de Credito cfditf
-                        listaConceptos = this.getFacdao().getNotaCreditoCfd_ListaConceptosXml(id_nota_credito);
-                        impRetenidos = this.getFacdao().getNotaCreditoCfd_ImpuestosRetenidosXml();
-                        impTrasladados = this.getFacdao().getNotaCreditoCfd_ImpuestosTrasladadosXml(id_sucursal);
+                        listaConceptos = this.getFacdao().getNotaCreditoCfdiTf_ListaConceptosXml(id_nota_credito);
+                        impRetenidos = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosRetenidosXml();
+                        impTrasladados = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(id_sucursal);
                         dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
-                        */
                         
-                        //listaConceptos = this.getFacdao().getNotaCreditoCfdi_ListaConceptos(id_nota_credito);
-                        //dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
-                        /*
                         //obtiene datos extras para el cfdi
                         datosExtras = this.getFacdao().getNotaCreditoCfdi_DatosExtras(id_nota_credito, Serie, Folio);
-                        */
-                        //impTrasladados = this.getFacdao().getNotaCreditoCfdi_ImpuestosTrasladados(id_nota_credito);
-                        //impRetenidos = this.getFacdao().getNotaCreditoCfdi_ImpuestosRetenidos(id_nota_credito);
-                        //leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
-                        //System.out.println("tipo_cambio: "+String.valueOf(datosExtras.get("tipo_cambio"))+" nombre_moneda:"+String.valueOf(datosExtras.get("nombre_moneda")) );
+                        
                         dataCliente.put("comprobante_attr_tc", String.valueOf(datosExtras.get("tipo_cambio")));
                         dataCliente.put("comprobante_attr_moneda", String.valueOf(datosExtras.get("nombre_moneda")));
                         
@@ -592,18 +571,16 @@ public class NotasCreditoController {
                         datosExtras.put("command_selected", command_selected);
                         datosExtras.put("extra_data_array", extra_data_array);
                         
-                        
                         //genera xml factura
                         this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal);
                         String timbrado_correcto = this.getBfcfditf().start();
                         
                         //System.out.println("timbrado_correcto:"+timbrado_correcto);
-                        
                         /***********************************************/
                         //aqui se checa si el xml fue validado correctamente
                         //si fue correcto debe traer un valor "true", de otra manera trae un error y ppor lo tanto no se genera el pdf
                         if(timbrado_correcto.equals("true")){
-                            
+                            //System.out.println("timbrado_correcto dentro:"+timbrado_correcto);
                             //aqui se debe actializar el registro
                             data_string = 
                                 app_selected+"___"+
@@ -622,7 +599,7 @@ public class NotasCreditoController {
                             /*Codigo para generar el pdf para nota de credito*/
                             //obtiene serie_folio de la Nota de Credito que se acaba de guardar
                             serieFolio = this.getFacdao().getSerieFolioNotaCredito(id_nota_credito);
-
+                            
                             String cadena_original=this.getBfcfditf().getCadenaOriginal();
                             //System.out.println("cadena_original:"+cadena_original);
                         

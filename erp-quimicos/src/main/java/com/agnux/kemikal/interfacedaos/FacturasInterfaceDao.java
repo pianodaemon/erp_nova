@@ -122,8 +122,8 @@ public interface FacturasInterfaceDao {
     //metodos para xml nota de credito
     public HashMap<String,String> getNotaCreditoCfd_Cfdi_Datos(Integer id_nota_credito);//este metodo se utiliza para Nota de Credito CFD y CFDI
     public ArrayList<LinkedHashMap<String,String>> getNotaCreditoCfd_ListaConceptosXml(Integer id_nota_credito);
-    public ArrayList<LinkedHashMap<String,String>> getNotaCreditoCfd_ImpuestosRetenidosXml();
-    public ArrayList<LinkedHashMap<String,String>> getNotaCreditoCfd_ImpuestosTrasladadosXml(Integer id_sucursal);
+    public ArrayList<LinkedHashMap<String,String>> getNotaCreditoCfd_CfdiTf_ImpuestosRetenidosXml();
+    public ArrayList<LinkedHashMap<String,String>> getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(Integer id_sucursal);
     public LinkedHashMap<String,String> getNotaCreditoCfd_DatosExtrasXml(Integer id_nota_credito, String tipo_cambio,String id_usuario,String moneda_id, Integer id_empresa, Integer id_sucursal, Integer app_selected, String command_selected, String extra_data_array, String fac_saldado);
     public String getSerieFolioNotaCredito(Integer id_nota_credito);
     public ArrayList<HashMap<String, String>> getNotaCreditoCfd_ListaConceptosPdf(String serieFolio);
