@@ -1670,6 +1670,7 @@ $(function() {
     var agent = '<option value= "0" >[--Todos--]</option>';
     $select_agente.append(agent);
     
+    $select_tipo_reporte.focus();
 });
 
 
