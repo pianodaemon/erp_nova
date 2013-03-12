@@ -1211,8 +1211,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         return hm_cli;
     }
 
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control, Integer id_empresa, Integer id_sucursal) {
 	String sql_query = "SELECT "
@@ -1259,8 +1259,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         return hm_cli;
     }
 
-    
-    
+
+
 
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_CtaBanco(Integer id_moneda, Integer id_banco) {
@@ -1902,10 +1902,37 @@ public class CxcSpringDao implements CxcInterfaceDao{
 
 
     @Override
-    public ArrayList<HashMap<String, String>> getCartera_DatosReporteCobranzaAgente(Integer id_agente,String fecha_inicial, String fecha_final, Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getCartera_DatosReporteCobranzaAgente(Integer id_agente,String fecha_inicial, String fecha_final,Double monto_inicial,Double monto_final,Integer tipo_comision, Integer id_empresa) {
         String where="";
+        String and_montos ="";
+        String coma="";
+        String coma1="";
+        String monto="";
+        String cadena_case ="";
         if(id_agente!=0){
             where=" AND erp_h_facturas.cxc_agen_id="+id_agente;
+            coma1=",";
+        }
+        //if(monto_inicial >= 0 && monto_final !=0){
+        if (tipo_comision==2){
+            and_montos="and erp_h_facturas.subtotal >="+monto_inicial+" and erp_h_facturas.subtotal<="+monto_final+"";
+            coma=",";
+            monto="sbt.monto_tope_comision, "
+                +"sbt.monto_tope_comision2, "
+                +"sbt.monto_tope_comision3,  "
+                +" sbt.comision1_monto, "
+                +" sbt.comision2_monto, "
+                +" sbt.comision3_monto, "
+                +" (case when sbt.comision1_monto > 0 or sbt.comision1_monto != null   "
+                +" and  sbt.comision2_monto > 0 or sbt.comision2_monto != null    "
+                +" and sbt.comision3_monto > 0 or sbt.comision3_monto != null THEN sbt.comision3_monto  "
+                +" ELSE 0.0 end )comision_por_monto  ";
+            cadena_case="(case when "+monto_inicial+" >=erp_h_facturas.subtotal or  erp_h_facturas.subtotal<= "+monto_final+" then erp_h_facturas.subtotal * (cxc_agen.monto_tope_comision / 100::double precision) else 0.0 end )as comision1_monto, "
+                         +"(case when "+monto_inicial+" >=erp_h_facturas.subtotal or  erp_h_facturas.subtotal<= "+monto_final+" then erp_h_facturas.subtotal * (cxc_agen.monto_tope_comision2 / 100::double precision) else 0.0 end )as comision2_monto, "
+                         +"(case when "+monto_inicial+" >=erp_h_facturas.subtotal or  erp_h_facturas.subtotal<= "+monto_final+" then erp_h_facturas.subtotal * (cxc_agen.monto_tope_comision3 / 100::double precision) else 0.0 end )as comision3_monto ";
+
+        }else{
+        monto=" 0.0:: double precision  as comision_por_monto  ";
         }
 
         String sql_to_query = " "
@@ -1918,18 +1945,23 @@ public class CxcSpringDao implements CxcInterfaceDao{
                  +"sbt.numero_dias_pago, "
                  +"sbt.moneda_factura, "
                  +"sbt.subtotal, "
-                 //+"sbt.valor_mn, "
                  +"(CASE WHEN sbt.numero_dias_pago<=sbt.dias_tope_comision then sbt.comision  "
                       +"WHEN  sbt.numero_dias_pago > sbt.dias_tope_comision  AND sbt.numero_dias_pago <= sbt.dias_tope_comision2  THEN  sbt.comision2  "
                       +"WHEN  sbt.numero_dias_pago> sbt.dias_tope_comision2  AND  sbt.numero_dias_pago <= sbt.dias_tope_comision3  THEN  sbt.comision3  "
                       +"ELSE 0.0  "
-                      +"END )AS comision, "
+                      +"END )AS comision_por_fecha, "
+
                       +"(case when sbt.numero_dias_pago <= sbt.dias_tope_comision THEN sbt.subtotal * (sbt.comision / 100::double precision)  "
                       +"when  sbt.numero_dias_pago > sbt.dias_tope_comision  AND sbt.numero_dias_pago <= sbt.dias_tope_comision2 THEN  sbt.subtotal * (sbt.comision2::double precision / 100::double precision)  "
                       +"when  sbt.numero_dias_pago > sbt.dias_tope_comision2  AND sbt.numero_dias_pago <= sbt.dias_tope_comision3 THEN sbt.subtotal * (sbt.comision3::double precision / 100::double precision)  "
                       +"ELSE  0.0   "
-                  +"end )  AS total_comision "
-              +"from ( "
+                  +"end )  AS total_comision_por_fecha, "
+
+
+                +""+monto
+
+
+              +"  from ( "
                       +"SELECT  "
                           +"cxc_agen.id AS numero_agente,  "
                           +"cxc_agen.nombre AS nombre_agente,  "
@@ -1943,6 +1975,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
                           +"cxc_agen.dias_tope_comision, "
                           +"cxc_agen.dias_tope_comision2, "
                           +"cxc_agen.dias_tope_comision3, "
+                          +"cxc_agen.monto_tope_comision, "
+                          +"cxc_agen.monto_tope_comision2, "
+                          +"cxc_agen.monto_tope_comision3, "
                           +"cxc_agen.comision, "
                           +"cxc_agen.comision2, "
                           +"cxc_agen.comision3, "
@@ -1950,15 +1985,20 @@ public class CxcSpringDao implements CxcInterfaceDao{
                           +"erp_h_facturas.tipo_cambio, "
                           +"to_date(erp_h_facturas.momento_actualizacion::text,'yyyy-mm-dd') as momento_actualizacion, "
                           +"to_date(erp_h_facturas.momento_facturacion::text,'yyyy-mm-dd') as momento_creacion,  "
-                          +"gral_mon.id as id_moneda "
+                          +"gral_mon.id as id_moneda "+coma+""
+                          +""+cadena_case
+
                       +"FROM erp_h_facturas "
                       +"JOIN cxc_clie ON cxc_clie.id = erp_h_facturas.cliente_id "
                       +"JOIN cxc_agen ON cxc_agen.id= erp_h_facturas.cxc_agen_id "
                       +"JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id  "
                       +"WHERE erp_h_facturas.pagado=true "+where+" "
                       +"AND to_char(erp_h_facturas.fecha_ultimo_pago,'yyyymmdd')::integer between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer  "
-                      +"AND erp_h_facturas.empresa_id="+id_empresa+" order by nombre_agente asc,moneda_factura, numero_dias_pago asc "//order by nombre_agente asc,moneda_factura, serie_folio asc
-              +")AS sbt ";
+                      +"AND erp_h_facturas.empresa_id="+id_empresa
+                      +"  " +and_montos
+
+                + "  order by nombre_agente asc,moneda_factura, numero_dias_pago asc "//order by nombre_agente asc,moneda_factura, serie_folio asc
+              +")AS sbt order by sbt.numero_agente asc, sbt.moneda_factura asc";
 
 
 	 System.out.println("DatosReporteCobranzaAgente:: "+sql_to_query);
@@ -1967,6 +2007,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
             new Object[]{}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    //Integer monto_inicial=0;
+                    //Integer monto_final=0;
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("numero_agente",rs.getString("numero_agente"));
                     row.put("nombre_agente",rs.getString("nombre_agente"));
@@ -1978,8 +2020,15 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("moneda_factura",rs.getString("moneda_factura"));
                     //row.put("valor_mn",StringHelper.roundDouble(rs.getDouble("valor_mn"), 2));
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"), 2));
-                    row.put("comision",rs.getString("comision"));
-                    row.put("total_comision",StringHelper.roundDouble(rs.getDouble("total_comision"), 2));
+                    row.put("comision_por_fecha",rs.getString("comision_por_fecha"));
+                    row.put("total_comision_por_fecha",StringHelper.roundDouble(rs.getDouble("total_comision_por_fecha"), 2));
+                    //if(monto_inicial != 0 && monto_final !=0){
+                    //row.put("monto_tope_comision",rs.getString("monto_tope_comision"));
+                    //row.put("monto_tope_comision2",rs.getString("monto_tope_comision2"));
+                    //row.put("monto_tope_comision3",rs.getString("monto_tope_comision3"));
+                    row.put("comision_por_monto",rs.getString("comision_por_monto"));
+                    //}
+
                     return row;
                 }
             }
@@ -2296,7 +2345,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     + " venta_pesos double precision,  "
                                     + " costo double precision,  "
                                     + " fecha_factura text,"
-                                    
+
                                     + "id_presentacion Integer, "
                                     + "presentacion character varying"
                                     + "); ";
@@ -2802,12 +2851,12 @@ return subfamilias;
     @Override
     public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldos(Integer tipo, String cliente, Integer id_empresa) {
         String where_cliente="";
-        
+
         if(tipo == 1){
             where_cliente = " AND cxc_clie.razon_social ILIKE '%"+cliente+"%'";
         }
-        
-        
+
+
         String sql_to_query = ""
             + "SELECT cliente,"
                     + "clave_cliente,"
