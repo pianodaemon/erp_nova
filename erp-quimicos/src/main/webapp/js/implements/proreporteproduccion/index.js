@@ -78,81 +78,44 @@ $(function() {
     var $select_Operario= $('#lienzo_recalculable').find('div.repproduccion').find('table#filtros tr td').find('select[name=Operario]');
 
     produccion_diaria=function(){
-        $tr_produccion_diaria.show();
-        $tr_produccionxequipo.hide();
-        $tr_produccionxoperario.hide()
-        $tr_produccionxproducto.hide();
 
-        $Buscar_reporte_produccion.click(function(event){
-            $div_tabla_resultados.children().remove();
-            var html_trs="";
-            if($fecha_inicial.val() != "" && $fecha_final.val() != ""){
-                var arreglo_parametros = {
-                    id_operario:$select_Operario.val(),
-                    id_equipo:$select_tipo_equipo.val(),
-                    tipo_reporte:$select_tipo_reporte.val(),
-                    fecha_inicial : $fecha_inicial.val() ,
-                    fecha_final : $fecha_final.val(),
-                    sku:$sku_producto.val(),
-                    sku_descripcion:$producto.val(),
-                    iu:config.getUi()
-                    };
-                var restful_json_service = config.getUrlForGetAndPost() + '/getProduccion.json'
+        $div_tabla_resultados.children().remove();
+        var html_trs="";
+        if($fecha_inicial.val() != "" && $fecha_final.val() != ""){
+            var arreglo_parametros = {
+                id_operario:$select_Operario.val(),
+                id_equipo:$select_tipo_equipo.val(),
+                tipo_reporte:$select_tipo_reporte.val(),
+                fecha_inicial : $fecha_inicial.val() ,
+                fecha_final : $fecha_final.val(),
+                sku:$sku_producto.val(),
+                sku_descripcion:$producto.val(),
+                iu:config.getUi()
+            };
+            var restful_json_service = config.getUrlForGetAndPost() + '/getProduccion.json'
 
-                $.post(restful_json_service,arreglo_parametros,function(entry){
-                    if(entry['Datos'].length > 0){
+            $.post(restful_json_service,arreglo_parametros,function(entry){
+                if(entry['Datos'].length > 0){
 
-                        html_trs+='<table id="resultados" width="100%">'
-                        html_trs+='<thead> <tr>'
-                        html_trs+='<td >Folio Orden</td>'
-                        html_trs+='<td >Lote</td>'
-                        html_trs+='<td >F. Elaboracion</td>'
-                        html_trs+='<td >codigo</td>'
-                        html_trs+='<td >Descripcion</td>'
-                        html_trs+='<td >Equipo</td>'
-                        html_trs+='<td >Subproceso</td>'
-                        html_trs+='<td >Operador</td>'
-                        html_trs+='<td >cantidad</td>'
-                        html_trs+='</tr> </thead>'
-                        var folio_orden=entry['Datos'][0]["folio_orden"];
-                        var suma_cantidad=0.0;
-                        var tmp= 0;
+                    html_trs+='<table id="resultados" width="100%">'
+                    html_trs+='<thead> <tr>'
+                    html_trs+='<td >Folio Orden</td>'
+                    html_trs+='<td >Lote</td>'
+                    html_trs+='<td >F. Elaboracion</td>'
+                    html_trs+='<td >codigo</td>'
+                    html_trs+='<td >Descripcion</td>'
+                    html_trs+='<td >Equipo</td>'
+                    html_trs+='<td >Subproceso</td>'
+                    html_trs+='<td >Operador</td>'
+                    html_trs+='<td >cantidad</td>'
+                    html_trs+='</tr> </thead>'
+                    var folio_orden=entry['Datos'][0]["folio_orden"];
+                    var suma_cantidad=0.0;
+                    var tmp= 0;
 
-                        for(var i=0; i<entry['Datos'].length; i++){
-                            if(folio_orden == entry['Datos'][i]["folio_orden"]){
-                                if(tmp==0){
-                                    html_trs+='<tr>'
-                                    html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-                                    html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
-                                    html_trs+=' </tr>'
-                                    suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-
-                                }
-                                if(tmp != 0){
-                                    html_trs+='<tr>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-                                    html_trs+='<td align="right">0.0</td>'
-                                    html_trs+=' </tr>'
-
-                                }
-                                tmp=1;
-
-                            }else{
-
+                    for(var i=0; i<entry['Datos'].length; i++){
+                        if(folio_orden == entry['Datos'][i]["folio_orden"]){
+                            if(tmp==0){
                                 html_trs+='<tr>'
                                 html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
@@ -164,260 +127,122 @@ $(function() {
                                 html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
                                 html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
                                 html_trs+=' </tr>'
-
                                 suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-                                folio_orden=entry['Datos'][i]["folio_orden"];
-                            }
-
-                        }
-
-                        html_trs +='<tfoot>';
-                        html_trs +='<tr>';
-                        html_trs+='<td colspan="8">&nbsp;</td>'
-                        html_trs +='<td  align="right">'+$(this).agregar_comas(parseFloat(suma_cantidad).toFixed(2))+'</td>';
-                        html_trs +='</tr>';
-                        html_trs +='</table>';
-
-                        $div_tabla_resultados.append(html_trs);
-
-                    }else{
-                        jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
-                        }
-
-
-                    var height2 = $('#cuerpo').css('height');
-                    var alto = parseInt(height2)-275;
-                    var pix_alto=alto+'px';
-                    $('#resultados').tableScroll({
-                        height:parseInt(pix_alto)
-                        });
-                });
-
-            }else{
-                jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
-            }
-        });
-    }
-
-    produccion_diaria();
-
-
-
-
-    $select_tipo_reporte.change(function(){
-        if ($select_tipo_reporte.val() == 1){
-            $tr_produccion_diaria.show();
-            $tr_produccionxequipo.hide();
-            $tr_produccionxoperario.hide()
-            $tr_produccionxproducto.hide();
-
-            $Buscar_reporte_produccion.click(function(event){
-                $div_tabla_resultados.children().remove();
-                var html_trs="";
-                if($fecha_inicial.val() != "" && $fecha_final.val() != ""){
-                    //alert("sku:"+$sku_producto.val());
-                    var arreglo_parametros = {
-                        id_operario:$select_Operario.val(),
-                        id_equipo:$select_tipo_equipo.val(),
-                        tipo_reporte:$select_tipo_reporte.val(),
-                        fecha_inicial : $fecha_inicial.val() ,
-                        fecha_final : $fecha_final.val(),
-                        sku:$sku_producto.val(),
-                        sku_descripcion:$producto.val(),
-                        iu:config.getUi()
-                        };
-                    var restful_json_service = config.getUrlForGetAndPost() + '/getProduccion.json'
-
-                    $.post(restful_json_service,arreglo_parametros,function(entry){
-                        if(entry['Datos'].length > 0){
-
-                            html_trs+='<table id="resultados" width="100%">'
-                            html_trs+='<thead> <tr>'
-                            html_trs+='<td >Folio Orden</td>'
-                            html_trs+='<td >Lote</td>'
-                            html_trs+='<td >F. Elaboracion</td>'
-                            html_trs+='<td >codigo</td>'
-                            html_trs+='<td >Descripcion</td>'
-                            html_trs+='<td >Equipo</td>'
-                            html_trs+='<td >Subproceso</td>'
-                            html_trs+='<td >Operador</td>'
-
-                            html_trs+='<td >cantidad</td>'
-                            html_trs+='<td >unidad</td>'
-
-                            html_trs+='</tr> </thead>'
-                            var folio_orden=entry['Datos'][0]["folio_orden"];
-                            var suma_cantidad=0.0;
-                            var tmp= 0;
-
-                            for(var i=0; i<entry['Datos'].length; i++){
-                                if(folio_orden == entry['Datos'][i]["folio_orden"]){
-                                    if(tmp==0){
-                                        html_trs+='<tr>'
-                                        html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-
-                                        html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
-
-                                        html_trs+=' </tr>'
-                                        suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-
-                                    }
-                                    if(tmp != 0){
-                                        html_trs+='<tr>'
-                                        html_trs+='<td >'+""+'</td>'
-                                        html_trs+='<td >'+""+'</td>'
-                                        html_trs+='<td >'+""+'</td>'
-                                        html_trs+='<td >'+""+'</td>'
-                                        html_trs+='<td >'+""+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                        html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-
-                                        html_trs+='<td align="right">" "</td>'
-                                        //html_trs+='<td >'+entry['Datos'][i]["unidad"]+'</td>'
-                                        html_trs+=' </tr>'
-
-                                    }
-                                    tmp=1;
-
-                                //cantidad=parseFloat(entry['Datos'][i]["cantidad"]);
-
-                                }else{
-
-                                    html_trs+='<tr>'
-                                    html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-
-                                    html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
-                                    html_trs+=' </tr>'
-
-                                    suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-                                    folio_orden=entry['Datos'][i]["folio_orden"];
-                                }
 
                             }
+                            if(tmp != 0){
+                                html_trs+='<tr>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
+                                html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
+                                html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
+                                html_trs+='<td align="right">0.0</td>'
+                                html_trs+=' </tr>'
 
-                            html_trs +='<tfoot>';
-                            html_trs +='<tr>';
-                            html_trs+='<td colspan="8">&nbsp;</td>'
-                            html_trs +='<td  align="right">'+$(this).agregar_comas(parseFloat(suma_cantidad).toFixed(2))+'</td>';
-
-                            html_trs +='</tr>';
-                            html_trs +='</table>';
-
-                            $div_tabla_resultados.append(html_trs);
+                            }
+                            tmp=1;
 
                         }else{
-                            jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
-                            }
 
+                            html_trs+='<tr>'
+                            html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
+                            html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
+                            html_trs+=' </tr>'
 
-                        var height2 = $('#cuerpo').css('height');
-                        var alto = parseInt(height2)-275;
-                        var pix_alto=alto+'px';
-                        $('#resultados').tableScroll({
-                            height:parseInt(pix_alto)
-                            });
-                    });
+                            suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
+                            folio_orden=entry['Datos'][i]["folio_orden"];
+                        }
+
+                    }
+
+                    html_trs +='<tfoot>';
+                    html_trs +='<tr>';
+                    html_trs+='<td colspan="8">&nbsp;</td>'
+                    html_trs +='<td  align="right">'+$(this).agregar_comas(parseFloat(suma_cantidad).toFixed(2))+'</td>';
+                    html_trs +='</tr>';
+                    html_trs +='</table>';
+
+                    $div_tabla_resultados.append(html_trs);
 
                 }else{
-                    jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
+                    jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
                 }
+
+
+                var height2 = $('#cuerpo').css('height');
+                var alto = parseInt(height2)-275;
+                var pix_alto=alto+'px';
+                $('#resultados').tableScroll({
+                    height:parseInt(pix_alto)
+                });
             });
+
+        }else{
+            jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
         }
 
-        if ($select_tipo_reporte.val() == 2){
-            $tr_produccion_diaria.hide();
-            $tr_produccionxequipo.hide();
-            $tr_produccionxoperario.hide()
-            $tr_produccionxproducto.show();
+    }
 
-            $Buscar_reporte_produccion.click(function(event){
-                $div_tabla_resultados.children().remove();
-                var fecha=mostrarFecha();
-                //alert("fechasss:"+fecha);
-                var html_trs="";
-                var arreglo_parametros = {
-                    fecha_inicial:fecha,
-                    fecha_final:fecha,
-                    id_operario:$select_Operario.val(),
-                    id_equipo:$select_tipo_equipo.val(),
-                    tipo_reporte:$select_tipo_reporte.val(),
-                    fecha_inicial : $fecha_inicial.val() ,
-                    fecha_final : $fecha_final.val(),
-                    sku:$sku_producto.val(),
-                    sku_descripcion:$producto.val(),
-                    iu:config.getUi()
-                    };
-                var restful_json_service = config.getUrlForGetAndPost() + '/getProduccion.json'
 
-                $.post(restful_json_service,arreglo_parametros,function(entry){
-                    if(entry['Datos'].length > 0){
 
-                        html_trs+='<table id="resultados" width="100%">'
-                        html_trs+='<thead> <tr>'
-                        html_trs+='<td >Folio Orden</td>'
-                        html_trs+='<td >Lote</td>'
-                        html_trs+='<td >F. Elaboracion</td>'
-                        html_trs+='<td >codigo</td>'
-                        html_trs+='<td >Descripcion</td>'
-                        //html_trs+='<td >Equipo</td>'
-                        // html_trs+='<td >Subproceso</td>'
-                        // html_trs+='<td >Operador</td>'
-                        html_trs+='<td >cantidad</td>'
-                        //html_trs+='<td >unidad</td>'
-                        html_trs+='</tr> </thead>'
+    produccion_por_producto=function(){
 
-                        var folio_orden=entry['Datos'][0]["folio_orden"];
-                        var suma_cantidad=0.0;
-                        var tmp= 0;
+        $div_tabla_resultados.children().remove();
+        var fecha=mostrarFecha();
+        //alert("fechasss:"+fecha);
+        var html_trs="";
+        if($fecha_inicial.val() != "" && $fecha_final.val() != ""){
 
-                        for(var i=0; i<entry['Datos'].length; i++){
-                            if(folio_orden == entry['Datos'][i]["folio_orden"]){
-                                if(tmp==0){
-                                    html_trs+='<tr>'
-                                    html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
-                                    //html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                    //html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                    //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-                                    html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
-                                    html_trs+=' </tr>'
-                                    suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-                                }
-                                if(tmp != 0){
-                                /*html_trs+='<tr>'
-                                                html_trs+='<td >'+""+'</td>'
-                                                html_trs+='<td >'+""+'</td>'
-                                                html_trs+='<td >'+""+'</td>'
-                                                html_trs+='<td >'+""+'</td>'
-                                                html_trs+='<td >'+""+'</td>'
-                                                //html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                                //html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                                //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-                                                html_trs+='<td align="right">0.0</td>'
-                                              html_trs+=' </tr>'
-                                            */
-                                }
-                                tmp=1;
-                            }else{
 
+            var arreglo_parametros = {
+                fecha_inicial:fecha,
+                fecha_final:fecha,
+                id_operario:$select_Operario.val(),
+                id_equipo:$select_tipo_equipo.val(),
+                tipo_reporte:$select_tipo_reporte.val(),
+                fecha_inicial : $fecha_inicial.val() ,
+                fecha_final : $fecha_final.val(),
+                sku:$sku_producto.val(),
+                sku_descripcion:$producto.val(),
+                iu:config.getUi()
+            };
+            var restful_json_service = config.getUrlForGetAndPost() + '/getProduccion.json'
+
+            $.post(restful_json_service,arreglo_parametros,function(entry){
+                if(entry['Datos'].length > 0){
+
+                    html_trs+='<table id="resultados" width="100%">'
+                    html_trs+='<thead> <tr>'
+                    html_trs+='<td >Folio Orden</td>'
+                    html_trs+='<td >Lote</td>'
+                    html_trs+='<td >F. Elaboracion</td>'
+                    html_trs+='<td >codigo</td>'
+                    html_trs+='<td >Descripcion</td>'
+                    //html_trs+='<td >Equipo</td>'
+                    // html_trs+='<td >Subproceso</td>'
+                    // html_trs+='<td >Operador</td>'
+                    html_trs+='<td >cantidad</td>'
+                    //html_trs+='<td >unidad</td>'
+                    html_trs+='</tr> </thead>'
+
+                    var folio_orden=entry['Datos'][0]["folio_orden"];
+                    var suma_cantidad=0.0;
+                    var tmp= 0;
+
+                    for(var i=0; i<entry['Datos'].length; i++){
+                        if(folio_orden == entry['Datos'][i]["folio_orden"]){
+                            if(tmp==0){
                                 html_trs+='<tr>'
                                 html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
@@ -429,113 +254,111 @@ $(function() {
                                 //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
                                 html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
                                 html_trs+=' </tr>'
-
                                 suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-                                folio_orden=entry['Datos'][i]["folio_orden"];
                             }
-                        //alert("esta es la suma:"+suma_cantidad);
+                            if(tmp != 0){
+                            /*html_trs+='<tr>'
+                                                html_trs+='<td >'+""+'</td>'
+                                                html_trs+='<td >'+""+'</td>'
+                                                html_trs+='<td >'+""+'</td>'
+                                                html_trs+='<td >'+""+'</td>'
+                                                html_trs+='<td >'+""+'</td>'
+                                                //html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
+                                                //html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
+                                                //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
+                                                html_trs+='<td align="right">0.0</td>'
+                                              html_trs+=' </tr>'
+                                            */
+                            }
+                            tmp=1;
+                        }else{
+
+                            html_trs+='<tr>'
+                            html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
+                            //html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
+                            //html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
+                            //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
+                            html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
+                            html_trs+=' </tr>'
+
+                            suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
+                            folio_orden=entry['Datos'][i]["folio_orden"];
                         }
-                        html_trs +='<tfoot>';
-                        html_trs +='<tr>';
-                        html_trs+='<td colspan="5">&nbsp;</td>'
-                        html_trs +='<td  align="right">'+$(this).agregar_comas(parseFloat(suma_cantidad).toFixed(2))+'</td>';
+                    //alert("esta es la suma:"+suma_cantidad);
+                    }
+                    html_trs +='<tfoot>';
+                    html_trs +='<tr>';
+                    html_trs+='<td colspan="5">&nbsp;</td>'
+                    html_trs +='<td  align="right">'+$(this).agregar_comas(parseFloat(suma_cantidad).toFixed(2))+'</td>';
 
-                        html_trs +='</tr>';
-                        html_trs +='</table>';
+                    html_trs +='</tr>';
+                    html_trs +='</table>';
 
-                        $div_tabla_resultados.append(html_trs);
+                    $div_tabla_resultados.append(html_trs);
 
-                    }else{
-                        jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
-                        }
+                }else{
+                    jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
+                }
 
 
-                    var height2 = $('#cuerpo').css('height');
-                    var alto = parseInt(height2)-275;
-                    var pix_alto=alto+'px';
-                    $('#resultados').tableScroll({
-                        height:parseInt(pix_alto)
-                        });
+                var height2 = $('#cuerpo').css('height');
+                var alto = parseInt(height2)-275;
+                var pix_alto=alto+'px';
+                $('#resultados').tableScroll({
+                    height:parseInt(pix_alto)
                 });
+
             });
-
-
-
+        }else{
+            jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
         }
-        if ($select_tipo_reporte.val() == 3){
-            $tr_produccion_diaria.hide();
-            $tr_produccionxproducto.hide();
-            $tr_produccionxoperario.hide()
-            $tr_produccionxequipo.show();
 
+    }
 
-            $Buscar_reporte_produccion.click(function(event){
-                $div_tabla_resultados.children().remove();
-                var html_trs="";
-                var arreglo_parametros = {
-                    id_operario:$select_Operario.val(),
-                    id_equipo:$select_tipo_equipo.val(),
-                    tipo_reporte:$select_tipo_reporte.val(),
-                    fecha_inicial : $fecha_inicial.val() ,
-                    fecha_final : $fecha_final.val(),
-                    sku:$sku_producto.val(),
-                    sku_descripcion:$producto.val(),
-                    iu:config.getUi()
-                    };
-                var restful_json_service = config.getUrlForGetAndPost() + '/getProduccion.json'
+    produccion_por_equipo=function(){
 
-                $.post(restful_json_service,arreglo_parametros,function(entry){
-                    if(entry['Datos'].length > 0){
+        $div_tabla_resultados.children().remove();
+        var html_trs="";
+        if($fecha_inicial.val() != "" && $fecha_final.val() != ""){
+            var arreglo_parametros = {
+                id_operario:$select_Operario.val(),
+                id_equipo:$select_tipo_equipo.val(),
+                tipo_reporte:$select_tipo_reporte.val(),
+                fecha_inicial : $fecha_inicial.val() ,
+                fecha_final : $fecha_final.val(),
+                sku:$sku_producto.val(),
+                sku_descripcion:$producto.val(),
+                iu:config.getUi()
+            };
+            var restful_json_service = config.getUrlForGetAndPost() + '/getProduccion.json'
 
-                        html_trs+='<table id="resultados" width="100%">'
-                        html_trs+='<thead> <tr>'
-                        html_trs+='<td >Folio Orden</td>'
-                        html_trs+='<td >Lote</td>'
-                        html_trs+='<td >F. Elaboracion</td>'
-                        html_trs+='<td >codigo</td>'
-                        html_trs+='<td >Descripcion</td>'
-                        html_trs+='<td >Equipo</td>'
-                        html_trs+='<td >Subproceso</td>'
-                        //html_trs+='<td >Operador</td>'
+            $.post(restful_json_service,arreglo_parametros,function(entry){
+                if(entry['Datos'].length > 0){
 
-                        html_trs+='<td >cantidad</td>'
-                        html_trs+='</tr> </thead>'
-                        var folio_orden=entry['Datos'][0]["folio_orden"];
+                    html_trs+='<table id="resultados" width="100%">'
+                    html_trs+='<thead> <tr>'
+                    html_trs+='<td >Folio Orden</td>'
+                    html_trs+='<td >Lote</td>'
+                    html_trs+='<td >F. Elaboracion</td>'
+                    html_trs+='<td >codigo</td>'
+                    html_trs+='<td >Descripcion</td>'
+                    html_trs+='<td >Equipo</td>'
+                    html_trs+='<td >Subproceso</td>'
+                    //html_trs+='<td >Operador</td>'
 
-                        var suma_cantidad=0.0;
-                        var tmp= 0;
-                        for(var i=0; i<entry['Datos'].length; i++){
-                            if(folio_orden == entry['Datos'][i]["folio_orden"]){
-                                if(tmp==0){
-                                    html_trs+='<tr>'
-                                    html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                    //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-                                    html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
-                                    html_trs+=' </tr>'
-                                    suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-                                }
-                                if(tmp != 0){
-                                    html_trs+='<tr>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                    //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-                                    html_trs+='<td align="right">0.0</td>'
-                                    html_trs+=' </tr>'
-                                }
-                                tmp=1;
-                            }else{
+                    html_trs+='<td >cantidad</td>'
+                    html_trs+='</tr> </thead>'
+                    var folio_orden=entry['Datos'][0]["folio_orden"];
 
+                    var suma_cantidad=0.0;
+                    var tmp= 0;
+                    for(var i=0; i<entry['Datos'].length; i++){
+                        if(folio_orden == entry['Datos'][i]["folio_orden"]){
+                            if(tmp==0){
                                 html_trs+='<tr>'
                                 html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
@@ -545,166 +368,209 @@ $(function() {
                                 html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
                                 //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-
                                 html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
-                                //html_trs+='<td >'+entry['Datos'][i]["unidad"]+'</td>'
                                 html_trs+=' </tr>'
-
                                 suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-                                folio_orden=entry['Datos'][i]["folio_orden"];
                             }
-                        //alert("esta es la suma:"+suma_cantidad);
+                            if(tmp != 0){
+                                html_trs+='<tr>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
+                                html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
+                                //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
+                                html_trs+='<td align="right">0.0</td>'
+                                html_trs+=' </tr>'
+                            }
+                            tmp=1;
+                        }else{
+
+                            html_trs+='<tr>'
+                            html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
+                            //html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
+
+                            html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
+                            //html_trs+='<td >'+entry['Datos'][i]["unidad"]+'</td>'
+                            html_trs+=' </tr>'
+
+                            suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
+                            folio_orden=entry['Datos'][i]["folio_orden"];
                         }
-                        html_trs +='<tfoot>';
-                        html_trs +='<tr>';
-                        html_trs+='<td colspan="7">&nbsp;</td>'
-                        html_trs +='<td  align="right">'+$(this).agregar_comas(parseFloat(suma_cantidad).toFixed(2))+'</td>';
-                        html_trs +='</tr>';
-                        html_trs +='</table>';
+                    //alert("esta es la suma:"+suma_cantidad);
+                    }
+                    html_trs +='<tfoot>';
+                    html_trs +='<tr>';
+                    html_trs+='<td colspan="7">&nbsp;</td>'
+                    html_trs +='<td  align="right">'+$(this).agregar_comas(parseFloat(suma_cantidad).toFixed(2))+'</td>';
+                    html_trs +='</tr>';
+                    html_trs +='</table>';
 
-                        $div_tabla_resultados.append(html_trs);
+                    $div_tabla_resultados.append(html_trs);
 
-                    }else{
-                        jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
-                        }
+                }else{
+                    jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
+                }
 
 
-                    var height2 = $('#cuerpo').css('height');
-                    var alto = parseInt(height2)-275;
-                    var pix_alto=alto+'px';
-                    $('#resultados').tableScroll({
-                        height:parseInt(pix_alto)
-                        });
+                var height2 = $('#cuerpo').css('height');
+                var alto = parseInt(height2)-275;
+                var pix_alto=alto+'px';
+                $('#resultados').tableScroll({
+                    height:parseInt(pix_alto)
                 });
             });
 
-
-
-
+        }else{
+            jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
         }
-        if ($select_tipo_reporte.val() == 4){
-            $tr_produccion_diaria.hide();
-            $tr_produccionxequipo.hide();
-            $tr_produccionxproducto.hide();
-            $tr_produccionxoperario.show();
+    }
+
+    produccion_por_operario=function(){
+
+        $div_tabla_resultados.children().remove();
+        var html_trs="";
+
+        if($fecha_inicial.val() != "" && $fecha_final.val() != ""){
+            var arreglo_parametros = {
+                id_operario:$select_Operario.val(),
+                id_equipo:$select_tipo_equipo.val(),
+                tipo_reporte:$select_tipo_reporte.val(),
+                fecha_inicial : $fecha_inicial.val() ,
+                fecha_final : $fecha_final.val(),
+                sku:$sku_producto.val(),
+                sku_descripcion:$producto.val(),
+                iu:config.getUi()
+            };
+            var restful_json_service = config.getUrlForGetAndPost() + '/getProduccion.json'
+
+            $.post(restful_json_service,arreglo_parametros,function(entry){
+                if(entry['Datos'].length > 0){
+
+                    html_trs+='<table id="resultados" width="100%">'
+                    html_trs+='<thead> <tr>'
+                    html_trs+='<td >Folio Orden</td>'
+                    html_trs+='<td >Lote</td>'
+                    html_trs+='<td >F. Elaboracion</td>'
+                    html_trs+='<td >codigo</td>'
+                    html_trs+='<td >Descripcion</td>'
+                    //html_trs+='<td >Equipo</td>'
+                    html_trs+='<td >Subproceso</td>'
+                    html_trs+='<td >Operador</td>'
+                    html_trs+='<td >cantidad</td>'
 
 
-            $Buscar_reporte_produccion.click(function(event){
-                $div_tabla_resultados.children().remove();
-                var html_trs="";
-                var arreglo_parametros = {
-                    id_operario:$select_Operario.val(),
-                    id_equipo:$select_tipo_equipo.val(),
-                    tipo_reporte:$select_tipo_reporte.val(),
-                    fecha_inicial : $fecha_inicial.val() ,
-                    fecha_final : $fecha_final.val(),
-                    sku:$sku_producto.val(),
-                    sku_descripcion:$producto.val(),
-                    iu:config.getUi()
-                    };
-                var restful_json_service = config.getUrlForGetAndPost() + '/getProduccion.json'
+                    html_trs+='</tr> </thead>'
+                    var folio_orden=entry['Datos'][0]["folio_orden"];
 
-                $.post(restful_json_service,arreglo_parametros,function(entry){
-                    if(entry['Datos'].length > 0){
-
-                        html_trs+='<table id="resultados" width="100%">'
-                        html_trs+='<thead> <tr>'
-                        html_trs+='<td >Folio Orden</td>'
-                        html_trs+='<td >Lote</td>'
-                        html_trs+='<td >F. Elaboracion</td>'
-                        html_trs+='<td >codigo</td>'
-                        html_trs+='<td >Descripcion</td>'
-                        //html_trs+='<td >Equipo</td>'
-                        html_trs+='<td >Subproceso</td>'
-                        html_trs+='<td >Operador</td>'
-                        html_trs+='<td >cantidad</td>'
-
-
-                        html_trs+='</tr> </thead>'
-                        var folio_orden=entry['Datos'][0]["folio_orden"];
-
-                        var suma_cantidad=0.0;
-                        var tmp= 0;
-                        for(var i=0; i<entry['Datos'].length; i++){
-                            if(folio_orden == entry['Datos'][i]["folio_orden"]){
-                                if(tmp==0){
-                                    html_trs+='<tr>'
-                                    html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
-                                    //          html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-                                    html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
-                                    html_trs+=' </tr>'
-                                    suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-                                }
-                                if(tmp != 0){
-                                    html_trs+='<tr>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    html_trs+='<td >'+""+'</td>'
-                                    //            html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
-                                    html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-                                    html_trs+='<td align="right">0.0</td>'
-                                    html_trs+=' </tr>'
-                                }
-                                tmp=1;
-                            }else{
-
+                    var suma_cantidad=0.0;
+                    var tmp= 0;
+                    for(var i=0; i<entry['Datos'].length; i++){
+                        if(folio_orden == entry['Datos'][i]["folio_orden"]){
+                            if(tmp==0){
                                 html_trs+='<tr>'
                                 html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
-                                //        html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
+                                //          html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
                                 html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
-
                                 html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
-                                //html_trs+='<td >'+entry['Datos'][i]["unidad"]+'</td>'
                                 html_trs+=' </tr>'
-
                                 suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
-                                folio_orden=entry['Datos'][i]["folio_orden"];
                             }
-                        //alert("esta es la suma:"+suma_cantidad);
+                            if(tmp != 0){
+                                html_trs+='<tr>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                html_trs+='<td >'+""+'</td>'
+                                //            html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
+                                html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
+                                html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
+                                html_trs+='<td align="right">0.0</td>'
+                                html_trs+=' </tr>'
+                            }
+                            tmp=1;
+                        }else{
+
+                            html_trs+='<tr>'
+                            html_trs+='<td >'+entry['Datos'][i]["folio_orden"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["numero_lote"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["fecha_elaboracion"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["codigo"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["descripcion"]+'</td>'
+                            //        html_trs+='<td >'+entry['Datos'][i]["nombre_equipo"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["subproceso"]+'</td>'
+                            html_trs+='<td >'+entry['Datos'][i]["nombre_operador"]+'</td>'
+
+                            html_trs+='<td align="right">'+$(this).agregar_comas(parseFloat(entry['Datos'][i]["cantidad"]).toFixed(2))+'</td>'
+                            //html_trs+='<td >'+entry['Datos'][i]["unidad"]+'</td>'
+                            html_trs+=' </tr>'
+
+                            suma_cantidad=suma_cantidad+parseFloat(entry['Datos'][i]["cantidad"]);
+                            folio_orden=entry['Datos'][i]["folio_orden"];
                         }
-                        html_trs +='<tfoot>';
-                        html_trs +='<tr>';
-                        html_trs+='<td colspan="7">&nbsp;</td>'
-                        html_trs +='<td  align="right">'+$(this).agregar_comas(parseFloat(suma_cantidad).toFixed(2))+'</td>';
+                    //alert("esta es la suma:"+suma_cantidad);
+                    }
+                    html_trs +='<tfoot>';
+                    html_trs +='<tr>';
+                    html_trs+='<td colspan="7">&nbsp;</td>'
+                    html_trs +='<td  align="right">'+$(this).agregar_comas(parseFloat(suma_cantidad).toFixed(2))+'</td>';
 
-                        html_trs +='</tr>';
-                        html_trs +='</table>';
+                    html_trs +='</tr>';
+                    html_trs +='</table>';
 
-                        $div_tabla_resultados.append(html_trs);
+                    $div_tabla_resultados.append(html_trs);
 
-                    }else{
-                        jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
-                        }
+                }else{
+                    jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
+                }
 
 
-                    var height2 = $('#cuerpo').css('height');
-                    var alto = parseInt(height2)-275;
-                    var pix_alto=alto+'px';
-                    $('#resultados').tableScroll({
-                        height:parseInt(pix_alto)
-                        });
+                var height2 = $('#cuerpo').css('height');
+                var alto = parseInt(height2)-275;
+                var pix_alto=alto+'px';
+                $('#resultados').tableScroll({
+                    height:parseInt(pix_alto)
                 });
             });
+        }else{
+            jAlert("Elija Una Fecha inicial y una Fecha Final",'! Atencion');
+        }
+    }
 
 
+
+    $select_tipo_reporte.change(function(){
+        if ($select_tipo_reporte.val() == 1){
+            produccion_diaria();
+        }
+
+        if ($select_tipo_reporte.val() == 2){
+            produccion_por_producto();
+        }
+        if ($select_tipo_reporte.val() == 3){
+            produccion_por_equipo();
+        }
+        if ($select_tipo_reporte.val() == 4){
+            produccion_por_operario();
         }
 
     });
 
+    //Cargando los equipos disponibles
     var restful_json_service = config.getUrlForGetAndPost() + '/getEquipos.json'
     $arreglo = {
         iu:config.getUi()
@@ -718,6 +584,8 @@ $(function() {
         });
         $select_tipo_equipo.append(Equipos_html);
     });
+
+    //Cargando los operarios
     var restful_json_service = config.getUrlForGetAndPost() + '/getOperarios.json'
     $arreglo = {
         iu:config.getUi()
@@ -855,8 +723,6 @@ $(function() {
                     $producto.val($(this).find('span.titulo_prod_buscador').html());
                     $sku_producto.val($(this).find('span.sku_prod_buscador').html());
 
-
-
                     //elimina la ventana de busqueda
                     var remove = function() {
                         $(this).remove();
@@ -875,6 +741,10 @@ $(function() {
             $buscar_plugin_producto.trigger('click');
         }
 
+        if($campo_sku.val() != ''){
+            $buscar_plugin_producto.trigger('click');
+        }
+
         $cancelar_plugin_busca_producto.click(function(event){
             //event.preventDefault();
             var remove = function() {
@@ -888,10 +758,6 @@ $(function() {
         event.preventDefault();
         $busca_productos($sku_producto.val(),$producto.val());//llamada a la funcion que busca productos
     });
-
-
-
-
 
     $fecha_inicial.attr('readonly',true);
     $fecha_final.attr('readonly',true);
@@ -1060,8 +926,6 @@ $(function() {
     mostrarFecha($fecha_final.val());
 
     //click generar reporte de visitas
-
-
     //genera pdf del reporte
     $genera_PDF_reporte_produccion.click(function(event){
 
@@ -1093,22 +957,59 @@ $(function() {
             }
         }
         if ($select_tipo_reporte.val() == 2){
-            var cadena =$select_Operario.val()+"___"+$select_tipo_equipo.val()+"___"+$select_tipo_reporte.val()+"___"+$fecha_inicial.val()+"___"+$fecha_final.val()+"___"+sku+"___"+descripcion_sku+"___"+iu;
-            var input_json = config.getUrlForGetAndPost() + '/Crear_PDF_Produccion/'+cadena+'/'+config.getUi()+'/out.json';
-            window.location.href=input_json;
+            if($fecha_inicial.val() != "" && $fecha_final.val() !=""){
+                var cadena =$select_Operario.val()+"___"+$select_tipo_equipo.val()+"___"+$select_tipo_reporte.val()+"___"+$fecha_inicial.val()+"___"+$fecha_final.val()+"___"+sku+"___"+descripcion_sku+"___"+iu;
+                var input_json = config.getUrlForGetAndPost() + '/Crear_PDF_Produccion/'+cadena+'/'+config.getUi()+'/out.json';
+                window.location.href=input_json;
+            }else{
+                jAlert("Debe elegir el rango la fecha inicial y su fecha final ","Atencion!!!")
+            }
         }
         if ($select_tipo_reporte.val() == 3){
-            var cadena =$select_Operario.val()+"___"+$select_tipo_equipo.val()+"___"+$select_tipo_reporte.val()+"___"+$fecha_inicial.val()+"___"+$fecha_final.val()+"___"+sku+"___"+descripcion_sku+"___"+iu;
-            var input_json = config.getUrlForGetAndPost() + '/Crear_PDF_Produccion/'+cadena+'/'+config.getUi()+'/out.json';
-            window.location.href=input_json;
+            if($fecha_inicial.val() != "" && $fecha_final.val() !=""){
+                var cadena =$select_Operario.val()+"___"+$select_tipo_equipo.val()+"___"+$select_tipo_reporte.val()+"___"+$fecha_inicial.val()+"___"+$fecha_final.val()+"___"+sku+"___"+descripcion_sku+"___"+iu;
+                var input_json = config.getUrlForGetAndPost() + '/Crear_PDF_Produccion/'+cadena+'/'+config.getUi()+'/out.json';
+                window.location.href=input_json;
+            }else{
+                jAlert("Debe elegir el rango la fecha inicial y su fecha final ","Atencion!!!")
+            }
         }
         if ($select_tipo_reporte.val() == 4 ){
-            var cadena =$select_Operario.val()+"___"+$select_tipo_equipo.val()+"___"+$select_tipo_reporte.val()+"___"+$fecha_inicial.val()+"___"+$fecha_final.val()+"___"+sku+"___"+descripcion_sku+"___"+iu;
-            var input_json = config.getUrlForGetAndPost() + '/Crear_PDF_Produccion/'+cadena+'/'+config.getUi()+'/out.json';
-            window.location.href=input_json;
+            if($fecha_inicial.val() != "" && $fecha_final.val() !=""){
+                var cadena =$select_Operario.val()+"___"+$select_tipo_equipo.val()+"___"+$select_tipo_reporte.val()+"___"+$fecha_inicial.val()+"___"+$fecha_final.val()+"___"+sku+"___"+descripcion_sku+"___"+iu;
+                var input_json = config.getUrlForGetAndPost() + '/Crear_PDF_Produccion/'+cadena+'/'+config.getUi()+'/out.json';
+                window.location.href=input_json;
+            }else{
+                jAlert("Debe elegir el rango la fecha inicial y su fecha final ","Atencion!!!")
+            }
+        }
+    });//termina llamada json
+
+    $Buscar_reporte_produccion.click(function(event){
+        if ($select_tipo_reporte.val() == 1){
+            produccion_diaria();
         }
 
+        if ($select_tipo_reporte.val() == 2){
+            produccion_por_producto();
+        }
+        if ($select_tipo_reporte.val() == 3){
+            produccion_por_equipo();
+        }
+        if ($select_tipo_reporte.val() == 4){
+            produccion_por_operario();
+        }
 
-    });//termina llamada json
+    });
+
+    $(this).aplicarEventoKeypressEjecutaTrigger($fecha_inicial, $Buscar_reporte_produccion);
+    $(this).aplicarEventoKeypressEjecutaTrigger($fecha_final, $Buscar_reporte_produccion);
+    $(this).aplicarEventoKeypressEjecutaTrigger($sku_producto, $Buscar_reporte_produccion);
+    $(this).aplicarEventoKeypressEjecutaTrigger($producto, $Buscar_reporte_produccion);
+    $(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_reporte, $Buscar_reporte_produccion);
+    $(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_equipo, $Buscar_reporte_produccion);
+    $(this).aplicarEventoKeypressEjecutaTrigger($select_Operario, $Buscar_reporte_produccion);
+
+    $select_tipo_reporte.focus();
 
 });
