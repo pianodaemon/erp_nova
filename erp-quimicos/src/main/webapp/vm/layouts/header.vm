@@ -21,6 +21,8 @@
 	<script type="text/javascript" src="../../js/components/Hourpicker/mousewheel.js"></script>
 	<script type="text/javascript" src="../../js/components/Hourpicker/timepickerinputmask.js"></script>
 	<script type="text/javascript" src="../../js/components/Hourpicker/timepickerinputmask.min.js"></script>
+	
+	<script type="text/javascript" src="../../js/components/InputMask/jquery.mask.min.js"></script>
     
 	<script type="text/javascript" src="../../js/components/easy-tool-tip/easy-tool-tip.js" charset="utf-8"></script>
 	<script type="text/javascript" src="../../js/components/datagrid00/jquery.tablesorter.js"></script>
