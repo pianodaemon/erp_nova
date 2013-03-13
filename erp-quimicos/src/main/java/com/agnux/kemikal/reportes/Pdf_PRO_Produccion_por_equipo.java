@@ -88,6 +88,9 @@ public class Pdf_PRO_Produccion_por_equipo {
 
                tabla.addCell(celda);
             }
+
+            if(datos_produccion.size()>0){
+
             String folio_orden=datos_produccion.get(0).get("folio_orden").toString();
             Double  suma_cantidad=0.0;
             Integer tmp= 0;
@@ -351,7 +354,7 @@ public class Pdf_PRO_Produccion_por_equipo {
                         tabla.addCell(cell);
 
 
-
+            }
             doc.add(tabla);
             doc.close();
 	} catch (FileNotFoundException ex) {
