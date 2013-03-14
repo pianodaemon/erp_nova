@@ -245,7 +245,7 @@ public class ProPdfReporteProduccionController {
 
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
 
-        productos = this.getProDao().getBuscadorProductos_produccion(sku, descripcion, id_empresa);
+        productos = this.getProDao().getBuscadorProductos_produccion(sku,tipo, descripcion, id_empresa);
 
         jsonretorno.put("Productos", productos);
 
