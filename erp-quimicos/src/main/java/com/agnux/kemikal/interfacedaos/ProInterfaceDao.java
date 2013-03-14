@@ -269,7 +269,7 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getProduccion_por_operario(String fecha_inicial, String fecha_final,String sku,String sku_descripcion,Integer equipo,Integer operario,Integer tipo_reporte,Integer id_empresa);
 
     public ArrayList<HashMap<String, String>> getProducto_Tipos_produccion();
-    public ArrayList<HashMap<String, String>> getBuscadorProductos_produccion(String sku,String descripcion,Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getBuscadorProductos_produccion(String sku,String tipo,String descripcion,Integer id_empresa);
 
     public ArrayList<HashMap<String, String>> getOperarios(Integer id_empresa);
     //fin de los reportes de produccion
