@@ -20,10 +20,9 @@
 
         <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxOrdenCompra.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/cxprepantiguedadsaldos/modalboxBuscaproveedor.js"></script>
-		<!--<script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxbuscaPresentaciones.js"></script>-->
         <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxBuscapresentacion.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxBuscaproducto.js"></script>
-        <script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxCancelaEmision.js"></script>
+        <!--<script type="text/javascript" src="../../js/components/modalbox/comordencompra/modalboxCancelaEmision.js"></script>-->
         <script type="text/javascript" src="../../js/implements/comordencompra/index.js" ></script>
         
         #include("${layoutmenu}")
@@ -152,8 +151,7 @@
                                 <div class="fixed column" class="content_x" >
 
                                     <div id="tabx-1" class="contenidoPes" >
-
-
+										
                                         <table border="0" style="margin:0; padding:0;">
                                                 <tr>
                                                     <td width="520">&nbsp;</td>
@@ -166,19 +164,21 @@
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="80">RFC.&nbsp;Proveedor&nbsp;&nbsp;</td>
+                                                                <td width="80">No.&nbsp;Proveedor&nbsp;&nbsp;</td>
                                                                 <td width="120">
                                                                     <input type="hidden" name="id_proveedor" value="">
-                                                                    <input type="text" name="rfc_proveedor" style="width:120px;" >
+                                                                    <input type="hidden" name="tipo_prov" value="0">
+                                                                    <input type="hidden" name="rfc_proveedor" value="" >
+                                                                    <input type="text" name="no_proveedor" value="" style="width:120px; border:1px solid #000;">
                                                                 </td>
                                                                 <td width="15"><div class="interrogacion"><img SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfcproveed0r"></div></td>
-                                                                <td width="90" align="right"><a href="busca_proveedor">(Buscar&nbsp;proveedor)</a></td>
+                                                                <td width="90"><a href="busca_proveedor">(Buscar&nbsp;)</a></td>
                                                                 <td width="15"></td>
                                                                 <td width="90" align="right"><span>Folio&nbsp;&nbsp;&nbsp;</span></td>
                                                                 <td width="75"><input type="text" name="folio" style="width:75px;" readOnly="true"></td>
                                                                 <td width="15"></td>
                                                             </tr>
-
+															
                                                             <tr><td colspan="10" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
@@ -231,6 +231,12 @@
                                                                 <td width="90">
                                                                     <select name="select_moneda" style="width:90px;" title="Moneda para la Orden de Compra"></select>
                                                                     <select name="select_moneda_original" style="display:none"></select>
+                                                                    
+                                                                    <!--Estos son los valores del impuesto al cargar la ventana de Orden de Compra-->
+                                                                    <input type="hidden" name="id_impuesto_orig" value="0">
+                                                                    <input type="hidden" name="valorimpuesto_orig" value="0">
+                                                                    
+                                                                    <!--Estos son los valores del impuesto que seran guardados, estos cambian dependiendo del tipo de proveedor-->
                                                                     <input type="hidden" name="id_impuesto" value="0">
                                                                     <input type="hidden" name="valorimpuesto" value="0">
                                                                 </td>
@@ -447,66 +453,6 @@
 
 
 
-
-<form id="formaGeneraInforme" action="edit.json" method="POST" >
-<div id="div_one" class="panelcito_modal generainforme_div_one"  style="display:none;" title="">
-	<div id="div_two" title="" class="generainforme_div_two">
-			<div class="fixed column" style="width:290px; padding-left:6px;"><strong>Generador de informes</strong></div>
-	</div>
-	<div id="div_three" title="" class="generainforme_div_three">
-		<div class="columns" style="background:#731F6C;">
-			<div class="container" style="background:white;">
-				<div class="fixed column" class="content_x" >
-
-
-					<table width="100%" border="0">
-							<tr>
-								<td width="290" style="background:#ffffff;">
-									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
-										<tr>
-											<td colspan="6" width="290" height="10"></td>
-										</tr>
-										<tr>
-											<td width="50" align="right">Mes&nbsp;</td>
-											<td width="70"><select name="select_mes" style="width:70px;"></select></td>
-											<td width="30"></td>
-											<td width="60" align="right">A&ntilde;o&nbsp;</td>
-											<td width="70">
-												<select name="select_anio" style="width:70px;"></select></td>
-											<td width="10"></td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-
-							<tr>
-								<td width="290" height="12" style="background:#ffffff"></td>
-							</tr>
-
-							<tr>
-								<td width="290" style="background:#ffffff;">
-									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
-										<tr>
-											<td width="50"></td>
-											<td width="115" align="center"><a href="generar" style="font-size:13px;">Generar informe</a></td>
-											<td width="115" align="center"><a href="cancelar" style="font-size:13px;">Cancelar</a></td>
-											<td width="10"></td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-
-					</table>
-
-
-				</div>
-			</div>
-
-		</div>
-	</div>
-
-</div>
-</form>
 <div class="buscador_proveedores" style="display:none;">
     <table width="100%" border="0" class="formaBusqueda_proveedores">
             <tr>
@@ -525,33 +471,31 @@
                                                             <td width="10" style="background:#ffffff;"></td>
                                                             <td colspan="3" style="background:#ffffff;" width="650">
 
-                                                                    <table id="tabla_busqueda" border="0"  class="contenidobusqueda">
-                                                                            <tr>
-                                                                                    <td colspan="11">&nbsp;</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                    <td width="10"></td>
-                                                                                    <td width="45">RFC</td>
-                                                                                    <td width="150"><input type="text" name="campo_rfc" style="width:150px;"></td>
-                                                                                    <td width="25"></td>
-                                                                                    <td width="45">E-mail</td>
-                                                                                    <td width="200"><input type="text" name="campo_email" style="width:200px;"></td>
-                                                                                    <td width="120"></td>
-                                                                                    <td></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                    <td colspan="11">&nbsp;</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                    <td width="10"></td>
-                                                                                    <td width="45">Nombre</td>
-                                                                                    <td colspan="4"><input type="text" name="campo_nombre" style="width:420px;"></td>
-                                                                                    <td width="120"></td>
-                                                                                    <td>
-                                                                                            <input type="button" id="busca_proveedor_modalbox" class="onmouseOutBuscar">
-                                                                                    </td>
-                                                                            </tr>
-                                                                    </table>
+																<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+																	<tr>
+																			<td colspan="11">&nbsp;</td>
+																	</tr>
+																	<tr>
+																		<td width="10"></td>
+																		<td width="75">No. Proovedor</td>
+																		<td width="100"><input type="text" name="campo_no_proveedor" style="width:100px;"></td>
+																		<td width="25"></td>
+																		<td width="45">RFC</td>
+																		<td width="250"><input type="text" name="campo_rfc" style="width:250px;"></td>
+																		<td width="90"></td>
+																		<td></td>
+																	</tr>
+																	<tr>
+																		<td colspan="11">&nbsp;</td>
+																	</tr>
+																	<tr>
+																		<td width="10"></td>
+																		<td width="75">Razon Social</td>
+																		<td colspan="4"><input type="text" name="campo_nombre" style="width:420px;"></td>
+																		<td width="90"></td>
+																		<td><input type="button" id="busca_proveedor_modalbox" class="onmouseOutBuscar"></td>
+																	</tr>
+																</table>
 
 
                                                             </td>
@@ -615,123 +559,6 @@
             </tr>
     </table>
 </div>
-
-
-
-
-
-
-
-
-
-<div class="buscador_clientes" style="display:none;">
-	<table width="100%" border="0" class="formaBusqueda_clientes">
-		<tr>
-			<td>
-				<div class="div_dos_clientes">
-					<table width="100%" border="0">
-						<thead>
-							<tr>
-								<td colspan="8" height="50" valign="top"><div class="titulo_clientes" width="100%"><strong>Buscador de Proveedores</strong></div></td>
-							</tr>
-						</thead>
-
-						<tbody>
-							<tr>
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff;"></td>
-								<td colspan="3" style="background:#ffffff;" width="600">
-
-									<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
-										<tr>
-											<td colspan="7" width="600" height="10"></td>
-										</tr>
-										<tr>
-											<td width="50">Buscar</td>
-											<td width="245"><input type="text" name="cadena_buscar" style="width:245px;"></td>
-											<td width="25"></td>
-											<td width="60">Filtro por</td>
-											<td width="150"><select name="filtropor" style="width:150px;"></select></td>
-											<td width="70" align="right">
-												<!--<a href="busca_cliente_modalbox" style="font-size:13px;">Buscar</a>-->
-												<input type="button" id="busca_cliente_modalbox" class="onmouseOutBuscar">
-											</td>
-										</tr>
-
-									</table>
-
-								</td>
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-
-							<tr style="font-size:13px;">
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-
-								<td width="80"  style="background:#A8A9AB;">No. control</td>
-								<td width="140"  style="background:#A8A9AB;">RFC</td>
-								<td width="380"  style="background:#A8A9AB;">Razon social</td>
-
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-
-
-							<tr>
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-								<td style="background:#ffffff; border: solid 1px #454442;" colspan="3" width="600">
-									<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
-										<table  border="0" id="tabla_resultado" width="580">
-											<!--aqui van los resultados de la busqueda-->
-											<!--
-												<tr>
-													<td width="80">No. control</td>
-													<td width="145">RFC</td>
-													<td width="375">Razon social</td>
-												</tr>
-											-->
-										</table>
-									</div>
-								</td>
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr>
-								<td width="10"></td>
-								<td width="10" colspan="5" height="3" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr>
-								<td width="10"></td>
-								<td width="10" style="background:#ffffff"></td>
-
-								<td width="80" style="background:#ffffff"></td>
-								<td width="140" style="background:#ffffff"></td>
-								<td width="380" style="background:#ffffff" align="right">
-									<!--<a href="cencela" style="font-size:13px;">Cancelar</a>-->
-									<input type="button" id="cencela" class="onmouseOutCancelar">
-								</td>
-
-								<td width="10" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-							<tr>
-								<td width="10"></td>
-								<td width="10" colspan="5" height="6" style="background:#ffffff"></td>
-								<td width="10"></td>
-							</tr>
-						</tbody>
-
-					</table>
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
-
-
 
 
 <div class="buscador_productos" style="display:none;">
@@ -933,7 +760,7 @@
 </div>
 
 
-
+<!--
 <form id="formaCancelaEmision" action="edit.json" method="POST" >
 <div id="div_one" class="panelcito_modal cancelaemision_div_one"  style="display:none;" title="">
 	<div id="div_two" title="" class="cancelaemision_div_two">
@@ -1000,3 +827,4 @@
 
 </div>
 </form>
+-->

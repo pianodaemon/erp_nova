@@ -335,8 +335,8 @@ $(function() {
 		$('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -200  });
 		
 		var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
+		var $campo_no_proveedor = $('#forma-buscaproveedor-window').find('input[name=campo_no_proveedor]');
 		var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
-		var $campo_email = $('#forma-buscaproveedor-window').find('input[name=campo_email]');
 		var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
 		
 		var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
@@ -367,7 +367,7 @@ $(function() {
 			//event.preventDefault();
 			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProveedores.json';
 			$arreglo = {    'rfc':$campo_rfc.val(),
-							'email':$campo_email.val(),
+							'no_proveedor':$campo_no_proveedor.val(),
 							'nombre':$campo_nombre.val(),
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 						}

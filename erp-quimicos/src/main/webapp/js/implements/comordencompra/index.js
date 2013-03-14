@@ -140,7 +140,7 @@ $(function() {
 	
 	
 	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
-	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
+	$(this).aplicarEventoKeypressEjecutaTrigger = function($campo, $campo_ejecutar){
 		$campo.keypress(function(e){
 			if(e.which == 13){
 				$campo_ejecutar.trigger('click');
@@ -149,12 +149,13 @@ $(function() {
 		});
 	}
 	
-	$aplicar_evento_keypress($busqueda_folio, $buscar);
-	$aplicar_evento_keypress($busqueda_proveedor, $buscar);
-	$aplicar_evento_keypress($busqueda_codigo, $buscar);
-	$aplicar_evento_keypress($busqueda_producto, $buscar);
-	$aplicar_evento_keypress($busqueda_fecha_inicial, $buscar);
-	$aplicar_evento_keypress($busqueda_fecha_final, $buscar);
+	
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_proveedor, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
 	
 	
 
@@ -335,21 +336,94 @@ $(function() {
 	}
 	
 	
-	$busca_proveedores = function($select_via_embarque,$select_moneda,$select_condiciones, array_monedas, array_condiciones, array_via_embarque){
-		$(this).modalPanel_Buscaproveedor();
-
-		var $dialogoc =  $('#forma-buscaproveedor-window');
-		$dialogoc.append($('div.buscador_proveedores').find('table.formaBusqueda_proveedores').clone());
-		$('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -200  });
-
+	
+	
+	$agregarDatosProveedorSeleccionado = function(array_monedas, array_condiciones, array_via_embarque, rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor){
 		var $rfc_proveedor = $('#forma-comordencompra-window').find('input[name=rfc_proveedor]');
 		var $razon_proveedor = $('#forma-comordencompra-window').find('input[name=razonproveedor]');
 		var $dir_proveedor = $('#forma-comordencompra-window').find('input[name=dirproveedor]');
 		var $id_proveedor = $('#forma-comordencompra-window').find('input[name=id_proveedor]');
+		var $no_proveedor = $('#forma-comordencompra-window').find('input[name=no_proveedor]');
+		var $tipo_prov = $('#forma-comordencompra-window').find('input[name=tipo_prov]');
+		var $select_moneda = $('#forma-comordencompra-window').find('select[name=select_moneda]');
+		var $select_condiciones = $('#forma-comordencompra-window').find('select[name=select_condiciones]');
+		var $select_via_embarque = $('#forma-comordencompra-window').find('select[name=via_envarque]');
+		
+		var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
+		var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
+		
+		var $id_impuesto_orig = $('#forma-comordencompra-window').find('input[name=id_impuesto_orig]');
+		var $valorimpuesto_orig = $('#forma-comordencompra-window').find('input[name=valorimpuesto_orig]');
+		
+		$rfc_proveedor.val(rfc_proveedor);
+		$razon_proveedor.val(razon_soc_proveedor);
+		$dir_proveedor.val(dir_proveedor);
+		$id_proveedor.val(id_proveedor);
+		$tipo_prov.val(tipo_proveedor);
+		$no_proveedor.val(no_proveedor);
+		
+		//si Tipo=2, es un proveedor extranjero
+		if(parseInt($tipo_prov.val())==2){
+			//asignamos el id del impuesto tasa cero y valor cero
+			$id_impuesto.val(2);
+			$valor_impuesto.val(0);
+		}else{
+			//asignamos los valores correspondientes del impuesto
+			$id_impuesto.val($id_impuesto_orig.val());
+			$valor_impuesto.val($valorimpuesto_orig.val());
+		}
+		
+		
+		
+		//carga el select de monedas  con la moneda del cliente seleccionada por default
+		$select_moneda.children().remove();
+		var moneda_hmtl = '';
+		$.each(array_monedas ,function(entryIndex,moneda){
+			if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+				moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+			}else{
+				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+			}
+		});
+		$select_moneda.append(moneda_hmtl);
+
+		//carga select de condiciones con los dias de Credito default del Cliente
+		$select_condiciones.children().remove();
+		var hmtl_condiciones;
+		$.each(array_condiciones, function(entryIndex,condicion){
+			if( parseInt(condicion['id']) == parseInt(id_dias_credito) ){
+				hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes">' + condicion['descripcion'] + '</option>';
+			}else{
+				hmtl_condiciones += '<option value="' + condicion['id'] + '" >' + condicion['descripcion'] + '</option>';
+			}
+		});
+		$select_condiciones.append(hmtl_condiciones);
+		
+		//carga select de condiciones con los dias de Credito default del Cliente
+		$select_via_embarque.children().remove();
+		var hmtl_via_embarque;
+		$.each(array_via_embarque, function(entryIndex,embarque){
+			if( parseInt(embarque['id']) == parseInt(id_tipo_embarque) ){
+				hmtl_via_embarque += '<option value="' + embarque['id'] + '" selected="yes">' + embarque['tipo_embarque'] + '</option>';
+			}else{
+				hmtl_via_embarque += '<option value="' + embarque['id'] + '" >' + embarque['tipo_embarque'] + '</option>';
+			}
+		});
+		$select_via_embarque.append(hmtl_via_embarque);
+	}//termina cargar datos del proveedor seleccionado
+	
+	
+	
+	$busca_proveedores = function(array_monedas, array_condiciones, array_via_embarque, no_proveedor, razon_social){
+		$(this).modalPanel_Buscaproveedor();
+		
+		var $dialogoc =  $('#forma-buscaproveedor-window');
+		$dialogoc.append($('div.buscador_proveedores').find('table.formaBusqueda_proveedores').clone());
+		$('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -200  });
 		
 		var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
+		var $campo_no_proveedor = $('#forma-buscaproveedor-window').find('input[name=campo_no_proveedor]');
 		var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
-		var $campo_email = $('#forma-buscaproveedor-window').find('input[name=campo_email]');
 		var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
 		
 		var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
@@ -372,28 +446,29 @@ $(function() {
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
-		$campo_rfc.val($rfc_proveedor.val());
-		$campo_nombre.val($razon_proveedor.val());
+		$campo_no_proveedor.val(no_proveedor);
+		$campo_nombre.val(razon_social);
 		
-		$campo_rfc.focus();
+		$campo_no_proveedor.focus();
 		
 		//click buscar proveedor
 		$buscar_plugin_proveedor.click(function(event){
 			var restful_json_service = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscaProveedores.json'
 			$arreglo = {    rfc:$campo_rfc.val(),
-							email:$campo_email.val(),
+							no_proveedor:$campo_no_proveedor.val(),
 							nombre:$campo_nombre.val(),
 							iu:$('#lienzo_recalculable').find('input[name=iu]').val()
 						}
-
+			
 			var trr = '';
 			$tabla_resultados.children().remove();
 			$.post(restful_json_service,$arreglo,function(entry){
 				$.each(entry['Proveedores'],function(entryIndex,proveedor){
-
+					
 					trr = '<tr>';
 						trr += '<td width="120">';
 							trr += '<input type="hidden" id="id_prov" value="'+proveedor['id']+'">';
+							trr += '<input type="hidden" id="no_prov" value="'+proveedor['numero_proveedor']+'">';
 							trr += '<input type="hidden" id="id_moneda" value="'+proveedor['moneda_id']+'">';
 							trr += '<input type="hidden" id="descuento" value="'+proveedor['descuento']+'">';
 							trr += '<input type="hidden" id="limite_de_credito" value="'+proveedor['limite_de_credito']+'">';
@@ -425,57 +500,23 @@ $(function() {
 				
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
-
-					$rfc_proveedor.val($(this).find('.rfc').html());
-					$razon_proveedor.val($(this).find('#razon_social').html());
-					$dir_proveedor.val($(this).find('.direccion').html());
-					$id_proveedor.val($(this).find('#id_prov').val());
-
+					var rfc_proveedor = $(this).find('.rfc').html();
+					var razon_soc_proveedor = $(this).find('#razon_social').html();
+					var dir_proveedor = $(this).find('.direccion').html();
+					var id_proveedor = $(this).find('#id_prov').val();
+					var tipo_proveedor = $(this).find('#tipo_prov').val();
+					var no_proveedor = $(this).find('#no_prov').val();
 					var id_moneda=$(this).find('#id_moneda').val();
 					var id_dias_credito=$(this).find('#id_dias_credito').val();
 					var id_tipo_embarque=$(this).find('#id_tipo_embarque').val();
 					
-					//carga el select de monedas  con la moneda del cliente seleccionada por default
-					$select_moneda.children().remove();
-					var moneda_hmtl = '';
-					$.each(array_monedas ,function(entryIndex,moneda){
-						if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-						}else{
-							moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-						}
-					});
-					$select_moneda.append(moneda_hmtl);
-
-                                        //carga select de condiciones con los dias de Credito default del Cliente
-					$select_condiciones.children().remove();
-					var hmtl_condiciones;
-					$.each(array_condiciones, function(entryIndex,condicion){
-						if( parseInt(condicion['id']) == parseInt(id_dias_credito) ){
-							hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes">' + condicion['descripcion'] + '</option>';
-						}else{
-							hmtl_condiciones += '<option value="' + condicion['id'] + '" >' + condicion['descripcion'] + '</option>';
-						}
-					});
-					$select_condiciones.append(hmtl_condiciones);
+					//llamada a la función que agrega datos del proveedor seleccionado
+					$agregarDatosProveedorSeleccionado(array_monedas, array_condiciones, array_via_embarque, rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor);
 					
-					//carga select de condiciones con los dias de Credito default del Cliente
-					$select_via_embarque.children().remove();
-					var hmtl_via_embarque;
-					$.each(array_via_embarque, function(entryIndex,embarque){
-						if( parseInt(embarque['id']) == parseInt(id_tipo_embarque) ){
-							hmtl_via_embarque += '<option value="' + embarque['id'] + '" selected="yes">' + embarque['tipo_embarque'] + '</option>';
-						}else{
-							hmtl_via_embarque += '<option value="' + embarque['id'] + '" >' + embarque['tipo_embarque'] + '</option>';
-						}
-					});
-					$select_via_embarque.append(hmtl_via_embarque);
-
-
 					//elimina la ventana de busqueda
 					var remove = function() { $(this).remove(); };
 					$('#forma-buscaproveedor-overlay').fadeOut(remove);
-					$razon_proveedor.focus();
+					$('#forma-comordencompra-window').find('input[name=razonproveedor]').focus();
 				});
 			});
 		});
@@ -485,16 +526,15 @@ $(function() {
 			$buscar_plugin_proveedor.trigger('click');
 		}
 		
-		$aplicar_evento_keypress($campo_rfc, $buscar_plugin_proveedor);
-		$aplicar_evento_keypress($campo_email, $buscar_plugin_proveedor);
-		$aplicar_evento_keypress($campo_nombre, $buscar_plugin_proveedor);
-		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_rfc, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_no_proveedor, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_nombre, $buscar_plugin_proveedor);
 		
 		$cancelar_plugin_busca_proveedor.click(function(event){
 			//event.preventDefault();
 			var remove = function() { $(this).remove(); };
 			$('#forma-buscaproveedor-overlay').fadeOut(remove);
-			$rfc_proveedor.focus();
+			$('#forma-comordencompra-window').find('input[name=razonproveedor]').focus();
 		});
 	}//termina buscador de proveedores
 	
@@ -503,7 +543,6 @@ $(function() {
 	
 	//buscador de productos
 	$busca_productos = function(sku_buscar, nombre_producto){
-		
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
@@ -546,11 +585,14 @@ $(function() {
 			$select_tipo_producto.children().remove();
 			var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
 			$.each(data['prodTipos'],function(entryIndex,pt){
+				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+				/*
 				if(parseInt(pt['id'])==1){
 					prod_tipos_html += '<option value="' + pt['id'] + '" selected="yes">' + pt['titulo'] + '</option>';
 				}else{
 					prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
-				}
+				}*/
+				
 			});
 			$select_tipo_producto.append(prod_tipos_html);
 		});
@@ -624,9 +666,9 @@ $(function() {
 			$buscar_plugin_producto.trigger('click');
 		}
 		
-		$aplicar_evento_keypress($campo_sku, $buscar_plugin_producto);
-		$aplicar_evento_keypress($select_tipo_producto, $buscar_plugin_producto);
-		$aplicar_evento_keypress($campo_descripcion, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_producto, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $buscar_plugin_producto);
 		
 		$cancelar_plugin_busca_producto.click(function(event){
 			//event.preventDefault();
@@ -641,9 +683,7 @@ $(function() {
 
 
 	//buscador de presentaciones disponibles para un producto
-
 	$buscador_presentaciones_producto = function($id_proveedor,$clave_proveedor, sku_producto,$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio){
-
 		//verifica si el campo rfc proveedor no esta vacio
 		if($clave_proveedor != ''){
 			//verifica si el campo sku no esta vacio para realizar busqueda
@@ -659,7 +699,7 @@ $(function() {
 
 					//verifica si el arreglo  retorno datos
 					if (entry['Presentaciones'].length > 0){
-                                            $(this).modalPanel_Buscapresentacion();
+						$(this).modalPanel_Buscapresentacion();
 
 						var $dialogoc =  $('#forma-buscapresentacion-window');
 						$dialogoc.append($('div.buscador_presentaciones').find('table.formaBusqueda_presentaciones').clone());
@@ -669,8 +709,7 @@ $(function() {
 						//var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('a[href*=cencela]');
 						var $cancelar_plugin_busca_lotes_producto = $('#forma-buscapresentacion-window').find('#cencela');
 						$tabla_resultados.children().remove();
-
-
+						
 						$cancelar_plugin_busca_lotes_producto.mouseover(function(){
 							$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
 						});
@@ -733,25 +772,33 @@ $(function() {
 							//elimina la ventana de busqueda
 							var remove = function() {$(this).remove();};
 							$('#forma-buscapresentacion-overlay').fadeOut(remove);
+							
+							$('#forma-comordencompra-window').find('input[name=sku_producto]').val('');
+							$('#forma-comordencompra-window').find('input[name=nombre_producto]').val('');
 						});
 
 						$cancelar_plugin_busca_lotes_producto.click(function(event){
 							//event.preventDefault();
 							var remove = function() {$(this).remove();};
 							$('#forma-buscapresentacion-overlay').fadeOut(remove);
+							$('#forma-comordencompra-window').find('input[name=sku_producto]').focus();
 						});
 
 					}else{
-						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
-						$('#forma-comordencompra-window').find('input[name=titulo_producto]').val('');
+						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.", 'Atencion!', function(r) { 
+							$('#forma-comordencompra-window').find('input[name=sku_producto]').focus();
+						});
 					}
 				});
-
 			}else{
-					jAlert("Es necesario ingresar un Sku de producto valido", 'Atencion!');
+				jAlert("Es necesario ingresar un Sku de producto valido.", 'Atencion!', function(r) { 
+					$('#forma-comordencompra-window').find('input[name=sku_producto]').focus();
+				});
 			}
 		}else{
-			jAlert("Es necesario seleccionar un Proveedor", 'Atencion!');
+			jAlert("Es necesario seleccionar un Proveedor.", 'Atencion!', function(r) { 
+				$('#forma-comordencompra-window').find('input[name=rfc_proveedor]').focus();
+			});
 		}
 
 	}//termina buscador dpresentaciones disponibles de un producto
@@ -772,7 +819,7 @@ $(function() {
 		var $grid_productos = $('#forma-comordencompra-window').find('#grid_productos');
 		var $empresa_immex = $('#forma-comordencompra-window').find('input[name=empresa_immex]');
 		var $tasa_ret_immex = $('#forma-comordencompra-window').find('input[name=tasa_ret_immex]');
-
+		
 		var sumaSubTotal = 0; //es la suma de todos los importes
 		var sumaImpuesto = 0; //valor del iva
 		var impuestoRetenido = 0; //monto del iva retenido de acuerdo a la tasa de retencion immex
@@ -782,6 +829,7 @@ $(function() {
 		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
 			$valor_impuesto.val(0);
 		}
+		
 
 		$grid_productos.find('tr').each(function (index){
 			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
@@ -789,15 +837,11 @@ $(function() {
 				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
 				//alert($(this).find('#import').val());
 				if($(this).find('#totimp').val() != ''){
-					//alert($(this).find('#totimp').val());
 					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
 				}
 			}
 		});
-
-		//calcular  la tasa de retencion IMMEX
-	        //impuestoRetenido = parseFloat(sumaSubTotal)  * parseFloat(parseFloat($tasa_ret_immex.val()));
-
+		
 		//calcula el total sumando el subtotal y el impuesto menos la retencion
 		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto);// - parseFloat(impuestoRetenido);
 
@@ -1091,18 +1135,20 @@ $(function() {
 		var $total_tr = $('#forma-comordencompra-window').find('input[name=total_tr]');
 		var $busca_proveedor = $('#forma-comordencompra-window').find('a[href*=busca_proveedor]');
 		var $id_proveedor = $('#forma-comordencompra-window').find('input[name=id_proveedor]');
+		var $no_proveedor = $('#forma-comordencompra-window').find('input[name=no_proveedor]');
 		var $rfc_proveedor = $('#forma-comordencompra-window').find('input[name=rfc_proveedor]');
 		var $razon_proveedor = $('#forma-comordencompra-window').find('input[name=razonproveedor]');
+		var $tipo_prov = $('#forma-comordencompra-window').find('input[name=tipo_prov]');
 		var $dir_proveedor = $('#forma-comordencompra-window').find('input[name=dirproveedor]');
 		var $observaciones = $('#forma-comordencompra-window').find('textarea[name=observaciones]');
-
+		
 		var $select_moneda = $('#forma-comordencompra-window').find('select[name=select_moneda]');
 		var $tipo_cambio = $('#forma-comordencompra-window').find('input[name=tipo_cambio]');
 		var $grupo = $('#forma-comordencompra-window').find('input[name=grupo]');
 		var $select_condiciones = $('#forma-comordencompra-window').find('select[name=select_condiciones]');
 		var consigandoA= $('#forma-comordencompra-window').find('input[name=consigandoA]');
 		var $select_via_embarque = $('#forma-comordencompra-window').find('select[name=via_envarque]');
-
+		
 		var $sku_producto = $('#forma-comordencompra-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-comordencompra-window').find('input[name=nombre_producto]');
 		//buscar producto
@@ -1114,18 +1160,19 @@ $(function() {
 		*/
 		var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
-
-
-
+		
+		var $id_impuesto_orig = $('#forma-comordencompra-window').find('input[name=id_impuesto_orig]');
+		var $valorimpuesto_orig = $('#forma-comordencompra-window').find('input[name=valorimpuesto_orig]');
+		
 		var $cancelar_orden_compra = $('#forma-comordencompra-window').find('#cancelar_orden_compra');
 		var $descargarpdf = $('#forma-comordencompra-window').find('#descargarpdf');
 		var $cancelado = $('#forma-comordencompra-window').find('input[name=cancelado]');
-
+		
 		//grid de productos
 		var $grid_productos = $('#forma-comordencompra-window').find('#grid_productos');
 		//grid de errores
 		var $grid_warning = $('#forma-comordencompra-window').find('#div_warning_grid').find('#grid_warning');
-
+		
 		//var $flete = $('#forma-comordencompra-window').find('input[name=flete]');
 		var $subtotal = $('#forma-comordencompra-window').find('input[name=subtotal]');
 		var $impuesto = $('#forma-comordencompra-window').find('input[name=impuesto]');
@@ -1141,13 +1188,22 @@ $(function() {
 		$cancelado .hide();
 		
 		$dir_proveedor.css({'background' : '#F0F0F0'});
-		$rfc_proveedor.focus();
-                /*
+		$no_proveedor.focus();
+		
+		
+		//quitar enter a todos los campos input
+		$('#forma-comordencompra-window').find('input').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
+		
+		/*
 		$permitir_solo_numeros($no_cuenta);
 		$no_cuenta.attr('disabled','-1');
 		$etiqueta_digit.attr('disabled','-1');
 		*/
-
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("La Orden de Compra se guard&oacute; con &eacute;xito", 'Atencion!');
@@ -1196,7 +1252,7 @@ $(function() {
 											$grid_productos.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
 										}
 									}
-
+									
 									//$grid_productos.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
 									//$grid_productos.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
 
@@ -1229,18 +1285,14 @@ $(function() {
 
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
-			//buscador de provedores
-			$busca_proveedor.click(function(event){
-				event.preventDefault();
-				$busca_proveedores($select_via_embarque,$select_moneda,$select_condiciones, entry['Monedas'], entry['Condiciones'],entry['via_embarque']);
-			});
-
-
-			//$campo_tc.val(entry['tc']['tipo_cambio']);
+			$id_impuesto_orig.val(entry['iva']['0']['id_impuesto']);
+			$valorimpuesto_orig.val(entry['iva']['0']['valor_impuesto']);
+			
 			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
 			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
+			
 			$tipo_cambio.val(entry['Tc']['0']['tipo_cambio']);
-
+			
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
 			var moneda_hmtl = '';
@@ -1248,8 +1300,7 @@ $(function() {
 				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 			});
 			$select_moneda.append(moneda_hmtl);
-
-
+			
 			//carga select de terminos
 			$select_condiciones.children().remove();
 			var hmtl_condiciones;
@@ -1257,7 +1308,7 @@ $(function() {
 				hmtl_condiciones += '<option value="' + condicion['id'] + '"  >' + condicion['descripcion'] + '</option>';
 			});
 			$select_condiciones.append(hmtl_condiciones);
-
+			
 			//carga select via de envarque
 			$select_via_embarque.children().remove();
 			var via_embarque_hmtl = '';
@@ -1265,9 +1316,56 @@ $(function() {
 				via_embarque_hmtl += '<option value="' + via_envarque['id'] + '"  >' + via_envarque['tipo_embarque'] + '</option>';
 			});
 			$select_via_embarque.append(via_embarque_hmtl);
+			
+			
+			//buscador de provedores
+			$busca_proveedor.click(function(event){
+				event.preventDefault();
+				$busca_proveedores(entry['Monedas'], entry['Condiciones'],entry['via_embarque'], $no_proveedor.val(), $razon_proveedor.val() );
+			});
+			
+			
+			$no_proveedor.keypress(function(e){
+				if(e.which == 13){
+					var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoProv.json';
+					$arreglo2 = {'no_proveedor':$no_proveedor.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+					
+					$.post(input_json2,$arreglo2,function(entry2){
+						
+						if(parseInt(entry2['Proveedor'].length) > 0 ){
+							var id_proveedor = entry2['Proveedor'][0]['id'];
+							var no_proveedor = entry2['Proveedor'][0]['numero_proveedor'];
+							var rfc_proveedor = entry2['Proveedor'][0]['rfc'];
+							var razon_soc_proveedor = entry2['Proveedor'][0]['razon_social'];
+							var dir_proveedor = entry2['Proveedor'][0]['direccion'];
+							var tipo_proveedor = entry2['Proveedor'][0]['proveedortipo_id'];
+							var id_moneda = entry2['Proveedor'][0]['moneda_id'];
+							var id_dias_credito = entry2['Proveedor'][0]['id_dias_credito'];
+							var id_tipo_embarque = entry2['Proveedor'][0]['id_tipo_embarque'];
+							
+							//llamada a la función que agrega datos del proveedor seleccionado
+							$agregarDatosProveedorSeleccionado(entry['Monedas'], entry['Condiciones'],entry['via_embarque'], rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor);
+							
+						}else{
+							$id_proveedor.val('');
+							$no_proveedor.val('');
+							$rfc_proveedor.val('');
+							$razon_proveedor.val('');
+							$dir_proveedor.val('');
+							$tipo_prov.val('0');
+							
+							jAlert('N&uacute;mero de Proveedor desconocido.', 'Atencion!', function(r) { 
+								$no_proveedor.focus(); 
+							});
+						}
+					},"json");//termina llamada json
+					
+					return false;
+				}
+			});
 		},"json");//termina llamada json
-
-
+		
+		
 		$tipo_cambio.keypress(function(e){
 			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
@@ -1277,8 +1375,8 @@ $(function() {
 			}
 		});
 		
-		$aplicar_evento_keypress($rfc_proveedor, $busca_proveedor);
-		$aplicar_evento_keypress($razon_proveedor, $busca_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($rfc_proveedor, $busca_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($razon_proveedor, $busca_proveedor);
 		
 		//buscador de productos
 		$busca_sku.click(function(event){
@@ -1293,8 +1391,8 @@ $(function() {
 		});
 		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
-		$aplicar_evento_keypress($sku_producto, $agregar_producto);
-		$aplicar_evento_keypress($nombre_producto, $busca_sku);
+		$(this).aplicarEventoKeypressEjecutaTrigger($sku_producto, $agregar_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_producto, $busca_sku);
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
@@ -1309,19 +1407,19 @@ $(function() {
 				return false;
 			}
 		});
-
+		
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
 			$('#forma-comordencompra-overlay').fadeOut(remove);
 		});
-
+		
 		//boton cancelar y cerrar plugin
 		$cancelar_plugin.click(function(event){
 			var remove = function() {$(this).remove();};
 			$('#forma-comordencompra-overlay').fadeOut(remove);
 		});
-
+		
 	});
 
 
@@ -1667,7 +1765,6 @@ $(function() {
 									$(this).parent().parent().find('#import').val('');
 									$(this).parent().parent().find('#totimp').val('');
 								}
-                                                                alert("Llamando a la funcion que me calcula los totales cuando se modifica la cantidad");
 								$calcula_totales();//llamada a la funcion que calcula totales
 							});
 
@@ -1696,7 +1793,6 @@ $(function() {
 									$(this).parent().parent().find('#import').val('');
 									$(this).parent().parent().find('#totimp').val('');
 								}
-                                                                alert("Llamando a la funcion que me calcula los totales cuando se modifica el costo");
 								$calcula_totales();//llamada a la funcion que calcula totales
 							});
 
@@ -1707,7 +1803,7 @@ $(function() {
 							//elimina un producto del grid
 							$grid_productos.find('#delete'+ tr).bind('click',function(event){
 								event.preventDefault();
-                                                                if(parseInt($(this).parent().find('#elim').val()) != 0){
+								if(parseInt($(this).parent().find('#elim').val()) != 0){
 									var iddetalle = $(this).parent().find('#idd').val();
 
 									//asigna espacios en blanco a todos los input de la fila eliminada
@@ -1723,8 +1819,8 @@ $(function() {
 							});
 						});
 					}
-
-
+					
+					
 					if(entry['datosOrdenCompra']['0']['cancelado']=='t' || entry['datosOrdenCompra']['0']['status']==1 || entry['datosOrdenCompra']['0']['status']==2){
 						$grid_productos.find('a[href*=elimina_producto]').hide();
 						$('#forma-comordencompra-window').find('a[href*=busca_sku]').hide();
@@ -1759,10 +1855,10 @@ $(function() {
 						$total.attr('disabled','-1'); //deshabilitar
 
 					}else{
-							$grid_productos.find('a[href*=elimina_producto]').show();
-							$('#forma-comordencompra-window').find('a[href*=busca_sku]').show();
-							$('#forma-comordencompra-window').find('a[href*=agregar_producto]').show();
-							$('#forma-comordencompra-window').find('#submit').show();
+						$grid_productos.find('a[href*=elimina_producto]').show();
+						$('#forma-comordencompra-window').find('a[href*=busca_sku]').show();
+						$('#forma-comordencompra-window').find('a[href*=agregar_producto]').show();
+						$('#forma-comordencompra-window').find('#submit').show();
 					}
 					$calcula_totales();//llamada a la funcion que calcula totales
 				});//termina llamada json
@@ -1820,8 +1916,8 @@ $(function() {
 				 });
 				 
 				//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
-				$aplicar_evento_keypress($sku_producto, $agregar_producto);
-				$aplicar_evento_keypress($nombre_producto, $busca_sku);
+				$(this).aplicarEventoKeypressEjecutaTrigger($sku_producto, $agregar_producto);
+				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_producto, $busca_sku);
 				
 				$submit_actualizar.bind('click',function(){
 					var trCount = $("tr", $grid_productos).size();

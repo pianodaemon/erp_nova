@@ -120,7 +120,7 @@
 								<table border="0">
                                     <tr>
                                         <td width="5"></td>
-                                        <td width="75">Proveedor</td>
+                                        <td width="75">No.&nbsp;Proveedor</td>
                                         <td width="5"></td>
                                         <td><INPUT TYPE="text" name="folio" readOnly="true"  style="width:150px;"></td>
                                         <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_folio"></div></td>

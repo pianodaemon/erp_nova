@@ -315,15 +315,15 @@ $(function() {
 		$dialogoc.append($('div.buscador_proveedores').find('table.formaBusqueda_proveedores').clone());
 		$('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -200  });
 		
-                var $rfc_proveedor = $('#forma-com_oc_req-window').find('input[name=rfc_proveedor]');
+		var $rfc_proveedor = $('#forma-com_oc_req-window').find('input[name=rfc_proveedor]');
 		var $razon_proveedor = $('#forma-com_oc_req-window').find('input[name=razonproveedor]');
-                var $dir_proveedor = $('#forma-com_oc_req-window').find('input[name=dirproveedor]');
-                var $id_proveedor = $('#forma-com_oc_req-window').find('input[name=id_proveedor]');
+		var $dir_proveedor = $('#forma-com_oc_req-window').find('input[name=dirproveedor]');
+		var $id_proveedor = $('#forma-com_oc_req-window').find('input[name=id_proveedor]');
                 
                 
-                var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
+		var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
+		var $campo_no_proveedor = $('#forma-buscaproveedor-window').find('input[name=campo_no_proveedor]');
 		var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
-		var $campo_email = $('#forma-buscaproveedor-window').find('input[name=campo_email]');
 		var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
 		
 		var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
@@ -350,13 +350,13 @@ $(function() {
 		$buscar_plugin_proveedor.click(function(event){
                     
 			event.preventDefault();
-                        //var restful_json_service = config.getUrlForGetAndPost() + '/getBuscaProveedores.json'
-                        var restful_json_service = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscaProveedores.json'
+			//var restful_json_service = config.getUrlForGetAndPost() + '/getBuscaProveedores.json'
+			var restful_json_service = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscaProveedores.json'
 			$arreglo = {    rfc:$campo_rfc.val(),
-                                        email:$campo_email.val(),
-                                        nombre:$campo_nombre.val(),
-                                        iu:$('#lienzo_recalculable').find('input[name=iu]').val()
-                                   }
+						no_proveedor:$campo_no_proveedor.val(),
+						nombre:$campo_nombre.val(),
+						iu:$('#lienzo_recalculable').find('input[name=iu]').val()
+				   }
 			
 			var trr = '';
 			$tabla_resultados.children().remove();
@@ -366,25 +366,18 @@ $(function() {
 					trr = '<tr>';
 						trr += '<td width="120">';
 							trr += '<input type="hidden" id="id_prov" value="'+proveedor['id']+'">';
-                                                        
-                                                        trr += '<input type="hidden" id="id_moneda" value="'+proveedor['moneda_id']+'">';
-                                                        trr += '<input type="hidden" id="descuento" value="'+proveedor['descuento']+'">';
-                                                        trr += '<input type="hidden" id="limite_de_credito" value="'+proveedor['limite_de_credito']+'">';
-                                                        trr += '<input type="hidden" id="id_dias_credito" value="'+proveedor['id_dias_credito']+'">';
-                                                        trr += '<input type="hidden" id="id_tipo_embarque" value="'+proveedor['id_tipo_embarque']+'">';
-                                                        trr += '<input type="hidden" id="comienzo_de_credito" value="'+proveedor['comienzo_de_credito']+'">';
-                                                        
+								trr += '<input type="hidden" id="id_moneda" value="'+proveedor['moneda_id']+'">';
+								trr += '<input type="hidden" id="descuento" value="'+proveedor['descuento']+'">';
+								trr += '<input type="hidden" id="limite_de_credito" value="'+proveedor['limite_de_credito']+'">';
+								trr += '<input type="hidden" id="id_dias_credito" value="'+proveedor['id_dias_credito']+'">';
+								trr += '<input type="hidden" id="id_tipo_embarque" value="'+proveedor['id_tipo_embarque']+'">';
+								trr += '<input type="hidden" id="comienzo_de_credito" value="'+proveedor['comienzo_de_credito']+'">';
 							trr += '<input type="hidden" id="tipo_prov" value="'+proveedor['proveedortipo_id']+'">';
 							trr += '<span class="rfc">'+proveedor['rfc']+'</span>';
 						trr += '</td>';
 						trr += '<td width="250"><span id="razon_social">'+proveedor['razon_social']+'</span></td>';
 						trr += '<td width="250"><span class="direccion">'+proveedor['direccion']+'</span></td>';
 					trr += '</tr>';
-                                        /*row.put("descuento",StringHelper.roundDouble(String.valueOf(rs.getDouble("descuento")),2));
-                                        row.put("limite_de_credito",StringHelper.roundDouble(String.valueOf(rs.getDouble("limite_credito")),2));
-                                        row.put("id_dias_credito",String.valueOf(rs.getInt("id_dias_credito")));
-                                        row.put("id_tipo_envarque",String.valueOf(rs.getInt("id_tipo_envarque")));
-                                        row.put("comienzo_de_credito",String.valueOf(rs.getInt("comienzo_de_credito")));*/
 					
 					$tabla_resultados.append(trr);
 				});
@@ -405,15 +398,16 @@ $(function() {
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
 					
-                                        $rfc_proveedor.val($(this).find('.rfc').html());
-                                        $razon_proveedor.val($(this).find('#razon_social').html());
-                                        $dir_proveedor.val($(this).find('.direccion').html());
-                                        $id_proveedor.val($(this).find('#id_prov').val());
-                                        
-                                        var id_moneda=$(this).find('#id_moneda').val();
-                                        var id_dias_credito=$(this).find('#id_dias_credito').val();
-                                        var id_tipo_embarque=$(this).find('#id_tipo_embarque').val();
-                                        //carga el select de monedas  con la moneda del cliente seleccionada por default
+					$rfc_proveedor.val($(this).find('.rfc').html());
+					$razon_proveedor.val($(this).find('#razon_social').html());
+					$dir_proveedor.val($(this).find('.direccion').html());
+					$id_proveedor.val($(this).find('#id_prov').val());
+					
+					var id_moneda=$(this).find('#id_moneda').val();
+					var id_dias_credito=$(this).find('#id_dias_credito').val();
+					var id_tipo_embarque=$(this).find('#id_tipo_embarque').val();
+					
+					//carga el select de monedas  con la moneda del cliente seleccionada por default
 					$select_moneda.children().remove();
 					var moneda_hmtl = '';
 					$.each(array_monedas ,function(entryIndex,moneda){
@@ -425,7 +419,7 @@ $(function() {
 					});
 					$select_moneda.append(moneda_hmtl);
                                         
-                                        //carga select de condiciones con los dias de Credito default del Cliente
+					//carga select de condiciones con los dias de Credito default del Cliente
 					$select_condiciones.children().remove();
 					var hmtl_condiciones;
 					$.each(array_condiciones, function(entryIndex,condicion){
@@ -437,9 +431,7 @@ $(function() {
 					});
 					$select_condiciones.append(hmtl_condiciones);					
 					
-                                        
-                                        
-                                        //carga select de condiciones con los dias de Credito default del Cliente
+					//carga select de condiciones con los dias de Credito default del Cliente
 					$select_via_embarque.children().remove();
 					var hmtl_via_embarque;
 					$.each(array_via_embarque, function(entryIndex,embarque){
@@ -450,9 +442,8 @@ $(function() {
 						}
 					});
 					$select_via_embarque.append(hmtl_via_embarque);
-                                        
-                                        
-                                        //elimina la ventana de busqueda
+					
+					//elimina la ventana de busqueda
 					var remove = function() { $(this).remove(); };
 					$('#forma-buscaproveedor-overlay').fadeOut(remove);
 				});

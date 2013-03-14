@@ -374,13 +374,13 @@ $(function() {
                             jAlert("Debe elegir el rango la fecha inicial y su fecha final par la busqueda","Atencion!!!")
                     }
             });
-
+			
             $Buscar_productos.click(function(event){
                     event.preventDefault();
                     busca_productos();
             });
 
-
+			
             $busca_proveedores = function(){
                     $(this).modalPanel_Buscaprov();
                     var $dialogoc =  $('#forma-buscaproveedor-window');
@@ -388,10 +388,10 @@ $(function() {
                     $('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -200  });
 
                     var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
-                    var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
-                    var $campo_email = $('#forma-buscaproveedor-window').find('input[name=campo_email]');
-                    var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
-
+					var $campo_no_proveedor = $('#forma-buscaproveedor-window').find('input[name=campo_no_proveedor]');
+					var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
+					var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
+					
                     var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
                     var $cancelar_plugin_busca_proveedor = $('#forma-buscaproveedor-window').find('#cencela');
 
@@ -399,17 +399,17 @@ $(function() {
 
                     //funcionalidad botones
                     $buscar_plugin_proveedor.mouseover(function(){
-                                    $(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+						$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
                     });
                     $buscar_plugin_proveedor.mouseout(function(){
-                                    $(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+						$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
                     });
 
                     $cancelar_plugin_busca_proveedor.mouseover(function(){
-                                    $(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+						$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
                     });
                     $cancelar_plugin_busca_proveedor.mouseout(function(){
-                                    $(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+						$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
                     });
 
 
@@ -419,7 +419,7 @@ $(function() {
                         var restful_json_service = config.getUrlForGetAndPost() + '/getBuscaProveedores.json'
                         $arreglo = {
                                         rfc:$campo_rfc.val(),
-                                        email:$campo_email.val(),
+                                        no_proveedor:$campo_no_proveedor.val(),
                                         nombre:$campo_nombre.val(),
                                         iu:config.getUi()
                         }
