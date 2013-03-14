@@ -506,19 +506,16 @@
 													<li class="topline"><a href="../crmregistrocasos/startup.agnux">Registro de Casos</a></li>
 												</ul>
 											</li>
-
 											<li>
 												<a href="#" class="sub">Consultas &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../crmconsultas/startup.agnux">Consultas</a></li>
-
 												</ul>
 											</li>
-                                                                                        <li>
+											<li>
 												<a href="#" class="sub">Reportes</a>
 												<ul>
-													<li class="topline"><a href="../crmreportevisitas/startup.agnux">Reporte&nbspVisitas</a></li>
-
+													<li class="topline"><a href="../crmreportevisitas/startup.agnux">Visitas</a></li>
 												</ul>
 											</li>
 										</ul>
@@ -548,7 +545,6 @@
 													<li class="topline"><a href="../proconfigproduccion/startup.agnux">Configuraci&oacute;n</a></li>
 													<li class="topline"><a href="../propreordenproduccion/startup.agnux">Preorden Producci&oacute;n</a></li>
 													<li class="topline"><a href="../proordenproduccion/startup.agnux">Orden Producci&oacute;n</a></li>
-
 													<li class="topline"><a href="../proordensimulacion/startup.agnux">Simulaci&oacute;n de Producci&oacute;n</a></li>
 
 													<!--
@@ -559,13 +555,11 @@
 													-->
 												</ul>
 											</li>
-
-											
-                                                                                        <li>
+											<li>
 												<a href="#" class="sub">Reportes&raquo;</a>
 												<ul>
 													<!--<li class="topline"><a href="#">F&oacute;rmulas</a></li>-->
-                                                                                                        <li class="topline"><a href="../proreporteproduccion/startup.agnux">Produccion</a></li>
+													<li class="topline"><a href="../proreporteproduccion/startup.agnux">Producci&oacute;n</a></li>
 												</ul>
 											</li>
 										</ul>
@@ -598,7 +592,6 @@
 												<ul>
 													<li class="topline"><a href="../graldocs/startup.agnux">Actualizador C&oacute;digos ISO</a></li>
 													<li class="topline"><a href="../graltipocambio/startup.agnux">Actualizador Tipo Cambio</a></li>
-
 												</ul>
 											</li>
 
