@@ -20,23 +20,23 @@ import org.springframework.jdbc.core.RowMapper;
 
 public class InvSpringDao implements InvInterfaceDao{
     private JdbcTemplate jdbcTemplate;
-    
+
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }
-    
+
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-    
+
     @Override
     public HashMap<String, String> selectFunctionValidateAaplicativo(String data, Integer idApp, String extra_data_array) {
         String sql_to_query = "select erp_fn_validaciones_por_aplicativo from erp_fn_validaciones_por_aplicativo('"+data+"',"+idApp+",array["+extra_data_array+"]);";
         //System.out.println("Validacion:"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -48,9 +48,9 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public String selectFunctionForThisApp(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from gral_adm_catalogos('"+campos_data+"',array["+extra_data_array+"]);";
@@ -59,25 +59,25 @@ public class InvSpringDao implements InvInterfaceDao{
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
-        
+
         valor_retorno = update.get("gral_adm_catalogos").toString();
-        
+
         return valor_retorno;
     }
-    
-    
-    
+
+
+
     @Override
     public int countAll(String data_string) {
         String sql_busqueda = "select id from gral_bus_catalogos('"+data_string+"') as foo (id integer)";
         String sql_to_query = "select count(id)::int as total from ("+sql_busqueda+") as subt";
-        
+
         int rowCount = this.getJdbcTemplate().queryForInt(sql_to_query);
         return rowCount;
     }
-    
-    
-    
+
+
+
     @Override
     public String selectFunctionForApp_MovimientosInventario(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from inv_adm_movimientos('"+campos_data+"',array["+extra_data_array+"]);";
@@ -86,14 +86,14 @@ public class InvSpringDao implements InvInterfaceDao{
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
-        
+
         valor_retorno = update.get("inv_adm_movimientos").toString();
-        
+
         return valor_retorno;
     }
-    
-    
-    
+
+
+
     //llamada al Procedimiento de Reportes de Inventario
     //éste trabaja utilizando el numero de Aplicativo.
     //Para cada aplicativo Recibe diferentes parametros y devuelve diferente Resultado
@@ -101,11 +101,11 @@ public class InvSpringDao implements InvInterfaceDao{
     public ArrayList<HashMap<String, String>> selectFunctionForInvReporte(Integer id_app, String campos_data) {
         ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
         String sql_to_query = "";
-        
+
         if(id_app==125){
             sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY descripcion;";
             //System.out.println("InvReporte: "+sql_to_query);
-            
+
             ArrayList<HashMap<String, String>> hm125 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,
                 new Object[]{}, new RowMapper(){
@@ -134,8 +134,8 @@ public class InvSpringDao implements InvInterfaceDao{
             );
             data=hm125;
         }
-        
-        
+
+
         //este es para el reporte de Actualizacion de Precios
         if(id_app==126){
             sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
@@ -166,14 +166,14 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "mon9 character varying,"
                     + "mon10 character varying) ORDER BY descripcion;";
             //System.out.println("InvReporte: "+sql_to_query);
-            
+
             ArrayList<HashMap<String, String>> hm126 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,
                 new Object[]{}, new RowMapper(){
                     @Override
                     public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                         HashMap<String, String> row = new HashMap<String, String>();
-                       
+
                         row.put("codigo",rs.getString("codigo"));
                         row.put("descripcion",rs.getString("descripcion"));
                         row.put("unidad",rs.getString("unidad"));
@@ -206,20 +206,20 @@ public class InvSpringDao implements InvInterfaceDao{
             );
             data=hm126;
         }
-        
-        
-        
+
+
+
         return data;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getPaises() {
         //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
         String sql_to_query = "SELECT DISTINCT id as cve_pais, titulo as pais_ent FROM gral_pais;";
-        
+
         ArrayList<HashMap<String, String>> pais = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -234,15 +234,15 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return pais;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getAllTiposMovimientoInventario(Integer id_empresa) {
         //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
         String sql_to_query = "SELECT id,titulo FROM inv_mov_tipos;";
-        
+
         ArrayList<HashMap<String, String>> pais = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -257,11 +257,11 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return pais;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getEntidadesForThisPais(String id_pais) {
         String sql_to_query = "SELECT id as cve_ent, titulo as nom_ent FROM gral_edo WHERE pais_id="+id_pais+" order by nom_ent;";
@@ -280,13 +280,13 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getLocalidadesForThisEntidad(String id_pais, String id_entidad) {
         String sql_to_query = "SELECT id as cve_mun, titulo as nom_mun FROM gral_mun WHERE estado_id="+id_entidad+" and pais_id="+id_pais+" order by nom_mun;";
-        
+
         //System.out.println("Ejecutando query loc_for_this_entidad: "+sql_to_query);
         //System.out.println(sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -303,14 +303,14 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getProductos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_prod.id, "
                                     + "inv_prod.sku, "
                                     + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad, "
@@ -321,10 +321,10 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_prod.id "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -340,11 +340,11 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //obtiene detalles de un producto en especifico
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Datos(Integer id_producto) {
@@ -389,7 +389,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "FROM inv_prod  "
                 + "LEFT JOIN cxp_prov ON cxp_prov.id=inv_prod.cxp_prov_id "
                 + "WHERE inv_prod.id=?";
-        
+
 	//System.out.println("getProducto_Datos: "+sql_query);
         ArrayList<HashMap<String, String>> hm_producto = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -439,10 +439,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_producto;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene datos de Configuracion de Cuentas Contables para Productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_DatosContabilidad(Integer id_producto) {
@@ -475,7 +475,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "LEFT JOIN ctb_cta AS tbl_cta_costo_vent ON tbl_cta_costo_vent.id=inv_prod.ctb_cta_id_costo_venta "
                 + "LEFT JOIN ctb_cta AS tbl_cta_venta ON tbl_cta_venta.id=inv_prod.ctb_cta_id_venta "
                 + "WHERE inv_prod.id=?";
-        
+
 	//System.out.println("getProducto_DatosContabilidad: "+sql_query);
         ArrayList<HashMap<String, String>> contab = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -491,7 +491,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("gas_sssubcta",rs.getString("gas_sssubcta"));
                     row.put("gas_ssssubcta",rs.getString("gas_ssssubcta"));
                     row.put("gas_descripcion",rs.getString("gas_descripcion"));
-                    
+
                     row.put("costvent_id_cta",rs.getString("costvent_id_cta"));
                     row.put("costvent_cta",rs.getString("costvent_cta"));
                     row.put("costvent_subcta",rs.getString("costvent_subcta"));
@@ -499,7 +499,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("costvent_sssubcta",rs.getString("costvent_sssubcta"));
                     row.put("costvent_ssssubcta",rs.getString("costvent_ssssubcta"));
                     row.put("costvent_descripcion",rs.getString("costvent_descripcion"));
-                            
+
                     row.put("vent_id_cta",rs.getString("vent_id_cta"));
                     row.put("vent_cta",rs.getString("vent_cta"));
                     row.put("vent_subcta",rs.getString("vent_subcta"));
@@ -507,18 +507,18 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("vent_sssubcta",rs.getString("vent_sssubcta"));
                     row.put("vent_ssssubcta",rs.getString("vent_ssssubcta"));
                     row.put("vent_descripcion",rs.getString("vent_descripcion"));
-                    
+
                     return row;
                 }
             }
         );
         return contab;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //obtiene tipos de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Tipos() {
@@ -535,18 +535,18 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        
+
         return hm_tp;
     }
-    
-    
-    
+
+
+
     //obtiene lineas de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Lineas(Integer id_empresa) {
 	String sql_query = "select id,titulo from inv_prod_lineas where borrado_logico=false AND gral_emp_id="+id_empresa;
         //System.out.println("Buscando lineas:"+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm_lineas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -561,15 +561,15 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_lineas;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene marcas de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Marcas(Integer id_empresa) {
 	String sql_query = "SELECT id, titulo FROM inv_mar WHERE borrado_logico=false AND gral_emp_id="+id_empresa;
-        
+
         ArrayList<HashMap<String, String>> hm_lineas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -584,14 +584,14 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_lineas;
     }
-    
-    
-    
+
+
+
     //obtiene grupos de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Grupos(Integer id_empresa) {
 	String sql_query = "SELECT id, titulo FROM inv_prod_grupos WHERE borrado_logico=false AND gral_emp_id="+id_empresa;
-        
+
         ArrayList<HashMap<String, String>> hm_lineas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -606,8 +606,8 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_lineas;
     }
-    
-    
+
+
     //Obtener todas las subfamilias, para select de catalogo de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Subfamilias(Integer id_empresa) {
@@ -626,10 +626,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //Obtener todas las clasificaciones stock para el catalogo de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_ClasificacionStock(Integer id_empresa) {
@@ -648,10 +648,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //Obtener todas las Clases para el catalogo de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Clases(Integer id_empresa) {
@@ -670,10 +670,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    //obtiene los ingredientes de un producto en especifico 
+
+
+
+    //obtiene los ingredientes de un producto en especifico
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Ingredientes(Integer id_producto) {
 	String sql_query = "SELECT  inv_kit.producto_elemento_id as producto_ingrediente_id, "
@@ -703,14 +703,14 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_ingrediente;
     }
-    
-    
+
+
     //obtiene las presentaciones seleccionadas de un producto en especifico
     @Override
     public ArrayList<HashMap<String, String>> getProducto_PresentacionesON(Integer id_producto) {
         String sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE id IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
-        
-        
+
+
         ArrayList<HashMap<String, String>> hm_pres_on = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -725,15 +725,15 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_pres_on;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getProducto_CuentasMayor(Integer id_empresa) {
         String sql_query = "SELECT id, titulo FROM ctb_may_clases ORDER BY id;";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -746,14 +746,14 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //obtiene las unidades
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Unidades() {
 	String sql_query = "SELECT id,titulo from inv_prod_unidades where borrado_logico=false";
-        
+
         ArrayList<HashMap<String, String>> hm_unidades = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -768,10 +768,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_unidades;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene las presentaciones de un producto
     //cuando id=0, obtiene todas las presentaciones
     //cuando id es diferente de 0, obtiene las presentaciones no asignadas a un producto en especifico
@@ -783,7 +783,7 @@ public class InvSpringDao implements InvInterfaceDao{
         }else{
             sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE borrado_logico=FALSE order by titulo;";
         }
-	
+
         ArrayList<HashMap<String, String>> hm_pres= (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -798,19 +798,19 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_pres;
     }
-    
-    
-    
+
+
+
     //busca producto en especifico
     @Override
     public ArrayList<HashMap<String, String>> getProducto_sku(String sku, Integer id_usuario) {
-        
+
         String sql_to_query = "	SELECT gral_suc.empresa_id FROM gral_usr_suc "
                             + "JOIN gral_suc ON gral_suc.id = gral_usr_suc.gral_suc_id "
                             + "WHERE gral_usr_suc.gral_usr_id = "+id_usuario;
-        
+
         int id_empresa = this.getJdbcTemplate().queryForInt(sql_to_query);
-        
+
         String sql_query = "SELECT inv_prod.id, "
                                 + "inv_prod.sku, "
                                 + "inv_prod.descripcion,"
@@ -819,9 +819,9 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                             + "WHERE inv_prod.empresa_id = "+id_empresa+" AND inv_prod.sku='"+sku+"' AND inv_prod.tipo_de_producto_id != 2;";
         //System.out.println("Obteniendo datos sku:"+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm_sku = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -836,14 +836,14 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_sku;
     }
-    
-    
-    
-    
+
+
+
+
     //metodo para el buscador de cuentas contables
     @Override
     public ArrayList<HashMap<String, String>> getProducto_CuentasContables(Integer cta_mayor, Integer detalle, String clasifica, String cta, String scta, String sscta, String ssscta, String sssscta, String descripcion, Integer id_empresa) {
-        
+
         String where="";
 	if(cta_mayor != 0){
             where+=" AND ctb_cta.cta_mayor="+cta_mayor+" ";
@@ -851,31 +851,31 @@ public class InvSpringDao implements InvInterfaceDao{
 	if(!clasifica.equals("")){
             where+=" AND ctb_cta.clasifica="+clasifica+" ";
 	}
-        
+
 	if(!cta.equals("")){
             where+=" AND ctb_cta.cta="+cta+" ";
 	}
-        
+
 	if(!scta.equals("")){
             where+=" AND ctb_cta.subcta="+scta+" ";
 	}
-        
+
 	if(!sscta.equals("")){
             where+=" AND ctb_cta.ssubcta="+sscta+" ";
 	}
-        
+
 	if(!ssscta.equals("")){
             where+=" AND ctb_cta.sssubcta="+ssscta+" ";
 	}
-        
+
 	if(!sssscta.equals("")){
             where+=" AND ctb_cta.ssssubcta="+sssscta+" ";
 	}
-        
+
 	if(!descripcion.equals("")){
             where+=" AND ctb_cta.ssssubcta ilike '%"+descripcion+"%'";
 	}
-        
+
         String sql_query = ""
                 + "SELECT DISTINCT "
                     + "ctb_cta.id, "
@@ -900,10 +900,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "WHERE ctb_cta.borrado_logico=false  "
                 + "AND ctb_cta.gral_emp_id=? AND ctb_cta.detalle=? "+ where +" "
                 + "ORDER BY ctb_cta.id;";
-        
-        
+
+
         //System.out.println("sql_query: "+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id_empresa), new Integer(detalle)}, new RowMapper() {
@@ -928,15 +928,15 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getEntradas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = "SELECT com_fac.id, "
 				+"com_fac.no_entrada as folio, "
 				+"cxp_prov.razon_social as proveedor, "
@@ -950,12 +950,12 @@ public class InvSpringDao implements InvInterfaceDao{
 			+"LEFT JOIN cxp_prov on cxp_prov.id=com_fac.proveedor_id "
                         +"JOIN ("+sql_busqueda+") as subt on subt.id=com_fac.id "
                         +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -973,12 +973,12 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm;   
+        return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getEntrada_Datos(Integer id) {
         String sql_to_query = "SELECT com_fac.id,"
@@ -1008,7 +1008,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             +"FROM com_fac "
                             + "LEFT JOIN gral_mon ON gral_mon.id=com_fac.moneda_id "
                             +"where com_fac.id="+ id + ";";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1044,11 +1044,11 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm_datos_entrada; 
+        return hm_datos_entrada;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_DatosProveedor(Integer id_proveedor) {
         String sql_to_query = "SELECT DISTINCT  cxp_prov.id, "
@@ -1069,7 +1069,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
                             + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id "
                             + "WHERE cxp_prov.id="+ id_proveedor;
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_proveedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1096,10 +1096,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_proveedor;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getProveedor_Contacto(Integer idProveedor) {
         ArrayList<HashMap<String, String>> contact = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1116,9 +1116,9 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return contact;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_DatosGrid(Integer id) {
                 String sql_to_query = "SELECT "
@@ -1139,7 +1139,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                 +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                                 +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_fac_detalle.presentacion_id "
                                 +"WHERE com_fac_detalle.com_fac_id="+ id + ";";
-                                
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1163,13 +1163,13 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm_datos_entrada;  
+        return hm_datos_entrada;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //OBTIENE DATOS DE LA ORDEN DE COMPRA
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_DatosOrdenCompra(String orden_compra, Integer id_empresa) {
@@ -1188,7 +1188,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN cxp_prov ON cxp_prov.id=com_orden_compra.proveedor_id "
                 + "WHERE com_orden_compra.folio='"+ orden_compra + "'  "
                 + "AND com_orden_compra.gral_emp_id="+ id_empresa + ";";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1209,12 +1209,12 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm_datos_entrada; 
+        return hm_datos_entrada;
     }
-    
-    
-    
-    
+
+
+
+
     //OBTENER DETALLES DE LA ORDEN DE COMPRA
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_DetallesOrdenCompra(Integer id_orden_compra) {
@@ -1237,7 +1237,7 @@ public class InvSpringDao implements InvInterfaceDao{
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id=com_orden_compra_detalle.presentacion_id "
         + "WHERE com_orden_compra_detalle.com_orden_compra_id="+ id_orden_compra + ";";
-                                
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1261,14 +1261,14 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm;  
+        return hm;
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getMonedas() {
         String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND compras=TRUE ORDER BY id ASC;";
@@ -1287,8 +1287,8 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_monedas;
     }
-    
-    
+
+
     //este metodo solo se utiliza en el Catalogo de Listas de Precios
     @Override
     public ArrayList<HashMap<String, String>> getMonedas2() {
@@ -1309,7 +1309,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_monedas;
     }
-    
+
     //se utiliza en catalogo  de productos y entradas de mercancias
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_Impuestos() {
@@ -1330,10 +1330,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_ivas;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_TasaFletes() {
         String sql_to_query = "SELECT DISTINCT valor FROM erp_parametros_generales WHERE variable = 'tasa_retencion_fletes' LIMIT 1;";
@@ -1351,10 +1351,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_tasa_fletes;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> geteEntradas_Fleteras(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT id,razon_social FROM cxp_prov_fleteras WHERE borrado_logico = false"
@@ -1374,10 +1374,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_fleteras;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene los almacenes de la empresa indicada
     @Override
     public ArrayList<HashMap<String, String>> getAlmacenes(Integer id_empresa) {
@@ -1386,7 +1386,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "inv_alm.titulo, "
                             + "gral_suc.id AS suc_id,"
                             + "gral_suc.empresa_id AS emp_id "
-                        + "FROM inv_alm " 
+                        + "FROM inv_alm "
                         + "JOIN inv_suc_alm ON inv_suc_alm.almacen_id = inv_alm.id "
                         + "JOIN gral_suc ON gral_suc.id = inv_suc_alm.sucursal_id  "
                         + "WHERE gral_suc.empresa_id="+id_empresa+" AND inv_alm.borrado_logico=FALSE;";
@@ -1406,10 +1406,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_alm;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene los almacenes de la empresa, sin incluir informacion de Sucursal y Empresa.
     //se utiliza en la opcion editar de Traspasos
     @Override
@@ -1436,9 +1436,9 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_alm;
     }
-    
-    
-    
+
+
+
     //obtiene datos para el buscador de proveedores
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProveedores(String rfc, String email, String razon_social, Integer id_empresa) {
@@ -1446,15 +1446,15 @@ public class InvSpringDao implements InvInterfaceDao{
 	if(rfc.equals("")==false){
             where=" AND cxp_prov.rfc ILIKE '%"+rfc+"%'";
 	}
-        
+
 	if(email.equals("")==false){
             where +=" AND cxp_prov.correo_electronico ILIKE '%"+email+"%'";
 	}
-        
+
 	if(razon_social.equals("")==false ){
             where +=" AND (cxp_prov.razon_social ilike '%"+razon_social+"%' OR cxp_prov.clave_comercial ilike '%"+razon_social+"%')";
 	}
-        
+
         String sql_to_query = "SELECT DISTINCT  cxp_prov.id, "
                                 + "cxp_prov.rfc, "
                                 + "cxp_prov.razon_social, "
@@ -1466,9 +1466,9 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
                             + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
                             + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico = false "+where;
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm_datos_proveedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1484,11 +1484,11 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm_datos_proveedor;  
+        return hm_datos_proveedor;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa) {
         String where = "";
@@ -1501,7 +1501,7 @@ public class InvSpringDao implements InvInterfaceDao{
 	if(!descripcion.equals("")){
 		where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
 	}
-        
+
         String sql_to_query = ""
                 + "SELECT "
 				+"inv_prod.id,"
@@ -1516,7 +1516,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                 + "WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1537,8 +1537,8 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm_datos_productos;
     }
 
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_PresentacionesProducto(String sku) {
         String sql_to_query = "SELECT "
@@ -1553,9 +1553,9 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
                         +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
                         +"where inv_prod.sku ILIKE '"+sku+"'";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm_presentaciones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1572,14 +1572,14 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm_presentaciones;  
+        return hm_presentaciones;
     }
-    
+
     //obtiene el tipo de cambio de la fecha indicada
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_TipoCambio(String fecha) {
         String sql_to_query = "SELECT valor FROM erp_monedavers WHERE  to_char(momento_creacion,'yyyy-mm-dd')<='"+fecha+"' AND moneda_id=2 ORDER BY momento_creacion DESC LIMIT 1;";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_tc = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1592,22 +1592,22 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm_tc;  
+        return hm_tc;
     }
-    
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
     //obtiene  tipos de traspaso
     @Override
     public ArrayList<HashMap<String, String>> getTraspaso_Tipos() {
@@ -1627,14 +1627,14 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_tipos;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getTraspaso_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = "SELECT erp_historico_traspasos.id, "
                                 +"erp_historico_traspasos.folio, "
                                 +"erp_tipos_de_traspaso.titulo as tipo, "
@@ -1645,12 +1645,12 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"LEFT JOIN inv_alm ON inv_alm.id=erp_historico_traspasos.almacen_id "
                         +"JOIN ("+sql_busqueda+") as subt on subt.id=erp_historico_traspasos.id "
                         +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1664,12 +1664,12 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
 
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getTraspaso_Datos(Integer id_traspaso) {
         String sql_to_query = "SELECT erp_historico_traspasos.id, "
@@ -1684,7 +1684,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "FROM erp_historico_traspasos "
                             + "LEFT JOIN erp_prealmacen_entradas ON erp_prealmacen_entradas.id = erp_historico_traspasos.prealmacen_entrada_id "
                             + "WHERE erp_historico_traspasos.id="+id_traspaso+";";
-        
+
         ArrayList<HashMap<String, String>> hm_traspaso = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1706,11 +1706,11 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_traspaso;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //obtiene datos para el grid de traspasos
     @Override
     public ArrayList<HashMap<String, String>> getTraspaso_DatosGrid(Integer id_traspaso) {
@@ -1729,7 +1729,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id = inv_prod.unidad_id "
                             + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=erp_historico_traspasos_detalles.presentacion_id "
                             + "WHERE  erp_historico_traspasos_detalles.historico_traspaso_id="+id_traspaso+";";
-        
+
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1752,11 +1752,11 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_grid;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //obtiene existencia del almacen de la empresa indicada
     @Override
     public ArrayList<HashMap<String, String>> getDatos_ReporteExistencias(Integer id_isuario,Integer id_almacen, String codigo_producto, String descripcion,Integer tipo ) {
@@ -1764,7 +1764,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                         + "id integer,"
                                         +"valor_minimo double precision, "
                                         +"valor_maximo double precision,"
-                                        +"punto_reorden double precision, "                
+                                        +"punto_reorden double precision, "
                                         +"almacen character varying, "
 					+"familia character varying, "
 					+"grupo character varying, "
@@ -1776,9 +1776,9 @@ public class InvSpringDao implements InvInterfaceDao{
 					+"costo_unitario double precision, "
 					+"costo_total double precision "
 					+") ORDER BY descripcion ASC;";
-        
+
         //System.out.println("sql_query: "+ sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm_exis = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -1801,23 +1801,23 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_exis;
     }
-    
-    
-    
-    
+
+
+
+
     //Metodos para catalogo tipod de movimiento
     @Override
     public ArrayList<HashMap<String, Object>> getTipoMovimientosInventaioGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_mov_tipos.id,inv_mov_tipos.titulo,inv_mov_tipos.descripcion "
                             + "FROM inv_mov_tipos "
                             + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_mov_tipos.id "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         //System.out.println("getTipoMovimientosInventaioGrid: "+sql_to_query+"    "+data_string);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1829,16 +1829,16 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
    //obtiene datos del tipo de movimiento actual
     @Override
     public ArrayList<HashMap<String, String>> getTipoMovInv_Datos(Integer id) {
         String sql_query = "SELECT * FROM inv_mov_tipos WHERE id = ? and borrado_logico=false";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1858,24 +1858,24 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //Metodos para catalogo invsecciones
     @Override
     public ArrayList<HashMap<String, Object>> getInvSeccionesGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_secciones.id,inv_secciones.titulo,inv_secciones.descripcion,inv_secciones.activa "
                             + "FROM inv_secciones "
                             + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_secciones.id "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         //System.out.println("getInvSeccionesGrid: "+sql_to_query+"    "+data_string);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1888,15 +1888,15 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
+
     //obtiene datos del tipo de movimiento actual
     @Override
     public ArrayList<HashMap<String, String>> getInvSecciones_Datos(Integer id) {
         String sql_query = "SELECT id,titulo, descripcion, activa FROM inv_secciones WHERE id = ? and borrado_logico=false";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1911,17 +1911,17 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //AQUI EMPIEZA CATALOGO DE ALMACENES
-   //obtiene los tipos de almacen 
+   //obtiene los tipos de almacen
     @Override
     public ArrayList<HashMap<String, String>> getAlmacennes_TiposAlmacen() {
         String sql_query = "SELECT id, titulo FROM inv_alm_tipos;";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1934,13 +1934,13 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getAlmacenes_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_alm.id, "
                                     +"inv_alm.titulo, "
                                     +"inv_alm_tipos.titulo as tipo, "
@@ -1957,14 +1957,14 @@ public class InvSpringDao implements InvInterfaceDao{
                             +"JOIN inv_alm_tipos ON inv_alm_tipos.id=inv_alm.almacen_tipo_id "
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_alm.id "
                             +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         //System.out.println("data_string: "+data_string);
         //System.out.println("offset: "+offset+"        pageSize: "+pageSize+"        orderBy: "+orderBy);
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1972,31 +1972,31 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("tipo",rs.getString("tipo"));
-                    
+
                     if(rs.getBoolean("reporteo")){
                         row.put("reporteo","<input type='checkbox' checked disabled name='rep'>");
                     }else{
                         row.put("reporteo","<input type='checkbox' disabled name='rep'>");
                     }
-                    
+
                     if(rs.getBoolean("ventas")){
                         row.put("ventas","<input type='checkbox' checked disabled name='vent'>");
                     }else{
                         row.put("ventas","<input type='checkbox' disabled name='vent'>");
                     }
-                    
+
                     if(rs.getBoolean("compras")){
                         row.put("compras","<input type='checkbox' checked disabled name='comp'>");
                     }else{
                         row.put("compras","<input type='checkbox' disabled name='comp'>");
                     }
-                    
+
                     if(rs.getBoolean("traspaso")){
                         row.put("traspaso","<input type='checkbox' checked disabled name='tras'>");
                     }else{
                         row.put("traspaso","<input type='checkbox' disabled name='tras'>");
                     }
-                    
+
                     if(rs.getBoolean("reabastecimiento")){
                         row.put("reabastecimiento","<input type='checkbox' checked disabled name='rea'>");
                     }else{
@@ -2008,7 +2008,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     }else{
                         row.put("garantias","<input type='checkbox' disabled name='gar'>");
                     }
-                    
+
                     if(rs.getBoolean("consignacion")){
                         row.put("consignacion","<input type='checkbox' checked disabled name='cons'>");
                     }else{
@@ -2020,7 +2020,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     }else{
                         row.put("recepcion_mat","<input type='checkbox' disabled name='remat'>");
                     }
-                    
+
                     if(rs.getBoolean("explosion_mat")){
                         row.put("explosion_mat","<input type='checkbox' checked disabled name='exmat'>");
                     }else{
@@ -2030,10 +2030,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
 
-    
+
    //obtiene datos del almacen seleccionado
     @Override
     public ArrayList<HashMap<String, String>> getAlmacenes_Datos(Integer id) {
@@ -2066,7 +2066,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"FROM inv_alm "
                         +"WHERE id="+id;
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2103,17 +2103,17 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene las sucursales
     //cuando id_almacen=0, obtiene todas las sucursales de la empresa indicada
     //cuando id_almacen es diferente de 0, obtiene las sucursales no asignadas al almacen
     @Override
     public ArrayList<HashMap<String, String>> getAlmacenes_Sucursales(Integer id_almacen, Integer id_empresa) {
         String sql_query="";
-        
+
         if(id_almacen != 0){
             //aqui obtiene solo las sucursales NO asignadas al almacen
             sql_query = "SELECT id, titulo FROM gral_suc WHERE empresa_id="+id_empresa+" AND id NOT IN ( "
@@ -2126,7 +2126,7 @@ public class InvSpringDao implements InvInterfaceDao{
             //obtiene todas las sucursales
             sql_query = "SELECT id, titulo FROM gral_suc WHERE empresa_id="+id_empresa+" ORDER BY titulo;";
         }
-	
+
         ArrayList<HashMap<String, String>> hm_pres= (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -2141,10 +2141,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_pres;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene las sucursales asignadas a un almacen en especifico
     @Override
     public ArrayList<HashMap<String, String>> getAlmacenes_SucursalesON(Integer id_almacen, Integer id_empresa) {
@@ -2156,7 +2156,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "JOIN gral_suc ON gral_suc.id = inv_suc_alm.sucursal_id "
                         + "WHERE gral_suc.empresa_id="+id_empresa+"  AND inv_suc_alm.almacen_id="+id_almacen+" "
                 + ") ORDER BY titulo;";
-        
+
         ArrayList<HashMap<String, String>> hm_pres_on = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -2171,26 +2171,26 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_pres_on;
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     //catalogo de marcas de Productos
     @Override
     public ArrayList<HashMap<String, Object>> getMarcas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
-	String sql_to_query = "SELECT (CASE WHEN inv_mar.estatus=false THEN 'INACTIVO' ELSE 'ACTIVO' END) AS estatus,inv_mar.id,inv_mar.titulo as descripcion "                              
-                                +"FROM inv_mar "                        
+
+	String sql_to_query = "SELECT (CASE WHEN inv_mar.estatus=false THEN 'INACTIVO' ELSE 'ACTIVO' END) AS estatus,inv_mar.id,inv_mar.titulo as descripcion "
+                                +"FROM inv_mar "
                                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_mar.id "
                                 +"WHERE inv_mar.borrado_logico=false  "
                                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2198,19 +2198,19 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",rs.getInt("id"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("estatus",rs.getString("estatus"));
-                   
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getMarcas_Datos(Integer id_marca) {
         String sql_to_query = "SELECT inv_mar.url,inv_mar.id,inv_mar.titulo as descripcion,(CASE  WHEN inv_mar.estatus =false THEN 'Inactivo' ELSE 'Activo' END) AS estatus  FROM inv_mar WHERE id ="+id_marca;
-        
+
         ArrayList<HashMap<String, String>> datos_marcas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2221,33 +2221,33 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("estatus",rs.getString("estatus"));
                     row.put("url",rs.getString("url"));
-                    
+
                     return row;
                 }
             }
         );
         return datos_marcas;
     }
-    
-  
-    
-    
-    
-    
-     
+
+
+
+
+
+
+
     //Metodos para catalogo InvProdLineas_Datos
     @Override
     public ArrayList<HashMap<String, Object>> getInvProdLineas_Grid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_prod_lineas.id,inv_prod_lineas.titulo,inv_prod_lineas.descripcion,inv_prod_lineas.titulo as accesor_seccion "
                             + "FROM inv_prod_lineas "
                             + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_prod_lineas.id "
                             +" left join inv_secciones on inv_secciones.id=inv_prod_lineas.inv_seccion_id order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         //System.out.println("getInvSeccionesGrid: "+sql_to_query+"    "+data_string);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2260,16 +2260,16 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     //obtiene datos de InvProdLineas actual
     @Override
     public ArrayList<HashMap<String, String>> getInvProdLineas_Datos(Integer id) {
         String sql_query = "SELECT id, titulo, descripcion,inv_seccion_id FROM inv_prod_lineas WHERE id = ? and borrado_logico=false";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query, 
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2284,7 +2284,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
+
     //obtiene datos de las secciones
     //se utiliza en catalogo de lineas y catalogo de productos
     @Override
@@ -2305,7 +2305,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_tipos;
     }
-    
+
     //obtiene datos de las marcas
     @Override
     public ArrayList<HashMap<String, String>> getInvProdLineas_Marcas() {
@@ -2325,7 +2325,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_tipos;
     }
-    
+
     //obtiene datos lienas marcas
     @Override
     public ArrayList<HashMap<String, String>> getInvProdLineas_LM(Integer id_linea) {
@@ -2346,19 +2346,19 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_tipos;
     }
-     
-     
-    
-    
 
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
     //obtiene datos para el reporte de Compras Netas por Producto
     @Override
     public ArrayList<HashMap<String, String>> getDatos_ReporteComprasNetasProducto(Integer tipo_reporte, String proveedor, String producto,String fecha_inicial,String fecha_final, Integer id_empresa) {
@@ -2378,7 +2378,7 @@ public class InvSpringDao implements InvInterfaceDao{
             //orderBy = " cxp_prov.razon_social,inv_prod_unidades.titulo_abr,,erp_prealmacen_entradas.momento_creacion asc";
             orderBy  = "inv_prod_unidades.titulo_abr,cxp_prov.razon_social asc,com_fac.factura_fecha_expedicion asc ";
         }
-        
+
         String sql_to_query = ""
         + "SELECT  "
                 + "cxp_prov.folio AS clave_proveedor, "
@@ -2410,7 +2410,7 @@ public class InvSpringDao implements InvInterfaceDao{
         + "AND inv_prod.descripcion ILIKE '%"+producto+"%' "
         + "AND cxp_prov.razon_social ILIKE '%"+proveedor+"%' "
         + "ORDER BY "+orderBy;
-                
+
         //System.out.println("Busqueda_compras_producto: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -2436,16 +2436,16 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //Metodos para catalogo Productos Familias
     @Override
     public ArrayList<HashMap<String, Object>> getInvProdFamilias_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_prod_familias.id, "
                                 + "inv_prod_familias.titulo,"
                                 + "inv_prod_familias.descripcion "
@@ -2453,9 +2453,9 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_prod_familias.id "
                             +" order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         //System.out.println("getInvSeccionesGrid: "+sql_to_query+"    "+data_string);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2467,15 +2467,15 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvProdFamilias_Datos(Integer id_familia) {
         String sql_query = "SELECT id, titulo, descripcion, inv_prod_tipo_id FROM inv_prod_familias WHERE borrado_logico=FALSE AND id="+id_familia;
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2490,14 +2490,14 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     //add por paco
     @Override
     public ArrayList<HashMap<String, String>> getInvProdFamilias_TiposProd() {
         String sql_query = "SELECT id, titulo FROM inv_prod_tipos WHERE borrado_logico=FALSE";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2510,19 +2510,19 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
 
-    
-    
-    
+
+
+
+
+
+
+
     //Metodos para catalogo Productos Subfamilias
     @Override
     public ArrayList<HashMap<String, Object>> getInvProdSubFamilias_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_prod_familias.id, "
                                     + "inv_prod_familias.titulo as subfamilia, "
                                     + "inv_prod_familias.descripcion, "
@@ -2535,11 +2535,11 @@ public class InvSpringDao implements InvInterfaceDao{
                             + ") AS sbt ON sbt.identificador_familia_padre=inv_prod_familias.identificador_familia_padre "
                             + "JOIN ("+sql_busqueda+") AS sbt2 ON sbt2.id = inv_prod_familias.id "
                             +" order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("getInvSeccionesGrid: "+sql_to_query+"    "+data_string);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2552,10 +2552,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     //Obtener todas las familias
     //se utiliza en catalogo de Productos y catalogo de Subfamilias
     @Override
@@ -2576,9 +2576,9 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //Obtener datos de la subfamilia
     @Override
     public ArrayList<HashMap<String, String>> getInvProdSubFamilias_Datos(Integer id_subfamilia) {
@@ -2599,12 +2599,12 @@ public class InvSpringDao implements InvInterfaceDao{
             }
         );
         return hm;
-    } 
-    
-    
-    
-    
-    
+    }
+
+
+
+
+
     //Obtener todas las subfamilias, para select de catalogo de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Subfamilias(Integer id_empresa, String familia_id) {
@@ -2623,9 +2623,9 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //Obtener todas las familias
     //se utiliza en catalogo de Productos y catalogo de Subfamilias
     @Override
@@ -2634,7 +2634,7 @@ public class InvSpringDao implements InvInterfaceDao{
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
-                @Override   
+                @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
@@ -2646,29 +2646,29 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //catalogo de plazas 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //catalogo de plazas
     @Override
     public ArrayList<HashMap<String, Object>> getPlazas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query =
                                 "SELECT gral_plazas.id "
                                 +",gral_plazas.titulo as plaza "
                                 +",gral_plazas.descripcion as nombre "
-                                +",inv_zonas.titulo as zona "                              
+                                +",inv_zonas.titulo as zona "
                                 +",(CASE WHEN gral_plazas.estatus=false "
                                 +"THEN 'INACTIVO' ELSE 'ACTIVO' END) AS estatus "
                                 +"FROM gral_plazas "
@@ -2676,10 +2676,10 @@ public class InvSpringDao implements InvInterfaceDao{
                                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = gral_plazas.id "
                                 +"where gral_plazas.borrado_logico =false "
                                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2693,10 +2693,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
      @Override
         public ArrayList<HashMap<String, String>> getPlazas_Datos(Integer id_plaza) {
         String sql_to_query = "SELECT "
@@ -2709,7 +2709,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                     +" from gral_plazas "
                                     +" join inv_zonas on inv_zonas.id= gral_plazas.inv_zonas_id "
                                   +" WHERE gral_plazas.id ="+id_plaza;
-        
+
         ArrayList<HashMap<String, String>> datos_plazas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2722,32 +2722,32 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("estatus",rs.getString("estatus"));
                     row.put("zona",rs.getString("zona"));
                     return row;
-                    
+
                 }
             }
         );
-        
+
         return datos_plazas;
     }
 
-    
+
     @Override
     public ArrayList<HashMap<String, Object>> getZonas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_zonas.id "
                                +",inv_zonas.titulo as zona "
                                +",inv_zonas.descripcion "
                                +",(CASE WHEN inv_zonas.estatus=false "
-                               +" THEN 'INACTIVO' ELSE 'ACTIVO' END) AS estatus "                           
-                               +"FROM inv_zonas "                        
+                               +" THEN 'INACTIVO' ELSE 'ACTIVO' END) AS estatus "
+                               +"FROM inv_zonas "
                                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_zonas.id "
                                 +"where inv_zonas.borrado_logico =false "
                                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2756,19 +2756,19 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("zona",rs.getString("zona"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("estatus",rs.getString("estatus"));
-                   
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
      @Override
     public ArrayList<HashMap<String, String>> getZonas_Datos(Integer id_zona) {
         String sql_to_query = "SELECT inv_zonas.titulo,inv_zonas.id,inv_zonas.descripcion,(CASE  WHEN inv_zonas.borrado_logico =false THEN 'false' ELSE 'true' END) AS estatus  FROM inv_zonas WHERE id ="+id_zona;
-        
+
         ArrayList<HashMap<String, String>> datos_zonas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2779,7 +2779,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("titulo",rs.getString("titulo"));
                     row.put("estatus",rs.getString("estatus"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    
+
                     return row;
                 }
             }
@@ -2805,26 +2805,26 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_zonas;
     }
-     
-     
-     
-    
-    //catalogo de producto grupos 
+
+
+
+
+    //catalogo de producto grupos
    @Override
     public ArrayList<HashMap<String, Object>> getProductoGrupos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_prod_grupos.id "
                                +",inv_prod_grupos.titulo as grupo  "
                                +",inv_prod_grupos.descripcion "
-                                                         
-                               +"FROM inv_prod_grupos "                        
+
+                               +"FROM inv_prod_grupos "
                                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_prod_grupos.id "
                                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2832,19 +2832,19 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",rs.getInt("id"));
                     row.put("grupo",rs.getString("grupo"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
      @Override
      public ArrayList<HashMap<String, String>> getProductosGrupos_Datos(Integer id_grupoproducto) {
      String sql_to_query = "SELECT inv_prod_grupos.id,inv_prod_grupos.titulo as grupo,inv_prod_grupos.descripcion  FROM inv_prod_grupos WHERE id ="+id_grupoproducto;
-        
+
         ArrayList<HashMap<String, String>> datos_grupoproducto = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2854,23 +2854,23 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("grupo",rs.getString("grupo"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    
+
                     return row;
                 }
             }
         );
         return datos_grupoproducto;
     }
-    
-    
-    
-     
-     
+
+
+
+
+
     //Metodos para catalogo InvPre
     @Override
     public ArrayList<HashMap<String, Object>> getInvPreGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT "
                 + "inv_pre.id "
                 + ", inv_prod.sku "
@@ -2891,10 +2891,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_pre.id "
                 +" join inv_prod on inv_prod.id=inv_pre.inv_prod_id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
-        
+
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2913,15 +2913,15 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("precio_8",StringHelper.roundDouble(rs.getDouble("precio_8"), 2));
                     row.put("precio_9",StringHelper.roundDouble(rs.getDouble("precio_9"), 2));
                     row.put("precio_10",StringHelper.roundDouble(rs.getDouble("precio_10"), 2));
-                                        
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     //obtiene datos del tipo de movimiento actual
     @Override
     public ArrayList<HashMap<String, String>> getInvPre_Datos(Integer id) {
@@ -2933,9 +2933,9 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "join inv_prod on inv_prod.id=inv_pre.inv_prod_id "
                         + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id  "
                         + " WHERE inv_pre.id = ? and inv_pre.borrado_logico=false";
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2956,7 +2956,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("precio_8",StringHelper.roundDouble(rs.getDouble("precio_8"), 2));
                     row.put("precio_9",StringHelper.roundDouble(rs.getDouble("precio_9"), 2));
                     row.put("precio_10",StringHelper.roundDouble(rs.getDouble("precio_10"), 2));
-                    
+
                     row.put("id_mon1",String.valueOf(rs.getInt("gral_mon_id_pre1")));
                     row.put("id_mon2",String.valueOf(rs.getInt("gral_mon_id_pre2")));
                     row.put("id_mon3",String.valueOf(rs.getInt("gral_mon_id_pre3")));
@@ -2967,7 +2967,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id_mon8",String.valueOf(rs.getInt("gral_mon_id_pre8")));
                     row.put("id_mon9",String.valueOf(rs.getInt("gral_mon_id_pre9")));
                     row.put("id_mon10",String.valueOf(rs.getInt("gral_mon_id_pre10")));
-                    
+
                     row.put("descuento_1",StringHelper.roundDouble(rs.getDouble("descuento_1"), 2));
                     row.put("descuento_2",StringHelper.roundDouble(rs.getDouble("descuento_2"), 2));
                     row.put("descuento_3",StringHelper.roundDouble(rs.getDouble("descuento_3"), 2));
@@ -3034,10 +3034,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     /*
-    Éste método solo obtiene la moneda de la lista de precio. 
+    Éste método solo obtiene la moneda de la lista de precio.
     Si la lista de precio no tiene moneda, por default le asigna el 1
      */
      @Override
@@ -3056,7 +3056,7 @@ public class InvSpringDao implements InvInterfaceDao{
                  + "(CASE WHEN gral_mon_id_pre10=0 OR gral_mon_id_pre10 IS NULL THEN 1 ELSE gral_mon_id_pre10 END) AS moneda_lista10 "
              + "FROM inv_pre "
              + "WHERE gral_emp_id="+id_empresa+" AND borrado_logico=FALSE LIMIT 1;";
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -3079,25 +3079,25 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-     
-     
-     
-     
-    
+
+
+
+
+
      //catalogo de comisiones de articulos
     //Metodos para catalogo InvCom
     @Override
     public ArrayList<HashMap<String, Object>> getInvComGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_com.id,inv_prod.sku ,inv_prod.descripcion, inv_com.nivel,inv_com.escala, inv_com.limite_inferior,inv_com.limite_superior,inv_com.comision "
                             + "FROM inv_com "
                             + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_com.id "
                             +" join inv_prod on inv_prod.id=inv_com.inv_prod_id "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3114,9 +3114,9 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
+
      //obtiene datos del InvCom
     @Override
     public ArrayList<HashMap<String, String>> getInvCom_Datos(Integer id) {
@@ -3124,7 +3124,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "inv_com join inv_prod on inv_prod.id=inv_com.inv_prod_id "
                 + " WHERE inv_com.id = ? and inv_com.borrado_logico=false";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3139,7 +3139,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("limite_superior",StringHelper.roundDouble(rs.getDouble("limite_superior"), 2));
                     row.put("comision",StringHelper.roundDouble(rs.getDouble("comision"), 2));
                     row.put("comision_valor",StringHelper.roundDouble(rs.getDouble("comision_valor"), 2));
-                    
+
                     return row;
                 }
             }
@@ -3147,24 +3147,24 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm;
     }
 
-     
-     
-    
+
+
+
     //catalogo de Invetario clasificaciones de Stock
     @Override
     public ArrayList<HashMap<String, Object>> getStock_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query =  "select inv_stock_clasificaciones.id,titulo as clasificacion, descripcion from inv_stock_clasificaciones "
-                
+
                                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_stock_clasificaciones.id "
                                 +"where inv_stock_clasificaciones.borrado_logico =false "
                                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
-        
+
+
         //System.out.println("informacion que carga el grid de stock    : "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3172,19 +3172,19 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",rs.getInt("id"));
                     row.put("clasificacion",rs.getString("clasificacion"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
      @Override
     public ArrayList<HashMap<String, String>> getStock_Datos(Integer id_stock) {
         String sql_to_query = "select inv_stock_clasificaciones.id,titulo as clasificacion, descripcion from inv_stock_clasificaciones WHERE id ="+id_stock;
-        
+
         ArrayList<HashMap<String, String>> datos_stock = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -3194,24 +3194,24 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("clasificacion",rs.getString("clasificacion"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    
+
                     return row;
                 }
             }
         );
         return datos_stock;
     }
-     
-     
-     
-    
-    
-    
+
+
+
+
+
+
     //catalogo inv clasificaciones
     @Override
     public ArrayList<HashMap<String, Object>> getInvClas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
         String sql_to_query =  "select inv_clas.id, "
                             +" inv_clas.titulo as clasificacion, "
                             +" inv_clas.descripcion, "
@@ -3221,11 +3221,11 @@ public class InvSpringDao implements InvInterfaceDao{
                             +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_clas.id "
                             +"where inv_clas.borrado_logico =false "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
-        
+
+
         //System.out.println("informacion que carga el grid de inv_clas    : "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3235,15 +3235,15 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("stock_seguridad",rs.getDouble("stock_seguridad"));
                     row.put("factor_maximo",rs.getDouble("factor_maximo"));
-                    
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
      @Override
     public ArrayList<HashMap<String, String>> getInvClas_Datos(Integer id_invclas) {
         String sql_to_query = "select inv_clas.id, "
@@ -3252,7 +3252,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             +" inv_clas.stock_seguridad, "
                             +" inv_clas.factor_maximo  "
                             +" from inv_clas  WHERE id ="+id_invclas;
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -3264,26 +3264,26 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("stock_seguridad",StringHelper.roundDouble(rs.getString("stock_seguridad"),2));
                     row.put("factor_maximo",StringHelper.roundDouble(rs.getString("factor_maximo"),2));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-     
-     
-     
-     
-     
+
+
+
+
+
+
+
     //traer sucursales
      @Override
     public ArrayList<HashMap<String, String>> getSucursales(Integer id_empresa){
-         
+
         String sql_to_query = "SELECT id, titulo AS sucursal, empresa_id FROM gral_suc WHERE empresa_id="+id_empresa+";";
-        
+
         ArrayList<HashMap<String, String>> sucursales = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -3299,16 +3299,16 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return sucursales;
     }
-     
+
      //traer plazas
      @Override
     public ArrayList<HashMap<String, String>> getPlazas(Integer id_empresa){
-         
+
         String sql_to_query = "select gral_plazas.id,"
                                 +" gral_plazas.titulo as plaza "
                                 +"from gral_plazas "
                                 +"where gral_plazas.borrado_logico=false and empresa_id="+id_empresa;
-                    
+
         ArrayList<HashMap<String, String>> plazas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -3317,17 +3317,17 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("plaza",rs.getString("plaza"));
-                    
+
                     return row;
                 }
             }
         );
         return plazas;
     }
-    
+
       @Override
     public ArrayList<HashMap<String, String>> getPlazasAsignadas(Integer id_empresa,Integer id_sucursal){
-         
+
         String sql_to_query = "SELECT gral_plazas.id,gral_plazas.titulo as plaza "
                                 +"FROM gral_plazas "
                                 +"LEFT JOIN gral_suc_pza ON gral_suc_pza.plaza_id=gral_plazas.id "
@@ -3341,17 +3341,17 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("plaza",rs.getString("plaza"));
-                    
+
                     return row;
                 }
             }
         );
         return plazasAsig;
     }
-      
+
        @Override
     public ArrayList<HashMap<String, String>> getPlazasNoAsignadas(Integer id_empresa,Integer id_sucursal){
-         
+
         String sql_to_query = "SELECT gral_plazas.id,gral_plazas.titulo as plaza "
                                 +"FROM gral_plazas "
                                 +"WHERE borrado_logico=false AND empresa_id=4 "
@@ -3370,22 +3370,22 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("plaza",rs.getString("plaza"));
-                    
+
                     return row;
                 }
             }
         );
         return plazasNoAsig;
-    } 
-     
-     
-       
-       
+    }
+
+
+
+
     //Metodos para catalogo InvPreOfe
     @Override
     public ArrayList<HashMap<String, Object>> getInvPreOfeGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_pre_ofe.id,"
                                 + "inv_prod.sku,"
                                 + "inv_prod.descripcion, "
@@ -3397,9 +3397,9 @@ public class InvSpringDao implements InvInterfaceDao{
                             +" join inv_prod on inv_prod.id=inv_pre_ofe.inv_prod_id "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         //System.out.println("getInvSeccionesGrid: "+sql_to_query+"    "+data_string);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3416,7 +3416,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
+
     //obtiene datos del InvCom
     @Override
     public ArrayList<HashMap<String, String>> getInvPreOfe_Datos(Integer id) {
@@ -3455,15 +3455,15 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //metodos para aplicativo orden pre-subensamble
     @Override
     public ArrayList<HashMap<String, Object>> getInvOrdPreSubenGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "select opse.id, "
                                 + "opse.folio, "
                                 + "(CASE WHEN opse.estatus=0 THEN ''  "
@@ -3476,10 +3476,10 @@ public class InvSpringDao implements InvInterfaceDao{
                                 + "FROM inv_ord_subensamble as opse "
                             + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id=opse.id "
                             + "order by "+orderBy+" "+asc+" LIMIT ? OFFSET ? ";
-        
+
         //System.out.println("getInvOrdPreSubenGrid: "+sql_to_query+"    "+data_string);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3494,10 +3494,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene datos del pre-subensamble
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdPreSuben_Datos(String id) {
@@ -3511,10 +3511,10 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "FROM inv_ord_subensamble "
                             + "JOIN inv_proceso on inv_proceso.id=inv_ord_subensamble.proceso_id "
                             + "WHERE inv_ord_subensamble.id="+id;
-        
+
         //System.out.println("getInvOrdPreSuben_Datos: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query, 
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3532,8 +3532,8 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
 
 
     //obtiene detalles del la orden pre-subensamble
@@ -3545,10 +3545,10 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "FROM inv_ord_subensamble_detalle as iop "
                             + "JOIN inv_prod on inv_prod.id=iop.inv_prod_id_subensamble  "
                             + "where iop.inv_ord_subensamble_id="+id;
-        
+
         //System.out.println("getInvDetalleOrdPreSuben: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query, 
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3562,10 +3562,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosProductos(String sku, Integer id_empresa) {
         String sql_to_query = "SELECT inv_prod.id, "
@@ -3575,7 +3575,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                 + "FROM inv_prod  "
                             + "JOIN inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
                             + "WHERE inv_prod.sku ILIKE '"+sku+"'";
-        
+
         //System.out.println(sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -3593,9 +3593,9 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosComProd(String sku) {
         String sql_to_query = ""
@@ -3612,7 +3612,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "JOIN inv_kit ON tmp1.id=inv_kit.producto_kit_id "
                 + ") as tmp ON tmp.producto_elemento_id=inv_prod.id "
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id";
-        
+
         //System.out.println(sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -3631,36 +3631,36 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-    
-    
-    
+
+
+
     @Override
     public HashMap<String, String> getInvOrdPreSuben_IdAlmacenProd(Integer id_empresa) {
         HashMap<String, String> data = new HashMap<String, String>();
-        
+
         String sql_to_query = "SELECT inv_alm_id FROM pro_par WHERE gral_emp_id="+id_empresa+";";
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         data.put("id_alm_prod",map.get("inv_alm_id").toString());
         return data;
     }
-    
-    
-    
-    
+
+
+
+
     //Metodos para proceso InvOrdSuben
     @Override
     public ArrayList<HashMap<String, Object>> getInvOrdSubenGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query = "select inv_ord_subensamble.id , inv_ord_subensamble.folio, inv_ord_subensamble.momento_creacion, inv_ord_subensamble.estatus from inv_ord_subensamble "
                             + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_ord_subensamble.id "
                 + "order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
-        
+
         //System.out.println("getInvOrdSubenGrid: "+sql_to_query+"    "+data_string);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3682,15 +3682,15 @@ public class InvSpringDao implements InvInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdSuben_Datos(String id) {
         String sql_query = "select * from inv_ord_subensamble where id="+id;
-        
+
         //System.out.println("getInvOrdSuben_Datos: "+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query, 
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    
+
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("folio",rs.getString("folio"));
@@ -3698,16 +3698,16 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("estatus",String.valueOf(rs.getInt("estatus")));
                     row.put("fecha",String.valueOf(rs.getDate("momento_creacion")));
                     //row.put("comoponente", getInvOrdPreSubenDatosComponentesPorProducto(String.valueOf(rs.getString("sku"))));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //obtiene datos del InvCom
     @Override
     public ArrayList<HashMap<String, String>> getInvDetalleOrdSuben(String id) {
@@ -3720,34 +3720,34 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_prod ON inv_prod.id=iop.inv_prod_id_subensamble "
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                 + "WHERE iop.inv_ord_subensamble_id="+id;
-        
+
         //System.out.println("getInvDetalleOrdSuben: "+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query, 
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    
+
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"), 2));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosComponentesPorProducto(String id) {
-        
+
         String sql_to_query = "SELECT inv_prod.id,"
                     + "inv_prod.sku, "
                     + "inv_prod.descripcion, "
@@ -3768,7 +3768,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + ") AS subt2 "
                 + "JOIN inv_prod ON subt2.producto_elemento_id=inv_prod.id "
                 + "JOIN inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id; ";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         //System.out.println(sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -3788,14 +3788,14 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-    
-    
-    
+
+
+
     //Catalogo de Unidades de Medida
     @Override
     public ArrayList<HashMap<String, Object>> getUnidades_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
 	String sql_to_query =  "SELECT inv_prod_unidades.id "
                                +",inv_prod_unidades.titulo_abr"
                                +",inv_prod_unidades.titulo as descripcion "
@@ -3806,7 +3806,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3815,19 +3815,19 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("titulo_abr",rs.getString("titulo_abr"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("decimales",rs.getString("decimales"));
-                   
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
      @Override
     public ArrayList<HashMap<String, String>> getUnidades_Datos(Integer id_zona) {
         String sql_to_query = "SELECT  inv_prod_unidades.id,inv_prod_unidades.titulo_abr as unidad,inv_prod_unidades.titulo as descripcion,inv_prod_unidades.decimales FROM inv_prod_unidades WHERE id ="+id_zona;
-        
+
         ArrayList<HashMap<String, String>> datos_unidades = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -3843,48 +3843,48 @@ public class InvSpringDao implements InvInterfaceDao{
             }
         );
         return datos_unidades;
-    }    
-    
-    
-    
-    
-     
- 
+    }
+
+
+
+
+
+
     //catalogo de Presentaciones de Productos
     @Override
     public ArrayList<HashMap<String, Object>> getPresentaciones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
-	String sql_to_query = "SELECT inv_prod_presentaciones.id,inv_prod_presentaciones.titulo as descripcion "                              
-                                +"FROM inv_prod_presentaciones "                        
+
+	String sql_to_query = "SELECT inv_prod_presentaciones.id,inv_prod_presentaciones.titulo as descripcion "
+                                +"FROM inv_prod_presentaciones "
                                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_prod_presentaciones.id "
                                 +"WHERE inv_prod_presentaciones.borrado_logico=false  "
                                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
                     row.put("descripcion",rs.getString("descripcion"));
-                   
-                   
+
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
+
 
 
     @Override
     public ArrayList<HashMap<String, String>> getPresentaciones_Datos(Integer id_Presentacion) {
         String sql_to_query = "SELECT inv_prod_presentaciones.id,inv_prod_presentaciones.titulo as descripcion  FROM inv_prod_presentaciones WHERE id ="+id_Presentacion;
-        
+
         ArrayList<HashMap<String, String>> datos_presentaciones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -3893,22 +3893,22 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("descripcion",rs.getString("descripcion"));
-                    
-                    
-                    
+
+
+
                     return row;
                 }
             }
         );
         return datos_presentaciones;
     }
-     
-     
-     
-     
-     
-    
-    
+
+
+
+
+
+
+
     //:::::CATALOGO DE FORMULAS::::::::::
     //obtiene tipos de productos
     @Override
@@ -3923,13 +3923,13 @@ public class InvSpringDao implements InvInterfaceDao{
         if(buscador_producto==3){
          cadena_where ="and inv_prod_tipos.id in (1,2) ";
         }
-        
+
 	String sql_query = "SELECT DISTINCT id,titulo  "
                             + " FROM inv_prod_tipos  "
                             +"  WHERE borrado_logico=false "
-                            +cadena_where+ "order by inv_prod_tipos.titulo;"; 
-                            
-           //System.out.println("sql_query: "+sql_query);                 
+                            +cadena_where+ "order by inv_prod_tipos.titulo;";
+
+           //System.out.println("sql_query: "+sql_query);
         ArrayList<HashMap<String, String>> hm_tp = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -3942,21 +3942,21 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        
+
         return hm_tp;
     }
-    
+
 
     //busca producto en especifico para agregar a la lista de productos elemento en el catalogo de formulas
     @Override
     public ArrayList<HashMap<String, String>> getFormulas_sku(String sku, Integer id_usuario) {
-        
+
         String sql_to_query = "	SELECT gral_suc.empresa_id FROM gral_usr_suc "
                             + "JOIN gral_suc ON gral_suc.id = gral_usr_suc.gral_suc_id "
                             + "WHERE gral_usr_suc.gral_usr_id = "+id_usuario;
-        
+
         int id_empresa = this.getJdbcTemplate().queryForInt(sql_to_query);
-        
+
         String sql_query = "SELECT inv_prod.id, "
                                 + "inv_prod.sku, "
                                 + "inv_prod.descripcion,"
@@ -3965,9 +3965,9 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                             + "WHERE inv_prod.empresa_id = "+id_empresa+" AND inv_prod.sku='"+sku+"';";
         //System.out.println("Obteniendo datos sku:"+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm_sku = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -3982,21 +3982,21 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_sku;
     }
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
     //catalogo de formulas de Productos
     @Override
     public ArrayList<HashMap<String, Object>> getFormulas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         //String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
         String sql_to_query = "SELECT distinct "
                                 +" inv_formulas.inv_prod_id_master||'---'||inv_formulas.nivel as id, "
-                                +" inv_prod.sku as codigo, " 
+                                +" inv_prod.sku as codigo, "
                                 +" inv_prod.descripcion, "
                                 +" inv_prod_unidades.titulo_abr as unidad,"
                                 +" inv_prod_tipos.titulo as tipo_producto,  "
@@ -4007,11 +4007,11 @@ public class InvSpringDao implements InvInterfaceDao{
                                 +" join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id  "
                                // +" order by nivel desc  ";
                                 +" order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
-                           
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -4022,15 +4022,15 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("tipo_producto",rs.getString("tipo_producto"));
                     row.put("nivel",String.valueOf(rs.getInt("nivel")));
-                   
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getFormulas_Datos(String id_formula, String id_nivel) {
         String sql_to_query =    " SELECT "
@@ -4064,7 +4064,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("tipo_producto",rs.getString("tipo_producto"));
                     row.put("unidad",rs.getString("unidad"));
-                    
+
                     return row;
                 }
             }
@@ -4072,8 +4072,8 @@ public class InvSpringDao implements InvInterfaceDao{
         return datos_formulas;
     }
     //:::::::::::TERMINA CATALOGO DE FORMULAS::::::::::::::::::::::::
-    
-    
+
+
     //:::::::::::CONSULTA QUE RETORNA EL GRID DE FORMULAS DE ACUERDO A SU PASO::::::::::::::::::::::::
     @Override
     public ArrayList<HashMap<String, String>> getFormulas_DatosMinigrid(String id_tabla_formula, String id_nivel) {
@@ -4081,7 +4081,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             + " inv_prod_id_master,  inv_prod_id,  nivel "
                             + " FROM  inv_formulas where inv_formulas.id="+id_tabla_formula;
         //System.out.println("Primer  query??"+sql_query);
-        
+
          String sql_to_query = " SELECT  "
                                 + " inv_formulas.producto_elemento_id, "
                                 + " inv_prod.sku AS codigo, "
@@ -4092,7 +4092,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                 + " JOIN inv_prod ON inv_prod.id=inv_formulas.producto_elemento_id  "
                                 + "WHERE "
                                 + " inv_formulas.inv_prod_id_master ="+id_tabla_formula
-                                //+ " inv_formulas.inv_prod_id ="+id_tabla_formula                           
+                                //+ " inv_formulas.inv_prod_id ="+id_tabla_formula
                                 + " and inv_formulas.nivel ="+id_nivel+" "
                                 + " ORDER BY inv_formulas.id ASC;";
                             //.get("inv_prod_id_master").toString();
@@ -4109,18 +4109,18 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),4));
                     row.put("nivel",rs.getString("nivel"));
-                    
+
                     return row;
                 }
             }
         );
         return datos_formulas_minigrid;
     }
-    
+
     //::::::::::::::::::::::RETORNANDO EL PRODUCTO SALIENTE ( ID_PRODUCTO_SALIENTE ,CODIGO , DESCRIPCION ,  )
         @Override
     public ArrayList<HashMap<String, String>> getFormulas_DatosProductoSaliente(String id_tabla_formula, String id_nivel) {
-        
+
          String sql_to_query = " SELECT inv_prod_id,    inv_prod.sku as codigo,   inv_prod.descripcion "
                               + " FROM  inv_formulas   "
                               + " JOIN  inv_prod ON inv_prod.id=inv_formulas.inv_prod_id "
@@ -4137,10 +4137,10 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    
-                    
-                    
-                    
+
+
+
+
                     return row;
                 }
             }
@@ -4148,9 +4148,9 @@ public class InvSpringDao implements InvInterfaceDao{
         return datos_formulas_minigrid;
     }
     //:::. FIN DEL  RETORNO DE DATOS  PARA EL PRODUCTO SALIENTE
-        
-        
-        
+
+
+
     //metodo para reporte de kits
     @Override
     public ArrayList<HashMap<String, String>> getKits(Integer id_empresa,Integer id_usuario,String codigo, String descripcion) {
@@ -4159,11 +4159,11 @@ public class InvSpringDao implements InvInterfaceDao{
         if(!codigo.equals("")){
           cadena_where=" and inv_prod.sku = '"+codigo +"'";
         }
-        
+
         if(descripcion !=""){
           cadena_where=" and inv_prod.descripcion ilike '"+descripcion +"'";
         }
-        
+
         String sql_to_query =""
                 + "SELECT  "
                          +"codigo, "
@@ -4186,12 +4186,12 @@ public class InvSpringDao implements InvInterfaceDao{
                                 +")AS sbt1  order by codigo,producto_kit asc "
                          +")AS sbt2 "
                          +" group by codigo,producto_kit ";
-           
-        
+
+
        //System.out.println("query cuantos kits puedo formar:"+ sql_to_query);
-       
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_to_query, 
+                sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -4199,16 +4199,16 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("codigo",rs.getString("codigo"));
                     row.put("producto_kit",rs.getString("producto_kit"));
                     row.put("cantidad_de_kits",String.valueOf(rs.getDouble("cantidad_de_kits")));
-                    
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
+
+
+
     //:::::::::::::::para pdf de formulas hecho por Paco Mora::::::::::::::::::
     @Override
     public ArrayList<HashMap<String, Object>> getInv_ListaProductosFormulaPdf(Integer formula_id) {
@@ -4228,10 +4228,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
                 + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
                 + "where inv_prod_id_master="+formula_id+" order by inv_formulas.id desc";
-        
+
         //System.out.println("Obtiene datos pdf ruta: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -4248,17 +4248,17 @@ public class InvSpringDao implements InvInterfaceDao{
                     }else{
                         row.put("adicionales",rs.getInt("id_tipo"));
                     }
-                    
+
                     return row;
                 }
             }
         );
         return hm_grid;
     }
-    
+
     //metodo para obtener los componentes de la formula de tipo intermedio
     private ArrayList<HashMap<String, String>> getInv_ListaProductosFormulaIntermedioPdf(String formula_id) {
-        
+
         String sql_query = ""
                 + "select "
                 + "inv_formulas.producto_elemento_id,"
@@ -4275,10 +4275,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
                 + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
                 + "where inv_prod_id_master="+formula_id+" order by inv_formulas.id desc";
-        
+
         //System.out.println("Obtiene datos pdf ruta: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -4291,28 +4291,28 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("tipo","  "+rs.getString("tipo"));
                     row.put("id_tipo",rs.getString(rs.getInt("id_tipo")));
                     row.put("adicionales",rs.getString(rs.getInt("id_tipo")));
-                    
+
                     return row;
                 }
             }
         );
         return hm_grid;
     }
-    
-    
+
+
     //metoodo para pdf de formulas
     @Override
     public HashMap<String, String> getInv_DatosFormulaPdf(Integer formula_id) {
-        
+
         HashMap<String, String> datos = new HashMap<String, String>();
-        
+
         String sql_query = "select inv_prod.descripcion,inv_formulas.nivel, inv_formulas.inv_prod_id_master, "
                 + "inv_prod.sku from inv_formulas join inv_prod on inv_prod.id=inv_formulas.inv_prod_id_master where "
                 + "inv_prod_id_master="+formula_id+" limit 1";
-        
+
         //System.out.println("DATOS PARA EL PDF:"+sql_query);
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
-        
+
         datos.put("folio", map.get("inv_prod_id_master").toString());
         datos.put("fecha", "");
         datos.put("nombre_mes", "" );
@@ -4321,29 +4321,29 @@ public class InvSpringDao implements InvInterfaceDao{
         datos.put("clave_vehiculo", "" );
         datos.put("hora_salida", "" );
         datos.put("hora_llegada", "" );
-        
+
         return datos;
     }
-    
-    
-    
+
+
+
     //metoodo para especificaciones pdf
     @Override
     public ArrayList<HashMap<String, String>> getInv_DatosFormulaEspecificacionesPdf(Integer formula_id) {
-       
+
         HashMap<String, String> datos = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> hm_grid = new ArrayList<HashMap<String, String>>();
-       
+
         String sql_busqueda = "select count(pro_proc_esp.id) as cantidad from pro_subproceso_prod join pro_proc_esp on pro_proc_esp.pro_subproceso_prod_id=pro_subproceso_prod.id where "
                 + "pro_subproceso_prod.inv_prod_id="+formula_id+" limit 1";
         //esto es para revisar que exista el registro
         int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
-       
+
         //System.out.println("DATOS PARA EL PDF:"+sql_busqueda);
-       
+
         //si rowCount es mayor que cero si se encontro registro y extraemos el valor
         if (rowCount > 0){
-           
+
             String sql_query = "select pro_proc_esp.id, pro_proc_esp.fineza_inicial, pro_proc_esp.viscosidads_inicial, pro_proc_esp.viscosidadku_inicial,"
                     + "pro_proc_esp.viscosidadcps_inicial, pro_proc_esp.densidad_inicial, pro_proc_esp.volatiles_inicial, pro_proc_esp.hidrogeno_inicial, "
                     + "pro_proc_esp.cubriente_inicial, pro_proc_esp.tono_inicial, pro_proc_esp.brillo_inicial, pro_proc_esp.dureza_inicial, "
@@ -4354,11 +4354,11 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "from pro_subproceso_prod join pro_proc_esp on pro_proc_esp.pro_subproceso_prod_id=pro_subproceso_prod.id "
                     + "join pro_subprocesos on pro_subproceso_prod.pro_subprocesos_id=pro_subprocesos.id where "
                             + "pro_subproceso_prod.inv_prod_id="+formula_id+" order by pro_subprocesos.id";
-              
+
 
             //System.out.println("Obtiene datos pdf ruta: "+sql_query);
             hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_query, 
+                sql_query,
                 new Object[]{}, new RowMapper() {
                     @Override
                     public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -4368,7 +4368,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         row.put("posicion",String.valueOf(rs.getInt("posicion")));
                         row.put("descripcion","  "+rs.getString("descripcion"));
                         */
-                       
+
                         row.put("id", String.valueOf(rs.getInt("id")));
                         row.put("fineza_inicial", String.valueOf(rs.getInt("fineza_inicial")));
                         row.put("viscosidads_inicial", String.valueOf(rs.getInt("viscosidads_inicial")));
@@ -4395,42 +4395,42 @@ public class InvSpringDao implements InvInterfaceDao{
                         row.put("brillo_final", String.valueOf(rs.getDouble("brillo_final")));
                         row.put("dureza_final", rs.getString("dureza_final"));
                         row.put("adherencia_final", String.valueOf(rs.getDouble("adherencia_final")));
-                       
+
                         row.put("titulo", rs.getString("titulo"));
-                       
+
                         return row;
                     }
                 }
             );
-           
-           
+
+
         }else{
             HashMap<String, String> row = new HashMap<String, String>();
             row.put("id","0");
             hm_grid.add(datos);
         }
-        
+
         return hm_grid;
     }
     //termina metodos para el catalogo de formulas
-    
-    
-    
+
+
+
     //metodo para obtener los procedidmientos de la formula de tipo intermedio
     public ArrayList<HashMap<String, String>> getInv_DatosFormulaProcedidmientoPdf(Integer formula_id) {
-        
+
         HashMap<String, String> datos = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> hm_grid = new ArrayList<HashMap<String, String>>();
-        
+
         String sql_busqueda = "select count(pro_proc_procedimiento.id) as cantidad from "
                 + "pro_subproceso_prod join pro_proc_procedimiento on pro_proc_procedimiento.pro_subproceso_prod_id=pro_subproceso_prod.id "
                 + "where pro_subproceso_prod.inv_prod_id="+formula_id+" limit 1";
-       
+
         //esto es para revisar que exista el registro
         int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
-        
+
         //System.out.println("DATOS PARA EL PDF:"+sql_busqueda);
-        
+
         //si rowCount es mayor que cero si se encontro registro y extraemos el valor
         if (rowCount > 0){
             String sql_query = "select pro_proc_procedimiento.id, pro_proc_procedimiento.posicion, pro_proc_procedimiento.descripcion, "
@@ -4438,10 +4438,10 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "pro_proc_procedimiento.pro_subproceso_prod_id=pro_subproceso_prod.id join pro_subprocesos on "
                     + "pro_subproceso_prod.pro_subprocesos_id=pro_subprocesos.id where pro_subproceso_prod.inv_prod_id="+formula_id+" order by "
                     + "pro_subprocesos.id,pro_proc_procedimiento.posicion";
-           
+
             //System.out.println("Obtiene datos pdf ruta: "+sql_query);
             hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_query, 
+                sql_query,
                 new Object[]{}, new RowMapper() {
                     @Override
                     public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -4450,7 +4450,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         row.put("posicion",String.valueOf(rs.getInt("posicion")));
                         row.put("descripcion","  "+rs.getString("descripcion"));
                         row.put("titulo","  "+rs.getString("titulo"));
-                        
+
                         return row;
                     }
                 }
@@ -4460,17 +4460,17 @@ public class InvSpringDao implements InvInterfaceDao{
             row.put("id","0");
             hm_grid.add(datos);
         }
-        
+
         return hm_grid;
     }
-    
-    
-    
+
+
+
     /***Metodos para Orden de Entrada******/
     @Override
     public ArrayList<HashMap<String, Object>> getInvOrdenEntrada_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_oent.id, "
 				+"inv_oent.folio, "
                                 + "(CASE WHEN inv_oent.tipo_documento=1 AND cxp_prov.razon_social IS NOT NULL THEN cxp_prov.razon_social "
@@ -4489,10 +4489,10 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         //System.out.println("data_string: "+data_string);
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -4509,10 +4509,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm;  
+        return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdenEntrada_Datos(Integer id) {
         String sql_to_query = ""
@@ -4546,7 +4546,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "FROM inv_oent "
                 + "LEFT JOIN cxp_prov ON cxp_prov.id=inv_oent.cxp_prov_id "
                 + "WHERE inv_oent.id=?;";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4586,8 +4586,8 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdenEntrada_DatosGrid(Integer id) {
                 String sql_to_query = ""
@@ -4616,7 +4616,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_oent_detalle.inv_prod_presentacion_id "
                         + "WHERE inv_oent_detalle.inv_oent_id=? "
                         + "ORDER BY inv_oent_detalle.inv_oent_id;";
-                
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4646,11 +4646,11 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm;  
+        return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdenEntrada_DatosGridLotes(Integer id) {
                 String sql_to_query = ""
@@ -4669,7 +4669,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "JOIN inv_prod on inv_prod.id = inv_lote.inv_prod_id  "
                         + "WHERE inv_oent_detalle.inv_oent_id=? "
                         + "ORDER BY inv_lote.id;";
-        
+
         //System.out.println(sql_to_query);
         //System.out.println("id: "+id);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -4693,12 +4693,12 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     @Override
     public HashMap<String, String> getInvOrdenEntrada_Datos_PDF(Integer id) {
         HashMap<String, String> data = new HashMap<String, String>();
-        
+
         String sql_to_query = "select  inv_oent.id,"
                                     + "inv_oent.folio,"
                                     +" to_char(inv_oent.momento_creacion,'dd/mm/yyyy') AS fecha_orden_entrada,"
@@ -4733,7 +4733,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                 + "LEFT JOIN gral_mon ON gral_mon.id=inv_oent.moneda_id "
                                 + "WHERE inv_oent.id="+id+";";
         //System.out.println("Header PDF OENT::::"+sql_to_query);
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         data.put("id",String.valueOf(map.get("id")));
         data.put("folio",map.get("folio").toString());
@@ -4755,19 +4755,19 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("nombre_usuario_elaboro",map.get("nombre_usuario_elaboro").toString());
         return data;
     }
-    
+
     /***Termina Metodos para Orden de Entrada******/
-    
-    
+
+
     /************************************************************************************
      *INICIA METODOS PARA ORDENES DE SALIDA
      *************************************************************************************/
-    
+
     //metodo  para el grid y paginado
     @Override
     public ArrayList<HashMap<String, Object>> getInvOrdenSalida_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = "SELECT inv_osal.id, "
 				+"inv_osal.folio, "
                                 +"(CASE WHEN inv_osal.momento_confirmacion IS NULL THEN '' ELSE to_char(inv_osal.momento_confirmacion,'dd/mm/yyyy') END ) AS fecha_salida, "
@@ -4788,12 +4788,12 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"LEFT JOIN pro_orden_prod ON pro_orden_prod.id=pro_ordenprod_invosal.pro_orden_prod_id "
                         +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_osal.id "
                         +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -4812,10 +4812,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdenSalida_Datos(Integer id) {
         String sql_to_query = ""
@@ -4847,7 +4847,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "LEFT JOIN cxc_clie ON cxc_clie.id = inv_osal.cxc_clie_id "
                 + "LEFT JOIN cxp_prov ON cxp_prov.id = inv_osal.cxp_prov_id "
                 + "WHERE inv_osal.id="+ id + ";";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4877,16 +4877,16 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("cancelacion",String.valueOf(rs.getBoolean("cancelacion")));
                     row.put("tipo_movimiento_id",String.valueOf(rs.getInt("tipo_movimiento_id")));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdenSalida_DatosGrid(Integer id) {
                 String sql_to_query = ""
@@ -4912,7 +4912,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_osal_detalle.inv_prod_presentacion_id "
                         + "WHERE inv_osal_detalle.inv_osal_id=? "
                         + "ORDER BY inv_osal_detalle.id;";
-                
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4941,9 +4941,9 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //obtiene datos de un lota para agregar al grid
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdenSalida_DatosLote(String no_lote, Integer id_producto, Integer id_almacen) {
@@ -4959,7 +4959,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "WHERE lote_int='"+no_lote+"' AND inv_lote.inv_prod_id="+id_producto+" AND inv_lote.inv_alm_id="+id_almacen+" "
                 + ") AS sbt "
                 + "WHERE exis_lote > 0;";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4976,11 +4976,11 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdenSalida_DatosGridLotes(Integer id) {
         String sql_to_query = ""
@@ -4998,7 +4998,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_lote ON inv_lote.id=inv_lote_detalle.inv_lote_id "
                 + "WHERE inv_osal_detalle.inv_osal_id=? "
                 + "ORDER BY inv_lote.id;";
-        
+
         //System.out.println(sql_to_query);
         //System.out.println("id: "+id);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -5021,13 +5021,13 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public HashMap<String, String> getInvOrdenSalida_Datos_PDF(Integer id) {
-        HashMap<String, String> data = new HashMap<String, String>();        
-        
+        HashMap<String, String> data = new HashMap<String, String>();
+
         String sql_to_query = "SELECT inv_osal.id,  "
                                 +"inv_osal.folio, "
                                 +"inv_osal.moneda_id, "
@@ -5059,9 +5059,9 @@ public class InvSpringDao implements InvInterfaceDao{
                             +"LEFT JOIN gral_usr ON gral_usr.id=inv_osal.gral_usr_id_confirmacion "
                             +"LEFT JOIN gral_empleados ON gral_empleados.id = gral_usr.gral_empleados_id "
                             +"where inv_osal.id="+id+";";
-        
+
         //System.out.println("Header PDF::::"+sql_to_query);
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         data.put("id",String.valueOf(map.get("id")));
         data.put("folio",map.get("folio").toString());
@@ -5079,13 +5079,13 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("nombre_usuario_elaboro",map.get("nombre_usuario_elaboro").toString());
         return data;
     }
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_DatosCliente(Integer id_cliente) {
         String sql_to_query = "SELECT DISTINCT  cxc_clie.id, "
@@ -5106,7 +5106,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                 +" JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id   "
                                 +" JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
                                 + "WHERE cxc_clie.id="+ id_cliente;
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_cliente = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -5134,13 +5134,13 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm_datos_cliente;
     }
 
-    
+
      //TERMINA METODOS PARA ORDENES DE SALIDA
      //*************************************************************************************
-    
-    
-    
-    
+
+
+
+
     //INICIA PROCEDIMIENTOS PARA AJUSTES DE INVENTARIO
     //este buscador es solo para Ajustes de Inventario
     @Override
@@ -5152,11 +5152,11 @@ public class InvSpringDao implements InvInterfaceDao{
 	if(!tipo.equals("0")){
             where +=" AND inv_prod.tipo_de_producto_id="+tipo;
 	}
-        
+
 	if(!descripcion.equals("")){
             where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
 	}
-        
+
         String sql_to_query = ""
                 + "SELECT "
                     + "inv_prod.id, "
@@ -5175,7 +5175,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "AND inv_exi.ano="+ano_actual+" "+where+" "
                 + "ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -5195,13 +5195,13 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-    
-    
-    
+
+
+
     //busca datos de un producto para agregar al grid de ajustes
     @Override
     public ArrayList<HashMap<String, String>> getInvAjustes_DatosProducto(String sku, Integer id_empresa, Integer id_almacen, Integer ano_actual) {
-        
+
         String sql_to_query = ""
                 + "SELECT "
                     + "inv_prod.id AS id_producto, "
@@ -5219,7 +5219,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "AND inv_exi.ano="+ano_actual+" AND inv_prod.sku='"+sku+"' "
                 + "ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -5238,14 +5238,14 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //obtiene los tipos de Movimietos para Ajustes
     @Override
     public ArrayList<HashMap<String, String>> getInvAjustes_TiposMovimiento(Integer id_empresa) {
         String sql_to_query = "SELECT id, titulo, grupo, tipo_costo FROM inv_mov_tipos WHERE borrado_logico=FALSE AND ajuste=TRUE ORDER BY titulo;";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -5263,16 +5263,16 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     //obtiene costo promedio actual de un producto
     @Override
     public ArrayList<HashMap<String, String>> getInvAjustes_CostoPromedioActual(Integer id_prod, String fecha_actual) {
         String sql_to_query = "SELECT inv_obtiene_costo_promedio_actual as costo_promedio_actual FROM inv_obtiene_costo_promedio_actual("+id_prod+", '"+fecha_actual+"'::timestamp with time zone);";
-        
+
         //System.out.println("Obteniendo costo promedio:"+sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -5287,16 +5287,16 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getInvAjustes_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = ""
                 + "SELECT DISTINCT inv_mov.id, "
                     + "inv_mov.referencia AS folio_ajuste, "
@@ -5307,11 +5307,11 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_mov_detalle ON inv_mov_detalle.inv_mov_id=inv_mov.id "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_mov.id "
                 +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -5326,12 +5326,12 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvAjustes_Datos(Integer id) {
         String sql_to_query = ""
@@ -5347,7 +5347,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_mov_detalle ON inv_mov_detalle.inv_mov_id=inv_mov.id "
                 + "JOIN inv_mov_tipos ON inv_mov_tipos.id=inv_mov.inv_mov_tipo_id "
                 + "WHERE inv_mov.id="+ id + ";";
-        
+
         //Grupo: 0=Entradas, 2=Salidas
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -5369,17 +5369,17 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvAjustes_DatosGrid(Integer id, String fecha, Integer id_almacen ) {
-        
+
         String f[]=fecha.split("-");
         Integer mes_actual= Integer.parseInt(f[1]);
         Integer ano_actual= Integer.parseInt(f[0]);
-        
+
         //genera formula para calcular existencia en el mes de la fecha que recibimos como parametro a este metodo
         Integer incrementa=1;
         String cadena_existencia= "(exi_inicial  ";
@@ -5388,8 +5388,8 @@ public class InvSpringDao implements InvInterfaceDao{
             incrementa ++;
         }
 	cadena_existencia+=") AS  existencia ";
-	
-        
+
+
         String sql_to_query = ""
                 + "SELECT inv_mov_detalle.producto_id, "
                     + "inv_exi.inv_alm_id AS  id_almacen, "
@@ -5408,7 +5408,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "WHERE inv_mov_detalle.inv_mov_id=? "
                 + "AND inv_exi.ano="+ano_actual+" "
                 + "AND inv_exi.inv_alm_id="+id_almacen;
-        
+
         //System.out.println(sql_to_query);
         //System.out.println("id: "+id);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -5433,15 +5433,15 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public HashMap<String, String> getInvAjustes_DatosPDF(Integer id) {
         HashMap<String, String> data = new HashMap<String, String>();
-        
+
         String sql_to_query = ""
                 + "SELECT "
                     + "sbt.folio_ajuste, "
@@ -5469,11 +5469,11 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "WHERE inv_mov.id="+ id + " "
                 + ") AS sbt "
                 + "JOIN inv_alm ON inv_alm.id=sbt.id_almacen;";
-        
-        
-        
+
+
+
         //System.out.println("Header PDF::::"+sql_to_query);
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         data.put("id",String.valueOf(map.get("id")));
         data.put("folio_ajuste",map.get("folio_ajuste").toString());
@@ -5487,12 +5487,12 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("nombre_usuario",map.get("nombre_usuario").toString());
         return data;
     }
-    
+
     //TERMINA METODOS DE APLICATIVO DE AJUSTES DE INVETARIO
     //***********************************************************************************************************************************
-    
-    
-    
+
+
+
     //***********************************************************************************************************************************
     //ESTO ES PARA PRODUCTOS EQUIVALENTES.
     @Override
@@ -5512,7 +5512,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_lote ON inv_lote.id=inv_lote_detalle.inv_lote_id "
                 + "WHERE inv_osal_detalle.inv_osal_id=? "
                 + "ORDER BY inv_lote.id;";
-        
+
         //System.out.println(sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -5532,16 +5532,16 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm;  
+        return hm;
     }
-    
-    
-    
+
+
+
     //catalogo  de Productos equivalentes
     @Override
     public ArrayList<HashMap<String, Object>> getProductosEquivalentes_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
         String sql_to_query = " SELECT distinct inv_prod_equiv.inv_prod_id as id, "
                             + " inv_prod.sku as codigo, "
                             + " inv_prod.descripcion "
@@ -5549,11 +5549,11 @@ public class InvSpringDao implements InvInterfaceDao{
                             + " JOIN inv_prod ON inv_prod.id=inv_prod_equiv.inv_prod_id "
                             + " JOIN ("+sql_busqueda+") as subt on subt.id=inv_prod.id "
                             + " ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-                           
+
         //System.out.println("Busqueda GetPage este es el queryyyyyyyyyyyyyyyyyyyyyyyyy: "+sql_to_query);
-        
+
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -5565,19 +5565,19 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
+
     //busca producto en especifico para agregar a la lista de productos elemento en el catalogo de formulas
     @Override
     public ArrayList<HashMap<String, String>> getProductos_sku(String sku, Integer id_usuario) {
-        
+
         String sql_to_query = " SELECT gral_suc.empresa_id FROM gral_usr_suc "
                             + " JOIN gral_suc ON gral_suc.id = gral_usr_suc.gral_suc_id "
                             + " WHERE gral_usr_suc.gral_usr_id = "+id_usuario;
-        
+
         int id_empresa = this.getJdbcTemplate().queryForInt(sql_to_query);
-        
+
         String sql_query = "SELECT inv_prod.id, "
                                 + "inv_prod.sku, "
                                 + "inv_prod.descripcion "
@@ -5586,9 +5586,9 @@ public class InvSpringDao implements InvInterfaceDao{
                             //+ "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                             + "WHERE inv_prod.empresa_id = "+id_empresa+" AND inv_prod.sku='"+sku+"';";
         //System.out.println("Obteniendo datos sku:"+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm_sku = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -5603,8 +5603,8 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_sku;
     }
-    
-    
+
+
     //obtiene tipos de productos
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Tipos_para_productos_equivalentes(String titulo_producto) {
@@ -5612,14 +5612,14 @@ public class InvSpringDao implements InvInterfaceDao{
         if(!titulo_producto.equals("")){
          cadena_where ="and inv_prod_tipos.titulo ilike '"+titulo_producto+"' ";
         }
-        
+
 	String sql_query =    " SELECT DISTINCT id,titulo  "
                             + " FROM inv_prod_tipos  "
                             + " WHERE borrado_logico=false "
                             + " and inv_prod_tipos.id != 3 and inv_prod_tipos.id != 4  "
-                            +cadena_where+ "  order by inv_prod_tipos.titulo;"; 
-                            
-        // System.out.println("sql_query: "+sql_query);                 
+                            +cadena_where+ "  order by inv_prod_tipos.titulo;";
+
+        // System.out.println("sql_query: "+sql_query);
         ArrayList<HashMap<String, String>> hm_tp = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -5632,10 +5632,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        
+
         return hm_tp;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, String>> getProductosEquivalentes_Datos(Integer id) {
         String sql_to_query =     " SELECT inv_prod_equiv.id, "
@@ -5660,21 +5660,21 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("codigo",rs.getString("codigo"));
                     row.put("tipo_producto",rs.getString("tipo_producto"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    
+
                     return row;
                 }
             }
         );
         return datos_productosequivalentes;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getProductosEquivalentes_DatosMinigrid(String id) {
         String sql_query = " SELECT inv_prod_id,  inv_prod_id_equiv FROM  inv_prod_equiv where inv_prod_equiv.id="+id;
-        
+
          String sql_to_query = " SELECT inv_prod_equiv.inv_prod_id_equiv, "
                             +  " inv_prod.sku AS codigo, "
                             +  " inv_prod.descripcion, "
@@ -5696,14 +5696,14 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("observaciones",rs.getString("observaciones"));
-                    
+
                     return row;
                 }
             }
         );
         return datos_formulas_minigrid;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProductosEquivalentes(String sku, String tipo, String descripcion, Integer id_empresa, String id_prod) {
         String where = "";
@@ -5716,11 +5716,11 @@ public class InvSpringDao implements InvInterfaceDao{
 	if(!descripcion.equals("")){
 		where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
 	}
-        
+
         if(!id_prod.equals("")){
 		where +=" AND inv_prod.id != '"+id_prod+"'";
 	}
-        
+
         String sql_to_query = ""
                                 + " SELECT "
 				+ " inv_prod.id,"
@@ -5756,11 +5756,11 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-    
+
     //TERMINA PRODUCTOS EQUIVALENTES
     //***********************************************************************************************************************************
-    
-    
+
+
     //***********************************************************************************************************************************
     //METODOS PARA APLICATIVO IMPRESION DE ETIQUETAS
     //Buscador de entradas
@@ -5768,7 +5768,7 @@ public class InvSpringDao implements InvInterfaceDao{
     public ArrayList<HashMap<String, String>> getBuscadorEntradas(String folio, String fecha_inicial, String fecha_final, Integer tipo_origen, Integer id_empresa) {
         String where = "";
         String sql_to_query = " ";
-        
+
         if(tipo_origen == 1){
             if(!folio.equals("")){
                 where=" AND inv_oent.folio ilike '%"+folio+"%'";
@@ -5778,7 +5778,7 @@ public class InvSpringDao implements InvInterfaceDao{
                  where="AND (to_char(inv_oent.momento_creacion,'yyyymmdd')::INTEGER BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::INTEGER AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::INTEGER) ";
             }
         }
-        
+
         if(tipo_origen == 2){
             if(!folio.equals("")){
                 where="    AND inv_oent.folio_documento ilike '%"+folio+"%'";
@@ -5788,7 +5788,7 @@ public class InvSpringDao implements InvInterfaceDao{
                  where="     AND (to_char(inv_oent.momento_creacion,'yyyymmdd')::INTEGER BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::INTEGER AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::INTEGER) ";
             }
         }
-        
+
         if(tipo_origen == 3){
             if(!folio.equals("")){
                 where="    AND inv_osal.folio_documento ilike '%"+folio+"%'";
@@ -5798,51 +5798,51 @@ public class InvSpringDao implements InvInterfaceDao{
                  where="   AND (to_char(inv_osal.momento_creacion,'yyyymmdd')::INTEGER BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::INTEGER AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::INTEGER) ";
             }
         }
-        
+
 	if(tipo_origen == 1){
             sql_to_query = " "
                     + "SELECT "
                         + "inv_oent.id as entrada_id, "
                         + "inv_oent.folio,  "
-                        + "(case when cxp_prov.id is null then '0' else  cxp_prov.id  end) as proveedor_id, "     
+                        + "(case when cxp_prov.id is null then '0' else  cxp_prov.id  end) as proveedor_id, "
                         + "(case when cxp_prov.razon_social is null then '' else  cxp_prov.razon_social end) AS proveedor, "
                         + "(case when inv_oent.orden_de_compra  is null then '' else inv_oent.orden_de_compra  end ) as orden_compra, "
                         + "inv_oent.folio_documento, "
                         + "to_char(inv_oent.fecha_exp::timestamp with time zone,'dd-mm-yyyy') as fecha_documento,  "
                         + "to_char(inv_oent.momento_creacion,'dd-mm-yyyy') as momento_creacion  "
-                        
-                        
+
+
                     + "FROM inv_oent  "
                     + "LEFT JOIN cxp_prov on cxp_prov.id=inv_oent.cxp_prov_id  "
                     + "WHERE inv_oent.gral_emp_id="+id_empresa+" AND inv_oent.borrado_logico=false "+where+" "
                     + "ORDER BY folio DESC ";
                     //System.out.println("esto el del pluguin entradas:::"+sql_to_query);
         }
-        
-        
-        
+
+
+
         if(tipo_origen == 2){
             sql_to_query = " "
-                    
+
                 +"  select "
                 +"  inv_oent.folio, "
                 +"  to_char(inv_oent.momento_creacion,'yyyy-mm-dd') as momento_creacion ,  "
                 +"  inv_oent.id as entrada_id, "
                 +"  0::integer as proveedor_id, "
-                +"  ' '::character varying as proveedor, "   
+                +"  ' '::character varying as proveedor, "
                 +"  (case when inv_oent.orden_de_compra is null then '' else inv_oent.orden_de_compra  end) as orden_compra, "
                 +"  inv_oent.folio_documento, "
                 +"  to_char(inv_oent.momento_creacion,'yyyy-mm-dd') as fecha_documento "
                 +"  from inv_oent "
                 +"  join inv_mov_tipos on inv_mov_tipos.id = inv_oent.inv_mov_tipo_id    "
-                
+
                 +"  where inv_mov_tipos.id=10  and inv_oent.gral_emp_id="+id_empresa  + where;
-            
+
             //System.out.println("CARGANDO DATOS PARA PRODUCCION:::"+sql_to_query);
         }
-        
-        
-        
+
+
+
         if(tipo_origen == 3){
         sql_to_query = " SELECT   "
                         +"   inv_osal.folio,   "
@@ -5859,9 +5859,9 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"   join inv_lote_detalle on inv_lote_detalle.inv_osal_detalle_id = inv_osal_detalle.id        "
                         +"   join inv_lote on inv_lote.id=inv_lote_detalle.inv_lote_id        "
                         +"   where inv_mov_tipos.id=11 and inv_osal.tipo_documento=4 "+where;
-        }   
-        
-        
+        }
+
+
         ArrayList<HashMap<String, String>> hm_datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -5877,7 +5877,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("fecha_documento",rs.getString("fecha_documento"));
                     row.put("momento_creacion",rs.getString("momento_creacion"));
                     //row.put("tipo_orden",rs.getString("tipo_orden"));
-                    
+
                     return row;
                 }
             }
@@ -5886,28 +5886,28 @@ public class InvSpringDao implements InvInterfaceDao{
     }//FIN del buscador de Entradas
 
 
-    
-    
-    
-    //RETORNANDO DATOS PARA CARGAR EL GRID DE IMPRESION DE ETIQUETAS  (ENTRADAS, PRODUCCION Y REQUISICION) 
-    @Override      
+
+
+
+    //RETORNANDO DATOS PARA CARGAR EL GRID DE IMPRESION DE ETIQUETAS  (ENTRADAS, PRODUCCION Y REQUISICION)
+    @Override
     public ArrayList<HashMap<String, String>> getgridEntradas(String folio, String fecha_inicial, String fecha_final,Integer tipo_origen,Integer id_empresa) {
         String where = "";
         String sql_to_query ="";
-        
+
         if(tipo_origen == 1){
                 if(!folio.equals("")){
                     where=" AND inv_oent.folio ilike '"+folio+"'";
                 }
-                
+
                 sql_to_query =" SELECT  "
                             +"  inv_oent.id as entrada_id,  "
                             +"  inv_lote.id AS lote_id,  "
                             +"  inv_lote.inv_prod_id as producto_id, "
                             +"  inv_lote.lote_int, "
-                            +"  inv_lote.lote_prov, "   
-                            +"  inv_lote.inv_prod_id,  "   
-                            +"  inv_prod.sku AS codigo,  "   
+                            +"  inv_lote.lote_prov, "
+                            +"  inv_lote.inv_prod_id,  "
+                            +"  inv_prod.sku AS codigo,  "
                             +"  inv_prod.descripcion AS producto,  "
                             +"  inv_prod.tipo_de_producto_id , "
                             +"  ''::character varying  AS folio,  "
@@ -5922,15 +5922,15 @@ public class InvSpringDao implements InvInterfaceDao{
                             //WHERE inv_oent.id=2 ";
             //System.out.println("informacion par el GRID DEL PRIMER PLUGUIN::: tipo_origen:  "+tipo_origen+":ENTRADAS   "+"QUERY: "+sql_to_query);
         }
-        
+
         if(tipo_origen == 2){
             if(!folio.equals("")){
                     where=" AND op.folio ilike '"+folio+"'";
             }
-            
+
             sql_to_query =" SELECT  distinct  op.folio,  "
                         +"  to_char(op.momento_creacion,'yyyy-mm-dd') as momento_creacion, "
-                        +"  ''::character varying  as tipo_orden,   "  
+                        +"  ''::character varying  as tipo_orden,   "
                         +"  0::integer as entrada_id,       "
                         +"  0::integer as lote_id,      "
                         +"   inv_prod.id as producto_id, "
@@ -5944,17 +5944,17 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"   from pro_orden_prod AS op "
                         +"   join pro_orden_prod_det as opd ON opd.pro_orden_prod_id=op.id  "
                         +"    join inv_prod on inv_prod.id=opd.inv_prod_id where op.gral_emp_id="+id_empresa+""+where+" ";
-                        
-            
+
+
             //System.out.println("informacion para el GRID DEL PRIMER PLUGUIN::: tipo_origen:  "+tipo_origen +":PRODUCCION   "+"QUERY: "+sql_to_query);
         }
-        
+
         if(tipo_origen == 3){
-            
+
                 if(!folio.equals("")){
                     where=" AND inv_osal.folio_documento ilike '"+folio+"'";
                 }
-                
+
             sql_to_query =" SELECT  "
                         //+"  inv_osal.folio_documento as folio,  "
                         +"   pro_orden_prod.folio,  "
@@ -5979,11 +5979,11 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"  JOIN  inv_lote_detalle on inv_lote_detalle.inv_osal_detalle_id = inv_osal_detalle.id  "
                         +"  JOIN  inv_lote on inv_lote.id=inv_lote_detalle.inv_lote_id  "
                         +"  WHERE inv_mov_tipos.id=11 AND inv_osal.tipo_documento=4  "+where+" ";
-            
+
             //System.out.println("informacion para el GRID DEL PRIMER PLUGUIN::: tipo_origen:  "+tipo_origen+":REQUISICIONES   "+"QUERY: "+sql_to_query);
         }
-        
-	
+
+
         ArrayList<HashMap<String, String>> hm_grid_entradas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -5992,9 +5992,9 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id_entrada",String.valueOf(rs.getInt("entrada_id")));
                     row.put("id_lote",String.valueOf(rs.getInt("lote_id")));
-                    row.put("inv_prod_id",String.valueOf(rs.getInt("producto_id"))); 
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("producto_id")));
                     row.put("tipo_de_producto_id",String.valueOf(rs.getInt("tipo_de_producto_id")));
-                            
+
                     row.put("lote_interno",rs.getString("lote_int"));
                     row.put("lote_proveedor",rs.getString("lote_prov"));
                     row.put("codigo",rs.getString("codigo"));
@@ -6009,7 +6009,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_grid_entradas;
     }//FIN del que carga los datos del grid del primer pluguin cuando entra a la parte de nuevo
-    
+
     //cargando el grid cuando le danclick en editar
     @Override
     public ArrayList<HashMap<String, String>> getEtiquetas_Datos_header(Integer id_etiqueta) {
@@ -6027,16 +6027,16 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("folio_origen",rs.getString("folio_origen"));
                     row.put("folio",rs.getString("folio"));
                     row.put("tipo_origen",rs.getString("tipo_origen"));
-                    
-                    
+
+
                     return row;
                 }
             }
         );
         return datos_grid_etiquetas;
     }
-    
-   
+
+
     @Override
     public ArrayList<HashMap<String, String>> getEtiquetas_Datos_grid(Integer id_etiqueta,Integer tipo_origen) {
        String sql_to_query="";
@@ -6049,7 +6049,7 @@ public class InvSpringDao implements InvInterfaceDao{
             l="left  ";
             t_o="Produccion";
        }
-      
+
               sql_to_query = "select  inv_etiquetas.id as etiqueta_id,  "
                 +"  inv_etiquetas_detalle.id  as etiqueta_detalle_id, "
                 + "  inv_etiquetas_detalle.inv_etiquetas_id,   "
@@ -6058,20 +6058,20 @@ public class InvSpringDao implements InvInterfaceDao{
                 +"  (case when inv_prod.sku is null or inv_prod.sku ='' then '"+t_o+"' else inv_prod.sku end )  as codigo,  "
                 +"  (case when inv_prod.descripcion is null or inv_prod.descripcion ='' then '"+t_o+"' else inv_prod.descripcion end ) as descripcion, "
                 +"  inv_etiquetas_detalle. inv_prod_id, "
-                +"  inv_etiquetas_detalle.inv_lote_id,  " 
+                +"  inv_etiquetas_detalle.inv_lote_id,  "
                 +"  inv_prod.tipo_de_producto_id, "
                 +"  inv_etiquetas_detalle.inv_etiqueta_medidas_id, "
                 +"  inv_etiqueta_medidas.titulo AS medidas, "
                 +"  (case when inv_etiquetas_detalle.cantidad_produccion is null then 0 else inv_etiquetas_detalle.cantidad_produccion end ) as  cantidad_produccion "
 
-   
+
                 +"  from inv_etiquetas_detalle  "
                 +" "+l +  "join  inv_etiquetas  on inv_etiquetas.id=inv_etiquetas_detalle.inv_etiquetas_id "
                 +" "+l +  "join inv_prod on inv_prod.id=inv_etiquetas_detalle.inv_prod_id   "
-                +" "+l +  "join inv_etiqueta_medidas on inv_etiqueta_medidas.id= inv_etiquetas_detalle. inv_etiqueta_medidas_id  " 
+                +" "+l +  "join inv_etiqueta_medidas on inv_etiqueta_medidas.id= inv_etiquetas_detalle. inv_etiqueta_medidas_id  "
                 +"  WHERE inv_etiquetas_detalle.inv_etiquetas_id="+id_etiqueta+" and inv_etiquetas.tipo_origen="+tipo_origen;
-      
-      
+
+
 
          //System.out.println("DATOS PARA EL CUANDO EL TIPO ORIGEN ES:"+tipo_origen+"QUERY::"+sql_to_query);
         ArrayList<HashMap<String, String>> datos_grid_etiquetas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -6091,11 +6091,11 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
                     row.put("tipo_de_producto_id",String.valueOf(rs.getInt("tipo_de_producto_id")));
-                    row.put("inv_lote_id",String.valueOf(rs.getInt("inv_lote_id")));  
+                    row.put("inv_lote_id",String.valueOf(rs.getInt("inv_lote_id")));
                     row.put("inv_etiquetas_id",String.valueOf(rs.getInt("inv_etiquetas_id")));
-                    
-                    
-                    
+
+
+
                     return row;
                 }
             }
@@ -6103,26 +6103,26 @@ public class InvSpringDao implements InvInterfaceDao{
         return datos_grid_etiquetas;
     }
     //fin del cargado de datos en editar
-    
 
-    
-    
-    
+
+
+
+
     //RETORNANDO DATOS PARA LOS PDFS DE ETIQUETAS..
-    @Override      
+    @Override
     public ArrayList<HashMap<String, String>> getEtiquetas_Entrada(Integer etiqueta_id,Integer tipo_origen,Integer id_empresa) {
         String sql_to_query="";
         String l="";
         if(tipo_origen == 2){
             l="LEFT   ";
         }
-       
+
             sql_to_query ="SELECT  "
                         +"   inv_etiquetas.id,  "
                         +"   (CASE WHEN inv_etiquetas.tipo_origen=1 THEN  inv_prod.descripcion "
                         +"   WHEN inv_etiquetas.tipo_origen=2 THEN  'PRODUCCION' "
                         +"   WHEN inv_etiquetas.tipo_origen=3 THEN  inv_prod.descripcion "
-                        +"   ELSE '' END) AS descripcion, "  
+                        +"   ELSE '' END) AS descripcion, "
                         +"   inv_prod.sku as codigo,  "
                         +"   to_char(inv_lote.caducidad,'yyyy-mm-dd')as caducidad,  "
                         +"   inv_etiquetas_detalle.lote_interno,  "
@@ -6133,10 +6133,10 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"   "+l+" JOIN inv_lote on inv_lote.id=inv_etiquetas_detalle.inv_lote_id  "
                         +"   WHERE inv_etiquetas_detalle.inv_etiquetas_id="+etiqueta_id+"    "
                         +"   AND inv_etiquetas.gral_emp_id="+id_empresa+" AND inv_etiquetas.borrado_logico=false AND inv_etiquetas.tipo_origen ="+tipo_origen;
-                               
+
 
             //System.out.println("informacion par el PDF::: tipo_origen:  "+tipo_origen+":PRODUCCION   "+"QUERY: "+sql_to_query);
-       
+
         ArrayList<HashMap<String, String>> hm_etiquetas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -6149,8 +6149,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("fecha",rs.getString("caducidad"));
                     row.put("lote_interno_codigo",rs.getString("lote_interno_codigo"));
                     row.put("lote_interno",rs.getString("lote_interno"));
-                  
-                   
+
+
                     return row;
                 }
             }
@@ -6158,11 +6158,11 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm_etiquetas;
     }
     //FIN DEL RETORNO DE  DATOS PARA LOS PDFS DE ETIQUETAS
-    
+
     @Override
     public ArrayList<HashMap<String, Object>> getEtiquetas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
             String sql_to_query = "select  inv_etiquetas.id, "
                             +"  inv_etiquetas.folio , "
                             +"  inv_etiquetas.folio_origen, "
@@ -6176,11 +6176,11 @@ public class InvSpringDao implements InvInterfaceDao{
                             +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_etiquetas.id "
                             +"WHERE inv_etiquetas.borrado_logico=false  "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-            
-        
+
+
         //System.out.println("Busqueda Grid::::::: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -6189,21 +6189,21 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("folio",rs.getString("folio"));
                     row.put("folio_origen",rs.getString("folio_origen"));
                     row.put("tipo_origen",rs.getString("tipo_origen"));
-                   
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    //metodo para crear los  xml de produccion 
+
+
+    //metodo para crear los  xml de produccion
     @Override
     public LinkedHashMap<String, Object> getDatosEtiquetaLote_produccion(String lote_interno, Integer id_etiqueta, Integer id_medida_etiqueta) {
         LinkedHashMap<String, Object> data = new LinkedHashMap<String, Object>();
-        
-        
+
+
         String sql_to_query =" select  "
                             +"  ''::character varying nombre_cliente,   "
                             +"  inv_etiquetas_detalle.lote_interno as lote_produccion,   "
@@ -6221,11 +6221,11 @@ public class InvSpringDao implements InvInterfaceDao{
                             +"  join inv_prod on inv_prod.id=inv_etiquetas_detalle.inv_prod_id    "
                             +"  join inv_etiqueta_medidas on inv_etiqueta_medidas.id=inv_etiquetas_detalle. inv_etiqueta_medidas_id    "
                             +"  join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id    "
-                            +"  where   inv_etiquetas_detalle.lote_interno ilike '"+lote_interno+"' and inv_etiquetas_detalle.inv_etiquetas_id= "+ id_etiqueta ; 
+                            +"  where   inv_etiquetas_detalle.lote_interno ilike '"+lote_interno+"' and inv_etiquetas_detalle.inv_etiquetas_id= "+ id_etiqueta ;
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         //System.out.println("Imprimiendo el query que trae la produccion o requisicion a imprimir:::   "+sql_to_query);
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         data.put("etiqueta_largo",StringHelper.roundDouble(String.valueOf(map.get("etiqueta_largo")),2));
         data.put("etiqueta_alto",StringHelper.roundDouble(String.valueOf(map.get("etiqueta_alto")),2));
@@ -6238,22 +6238,22 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("lote_proveedor",String.valueOf(map.get("lote_proveedor")));
         data.put("caducidad_fecha",String.valueOf(map.get("caducidad_fecha")));
         data.put("nombre_cliente",String.valueOf(map.get("nombre_cliente")));
-        
+
         data.put("lote_produccion",String.valueOf(map.get("lote_produccion")));
-        
+
         return data;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public LinkedHashMap<String, Object> getDatosEtiquetaLote_requisicion(String id_etiquetas_detalle) {
         LinkedHashMap<String, Object> data = new LinkedHashMap<String, Object>();
-        
-        
+
+
         String sql_to_query =" select "
-                            
+
 	                    +"  ''::character varying nombre_cliente, "
                             +"  inv_etiquetas.folio_origen as lote_produccion, "
                             +"  inv_etiqueta_medidas.largo as etiqueta_largo, "
@@ -6272,12 +6272,12 @@ public class InvSpringDao implements InvInterfaceDao{
                     +"  join inv_etiqueta_medidas on inv_etiqueta_medidas.id=inv_etiquetas_detalle. inv_etiqueta_medidas_id  "
                     +"  join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id       "
                     +" where   inv_etiquetas_detalle.id="+id_etiquetas_detalle;
-                    
+
                     //+"  join pro_orden_prod on pro_orden_prod.folio=inv_etiquetas_detalle.lote_interno where   inv_etiquetas_detalle.inv_etiquetas_id="+etiqueta_id +" and  gral_emp_id="+ empresa_id;
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         //System.out.println("Imprimiendo el query que trae la produccion o requisicion a imprimir:::   "+sql_to_query);
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         data.put("etiqueta_largo",StringHelper.roundDouble(String.valueOf(map.get("etiqueta_largo")),2));
         data.put("etiqueta_alto",StringHelper.roundDouble(String.valueOf(map.get("etiqueta_alto")),2));
@@ -6290,26 +6290,26 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("lote_proveedor",String.valueOf(map.get("lote_proveedor")));
         data.put("caducidad_fecha",String.valueOf(map.get("caducidad_fecha")));
         data.put("nombre_cliente",String.valueOf(map.get("nombre_cliente")));
-        
+
         data.put("lote_produccion",String.valueOf(map.get("lote_produccion")));
-        
+
         return data;
     }
 
     //TERMINA PRODUCTOS IMPRESION DE ETIQUETAS
     //***********************************************************************************************************************************
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     //***********************************************************************************************************************************
     //METODOS PARA APLICATIVO DEVOLUCIONES DE MERCANCIAS
     @Override
     public ArrayList<HashMap<String, Object>> getInvOrdenDev_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = ""
                 + "SELECT "
                     + "inv_odev.id, "
@@ -6322,12 +6322,12 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "LEFT JOIN cxc_clie ON cxc_clie.id = inv_odev.cxc_clie_id  "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_odev.id "
                 +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -6344,11 +6344,11 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
+
     //TERMINA APLICATIVO DEVOLUCIONES DE MERCANCIAS
     //***********************************************************************************************************************************
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getReporteExistenciasLotes_MedidasEtiquetas() {
          String sql_to_query = "SELECT id,titulo FROM inv_etiqueta_medidas;";
@@ -6366,23 +6366,23 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //obtiene existencia del almacen por Lotes
     @Override
     public ArrayList<HashMap<String, String>> getReporteExistenciasLotes_Datos(Integer id_almacen, String codigo_producto, String descripcion,Integer tipo, String lote_interno ) {
         String cadena_where="";
         String orderBy="";
-        
+
         if(tipo == 2){
             cadena_where += " WHERE existencia > 0";
         }
-        
+
         if(tipo == 3){
             cadena_where += " WHERE existencia < 0";
         }
-        
+
 	String sql_query = ""
                 + "SELECT "
                     + "id_lote, "
@@ -6417,9 +6417,9 @@ public class InvSpringDao implements InvInterfaceDao{
                 + ") AS sbt "
                 + cadena_where +" "
                 + "ORDER BY descripcion,id_lote;";
-        
+
         //System.out.println("sql_query: "+ sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm_exis = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -6442,18 +6442,18 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_exis;
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     @Override
     public LinkedHashMap<String, Object> getDatosEtiquetaLote(Integer id_lote, Integer tipo_producto, Integer id_medida_etiqueta) {
         LinkedHashMap<String, Object> data = new LinkedHashMap<String, Object>();
         String sql_to_query = "";
         String nombre_cliente="";
-        
+
         //tipo=1 Normal o Terminado
         //tipo=2 Subensable o Formulacion o Intermedio
         //tipo=3 Kit
@@ -6462,7 +6462,7 @@ public class InvSpringDao implements InvInterfaceDao{
         //tipo=6 Accesorios
         //tipo=7 Materia Prima
         //tipo=8 Prod. en Desarrollo
-        
+
         if(tipo_producto==1 || tipo_producto==2 || tipo_producto==8){
             //Buscar el tipo de entrada desde donde se generó el Lote
             sql_to_query = ""
@@ -6478,18 +6478,18 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "LEFT JOIN pro_orden_prod ON pro_orden_prod.folio=inv_oent.folio_documento "
                     + "LEFT JOIN pro_orden_tipos ON pro_orden_tipos.id=pro_orden_prod.pro_orden_tipos_id "
                     + "WHERE inv_lote.id="+id_lote+";";
-            
+
             Map<String, Object> mapEnt = this.getJdbcTemplate().queryForMap(sql_to_query);
             //System.out.println("sql_to_query:"+sql_to_query);
-            
+
             //tipo_documento 4=Produccion
             if(Integer.parseInt(mapEnt.get("tipo_documento").toString()) == 4){
                 //inicializar variable
                  sql_to_query="";
-                 
+
                  //id_tipo_orden 1=Pedido
                  if(Integer.parseInt(mapEnt.get("id_tipo_orden").toString()) == 1){
-                     
+
                     //Buscar cliente a partir del Folio del id de la preorden
                     sql_to_query = ""
                             + "SELECT DISTINCT (CASE WHEN cxc_clie.razon_social IS NULL THEN '' ELSE cxc_clie.razon_social END ) AS cliente "
@@ -6499,7 +6499,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "WHERE pro_preorden_prod_det.pro_preorden_prod_id="+Integer.parseInt(mapEnt.get("id_preorden").toString()) +";";
                             //System.out.println("sql_to_query2:"+sql_to_query);
                     Map<String, Object> mapClient = this.getJdbcTemplate().queryForMap(sql_to_query);
-                    
+
                     nombre_cliente= String.valueOf(mapClient.get("cliente")).toUpperCase();
                  }else{
                      nombre_cliente= String.valueOf(mapEnt.get("tipo_orden_produccion")).toUpperCase();
@@ -6508,23 +6508,23 @@ public class InvSpringDao implements InvInterfaceDao{
                 nombre_cliente="";
             }
         }else{
-            
+
             sql_to_query = ""
             +"select razon_social from cxp_prov "
             + "where id=(select cxp_prov_id from inv_oent where id=(select inv_oent_id from inv_oent_detalle "
             + "where id=(select inv_oent_detalle_id from inv_lote where id="+id_lote+" limit 1 ) limit 1)  limit 1) limit 1";
-            
+
             //System.out.println("razon_social::::"+sql_to_query);
-            
+
             Map<String, Object> mapClient = this.getJdbcTemplate().queryForMap(sql_to_query);
-            
+
             nombre_cliente= String.valueOf(mapClient.get("razon_social")).toUpperCase();
-            
+
         }
-        
-        
+
+
         //inicializar variable
-        
+
         sql_to_query = ""
                 + "SELECT inv_prod.sku AS producto_codigo, inv_prod.descripcion AS producto_nombre, inv_lote.lote_int AS lote_interno, "
                 + "(CASE WHEN inv_lote.lote_prov IS NULL THEN '' ELSE inv_lote.lote_prov END) AS lote_proveedor, "
@@ -6534,10 +6534,10 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_prod ON  inv_prod.id=inv_lote.inv_prod_id "
                 + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
                 + "WHERE inv_lote.id="+id_lote+";";
-        
+
         //System.out.println("Datos Lote::::"+sql_to_query);
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
-        
+
         data.put("producto_codigo",String.valueOf(map.get("producto_codigo")));
         data.put("producto_nombre",String.valueOf(map.get("producto_nombre")));
         data.put("lote_interno",String.valueOf(map.get("lote_interno")));
@@ -6546,34 +6546,34 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("nombre_cliente",nombre_cliente);
         data.put("producto_unidad",String.valueOf(map.get("titulo_abr")));
         data.put("producto_cantidad",StringHelper.roundDouble(String.valueOf(map.get("cantidad")),2));
-        
-        
+
+
         //inicializar variable
         sql_to_query="";
-        
-        
+
+
         //obtener datos de la medida de la etiqueta
         sql_to_query = "SELECT * FROM inv_etiqueta_medidas WHERE id="+id_medida_etiqueta+";";
         Map<String, Object> map2 = this.getJdbcTemplate().queryForMap(sql_to_query);
-        
+
         data.put("etiqueta_largo",StringHelper.roundDouble(String.valueOf(map2.get("largo")),2));
         data.put("etiqueta_alto",StringHelper.roundDouble(String.valueOf(map2.get("alto")),2));
         data.put("modelo_impresora",String.valueOf(map2.get("modelo_impresora")));
-        
-        
+
+
         return data;
     }
-    
-    
-    
-    
+
+
+
+
     //**************************************************************************************************************************
     //INICIA METODOS DE APLICATIVO INVTRASPASOS
     //**************************************************************************************************************************
     @Override
     public ArrayList<HashMap<String, Object>> getInvTraspasos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = ""
                 + "SELECT DISTINCT "
                     + "inv_tras.id, "
@@ -6586,12 +6586,12 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "LEFT JOIN inv_alm AS alm_dest ON alm_dest.id=inv_tras.inv_alm_id_destino "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_tras.id "
                 +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         //System.out.println("data_string: "+data_string);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -6607,13 +6607,13 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //busca datos de un producto para agregar al grid de Traspasos
     @Override
     public ArrayList<HashMap<String, String>> getInvTraspasos_DatosProducto(String sku, Integer id_empresa, Integer id_almacen, Integer ano_actual) {
-        
+
         String sql_to_query = ""
                 + "SELECT "
                     + "inv_prod.id AS id_producto, "
@@ -6632,7 +6632,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "AND inv_exi.ano="+ano_actual+" AND inv_prod.sku='"+sku+"' "
                 + "ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -6646,16 +6646,16 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id_almacen",String.valueOf(rs.getInt("id_almacen")));
                     row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),2));
                     row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), 4));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvTraspasos_Datos(Integer id) {
         String sql_to_query = ""
@@ -6672,7 +6672,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "FROM inv_tras "
                 + "WHERE id=?;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id)}, new RowMapper(){
@@ -6688,14 +6688,14 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("suc_destino",String.valueOf(rs.getInt("gral_suc_id_destino")));
                     row.put("alm_destino",String.valueOf(rs.getInt("inv_alm_id_destino")));
                     row.put("cancelado",String.valueOf(rs.getBoolean("cancelacion")));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
+
     /*
     @Override
     public ArrayList<HashMap<String, String>> getInvTraspasos_DatosGrid(Integer id, Integer id_almacen_origen) {
@@ -6714,7 +6714,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "WHERE inv_tras_det.inv_tras_id=? AND inv_exi.inv_alm_id=? "
                 + "ORDER BY inv_tras_det.id;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id), new Integer(id_almacen_origen)}, new RowMapper(){
@@ -6733,7 +6733,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-     * 
+     *
      */
     @Override
     public ArrayList<HashMap<String, String>> getInvTraspasos_DatosGrid(Integer id, Integer id_almacen_origen) {
@@ -6754,7 +6754,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "ORDER BY inv_tras_det.id;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         //System.out.println(sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id), new Integer(id_almacen_origen)}, new RowMapper(){
@@ -6768,21 +6768,21 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),4));
                     row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
                     row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), 4));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public HashMap<String, String> getInvTraspasos_DatosPDF(Integer id) {
         HashMap<String, String> data = new HashMap<String, String>();
-        
+
         String sql_to_query = ""
                 + "SELECT "
                     + "inv_tras.folio AS folio_traspaso, "
@@ -6798,9 +6798,9 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN gral_usr ON gral_usr.id=inv_tras.gral_usr_id_creacion "
                 + "LEFT JOIN gral_empleados ON gral_empleados.id = gral_usr.gral_empleados_id "
                 + "WHERE inv_tras.id="+id+";";
-        
+
         //System.out.println("Header PDF Traspaso::::"+sql_to_query);
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         data.put("folio_traspaso",map.get("folio_traspaso").toString());
         data.put("alm_origen",map.get("alm_origen").toString());
@@ -6811,8 +6811,8 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("nombre_usuario",String.valueOf(map.get("nombre_usuario")));
         return data;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvTraspasos_DatosGridPDF(Integer id_traspaso) {
         String sql_to_query = ""
@@ -6828,7 +6828,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "WHERE inv_tras_det.inv_tras_id=? "
                 + "ORDER BY inv_tras_det.id;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id_traspaso)}, new RowMapper(){
@@ -6846,20 +6846,20 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
+
     //TERMINA METODOS INVTRASPASOS
     //**************************************************************************************************************************
-    
-    
-    
-    
+
+
+
+
     //**************************************************************************************************************************
     //INICIA METODOS DE APLICATIVO ORDENES DE TRASPASO
     //**************************************************************************************************************************
     @Override
     public ArrayList<HashMap<String, Object>> getInvoOrdenTras_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
-        
+
 	String sql_to_query = ""
                 + "SELECT DISTINCT "
                     + "inv_otras.id, "
@@ -6872,12 +6872,12 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "LEFT JOIN inv_alm AS alm_dest ON alm_dest.id=inv_otras.inv_alm_id_destino "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_otras.id "
                 +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-        
+
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         //System.out.println("data_string: "+data_string);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -6893,10 +6893,10 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvoOrdenTras_Datos(Integer id) {
         String sql_to_query = ""
@@ -6914,7 +6914,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "FROM inv_otras "
                 + "WHERE id=?;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id)}, new RowMapper(){
@@ -6931,16 +6931,16 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("suc_destino",String.valueOf(rs.getInt("gral_suc_id_destino")));
                     row.put("alm_destino",String.valueOf(rs.getInt("inv_alm_id_destino")));
                     row.put("cancelado",String.valueOf(rs.getBoolean("cancelacion")));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvoOrdenTras_DatosGrid(Integer id) {
         String sql_to_query = ""
@@ -6958,7 +6958,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "WHERE inv_otras_det.inv_otras_id=? "
                 + "ORDER BY inv_otras_det.id;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id)}, new RowMapper(){
@@ -6978,9 +6978,9 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getInvoOrdenTras_GridLotes(Integer id) {
         String sql_to_query = ""
@@ -6993,9 +6993,9 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_lote ON inv_lote.id=inv_lote_mov_det.inv_lote_id "
                 + "WHERE inv_otras_det.inv_otras_id=? "
                 + "ORDER BY inv_otras_det.id;";
-        
+
         //System.out.println(sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id)}, new RowMapper(){
@@ -7011,15 +7011,15 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public HashMap<String, String> getInvOrdenTras_DatosPDF(Integer id) {
         HashMap<String, String> data = new HashMap<String, String>();
-        
+
         String sql_to_query = ""
                 + "SELECT  "
                     + "inv_otras.folio, "
@@ -7035,9 +7035,9 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN gral_usr ON gral_usr.id=inv_otras.gral_usr_id_creacion  "
                 + "LEFT JOIN gral_empleados ON gral_empleados.id = gral_usr.gral_empleados_id  "
                 + "WHERE inv_otras.id="+id+";";
-        
+
         //System.out.println("Header PDF Orden Traspaso::::"+sql_to_query);
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         data.put("folio",map.get("folio").toString());
         data.put("alm_origen",map.get("alm_origen").toString());
@@ -7048,19 +7048,19 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("nombre_usuario",String.valueOf(map.get("nombre_usuario")));
         return data;
     }
-    
-    
-    
+
+
+
     //--Métodos para Aplicativo Control de Costos---------------------------------------------------------------------------------
     //metodo  para el grid y paginado
     @Override
     public ArrayList<HashMap<String, Object>> getInvControlCostos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
-        
+
         if(orderBy.equals("id")) orderBy="descripcion";
-        
+
         String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
         //System.out.println("ControlCostos_PaginaGrid: "+sql_to_query);
-        
+
         ArrayList<HashMap<String, Object>> hm125 = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(pageSize),new Integer(offset)}, new RowMapper(){
@@ -7089,39 +7089,39 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm125;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProductosParaControlCostos(String marca, String familia, String subfamilia, String sku, String tipo, String descripcion, Integer id_empresa) {
         String where = "";
-        
+
 	if(!marca.equals("0")){
             where+=" AND inv_prod.inv_mar_id="+marca+" ";
 	}
-        
+
 	if(!familia.equals("0")){
             where+=" AND inv_prod.inv_prod_familia_id="+familia+" ";
 	}
-        
+
 	if(!subfamilia.equals("0")){
             where+=" AND inv_prod.subfamilia_id="+subfamilia+" ";
 	}
-        
+
 	if(!sku.equals("")){
             where+=" AND inv_prod.sku ilike '%"+sku+"%'";
 	}
-        
+
 	if(!tipo.equals("0")){
             where +=" AND inv_prod.tipo_de_producto_id="+tipo;
 	}
-        
+
 	if(!descripcion.equals("")){
             where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
 	}
-        
+
         String sql_to_query = ""
                 + "SELECT "
 				+"inv_prod.id,"
@@ -7136,7 +7136,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                 + "WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -7156,18 +7156,18 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-    
-    
-    
-    
+
+
+
+
     //esto es para cargar el select de años del Buscador en el paginado
     @Override
     public ArrayList<HashMap<String, String>>  getInvControlCostos_Anios() {
         ArrayList<HashMap<String, String>> anios = new ArrayList<HashMap<String, String>>();
-        
+
         Calendar c1 = Calendar.getInstance();
         Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
-        
+
         for(int i=0; i<2; i++) {
             HashMap<String, String> row = new HashMap<String, String>();
             row.put("valor",String.valueOf((annio-i)));
@@ -7175,22 +7175,22 @@ public class InvSpringDao implements InvInterfaceDao{
         }
         return anios;
     }
-    
-    
-    
+
+
+
     //-----Termina Métodos para el Aplicativo Control de Costos----------------------------------------------------------------
-    
-    
+
+
     //--Métodos para Aplicativo Actualizador de Precios---------------------------------------------------------------------------------
     //metodo  para el grid y paginado
     @Override
     public ArrayList<HashMap<String, Object>> getInvActualizaPrecio_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
-        
+
         if(orderBy.equals("id")) orderBy="descripcion";
-        
+
         String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(prod_id integer, codigo character varying, descripcion character varying, unidad character varying, pres_id integer, presentacion character varying, moneda_id integer, moneda character varying, tc double precision, precio_minimo double precision) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
         //System.out.println("getInvActualizaPrecio: "+sql_to_query);
-        
+
         ArrayList<HashMap<String, Object>> hm125 = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(pageSize),new Integer(offset)}, new RowMapper(){
@@ -7214,5 +7214,66 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm125;
     }
     //------------termina metodos para aplicativo Actualizador de Precios
-    
+
+    @Override
+    public ArrayList<HashMap<String, String>> getMovimientos(Integer tipo_movimiento,Integer id_almacen,String codigo, String descripcion,String fecha_inicial,String fecha_final ,Integer id_empresa) {
+        String where = "";
+	if(!codigo.equals("")){
+		where=" AND inv_prod.sku ilike "+codigo+"";
+	}
+	if(id_almacen != 0 ){
+		where +=" AND inv_prod.tipo_de_producto_id="+id_almacen;
+	}
+	if(!descripcion.equals("")){
+		where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
+	}
+
+        String sql_to_query = ""
+                + "SELECT  "
+  + "inv_prod.sku as codigo,  "
+  + "inv_prod.descripcion,   "
+  + "inv_mov.referencia,   "
+  + "inv_mov_tipos.id,  "
+  + "inv_mov_tipos.titulo as tipo_movimiento,   "
+  + "inv_mov.fecha_mov as fecha_movimiento,   "
+  + "gral_emp.id as id_empresa,   "
+  + "gral_emp.titulo as nombre_empresa,   "
+  + "gral_suc.id as id_sucursal,   "
+  + "gral_suc.titulo as nombre_sucursal,   "
+  + "inv_alm.id as id_almacen,  "
+  + "inv_alm.titulo as nombre_almacen,   "
+  + "inv_mov_detalle.cantidad,   "
+  + "inv_mov_detalle.alm_destino_id ,   "
+  + "inv_mov_detalle.alm_origen_id,   "
+  + "inv_mov_detalle.costo  "
+  + "FROM inv_mov_detalle  "
++ "JOIN inv_mov ON inv_mov.id = inv_mov_detalle.inv_mov_id   "
++ "JOIN inv_mov_tipos  ON inv_mov_tipos.id = inv_mov.inv_mov_tipo_id  "
++ "JOIN inv_prod ON  inv_prod.id = inv_mov_detalle.producto_id  "
++ "JOIN gral_emp ON gral_emp.id = inv_prod.empresa_id  "
++ "JOIN gral_suc ON gral_suc.id  = inv_prod.sucursal_id  "
++ "JOIN inv_alm  ON inv_alm.id = inv_mov_detalle.alm_origen_id  "
++ "WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+
+        ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("decimales",String.valueOf(rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
+
 }
