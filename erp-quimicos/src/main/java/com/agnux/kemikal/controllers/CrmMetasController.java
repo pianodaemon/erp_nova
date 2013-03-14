@@ -73,6 +73,7 @@ public class CrmMetasController {
         infoConstruccionTabla.put("id", "Acciones:70");
         infoConstruccionTabla.put("folio", "Folio:100");
         infoConstruccionTabla.put("agente","Agente:300");
+        infoConstruccionTabla.put("ano","A&ntilde;o:100");
         infoConstruccionTabla.put("mes","Mes:100");
         
         

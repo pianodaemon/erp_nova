@@ -299,7 +299,9 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     + "cxc_agen.nombre AS agente, "
                     + "crm_motivos_visita.descripcion AS motivo, "
                     + "crm_calificaciones_visita.titulo AS calif, "
-                    + "crm_tipos_seguimiento_visita.titulo AS tipo_seg "
+                    + "crm_tipos_seguimiento_visita.titulo AS tipo_seg, "
+                    + "crm_registro_visitas.fecha,"
+                    + "crm_registro_visitas.hora "
                 + "FROM crm_registro_visitas "
                 + "JOIN cxc_agen ON cxc_agen.id=crm_registro_visitas.gral_empleado_id "
                 + "LEFT JOIN crm_motivos_visita ON crm_motivos_visita.id=crm_registro_visitas.crm_motivos_visita_id "
@@ -320,7 +322,9 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("motivo",rs.getString("motivo"));
                     row.put("calif",rs.getString("calif"));
                     row.put("tipo_seg",rs.getString("tipo_seg"));
-
+                    row.put("fecha",String.valueOf(rs.getDate("fecha")));
+                    row.put("hora",String.valueOf(rs.getTime("hora")));
+                    
                     return row;
                 }
             }
@@ -1035,7 +1039,8 @@ public class CrmSpringDao implements CrmInterfaceDao{
                                         +"when mes =10 then 'Octubre' "
                                         +"when mes =11 then 'Noviembre' "
                                         +"when mes =12 then 'Diciembre' "
-                                    +"else 'Fin del Mundo' end ) as mes "
+                                    +"else 'Fin del Mundo' end ) as mes,  "
+                                    +" crm_metas.ano "
                                 +"FROM "
                                 +"crm_metas "
                                 + "join gral_empleados on gral_empleados.id = crm_metas.gral_empleado_id "
@@ -1052,7 +1057,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("folio",rs.getString("folio"));
                     row.put("agente",rs.getString("agente"));
                     row.put("mes",rs.getString("mes"));
-
+                    row.put("ano",String.valueOf(rs.getInt("ano")));
 
 
                     return row;
@@ -1203,7 +1208,9 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     +"cxc_agen.nombre AS agente, "
                     +"crm_motivos_llamada.descripcion AS motivo, "
                     +"crm_calificaciones_visita.titulo AS calif, "
-                    +"crm_tipos_seguimiento_visita.titulo AS tipo_seg "
+                    +"crm_tipos_seguimiento_visita.titulo AS tipo_seg, "
+                    +"crm_registro_llamadas.fecha, "
+                    +"crm_registro_llamadas.hora "
                 +"FROM crm_registro_llamadas "
                 +"JOIN cxc_agen ON cxc_agen.id=crm_registro_llamadas.gral_empleado_id "
                 +"LEFT JOIN crm_motivos_llamada ON crm_motivos_llamada.id=crm_registro_llamadas.crm_motivos_llamda_id "
@@ -1225,8 +1232,9 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("motivo",rs.getString("motivo"));
                     row.put("calif",rs.getString("calif"));
                     row.put("tipo_seg",rs.getString("tipo_seg"));
-
-
+                    row.put("fecha",String.valueOf(rs.getDate("fecha")));
+                    row.put("hora",String.valueOf(rs.getTime("hora")));
+                    
                     return row;
                 }
             }
@@ -1255,7 +1263,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     +" crm_registro_casos.descripcion ,  "
                     +" crm_registro_casos.resolucion ,  "
                     +" crm_registro_casos.observacion_agente  "
-
+                    
                 + "FROM crm_registro_casos "
                 +" LEFT JOIN crm_registro_casos_prospectos on crm_registro_casos_prospectos.id_crm_registro_casos=crm_registro_casos.id  "
 	        +" LEFT JOIN crm_registro_casos_clie on  crm_registro_casos_clie.id_crm_registro_casos=crm_registro_casos.id  "

@@ -70,6 +70,8 @@ public class CrmRegistroLlamadasController {
         infoConstruccionTabla.put("motivo", "Motivo:150");
         infoConstruccionTabla.put("calif", "Calificaci&oacute;n:120");
         infoConstruccionTabla.put("tipo_seg", "Tipo de Seguimiento:150");
+        infoConstruccionTabla.put("fecha", "Fecha:100");
+        infoConstruccionTabla.put("hora", "Hora:100");
         
         
         
