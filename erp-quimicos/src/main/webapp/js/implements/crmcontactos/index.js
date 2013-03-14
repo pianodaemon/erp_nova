@@ -518,7 +518,7 @@ $(function() {
 				
 				var respuestaProcesada = function(data){
                                     if ( data['success'] == "true" ){
-                                        jAlert("El contacto fue dado de alta con exito", 'Atencion!');
+                                        jAlert("El contacto fue actualizado con exito", 'Atencion!');
                                         var remove = function() {$(this).remove();};
                                         $('#forma-crmcontactos-overlay').fadeOut(remove);
 
