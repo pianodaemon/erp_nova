@@ -1848,7 +1848,7 @@ $(function() {
 											if($monto_anticipo > 0){
 												//alert("Usd: "+$deuda_usd +"  "+usd+"\nPesos: "+$deuda_pesos+" "+psos+" \n anticipo: "+$monto_anticipo);
 												antipo = parseFloat($monto_anticipo).toFixed(2);
-												if($select_moneda.val()=='false')
+												if($select_moneda.val()=='1')
 													text_anticipo +="se generar&aacute; un anticipo de: " + $(this).agregar_comas(antipo) + " Pesos\n"
 												else
 													text_anticipo +="se generar&aacute; un anticipo de: " + $(this).agregar_comas(antipo) + " USD\n"
@@ -1899,7 +1899,7 @@ $(function() {
 													$('#forma-carteras-window').find('div.interrogacion').css({'display':'none'});
 													jAlert('Pago registrado con &eacute;xito.\nN&uacute;mero de transacci&oacute;n: '+data['numero_transaccion'],'Atencion!')
 													
-													
+													$textarea_observaciones.val('');
 													
 													/*
 													//COMENTADO PARA SAAR Y NOVASOL, HABILITAR SOLO PARA KEMIKAL Y KATHION
@@ -2878,6 +2878,7 @@ $(function() {
 			$contenido1.find('tr.uno').find('tbody tr.monto').hide();
 			$contenido1.find('tr.uno').find('tbody tr.monto_total').hide();
 			$contenido1.find('tr.uno').find('tbody tr.moneda').hide();
+			$contenido1.find('tr.uno').find('tbody tr.moneda').find('textarea[name=observaciones]').text('');
 			$contenido1.find('tr.uno').find('tbody tr.moneda').find('textarea[name=observaciones]').hide();
 			
 			$contenido1.find('tr.uno').find('tbody tr.anticipo').remove();
