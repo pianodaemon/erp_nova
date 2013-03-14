@@ -32,6 +32,7 @@ public interface ComInterfaceDao {
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getBuscadorProveedores(String rfc, String email, String razon_social, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getDatosProveedorByNoProv(String numeroProveedor, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getViaEnvarque();
     
     

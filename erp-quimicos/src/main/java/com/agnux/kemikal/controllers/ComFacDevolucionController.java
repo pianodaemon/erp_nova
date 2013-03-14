@@ -185,7 +185,7 @@ public class ComFacDevolucionController {
     @RequestMapping(method = RequestMethod.POST, value="/getProveedores.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProveedoresJson(
             @RequestParam(value="rfc", required=true) String rfc,
-            @RequestParam(value="email", required=true) String email,
+            @RequestParam(value="no_proveedor", required=true) String no_proveedor,
             @RequestParam(value="nombre", required=true) String nombre,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
@@ -202,7 +202,7 @@ public class ComFacDevolucionController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        proveedores = this.getComDao().getBuscadorProveedores(rfc, email, nombre,id_empresa);
+        proveedores = this.getComDao().getBuscadorProveedores(rfc, no_proveedor, nombre,id_empresa);
         
         jsonretorno.put("proveedores", proveedores);
         

@@ -543,18 +543,18 @@ public class ComSpringDao  implements ComInterfaceDao {
     
     //obtiene datos para el buscador de proveedores
     @Override
-    public ArrayList<HashMap<String, String>> getBuscadorProveedores(String rfc, String email, String razon_social, Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getBuscadorProveedores(String rfc, String no_proveedor, String razon_social, Integer id_empresa) {
         String where = "";
-	if(rfc.equals("")==false){
-            where=" AND cxp_prov.rfc ILIKE '%"+rfc+"%'";
+	if(!rfc.equals("")){
+            where=" AND cxp_prov.rfc ILIKE '%"+rfc.toUpperCase()+"%'";
 	}
         
-	if(email.equals("")==false){
-            where +=" AND cxp_prov.correo_electronico ILIKE '%"+email+"%'";
+	if(!no_proveedor.equals("")){
+            where +=" AND cxp_prov.folio ILIKE '%"+no_proveedor.toUpperCase()+"%'";
 	}
         
-	if(razon_social.equals("")==false ){
-            where +=" AND (cxp_prov.razon_social ilike '%"+razon_social+"%' OR cxp_prov.clave_comercial ilike '%"+razon_social+"%')";
+	if(!razon_social.equals("")){
+            where +=" AND (cxp_prov.razon_social ilike '%"+razon_social.toUpperCase()+"%' OR cxp_prov.clave_comercial ilike '%"+razon_social.toUpperCase()+"%')";
 	}
         
         String sql_to_query = "SELECT DISTINCT  cxp_prov.id, "
@@ -601,6 +601,64 @@ public class ComSpringDao  implements ComInterfaceDao {
         );
         return hm_datos_proveedor;  
     }
+    
+    
+    
+    //obtiene datos del Proveedor a partir del Número de Proveedor
+    @Override
+    public ArrayList<HashMap<String, String>> getDatosProveedorByNoProv(String numeroProveedor, Integer id_empresa) {
+        
+        String sql_to_query = ""
+                + "SELECT DISTINCT  "
+                    + "cxp_prov.id, "
+                    + "cxp_prov.folio AS numero_proveedor, "
+                    + "cxp_prov.rfc, "
+                    + "cxp_prov.razon_social, "
+                    + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo ||' C.P. '||cxp_prov.cp as direccion, "
+                    + "cxp_prov.proveedortipo_id,  "
+                    + "cxp_prov.descuento,  "
+                    + "cxp_prov.dias_credito_id as id_dias_credito,  "
+                    + "cxp_prov.cxp_prov_tipo_embarque_id as id_tipo_embarque,  "
+                    + "cxp_prov.credito_a_partir as comienzo_de_credito, "
+                    + "cxp_prov.limite_credito, "
+                    + "cxp_prov.moneda_id "
+                + "FROM cxp_prov "
+                + "JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
+                + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
+                + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
+                + "WHERE empresa_id="+id_empresa+" "
+                + "AND cxp_prov.borrado_logico=false "
+                + "AND cxp_prov.folio='"+numeroProveedor.toUpperCase()+"';";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("numero_proveedor",rs.getString("numero_proveedor"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("proveedortipo_id",String.valueOf(rs.getInt("proveedortipo_id")));
+                    row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    row.put("descuento",StringHelper.roundDouble(String.valueOf(rs.getDouble("descuento")),2));
+                    row.put("limite_de_credito",StringHelper.roundDouble(String.valueOf(rs.getDouble("limite_credito")),2));
+                    row.put("id_dias_credito",String.valueOf(rs.getInt("id_dias_credito")));
+                    row.put("id_tipo_embarque",String.valueOf(rs.getInt("id_tipo_embarque")));
+                    row.put("comienzo_de_credito",String.valueOf(rs.getInt("comienzo_de_credito")));
+                    return row;
+                }
+            }
+        );
+        return hm;  
+    }
+    
+    
+    
     
     
     
