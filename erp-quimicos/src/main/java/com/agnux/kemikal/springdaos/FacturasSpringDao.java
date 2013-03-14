@@ -132,7 +132,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public String selectFunctionForFacAdmProcesos(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from fac_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         
-        //System.out.println("sql_to_query: "+sql_to_query);
+        //System.out.println("sql_to_query fac_adm_procesos: "+sql_to_query);
         
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
