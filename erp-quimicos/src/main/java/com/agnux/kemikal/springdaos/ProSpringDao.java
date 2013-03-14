@@ -4987,8 +4987,12 @@ System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
         return hm_tp;
     }
     @Override
-    public ArrayList<HashMap<String, String>> getBuscadorProductos_produccion(String sku, String descripcion, Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getBuscadorProductos_produccion(String sku, String tipo, String descripcion, Integer id_empresa) {
         String where = "";
+
+        if(!tipo.equals('0')){
+		where=" AND inv_prod_tipos.id ="+tipo;
+	}
 	if(!sku.equals("")){
 		where=" AND inv_prod.sku ilike '%"+sku+"%'";
 	}
