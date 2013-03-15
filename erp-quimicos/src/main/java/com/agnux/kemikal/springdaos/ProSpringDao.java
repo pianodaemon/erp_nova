@@ -4133,7 +4133,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("cantidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad")),4));
                     row.put("cantidad_adicional",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad_adicional")),4));
                     row.put("lote",rs.getString("lote"));
-                    row.put("agregado",String.valueOf(rs.getDouble("agregado")));
+                    row.put("agregado",String.valueOf(rs.getBoolean("agregado")));
                     return row;
                 }
             }
