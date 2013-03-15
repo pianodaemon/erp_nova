@@ -234,7 +234,7 @@ public class ProPdfReporteProduccionController {
             @RequestParam(value = "descripcion", required = true) String descripcion,
             @RequestParam(value = "iu", required = true) String id_user,
             Model model) {
-
+        
         log.log(Level.INFO, "Ejecutando getBuscadorProductosJson de {0}", InvRepComprasNetasPorProductoController.class.getName());
         HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
@@ -242,13 +242,13 @@ public class ProPdfReporteProduccionController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
-
+        
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-
+        
         productos = this.getProDao().getBuscadorProductos_produccion(sku,tipo, descripcion, id_empresa);
-
+        
         jsonretorno.put("Productos", productos);
-
+        
         return jsonretorno;
     }
 
