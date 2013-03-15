@@ -229,7 +229,7 @@ public class ProOrdenProduccionController {
                 datosOrdenDet = this.getProDao().getProOrden_EspecificacionesDetalle(id);
                 
                 almacenes = this.getProDao().getAlmacenes(id_empresa);
-                        
+                    
             }else{
                 
                 datosOrdenDet = this.getProDao().getProOrden_Detalle(id);
