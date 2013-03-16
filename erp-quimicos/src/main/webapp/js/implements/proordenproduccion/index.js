@@ -2901,6 +2901,9 @@ $(function() {
             var $cancelar_orden = $('#forma-proordenproduccion-window').find('#cancelar_orden');
             var $pdf_orden = $('#forma-proordenproduccion-window').find('#pdf_orden');
             var $pdf_requisicion = $('#forma-proordenproduccion-window').find('#pdf_requisicion');
+            var $costo_ultimo = $('#forma-proordenproduccion-window').find('input[name=costo_ultimo]');
+            var $costo_ultimo_text = $('#forma-proordenproduccion-window').find('.costo_ultimo');
+            
             
             $botones_confirmacion.show();
             $confirmar_programacion.hide();
@@ -2918,6 +2921,8 @@ $(function() {
                 $confirmar_terminada.hide();
                 $cancelar_orden.show();
                 $pdf_requisicion.hide();
+                $costo_ultimo.hide();
+                $costo_ultimo_text.hide();
                 
                 if($tipo == 1){
                     $preorden_tipo_pedido.hide();
@@ -2946,6 +2951,8 @@ $(function() {
             }
             
             if(estatus == "2"){
+                $costo_ultimo.hide();
+                $costo_ultimo_text.hide();
                 $submit_actualizar.hide();
                 $confirmar_programacion.show();
                 $confirmar_enviar_produccion.show();
@@ -2961,7 +2968,8 @@ $(function() {
             }
             
             if(estatus == "3"){
-                
+                $costo_ultimo.hide();
+                $costo_ultimo_text.hide();
                 $submit_actualizar.hide();
                 $confirmar_programacion.hide();
                 $confirmar_enviar_produccion.hide();
@@ -2984,6 +2992,8 @@ $(function() {
             }
             
             if(estatus == "4"){
+                $costo_ultimo.show();
+                $costo_ultimo_text.show();
                 $submit_actualizar.hide();
                 $confirmar_programacion.hide();
                 $confirmar_enviar_produccion.hide();
@@ -2999,6 +3009,8 @@ $(function() {
             }
             
             if(estatus == "5"){
+                $pdf_orden.hide();
+                $pdf_requisicion.hide();
                 $submit_actualizar.hide();
                 $confirmar_programacion.hide();
                 $confirmar_enviar_produccion.hide();
@@ -3435,6 +3447,8 @@ $(function() {
                                 var $observaciones = $('#forma-proordenproduccion-window').find('textarea[name=observaciones]');
                                 var $folio_op = $('#forma-proordenproduccion-window').find('input[name=folio_op]');
                                 var $lote_pop = $('#forma-proordenproduccion-window').find('input[name=lote_pop]');
+                                var $costo_ultimo = $('#forma-proordenproduccion-window').find('input[name=costo_ultimo]');
+                                var $costo_ultimo_text = $('#forma-proordenproduccion-window').find('.costo_ultimo');
                                 
                                 //
                                 var $titprod_tmp = $('#forma-proordenproduccion-window').find('input[name=titprod_tmp]');
@@ -3484,6 +3498,9 @@ $(function() {
                                 $confirmar_terminada.show();
                                 $cancelar_orden.show();
                                 $pdf_orden.show();
+                                
+                                //$costo_ultimo.hide();
+                                //$costo_ultimo_text.hide();
                                 
 				//$sku.attr("readonly", true);
 				//$titulo.attr("readonly", true);
@@ -3587,6 +3604,8 @@ $(function() {
                                     $folio_op.attr({'value': entry['Orden']['0']['folio']});
                                     $lote_pop.attr({'value': entry['Orden']['0']['lote']});
                                     $id_formula.attr({'value': entry['Orden']['0']['pro_estruc_id']});
+                                    
+                                    $costo_ultimo.attr({'value': entry['Orden']['0']['costo_ultimo']});
                                     
                                     array_almacenes = entry['Almacenes'];
                                     array_sucursales = entry['Sucursales'];
