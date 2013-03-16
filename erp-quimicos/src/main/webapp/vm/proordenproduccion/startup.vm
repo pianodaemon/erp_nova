@@ -269,7 +269,9 @@
                                                                                                 <table width="900px" border="0">
                                                                                                     <tr>
                                                                                                         <td >&nbsp;</td>
-                                                                                                        <td width="410px">&nbsp;</td>
+                                                                                                        <td width="90"><span class="costo_ultimo">Costo: </span></td>
+                                                                                                        <td width="50"><INPUT TYPE="text" name="costo_ultimo" style="width:97px;" value="" readOnly="true"></span></td>
+                                                                                                        <td width="260px">&nbsp;</td>
                                                                                                         <td width="470" align="right">
                                                                                                             <INPUT TYPE="button" id="confirmar_programacion" name="confirmar_programacion" value="Programar" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;
                                                                                                             <INPUT TYPE="button" id="confirmar_enviar_produccion" name="confirmar_programacion" value="Envia Producci&oacute;n" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;
