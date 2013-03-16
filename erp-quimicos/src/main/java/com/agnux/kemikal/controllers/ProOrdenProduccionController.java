@@ -1014,6 +1014,7 @@ public class ProOrdenProduccionController {
         datos.put("flujo", datos_orden.get(0).get("flujo"));
         datos.put("observaciones", datos_orden.get(0).get("observaciones"));
         datos.put("lote", datos_orden.get(0).get("lote"));
+        datos.put("costo_ultimo", datos_orden.get(0).get("costo_ultimo"));
         
         //obtiene las facturas del periodo indicado
         productos = this.getProDao().getPro_DatosOrdenProduccionPdf(id_orden, String.valueOf(datos_orden.get(0).get("pro_proceso_id")));

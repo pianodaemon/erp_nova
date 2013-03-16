@@ -87,7 +87,7 @@ public class PdfProOrdenProduccion {
             tablaX.addCell(celdaX);
             
             //columna 5 y 6 fil1
-            celdaX = new PdfPCell(new Paragraph("FECHA:"+datos.get("fecha_elavorar") +"   HORA:"+datos.get("fecha_elavorar") +"   No. de Lote : "+datos.get("folio"),fuentenegrita));
+            celdaX = new PdfPCell(new Paragraph("FECHA:"+datos.get("fecha_elavorar") +"   HORA:"+datos.get("fecha_elavorar") +"   No. de Lote : "+datos.get("folio")+"      Costo : $"+datos.get("costo_ultimo"),fuentenegrita));
             celdaX.setBorderWidthBottom(1);
             celdaX.setBorderWidthTop(0);
             celdaX.setBorderWidthRight(0);

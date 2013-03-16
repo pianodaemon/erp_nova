@@ -3750,7 +3750,8 @@ public class ProSpringDao implements ProInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getProOrden_Datos(Integer id) {
-        String sql_to_query = "select pro_orden_prod.*,pro_proceso.pro_proceso_flujo_id, pro_proceso_flujo.titulo as flujo  "
+        String sql_to_query = "select pro_orden_prod.*,pro_proceso.pro_proceso_flujo_id, pro_proceso_flujo.titulo as flujo,"
+                + "pro_orden_prod.costo_ultimo  "
                 + "from pro_orden_prod join "
                 + " pro_proceso on pro_proceso.id=pro_orden_prod.pro_proceso_id "
                 + " join pro_proceso_flujo on pro_proceso_flujo.id=pro_proceso.pro_proceso_flujo_id "
@@ -3773,7 +3774,8 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("flujo",rs.getString("flujo"));
                     row.put("pro_proceso_flujo_id",String.valueOf(rs.getInt("pro_proceso_flujo_id")));
                     row.put("pro_estruc_id",String.valueOf(rs.getInt("pro_estruc_id")));
-
+                    row.put("costo_ultimo",StringHelper.roundDouble(String.valueOf(rs.getDouble("costo_ultimo")),4));
+                    
                     return row;
                 }
             }
