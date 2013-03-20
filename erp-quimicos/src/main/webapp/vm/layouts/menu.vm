@@ -36,7 +36,7 @@
 											<li>
 												<a href="#" class="menulink_">Configuraciones &raquo;</a>
 												<ul>
-													<li class="topline"><a href="../cotizaciones/startup.agnux">Saludo y Despedida</a></li>
+													<li class="topline"><a href="../cotizacionsaludodesp/startup.agnux">Saludo y Despedida</a></li>
 													<li class="topline"><a href="../cotizaciones/startup.agnux">Condiciones Comerciales</a></li>
 													<li class="topline"><a href="../cotizaciones/startup.agnux">Pol&iacute;ticas de Pago</a></li>
 												</ul>

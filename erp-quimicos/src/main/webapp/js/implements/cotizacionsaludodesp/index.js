@@ -125,8 +125,7 @@ $(function() {
 		$tabs_li_funxionalidad();
 		
 		//campos de la vista
-		var $campo_id = $('#forma-cotizacionsaludodesp-window').find('input[name=identificador]'); 
-		//alert($campo_id);
+		var $identificador = $('#forma-cotizacionsaludodesp-window').find('input[name=identificador]'); 
 		var $codigo001 = $('#forma-cotizacionsaludodesp-window').find('input[name=codigo001]');
 		var $codigo002 = $('#forma-cotizacionsaludodesp-window').find('input[name=codigo002]');
 		var $titulo= $('#forma-cotizacionsaludodesp-window').find('input[name=titulo]');
@@ -177,10 +176,8 @@ $(function() {
 			//aqui se cargan los campos al editar
 			$.post(input_json,$arreglo,function(entry){
 			// aqui van los campos de editar
-				$campo_id.attr({'value' : entry['Titulo']['0']['id']});
-				$codigo001.attr({'value' : entry['Codigos']['0']['codigo']});
-				$codigo002.attr({'value':entry['Codigos']['1']['codigo']});
-				$titulo.attr({'value':entry['Titulo']['0']['titulo']});
+				$identificador.attr({'value' : entry['Datos']['0']['id']});
+				//$titulo.attr({'value':entry['Datos']['0']['titulo']});
 			 },"json");//termina llamada json
 			
 			
