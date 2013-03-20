@@ -73,7 +73,7 @@ public class CotizacionSaludDespController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:70");
         infoConstruccionTabla.put("tipo", "Campo:100");
-        infoConstruccionTabla.put("titulo", "Titulo:400");
+        infoConstruccionTabla.put("titulo", "Titulo:450");
         
         
         ModelAndView x = new ModelAndView("cotizacionsaludodesp/startup", "title", "Actializador de Saludo y Despedida");
