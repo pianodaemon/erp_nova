@@ -42,8 +42,9 @@ $(function() {
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-    
+    $('#barra_acciones').hide();
     $('#barra_buscador').hide();
+    
     
 	var $cadena_busqueda = "";
 	var $busqueda_titulo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_titulo]');
@@ -119,16 +120,15 @@ $(function() {
 		
 		$(this).modalPanel_cotizacionsaludodesp();
 					
-		$('#forma-cotizacionsaludodesp-window').css({"margin-left": -300, 	"margin-top": -200});
+		$('#forma-cotizacionsaludodesp-window').css({"margin-left": -400, 	"margin-top": -200});
 		$forma_selected.prependTo('#forma-cotizacionsaludodesp-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
 		
 		//campos de la vista
 		var $identificador = $('#forma-cotizacionsaludodesp-window').find('input[name=identificador]'); 
-		var $codigo001 = $('#forma-cotizacionsaludodesp-window').find('input[name=codigo001]');
-		var $codigo002 = $('#forma-cotizacionsaludodesp-window').find('input[name=codigo002]');
-		var $titulo= $('#forma-cotizacionsaludodesp-window').find('input[name=titulo]');
+		var $tipo= $('#forma-cotizacionsaludodesp-window').find('input[name=tipo]');
+		var $titulo = $('#forma-pocpedidos-window').find('textarea[name=titulo]');
 		
 		//alert($titulo.val());
 		//botones                        
@@ -177,7 +177,8 @@ $(function() {
 			$.post(input_json,$arreglo,function(entry){
 			// aqui van los campos de editar
 				$identificador.attr({'value' : entry['Datos']['0']['id']});
-				//$titulo.attr({'value':entry['Datos']['0']['titulo']});
+				$tipo.attr({'value':entry['Datos']['0']['tipo']});
+				$titulo.text(entry['Datos']['0']['titulo']);
 			 },"json");//termina llamada json
 			
 			

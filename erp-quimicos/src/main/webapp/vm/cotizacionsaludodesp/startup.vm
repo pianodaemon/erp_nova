@@ -73,7 +73,7 @@
                 <input type="hidden" name="identificador">
 				<div id="div_two" title="" class="cotizacionsaludodesp_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:329px; padding-left:6px;"><strong>Edici&oacute;n de Saludo y Despedida para la Cotizaci&oacute;n</strong></div>
+                            <div class="fixed column" id="cierra" style="width:510px; padding-left:6px;"><strong>Edici&oacute;n de Saludo y Despedida para la Cotizaci&oacute;n</strong></div>
                             <div class="fixed column" style="width:30px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -95,51 +95,25 @@
                                         <table border="0">
                                             <tr>
                                                 <td width="5"></td>
-                                                <td width="120">Titulo</td>
-                                                <td width="220"><INPUT TYPE="text" name="titulo" style="width:220px;" readOnly="true"></td>
-                                                
+                                                <td width="120"><input type="text" name="tipo" style="width:100px; 	border-color:transparent; background:transparent;" ></td>
                                                 <td width="25"></td>
-                                                <td width="5"></td>
-                                            </tr>
-                                             <tr>
-                                               <td colspan="5">&nbsp;</td>
-                                               
                                             </tr>
                                             <tr>
                                                 <td width="5"></td>
-                                                <td width="120">CODIGO001</td>
-                                                <td width="220"><INPUT TYPE="text" name="codigo001" style="width:220px;"></td>
-                                                
+                                                <td width="120"><textarea name="titulo" rows="4" cols="60" style="width:460px; resize: none;"></textarea></td>
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_codigo"></div></td>
                                                 <td width="5"></td>
                                             </tr>
-                                            <tr>
-                                               <td colspan="5">&nbsp;</td>
-                                               
-                                            </tr>
-                                            <tr>
-                                                <td colspan="5"><input type="hidden"></td>
-                                            </tr>
-                                        
-                                            <tr>
-                                                <td width="5"></td>
-                                                <td width="120">CODIGO002</td>
-                                                <td width="220"><INPUT TYPE="text" name="codigo002" style="width:220px;"></td>
-                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_codigo"></div></td>
-                                                <td width="5"></td>
-                                            </tr>
-                                            <tr>
-                                                <td width="5">&nbsp;</td>
-                                            </tr>
+                                            
                                         </table>
                                     </div>
                                 </div>
                             </div>
-                            <div class="fixed column" id="botones" style="width:359px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:527px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
                                 <table border="0">
                                         <tr><td colspan="4" height="7"></td></tr>
                                         <tr>
-                                            <td width="559"></td>
+                                            <td width="427"></td>
                                             <td>
                                                <input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
                                             </td>
