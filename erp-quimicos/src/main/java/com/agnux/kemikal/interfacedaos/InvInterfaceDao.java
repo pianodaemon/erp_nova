@@ -27,6 +27,7 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> selectFunctionForInvReporte(Integer id_app, String campos_data);
 
     public ArrayList<HashMap<String, String>> getBuscadorProveedores(String rfc, String email, String razon_social, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getDatosProveedorByNoProv(String noProveedor, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getSucursales(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getAlmacenes(Integer id_empresa);
     //se utiliza en traspasos, reporte de existencias, reporte de existencias por Lote, Facturas Compras(Entradas Mercnacias)

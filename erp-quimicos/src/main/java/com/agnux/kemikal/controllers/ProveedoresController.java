@@ -72,9 +72,10 @@ public class ProveedoresController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
+        infoConstruccionTabla.put("folio", "No. Proveedor:100");
         infoConstruccionTabla.put("razon_social", "Nombre Proveedor:250");
         infoConstruccionTabla.put("correo_electronico", "E-mail:150");
-        infoConstruccionTabla.put("rfc", "Rfc:120");
+        infoConstruccionTabla.put("rfc", "RFC:120");
         infoConstruccionTabla.put("titulo","Contacto:250");
         
         ModelAndView x = new ModelAndView("proveedores/startup", "title", "Cat&aacute;logo de Proveedores");
@@ -126,9 +127,9 @@ public class ProveedoresController {
         //variables para el buscador
         String busqueda_cadena = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cadena_busqueda")))+"%";
         String por_rfc = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("por_rfc")))+"%";
-        String por_imail = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("por_imail")))+"%";
+        String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+busqueda_cadena+"___"+por_rfc+"___"+por_imail;
+        String data_string = app_selected+"___"+id_usuario+"___"+busqueda_cadena+"___"+por_rfc+"___"+folio;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCxpDao().countAll(data_string);

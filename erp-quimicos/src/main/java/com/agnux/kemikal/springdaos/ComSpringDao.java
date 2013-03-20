@@ -284,6 +284,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "SELECT  "
                     + "com_orden_compra.id, "
                     + "cxp_prov.rfc, "
+                    + "cxp_prov.folio AS no_proveedor, "
                     + "com_orden_compra.folio,  "
                     + "com_orden_compra.cancelado,  "
                     + "com_orden_compra.observaciones, "
@@ -323,6 +324,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("rfc",rs.getString("rfc"));
+                    row.put("no_proveedor",rs.getString("no_proveedor"));
                     row.put("folio",rs.getString("folio"));
                     row.put("cancelado",rs.getString("cancelado"));
                     row.put("observaciones",rs.getString("observaciones"));

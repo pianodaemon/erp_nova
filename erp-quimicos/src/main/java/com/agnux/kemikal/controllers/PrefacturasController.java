@@ -738,7 +738,7 @@ public class PrefacturasController {
                         datosExtrasXmlFactura.put("app_selected", String.valueOf(app_selected));
                         datosExtrasXmlFactura.put("command_selected", command_selected);
                         datosExtrasXmlFactura.put("extra_data_array", extra_data_array);
-                        
+                        System.out.println("tipo_facturacion:::"+tipo_facturacion);
                         //genera xml factura
                         this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
                         String timbrado_correcto = this.getBfCfdiTf().start();

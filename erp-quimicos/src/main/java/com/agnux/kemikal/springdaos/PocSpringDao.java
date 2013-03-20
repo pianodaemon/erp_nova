@@ -1958,5 +1958,65 @@ public class PocSpringDao implements PocInterfaceDao{
     
     
     
+    //metodos para Actualizador de Saludo y Despedida para Cotizaciones-----------------------------------------------------------------
+    @Override
+    public ArrayList<HashMap<String, Object>> getCotizacionSaludoDespedida_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+	String sql_to_query = ""
+                + "SELECT "
+                    + "poc_cot_saludo_despedida.id, "
+                    + "poc_cot_saludo_despedida.tipo, "
+                    + "poc_cot_saludo_despedida.titulo "
+                + "FROM poc_cot_saludo_despedida "
+                + "JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot_saludo_despedida.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("data_string: "+data_string);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    //obtiene datos del saludo ó despedida
+    @Override
+    public ArrayList<HashMap<String, String>> getCotizacionSaludoDespedida_Datos(Integer id) {
+        String sql_query = ""
+                + "SELECT "
+                    + "id, "
+                    + "tipo, "
+                    + "titulo "
+                + "FROM poc_cot_saludo_despedida "
+                + " WHERE poc_cot_saludo_despedida.id=? ";
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
     
 }

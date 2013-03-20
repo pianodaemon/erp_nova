@@ -248,7 +248,7 @@ public class BeanFacturadorCfdiTimbre {
                 //Aquí se ejecuta la validación del xml contra el Esquema(xsd)
                 String success = validacion.validar();
                 
-                //System.out.println("success: "+success);
+                System.out.println("Validacion XML: "+success);
                 
                 //error po numero de cuenta NA
                 //DOCUMENTO INVÁLIDO: org.xml.sax.SAXParseException; cvc-minLength-valid: El valor 'NA' con la longitud = '2' no es de faceta válida con respecto a minLength '4' para el tipo '#AnonType_NumCtaPagoComprobante'
@@ -462,6 +462,7 @@ public class BeanFacturadorCfdiTimbre {
                 this.getRfc_receptor(),
                 this.getPais_domicilio_receptor(),
                 this.getNoExterior_domicilio_receptor(),
+                this.getNoInterior_domicilio_receptor(),
                 this.getCalle_domicilio_receptor(),
                 this.getColonia_domicilio_receptor(),
                 this.getMunicipio_domicilio_receptor(),

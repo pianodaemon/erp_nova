@@ -252,8 +252,12 @@ public class BeanFacturadorCfdi {
             cadena_retorno += "reRfc|" + reRfc + "\n";
             cadena_retorno += "reNombre|" + reNombre + "\n";
             cadena_retorno += "reCalle|" + reCalle + "\n";
-            //cadena_retorno += "reNoExterior|" + reNoExterior + "\n";
-            cadena_retorno += "reNoInterior|" + reNoInterior + "\n";
+            if(!reNoExterior.equals("") && reNoExterior!=null){
+                cadena_retorno += "reNoExterior|" + reNoExterior + "\n";
+            }
+            if(!reNoInterior.equals("") && reNoInterior!=null){
+                cadena_retorno += "reNoInterior|" + reNoInterior + "\n";
+            }
             cadena_retorno += "reColonia|" + reColonia + "\n";
             cadena_retorno += "reMunicipio|" + reMunicipio.toUpperCase() + "\n";
             cadena_retorno += "reEstado|" + reEstado.toUpperCase() + "\n";

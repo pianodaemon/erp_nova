@@ -109,7 +109,7 @@ public class CfdiXmlBuilder {
             this.setDoc(tmp);
 	}
         
-	public void configurarNodoReceptor(String nombre,String rfc,String pais, String noExterior, String calle, String colonia, String municipio, String estado, String codigoPostal ){
+	public void configurarNodoReceptor(String nombre,String rfc,String pais, String noExterior, String noInterior, String calle, String colonia, String municipio, String estado, String codigoPostal ){
             Document tmp = this.getDoc();
             Element element = tmp.createElement("cfdi:Receptor");
             element.setAttribute("nombre", StringEscapeUtils.escapeHtml(nombre) );
@@ -120,7 +120,15 @@ public class CfdiXmlBuilder {
             extra.setAttribute("estado",StringEscapeUtils.escapeHtml(estado));
             extra.setAttribute("municipio",StringEscapeUtils.escapeHtml(municipio));
             extra.setAttribute("colonia",StringEscapeUtils.escapeHtml(colonia));
-            extra.setAttribute("noExterior",noExterior);
+            
+            if(!noExterior.equals("") && noExterior!=null){
+                extra.setAttribute("noExterior",noExterior);
+            }
+            
+            if(!noInterior.equals("") && noInterior!=null){
+                extra.setAttribute("noInterior",noInterior);
+            }
+            
             extra.setAttribute("pais",StringEscapeUtils.escapeHtml(pais));
             extra.setAttribute("calle",StringEscapeUtils.escapeHtml(calle));
             element.appendChild(extra);

@@ -211,11 +211,6 @@ public class EntradamercanciasController {
     
     
     
-    
-    
-    
-    
-    
     //obtiene datos de la Orden de Compra
     @RequestMapping(method = RequestMethod.POST, value="/getDatosOrdenCompra.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosOrdenCompraJson(
@@ -310,7 +305,7 @@ public class EntradamercanciasController {
     //public @ResponseBody HashMap<java.lang.String,java.lang.Object> getProveedorJson(
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProveedoresJson(
             @RequestParam(value="rfc", required=true) String rfc,
-            @RequestParam(value="email", required=true) String email,
+            @RequestParam(value="no_prov", required=true) String no_prov,
             @RequestParam(value="nombre", required=true) String nombre,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
@@ -326,12 +321,36 @@ public class EntradamercanciasController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        proveedores = this.getInvDao().getBuscadorProveedores(rfc, email, nombre,id_empresa);
+        proveedores = this.getInvDao().getBuscadorProveedores(rfc, no_prov, nombre,id_empresa);
         
         jsonretorno.put("proveedores", proveedores);
         
         return jsonretorno;
     }
+    
+    
+    
+    //Obtener datos del Proveedor a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoProv.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataByNoProvJson(
+            @RequestParam(value="no_prov", required=true) String no_prov,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Proveedor", this.getInvDao().getDatosProveedorByNoProv(no_prov, id_empresa));
+        return jsonretorno;
+    }
+    
     
     
     //obtiene los productos para el buscador

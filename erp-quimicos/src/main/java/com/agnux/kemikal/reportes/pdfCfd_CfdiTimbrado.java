@@ -90,6 +90,7 @@ public final class pdfCfd_CfdiTimbrado {
     private String receptor_rfc;
     private String receptor_calle;
     private String receptor_numero;
+    private String receptor_numero_exterior;
     private String receptor_colonia;
     private String receptor_cp;
     private String receptor_municipio;
@@ -193,7 +194,8 @@ public final class pdfCfd_CfdiTimbrado {
         this.setReceptor_no_control(datosCliente.get("numero_control"));
         this.setReceptor_rfc(datosCliente.get("comprobante_receptor_attr_rfc"));
         this.setReceptor_calle(datosCliente.get("comprobante_receptor_domicilio_attr_calle"));
-        this.setReceptor_numero(datosCliente.get("comprobante_receptor_domicilio_attr_noexterior"));
+        this.setReceptor_numero(datosCliente.get("comprobante_receptor_domicilio_attr_nointerior"));
+        this.setReceptor_numero_exterior(datosCliente.get("comprobante_receptor_domicilio_attr_noexterior"));
         this.setReceptor_colonia(datosCliente.get("comprobante_receptor_domicilio_attr_colonia"));
         this.setReceptor_cp(datosCliente.get("comprobante_receptor_domicilio_attr_codigopostal"));
         this.setReceptor_municipio(datosCliente.get("comprobante_receptor_domicilio_attr_municipio"));
@@ -508,7 +510,9 @@ public final class pdfCfd_CfdiTimbrado {
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
             
-            String fecha[] = this.getFacha_comprobante().split("-");
+            String fecha1[] = this.getFacha_comprobante().split("T");
+            
+            String fecha[] = fecha1[0].split("-");
             
             //fecha
             cell = new PdfPCell(new Paragraph(fecha[2]+"/"+fecha[1]+"/"+fecha[0],smallFont));
@@ -552,10 +556,10 @@ public final class pdfCfd_CfdiTimbrado {
             table.addCell(cell);
             
             //aqui debe ir la hora
-            cell = new PdfPCell(new Paragraph("",largeBoldFont));
+            cell = new PdfPCell(new Paragraph(fecha1[1],smallFont));
             cell.setBorder(0);
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
             /////////////////////////////////////////////////////////////////////////
             
@@ -629,9 +633,21 @@ public final class pdfCfd_CfdiTimbrado {
                 estadoCliente = this.getReceptor_estado().toUpperCase();
             }
             
+            String no="";
+            if( !this.getReceptor_numero().equals("") && this.getReceptor_numero()!=null){
+                no= ""+this.getReceptor_numero();
+            }
+            
+            if( !this.getReceptor_numero_exterior().equals("") && this.getReceptor_numero_exterior()!=null){
+                if(no.equals("")){
+                    no+= ""+this.getReceptor_numero_exterior();
+                }else{
+                    no+= ", "+this.getReceptor_numero_exterior();
+                }
+            }
             
             cell = new PdfPCell(new Paragraph( 
-                    this.getReceptor_calle()+ " " + this.getReceptor_numero() +"\n"+ 
+                    this.getReceptor_calle()+ " " + no +"\n"+ 
                     this.getReceptor_colonia().toUpperCase() + "\n" + 
                     municipioCliente + ", " + estadoCliente+", " + this.getReceptor_pais().toUpperCase()+ ".\n"+ 
                     "C.P. " + this.getReceptor_cp(), smallFont));
@@ -2957,7 +2973,13 @@ public final class pdfCfd_CfdiTimbrado {
         this.uuid = uuid;
     }
     
-    
+    public String getReceptor_numero_exterior() {
+        return receptor_numero_exterior;
+    }
+
+    public void setReceptor_numero_exterior(String receptor_numero_exterior) {
+        this.receptor_numero_exterior = receptor_numero_exterior;
+    }
     
     
     static class HeaderFooter extends PdfPageEventHelper {

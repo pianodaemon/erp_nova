@@ -108,7 +108,7 @@ public class Pdf_CRM_registroVisitas {
                 //3
                 cell = new PdfPCell(new Paragraph(registro.get("nombre_contacto").toString(),smallFont));
                 cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setUseDescender(true);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
@@ -124,7 +124,7 @@ public class Pdf_CRM_registroVisitas {
                 //5
                 cell = new PdfPCell(new Paragraph(registro.get("tipo_seguimiento_visita"),smallFont));
                 cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setUseDescender(true);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
@@ -140,7 +140,7 @@ public class Pdf_CRM_registroVisitas {
                 //7
                 cell = new PdfPCell(new Paragraph(registro.get("existe_oportunidad").toString(),smallFont));
                 cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setHorizontalAlignment(Element.ALIGN_MIDDLE);
                 cell.setUseDescender(true);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
@@ -148,7 +148,7 @@ public class Pdf_CRM_registroVisitas {
                 //8
                 cell = new PdfPCell(new Paragraph(registro.get("resultado").toString(),smallFont));
                 cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setUseDescender(true);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);

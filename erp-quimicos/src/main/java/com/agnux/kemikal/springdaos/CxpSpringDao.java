@@ -44,7 +44,9 @@ public class CxpSpringDao implements CxpInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getProveedor_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        String sql_to_query = "select cxp_prov.id, "
+        String sql_to_query = ""
+                        + "select cxp_prov.id, "
+                        + "cxp_prov.folio,"
                         + "cxp_prov.razon_social, "
                         +"cxp_prov.correo_electronico, "
                         +"cxp_prov.rfc, "
@@ -63,6 +65,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("correo_electronico",rs.getString("correo_electronico"));
                     row.put("rfc",rs.getString("rfc"));

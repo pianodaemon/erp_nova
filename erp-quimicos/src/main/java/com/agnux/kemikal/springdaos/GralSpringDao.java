@@ -1995,6 +1995,15 @@ public class GralSpringDao implements GralInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",String.valueOf(rs.getInt("id")));
+<<<<<<< .mine
+                    row.put("valor",rs.getString("valor"));
+                    row.put("momento_creacion",rs.getString("momento_creacion"));                    
+                    row.put("moneda_id",rs.getString("moneda_id"));                    
+                    row.put("version",rs.getString("version"));                    
+                    row.put("descripcion_abr",rs.getString("descripcion_abr")); 
+                    row.put("descripcion",rs.getString("descripcion")); 
+                    row.put("simbolo",rs.getString("simbolo")); 
+=======
                     row.put("valor",rs.getString("valor"));
                     row.put("momento_creacion",rs.getString("momento_creacion"));
                     row.put("moneda_id",rs.getString("moneda_id"));
@@ -2002,6 +2011,7 @@ public class GralSpringDao implements GralInterfaceDao{
                     row.put("descripcion_abr",rs.getString("descripcion_abr"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("simbolo",rs.getString("simbolo"));
+>>>>>>> .r643
                     return row;
                 }
             }

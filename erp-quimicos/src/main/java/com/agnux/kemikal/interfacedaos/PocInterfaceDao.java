@@ -74,4 +74,8 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getCotizacion_PolitizasPago(Integer id_emp);
     public HashMap<String, String> getUserRol(Integer id_user);
     
+    
+    //aplicativo actualizador de Saludo y Despedida para Cotizaciones
+    public ArrayList<HashMap<String, Object>> getCotizacionSaludoDespedida_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getCotizacionSaludoDespedida_Datos(Integer id);
 }

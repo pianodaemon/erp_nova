@@ -586,7 +586,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         String fecha = TimeHelper.getFechaActualYMDH();
         String[] fecha_hora = fecha.split(" ");
         //formato fecha: 2011-03-01T00:00:00
-        this.setFechaComprobante(fecha_hora[0]);//este solo se utiliza en pdfcfd
+        this.setFechaComprobante(fecha_hora[0]+"T"+fecha_hora[1]);//este solo se utiliza en pdfcfd
         
         data.put("comprobante_attr_fecha",fecha_hora[0]+"T"+fecha_hora[1]);
         data.put("comprobante_attr_condicionesdepago",map.get("condicion_pago").toString().toUpperCase());
@@ -2120,7 +2120,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         String fecha = TimeHelper.getFechaActualYMDH();
         String[] fecha_hora = fecha.split(" ");
         //formato fecha: 2011-03-01T00:00:00
-        this.setFechaComprobante(fecha_hora[0]);//este solo se utiliza en pdfcfd
+        this.setFechaComprobante(fecha_hora[0]+"T"+fecha_hora[1]);//este solo se utiliza en pdfcfd
         
         data.put("comprobante_attr_fecha",fecha_hora[0]+"T"+fecha_hora[1]);
         data.put("comprobante_attr_condicionesdepago",map.get("condicion_pago").toString().toUpperCase());
