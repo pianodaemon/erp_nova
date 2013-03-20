@@ -27,10 +27,18 @@
 									<li class="body">
 										<a href="#" class="accessible">Cotizaciones &raquo;</a>
 										<ul>
-											<li id="6">
+											<li>
 												<a href="#" class="menulink_">Procesos &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../cotizaciones/startup.agnux">Cotizaci&oacute;n</a></li>
+												</ul>
+											</li>
+											<li>
+												<a href="#" class="menulink_">Configuraciones &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../cotizaciones/startup.agnux">Saludo y Despedida</a></li>
+													<li class="topline"><a href="../cotizaciones/startup.agnux">Condiciones Comerciales</a></li>
+													<li class="topline"><a href="../cotizaciones/startup.agnux">Pol&iacute;ticas de Pago</a></li>
 												</ul>
 											</li>
 										</ul>
@@ -383,8 +391,9 @@
 													<li class="topline"><a href="../repinvexis/startup.agnux">Inventario</a></li>
 													<li class="topline"><a href="../repinvexislote/startup.agnux">Existencias en Lotes</a></li>
 													<li class="topline"><a href="../repinvkits/startup.agnux">Kits</a></li>
-													<li class="topline"><a href="../repinvmovimientos/startup.agnux">Movimientos</a></li>
+													
 													<!--
+													<li class="topline"><a href="../repinvmovimientos/startup.agnux">Movimientos</a></li>
 													<li class="topline"><a href="#">Existencias FÃ­sicas Capturadas</a></li>
 													-->
 												</ul>

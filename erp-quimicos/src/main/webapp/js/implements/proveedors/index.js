@@ -37,48 +37,46 @@ $(function() {
 		$(this).removeClass("onmouseOverVisualizaBuscador").addClass("onmouseOutVisualizaBuscador");
 	});
 	
-	
 	//aqui va el titulo del catalogo
 	$('#barra_titulo').find('#td_titulo').append('Cat&aacute;logo de Proveedores');
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-
-
+	
     var $cadena_busqueda = "";
     var $campo_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=cadena_busqueda]');
-    var $campo_email_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=email]');
+    var $campo_busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=folio]');
     var $campo_rfc_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=rfc]');
-
+	
     var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
     var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
-
+	
     var to_make_one_search_string = function(){
-            var valor_retorno = "";
-            var signo_separador = "=";
-            valor_retorno += "cadena_busqueda" + signo_separador + $campo_busqueda.val() + "|";
-            valor_retorno += "por_imail" + signo_separador + $campo_email_busqueda.val() + "|";
-            valor_retorno += "por_rfc" + signo_separador + $campo_rfc_busqueda.val() + "|";
-            return valor_retorno;
+		var valor_retorno = "";
+		var signo_separador = "=";
+		valor_retorno += "cadena_busqueda" + signo_separador + $campo_busqueda.val() + "|";
+		valor_retorno += "folio" + signo_separador + $campo_busqueda_folio.val() + "|";
+		valor_retorno += "por_rfc" + signo_separador + $campo_rfc_busqueda.val() + "|";
+		return valor_retorno;
     };
-
+	
     cadena = to_make_one_search_string();
     $cadena_busqueda = cadena.toCharCode();
-
-    //var json_string = document.location.protocol + '//' + document.location.host + '/' + controller + '/data_buscador/out.json';
+    
     $buscar.click(function(event){
-            event.preventDefault();
-            cadena = to_make_one_search_string();
-            $cadena_busqueda = cadena.toCharCode();
-            $get_datos_grid();
+		event.preventDefault();
+		cadena = to_make_one_search_string();
+		$cadena_busqueda = cadena.toCharCode();
+		$get_datos_grid();
     });
 
     $limpiar.click(function(event){
         event.preventDefault();
         $campo_busqueda.val("");
-        $campo_email_busqueda.val("");
+        $campo_busqueda_folio.val("");
         $campo_rfc_busqueda.val("");
+        $campo_busqueda_folio.focus();
     });
     
 	TriggerClickVisializaBuscador = 0;
@@ -109,8 +107,13 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$campo_busqueda_folio.focus();
 	});
-
+	
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_rfc_busqueda, $buscar);
+	
 	
     //datos para el buscador
     //$arreglo = {}

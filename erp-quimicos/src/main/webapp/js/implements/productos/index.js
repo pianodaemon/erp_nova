@@ -7,6 +7,8 @@ $(function() {
 	    return work.join(',');
 	};
 	
+	var arrayTProd;
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
 	var $username = $('#header').find('#header1').find('span.username');
@@ -56,12 +58,36 @@ $(function() {
 		$get_datos_grid();
 	});
 	
-	$limpiar.click(function(event){
-		event.preventDefault();
-		$campo_descripcion_busqueda.val('');
-		$select_tipo_productos_busqueda.find('option[index=0]').attr('selected','selected');
+	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+		//Llena el select tipos de productos en el buscador
+		$select_tipo_productos_busqueda.children().remove();
+		var prod_tipos_html = '<option value="0" selected="yes">[-- --]</option>';
+		$.each(data['prodTipos'],function(entryIndex,pt){
+			prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+		});
+		$select_tipo_productos_busqueda.append(prod_tipos_html);
+		
+		arrayTProd=data['prodTipos'];
 	});
 	
+	
+	$limpiar.click(function(event){
+		event.preventDefault();
+		$sku_busqueda.val('');
+		$campo_descripcion_busqueda.val('');
+		
+		//Llena el select tipos de productos en el buscador
+		$select_tipo_productos_busqueda.children().remove();
+		var tipos_html = '<option value="0" selected="yes">[-- --]</option>';
+		$.each(arrayTProd,function(entryIndex,pt){
+			tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+		});
+		$select_tipo_productos_busqueda.append(tipos_html);
+		
+		$sku_busqueda.focus();
+	});
 	
 	TriggerClickVisializaBuscador = 0;
 	//visualizar  la barra del buscador
@@ -80,7 +106,6 @@ $(function() {
 			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 			 $('#barra_buscador').animate({height: '60px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
-			 
 			 //alert($('#cuerpo').css('height'));
 		}else{
 			 TriggerClickVisializaBuscador=0;
@@ -91,21 +116,13 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		
+		$sku_busqueda.focus();
 	});
 	
-	
-	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
-	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-	$.post(input_json_lineas,$arreglo,function(data){
-		//Llena el select tipos de productos en el buscador
-		$select_tipo_productos_busqueda.children().remove();
-		var prod_tipos_html = '<option value="0" selected="yes">[-- --]</option>';
-		$.each(data['prodTipos'],function(entryIndex,pt){
-			prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
-		});
-		$select_tipo_productos_busqueda.append(prod_tipos_html);
-	});
-	
+	$(this).aplicarEventoKeypressEjecutaTrigger($sku_busqueda, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion_busqueda, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_productos_busqueda, $buscar);
 	
 	$tabs_li_funxionalidad = function(){
 		var $select_prod_tipo = $('#forma-product-window').find('select[name=select_prodtipo]');

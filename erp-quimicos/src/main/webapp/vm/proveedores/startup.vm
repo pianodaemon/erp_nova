@@ -39,23 +39,23 @@
 				<td colspan="13">&nbsp;&nbsp;</td>
 			</tr>
 			<tr>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td>No.&nbsp;Proveedor</td>
+				<td width="10">&nbsp;&nbsp;</td>
+				<td><INPUT TYPE="text" name="folio" style="width:100px;"></td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td>Nombre</td>
-				<td width=10>&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="text" name="cadena_busqueda" style="width:200px;"></td>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td >E-mail</td>
-				<td width=10>&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="email" style="width:200px;"></td>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td >RFC</td>
-				<td width=10>&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td>RFC</td>
+				<td width="10">&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="text" name="rfc" style="width:140px;"></td>
-				<td width=60>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="60">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td ><INPUT TYPE="button" value="Limpiar"></td>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td><INPUT TYPE="button" value="Limpiar"></td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 		</table>
             

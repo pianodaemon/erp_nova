@@ -117,6 +117,16 @@ $(function() {
 		$select_busqueda_tipodoc.focus();
 	});
 	
+	
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_oc, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_factura, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_proveedor, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_busqueda_tipodoc, $buscar);
+	
+	
 	$tabs_li_funxionalidad = function(){
 		var $select_prod_tipo = $('#forma-entradamercancias-window').find('select[name=prodtipo]');
 		$('#forma-entradamercancias-window').find('#submit').mouseover(function(){
@@ -201,19 +211,19 @@ $(function() {
 		return Fecha;
 	}
 	//----------------------------------------------------------------
-
-
-
+	
+	
+	
 	//buscador de proveedores
-	$busca_proveedores = function(){
+	$busca_proveedores = function(no_proveedor, nombre_proveedor){
 		$(this).modalPanel_Buscaproveedor();
 		var $dialogoc =  $('#forma-buscaproveedor-window');
 		$dialogoc.append($('div.buscador_proveedores').find('table.formaBusqueda_proveedores').clone());
 		$('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -200  });
 		
 		var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
+		var $campo_no_proveedor = $('#forma-buscaproveedor-window').find('input[name=campo_no_proveedor]');
 		var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
-		var $campo_email = $('#forma-buscaproveedor-window').find('input[name=campo_email]');
 		var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
 		
 		var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
@@ -235,14 +245,18 @@ $(function() {
 		$cancelar_plugin_busca_proveedor.mouseout(function(){
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
-	
+		
+		$campo_no_proveedor.val(no_proveedor);
+		$campo_nombre.val(nombre_proveedor);
+		
+		$campo_nombre.focus();
 		
 		//click buscar proveedor
 		$buscar_plugin_proveedor.click(function(event){
 			//event.preventDefault();
 			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_proveedores.json';
 			$arreglo = {    'rfc':$campo_rfc.val(),
-							'email':$campo_email.val(),
+							'no_prov':$campo_no_proveedor.val(),
 							'nombre':$campo_nombre.val(),
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 						}
@@ -256,6 +270,7 @@ $(function() {
 						trr += '<td width="120">';
 							trr += '<input type="hidden" id="id_prov" value="'+proveedor['id']+'">';
 							trr += '<input type="hidden" id="tipo_prov" value="'+proveedor['proveedortipo_id']+'">';
+							trr += '<input type="hidden" id="no_prov" value="'+proveedor['no_proveedor']+'">';
 							trr += '<span class="rfc">'+proveedor['rfc']+'</span>';
 						trr += '</td>';
 						trr += '<td width="250"><span id="razon_social">'+proveedor['razon_social']+'</span></td>';
@@ -266,7 +281,7 @@ $(function() {
 				});
 				$tabla_resultados.find('tr:odd').find('td').css({ 'background-color' : '#e7e8ea'});
 				$tabla_resultados.find('tr:even').find('td').css({ 'background-color' : '#FFFFFF'});
-
+				
 				$('tr:odd' , $tabla_resultados).hover(function () {
 					$(this).find('td').css({ background : '#FBD850'});
 				}, function() {
@@ -283,28 +298,39 @@ $(function() {
 					//asignar a los campos correspondientes el sku y y descripcion
 					$('#forma-entradamercancias-window').find('input[name=id_proveedor]').val($(this).find('#id_prov').val());
 					$('#forma-entradamercancias-window').find('input[name=tipo_proveedor]').val($(this).find('#tipo_prov').val());
+					$('#forma-entradamercancias-window').find('input[name=no_proveedor]').val($(this).find('#no_prov').val());
 					$('#forma-entradamercancias-window').find('input[name=rfcproveedor]').val($(this).find('span.rfc').html());
 					$('#forma-entradamercancias-window').find('input[name=razon_proveedor]').val($(this).find('#razon_social').html());
-					//$('#forma-entradamercancias-window').find('input[name=dir_proveedor]').val($(this).find('span.direccion').html());
 					
 					//elimina la ventana de busqueda
 					var remove = function() { $(this).remove(); };
 					$('#forma-buscaproveedor-overlay').fadeOut(remove);
+					//$('#forma-entradamercancias-window').find('input[name=razon_proveedor]').focus();
+					$('#forma-entradamercancias-window').find('input[name=factura]').focus();
 				});
 			});
 		});
+		
+		if ($campo_no_proveedor.val()!='' || $campo_nombre.val()!=''){
+			$buscar_plugin_proveedor.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_no_proveedor, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_rfc, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_nombre, $buscar_plugin_proveedor);
 		
 		$cancelar_plugin_busca_proveedor.click(function(event){
 			//event.preventDefault();
 			var remove = function() { $(this).remove(); };
 			$('#forma-buscaproveedor-overlay').fadeOut(remove);
+			$('#forma-entradamercancias-window').find('input[name=razon_proveedor]').focus();
 		});
 	}//termina buscador de proveedores
 	
 	
 	
 	//buscador de productos
-	$busca_productos = function(sku_buscar){
+	$busca_productos = function(sku_buscar, nombre_producto){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
@@ -351,6 +377,7 @@ $(function() {
 		});
 		
 		$campo_sku.val(sku_buscar);
+		$campo_descripcion.val(nombre_producto);
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -409,14 +436,21 @@ $(function() {
 		
 		
 		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
-		if($campo_sku.val() != ''){
+		if($campo_sku.val()!='' || $campo_descripcion.val()!=''){
 			$buscar_plugin_producto.trigger('click');
 		}
+		
+		$campo_sku.focus();
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_producto, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $buscar_plugin_producto);
 		
 		$cancelar_plugin_busca_producto.click(function(event){
 			//event.preventDefault();
 			var remove = function() { $(this).remove(); };
 			$('#forma-buscaproducto-overlay').fadeOut(remove);
+			$('#forma-entradamercancias-window').find('input[name=titulo_producto]').focus();
 		});
 	}//termina buscador de productos
 	
@@ -506,25 +540,32 @@ $(function() {
 							//elimina la ventana de busqueda
 							var remove = function() { $(this).remove(); };
 							$('#forma-buscapresentacion-overlay').fadeOut(remove);
+							
 						});
 						
 						$cancelar_plugin_busca_lotes_producto.click(function(event){
 							//event.preventDefault();
 							var remove = function() { $(this).remove(); };
 							$('#forma-buscapresentacion-overlay').fadeOut(remove);
+							$('#forma-entradamercancias-window').find('input[name=sku_producto]').focus();
 						});
 						
 					}else{
-						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
-						$('#forma-entradamercancias-window').find('input[name=titulo_producto]').val('');
+						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.", 'Atencion!', function(r) { 
+							$('#forma-entradamercancias-window').find('input[name=sku_producto]').focus();
+						});
 					}
 				},"json");
 				
 			}else{
-				jAlert("Es necesario ingresar un C&oacute;digo de producto valido", 'Atencion!');
+				jAlert("Es necesario ingresar un C&oacute;digo de producto valido.", 'Atencion!', function(r) { 
+					$('#forma-entradamercancias-window').find('input[name=sku_producto]').focus();
+				});
 			}
 		}else{
-			jAlert("Es necesario seleccionar un proveedor", 'Atencion!');
+			jAlert("Es necesario seleccionar un Proveedor.", 'Atencion!', function(r) { 
+				$('#forma-entradamercancias-window').find('input[name=no_proveedor]').focus();
+			});
 		}
 		
 	}//termina buscador de lotes disponibles de un producto
@@ -678,11 +719,11 @@ $(function() {
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<INPUT TYPE="text" name="cantidad" id="cant" value="1" style="width:66px;">';
+					tr_prod += '<INPUT TYPE="text" name="cantidad" id="cant" class="cant'+trCount+'" value="1" style="width:66px;">';
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="75" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<INPUT TYPE="text" name="costo" id="cost" value=" " style="width:69px;">';
+					tr_prod += '<INPUT TYPE="text" name="costo" id="cost" class="cost'+trCount+'" value=" " style="width:69px;">';
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
@@ -690,7 +731,7 @@ $(function() {
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += '<SELECT name="impuesto" id="imp" style="width:80px;">';
+				tr_prod += '<SELECT name="impuesto" id="imp" class="imp'+trCount+'" style="width:80px;">';
 					
 					//carga select con tipos de impuesto
 					if(parseInt($hidden_tipo_proveedor.val()) == 2){
@@ -724,18 +765,20 @@ $(function() {
 			
 			
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-			$grid_productos.find('input[name=costo]').focus(function(e){
+			//$grid_productos.find('input[name=costo]').focus(function(e){
+			$grid_productos.find('input.cost'+trCount).focus(function(e){
 				if($(this).val() == ' '){
 					$(this).val('');
 				}
 			});
-                        
+			
 			//recalcula importe al perder enfoque el campo costo
-			$grid_productos.find('input[name=costo]').blur(function(){
+			//$grid_productos.find('input[name=costo]').blur(function(){
+			$grid_productos.find('input.cost'+trCount).blur(function(e){
 				if ($(this).val() == ''  || $(this).val() == null){
 					$(this).val(' ');
 				}
-                            
+				
 				if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
 				{	//calcula el importe
 					$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val()));
@@ -748,14 +791,16 @@ $(function() {
 			});
 			
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-			$grid_productos.find('input[name=cantidad]').focus(function(e){
+			//$grid_productos.find('input[name=cantidad]').focus(function(e){
+			$grid_productos.find('input.cant'+trCount).focus(function(e){
 				if($(this).val() == ' '){
 						$(this).val('');
 				}
 			});
                         
 			//recalcula importe al perder enfoque el campo cantidad
-			$grid_productos.find('input[name=cantidad]').blur(function(){
+			//$grid_productos.find('input[name=cantidad]').blur(function(){
+			$grid_productos.find('input.cant'+trCount).blur(function(e){
 				if ($(this).val() == ''  || $(this).val() == null){
 					$(this).val(' ');
 				}
@@ -772,7 +817,8 @@ $(function() {
 			
 			
 			//validar campo costo, solo acepte numeros y punto
-			$grid_productos.find('input[name=costo]').keypress(function(e){
+			//$grid_productos.find('input[name=costo]').keypress(function(e){
+			$grid_productos.find('input.cost'+trCount).keypress(function(e){
 				//alert(e.which);
 				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
@@ -783,7 +829,8 @@ $(function() {
 			});
 			
 			//validar campo cantidad, solo acepte numeros y punto
-			$grid_productos.find('input[name=cantidad]').keypress(function(e){
+			//$grid_productos.find('input[name=cantidad]').keypress(function(e){
+			$grid_productos.find('input.cant'+trCount).keypress(function(e){
 				//alert(e.which);
 				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
@@ -813,7 +860,8 @@ $(function() {
 			});
 			
 			//seleccionar tipo de  impuesto
-			$grid_productos.find('select[name=impuesto]').change(function(){
+			//$grid_productos.find('select[name=impuesto]').change(function(){
+			$grid_productos.find('select.imp'+trCount).change(function(e){
 				var valorImpuesto=0;
 				var id_ivatipo = $(this).val();
 				$.each(tiposIva,function(entryIndex,tipos){
@@ -826,9 +874,18 @@ $(function() {
 				$calcula_totales();//llamada a la funcion que calcula totales
 			});
 			
+			//limpiar campos de Busqueda
+			$sku_prod.val('');
+			$nombre_prod.val('');
+			
+			$grid_productos.find('.cant'+trCount).focus();
+			
 		}else{
-			jAlert("El producto con &eacute;sta presentaci&oacute;n ya se encuentra en el listado, seleccione otro diferente.", 'Atencion!');
-			$sku_prod.focus();
+			jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+				$nombre_prod.val('');
+				$sku_prod.val('');
+				$sku_prod.focus();
+			});
 		}
 		
 	}//termina agregar producto nuevo al grid
@@ -891,11 +948,13 @@ $(function() {
 		//campos del proveedor
 		var $buscar_proveedor = $('#forma-entradamercancias-window').find('a[href*=busca_proveedor]');
 		var $hidden_id_proveedor = $('#forma-entradamercancias-window').find('input[name=id_proveedor]');
+		var $no_proveedor = $('#forma-entradamercancias-window').find('input[name=no_proveedor]');
 		var $campo_rfc_proveedor = $('#forma-entradamercancias-window').find('input[name=rfcproveedor]');
 		var $campo_razon_proveedor = $('#forma-entradamercancias-window').find('input[name=razon_proveedor]');
 		var $hidden_tipo_proveedor = $('#forma-entradamercancias-window').find('input[name=tipo_proveedor]');
 		
 		var $campo_sku = $('#forma-entradamercancias-window').find('input[name=sku_producto]');
+		var $titulo_producto = $('#forma-entradamercancias-window').find('input[name=titulo_producto]');
 		
 		//tabla contenedor del listado de productos
 		var $grid_productos = $('#forma-entradamercancias-window').find('#grid_productos');
@@ -928,6 +987,8 @@ $(function() {
 		//$campo_factura.css({'background' : '#ffffff'});
 		$cancelar_entrada.hide();
 		$pdf_entrada.hide();
+		
+		$no_proveedor.focus();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -1086,6 +1147,14 @@ $(function() {
 		$campo_ordencompra.keypress(function(e){
 			if(e.which == 13){
 				
+				$hidden_id_proveedor.val('');
+				$campo_rfc_proveedor.val('');
+				$campo_razon_proveedor.val('');
+				$hidden_tipo_proveedor.val('');
+				$no_proveedor.val('');
+				
+				$grid_productos.children().remove();
+				
 				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosOrdenCompra.json';
 				$arreglo2 = {	'orden_compra':$campo_ordencompra.val(),
 								'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
@@ -1093,11 +1162,12 @@ $(function() {
 				
 				$.post(input_json2,$arreglo2,function(entry){
 					
-					$hidden_id_proveedor.attr({ 'value' : entry['DatosOC']['0']['proveedor_id'] });
-					$campo_rfc_proveedor.attr({ 'value' : entry['DatosOC']['0']['rfc'] });
-					$campo_razon_proveedor.attr({ 'value' : entry['DatosOC']['0']['razon_social'] });
-					$hidden_tipo_proveedor.attr({ 'value' : entry['DatosOC']['0']['proveedortipo_id'] });
-					
+					$hidden_id_proveedor.val(entry['DatosOC']['0']['proveedor_id']);
+					$campo_rfc_proveedor.val(entry['DatosOC']['0']['rfc']);
+					$campo_razon_proveedor.val(entry['DatosOC']['0']['razon_social']);
+					$hidden_tipo_proveedor.val(entry['DatosOC']['0']['proveedortipo_id']);
+					$no_proveedor.val(entry['DatosOC']['0']['no_proveedor']);
+							
 					//carga select denominacion con todas las monedas
 					$select_denominacion.children().remove();
 					var moneda_hmtl = '';
@@ -1282,12 +1352,32 @@ $(function() {
 		});
 		
 		
-		
-		$campo_tc.keypress(function(e){
-			// Permitir solo numeros, borrar, suprimir, TAB, punto
-			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-				return true;
-			}else {
+		//ejecuta Busqueda de Datos del Proveedor al pulsar enter en el campo No. Proveedor
+		$no_proveedor.keypress(function(e){
+			if(e.which == 13){
+				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoProv.json';
+				$arreglo2 = {'no_prov':$no_proveedor.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+				
+				$.post(input_json2,$arreglo2,function(entry2){
+					$hidden_id_proveedor.val('');
+					$hidden_tipo_proveedor.val('');
+					$no_proveedor.val('');
+					$campo_rfc_proveedor.val('');
+					$campo_razon_proveedor.val('');
+					
+					if(parseInt(entry2['Proveedor'].length) > 0 ){
+						$hidden_id_proveedor.val(entry2['Proveedor'][0]['id']);
+						$hidden_tipo_proveedor.val(entry2['Proveedor'][0]['proveedortipo_id']);
+						$no_proveedor.val(entry2['Proveedor'][0]['no_proveedor']);
+						$campo_rfc_proveedor.val(entry2['Proveedor'][0]['rfc']);
+						$campo_razon_proveedor.val(entry2['Proveedor'][0]['razon_social']);
+					}else{						
+						jAlert('N&uacute;mero de Proveedor desconocido.', 'Atencion!', function(r) { 
+							$no_proveedor.focus(); 
+						});
+					}
+				},"json");//termina llamada json
+				
 				return false;
 			}
 		});
@@ -1296,13 +1386,17 @@ $(function() {
 		//buscar proveedor
 		$buscar_proveedor.click(function(event){
 			event.preventDefault();
-			$busca_proveedores();
+			$busca_proveedores($no_proveedor.val(), $campo_razon_proveedor.val());
 		});
+		
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_razon_proveedor, $buscar_proveedor);
+		
 		
 		//buscar producto
 		$buscar_producto.click(function(event){
 			event.preventDefault();
-			$busca_productos($campo_sku.val());
+			$busca_productos($campo_sku.val(), $titulo_producto.val());
 		});
 		
 		
@@ -1313,10 +1407,29 @@ $(function() {
 			$buscador_presentaciones_producto($campo_rfc_proveedor.val(),$campo_sku.val());
 		});
 		
+		
+		/*
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$campo_sku.keypress(function(e){
 			if(e.which == 13){
 				$agregar_producto.trigger('click');
+				return false;
+			}
+		});
+		*/
+		
+		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $agregar_producto);
+		
+		//desencadena clic del href Buscar Producto al pulsar enter en el campo Nombre del producto
+		$(this).aplicarEventoKeypressEjecutaTrigger($titulo_producto, $buscar_producto);
+		
+		
+		$campo_tc.keypress(function(e){
+			// Permitir solo numeros, borrar, suprimir, TAB, punto
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
 				return false;
 			}
 		});
@@ -1358,7 +1471,7 @@ $(function() {
 				});
 				return true;
 			}else{
-				jAlert("No hay datos para actualizar", 'Atencion!');
+				jAlert('No hay datos para actualizar.', 'Atencion!', function(r) { $campo_sku.focus(); });
 				return false;
 			}
 		});
@@ -1445,12 +1558,14 @@ $(function() {
 				//campos del proveedor
 				var $buscar_proveedor = $('#forma-entradamercancias-window').find('a[href*=busca_proveedor]');
 				var $hidden_id_proveedor = $('#forma-entradamercancias-window').find('input[name=id_proveedor]');
+				var $no_proveedor = $('#forma-entradamercancias-window').find('input[name=no_proveedor]');
 				var $campo_rfc_proveedor = $('#forma-entradamercancias-window').find('input[name=rfcproveedor]');
 				var $campo_razon_proveedor = $('#forma-entradamercancias-window').find('input[name=razon_proveedor]');
 				//var $campo_dir_proveedor = $('#forma-entradamercancias-window').find('input[name=dir_proveedor]');
 				var $campo_tipo_proveedor = $('#forma-entradamercancias-window').find('input[name=tipo_proveedor]');
 				
 				var $campo_sku = $('#forma-entradamercancias-window').find('input[name=sku_producto]');
+				var $titulo_producto = $('#forma-entradamercancias-window').find('input[name=titulo_producto]');
 				
 				//tabla contenedor del listado de productos
 				var $grid_productos = $('#forma-entradamercancias-window').find('#grid_productos');
@@ -1485,6 +1600,16 @@ $(function() {
 				$campo_observaciones.attr("readonly", true);
 				$campo_flete.attr("readonly", true);
 				
+				$no_proveedor.attr("readonly", true);
+				$campo_razon_proveedor.attr("readonly", true);
+				$no_proveedor.css({'background' : '#F0F0F0'});
+				$campo_razon_proveedor.css({'background' : '#F0F0F0'});
+				$campo_sku.css({'background' : '#F0F0F0'});
+				$titulo_producto.css({'background' : '#F0F0F0'});
+				
+				$buscar_proveedor.hide();
+				$buscar_producto.hide();
+				$agregar_producto.hide();
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -1498,7 +1623,7 @@ $(function() {
 						$grid_productos.find('#cost').css({'background' : '#ffffff'});
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
 						$grid_productos.find('#cad').css({'background' : '#ffffff'});
-
+						
 						$('#forma-entradamercancias-window').find('#div_warning_grid').css({'display':'none'});
 						$('#forma-entradamercancias-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 								
@@ -1594,6 +1719,7 @@ $(function() {
 					
 					$.each(entry['datosProveedor'],function(entryIndex,proveedor){
 						$hidden_id_proveedor.attr({ 'value' : proveedor['id'] });
+						$no_proveedor.attr({ 'value' : proveedor['no_proveedor'] });
 						$campo_rfc_proveedor.attr({ 'value' : proveedor['rfc'] });
 						$campo_razon_proveedor.attr({ 'value' : proveedor['razon_social'] });
 						//$campo_dir_proveedor.attr({ 'value' : proveedor['direccion'] });
@@ -1798,7 +1924,8 @@ $(function() {
 									
 									$calcula_totales();//llamada a la funcion que calcula totales
 								});
-													
+								
+								$grid_productos.find('#eliminaprod'+ trCount).hide();
 						});
 						$campo_flete.val(Math.round(parseFloat( entry['datosEntrada']['0']['flete'])*100)/100);
 						
@@ -1841,11 +1968,11 @@ $(function() {
 					//$busca_proveedores();
 					jAlert("El proveedor no puede ser cambiado", 'Atencion!');
 				});
-				
+				/*
 				//buscar producto
 				$buscar_producto.click(function(event){
 					event.preventDefault();
-					$busca_productos($campo_sku.val());
+					$busca_productos($campo_sku.val(), $titulo_producto.val());
 				});
 				
                                 
@@ -1886,7 +2013,7 @@ $(function() {
 						return false;
 					}
 				});
-				
+				*/
 				//descargar pdf de factura
 				$pdf_entrada.click(function(event){
 					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
@@ -1986,7 +2113,8 @@ $(function() {
 						}
 					});
                                         
-					return true;
+					//return true;
+					return false;
 				});
                                 
 				//Ligamos el boton cancelar al evento click para eliminar la forma

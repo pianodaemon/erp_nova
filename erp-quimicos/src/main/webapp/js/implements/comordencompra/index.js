@@ -662,8 +662,17 @@ $(function() {
 		});
 
 		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
-		if($campo_sku.val() != ''){
-			$buscar_plugin_producto.trigger('click');
+		if($campo_descripcion.val()==''){
+			if($campo_sku.val() != ''){
+				$buscar_plugin_producto.trigger('click');
+				$campo_sku.focus();
+			}
+		}else{
+			//si hay algo en el campo campo_descripcion al cargar el buscador, ejecuta la busqueda
+			if($campo_descripcion.val() != ''){
+				$buscar_plugin_producto.trigger('click');
+				$campo_descripcion.focus();
+			}
 		}
 		
 		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $buscar_plugin_producto);
@@ -797,7 +806,7 @@ $(function() {
 			}
 		}else{
 			jAlert("Es necesario seleccionar un Proveedor.", 'Atencion!', function(r) { 
-				$('#forma-comordencompra-window').find('input[name=rfc_proveedor]').focus();
+				$('#forma-comordencompra-window').find('input[name=no_proveedor]').focus();
 			});
 		}
 
@@ -1069,7 +1078,9 @@ $(function() {
 			$grid_productos.find('.cant'+ tr).focus();
 			
 		}else{
-			jAlert("El producto: "+sku+" con presentacion: "+pres+" ya se encuentra en el listado, seleccione otro diferente.", 'Atencion!');
+			jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+				$('#forma-comordencompra-window').find('input[name=sku_producto]').focus();
+			});
 		}
 
 	}//termina agregar producto al grid
@@ -1132,6 +1143,7 @@ $(function() {
 			   };
 
 		var $id_orden_compra = $('#forma-comordencompra-window').find('input[name=id_orden_compra]');
+		var $folio = $('#forma-comordencompra-window').find('input[name=folio]');
 		var $total_tr = $('#forma-comordencompra-window').find('input[name=total_tr]');
 		var $busca_proveedor = $('#forma-comordencompra-window').find('a[href*=busca_proveedor]');
 		var $id_proveedor = $('#forma-comordencompra-window').find('input[name=id_proveedor]');
@@ -1187,6 +1199,7 @@ $(function() {
 		$descargarpdf.hide();
 		$cancelado .hide();
 		
+		$folio.css({'background' : '#F0F0F0'});
 		$dir_proveedor.css({'background' : '#F0F0F0'});
 		$no_proveedor.focus();
 		
@@ -1375,7 +1388,7 @@ $(function() {
 			}
 		});
 		
-		$(this).aplicarEventoKeypressEjecutaTrigger($rfc_proveedor, $busca_proveedor);
+		//$(this).aplicarEventoKeypressEjecutaTrigger($no_proveedor, $busca_proveedor);
 		$(this).aplicarEventoKeypressEjecutaTrigger($razon_proveedor, $busca_proveedor);
 		
 		//buscador de productos
@@ -1471,6 +1484,7 @@ $(function() {
 
 			var $busca_proveedor = $('#forma-comordencompra-window').find('a[href*=busca_proveedor]');
 			var $id_proveedor = $('#forma-comordencompra-window').find('input[name=id_proveedor]');
+			var $no_proveedor = $('#forma-comordencompra-window').find('input[name=no_proveedor]');
 			var $rfc_proveedor = $('#forma-comordencompra-window').find('input[name=rfc_proveedor]');
 			var $razon_proveedor = $('#forma-comordencompra-window').find('input[name=razonproveedor]');
 			var $dir_proveedor = $('#forma-comordencompra-window').find('input[name=dirproveedor]');
@@ -1525,11 +1539,14 @@ $(function() {
 			$tasa_ret_immex.val('0');
 			$busca_proveedor.hide();
 			$cancelado.hide();
-
+			
+			$folio.css({'background' : '#F0F0F0'});
 			$rfc_proveedor.css({'background' : '#F0F0F0'});
 			$razon_proveedor.css({'background' : '#F0F0F0'});
 			$dir_proveedor.css({'background' : '#F0F0F0'});
+			$no_proveedor.css({'background' : '#F0F0F0'});
 			
+			$no_proveedor.attr('readonly',true);
 			$rfc_proveedor.attr('readonly',true);
 			$razon_proveedor.attr('readonly',true);
 			
@@ -1637,6 +1654,7 @@ $(function() {
 					$id_orden_compra.val(entry['datosOrdenCompra']['0']['id']);
 					$folio.val(entry['datosOrdenCompra']['0']['folio']);
 					$id_proveedor.val(entry['datosOrdenCompra']['0']['proveedor_id']);
+					$no_proveedor.val(entry['datosOrdenCompra']['0']['no_proveedor']);
 					$rfc_proveedor.val(entry['datosOrdenCompra']['0']['rfc']);
 					$razon_proveedor.val(entry['datosOrdenCompra']['0']['razon_social']);
 					$dir_proveedor.val(entry['datosOrdenCompra']['0']['direccion']);

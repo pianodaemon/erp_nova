@@ -157,7 +157,7 @@
 															<td width="10"></td>
 															<td>Tipo&nbsp;de&nbsp;documento</td>
 															<td></td>
-															<td>RFC&nbsp;Proveedor</td>
+															<td>No.&nbsp;Proveedor</td>
 															<td></td>
 															<td></td>
 															<td></td>
@@ -173,16 +173,17 @@
 																	<option value="2">Remisi&oacute;n</option>
 																</SELECT>
 															</td>
-															<td width="105"></td>
+															<td width="130"></td>
 															<td>
 																<input type="hidden" name="id_proveedor">
 																<input type="hidden" name="tipo_proveedor">
-																<INPUT TYPE="text" name="rfcproveedor" style="width:160px;" readOnly="true">
+																<INPUT TYPE="hidden" name="rfcproveedor" readOnly="true">
+																<input type="text" name="no_proveedor" value="" style="width:130px; border:1px solid #000;">
 															</td>
 															<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfcproveedor"></td>
 															<td width="40"><a  href="busca_proveedor">(Buscar)</a></td>
-															<td width="20"></td>
-															<td><INPUT TYPE="text" name="razon_proveedor" style="width:400px;" readOnly="true"></td>
+															<td width="50"></td>
+															<td><INPUT TYPE="text" name="razon_proveedor" style="width:400px;"></td>
 															<td width="15"></td>
 															<!--<td><INPUT TYPE="text" name="dir_proveedor" style="width:350px;" readOnly="true"></td>-->
 														</tr>
@@ -298,11 +299,11 @@
 																<INPUT TYPE="text" name="sku_producto" style="width:110px;">
 															</td>
 															<td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sku"></div></td>
-															<td width="30"><a href="busca_producto">(Buscar)</a></td>
+															<td width="30"><a href="agregar_producto">(Agregar)</a></td>
 															<td width="10"></td>
-															<td width="280"><INPUT TYPE="text" name="titulo_producto" style="width:280px;" readOnly="true"></td>
+															<td width="280"><INPUT TYPE="text" name="titulo_producto" style="width:280px;"></td>
 															<td width="10"></td>
-															<td width="25"><a href="agregar_producto">(Agregar)</a></td>
+															<td width="25"><a href="busca_producto">(Buscar)</a></td>
 															<td width="25"></td>
 															<td width="55"><INPUT TYPE="button" id="cancela_entrada" value="Cancelar" style="width:55px; font-weight: bold;"></td>
 															<td width="10"></td>
@@ -477,12 +478,12 @@
 										</tr>
 										<tr>
 											<td width="10"></td>
-											<td width="45">RFC</td>
-											<td width="150"><INPUT TYPE="text" name="campo_rfc" style="width:150px;"></td>
+											<td width="75">No. Proovedor</td>
+											<td width="100"><input type="text" name="campo_no_proveedor" style="width:100px;"></td>
 											<td width="25"></td>
-											<td width="45">E-mail</td>
-											<td width="200"><INPUT TYPE="text" name="campo_email" style="width:200px;"></td>
-											<td width="120"></td>
+											<td width="45">RFC</td>
+											<td width="250"><input type="text" name="campo_rfc" style="width:250px;"></td>
+											<td width="90"></td>
 											<td></td>
 										</tr>
 										<tr>
@@ -490,12 +491,10 @@
 										</tr>
 										<tr>
 											<td width="10"></td>
-											<td width="45">Nombre</td>
-											<td colspan="4"><INPUT TYPE="text" name="campo_nombre" style="width:420px;"></td>
-											<td width="120"></td>
-											<td>
-												<INPUT TYPE="button" id="busca_proveedor_modalbox" class="onmouseOutBuscar">
-											</td>
+											<td width="75">Razon Social</td>
+											<td colspan="4"><input type="text" name="campo_nombre" style="width:420px;"></td>
+											<td width="90"></td>
+											<td><input type="button" id="busca_proveedor_modalbox" class="onmouseOutBuscar"></td>
 										</tr>
 									</table>
 									
