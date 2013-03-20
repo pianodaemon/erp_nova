@@ -73,7 +73,7 @@ public class CotizacionSaludDespController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:70");
         infoConstruccionTabla.put("tipo", "Campo:100");
-        infoConstruccionTabla.put("titulo", "Titulo:300");
+        infoConstruccionTabla.put("titulo", "Titulo:400");
         
         
         ModelAndView x = new ModelAndView("cotizacionsaludodesp/startup", "title", "Actializador de Saludo y Despedida");
@@ -120,7 +120,6 @@ public class CotizacionSaludDespController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         //variables para el buscador
-        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
         
         String data_string = app_selected+"___"+id_usuario;
         
