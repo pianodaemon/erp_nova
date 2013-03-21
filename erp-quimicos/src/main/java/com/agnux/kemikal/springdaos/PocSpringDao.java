@@ -1692,7 +1692,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot.cxc_agen_id, "
                     + "(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'yyyy-mm-dd') ELSE to_char(poc_cot.fecha::timestamp with time zone,'yyyy-mm-dd') END) AS fecha,"
                     + "(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE  gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE  gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE  gral_empleados.apellido_materno END) AS nombre_usuario,"
-                    + "(CASE WHEN gral_puestos.titulo IS NULL THEN '' ELSE gral_puestos.titulo END) AS puesto_usuario "
+                    + "(CASE WHEN gral_puestos.titulo IS NULL THEN '' ELSE gral_puestos.titulo END) AS puesto_usuario, "
+                    + "(CASE WHEN gral_empleados.correo_empresa IS NULL THEN '' ELSE gral_empleados.correo_empresa END) AS correo_agente "
                 + "FROM poc_cot "
                 + "LEFT JOIN gral_usr ON gral_usr.id=poc_cot.gral_usr_id_creacion "
                 + "LEFT JOIN  gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
@@ -1718,6 +1719,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("agente_id",String.valueOf(rs.getInt("cxc_agen_id")));
                     row.put("nombre_usuario",rs.getString("nombre_usuario"));
                     row.put("puesto_usuario",rs.getString("puesto_usuario"));
+                    row.put("correo_agente",rs.getString("correo_agente"));
                     
                     return row;
                 }
@@ -1957,6 +1959,68 @@ public class PocSpringDao implements PocInterfaceDao{
     }
     
     
+    //obtener SALUDO
+    @Override
+    public HashMap<String, String> getCotizacion_Saludo(Integer id_empresa) {
+        HashMap<String, String> retorno = new HashMap<String, String>();
+        String sql_busqueda = "SELECT count(id) FROM poc_cot_saludo_despedida WHERE tipo='SALUDO' AND status=true AND gral_emp_id="+id_empresa;
+        
+        int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
+        
+        if(rowCount > 0){
+            String sql_to_query = "SELECT titulo FROM poc_cot_saludo_despedida WHERE tipo='SALUDO' AND status=true AND gral_emp_id="+id_empresa;
+            HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
+                sql_to_query, 
+                new Object[]{}, new RowMapper() {
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        HashMap<String, String> row = new HashMap<String, String>();
+                        row.put("saludo",rs.getString("titulo"));
+                        return row;
+                    }
+                }
+            );
+            
+            retorno=hm;
+        }else{
+            retorno.put("saludo", "");
+        }
+        
+        return retorno; 
+    }
+    
+    //obtener DESPEDIDA
+    @Override
+    public HashMap<String, String> getCotizacion_Despedida(Integer id_empresa) {
+        HashMap<String, String> retorno = new HashMap<String, String>();
+        String sql_busqueda = "SELECT count(id) FROM poc_cot_saludo_despedida WHERE tipo='DESPEDIDA' AND status=true AND gral_emp_id="+id_empresa;
+        
+        int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
+        
+        if(rowCount > 0){
+            String sql_to_query = "SELECT titulo FROM poc_cot_saludo_despedida WHERE tipo='DESPEDIDA' AND status=true AND gral_emp_id="+id_empresa;
+            HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
+                sql_to_query, 
+                new Object[]{}, new RowMapper() {
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        HashMap<String, String> row = new HashMap<String, String>();
+                        row.put("despedida",rs.getString("titulo"));
+                        return row;
+                    }
+                }
+            );
+            
+            retorno=hm;
+        }else{
+            retorno.put("despedida", "");
+        }
+        
+        return retorno; 
+    }
+    
+
+    
     
     //metodos para Actualizador de Saludo y Despedida para Cotizaciones-----------------------------------------------------------------
     @Override
@@ -1966,7 +2030,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "SELECT "
                     + "poc_cot_saludo_despedida.id, "
                     + "poc_cot_saludo_despedida.tipo, "
-                    + "poc_cot_saludo_despedida.titulo "
+                    + "poc_cot_saludo_despedida.titulo, "
+                    + "(CASE WHEN status=TRUE THEN 'Activo' ELSE 'Inactivo' END ) AS status "
                 + "FROM poc_cot_saludo_despedida "
                 + "JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot_saludo_despedida.id "
                 + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -1981,6 +2046,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("id",rs.getInt("id"));
                     row.put("tipo",rs.getString("tipo"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("status",rs.getString("status"));
                     return row;
                 }
             }
@@ -1997,7 +2063,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "SELECT "
                     + "id, "
                     + "tipo, "
-                    + "titulo "
+                    + "titulo,"
+                    + "(CASE WHEN status=TRUE THEN 1 ELSE 2 END ) AS status "
                 + "FROM poc_cot_saludo_despedida "
                 + " WHERE poc_cot_saludo_despedida.id=? ";
         
@@ -2010,6 +2077,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("tipo",rs.getString("tipo"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("status",String.valueOf(rs.getInt("status")));
                     return row;
                 }
             }

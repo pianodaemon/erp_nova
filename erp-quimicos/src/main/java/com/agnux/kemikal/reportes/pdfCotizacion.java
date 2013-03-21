@@ -56,6 +56,9 @@ public class pdfCotizacion {
     private String observaciones;
     private String nombreUsuario;
     private String puestoUsuario;
+    private String correo_agente;
+    private String saludo;
+    private String despedida;
 
     private String emisorRazonSocial;
     private String emisorRfc;
@@ -100,7 +103,9 @@ public class pdfCotizacion {
         this.setIncluyeImgDesc(datos.get("img_desc"));
         this.setPuestoUsuario(datos.get("puesto_usuario"));
         this.setNombreUsuario(datos.get("nombre_usuario"));
-        
+        this.setCorreo_agente(datos.get("correo_agente"));
+        this.setSaludo(datos.get("saludo"));
+        this.setDespedida(datos.get("despedida"));
         
         this.setEmisorCalle(datosEmisor.get("emp_calle"));
         this.setEmisorColonia(datosEmisor.get("emp_colonia"));
@@ -139,6 +144,8 @@ public class pdfCotizacion {
             
             Document document;
             PdfPTable tablaHeader;
+            PdfPTable tablaSaludo;
+            PdfPTable tablaDespedida;
             PdfPTable tablaPartidas;
             PdfPCell cell;
             Iterator it;
@@ -188,6 +195,7 @@ public class pdfCotizacion {
             
             cell = new PdfPCell(cepdf.addContent(cadena));
             cell.setBorder(0);
+            //cell.setBorderWidth(1);
             cell.setRowspan(9);
             tablaHeader.addCell(cell);
             
@@ -210,10 +218,20 @@ public class pdfCotizacion {
                     "R.F.C.: " + StringHelper.capitalizaString(this.getEmisorRfc())+"\n"+
                     this.getEmisorPaginaWeb(), smallFont));
             cell.setBorder(0);
+            //cell.setBorderWidth(1);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setRowspan(7);
             tablaHeader.addCell(cell);
+            
+            //aqui hay que agregar nueva fila
+            
+            
+            
+            
+            
+            
+            
             
             
             //tabla donde va los datos del cliente
@@ -244,17 +262,22 @@ public class pdfCotizacion {
             //FILA 1
             cell = new PdfPCell(new Paragraph(etiqueta_tipo,smallBoldFontBlack));
             cell.setBorder(0);
+            //cell.setBorderWidth(1);
             cell.setRightIndent(10);
             tableHelper.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("",smallBoldFontBlack));
             cell.setBorder(0);
+            //cell.setBorderWidth(1);
             cell.setRightIndent(10);
             tableHelper.addCell(cell);
+            
+            
             
             //FILA 2
             cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(cadena_datos), smallFont));
             cell.setBorder(0);
+            //cell.setBorderWidth(1);
             cell.setRowspan(2);
             cell.setRightIndent(10);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
@@ -263,25 +286,45 @@ public class pdfCotizacion {
             
             cell = new PdfPCell(new Paragraph("CONTACTO:",smallFont));
             cell.setBorder(0);
+            //cell.setBorderWidth(1);
             cell.setRightIndent(10);
             tableHelper.addCell(cell);
             
             //FILA 3
             cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(this.getClieContacto()), smallFont));
             cell.setBorder(0);
+            //cell.setBorderWidth(1);
             cell.setRightIndent(10);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             tableHelper.addCell(cell);
-
+            
             
             cell = new PdfPCell(tableHelper);
             cell.setBorder(0);
+            //cell.setBorderWidth(1);
             cell.setColspan(3);
             tablaHeader.addCell(cell);
             
             tablaHeader.setSpacingAfter(10f);
             document.add(tablaHeader);
             //AQUI TERMINA LA TABLA HEADER--------------------------------------------------
+            
+            
+            if( !this.getSaludo().equals("") ){
+                //tabla el SALUDO
+                tablaSaludo = new PdfPTable(1);
+                
+                cell = new PdfPCell(new Paragraph(this.getSaludo(), smallFont));
+                cell.setBorder(0);
+                cell.setRightIndent(10);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                tablaSaludo.addCell(cell);
+                
+                tablaSaludo.setSpacingAfter(10f);
+                document.add(tablaSaludo);
+            }
+            
+            
             
             float [] medidas;
             
@@ -484,12 +527,13 @@ public class pdfCotizacion {
                 cell.setBorder(0);
                 tableObser.addCell(cell);
                 */
-                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getObservaciones())+"\n\n", smallFont));
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getObservaciones()), smallFont));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setBorder(0);
                 tableObser.addCell(cell);
                 
+                tableObser.setSpacingAfter(15f);
                 document.add(tableObser);
             }
             
@@ -506,7 +550,7 @@ public class pdfCotizacion {
                     String condicion = esteAtributoSeDejoNulo(map.get("descripcion"));
                     
                     if(condicion.split(":")[0].trim().toUpperCase().equals("NOTA")){
-                        condicion += "\n";
+                        condicion += "";
                         cell = new PdfPCell(new Paragraph(condicion, smallFont));
                         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -527,22 +571,23 @@ public class pdfCotizacion {
                         tableCondicionesComerciales.addCell(cell);
                     }
                     
-
                 }
+                tableCondicionesComerciales.setSpacingAfter(10f);
                 document.add(tableCondicionesComerciales);
             }
             
             if (this.getPoliticas_pago().size() > 0){
                 //tabla para las observaciones
                 PdfPTable tablePoliticasPago = new PdfPTable(widths3);
-                
+                /*
                 //fila vacia
-                cell = new PdfPCell(new Paragraph("\n", smallBoldFontBlack));
+                cell = new PdfPCell(new Paragraph("", smallBoldFontBlack));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setBorder(0);
                 cell.setColspan(2);
                 tablePoliticasPago.addCell(cell);
+                */
                 
                 cell = new PdfPCell(new Paragraph("POLITICAS DE PAGO\n", smallBoldFontBlack));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -569,16 +614,25 @@ public class pdfCotizacion {
                     cell.setBorder(0);
                     tablePoliticasPago.addCell(cell);
                 }
+                tablePoliticasPago.setSpacingAfter(10f);
                 document.add(tablePoliticasPago);
             }
             
             
             
             
-            
-            
-            
-            
+            if( !this.getDespedida().equals("") ){
+                //tabla el DESPEDIDA
+                tablaDespedida = new PdfPTable(1);
+                
+                cell = new PdfPCell(new Paragraph(this.getDespedida(), smallFont));
+                cell.setBorder(0);
+                cell.setRightIndent(10);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                tablaDespedida.addCell(cell);
+                
+                document.add(tablaDespedida);
+            }
             
             //tabla para datos de quien lo Elaboró
             PdfPTable tableElaboro = new PdfPTable(1);
@@ -605,6 +659,12 @@ public class pdfCotizacion {
             tableElaboro.addCell(cell);
             
             cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getPuestoUsuario()), smallFontBold));
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            tableElaboro.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getCorreo_agente()), smallFont));
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
@@ -1185,4 +1245,30 @@ public class pdfCotizacion {
     public void setEmisorTelefono(String emisorTelefono) {
         this.emisorTelefono = emisorTelefono;
     }
+    
+
+    public String getDespedida() {
+        return despedida;
+    }
+
+    public void setDespedida(String despedida) {
+        this.despedida = despedida;
+    }
+
+    public String getSaludo() {
+        return saludo;
+    }
+
+    public void setSaludo(String saludo) {
+        this.saludo = saludo;
+    }
+    
+    public String getCorreo_agente() {
+        return correo_agente;
+    }
+
+    public void setCorreo_agente(String correo_agente) {
+        this.correo_agente = correo_agente;
+    }
+    
 }

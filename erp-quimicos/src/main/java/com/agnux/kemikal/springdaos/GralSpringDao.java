@@ -955,11 +955,15 @@ public class GralSpringDao implements GralInterfaceDao{
                             +"gral_empleados.dias_tope_comision, "
                             +"gral_empleados.dias_tope_comision2, "
                             +"gral_empleados.dias_tope_comision3, "
-                            +"gral_empleados.tipo_comision "
+                            +"gral_empleados.monto_tope_comision, "
+                            +"gral_empleados.monto_tope_comision2, "
+                            +"gral_empleados.monto_tope_comision3, "
+                            +"gral_empleados.tipo_comision,"
+                            + "gral_empleados.correo_empresa "
                             +"FROM gral_empleados "
                             +"LEFT JOIN  gral_usr on gral_usr.gral_empleados_id=gral_empleados.id "
                             +"WHERE gral_empleados.borrado_logico=false AND gral_empleados.id=?;";
-
+        
         System.out.println("Ejecutando query getEmpleado:"+ sql_query);
         System.out.println("Obteniendo datos del empleado: "+id);
 
@@ -1007,16 +1011,19 @@ public class GralSpringDao implements GralInterfaceDao{
                     row.put("password",rs.getString("password"));
                     row.put("enabled",String.valueOf(rs.getBoolean("enabled")));
                     row.put("id_usuario",rs.getInt("id_usuario"));
-                    row.put("comision_agen",rs.getDouble("comision_agen"));
                     row.put("region_id_agen",rs.getInt("region_id_agen"));
-                    row.put("comision2_agen",rs.getDouble("comision2_agen"));
-                    row.put("comision3_agen",rs.getDouble("comision3_agen"));
-                    row.put("comision4_agen",rs.getDouble("comision4_agen"));
-                    row.put("dias_tope_comision",rs.getDouble("dias_tope_comision"));
-                    row.put("dias_tope_comision2",rs.getDouble("dias_tope_comision2"));
-                    row.put("dias_tope_comision3",rs.getDouble("dias_tope_comision3"));
-
+                    row.put("comision_agen",StringHelper.roundDouble(rs.getDouble("comision_agen"),2));
+                    row.put("comision2_agen",StringHelper.roundDouble(rs.getDouble("comision2_agen"),2));
+                    row.put("comision3_agen",StringHelper.roundDouble(rs.getDouble("comision3_agen"),2));
+                    row.put("comision4_agen",StringHelper.roundDouble(rs.getDouble("comision4_agen"),2));
+                    row.put("dias_tope_comision",StringHelper.roundDouble(rs.getDouble("dias_tope_comision"),2));
+                    row.put("dias_tope_comision2",StringHelper.roundDouble(rs.getDouble("dias_tope_comision2"),2));
+                    row.put("dias_tope_comision3",StringHelper.roundDouble(rs.getDouble("dias_tope_comision3"),2));
+                    row.put("monto_tope_comision",StringHelper.roundDouble(rs.getDouble("monto_tope_comision"),2));
+                    row.put("monto_tope_comision2",StringHelper.roundDouble(rs.getDouble("monto_tope_comision2"),2));
+                    row.put("monto_tope_comision3",StringHelper.roundDouble(rs.getDouble("monto_tope_comision3"),2));
                     row.put("tipo_comision",rs.getInt("tipo_comision"));
+                    row.put("correo_empresa",rs.getString("correo_empresa"));
                     return row;
                 }
             }

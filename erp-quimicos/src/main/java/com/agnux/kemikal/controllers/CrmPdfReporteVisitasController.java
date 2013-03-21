@@ -10,14 +10,11 @@ public class CrmPdfReporteVisitasController {
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
-import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CrmInterfaceDao;
-import com.agnux.kemikal.interfacedaos.PocInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.reportes.PdfReportedePedidos;
 import com.agnux.kemikal.reportes.Pdf_CRM_registroVisitas;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;

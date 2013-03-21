@@ -296,7 +296,6 @@ public class EmpleadosController {
             @RequestParam(value="identificador_empleado", required=true) Integer id_empleado,
             //@RequestParam(value="empleado_id", required=true) Integer empleado_id,
             @RequestParam(value="nombre", required=true) String nombre,
-
             @RequestParam(value="appaterno", required=true) String appaterno,
             @RequestParam(value="apmaterno", required=true) String apmaterno,
             @RequestParam(value="imss", required=true) String imss,
@@ -341,18 +340,16 @@ public class EmpleadosController {
             @RequestParam(value="dias_comision",required=true)String dias_comision_agen,
             @RequestParam(value="dias_comision2",required=true)String dias_comision_agen2,
             @RequestParam(value="dias_comision3",required=true)String dias_comision_agen3,
-
             @RequestParam(value="tipo_comision",required=true)Integer tipo_comision,
-            @RequestParam(value="monto_comision",required=true)Double monto_comision_agen,
-            @RequestParam(value="monto_comision2",required=true)Double monto_comision_agen2,
-            @RequestParam(value="monto_comision3",required=true)Double monto_comision_agen3,
-
-
+            @RequestParam(value="monto_comision",required=true)String monto_comision_agen,
+            @RequestParam(value="monto_comision2",required=true)String monto_comision_agen2,
+            @RequestParam(value="monto_comision3",required=true)String monto_comision_agen3,
             @RequestParam(value="region",required=true)String region_agen,
+            @RequestParam(value="correo_institucional",required=true)String correo_institucional,
             Model model,@ModelAttribute("user") UserSessionData user
-            ) {
-            System.out.print("Verifica si entra la deshabilitacion"+verifica_acceso);
-            System.out.print("Verificando si se envian"+nombre+appaterno);
+        ) {
+            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            HashMap<String, String> succes = new HashMap<String, String>();
             Integer app_selected = 4;
             String command_selected = "new";
             Integer id_usuario= user.getUserId();//variable para el id  del usuario
@@ -360,13 +357,13 @@ public class EmpleadosController {
             String extra_data_array ="";
             String actualizo = "0";
             int contador=0;
-
+            
             for (int i=0; i<seleccionado.length; i++){
                 if(seleccionado[i].equals("1")){
                      contador++;
                 }
             }
-
+            
             arreglo = new String[contador];
             int contador2=0;
             for(int i=0;i<seleccionado.length;i++){
@@ -380,19 +377,23 @@ public class EmpleadosController {
             //serializar el arreglo
             extra_data_array = StringUtils.join(arreglo, ",");
 
-
-            HashMap<String, String> jsonretorno = new HashMap<String, String>();
-
-            HashMap<String, String> succes = new HashMap<String, String>();
-
             if( id_empleado == 0 ){
                 command_selected = "new";
             }else{
                 command_selected = "edit";
             }
-
-            System.out.print("Esta imprimiento esto :"+" "+extra_data_array);
-
+            
+            comision_agen = StringHelper.removerComas(comision_agen);
+            comision_agen2 = StringHelper.removerComas(comision_agen2);
+            comision_agen3 = StringHelper.removerComas(comision_agen3);
+            comision_agen4 = StringHelper.removerComas(comision_agen4);
+            dias_comision_agen = StringHelper.removerComas(dias_comision_agen);
+            dias_comision_agen2 = StringHelper.removerComas(dias_comision_agen2);
+            dias_comision_agen3 = StringHelper.removerComas(dias_comision_agen3);
+            monto_comision_agen = StringHelper.removerComas(monto_comision_agen);
+            monto_comision_agen2 = StringHelper.removerComas(monto_comision_agen2);
+            monto_comision_agen3 = StringHelper.removerComas(monto_comision_agen3);
+            
             String data_string =
             app_selected //1
             +"___"+command_selected//2
@@ -445,12 +446,9 @@ public class EmpleadosController {
             +"___"+tipo_comision //49
             +"___"+monto_comision_agen//50
             +"___"+monto_comision_agen2//51
-            +"___"+monto_comision_agen3;//52
-
-
-
-
-
+            +"___"+monto_comision_agen3//52
+            +"___"+correo_institucional;//53
+            
             System.out.println("data_string: "+data_string);
 
             succes = this.getGralDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);

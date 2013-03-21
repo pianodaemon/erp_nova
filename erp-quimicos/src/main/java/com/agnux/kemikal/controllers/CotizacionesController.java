@@ -626,6 +626,8 @@ public class CotizacionesController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> HeaderFooter = new HashMap<String, String>();
         HashMap<String, String> datos = new HashMap<String, String>();
+        HashMap<String, String> saludo = new HashMap<String, String>();
+        HashMap<String, String> despedida = new HashMap<String, String>();
         HashMap<String, String> datosEmisor = new HashMap<String, String>();
         HashMap<String, String> datosReceptor = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosCotizacion = new ArrayList<HashMap<String, String>>();
@@ -682,6 +684,13 @@ public class CotizacionesController {
         HeaderFooter.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
         
         datosCotizacion = this.getPocDao().getCotizacion_Datos(id_cotizacion);
+        saludo = this.getPocDao().getCotizacion_Saludo(id_empresa);
+        despedida = this.getPocDao().getCotizacion_Despedida(id_empresa);
+        //obtiene las condiciones comerciales para la cotizacion
+        condiciones_comerciales = this.getPocDao().getCotizacion_CondicionesComerciales(id_empresa);
+        //obtiene las politicas de pago para la cotizacion
+        politicas_pago = this.getPocDao().getCotizacion_PolitizasPago(id_empresa);
+        
         lista_productos = this.getPocDao().getCotizacion_DatosGrid(id_cotizacion);
         datos.put("ruta_logo", rutaLogoEmpresa);
         datos.put("file_out", fileout);
@@ -694,6 +703,9 @@ public class CotizacionesController {
         datos.put("img_desc", incluye_img);
         datos.put("nombre_usuario", datosCotizacion.get(0).get("nombre_usuario"));
         datos.put("puesto_usuario", datosCotizacion.get(0).get("puesto_usuario"));
+        datos.put("correo_agente", datosCotizacion.get(0).get("correo_agente"));
+        datos.put("saludo", saludo.get("saludo"));
+        datos.put("despedida", despedida.get("despedida"));
         
         if(datosCotizacion.get(0).get("tipo").equals("1")){
             datosCliPros = this.getPocDao().getCotizacion_DatosCliente(id_cotizacion);
@@ -712,13 +724,7 @@ public class CotizacionesController {
         datosReceptor.put("clieRfc", datosCliPros.get(0).get("rfc"));
         datosReceptor.put("clieContacto", datosCliPros.get(0).get("contacto"));
         datosReceptor.put("clieRazonSocial", datosCliPros.get(0).get("razon_social"));
-        
-        //obtiene las condiciones comerciales para la cotizacion
-        condiciones_comerciales = this.getPocDao().getCotizacion_CondicionesComerciales(id_empresa);
-        //obtiene las politicas de pago para la cotizacion
-        politicas_pago = this.getPocDao().getCotizacion_PolitizasPago(id_empresa);
-        
-        
+                
         pdfCotizacion pdf = new pdfCotizacion(HeaderFooter, datosEmisor, datos,datosReceptor,lista_productos, condiciones_comerciales, politicas_pago);
         pdf.ViewPDF();
         

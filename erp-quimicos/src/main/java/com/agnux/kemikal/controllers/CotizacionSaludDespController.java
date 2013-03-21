@@ -67,14 +67,14 @@ public class CotizacionSaludDespController {
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
             @ModelAttribute("user") UserSessionData user
-            )throws ServletException, IOException {
+        )throws ServletException, IOException {
         
         log.log(Level.INFO, "Ejecutando starUp de {0}", CotizacionSaludDespController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:70");
         infoConstruccionTabla.put("tipo", "Campo:100");
         infoConstruccionTabla.put("titulo", "Titulo:450");
-        
+        infoConstruccionTabla.put("status", "Estatus:90");
         
         ModelAndView x = new ModelAndView("cotizacionsaludodesp/startup", "title", "Actializador de Saludo y Despedida");
         x = x.addObject("layoutheader", resource.getLayoutheader());
@@ -177,6 +177,7 @@ public class CotizacionSaludDespController {
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) Integer id,
             @RequestParam(value="titulo", required=true) String titulo,
+            @RequestParam(value="select_status", required=true) String select_status,
             @ModelAttribute("user") UserSessionData user,
             Model model
         ) {
@@ -190,16 +191,20 @@ public class CotizacionSaludDespController {
         
         String extra_data_array = "'sin datos'";
         String actualizo = "0";
-        
-        
         command_selected = "edit";
-       
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo;
+        
+        if(select_status.equals("1")){
+            select_status="true";
+        }else{
+            select_status="false";
+        }
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo+"___"+select_status;
         
         succes = this.getGralDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
         if( String.valueOf(succes.get("success")).equals("true") ){
-            actualizo = this.getGralDao().selectFunctionForThisApp(data_string, extra_data_array);
+            actualizo = this.getPocDao().selectFunctionForThisApp(data_string, extra_data_array);
         }
         
         jsonretorno.put("success",String.valueOf(succes.get("success")));
