@@ -7,6 +7,12 @@ $(function() {
 	    return work.join(',');
 	};
 	
+    //arreglo para select status
+    var arrayStatus = {
+				1:"Activo", 
+				2:"Inactivo"
+			};
+			
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
     var $username = $('#header').find('#header1').find('span.username');
@@ -14,44 +20,15 @@ $(function() {
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
 	var controller = $contextpath.val()+"/controllers/cotizacionsaludodesp";
-    
-    //Barra para las acciones
-    $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
-    $('#barra_acciones').find('.table_acciones').css({'display':'block'});
-	
-	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
-	
-	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
-		$(this).removeClass("onmouseOutNewItem").addClass("onmouseOverNewItem");
-	});
-	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseout(function(){
-		$(this).removeClass("onmouseOverNewItem").addClass("onmouseOutNewItem");
-	});
-	
-	$('#barra_acciones').find('.table_acciones').find('#vbuscador').mouseover(function(){
-		$(this).removeClass("onmouseOutVisualizaBuscador").addClass("onmouseOverVisualizaBuscador");
-	});
-	$('#barra_acciones').find('.table_acciones').find('#vbuscador').mouseout(function(){
-		$(this).removeClass("onmouseOverVisualizaBuscador").addClass("onmouseOutVisualizaBuscador");
-	});
-	
 	
 	//aqui va el titulo del catalogo
 	$('#barra_titulo').find('#td_titulo').append('Edici&oacute;n de Saludo y Despedida');
 	
-	//barra para el buscador 
-	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
-	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
     $('#barra_acciones').hide();
     $('#barra_buscador').hide();
     
     
 	var $cadena_busqueda = "";
-	var $busqueda_titulo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_titulo]');
-	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
-	var $limbuscarpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
-	
-	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
@@ -62,14 +39,6 @@ $(function() {
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
 	//$cadena_busqueda = cadena;
-	
-	$buscar.click(function(event){
-		event.preventDefault();
-		cadena = to_make_one_search_string();
-		$cadena_busqueda = cadena.toCharCode();
-		$get_datos_grid();
-	});
-	
 	
 	$tabs_li_funxionalidad = function(){
 		$('#forma-cotizacionsaludodesp-window').find('#submit').mouseover(function(){
@@ -120,7 +89,7 @@ $(function() {
 		
 		$(this).modalPanel_cotizacionsaludodesp();
 					
-		$('#forma-cotizacionsaludodesp-window').css({"margin-left": -400, 	"margin-top": -200});
+		$('#forma-cotizacionsaludodesp-window').css({"margin-left": -420, 	"margin-top": -200});
 		$forma_selected.prependTo('#forma-cotizacionsaludodesp-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
@@ -128,7 +97,8 @@ $(function() {
 		//campos de la vista
 		var $identificador = $('#forma-cotizacionsaludodesp-window').find('input[name=identificador]'); 
 		var $tipo= $('#forma-cotizacionsaludodesp-window').find('input[name=tipo]');
-		var $titulo = $('#forma-pocpedidos-window').find('textarea[name=titulo]');
+		var $titulo = $('#forma-cotizacionsaludodesp-window').find('textarea[name=titulo]');
+		var $select_status = $('#forma-cotizacionsaludodesp-window').find('select[name=select_status]');
 		
 		//alert($titulo.val());
 		//botones                        
@@ -175,12 +145,25 @@ $(function() {
 			
 			//aqui se cargan los campos al editar
 			$.post(input_json,$arreglo,function(entry){
-			// aqui van los campos de editar
+				$('#forma-cotizacionsaludodesp-window').find('#titulo_pestana').text(entry['Datos']['0']['tipo']); 
+				
+				//carga select de Status
+				$select_status.children().remove();
+				var status_html = '';
+				for(var i in arrayStatus){
+					if(parseInt(i)==parseInt(entry['Datos']['0']['status'])){
+						status_html += '<option value="' + i + '" selected="yes">' + arrayStatus[i] + '</option>';
+					}else{
+						status_html += '<option value="' + i + '" >' + arrayStatus[i] + '</option>';
+					}
+				}
+				$select_status.append(status_html);
+				
+				// aqui van los campos de editar
 				$identificador.attr({'value' : entry['Datos']['0']['id']});
 				$tipo.attr({'value':entry['Datos']['0']['tipo']});
 				$titulo.text(entry['Datos']['0']['titulo']);
-			 },"json");//termina llamada json
-			
+			},"json");//termina llamada json
 			
 			
 			//Ligamos el boton cancelar al evento click para eliminar la forma
@@ -194,12 +177,13 @@ $(function() {
 				$('#forma-cotizacionsaludodesp-overlay').fadeOut(remove);
 				$buscar.trigger('click');
 			});
-							
 			
+			$titulo.focus();
 		}
 		
 	}
-               
+	
+	
    $get_datos_grid = function(){
         var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllDatos.json';
 		
@@ -208,7 +192,6 @@ $(function() {
         $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllDatos.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
 		
         $.post(input_json,$arreglo,function(data){
-			
             //pinta_grid
             $.fn.tablaOrdenableEdit(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formaCC00_for_datagrid00);
 			
@@ -217,9 +200,6 @@ $(function() {
         },"json");
     }
     
-
     $get_datos_grid();
-    
-    
     
 });

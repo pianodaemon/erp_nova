@@ -7,12 +7,12 @@
 
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/empleados/formaEmpleados.css" type="text/css" />
-
-
+        
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/empleados/modalbox.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/empleados/modalboxDirconsignacion.js"></script>
+        <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         <script type="text/javascript" src="../../js/implements/empleados/index.js" ></script>
 
         #include("${layoutmenu}")
@@ -589,7 +589,6 @@
                                                         <td><SELECT NAME="permite" style="width:50;">
                                                             <!--<option value="0">SI</option>
                                                             <option value="1">NO</option>-->
-
                                                         </SELECT></td>
                                                         <td></td>
 
@@ -651,105 +650,78 @@
 
                                     <!-- ORGANIZACION -->
                                     <div id="tabx-5" class="contenidoPes" >
-                                            <table border="0">
-                                                    <tr>
-                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
-                                                    </tr>
-                                                   <tr>
-                                                        <td width="5"></td>
-                                                        <td width="55">Sucursal</td>
-                                                        <td width="5"></td>
-                                                        <td width="55"><SELECT NAME="sucursal" style="width:210px;"></SELECT></td>
-                                                        <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sucursal"></div></td>
-                                                        <td width="5"></td>
-                                                        <td width="55"></td>
-                                                        <td width="5"></td>
-                                                        <td width="55"></td>
-                                                        <td width="25"></td>
-                                                        <td width="55"></td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="5"></td>
-                                                        <td width="90">Puesto</td>
-                                                        <td width="5"></td>
-                                                        <td ><SELECT NAME="puesto" style="width:210px;"></SELECT></td>
-                                                        <td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_puesto"></div></td>
-                                                        <td width="5"></td>
-                                                        <td width="55">Categoria</td>
-                                                        <td width="5"></td>
-                                                        <td width="55"><SELECT name="categoria" style="width:210px;"></SELECT></td>
-                                                        <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_categoria"></div></td>
-                                                        <td width="55"></td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="5"></td>
-                                                        <td width="90"></td>
-                                                        <td width="5"></td>
-                                                        <td colspan="3"></td>
-                                                        <td width="45"></td>
-                                                        <td width="5"></td>
-                                                        <td width="55"></td>
-                                                        <td width="5"></td>
-                                                        <td width="55"></td>
-                                                        <td width="25"></td>
-                                                        <td width="55"></td>
-
-                                                    </tr>
-                                                     <tr>
-                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td width="5"></td>
-                                                        <td width="150">Comentarios</td>
-                                                        <td width="5"></td>
-                                                        <td colspan="3"><textarea name="comentarios" rows="2" cols="60" style="width:355px; resize: none;"></textarea></td>
-                                                        <td width="45"></td>
-                                                        <td width="5"></td>
-                                                        <td ></td>
-                                                        <td></td>
-                                                        <td ></td>
-                                                        <td ></td>
-                                                        <td ></td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
-                                                    </tr>
-                                                    <tr>
-
-                                                    <tr>
-                                                        <td width="5"></td>
-                                                        <td width="150"></td>
-                                                        <td width="5"></td>
-                                                        <td colspan="3"></td>
-                                                        <td width="45"></td>
-                                                        <td width="5"></td>
-                                                        <td ></td>
-                                                        <td></td>
-                                                        <td ></td>
-                                                        <td ></td>
-                                                        <td ></td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td width="5" height="7" colspan="17">&nbsp;</td>
-                                                    </tr>
-                                            </table>
+										<table border="0">
+											<tr>
+												<td width="5">&nbsp;</td>
+												<td width="50"></td>
+												<td width="210"></td>
+												<td width="25"></td>
+												<td width="55"></td>
+												<td width="100"></td>
+												<td width="250"></td>
+												<td width="25"></td>
+											</tr>
+										   <tr>
+												<td width="5"></td>
+												<td width="50">Sucursal</td>
+												<td width="210"><SELECT NAME="sucursal" style="width:210px;"></SELECT></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sucursal"></div></td>
+												<td width="55"></td>
+												<td width="100">Correo institucional</td>
+												<td width="250"><input type="text" name="correo_institucional" style="width:250px;" ></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_correoinst"></div></td>
+											</tr>
+											<tr>
+												<td width="5">&nbsp;</td>
+												<td width="50"></td>
+												<td width="210"></td>
+												<td width="25"></td>
+												<td width="55"></td>
+												<td width="100"></td>
+												<td width="250"></td>
+												<td width="25"></td>
+											</tr>
+											<tr>
+												<td width="5"></td>
+												<td width="50">Puesto</td>
+												<td width="210"><select name="puesto" style="width:210px;"></select></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_puesto"></div></td>
+												<td width="55"></td>
+												<td width="100">Comentarios</td>
+												<td width="250" rowspan="3"><textarea name="comentarios" rows="2" cols="60" style="width:250px; resize: none;"></textarea></td>
+												<td width="25"></td>
+											</tr>
+											<tr>
+												<td width="5">&nbsp;</td>
+												<td width="50"></td>
+												<td width="210"></td>
+												<td width="25"></td>
+												<td width="55"></td>
+												<td width="100"></td>
+												<!--<td width="250"></td>-->
+												<td width="25"></td>
+											</tr>
+											<tr>
+												<td width="5"></td>
+												<td width="50">Categoria</td>
+												<td width="210"><select name="categoria" style="width:210px;"></select></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_categoria"></div></td>
+												<td width="55"></td>
+												<td width="100"></td>
+												<!--<td width="250"></td>-->
+												<td width="25"></td>
+											</tr>
+											<tr>
+												<td width="5">&nbsp;</td>
+												<td width="50"></td>
+												<td width="210"></td>
+												<td width="25"></td>
+												<td width="55"></td>
+												<td width="100"></td>
+												<td width="250"></td>
+												<td width="25"></td>
+											</tr>
+										</table>
                                     </div>
 
                                     <!-- Agentes -->
@@ -763,7 +735,7 @@
                                                         <td width="55">Comisi&oacute;n</td>
                                                         <td width="5"></td>
                                                          <td width="25">
-                                                            <INPUT TYPE="text" name="comision" style="width:125px">
+                                                            <INPUT TYPE="text" name="comision" style="width:125px" maxlength="6">
                                                         </td>
                                                         <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_comision"></div></td>
                                                         <td width="5"></td>
@@ -794,18 +766,18 @@
                                                         <td width="5">&nbsp;</td>
                                                         <td width="90">Comisi&oacute;n&nbsp;2</td>
                                                         <td width="5"></td>
-                                                        <td><INPUT TYPE="text" name="comision2" style="width:90px"></td>
+                                                        <td><INPUT TYPE="text" name="comision2" style="width:90px" maxlength="6"></td>
                                                         <td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_comision2"></div></td>
                                                         <td >&nbsp;</td>
                                                         <td width="55">Comisi&oacute;n&nbsp;3</td>
                                                         <td >&nbsp;</td>
-                                                        <td width="55"><INPUT TYPE="text" name="comision3" style="width:90px"</td>
+                                                        <td width="55"><INPUT TYPE="text" name="comision3" style="width:90px" maxlength="6"></td>
                                                         <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_comision3"></div></td>
 
                                                         <td >&nbsp;</td>
                                                         <td width="65">Comisi&oacute;n&nbsp;4</td>
                                                         <td >&nbsp;</td>
-                                                        <td width="55"><INPUT TYPE="text" name="comision4" style="width:90px"</td>
+                                                        <td width="55"><INPUT TYPE="text" name="comision4" style="width:90px" maxlength="6"></td>
                                                         <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_comision4"></div></td>
                                                         <td >&nbsp;</td>
                                                         <td >&nbsp;</td>
@@ -821,38 +793,38 @@
                                                         <td width="5">&nbsp;</td>
                                                         <td width="90">Dias&nbsp;Comisi&oacute;n </td>
                                                         <td width="5">&nbsp;</td>
-                                                        <td ><INPUT TYPE="text" name="dias_comision" style="width:50px"></td>
+                                                        <td ><INPUT TYPE="text" name="dias_comision" style="width:90px" maxlength="6"></td>
                                                         <td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_dcomision"></div></td>
                                                         <td width="5">&nbsp;</td>
                                                         <td width="90">Dias&nbsp;Comisi&oacute;n&nbsp;2</td>
                                                         <td>&nbsp;</td>
-                                                        <td width="55"><INPUT TYPE="text" name="dias_comision2" style="width:50px"></td>
+                                                        <td width="55"><INPUT TYPE="text" name="dias_comision2" style="width:90px" maxlength="6"></td>
                                                         <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_dcomision2"></div></td>
                                                         <td>&nbsp;</td>
 
                                                         <td width="95">Dias&nbsp;Comisi&oacute;n&nbsp;3</td>
                                                         <td width="5"></td>
-                                                        <td width="55"><INPUT TYPE="text" name="dias_comision3" style="width:50px"></td>
+                                                        <td width="55"><INPUT TYPE="text" name="dias_comision3" style="width:90px" maxlength="6"></td>
                                                         <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_dcomision3"></div></td>
                                                         <td>&nbsp;</td>
                                                        <td>&nbsp;</td>
                                                     </tr>
-
+													
                                                     <tr id="montocomision">
                                                         <td width="5">&nbsp;</td>
                                                         <td width="90">Monto&nbsp;Comisi&oacute;n </td>
                                                         <td width="5">&nbsp;</td>
-                                                        <td ><INPUT TYPE="text" name="monto_comision" style="width:50px"></td>
+                                                        <td ><INPUT TYPE="text" name="monto_comision" style="width:90px" maxlength="12"></td>
                                                         <td width="10"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_mcomision"></div></td>
                                                         <td width="5">&nbsp;</td>
                                                         <td width="90">Monto&nbsp;Comisi&oacute;n&nbsp;2</td>
                                                         <td>&nbsp;</td>
-                                                        <td width="55"><INPUT TYPE="text" name="monto_comision2" style="width:50px"></td>
+                                                        <td width="55"><INPUT TYPE="text" name="monto_comision2" style="width:90px" maxlength="12"></td>
                                                         <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_mcomision2"></div></td>
                                                         <td>&nbsp;</td>
                                                         <td width="95">Monto&nbsp;Comisi&oacute;n&nbsp;3</td>
                                                         <td width="5"></td>
-                                                        <td width="55"><INPUT TYPE="text" name="monto_comision3" style="width:50px"></td>
+                                                        <td width="55"><INPUT TYPE="text" name="monto_comision3" style="width:90px" maxlength="12"></td>
                                                         <td width="15"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_mcomision3"></div></td>
                                                         <td>&nbsp;</td>
                                                         <td>&nbsp;</td>

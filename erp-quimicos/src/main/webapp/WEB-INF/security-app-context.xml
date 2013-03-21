@@ -103,7 +103,10 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_ACTUALIZA_PRECIOS,
         ROLE_PRO_FORMULAS_DESARROLLO,
         ROLE_PRO_SIMULACION_PRODUCCION,
-        ROLE_PRO_INSTRUMENTOS_MEDICION" />
+        ROLE_PRO_INSTRUMENTOS_MEDICION,
+        ROLE_COTIZACION_CONF_SALUDO_DESPEDIDA,
+        ROLE_PRO_REPORTE_PRODUCCION,
+        ROLE_CRM_REPORTE_VISITAS" />
         
         
         
@@ -142,6 +145,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/clientsdf/startup.agnux" access="ROLE_ADMIN,ROLE_DIR_FISCAL_CLIENTE" />
         <intercept-url pattern="/controllers/invcontrolcostos/startup.agnux" access="ROLE_ADMIN,ROLE_CONTROL_COSTOS" />
         <intercept-url pattern="/controllers/invactualizaprecios/startup.agnux" access="ROLE_ADMIN,ROLE_ACTUALIZA_PRECIOS" />
+        <intercept-url pattern="/controllers/cotizacionsaludodesp/startup.agnux" access="ROLE_ADMIN,ROLE_COTIZACION_CONF_SALUDO_DESPEDIDA" />
         
         <intercept-url pattern="/controllers/centrocostos/startup.agnux" access="ROLE_ADMIN,ROLE_CAT_CENTRO_COSTO" />
         <intercept-url pattern="/controllers/tipopolizas/startup.agnux" access="ROLE_ADMIN,ROLE_CAT_TIPO_POLIZA" />
@@ -168,6 +172,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/crmmetas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_REGISTRO_METAS" /><!--Luis-->
         <intercept-url pattern="/controllers/crmregistrocasos/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_REGISTRO_CASOS" /><!--Vale-->
         <intercept-url pattern="/controllers/crmconsultas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CONSULTAS" /><!--Paco-->
+        <intercept-url pattern="/controllers/crmreportevisitas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_REPORTE_VISITAS" /><!--Paco-->
+        
 
         
         
@@ -222,6 +228,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/proordensimulacion/startup.agnux" access="ROLE_ADMIN,ROLE_PRO_SIMULACION_PRODUCCION" />
         <intercept-url pattern="/controllers/proinstrumentosmedicion/startup.agnux" access="ROLE_ADMIN,ROLE_PRO_INSTRUMENTOS_MEDICION" />
         <intercept-url pattern="/controllers/protipoequipo/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_TIPO_EQUIPO" /><!--Ezequiel-->
+        <intercept-url pattern="/controllers/proreporteproduccion/startup.agnux" access="ROLE_ADMIN,ROLE_PRO_REPORTE_PRODUCCION" /><!--Vale-->
         
         
         <!--Paco, Noe-->
