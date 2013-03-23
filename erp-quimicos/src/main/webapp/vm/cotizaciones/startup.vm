@@ -17,6 +17,7 @@
         <script type="text/javascript" src="../../js/components/modalbox/cotizaciones/modalboxBuscacliente.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/cotizaciones/modalboxBuscapresentaciones.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/cotizaciones/modalboxBuscaproducto.js"></script>
+        <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         <script type="text/javascript" src="../../js/implements/cotizaciones/index.js" ></script>
         
         #include("${layoutmenu}")
@@ -66,7 +67,7 @@
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="70"><INPUT TYPE="text" name="busqueda_folio" style="width:70px;"></td>
+				<td width="70"><input type="text" name="busqueda_folio" style="width:70px;"></td>
 				<td width="5">&nbsp;</td>
 				<td id="td_tipo">
 					<select name="busqueda_select_tipo" style="width:90px;">
@@ -76,7 +77,7 @@
 					</select>
 				</td>
 				<td width="5">&nbsp;</td>
-				<td width="180"><INPUT TYPE="text" name="busqueda_cliente" style="width:180px;"></td>
+				<td width="180"><input type="text" name="busqueda_cliente" style="width:180px;"></td>
 				<td width="15"></td>
 				<td width="100"><input type="text" name="busqueda_codigo" style="width:100px;"></td>
 				<td width="15"></td>
@@ -89,14 +90,14 @@
 				</td>
 				<td width="20">&nbsp;</td>
 				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-				<td width="75"><INPUT TYPE="text" name="busqueda_fecha_inicial" style="width:75px;" readOnly="true"></td>
+				<td width="75"><input type="text" name="busqueda_fecha_inicial" style="width:75px;" readOnly="true"></td>
 				<td width="5">al</td>
 				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-				<td width="75"><INPUT TYPE="text" name="busqueda_fecha_final" style="width:75px;" readOnly="true"></td>
+				<td width="75"><input type="text" name="busqueda_fecha_final" style="width:75px;" readOnly="true"></td>
 				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="button" value="Buscar"></td>
+				<td><input type="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td ><INPUT TYPE="button" value="Limpiar"></td>
+				<td ><input type="button" value="Limpiar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 		</table>
@@ -122,7 +123,7 @@
                 <div id="div_one" class="panelcito_modal cotizacions_div_one"  style="display:none;" title="">
                 <input type="hidden" name="id_cotizacion">
                 <input type="hidden" name="total_tr">
-                
+                <input type="hidden" name="precio_ingresado" value="0">
                     <div id="div_two" title="" class="cotizacions_div_two">
                         <div class="columns on-2">
                             <div class="fixed column" id="titulo_plugin" style="width:1173px; padding-left:6px;"><strong>Cotizaciones</strong></div>
@@ -179,34 +180,40 @@
                                                                 <td width="10"></td>
                                                                 <td width="80">No.&nbsp;Control</td>
                                                                 <td width="80">
-                                                                    <INPUT TYPE="text" name="nocontrolcliente" style="width:80px;">
+                                                                    <input type="text" name="nocontrolcliente" style="width:80px;">
                                                                     <input type="hidden" name="id_cliente" value="">
                                                                     <input type="hidden" name="rfccliente" style="width:100px;">
                                                                     <input type="hidden" name="num_lista_precio" value="0">
                                                                 </td>
                                                                 <td width="20"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_rfccliente"></div></td>
                                                                 <td width="60"><a href="busca_cliente">(Buscar)</a></td>
-                                                                <td width="100" align="right" colspan="2">Folio&nbsp;Cotizaci&oacute;n&nbsp;</td>
-                                                                <!--<td width="20"></td>-->
-                                                                <td width="150" colspan="2"><input type="text" name="folio" style="width:80px;" readOnly="true"></td>
+                                                                <td width="60" align="right">Folio&nbsp;</td>
+                                                                <td width="60"><input type="text" name="folio" style="width:60px;" readOnly="true"></td>
+                                                                <td width="70" align="right"><span id="etiqueta_accion">Acci&oacute;n&nbsp;</span></td>
+                                                                <td width="80">
+                                                                    <select name="select_accion" style="width:80px;">
+																		<option value="update">Actualizar</option>
+																		<option value="new">Nuevo</option>
+                                                                    </select>
+                                                                </td>
                                                             </tr>
                                                             <tr><td colspan="9" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Razon&nbsp;social</td>
-                                                                <td colspan="7" width="430"><INPUT TYPE="text" name="razoncliente" style="width:430px;"></td>
+                                                                <td colspan="7" width="430"><input type="text" name="razoncliente" style="width:430px;"></td>
                                                             </tr>
                                                             <tr><td colspan="9" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Direcci&oacute;n</td>
-                                                                <td colspan="7" width="430"><INPUT TYPE="text" name="dircliente" style="width:430px;" readOnly="true"></td>
+                                                                <td colspan="7" width="430"><input type="text" name="dircliente" style="width:430px;" readOnly="true"></td>
                                                             </tr>
                                                             <tr><td colspan="9" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Contacto</td>
-                                                                <td colspan="7" width="430"><INPUT TYPE="text" name="contactocliente" style="width:430px;" readOnly="true"></td>
+                                                                <td colspan="7" width="430"><input type="text" name="contactocliente" style="width:430px;" readOnly="true"></td>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -217,19 +224,21 @@
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330" colspan="2">Observaciones</td>
+                                                                <td width="330" colspan="4">Observaciones</td>
                                                                 <td width="10"></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330"  colspan="2"><textarea name="observaciones" rows="4" cols="15" style="width:330px; resize:none;"></textarea></td>
+                                                                <td width="330"  colspan="4"><textarea name="observaciones" rows="4" cols="15" style="width:330px; resize:none;"></textarea></td>
                                                                 <td width="10"></td>
                                                             </tr>
                                                             <tr><td colspan="4" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="165">Incluir&nbsp;imagen&nbsp;y&nbsp;descripci&oacute;n&nbsp;larga</td>
-                                                                <td width="165"><input type="checkbox" name="check_descripcion_larga" ></td>
+                                                                <td width="45"><input type="checkbox" name="check_descripcion_larga" ></td>
+                                                                <td width="100">Incluir&nbsp;IVA&nbsp;y&nbsp;totales</td>
+                                                                <td width="20"><input type="checkbox" name="check_incluye_iva" ></td>
                                                                 <td width="10"></td>
                                                             </tr>
                                                         </table>
@@ -248,18 +257,23 @@
                                                                     <input type="hidden" name="id_impuesto" value="0">
                                                                     <input type="hidden" name="valorimpuesto" value="0">
                                                                 </td>
-                                                                <td width="50"></td>
+                                                                <td width="30"></td>
                                                                 <td width="60">Tipo&nbsp;Cambio</td>
-                                                                <td width="60"><input type="text" name="tc" value="0.0000" style="width:60px;" maxlength="8"></td>
-                                                                <td width="50"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_tc"></div></td>
+                                                                <td width="60">
+																	<input type="text" name="tc" value="0.0000" style="width:60px;" maxlength="8">
+																	<input type="text" name="tc_original" value="0.0000">
+																</td>
+                                                                <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_tc"></div></td>
                                                                 
-                                                                <td width="40">Fecha&nbsp;</td>
+                                                                <td width="35">Fecha&nbsp;</td>
                                                                 <td width="70"><input type="text" name="fecha" style="width:70px;" readOnly="true"></td>
-                                                                <td width="30"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_fecha"></div></td>
-                                                                
+                                                                <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_fecha"></div></td>
+                                                                <td width="48">Vigencia</td>
+                                                                <td width="30"><input type="text" name="vigencia" value="180" style="width:30px;" readOnly="true"></td>
+                                                                <td width="45">d&iacute;as</td>
                                                                 <td width="45">Agente</td>
-                                                                <td width="220"><select name="select_agente" style="width:220px;"></select></td>
-                                                                <td width="30"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_agente"></div></td>
+                                                                <td width="190"><select name="select_agente" style="width:190px;"></select></td>
+                                                                <td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_agente"></div></td>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -362,27 +376,25 @@
 
                                                     </td>
                                                     <td  width="260" align="right" valign="top" style="font-weight: bold;">
-														<!--
-                                                        <table border ="0" width="260">
-                                                            <!--<tr><td colspan="3" height="2"></td></tr>-->
-															<!--
+														
+                                                        <table border ="0" width="260" id="tabla_totales">
                                                             <tr>
                                                                 <td width="80"></td>
                                                                 <td width="60">Subtotal</td>
-                                                                <td width="120"><INPUT TYPE="text" name="subtotal" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                                <td width="120"><input type="text" name="subtotal" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="80"></td>
-                                                                <td width="60">Impuesto</td>
-                                                                <td width="120"><INPUT TYPE="text" name="impuesto" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                                <td width="60">I.V.A.</td>
+                                                                <td width="120"><input type="text" name="impuesto" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="80"></td>
                                                                 <td width="60">Total</td>
-                                                                <td width="120"><INPUT TYPE="text" name="total" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+                                                                <td width="120"><input type="text" name="total" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
                                                             </tr>
                                                         </table>
-                                                        -->
+                                                        
                                                     </td>
                                                 </tr>
 
@@ -464,12 +476,12 @@
 										</tr>
 										<tr>
 											<td width="50">Buscar</td>
-											<td width="245"><INPUT TYPE="text" name="cadena_buscar" style="width:245px;"></td>
+											<td width="245"><input type="text" name="cadena_buscar" style="width:245px;"></td>
 											<td width="25"></td>
 											<td width="60">Filtro por</td>
 											<td width="150"><SELECT NAME="filtropor" style="width:150px;"></SELECT></td>
 											<td width="70" align="right">
-												<INPUT TYPE="button" id="busca_cliente_modalbox" class="onmouseOutBuscar">
+												<input type="button" id="busca_cliente_modalbox" class="onmouseOutBuscar">
 											</td>
 										</tr>
 										
@@ -525,7 +537,7 @@
 								<td width="80" style="background:#ffffff"></td>
 								<td width="140" style="background:#ffffff"></td>
 								<td width="380" style="background:#ffffff" align="right">
-									<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+									<input type="button" id="cencela" class="onmouseOutCancelar">
 								</td>
 								
 								<td width="10" style="background:#ffffff"></td>
@@ -572,7 +584,7 @@
 										</tr>
 										<tr>
 											<td width="70">C&oacute;digo&nbsp;</td>
-											<td width="120"><INPUT TYPE="text" name="campo_sku" style="width:120px;"></td>
+											<td width="120"><input type="text" name="campo_sku" style="width:120px;"></td>
 											<td width="25"></td>
 											<td width="90">Tipo&nbsp;de&nbsp;Producto</td>
 											<td width="200">
@@ -588,10 +600,10 @@
 										</tr>
 										<tr>
 											<td width="70">Descripci&oacute;n</td>
-											<td width="400" colspan="4"><INPUT TYPE="text" name="campo_descripcion" style="width:415px;"></td>
+											<td width="400" colspan="4"><input type="text" name="campo_descripcion" style="width:415px;"></td>
 											<td width="25"></td>
 											<td width="90" align="right">
-												<INPUT TYPE="button" id="busca_producto_modalbox" class="onmouseOutBuscar">
+												<input type="button" id="busca_producto_modalbox" class="onmouseOutBuscar">
 											</td>
 										</tr>
 									</table>
@@ -647,7 +659,7 @@
 								<td width="280" style="background:#ffffff"></td>
 								<td width="90" style="background:#ffffff"></td>
 								<td width="110" style="background:#ffffff" align="right">
-									<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+									<input type="button" id="cencela" class="onmouseOutCancelar">
 								</td>
 								
 								<td width="10" style="background:#ffffff"></td>

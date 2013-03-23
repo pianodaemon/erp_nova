@@ -380,6 +380,10 @@ $(function() {
 	}
 	
 	
+	var quitar_comas= function($valor){
+		$valor = $valor+'';
+		return $valor.split(',').join('');
+	}
 	
 	
 	
@@ -396,6 +400,7 @@ $(function() {
 		
 		var id_moneda = id_moneda_cliente;
 		
+		var moneda_hmtl = '';
 		if(parseInt(num_lista_precio)>0){
 			//aquí se arma la cadena json para traer la moneda de la lista de precio
 			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaLista.json';
@@ -403,23 +408,54 @@ $(function() {
 			$.post(input_json2,$arreglo2,function(moneda_lista){
 				$.each(moneda_lista['listaprecio'],function(entryIndex ,monedalista){
 					id_moneda = monedalista['moneda_id'];
+					
+					//carga el select de monedas  con la moneda del cliente seleccionada por default
+					$('#forma-cotizacions-window').find('select[name=moneda]').children().remove();
+					$('#forma-cotizacions-window').find('select[name=moneda2]').children().remove();
+					$.each(array_monedas ,function(entryIndex,moneda){
+						if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+						}else{
+							//permitir que se muestren todas las monedas
+							//if(parseInt(id_moneda)==0){
+								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+							//}
+						}
+					});
+					$('#forma-cotizacions-window').find('select[name=moneda]').append(moneda_hmtl);
+					//esta es la moneda original, no cambia al cambiar la moneda de la vista
+					$('#forma-cotizacions-window').find('select[name=moneda2]').append(moneda_hmtl);
+					
+					
+					var cambiarTcOriginal='true';
+					//ejecutar funcion que obtiene el tipo de cambio de acuerdo a la moneda seleccionada
+					getTcIdMoneda(id_moneda, cambiarTcOriginal);
 				});
 			});
-		}
-		
-		//carga el select de monedas  con la moneda del cliente seleccionada por default
-		$('#forma-cotizacions-window').find('select[name=moneda]').children().remove();
-		var moneda_hmtl = '';
-		$.each(array_monedas ,function(entryIndex,moneda){
-			if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-				moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-			}else{
-				if(parseInt(id_moneda)==0){
-					moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+		}else{
+			//carga el select de monedas  con la moneda del cliente seleccionada por default
+			$('#forma-cotizacions-window').find('select[name=moneda]').children().remove();
+			$('#forma-cotizacions-window').find('select[name=moneda2]').children().remove();
+			$.each(array_monedas ,function(entryIndex,moneda){
+				if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+					moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+				}else{
+					//permitir que se muestren todas las monedas
+					//if(parseInt(id_moneda)==0){
+						moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+					//}
 				}
-			}
-		});
-		$('#forma-cotizacions-window').find('select[name=moneda]').append(moneda_hmtl);
+			});
+			$('#forma-cotizacions-window').find('select[name=moneda]').append(moneda_hmtl);
+			
+			//esta es la moneda original, no cambia al cambiar la moneda de la vista
+			$('#forma-cotizacions-window').find('select[name=moneda2]').append(moneda_hmtl);
+			
+			var cambiarTcOriginal='true';
+			//ejecutar funcion que obtiene el tipo de cambio de acuerdo a la moneda seleccionada
+			getTcIdMoneda(id_moneda, cambiarTcOriginal);
+		}
+
 		
 		
 		//carga select de agentes dejando seleccionado por default el agente asignado al cliente
@@ -589,6 +625,9 @@ $(function() {
 			$busca_cliente_modalbox.trigger('click');
 		}
 		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_cliente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_cliente_modalbox);
+		
 		$cancelar_plugin_busca_cliente.click(function(event){
 			//event.preventDefault();
 			var remove = function() {$(this).remove();};
@@ -633,6 +672,7 @@ $(function() {
 		$cancelar_plugin_busca_producto.mouseover(function(){
 			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
 		});
+		
 		$cancelar_plugin_busca_producto.mouseout(function(){
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
@@ -763,7 +803,7 @@ $(function() {
 					if (entry['Presentaciones'].length > 0){
 						
 						if (entry['Presentaciones'][0]['exis_prod_lp']=='1'){
-						
+							
 							$(this).modalPanel_Buscapresentacion();
 							var $dialogoc =  $('#forma-buscapresentacion-window');
 							$dialogoc.append($('div.buscador_presentaciones').find('table.formaBusqueda_presentaciones').clone());
@@ -807,11 +847,9 @@ $(function() {
 							}, function() {
 								$(this).find('td').css({'background-color':'#FFFFFF'});
 							});
-
+							
 							//seleccionar un producto del grid de resultados
 							$tabla_resultados.find('tr').click(function(){
-								//llamada a la funcion que busca y agrega producto al grid, se le pasa como parametro el lote y el almacen
-								//$agrega_producto_grid($(this).find('span.lote').html(),$(this).find('input.idalmacen').val());
 								var id_detalle=0;
 								var id_prod = $(this).find('span.id_prod').html();
 								var sku = $(this).find('span.sku').html();
@@ -825,8 +863,6 @@ $(function() {
 								var cantidad = 0;
 								var importe = 0;
 								var mon_id = $('#forma-cotizacions-window').find('select[name=moneda]').val();
-								
-								//$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
 								
 								//aqui se pasan datos a la funcion que agrega el tr en el grid
 								$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas);
@@ -874,59 +910,6 @@ $(function() {
 	
         
        
-	/*
-	
-	//calcula totales(subtotal, impuesto, total)
-	$calcula_totales = function(){
-		var $campo_subtotal = $('#forma-cotizacions-window').find('input[name=subtotal]');
-		var $campo_impuesto = $('#forma-cotizacions-window').find('input[name=impuesto]');
-		var $campo_total = $('#forma-cotizacions-window').find('input[name=total]');
-		//var $campo_tc = $('#forma-cotizacions-window').find('input[name=tc]');
-		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
-		var $grid_productos = $('#forma-cotizacions-window').find('#grid_productos');
-		
-		var sumaSubTotal = 0; //es la suma de todos los importes
-		var sumaImpuesto = 0; //valor del iva
-		var sumaTotal = 0; //suma del subtotal + totalImpuesto
-		
-		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
-		//if( $campo_tc.val()== null || $campo_tc.val()== ''){
-		//	$campo_tc.val(0);
-		//}
-		
-		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
-		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
-			$valor_impuesto.val(0);
-		}
-		
-		$grid_productos.find('tr').each(function (index){
-			if(( $(this).find('.precio'+ tr).val() != ' ') && ( $(this).find('.cant'+ tr).val() != ' ' )){
-				//alert($(this).find('.precio'+ tr).val());
-				//acumula los importes en la variable subtotal
-				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat($(this).find('.import'+ tr).val());
-				//alert($(this).find('.import'+ tr).val());
-				if($(this).find('#totimp').val() != ''){
-					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
-				}
-			}
-		});
-		
-                
-                
-                
-		//calcula el total sumando el subtotal y el impuesto
-		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto);
-		
-		
-		//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
-		$campo_subtotal.val(Math.round(parseFloat(sumaSubTotal)*100)/100);
-		//redondea a dos digitos el impuesto y lo asigna al campo impuesto
-		$campo_impuesto.val(Math.round(parseFloat(sumaImpuesto)*100)/100);
-		//redondea a dos digitos la suma  total y se asigna al campo total
-		$campo_total.val(Math.round(parseFloat(sumaTotal)*100)/100);
-		
-	}//termina calcular totales
-    */
 	
 	
 	
@@ -934,8 +917,46 @@ $(function() {
 	
 	//agregar producto al grid
 	$agrega_producto_grid = function($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas){
+		var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 		var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
+		var $precio_ingresado = $('#forma-cotizacions-window').find('input[name=precio_ingresado]');
+		
+		var $select_moneda = $('#forma-cotizacions-window').find('select[name=moneda]');
+		var $moneda_original = $('#forma-cotizacions-window').find('select[name=moneda2]');
+		var $num_lista_precio = $('#forma-cotizacions-window').find('input[name=num_lista_precio]');
+		var $tc = $('#forma-cotizacions-window').find('input[name=tc]');
+		var $tc_original = $('#forma-cotizacions-window').find('input[name=tc_original]');
+		
+		var precioOriginal = precio;
+		var precioCambiado = 0.00;
+		
+		alert("orig:"+$moneda_original.val() + "		selec:"+mon_id);
+		if(parseInt($num_lista_precio.val())>0){
+			//si la moneda inicial de la cotizacion es diferente a la moneda actual seleccionada
+			//entonces recalculamos los precios de acuerdo al tipo de cambio
+			if( parseInt($moneda_original.val()) != parseInt(mon_id) ){
+				
+				if(parseInt($moneda_original.val())==1 && parseInt(mon_id)!=1){
+					//si la moneda original es pesos, calculamos su equivalente a dolares
+					precioCambiado = parseFloat( parseFloat(precioOriginal) / parseFloat($tc.val())).toFixed(4);
+				}
+				
+				if(parseInt($moneda_original.val())!=1 && parseInt(mon_id)==1){
+					//alert("precioOriginal:"+precioOriginal +"		tc_original:"+$tc_original.val());
+					//si la moneda original es dolar y la moneda del precio es Pesos, calculamos su equivalente a dolar
+					precioCambiado = parseFloat( parseFloat(precioOriginal) * parseFloat($tc_original.val()) ).toFixed(4);
+				}
+				
+			}else{
+				precioCambiado = precio;
+			}
+		}else{
+			precioCambiado = precio;
+		}
+		
+		//agregar comas
+		precioCambiado = $(this).agregar_comas(precioCambiado);
 		
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
 		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
@@ -951,7 +972,6 @@ $(function() {
 		});
 		
 		if(parseInt(encontrado)!=1){//si el producto no esta en el grid entra aqui
-			
 			//obtiene numero de trs
 			var tr = $("tr", $grid_productos).size();
 			tr++;
@@ -1000,7 +1020,8 @@ $(function() {
 				trr += '</td>';
 				
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input type="text" name="precio" class="precio'+ tr +'" value="'+precio+'" id="cost" style="width:76px;">';
+					trr += '<input type="text" name="precio" class="precio'+ tr +'" value="'+precioCambiado+'" id="cost" style="width:76px;">';
+					trr += '<input type="text" value="'+precioOriginal+'" class="precor'+ tr +'" id="precor" style="width:76px;">';
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
@@ -1009,7 +1030,11 @@ $(function() {
 				
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
 					trr += '<input type="text" 	name="importe" 	class="import'+ tr +'" value="'+importe+'" id="import" readOnly="true" style="width:66px; text-align:right;">';
+					trr += '<input type="hidden" name="id_imp_prod"   value="'+  $id_impuesto.val() +'" id="idimppord">';
+					trr += '<input type="hidden" name="valor_imp"     value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
+					trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="0">';
 				trr += '</td>';
+				
 			trr += '</tr>';
 			$grid_productos.append(trr);
 			
@@ -1059,24 +1084,35 @@ $(function() {
 			
 			//recalcula importe al perder enfoque el campo cantidad
 			$grid_productos.find('.cant'+ tr).blur(function(){
-				if ($(this).val() == ''){
+				$precioPartida = $(this).parent().parent().find('.precio'+ tr);
+				$importePartida = $(this).parent().parent().find('.import'+ tr);
+				$tasaIva = $(this).parent().parent().find('#ivalorimp');
+				$totalImpuestoPartida = $(this).parent().parent().find('#totimp');
+				
+				if ($(this).val()=='' || $(this).val()==' '){
 					$(this).val(0);
 				}
-				$(this).val(parseFloat($(this).val()).toFixed(2));
+				//$(this).val(parseFloat($(this).val()).toFixed(2));
 				
-				if( ($(this).val() != ' ') && ($(this).parent().parent().find('.precio'+ tr).val() != ' ') )
+				if( $(this).val()!=' ' && $(this).val()!='' && $precioPartida.val()!=' ' && $precioPartida.val()!='' )
 				{   //calcula el importe
-					$(this).parent().parent().find('.import'+ tr).val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('.precio'+ tr).val()));
+					$importePartida.val(parseFloat($(this).val()) * parseFloat(quitar_comas($precioPartida.val())));
 					//redondea el importe en dos decimales
-					$(this).parent().parent().find('.import'+ tr).val(Math.round(parseFloat($(this).parent().parent().find('.import'+ tr).val())*100)/100);
+					$importePartida.val(Math.round(parseFloat( quitar_comas($importePartida.val()))*100)/100);
+					$importePartida.val(parseFloat($importePartida.val()).toFixed(2));
+					
+					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
+					$totalImpuestoPartida.val( parseFloat( $importePartida.val() ) * parseFloat(  $tasaIva.val()  ));
 				}else{
-					$(this).parent().parent().find('.import'+ tr).val('');
+					$importePartida.val('');
 				}
+				
+				$recalcula_totales();
 			});
 			
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 			$grid_productos.find('.precio'+ tr).focus(function(e){
-				if($(this).val() == ' '){
+				if($(this).val()==' '){
 					$(this).val('');
 				}else{
 					if(parseInt($(this).val()) <= 0 ){
@@ -1087,20 +1123,64 @@ $(function() {
             
 			//recalcula importe al perder enfoque el campo costo
 			$grid_productos.find('.precio'+ tr).blur(function(){
-				if ($(this).val() == ''){
+				var $catidadPartida = $(this).parent().parent().find('.cant'+ tr);
+				var $importePartida = $(this).parent().parent().find('.import'+ tr);
+				var $tasaIva = $(this).parent().parent().find('#ivalorimp');
+				var $totalImpuestoPartida = $(this).parent().parent().find('#totimp');
+				var $idMonedaPartida = $(this).parent().parent().find('.moneda'+ tr);
+				var $precioOriginalPartida = $(this).parent().parent().find('.precor'+ tr);
+				var precioCambiado=0.0;
+				
+				if ($(this).val()=='' || $(this).val()==' '){
 					$(this).val(0);
 				}
 				
-				$(this).val(parseFloat($(this).val()).toFixed(2));
-				
-				if( ($(this).val() != ' ') && ($(this).parent().parent().find('.cant'+ tr).val() != ' ') ){
-					//calcula el importe
-					$(this).parent().parent().find('.import'+ tr).val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('.cant'+ tr).val()));
-					//redondea el importe en dos decimales
-					$(this).parent().parent().find('.import'+ tr).val(Math.round(parseFloat($(this).parent().parent().find('.import'+ tr).val())*100)/100);
+				if(parseFloat($(this).val()) > 0){
+					
+					//alert("moneda_original:"+$moneda_original.val()+ "		idMonedaPartida:"+$idMonedaPartida.val());
+					//si la moneda inicial de la cotizacion es diferente a la moneda actual seleccionada
+					//entonces recalculamos los precios de acuerdo al tipo de cambio
+					if( parseInt($moneda_original.val()) != parseInt($idMonedaPartida.val()) ){
+						
+						if(parseInt($moneda_original.val())==1 && parseInt($idMonedaPartida.val())!=1){
+							//si la moneda original es pesos, calculamos su equivalente a dolares
+							precioCambiado = parseFloat( parseFloat($(this).val()) * parseFloat($tc.val())).toFixed(4);
+						}
+						
+						if(parseInt($moneda_original.val())!=1 && parseInt($idMonedaPartida.val())==1){
+							//alert("precioOriginal:"+precioOriginal +"		tc_original:"+$tc_original.val());
+							//si la moneda original es dolar y la moneda del precio es Pesos, calculamos su equivalente a dolar
+							precioCambiado = parseFloat( parseFloat($(this).val()) / parseFloat($tc_original.val()) ).toFixed(4);
+						}
+						
+					}else{
+						precioCambiado = $(this).val();
+					}
 				}else{
-					$(this).parent().parent().find('.import'+ tr).val('');
+					precioCambiado = $(this).val();
 				}
+				
+				$precioOriginalPartida.val(precioCambiado);
+				
+				
+				//$(this).val(parseFloat($(this).val()).toFixed(2));
+				
+				if( $(this).val()!=' ' && $(this).val()!='' && $catidadPartida.val()!=' ' && $catidadPartida.val() != '' ){
+					//calcula el importe
+					$importePartida.val( parseFloat($(this).val()) * parseFloat(quitar_comas($catidadPartida.val())) );
+					
+					//redondea el importe en dos decimales
+					$importePartida.val(Math.round(parseFloat(quitar_comas($importePartida.val()))*100)/100);
+					
+					$importePartida.val(parseFloat($importePartida.val()).toFixed(2));
+					
+					//calcula el impuesto para este producto multiplicando el importe por la tasa del iva
+					$totalImpuestoPartida.val( parseFloat( quitar_comas( $importePartida.val() ) ) * parseFloat(  $tasaIva.val()  ));
+				}else{
+					$importePartida.val('');
+				}
+				
+				$recalcula_totales();
 			});
 			
 			//validar campo costo, solo acepte numeros y punto
@@ -1124,7 +1204,6 @@ $(function() {
 			});
 			
 			
-				
 			//elimina un producto del grid
 			$grid_productos.find('#delete'+ tr).bind('click',function(event){
 				event.preventDefault();
@@ -1163,6 +1242,8 @@ $(function() {
 	
 	
 	
+	
+	
 	$aplicar_evento_click_checkbox = function($campo_check){
 		//click al checkbox descripcion larga
 		$campo_check.click(function(event){
@@ -1179,7 +1260,7 @@ $(function() {
 				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1213px'});
 				$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'1213px'});
 				$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'1203px'});
-				$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -220});
+				$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -230});
 				$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'1173px'});
 				$('#forma-cotizacions-window').find('#div_botones').css({'width':'1190px'});
 				$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'1090px'});
@@ -1195,12 +1276,191 @@ $(function() {
 				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'893px'});
 				$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'893px'});
 				$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'880px'});
-				$('#forma-cotizacions-window').css({"margin-left": -320, 	"margin-top": -220});
+				$('#forma-cotizacions-window').css({"margin-left": -320, 	"margin-top": -230});
 				$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'853px'});
 				$('#forma-cotizacions-window').find('#div_botones').css({'width':'870px'});
 				$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'770px'});
 			}
 		});
+	}
+	
+	
+	
+	$aplicar_evento_click_checkbox_incluye_iva = function($campo_check, incluyeCrm){
+		//click al checkbox descripcion larga
+		$campo_check.click(function(event){
+			if(this.checked){
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').find('#tabla_totales').show();
+				if(incluyeCrm=='true'){
+					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'550px'});
+				}else{
+					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'580px'});
+				}
+			}else{
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').find('#tabla_totales').hide();
+				if(incluyeCrm=='true'){
+					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'480px'});
+				}else{
+					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'480px'});
+				}
+			}
+		});
+	}
+	
+	
+	
+	
+	//calcula totales(subtotal, impuesto, total)
+	$recalcula_totales = function(){
+		var $campo_subtotal = $('#forma-cotizacions-window').find('input[name=subtotal]');
+		var $campo_impuesto = $('#forma-cotizacions-window').find('input[name=impuesto]');
+		var $campo_total = $('#forma-cotizacions-window').find('input[name=total]');
+		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
+		var $grid_productos = $('#forma-cotizacions-window').find('#grid_productos');
+		
+		var sumaSubTotal = 0; //es la suma de todos los importes
+		var sumaImpuesto = 0; //valor del iva
+		var sumaTotal = 0; //suma del subtotal + totalImpuesto
+		
+		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
+		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
+			$valor_impuesto.val(0);
+		}
+		
+		$grid_productos.find('tr').each(function (index){
+			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
+				//acumula los importes en la variable subtotal
+				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat($(this).find('#import').val());
+				if($(this).find('#totimp').val() != ''){
+					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
+				}
+			}
+		});
+		
+		//calcula el total sumando el subtotal y el impuesto
+		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto);
+		
+		//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
+		$campo_subtotal.val(Math.round(parseFloat(sumaSubTotal)*100)/100);
+		//redondea a dos digitos el impuesto y lo asigna al campo impuesto
+		$campo_impuesto.val(Math.round(parseFloat(sumaImpuesto)*100)/100);
+		//redondea a dos digitos la suma  total y se asigna al campo total
+		$campo_total.val(Math.round(parseFloat(sumaTotal)*100)/100);
+	}//termina calcular totales
+    
+	
+	
+	
+    //convertir costos en dolar y pesos
+	$convertir_costos = function(moneda_id){
+		var $campo_subtotal = $('#forma-cotizacions-window').find('input[name=subtotal]');
+		var $campo_impuesto = $('#forma-cotizacions-window').find('input[name=impuesto]');
+		var $campo_total = $('#forma-cotizacions-window').find('input[name=total]');
+		var $tipo_cambio = $('#forma-cotizacions-window').find('input[name=tc]');
+		var $tc_original = $('#forma-cotizacions-window').find('input[name=tc_original]');
+		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
+		var $grid_productos = $('#forma-cotizacions-window').find('#grid_productos');
+		var $moneda_original = $('#forma-cotizacions-window').find('select[name=moneda2]');
+		
+		var sumaSubTotal = 0; //es la suma de todos los importes
+		var sumaImpuesto = 0; //valor del iva
+		var sumaTotal = 0; //suma del subtotal + totalImpuesto
+		
+		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
+		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
+			$valor_impuesto.val(0);
+		}
+		
+		$grid_productos.find('tr').each(function (index){
+			var precio_cambiado=0;
+			var importe_cambiado=0;
+			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
+				
+				if( parseInt($moneda_original.val()) != parseInt(moneda_id) ){
+					if(parseInt($moneda_original.val())==1 && parseInt(moneda_id)!=1){
+						//si la moneda original es pesos, calculamos su equivalente a dolares
+						precio_cambiado = parseFloat(quitar_comas($(this).find('#precor').val())) / parseFloat($tipo_cambio.val());
+					}
+					
+					if(parseInt($moneda_original.val())!=1 && parseInt(moneda_id)==1){
+						//si la moneda original es dolar, calculamos su equivalente a pesos
+						precio_cambiado = parseFloat(quitar_comas($(this).find('#precor').val())) * parseFloat($tc_original.val());
+					}
+					
+					$(this).find('#cost').val($(this).agregar_comas(parseFloat(precio_cambiado).toFixed(4)));
+					//calcula el nuevo importe
+					importe_cambiado = parseFloat($(this).find('#cant').val()) * parseFloat(precio_cambiado).toFixed(4);
+					//asignamos el nuevo laor del importe
+					$(this).find('#import').val($(this).agregar_comas(parseFloat(importe_cambiado).toFixed(4) ) );
+				}else{
+					//aqui entra si la moneda seleccionada es la moneda original. Le devolvemos al campo costo su valor original
+					$(this).find('#cost').val( $(this).find('#precor').val()  );
+					//calcula el nuevo importe
+					importe_cambiado = parseFloat($(this).find('#cant').val()) * parseFloat($(this).find('#cost').val()).toFixed(4);
+					//asignamos el nuevo laor del importe
+					$(this).find('#import').val($(this).agregar_comas(parseFloat(importe_cambiado).toFixed(4) ) );
+				}
+				
+				//acumula los importes en la variable subtotal
+				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
+				if($(this).find('#totimp').val() != ''){
+					$(this).find('#totimp').val(parseFloat( quitar_comas($(this).find('#import').val()) ) * parseFloat($valor_impuesto.val()));
+					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
+				}
+			}
+		});
+		
+		
+		if( parseInt($moneda_original.val()) != parseInt(moneda_id) ){
+			//calcula el total sumando el subtotal y el impuesto
+			sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto);
+			//redondea a 4 digitos el  subtotal y lo asigna  al campo subtotal
+			$campo_subtotal.val($(this).agregar_comas(parseFloat(sumaSubTotal).toFixed(4)));
+			//redondea a 4 digitos el impuesto y lo asigna al campo impuesto
+			$campo_impuesto.val($(this).agregar_comas(parseFloat(sumaImpuesto).toFixed(4)));
+			//redondea a 4 digitos la suma  total y se asigna al campo total
+			$campo_total.val($(this).agregar_comas(parseFloat(sumaTotal).toFixed(4)));
+		}else{
+			//calcula el total sumando el subtotal y el impuesto
+			sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto);
+			//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
+			$campo_subtotal.val($(this).agregar_comas(parseFloat(sumaSubTotal).toFixed(2)));
+			//redondea a dos digitos el impuesto y lo asigna al campo impuesto
+			$campo_impuesto.val($(this).agregar_comas(parseFloat(sumaImpuesto).toFixed(2)));
+			//redondea a dos digitos la suma  total y se asigna al campo total
+			$campo_total.val($(this).agregar_comas(parseFloat(sumaTotal).toFixed(2)));
+		}
+	}//termina convertir dolar pesos
+
+	
+	
+	
+	
+	
+	//obtener el tipo de cambio de acuerdo al id de la moneda
+	getTcIdMoneda = function(idMoneda, cambiarTcOriginal){
+		var $tipo_cambio = $('#forma-cotizacions-window').find('input[name=tc]');
+		var $tc_original = $('#forma-cotizacions-window').find('input[name=tc_original]');
+		
+		var inputJsonTc = document.location.protocol + '//' + document.location.host + '/'+controller+'/getValorTc.json';
+		var $arreglo2 = {'idmon':idMoneda };
+		
+		$.post(inputJsonTc,$arreglo2,function(entry){
+			$tipo_cambio.val(entry['valor']);
+			if(cambiarTcOriginal=='true'){
+				$tc_original.val(entry['valor']);
+			}
+			
+			if(parseInt(idMoneda)==1){
+				$tipo_cambio.attr("readonly", true);
+				$tipo_cambio.css({'background' : '#F0F0F0'});
+			}else{
+				$tipo_cambio.attr("readonly", false);
+				$tipo_cambio.css({'background' : '#ffffff'});
+			}
+			
+			$convertir_costos(idMoneda);
+		},"json");//termina llamada json
 	}
 	
 	
@@ -1219,14 +1479,13 @@ $(function() {
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		//var accion = "getCotizacion";
 		
-		$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -220});
+		$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -230});
 		
 		$forma_selected.prependTo('#forma-cotizacions-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		
 		$tabs_li_funxionalidad();
 		
-		//var json_string = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + accion + '/' + id_to_show + '/out.json';
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCotizacion.json';
 		$arreglo = {'id_cotizacion':id_to_show,
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
@@ -1238,6 +1497,7 @@ $(function() {
 		var $td1 = $('#forma-cotizacions-window').find('#td1');
 		var $td2 = $('#forma-cotizacions-window').find('#td2');
 		var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
+		var $check_incluye_iva =$('#forma-cotizacions-window').find('input[name=check_incluye_iva]');
 		var $contenedor_grid = $('#forma-cotizacions-window').find('.contenedor_grid');
 		
 		var $id_cotizacion = $('#forma-cotizacions-window').find('input[name=id_cotizacion]');
@@ -1253,9 +1513,12 @@ $(function() {
 		var $dir_cliente = $('#forma-cotizacions-window').find('input[name=dircliente]');
 		var $contactocliente = $('#forma-cotizacions-window').find('input[name=contactocliente]');
 		var $select_moneda = $('#forma-cotizacions-window').find('select[name=moneda]');
-		var $select_moneda2 = $('#forma-cotizacions-window').find('select[name=moneda2]');
+		var $select_moneda_original = $('#forma-cotizacions-window').find('select[name=moneda2]');
 		var $tc = $('#forma-cotizacions-window').find('input[name=tc]');
+		var $tc_original = $('#forma-cotizacions-window').find('input[name=tc_original]');
+		
 		var $fecha = $('#forma-cotizacions-window').find('input[name=fecha]');
+		var $vigencia = $('#forma-cotizacions-window').find('input[name=vigencia]');
 		var $select_agente = $('#forma-cotizacions-window').find('select[name=select_agente]');
 		
 		//var $campo_tc = $('#forma-cotizacions-window').find('input[name=tc]');
@@ -1284,14 +1547,14 @@ $(function() {
 		var $impuesto = $('#forma-cotizacions-window').find('input[name=impuesto]');
 		var $total = $('#forma-cotizacions-window').find('input[name=total]');
 		
+		
 		var $cerrar_plugin = $('#forma-cotizacions-window').find('#close');
 		var $cancelar_plugin = $('#forma-cotizacions-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-cotizacions-window').find('#submit');
 		
 		
 		$id_cotizacion.val(0);//para nueva cotizacion el folio es 0
-		$select_moneda2.hide();
-		
+		//$select_moneda_original.hide();
 		
 		//quitar enter a todos los campos input
 		$('#forma-cotizacions-window').find('input').keypress(function(e){
@@ -1348,6 +1611,8 @@ $(function() {
 			}
 		});
 		
+		//seleccionar por default
+		$check_incluye_iva.attr('checked', true );
 		
 		$('#forma-cotizacions-window').find('input[name=razoncliente]').css({'width':'430px'});
 		$('#forma-cotizacions-window').find('input[name=dircliente]').css({'width':'430px'});
@@ -1360,7 +1625,7 @@ $(function() {
 		$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'893px'});
 		$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'893px'});
 		$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'880px'});
-		$('#forma-cotizacions-window').css({"margin-left": -320, 	"margin-top": -220});
+		$('#forma-cotizacions-window').css({"margin-left": -320, 	"margin-top": -230});
 		$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'853px'});
 		$('#forma-cotizacions-window').find('#div_botones').css({'width':'870px'});
 		$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'770px'});
@@ -1431,19 +1696,14 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
-		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
 			
 			if(entry['Extras'][0]['mod_crm']=='true'){
-				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'490px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'550px'});
 				$tr_tipo.show();//mostrar tr para escoger el tipo destino de la cotizacion
 			}
+			$aplicar_evento_click_checkbox_incluye_iva($check_incluye_iva, entry['Extras'][0]['mod_crm']);
 			
-			
-			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
-			$tc.val(entry['Tc']['0']['tipo_cambio']);
-                        
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
 			var moneda_hmtl = '';
@@ -1451,8 +1711,10 @@ $(function() {
 				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 			});
 			$select_moneda.append(moneda_hmtl);
-			$select_moneda2.append(moneda_hmtl);//este  esta oculto
+			$select_moneda_original.append(moneda_hmtl);//este  esta oculto
 			
+			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
+			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
 			
 			//carga select de agentes
 			$select_agente.children().remove();
@@ -1478,48 +1740,84 @@ $(function() {
 			
 			//busca datos del cliente al pulsar enter sobre en campo numero de control
 			$nocontrolcliente.keypress(function(e){
-				$nocontrolcliente.keypress(function(e){
-					if(e.which == 13){
-						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoControl.json';
-						$arreglo2 = {'tipo':$select_tipo_cotizacion.val(), 'no_control':$nocontrolcliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-						
-						$.post(input_json2,$arreglo2,function(entry2){
-							if(parseInt(entry2['Resultado'].length) > 0 ){
-								var num_lista_precio = entry2['Resultado'][0]['lista_precio'];
-								var id_cliente = entry2['Resultado'][0]['id'];
-								var numero_control = entry2['Resultado'][0]['numero_control'];
-								var razon_social_cliente = entry2['Resultado'][0]['razon_social'];
-								var dir_cliente = entry2['Resultado'][0]['direccion'];
-								var id_moneda_cliente = entry2['Resultado'][0]['moneda_id'];
-								var id_agente = entry2['Resultado'][0]['cxc_agen_id'];
-								var rfc_cliente = entry2['Resultado'][0]['rfc'];
-								var contacto_cliente = entry2['Resultado'][0]['contacto'];
-								
-								$agregarDatosClienteSeleccionado(entry['Monedas'], entry['Agentes'], num_lista_precio, id_cliente, numero_control, rfc_cliente, razon_social_cliente, dir_cliente, contacto_cliente, id_moneda_cliente, id_agente);
-								
-							}else{
-								//limpiar campos
-								$('#forma-cotizacions-window').find('input[name=id_cliente]').val('');
-								$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').val('');
-								$('#forma-cotizacions-window').find('input[name=rfccliente]').val('');
-								$('#forma-cotizacions-window').find('input[name=razoncliente]').val('');
-								$('#forma-cotizacions-window').find('input[name=dircliente]').val('');
-								$('#forma-cotizacions-window').find('input[name=contactocliente]').val('');
-								$('#forma-cotizacions-window').find('input[name=num_lista_precio]').val('');
-								
-								jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
-									$nocontrolcliente.focus(); 
-								});
-								
-							}
-						},"json");//termina llamada json
-						
-						return false;
+				if(e.which == 13){
+					var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoControl.json';
+					$arreglo2 = {'tipo':$select_tipo_cotizacion.val(), 'no_control':$nocontrolcliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+					
+					$.post(input_json2,$arreglo2,function(entry2){
+						if(parseInt(entry2['Resultado'].length) > 0 ){
+							var num_lista_precio = entry2['Resultado'][0]['lista_precio'];
+							var id_cliente = entry2['Resultado'][0]['id'];
+							var numero_control = entry2['Resultado'][0]['numero_control'];
+							var razon_social_cliente = entry2['Resultado'][0]['razon_social'];
+							var dir_cliente = entry2['Resultado'][0]['direccion'];
+							var id_moneda_cliente = entry2['Resultado'][0]['moneda_id'];
+							var id_agente = entry2['Resultado'][0]['cxc_agen_id'];
+							var rfc_cliente = entry2['Resultado'][0]['rfc'];
+							var contacto_cliente = entry2['Resultado'][0]['contacto'];
+							
+							$agregarDatosClienteSeleccionado(entry['Monedas'], entry['Agentes'], num_lista_precio, id_cliente, numero_control, rfc_cliente, razon_social_cliente, dir_cliente, contacto_cliente, id_moneda_cliente, id_agente);
+							
+						}else{
+							//limpiar campos
+							$('#forma-cotizacions-window').find('input[name=id_cliente]').val('');
+							$('#forma-cotizacions-window').find('input[name=nocontrolcliente]').val('');
+							$('#forma-cotizacions-window').find('input[name=rfccliente]').val('');
+							$('#forma-cotizacions-window').find('input[name=razoncliente]').val('');
+							$('#forma-cotizacions-window').find('input[name=dircliente]').val('');
+							$('#forma-cotizacions-window').find('input[name=contactocliente]').val('');
+							$('#forma-cotizacions-window').find('input[name=num_lista_precio]').val('');
+							
+							jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
+								$nocontrolcliente.focus(); 
+							});
+							
+						}
+					},"json");//termina llamada json
+					
+					return false;
+				}
+			});
+			
+			//aqui se pone el tipo de cambio de acuerdo a la Moneda seleccionada
+			if(parseInt($select_moneda.val())==1){
+				$tc.val(parseFloat(1).toFixed(4));
+				//$tc_original
+			}
+			
+			if(parseInt($select_moneda.val())==2){
+				$tc.val(parseFloat(entry['Tc']['0']['tipo_cambio']).toFixed(4));
+			}
+			
+			
+			//cambiar moneda
+			$select_moneda.change(function(){
+				var idMonSeleccionado = $(this).val();
+				var cambiarTcOriginal='false';
+				
+				//si la moneda actual seleccionada es igual a la moneda original entonces permitir cambiar el tipo de cambio original
+				if( parseInt($select_moneda_original.val()) == parseInt($select_moneda.val()) ){
+					cambiarTcOriginal='true';
+				}
+				
+				//ejecutar funcion al cambiar la moneda
+				getTcIdMoneda(idMonSeleccionado, cambiarTcOriginal);
+				
+				
+				//alert("select_moneda: "+$select_moneda.find('option:selected').val()+"   seleccionado:"+seleccionado);
+				//cambiar la moneda de las partidas del grid al cambiar la moneda
+				$grid_productos.find('select[name=monedagrid]').children().remove();
+				var moneda_grid_hmtl = '';
+				$.each(entry['Monedas'],function(entryIndex,moneda){
+					if(parseInt(idMonSeleccionado) == parseInt(moneda['id'])){
+						moneda_grid_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion_abr'] + '</option>';
 					}
 				});
+				$grid_productos.find('select[name=monedagrid]').append(moneda_grid_hmtl);
 			});
 			
 		},"json");//termina llamada json
+		
 		
 		
 		//buscador de productos
@@ -1528,17 +1826,52 @@ $(function() {
 			$busca_productos($sku_producto.val(), $nombre_producto.val());
 		});
 		
-		/*
-        //seleccionar tipo de movimiento
-		$select_moneda.change(function(){
-			var seleccionado = $(this).val();
-			//alert("select_moneda: "+$select_moneda.find('option:selected').val()+"   seleccionado:"+seleccionado);
-			$grid_productos.find('select[name=monedagrid]').children().remove();
-			$select_moneda2.find('option').clone().appendTo($grid_productos.find('select[name=monedagrid]'));
-			$grid_productos.find('select[name=monedagrid]').find('option[value="'+seleccionado+'"]').attr('selected','selected');
+		
+		//aplicar tipo de cambio a todos los precios al cambiar valor de tipo de cambio
+		$tc.blur(function(){
+			if($(this).val()=='' || $(this).val()==' '){
+				$(this).val(0);
+			}
 			
+			//si la moneda actual seleccionada es igual a la moneda original entonces permitir cambiar el tipo de cambio original
+			if( parseInt($select_moneda_original.val()) == parseInt($select_moneda.val()) ){
+				$tc_original.val($(this).val());
+			}
+			
+			$grid_productos.find('tr').each(function (index){
+				var precio_cambiado=0;
+				var importe_cambiado=0;
+				
+				if($(this).find('#cost').val()!=' ' && $(this).find('#cost').val()!=''){
+					//si la moneda inicial de la cotizacion es diferente a la moneda actual seleccionada
+					//entonces recalculamos los precios de acuerdo al tipo de cambio
+					if( parseInt($select_moneda_original.val()) != parseInt($select_moneda.val()) ){
+						
+						if(parseInt($select_moneda_original.val())==1 && parseInt($select_moneda.val())!=1){
+							//si la moneda original es pesos, calculamos su equivalente a dolares
+							precio_cambiado = parseFloat($(this).find('#precor').val()) / parseFloat($tc.val());
+						}
+						
+						if(parseInt($select_moneda_original.val())!=1 && parseInt($select_moneda.val())==1){
+							//si la moneda original es dolar, calculamos su equivalente a pesos
+							precio_cambiado = parseFloat($(this).find('#precor').val()) * parseFloat($tc_original.val());
+						}
+						
+						$(this).find('#cost').val(parseFloat(precio_cambiado).toFixed(4));
+						
+						importe_cambiado = parseFloat($(this).find('#cant').val()) * parseFloat($(this).find('#cost').val());
+						$(this).find('#import').val(parseFloat(importe_cambiado).toFixed(4));
+						
+					}else{
+						//aqui no se cambia porque es la misma moneda en la que se hizo la cotizacion, asi que no se aplica tipo de cambio
+					}
+				}
+			});
+			$recalcula_totales();//llamada a la funcion que calcula totales
 		});
-        */
+		
+		
+		
 		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$sku_producto.keypress(function(e){
@@ -1566,13 +1899,10 @@ $(function() {
 			}
 		});
 		
-		/*
-		$boton_genera_pdf.click(function(event){
-			//cuando la cotizacion es nueva no se genera pdf, hasta despues de guardar
-		});
-		*/
 		
 		$aplicar_evento_click_checkbox($check_descripcion_larga);
+		
+		
 		
 		//validar campo Tipo de Cambio, solo acepte numeros y punto
 		$tc.keypress(function(e){
@@ -1646,7 +1976,7 @@ $(function() {
 			
 			$(this).modalPanel_cotizacions();
 			
-			$('#forma-cotizacions-window').css({"margin-left": -370, 	"margin-top": -220});
+			$('#forma-cotizacions-window').css({"margin-left": -370, 	"margin-top": -230});
 			
 			$forma_selected.prependTo('#forma-cotizacions-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1669,6 +1999,7 @@ $(function() {
 				var $td1 = $('#forma-cotizacions-window').find('#td1');
 				var $td2 = $('#forma-cotizacions-window').find('#td2');
 				var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
+				var $check_incluye_iva =$('#forma-cotizacions-window').find('input[name=check_incluye_iva]');
 				var $contenedor_grid = $('#forma-cotizacions-window').find('.contenedor_grid');
 				
 				var $id_cotizacion = $('#forma-cotizacions-window').find('input[name=id_cotizacion]');
@@ -1687,7 +2018,10 @@ $(function() {
 				var $select_moneda = $('#forma-cotizacions-window').find('select[name=moneda]');
 				var $select_moneda2 = $('#forma-cotizacions-window').find('select[name=moneda2]');
 				var $tc = $('#forma-cotizacions-window').find('input[name=tc]');
+				var $tc_original = $('#forma-cotizacions-window').find('input[name=tc_original]');
 				var $fecha = $('#forma-cotizacions-window').find('input[name=fecha]');
+				var $vigencia = $('#forma-cotizacions-window').find('input[name=vigencia]');
+				
 				var $select_agente = $('#forma-cotizacions-window').find('select[name=select_agente]');
 				
 				var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
@@ -1817,7 +2151,7 @@ $(function() {
 						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'1213px'});
 						$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'1213px'});
 						$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'1203px'});
-						$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -220});
+						$('#forma-cotizacions-window').css({"margin-left": -480, 	"margin-top": -230});
 						$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'1173px'});
 						$('#forma-cotizacions-window').find('#div_botones').css({'width':'1190px'});
 						$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'1090px'});
@@ -1833,16 +2167,18 @@ $(function() {
 						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'width':'893px'});
 						$('#forma-cotizacions-window').find('.cotizacions_div_two').css({'width':'893px'});
 						$('#forma-cotizacions-window').find('.cotizacions_div_three').css({'width':'880px'});
-						$('#forma-cotizacions-window').css({"margin-left": -320, 	"margin-top": -220});
+						$('#forma-cotizacions-window').css({"margin-left": -320, 	"margin-top": -230});
 						$('#forma-cotizacions-window').find('#titulo_plugin').css({'width':'853px'});
 						$('#forma-cotizacions-window').find('#div_botones').css({'width':'870px'});
 						$('#forma-cotizacions-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'770px'});
 					}
 					
 					if(entry['Extras'][0]['mod_crm']=='true'){
-						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'490px'});
+						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'550px'});
 						$tr_tipo.show();//mostrar tr para escoger el tipo destino de la cotizacion
 					}
+					$aplicar_evento_click_checkbox_incluye_iva($check_incluye_iva, entry['Extras'][0]['mod_crm']);
+					
 					$folio.val(entry['datosCotizacion'][0]['folio']);
 					$id_cotizacion.val(entry['datosCotizacion'][0]['id']);
 					$observaciones.text(entry['datosCotizacion'][0]['observaciones']);
