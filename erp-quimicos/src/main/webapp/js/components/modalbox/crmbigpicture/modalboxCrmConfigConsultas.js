@@ -5,12 +5,12 @@
 		    
 		    //Our function for hiding the modalbox
 			function modalHide() {
-				$(document).unbind("keydown", handleEscape);
-				var remove = function() { $(this).remove(); };
-				overlay.fadeOut(remove);
-				modalWindow
-					.fadeOut(remove)
-					.empty();
+                            $(document).unbind("keydown", handleEscape);
+                            var remove = function() { $(this).remove(); };
+                            overlay.fadeOut(remove);
+                            modalWindow
+                                    .fadeOut(remove)
+                                    .empty();
 			}
 			
 			//Our function that listens for escape key.

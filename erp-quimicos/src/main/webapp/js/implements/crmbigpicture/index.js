@@ -28,7 +28,7 @@ $(function() {
 	$('#barra_titulo').find('#td_titulo').append('Consultas');
 	
 	
-	$tabs_li_funxionalidad = function(){
+	$tabs_li_funcionalidad = function(){
 		$('#forma-registro-window').find('#submit').mouseover(function(){
 			$('#forma-registro-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
@@ -65,1157 +65,592 @@ $(function() {
                     return false;
 		});
 	}
-	
-        $select_opciones.children().remove();
-        var opciones_html='';
-            opciones_html+='<option value="0" selected="yes" >--Seleccione el tipo de Consulta--</option>';
-            opciones_html+='<option value="1">Registro Visitas</option>';
-            opciones_html+='<option value="2">Registro Llamadas</option>';
-            opciones_html+='<option value="3">Registro Casos</option>';
-            opciones_html+='<option value="4">Registro Oportunidades</option>';
-            //opciones_html+='<option value="5">Contactos/Prospectos/Clientes</option>';
-         $select_opciones.append(opciones_html);
-         
-         //valida la fecha seleccionada
-            function mayor(fecha, fecha2){
-		var xMes=fecha.substring(5, 7);
-		var xDia=fecha.substring(8, 10);
-		var xAnio=fecha.substring(0,4);
-		var yMes=fecha2.substring(5, 7);
-		var yDia=fecha2.substring(8, 10);
-		var yAnio=fecha2.substring(0,4);
-
-		if (xAnio > yAnio){
-			return(true);
-		}else{
-			if (xAnio == yAnio){
-				if (xMes > yMes){
-					return(true);
-				}
-				if (xMes == yMes){
-					if (xDia > yDia){
-						return(true);
-					}else{
-						return(false);
-					}
-				}else{
-					return(false);
-				}
-			}else{
-				return(false);
-			}
-		}
-            }
-            //muestra la fecha actual
-            var mostrarFecha = function mostrarFecha(){
-                var ahora = new Date();
-                var anoActual = ahora.getFullYear();
-                var mesActual = ahora.getMonth();
-                mesActual = mesActual+1;
-                mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
-                var diaActual = ahora.getDate();
-                diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-                var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
-                return Fecha;
-            }
-
-             //Alimentando el select del mes
-                                        
-            var array_meses = {
-                0:"- Seleccionar -",  
-                1:"Enero",  
-                2:"Febrero", 
-                3:"Marzo", 
-                4:"Abirl", 
-                5:"Mayo", 
-                6:"Junio", 
-                7:"Julio", 
-                8:"Agosto", 
-                9:"Septiembre", 
-                10:"Octubre", 
-                11:"Noviembre", 
-                12:"Diciembre"
-            };
-         
-        //Plugin de registro de llamadas
-        $registro_llamadas = function(){
-            
-            var id_to_show = 1;
-            $(this).modalPanelLlamadas();
-            var form_to_show1 = 'formaCrmRegistroLlamadas';
-            $('#' + form_to_show1).each (function(){this.reset();});
-            var $forma_selected1 = $('#' + form_to_show1).clone();
-            $forma_selected1.attr({id : form_to_show1 + id_to_show});
-
-            $('#forma-llamadas-window').css({"margin-left": -400,"margin-top": -265});
-            $forma_selected1.prependTo('#forma-llamadas-window');
-            $forma_selected1.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-            $tabs_li_funxionalidad();
-            
-            //variables para la forma
-            var $select_agente =$('#forma-llamadas-window').find('select[name=select_agente]');
-            var $select_tipo =$('#forma-llamadas-window').find('input[name=select_tipo]');
-            var $select_status =$('#forma-llamadas-window').find('input[name=status]');
-            var $select_etapa =$('#forma-llamadas-window').find('input[name=etapa]');
-            var $fecha_inicial =$('#forma-llamadas-window').find('input[name=fecha_inicial]');
-            var $fecha_final =$('#forma-llamadas-window').find('input[name=fecha_final]');
-            var $consultar =$('#forma-llamadas-window').find('input[name=buscar]');
-            var $metas =$('#forma-llamadas-window').find('input[name=metas]');
-            var $totales =$('#forma-llamadas-window').find('input[name=totales]');
-            var $porcentaje =$('#forma-llamadas-window').find('input[name=porcentaje]');
-            var $llam_entrantes =$('#forma-llamadas-window').find('input[name=entrantes]');
-            var $llam_salientes =$('#forma-llamadas-window').find('input[name=salientes]');
-            var $llam_planeadas =$('#forma-llamadas-window').find('input[name=planeadas]');
-            var $con_exito =$('#forma-llamadas-window').find('input[name=con_exito]');
-            var $con_cita =$('#forma-llamadas-window').find('input[name=con_cita]');
-            var $con_seguimiento =$('#forma-llamadas-window').find('input[name=con_seguimiento]');
-            var $efectividad =$('#forma-llamadas-window').find('input[name=efectividad]');
-            var $gestion =$('#forma-llamadas-window').find('input[name=gestion]');
-            var $avance =$('#forma-llamadas-window').find('input[name=avance]');
-            var $planeacion =$('#forma-llamadas-window').find('input[name=planeacion]');
-            
-            var $cerrar_plugin = $('#forma-llamadas-window').find('#close');
-            var $cancelar_plugin = $('#forma-llamadas-window').find('#boton_cancelar');
-            
-            $select_status.attr({'value' : 0});
-            $select_etapa.attr({'value': 0});
-            
-            $select_tipo.val(0);
-            
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
-		var parametros={
-                    
-                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                }
-                $.post(input_json,parametros,function(entry){
-                 
-                    //Alimentando los campos select_agente
-                    $select_agente.children().remove();
-                    var motivo_hmtl = '';
-                    $.each(entry['Agentes'],function(entryIndex,motivo){
-                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
-                    });
-                    $select_agente.append(motivo_hmtl);
-                    
-                });//fin json
-                $fecha_inicial.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-            });
-		
-		$fecha_inicial.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_inicial.val(),
-			current: $fecha_inicial.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_inicial.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-					$fecha_inicial.DatePickerHide();
-					/*if (valida_fecha==true){
-						jAlert("Fecha no valida",'! Atencion');
-						$fecha_inicial.val(mostrarFecha());
-					}else{
-						$fecha_inicial.DatePickerHide();	
-					}*/
-				}
-			}
-		});
-		
-		
-        //fecha para la proxima visita
-		$fecha_final.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-		});
-		
-		$fecha_final.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_final.val(),
-			current: $fecha_final.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_final.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-					$fecha_final.DatePickerHide();
-					/*if (valida_fecha==true){
-						$fecha_final.DatePickerHide();	
-					}else{
-						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
-						$fecha_final.val(mostrarFecha());
-					}*/
-				}
-			}
-		});
-                
-             
-                //click para hacer la consulta
-		$consultar.click(function(event){
-                    $metas.attr({'value':''});
-                    $totales.attr({'value':''});
-                    $porcentaje.attr({'value':''});
-                    $llam_entrantes.attr({'value':''});
-                    $llam_salientes.attr({'value':''});
-                    $llam_planeadas.attr({'value':''});
-                    $con_exito.attr({'value':''});
-                    $con_cita.attr({'value':''});
-                    $con_seguimiento.attr({'value':''});
-                    $efectividad.attr({'value':''});
-                    $gestion.attr({'value':''});
-                    $avance.attr({'value':''});
-                    $planeacion.attr({'value':''});
-                    
-                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
-                    $arreglo = {
-                        
-                        'agente':$select_agente.val(),
-                        'status':$select_status.val(),
-                        'etapa':$select_etapa.val(),
-                        'tipo_seleccion':$select_tipo.val(),
-                        'fecha_inicial':$fecha_inicial.val(),
-                        'fecha_final':$fecha_final.val(),
-                         'id':id_to_show,
-                        'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                    }
-                    
-
-                    $.post(input_json,$arreglo,function(entry){
-                        
-                        if(entry['Registros'] != "" && entry['Registros'] != null ){
-                            $metas.attr({'value':entry['Registros']['0']['cantidad_llamadas']});
-                            $totales.attr({'value':entry['Registros']['0']['llamadas_totales']});
-                            $porcentaje.attr({'value':entry['Registros']['0']['porcentaje_llamadas']});
-                            $llam_entrantes.attr({'value':entry['Registros']['0']['llamadas_entrantes']});
-                            $llam_salientes.attr({'value':entry['Registros']['0']['llamadas_salientes']});
-                            $llam_planeadas.attr({'value':entry['Registros']['0']['llamadas_planeadas']});
-                            $con_exito.attr({'value':entry['Registros']['0']['llamadas_con_exito']});
-                            $con_cita.attr({'value':entry['Registros']['0']['llamadas_con_cita']});
-                            $con_seguimiento.attr({'value':entry['Registros']['0']['llamadas_con_seguimiento']});
-                            $efectividad.attr({'value':entry['Registros']['0']['efectividad']});
-                            $gestion.attr({'value':entry['Registros']['0']['gestion']});
-                            $avance.attr({'value':entry['Registros']['0']['avance']});
-                            $planeacion.attr({'value':entry['Registros']['0']['planeacion']});
-                        }else{
-                            jAlert("No se encontraron resultados.",'! Atencion');
-                        }
-                    });
-		});
-            
-            $cerrar_plugin.bind('click',function(){
-                var remove = function() {$(this).remove();};
-                $('#forma-llamadas-overlay').fadeOut(remove);
-            });
-            
-            $cancelar_plugin.click(function(event){
-                var remove = function() {$(this).remove();};
-                $('#forma-llamadas-overlay').fadeOut(remove);
-            });
-
-        }
-        
-        //fin de la forma Registro Llamadas
-
-         //Plugin de registro de visitas
-        $registro_visitas = function(){
-
-            var id_to_show = 2;
-            $(this).modalPanelVisitas();
-            var form_to_show2 = 'formaCrmRegistroVisitas';
-            $('#' + form_to_show2).each (function(){this.reset();});
-            var $forma_selected2 = $('#' + form_to_show2).clone();
-            $forma_selected2.attr({id : form_to_show2 + id_to_show});
-
-            $('#forma-visitas-window').css({"margin-left": -400, 	"margin-top": -265});
-            $forma_selected2.prependTo('#forma-visitas-window');
-            $forma_selected2.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-            $tabs_li_funxionalidad();
-
-            var $select_agente =$('#forma-visitas-window').find('select[name=select_agente]');
-            var $select_tipo =$('#forma-visitas-window').find('input[name=select_tipo]');
-            var $select_status =$('#forma-visitas-window').find('input[name=status]');
-            var $select_etapa =$('#forma-visitas-window').find('input[name=etapa]');
-            var $fecha_inicial =$('#forma-visitas-window').find('input[name=fecha_inicial]');
-            var $fecha_final =$('#forma-visitas-window').find('input[name=fecha_final]');
-            var $consultar =$('#forma-visitas-window').find('input[name=buscar]');
-            var $metas =$('#forma-visitas-window').find('input[name=metas]');
-            var $totales =$('#forma-visitas-window').find('input[name=totales]');
-            var $porcentaje =$('#forma-visitas-window').find('input[name=porcentaje]');
-            
-            var $con_exito =$('#forma-visitas-window').find('input[name=con_exito]');
-            var $con_cita =$('#forma-visitas-window').find('input[name=con_cita]');
-            var $con_seguimiento =$('#forma-visitas-window').find('input[name=con_seguimiento]');
-            var $efectividad =$('#forma-visitas-window').find('input[name=efectividad]');
-            var $gestion =$('#forma-visitas-window').find('input[name=gestion]');
-            var $avance =$('#forma-visitas-window').find('input[name=avance]');
-           
-            
-            
-            var $cerrar_plugin = $('#forma-visitas-window').find('#close');
-            var $cancelar_plugin = $('#forma-visitas-window').find('#boton_cancelar');
-            
-            $select_status.attr({'value' : 0});
-            $select_etapa.attr({'value': 0});
-            
-            $select_tipo.val(0);
-            
-             var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
-		var parametros={
-                    
-                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                }
-             $.post(input_json,parametros,function(entry){
-                 
-            //Alimentando los campos select_agente
-                    $select_agente.children().remove();
-                    var motivo_hmtl = '';
-                    $.each(entry['Agentes'],function(entryIndex,motivo){
-                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
-                    });
-                    $select_agente.append(motivo_hmtl);
-            
-            
-             });//fin json
-             
-             $fecha_inicial.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-            });
-			
-		$fecha_inicial.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_inicial.val(),
-			current: $fecha_inicial.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_inicial.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-					$fecha_inicial.DatePickerHide();
-					/*if (valida_fecha==true){
-						jAlert("Fecha no valida",'! Atencion');
-						$fecha_inicial.val(mostrarFecha());
-					}else{
-						$fecha_inicial.DatePickerHide();	
-					}*/
-				}
-			}
-		});
-		
-			
-        
-        //fecha para la proxima visita
-		$fecha_final.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-		});
-		
-		$fecha_final.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_final.val(),
-			current: $fecha_final.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_final.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-					$fecha_final.DatePickerHide();
-					/*if (valida_fecha==true){
-						$fecha_final.DatePickerHide();	
-					}else{
-						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
-						$fecha_final.val(mostrarFecha());
-					}*/
-				}
-			}
-		});
-            
-             //click para hacer la consulta
-		$consultar.click(function(event){ 
-                    $metas.attr({'value':''});
-                    $totales.attr({'value':''});
-                    $porcentaje.attr({'value':''});
-
-                    $con_exito.attr({'value':''});
-                    $con_cita.attr({'value':''});
-                    $con_seguimiento.attr({'value':''});
-                    $efectividad.attr({'value':''});
-                    $gestion.attr({'value':''});
-                    $avance.attr({'value':''});
-                    
-                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
-                    $arreglo = {
-                        
-                        'agente':$select_agente.val(),
-                        'status':$select_status.val(),
-                        'etapa':$select_etapa.val(),
-                        'tipo_seleccion':$select_tipo.val(),
-                        'fecha_inicial':$fecha_inicial.val(),
-                        'fecha_final':$fecha_final.val(),
-                         'id':id_to_show,
-                        'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                    }
-                    
-                   
-                    $.post(input_json,$arreglo,function(entry){
-                        
-                        if(entry['Visitas'] != null && entry['Visitas'] != ""){
-                            $metas.attr({'value':entry['Visitas']['0']['cantidad_visitas']});
-                            $totales.attr({'value':entry['Visitas']['0']['visitas_totales']});
-                            $porcentaje.attr({'value':entry['Visitas']['0']['porcentaje_visitas']});
-
-                            $con_exito.attr({'value':entry['Visitas']['0']['visitas_con_exito']});
-                            $con_cita.attr({'value':entry['Visitas']['0']['visitas_con_cita']});
-                            $con_seguimiento.attr({'value':entry['Visitas']['0']['visitas_con_seguimiento']});
-                            $efectividad.attr({'value':entry['Visitas']['0']['efectividad']});
-                            $gestion.attr({'value':entry['Visitas']['0']['gestion']});
-                            $avance.attr({'value':entry['Visitas']['0']['avance']});
-                        }else{
-                            jAlert("No se encontraron resultados.",'! Atencion');
-                        }
-                    });
-		});
-                
-                $cerrar_plugin.bind('click',function(){
-                    var remove = function() {$(this).remove();};
-                    $('#forma-visitas-overlay').fadeOut(remove);
-                });
-
-                $cancelar_plugin.click(function(event){
-                    var remove = function() {$(this).remove();};
-                    $('#forma-visitas-overlay').fadeOut(remove);
-
-                });
-
-        }
-        //fin de la forma Registro visitas
-
-         //Plugin de registro de casos
-        $registro_casos = function(){
-
-            var id_to_show = 3;
-            $(this).modalPanelCasos();
-            var form_to_show3 = 'formaCrmRegistroCasos';
-            $('#' + form_to_show3).each (function(){this.reset();});
-            var $forma_selected3 = $('#' + form_to_show3).clone();
-            $forma_selected3.attr({id : form_to_show3 + id_to_show});
-            
-            $('#forma-casos-window').css({"margin-left": -400, 	"margin-top": -265});
-            $forma_selected3.prependTo('#forma-casos-window');
-            $forma_selected3.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-            $tabs_li_funxionalidad();
-            
-            var $select_agente =$('#forma-casos-window').find('select[name=select_agente]');
-            var $select_tipo =$('#forma-casos-window').find('input[name=select_tipo]');
-            var $select_status =$('#forma-casos-window').find('select[name=estatus]');
-            var $select_etapa =$('#forma-casos-window').find('input[name=etapa]');
-            var $fecha_inicial =$('#forma-casos-window').find('input[name=fecha_inicial]');
-            var $fecha_final =$('#forma-casos-window').find('input[name=fecha_final]');
-            var $consultar =$('#forma-casos-window').find('input[name=buscar]');
-            var $metas =$('#forma-casos-window').find('input[name=metas]');
-            
-            var $casos_totales =$('#forma-casos-window').find('input[name=casos_totales]');
-            var $casos_facturacion =$('#forma-casos-window').find('input[name=casos_facturacion]');
-            var $casos_producto =$('#forma-casos-window').find('input[name=casos_producto]');
-            var $casos_garantia =$('#forma-casos-window').find('input[name=casos_garantia]');
-            var $casos_distribucion =$('#forma-casos-window').find('input[name=casos_distribucion]');
-            var $casos_danos =$('#forma-casos-window').find('input[name=casos_danos]');
-            var $casos_devoluciones =$('#forma-casos-window').find('input[name=casos_devoluciones]');
-            var $casos_cobranza =$('#forma-casos-window').find('input[name=casos_cobranza]');
-            var $casos_varios =$('#forma-casos-window').find('input[name=casos_varios]');
-            
-            
-            var $cerrar_plugin = $('#forma-casos-window').find('#close');
-            var $cancelar_plugin = $('#forma-casos-window').find('#boton_cancelar');
-            
-            $select_tipo.attr({'value':0});
-            $select_etapa.attr({'value': 0});
-            
-             var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
-		var parametros={
-                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                }
-             $.post(input_json,parametros,function(entry){
-                 
-            //Alimentando los campos select_agente
-                    $select_agente.children().remove();
-                    var motivo_hmtl = '';
-                    $.each(entry['Agentes'],function(entryIndex,motivo){
-                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
-                    });
-                    $select_agente.append(motivo_hmtl);
-            
-            
-             });//fin json
-             
-             $select_status.children().remove();
-             var status_html='';
-                status_html +='<option value="1" selected="yes">Registro</option>';
-                status_html +='<option value="2" >Asignado</option>';
-                status_html +='<option value="3" >Seguimiento</option>';
-                status_html +='<option value="4" >Resolucion</option>';
-            $select_status.append(status_html);
-             
-             $fecha_inicial.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-            });
-			
-		$fecha_inicial.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_inicial.val(),
-			current: $fecha_inicial.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_inicial.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-					$fecha_inicial.DatePickerHide();
-					/*if (valida_fecha==true){
-						jAlert("Fecha no valida",'! Atencion');
-						$fecha_inicial.val(mostrarFecha());
-					}else{
-						$fecha_inicial.DatePickerHide();	
-					}*/
-				}
-			}
-		});
-                
-                //fecha para la proxima visita
-		$fecha_final.click(function (s){
-                    var a=$('div.datepicker');
-                    a.css({'z-index':100});
-		});
-		
-		$fecha_final.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_final.val(),
-			current: $fecha_final.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-                            days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-                            daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-                            daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-                            months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-                            monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-                            weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-                            var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-                            $fecha_final.val(formated);
-                            if (formated.match(patron) ){
-                                var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-                                $fecha_final.DatePickerHide();
-                                /*if (valida_fecha==true){
-                                        $fecha_final.DatePickerHide();	
-                                }else{
-                                        jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
-                                        $fecha_final.val(mostrarFecha());
-                                }*/
-                            }
-			}
-		});
-                
-                //click para hacer la consulta
-		$consultar.click(function(event){
-                    $casos_facturacion.attr({'value':''});
-                    $casos_producto.attr({'value':''});
-                    $casos_garantia.attr({'value':''});
-                    $casos_distribucion.attr({'value':''});
-                    $casos_danos.attr({'value':''});
-                    $casos_devoluciones.attr({'value':''});
-                    $casos_cobranza.attr({'value':''});
-                    $casos_varios.attr({'value':''});
-                    
-                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
-                    $arreglo = {
-                        'agente':$select_agente.val(),
-                        'status':$select_status.val(),
-                        'etapa':$select_etapa.val(),
-                        'tipo_seleccion':$select_tipo.val(),
-                        'fecha_inicial':$fecha_inicial.val(),
-                        'fecha_final':$fecha_final.val(),
-                         'id':id_to_show,
-                        'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                    }
-                    
-                    $.post(input_json,$arreglo,function(entry){
-                        if(entry['Casos'] != null && entry['Casos'] != ''){
-                            
-                            $casos_facturacion.attr({'value':entry['Casos']['0']['casos_facturacion']});
-                            $casos_producto.attr({'value':entry['Casos']['0']['casos_producto']});
-                            $casos_garantia.attr({'value':entry['Casos']['0']['casos_garantia']});
-                            $casos_distribucion.attr({'value':entry['Casos']['0']['casos_distribucion']});
-                            $casos_danos.attr({'value':entry['Casos']['0']['casos_danos']});
-                            $casos_devoluciones.attr({'value':entry['Casos']['0']['casos_devoluciones']});
-                            $casos_cobranza.attr({'value':entry['Casos']['0']['casos_cobranza']});
-                            $casos_varios.attr({'value':entry['Casos']['0']['casos_varios']});
-                            
-                        }else{
-                            jAlert("No se encontraron resultados.",'! Atencion');
-                        }
-                    });
-		});
-                
-                $cerrar_plugin.bind('click',function(){
-                    var remove = function() {$(this).remove();};
-                    $('#forma-casos-overlay').fadeOut(remove);
-                });
-                
-                $cancelar_plugin.click(function(event){
-                    var remove = function() {$(this).remove();};
-                    $('#forma-casos-overlay').fadeOut(remove);
-
-                });
-
-        }
-        //fin de la forma Registro Casos
-        
-        //Plugin de registro de oportunidades
-        $registro_oportunidades = function(){
-
-            var id_to_show = 4;
-            $(this).modalPanelOportunidades();
-            var form_to_show4 = 'formaCrmRegistroOportunidades';
-            $('#' + form_to_show4).each (function(){this.reset();});
-            var $forma_selected4 = $('#' + form_to_show4).clone();
-            $forma_selected4.attr({id : form_to_show4 + id_to_show});
-
-            $('#forma-oportunidades-window').css({"margin-left": -400, 	"margin-top": -265});
-            $forma_selected4.prependTo('#forma-oportunidades-window');
-            $forma_selected4.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-            $tabs_li_funxionalidad();
-
-            var $select_agente =$('#forma-oportunidades-window').find('select[name=select_agente]');
-            var $select_tipo =$('#forma-oportunidades-window').find('input[name=select_tipo]');
-            var $select_status =$('#forma-oportunidades-window').find('input[name=estatus]');
-            var $select_etapa =$('#forma-oportunidades-window').find('select[name=etapa]');
-            var $fecha_inicial =$('#forma-oportunidades-window').find('input[name=fecha_inicial]');
-            var $fecha_final =$('#forma-oportunidades-window').find('input[name=fecha_final]');
-            var $consultar =$('#forma-oportunidades-window').find('input[name=buscar]');
-            var $metas =$('#forma-oportunidades-window').find('input[name=metas]');
-            var $totales =$('#forma-oportunidades-window').find('input[name=totales]');
-            var $montos_meta =$('#forma-oportunidades-window').find('input[name=montos]');
-            var $total_montos_meta =$('#forma-oportunidades-window').find('input[name=totales_monto]');
-            
-            
-            var $porciento_metas =$('#forma-oportunidades-window').find('input[name=porcentaje]');
-            var $porciento_montos =$('#forma-oportunidades-window').find('input[name=porcentaje_montos]');
-            var $incial =$('#forma-oportunidades-window').find('input[name=por_inicial]');
-            var $ganados =$('#forma-oportunidades-window').find('input[name=por_ganados]');
-            var $perdidos =$('#forma-oportunidades-window').find('input[name=por_perdidos]');
-            var $visita =$('#forma-oportunidades-window').find('input[name=por_visitas]');
-            var $seguimiento =$('#forma-oportunidades-window').find('input[name=por_seguimiento]');
-            var $cotizacion =$('#forma-oportunidades-window').find('input[name=por_cotizacion]');
-            var $negociacion =$('#forma-oportunidades-window').find('input[name=por_negociacion]');
-            var $cierre =$('#forma-oportunidades-window').find('input[name=por_cierre]');
-            
-           
-            
-            
-            var $cerrar_plugin = $('#forma-oportunidades-window').find('#close');
-            var $cancelar_plugin = $('#forma-oportunidades-window').find('#boton_cancelar');
-            
-            $select_tipo.attr({'value':0});
-            $select_status.attr({'value': 0});
-            
-            
-             var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
-		var parametros={
-                    
-                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                }
-             $.post(input_json,parametros,function(entry){
-                 
-            //Alimentando los campos select_agente
-                    $select_agente.children().remove();
-                    var motivo_hmtl = '';
-                    $.each(entry['Agentes'],function(entryIndex,motivo){
-                        motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
-                    });
-                    $select_agente.append(motivo_hmtl);
-            
-            
-             });//fin json
-             
-             $select_etapa.children().remove();
-             var status_html='';
-                status_html +='<option value="1" selected="yes">Inicial</option>';
-                status_html +='<option value="2" >Calificacion</option>';
-                status_html +='<option value="3" >Necesidad Analisis</option>';
-                status_html +='<option value="4" >Cotizaci&oacute;n</option>';
-                status_html +='<option value="5" >Negociaci&oacute;n/Revisi&oacute;n</option>';
-                status_html +='<option value="6" >Cerrado</option>';
-                status_html +='<option value="7" >Ganadas</option>';
-                status_html +='<option value="8" >Perdidas</option>';
-            $select_etapa.append(status_html);
-             
-                $fecha_inicial.click(function (s){
-                    var a=$('div.datepicker');
-                    a.css({'z-index':100});
-                });
-			
-		$fecha_inicial.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_inicial.val(),
-			current: $fecha_inicial.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_inicial.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-					$fecha_inicial.DatePickerHide();
-					/*if (valida_fecha==true){
-						jAlert("Fecha no valida",'! Atencion');
-						$fecha_inicial.val(mostrarFecha());
-					}else{
-						$fecha_inicial.DatePickerHide();	
-					}*/
-				}
-			}
-		});
-		
-			
-        
-        //fecha para la proxima visita
-		$fecha_final.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-		});
-		
-		$fecha_final.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_final.val(),
-			current: $fecha_final.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_final.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-					$fecha_final.DatePickerHide();
-					/*if (valida_fecha==true){
-						$fecha_final.DatePickerHide();	
-					}else{
-						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
-						$fecha_final.val(mostrarFecha());
-					}*/
-				}
-			}
-		});
-            
-             //click para hacer la consulta
-		$consultar.click(function(event){ 
-                    
-                    $metas.attr({'value':''});
-                    $totales.attr({'value':''});
-                    $montos_meta.attr({'value':''});
-                    $total_montos_meta.attr({'value':''});
-                    $porciento_metas.attr({'value':''});
-                    $porciento_montos.attr({'value':''});
-                    $incial.attr({'value':''});
-                    $ganados.attr({'value':''});
-                    $perdidos.attr({'value':''});
-                    $visita.attr({'value':''});
-                    $seguimiento.attr({'value':''});
-                    $cotizacion.attr({'value':''});
-                    $negociacion.attr({'value':''});
-                    $cierre.attr({'value':''});
-                    
-                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
-                    $arreglo = {
-                        
-                        'agente':$select_agente.val(),
-                        'status':$select_status.val(),
-                        'etapa':$select_etapa.val(),
-                        'tipo_seleccion':$select_tipo.val(),
-                        'fecha_inicial':$fecha_inicial.val(),
-                        'fecha_final':$fecha_final.val(),
-                         'id':id_to_show,
-                        'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                    }
-                   
-
-                    $.post(input_json,$arreglo,function(entry){
-                        
-                        if(entry['Oportunidades'] != '' && entry['Oportunidades'] != null){
-                            $metas.attr({'value':entry['Oportunidades']['0']['metas_oport']});
-                            $totales.attr({'value':entry['Oportunidades']['0']['total_metas_oport']});
-                            $montos_meta.attr({'value':entry['Oportunidades']['0']['monto_metas_oport']});
-                            $total_montos_meta.attr({'value':entry['Oportunidades']['0']['total_montos_oport']});
-
-                            $porciento_metas.attr({'value':entry['Oportunidades']['0']['metas_cumplidas']});
-                            $porciento_montos.attr({'value':entry['Oportunidades']['0']['montos_cumplidos']});
-                            $incial.attr({'value':entry['Oportunidades']['0']['oport_inicial']});
-                            $visita.attr({'value':entry['Oportunidades']['0']['oport_seguimiento']});
-                            $ganados.attr({'value':entry['Oportunidades']['0']['oport_visitas']});
-                            $perdidos.attr({'value':entry['Oportunidades']['0']['oport_cotizacion']});
-                            $seguimiento.attr({'value':entry['Oportunidades']['0']['oport_negociacion']});
-                            $cotizacion.attr({'value':entry['Oportunidades']['0']['oport_cierre']});
-                            $cierre.attr({'value':entry['Oportunidades']['0']['oport_ganados']});
-                            $negociacion.attr({'value':entry['Oportunidades']['0']['oport_perdidos']});
-                        }else{
-                            jAlert("No se encontraron resultados.",'! Atencion');
-                        }
-                    });
-		});
-                
-                
-                $cerrar_plugin.bind('click',function(){
-                    var remove = function() {$(this).remove();};
-                    $('#forma-oportunidades-overlay').fadeOut(remove);
-                });
-                
-                $cancelar_plugin.click(function(event){
-                    var remove = function() {$(this).remove();};
-                    $('#forma-oportunidades-overlay').fadeOut(remove);
-
-                });
-                
-        }
-        //fin de la forma Registro Oportunidades
-        
-            //Plugin de registro de Prospectos/Contactos/Clientes
-            $registro_varios = function(){
-
-                var id_to_show = 5;
-                $(this).modalPanelVarios();
-                var form_to_show5 = 'formaCrmRegistroVarios';
-                $('#' + form_to_show5).each (function(){this.reset();});
-                var $forma_selected5 = $('#' + form_to_show5).clone();
-                $forma_selected5.attr({id : form_to_show5 + id_to_show});
-
-                $('#forma-registro-window').css({"margin-left": -400, 	"margin-top": -265});
-                $forma_selected5.prependTo('#forma-registro-window');
-                $forma_selected5.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-                $tabs_li_funxionalidad();
-
-                var $select_agente =$('#forma-registro-window').find('select[name=select_agente]');
-                var $select_tipo =$('#forma-registro-window').find('input[name=select_tipo]');
-                var $select_status =$('#forma-registro-window').find('input[name=status]');
-                var $select_etapa =$('#forma-registro-window').find('input[name=etapa]');
-                var $fecha_inicial =$('#forma-registro-window').find('input[name=fecha_inicial]');
-                var $fecha_final =$('#forma-registro-window').find('input[name=fecha_final]');
-                var $consultar =$('#forma-registro-window').find('input[name=buscar]');
-                var $metas =$('#forma-registro-window').find('input[name=metas]');
-                var $totales =$('#forma-registro-window').find('input[name=totales]');
-                var $porcentaje =$('#forma-registro-window').find('input[name=porcentaje]');
-                var $contacto =$('#forma-registro-window').find('input[name=contactos]');
-               
-
-
-
-                var $cerrar_plugin = $('#forma-registro-window').find('#close');
-                var $cancelar_plugin = $('#forma-registro-window').find('#boton_cancelar');
-
-                $select_status.attr({'value' : 0});
-                $select_etapa.attr({'value': 0});
-
-                $select_tipo.attr({'value' : 0});
-
-                 var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
-                    var parametros={
-
-                        iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                    }
-                 $.post(input_json,parametros,function(entry){
-
-                //Alimentando los campos select_agente
-                    $select_agente.children().remove();
-                    var motivo_hmtl = '';
-                    $.each(entry['Agentes'],function(entryIndex,motivo){
-                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
-                    });
-                    $select_agente.append(motivo_hmtl);
-            
-            
-             });//fin json
-             
-             $fecha_inicial.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-            });
-			
-		$fecha_inicial.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_inicial.val(),
-			current: $fecha_inicial.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_inicial.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-					$fecha_inicial.DatePickerHide();
-					/*if (valida_fecha==true){
-						jAlert("Fecha no valida",'! Atencion');
-						$fecha_inicial.val(mostrarFecha());
-					}else{
-						$fecha_inicial.DatePickerHide();	
-					}*/
-				}
-			}
-		});
-		
-			
-        
-        //fecha para la proxima visita
-		$fecha_final.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-		});
-		
-		$fecha_final.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_final.val(),
-			current: $fecha_final.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_final.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-					$fecha_final.DatePickerHide();
-					/*if (valida_fecha==true){
-						$fecha_final.DatePickerHide();	
-					}else{
-						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
-						$fecha_final.val(mostrarFecha());
-					}*/
-				}
-			}
-		});
-            
-             //click para hacer la consulta
-		$consultar.click(function(event){ 
-                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
-                    $arreglo = {
-                        
-                        'agente':$select_agente.val(),
-                        'status':$select_status.val(),
-                        'etapa':$select_etapa.val(),
-                        'tipo_seleccion':$select_tipo.val(),
-                        'fecha_inicial':$fecha_inicial.val(),
-                        'fecha_final':$fecha_final.val(),
-                         'id':id_to_show,
-                        'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                    }
-                    
-                    $.post(input_json,$arreglo,function(entry){
-                        if(entry['Varios'] != '' && entry['Varios'] != null){
-                            
-                            $metas.attr({'value':entry['Varios']['0']['prospectos_meta']});
-                            $totales.attr({'value':entry['Varios']['0']['total_contactos']});
-                            $porcentaje.attr({'value':entry['Varios']['0']['porcentaje_cumplido']});
-                            
-                            $contacto.attr({'value':entry['Varios']['0']['contactos']});
-                        }else{
-                            jAlert("No se encontraron resultados.",'! Atencion');
-                        }
-                    });
-		});
-
-                $cerrar_plugin.bind('click',function(){
-                    var remove = function() {$(this).remove();};
-                    $('#forma-registro-overlay').fadeOut(remove);
-                });
-
-                $cancelar_plugin.click(function(event){
-                    var remove = function() {$(this).remove();};
-                    $('#forma-registro-overlay').fadeOut(remove);
-
-                });
-
-        }
-        //fin de la forma Registro Prospectos/Contactos/Clientes
-        
-	$new_consulta.click(function(event){
-            
-           var opcion = $select_opciones.val();
-           
-                switch (parseInt(opcion)){
-                    case 1:    
-                        $registro_visitas();
-                    break;
-                    case 2:
-                        $registro_llamadas();
-                    break;
-                    case 3:
-                        $registro_casos();
-                    break;
-                    case 4:
-                        $registro_oportunidades();
-                    break;
-                    case 5:
-                        $registro_varios();
-                    break;
-                    
-                    default:
-                        
-                }
-        });
         
         
         
         
         /* Aqui empieza el codigo para este aplicativo */
         //Plugin de registro de Prospectos/Contactos/Clientes
-            $registro_varios = function(){
-
-                var id_to_show = 5;
-                $(this).modalPanelVarios();
-                var form_to_show5 = 'formaCrmRegistroVarios';
-                $('#' + form_to_show5).each (function(){this.reset();});
-                var $forma_selected5 = $('#' + form_to_show5).clone();
-                $forma_selected5.attr({id : form_to_show5 + id_to_show});
-
-                $('#forma-registro-window').css({"margin-left": -400, 	"margin-top": -265});
-                $forma_selected5.prependTo('#forma-registro-window');
-                $forma_selected5.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-                $tabs_li_funxionalidad();
-
-                var $select_agente =$('#forma-registro-window').find('select[name=select_agente]');
-                var $select_tipo =$('#forma-registro-window').find('input[name=select_tipo]');
-                var $select_status =$('#forma-registro-window').find('input[name=status]');
-                var $select_etapa =$('#forma-registro-window').find('input[name=etapa]');
-                var $fecha_inicial =$('#forma-registro-window').find('input[name=fecha_inicial]');
-                var $fecha_final =$('#forma-registro-window').find('input[name=fecha_final]');
-                var $consultar =$('#forma-registro-window').find('input[name=buscar]');
-                var $metas =$('#forma-registro-window').find('input[name=metas]');
-                var $totales =$('#forma-registro-window').find('input[name=totales]');
-                var $porcentaje =$('#forma-registro-window').find('input[name=porcentaje]');
-                var $contacto =$('#forma-registro-window').find('input[name=contactos]');
-               
-
-
-
-                var $cerrar_plugin = $('#forma-registro-window').find('#close');
-                var $cancelar_plugin = $('#forma-registro-window').find('#boton_cancelar');
-
-                $select_status.attr({'value' : 0});
-                $select_etapa.attr({'value': 0});
-
-                $select_tipo.attr({'value' : 0});
-
-                 var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
-                    var parametros={
-
-                        iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                    }
-                 $.post(input_json,parametros,function(entry){
-
-                //Alimentando los campos select_agente
-                    $select_agente.children().remove();
-                    var motivo_hmtl = '';
-                    $.each(entry['Agentes'],function(entryIndex,motivo){
-                            motivo_hmtl += '<option value="' + motivo['id'] + '"  >' + motivo['nombre_agente'] + '</option>';
-                    });
-                    $select_agente.append(motivo_hmtl);
-            
-            
-             });//fin json
+            $registro_config_consultas = function(){
+                var usuario;
                 
-		
+                
+                var id_to_show = 0;
+                $(this).modalPanelCrmConfigConsultas();
+                var form_to_show = 'formaCrmConfigConsultas';
+                $('#' + form_to_show).each (function(){this.reset();});
+                var $forma_selected = $('#' + form_to_show).clone();
+                $forma_selected.attr({id : form_to_show + id_to_show});
+                
+                $('#forma-crmconfigconsultas-window').css({"margin-left": -400, 	"margin-top": -295});
+                $forma_selected.prependTo('#forma-crmconfigconsultas-window');
+                $forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
+                $tabs_li_funcionalidad();
+                
+                $registro_casos  =   $('#forma-crmconfigconsultas-window').find('.registro_casos');
+                $registro_oportunidades  =   $('#forma-crmconfigconsultas-window').find('.registro_oportunidades');
+                $registro_llamadas   =   $('#forma-crmconfigconsultas-window').find('.registro_llamadas');
+                $registro_visitas    =   $('#forma-crmconfigconsultas-window').find('.registro_visitas');
+                $submit_actualizar = $('#forma-crmconfigconsultas-window').find('#submit');
+                
+                $identificador  =$('#forma-crmconfigconsultas-window').find('input[name=identificador]');
+                
+                $metas_visita  =$('#forma-crmconfigconsultas-window').find('input[name=metas_visita]');
+                $totales_visita  =$('#forma-crmconfigconsultas-window').find('input[name=totales_visita]');
+                $cumplido_visita  =$('#forma-crmconfigconsultas-window').find('input[name=cumplido_visita]');
+                $conexito_visita =$('#forma-crmconfigconsultas-window').find('input[name=conexito_visita]');
+                $conoportunidad_visita  =$('#forma-crmconfigconsultas-window').find('input[name=conoportunidad_visita]');
+                $seguimiento_visita  =$('#forma-crmconfigconsultas-window').find('input[name=seguimiento_visita]');
+                $efectividad_visita  =$('#forma-crmconfigconsultas-window').find('input[name=efectividad_visita]');
+                $gestion_visita =$('#forma-crmconfigconsultas-window').find('input[name=gestion_visita]');
+                $avance_visita =$('#forma-crmconfigconsultas-window').find('input[name=avance_visita]');
+                
+                $metas_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=metas_llamadas]');
+                $total_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=total_llamadas]');
+                $cumplido_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=cumplido_llamadas]');
+                $entrantes_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=entrantes_llamadas]');
+                $salientes_llamadas =$('#forma-regcrmconfigconsultasistro-window').find('input[name=salientes_llamadas]');
+                $planeadas_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=planeadas_llamadas]');
+                $con_exito_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=con_exito_llamadas]');
+                $con_cita_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=con_cita_llamadas]');
+                $conseguimiento_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=conseguimiento_llamadas]');
+                $efectividad_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=efectividad_llamadas]');
+                $gestion_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=gestion_llamadas]');
+                $avance_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=avance_llamadas]');
+                $planeacion_llamadas =$('#forma-crmconfigconsultas-window').find('input[name=planeacion_llamadas]');
+                
+                $facturacion_casos =$('#forma-crmconfigconsultas-window').find('input[name=facturacion_casos]');
+                $producto_casos =$('#forma-crmconfigconsultas-window').find('input[name=producto_casos]');
+                $garantia_casos =$('#forma-crmconfigconsultas-window').find('input[name=garantia_casos]');
+                $distribucion_casos =$('#forma-crmconfigconsultas-window').find('input[name=distribucion_casos]');
+                $danos_casos =$('#forma-crmconfigconsultas-window').find('input[name=danos_casos]');
+                $devoluciones_casos =$('#forma-crmconfigconsultas-window').find('input[name=devoluciones_casos]');
+                $cobranza_casos =$('#forma-crmconfigconsultas-window').find('input[name=cobranza_casos]');
+                $varios_casos =$('#forma-crmconfigconsultas-window').find('input[name=varios_casos]');
+                
+                
+                $metas_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=metas_oportunidades]');
+                $total_metas_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=total_metas_oportunidades]');
+                $montos_meta_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=montos_meta_oportunidades]');
+                $total_montos_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=total_montos_oportunidades]');
+                $metas_cumplidas_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=metas_cumplidas_oportunidades]');
+                $montos_cumplidas_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=montos_cumplidas_oportunidades]');
+                $inicial_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=inicial_oportunidades]');
+                $seguimiento_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=seguimiento_oportunidades]');
+                $visitas_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=visitas_oportunidades]');
+                $cotizacion_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=cotizacion_oportunidades]');
+                $negociacion_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=negociacion_oportunidades]');
+                $cierre_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=cierre_oportunidades]');
+                $ganados_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=ganados_oportunidades]');
+                
+                
+                //funciona para seleccionar un checkbosx si en la base de datos indica que estara seleccionado
+                $is_check_checkbox = function(campo, valor){
+                    
+                    if(valor == 'true'){
+                        campo.attr('checked', true);
+                    }
+                }
+                
+                
+                //alert("estoy aqui adentro");
+                //var input_busqueda_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'obtener_facturas' + '/' + $identificador_cliente.val()  +'/out.json';
+                var input_busqueda_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getDatosConfigConsulta.json';
+                $arreglo = {'iu': $('#lienzo_recalculable').find('input[name=iu]').val()};
+                
+                $identificador.attr({'value': 0});
+                $.post(input_busqueda_json,$arreglo,function(entry){
+                    
+                    if(entry['Config'][0] != null ){
+                        $identificador.attr({'value': entry['Config']['0']['id']});
+                        $is_check_checkbox($metas_visita, entry['Config']['0']['metas_visita']);
+                        $is_check_checkbox($totales_visita, entry['Config']['0']['totales_visita']);
+                        $is_check_checkbox($cumplido_visita, entry['Config']['0']['cumplido_visita']);
+                        $is_check_checkbox($conexito_visita, entry['Config']['0']['conexito_visita']);
+                        $is_check_checkbox($conoportunidad_visita, entry['Config']['0']['conoportunidad_visita']);
+                        $is_check_checkbox($seguimiento_visita, entry['Config']['0']['seguimiento_visita']);
+                        $is_check_checkbox($efectividad_visita, entry['Config']['0']['efectividad_visita']);
+                        $is_check_checkbox($gestion_visita, entry['Config']['0']['gestion_visita']);
+                        $is_check_checkbox($avance_visita, entry['Config']['0']['avance_visita']);
+                        $is_check_checkbox($metas_llamadas, entry['Config']['0']['metas_llamadas']);
+                        $is_check_checkbox($total_llamadas, entry['Config']['0']['total_llamadas']);
+                        $is_check_checkbox($cumplido_llamadas, entry['Config']['0']['cumplido_llamadas']);
+                        $is_check_checkbox($entrantes_llamadas, entry['Config']['0']['entrantes_llamadas']);
+                        $is_check_checkbox($salientes_llamadas, entry['Config']['0']['salientes_llamadas']);
+                        $is_check_checkbox($planeadas_llamadas, entry['Config']['0']['planeadas_llamadas']);
+                        $is_check_checkbox($con_exito_llamadas, entry['Config']['0']['con_exito_llamadas']);
+                        $is_check_checkbox($con_cita_llamadas, entry['Config']['0']['con_cita_llamadas']);
+                        $is_check_checkbox($conseguimiento_llamadas, entry['Config']['0']['conseguimiento_llamadas']);
+                        $is_check_checkbox($efectividad_llamadas, entry['Config']['0']['efectividad_llamadas']);
+                        $is_check_checkbox($gestion_llamadas, entry['Config']['0']['gestion_llamadas']);
+                        $is_check_checkbox($avance_llamadas, entry['Config']['0']['avance_llamadas']);
+                        $is_check_checkbox($planeacion_llamadas, entry['Config']['0']['planeacion_llamadas']);
+                        $is_check_checkbox($facturacion_casos, entry['Config']['0']['facturacion_casos']);
+                        $is_check_checkbox($producto_casos, entry['Config']['0']['producto_casos']);
+                        $is_check_checkbox($garantia_casos, entry['Config']['0']['garantia_casos']);
+                        $is_check_checkbox($distribucion_casos, entry['Config']['0']['distribucion_casos']);
+                        $is_check_checkbox($danos_casos, entry['Config']['0']['danos_casos']);
+                        $is_check_checkbox($devoluciones_casos, entry['Config']['0']['devoluciones_casos']);
+                        $is_check_checkbox($cobranza_casos, entry['Config']['0']['cobranza_casos']);
+                        $is_check_checkbox($varios_casos, entry['Config']['0']['varios_casos']);
+                        $is_check_checkbox($metas_oportunidades, entry['Config']['0']['metas_oportunidades']);
+                        $is_check_checkbox($total_metas_oportunidades, entry['Config']['0']['total_metas_oportunidades']);
+                        $is_check_checkbox($montos_meta_oportunidades, entry['Config']['0']['montos_meta_oportunidades']);
+                        $is_check_checkbox($total_montos_oportunidades, entry['Config']['0']['total_montos_oportunidades']);
+                        $is_check_checkbox($metas_cumplidas_oportunidades, entry['Config']['0']['metas_cumplidas_oportunidades']);
+                        $is_check_checkbox($montos_cumplidas_oportunidades, entry['Config']['0']['montos_cumplidas_oportunidades']);
+                        $is_check_checkbox($inicial_oportunidades, entry['Config']['0']['inicial_oportunidades']);
+                        $is_check_checkbox($seguimiento_oportunidades, entry['Config']['0']['seguimiento_oportunidades']);
+                        $is_check_checkbox($visitas_oportunidades, entry['Config']['0']['visitas_oportunidades']);
+                        $is_check_checkbox($cotizacion_oportunidades, entry['Config']['0']['cotizacion_oportunidades']);
+                        $is_check_checkbox($negociacion_oportunidades, entry['Config']['0']['negociacion_oportunidades']);
+                        $is_check_checkbox($cierre_oportunidades, entry['Config']['0']['cierre_oportunidades']);
+                        $is_check_checkbox($ganados_oportunidades, entry['Config']['0']['ganados_oportunidades']);
+                        
+                    }else{
+                        $identificador.attr({'value': 0});
+                    }
+                    
+                });
+                
+                
+                
+                //Validar que no pueda seleccionar mas de 6 campos de cada tipo de registro
+                $valida_checks_seleccionados = function($clase){
+                    retorno = "";
+                    contador = 0;
+                    $clase.find('input[type=checkbox]').each(function(){
+                        if (this.checked) {
+                            contador ++;
+                        }
+                    });
+                    
+                    if(contador > 6){
+                        retorno = "Esxede la cantidad de campos a seleccoinar";
+                    }else{
+                        retorno = "true";
+                    }
+                    
+                    return retorno;
+                }
+                
+                //Obtinen el total de campos seleccionados del tipo de registro
+                $valida_cantidad_checks_seleccionados = function($clase){
+                    contador = 0;
+                    
+                    $clase.find('input[type=checkbox]').each(function(){
+                        if (this.checked) {
+                            contador ++;
+                        }
+                    });
+                    
+                    return contador;
+                }
+                
+                
+                
+                /*Validaciones para vicitas*/
+                $metas_visita.click(function(){
+                    valida = $valida_checks_seleccionados($registro_visitas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $totales_visita.click(function(){
+                    valida = $valida_checks_seleccionados($registro_visitas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                    
+                });
+                $cumplido_visita.click(function(){
+                    valida = $valida_checks_seleccionados($registro_visitas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $conexito_visita.click(function(){
+                    valida = $valida_checks_seleccionados($registro_visitas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $conoportunidad_visita.click(function(){
+                    valida = $valida_checks_seleccionados($registro_visitas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $seguimiento_visita.click(function(){
+                    valida = $valida_checks_seleccionados($registro_visitas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $efectividad_visita.click(function(){
+                    valida = $valida_checks_seleccionados($registro_visitas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $gestion_visita.click(function(){
+                    valida = $valida_checks_seleccionados($registro_visitas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                
+                $avance_visita.click(function(){
+                    valida = $valida_checks_seleccionados($registro_visitas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                
+                
+                
+                /*Validaciones para llamadas*/
+                $metas_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $total_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $cumplido_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $entrantes_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $salientes_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $planeadas_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $con_exito_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $con_cita_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $conseguimiento_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $efectividad_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $gestion_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $avance_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $planeacion_llamadas.click(function(){
+                    valida = $valida_checks_seleccionados($registro_llamadas);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                
+                
+                /*Validaciones para Casos*/
+                $facturacion_casos.click(function(){
+                    valida = $valida_checks_seleccionados($registro_casos);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $producto_casos.click(function(){
+                    valida = $valida_checks_seleccionados($registro_casos);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $garantia_casos.click(function(){
+                    valida = $valida_checks_seleccionados($registro_casos);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $distribucion_casos.click(function(){
+                    valida = $valida_checks_seleccionados($registro_casos);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $danos_casos.click(function(){
+                    valida = $valida_checks_seleccionados($registro_casos);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $devoluciones_casos.click(function(){
+                    valida = $valida_checks_seleccionados($registro_casos);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $cobranza_casos.click(function(){
+                    valida = $valida_checks_seleccionados($registro_casos);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $varios_casos.click(function(){
+                    valida = $valida_checks_seleccionados($registro_casos);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                
+                
+                
+                
+                /*Validaciones para Oportunidaddes*/
+                $metas_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $total_metas_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $montos_meta_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $total_montos_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $metas_cumplidas_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $montos_cumplidas_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $inicial_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $seguimiento_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $visitas_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $cotizacion_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $negociacion_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $cierre_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $ganados_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                
+                
+                $valida_cantidades_iguales_de_campos_seleccionados = function(){
+                    
+                    $registro_casos  =   $('#forma-crmconfigconsultas-window').find('.registro_casos');
+                    $registro_oportunidades  =   $('#forma-crmconfigconsultas-window').find('.registro_oportunidades');
+                    $registro_llamadas   =   $('#forma-crmconfigconsultas-window').find('.registro_llamadas');
+                    $registro_visitas    =   $('#forma-crmconfigconsultas-window').find('.registro_visitas');
+
+                    $cantidad_casos = $valida_cantidad_checks_seleccionados($registro_casos);
+                    $cantidad_oportunidades = $valida_cantidad_checks_seleccionados($registro_oportunidades);
+                    $cantidad_llamadas = $valida_cantidad_checks_seleccionados($registro_llamadas);
+                    $cantidad_visitas = $valida_cantidad_checks_seleccionados($registro_visitas);
+                    
+                    if((parseInt($cantidad_casos) == parseInt($cantidad_casos)) && 
+                            (parseInt($cantidad_casos) == parseInt($cantidad_casos)) && 
+                            (parseInt($cantidad_casos) == parseInt($cantidad_casos)) && 
+                            (parseInt($cantidad_casos) == parseInt($cantidad_casos)) && 
+                            (parseInt($cantidad_casos) == parseInt($cantidad_casos)) ){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                    
+                }
+                
+                
+                
+                var $cerrar_plugin = $('#forma-crmconfigconsultas-window').find('#close');
+                var $cancelar_plugin = $('#forma-crmconfigconsultas-window').find('#boton_cancelar');
+                
+                    var respuestaProcesada = function(data){
+                        if ( data['success'] == "true" ){
+                            jAlert("Configuracion actualizada con exito", 'Atencion!');
+                            var remove = function() {$(this).remove();};
+                            $('#forma-crmconfigconsultas-overlay').fadeOut(remove);
+
+                            $get_datos_grid();
+                        }else{
+                            // Desaparece todas las interrogaciones si es que existen
+                            $('#forma-crmconfigconsultas-window').find('div.interrogacion').css({'display':'none'});
+                            /*
+                            var valor = data['success'].split('___');
+                            //muestra las interrogaciones
+                            for (var element in valor){
+                                tmp = data['success'].split('___')[element];
+                                longitud = tmp.split(':');
+                                if( longitud.length > 1 ){
+                                    $('#forma-crmcontactos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+                                    .parent()
+                                    .css({'display':'block'})
+                                    .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+                                }
+                            }
+                            */
+                        }
+                }
+                var options = {dataType :  'json', success : respuestaProcesada};
+                $forma_selected.ajaxForm(options);
+                
+                $submit_actualizar.bind('click',function(){
+                    
+                    if($valida_cantidades_iguales_de_campos_seleccionados() == true){
+                        jConfirm('Son los campos correctos?' , 'Dialogo de confirmacion', function(r) {
+                            if (r){
+                                $submit_actualizar.parents("FORM").submit();
+                            }
+                        });
+                    }else{
+                        jAlert("Los campos seleccionados para cada configuracion, deben de ser la misma cantidad.", 'Atencion!');
+                    }
+                    // Always return false here since we don't know what jConfirm is going to do
+                    return false;
+                });
+                
                 $cerrar_plugin.bind('click',function(){
                     var remove = function() {$(this).remove();};
-                    $('#forma-registro-overlay').fadeOut(remove);
+                    $('#forma-crmconfigconsultas-overlay').fadeOut(remove);
                 });
-
+                
                 $cancelar_plugin.click(function(event){
                     var remove = function() {$(this).remove();};
-                    $('#forma-registro-overlay').fadeOut(remove);
-
+                    $('#forma-crmconfigconsultas-overlay').fadeOut(remove);
+                    
                 });
-
+                
         }
         //fin de la forma Registro Prospectos/Contactos/Clientes
         
@@ -1224,8 +659,7 @@ $(function() {
         $configurar_consultas.bind('click', function(event){
             event.preventDefault();
             
+            $registro_config_consultas();
             
-            
-            alert("Configurando");
         });
 });
