@@ -6,14 +6,21 @@
         #include("${layoutheader}")
 		
         <!--  css for this catalogo -->
+        <link rel="stylesheet" href="../../css/modalbox/crmbigpicture/formaCrmConfigConsultas.css" type="text/css" />
+        
+        <!--
         <link rel="stylesheet" href="../../css/modalbox/crmconsultas/formaCrmRegistroLlamadas.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/crmconsultas/formaCrmRegistroVisitas.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/crmconsultas/formaCrmRegistroCasos.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/crmconsultas/formaCrmRegistroOportunidades.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/crmconsultas/formaCrmRegistroVarios.css" type="text/css" />
-        
+        -->
 
         <!--  js for this catalogo -->
+        <script type="text/javascript" src="../../js/components/modalbox/crmbigpicture/modalboxCrmConfigConsultas.js"></script>
+        
+        <script type="text/javascript" src="../../js/implements/crmbigpicture/index.js" ></script>
+        <!--
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/crmconsultas/modalboxCasos.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/crmconsultas/modalboxVarios.js"></script>
@@ -22,7 +29,7 @@
         <script type="text/javascript" src="../../js/components/modalbox/crmconsultas/modalboxVisitas.js"></script>
 
         <script type="text/javascript" src="../../js/implements/crmbigpicture/index.js" ></script>
-        
+        -->
         #include("${layoutmenu}")
         
         <input type="hidden" name="contextpath" value="$url">
@@ -80,19 +87,18 @@
                 <td ></td>
             </tr>
         </table>
-
-        <!--form for crmregistrollamadas -->
-        <form id="formaCrmRegistroLlamadas" action="edit.json" method="POST" >
+        
+        <!--form for crmconfigconsultas -->
+        <form id="formaCrmConfigConsultas" action="edit.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
-                <div id="div_one" class="panelcito_modal llamadas_div_one"  style="display:none;" title="">
+                <div id="div_one" class="panelcito_modal crmconfigconsultas_div_one"  style="display:none;" title="">
                 
-                <input type="hidden" name="status">
-                <input type="hidden" name="etapa">
+                <input type="hidden" name="identificador">
                 
                     
-                    <div id="div_two" title="" class="llamadas_div_two">
+                    <div id="div_two" title="" class="crmconfigconsultas_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:735px; padding-left:6px;"><strong>Consultas</strong></div>
+                            <div class="fixed column" id="cierra" style="width:735px; padding-left:6px;"><strong>Configuracion de Consultas</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -100,11 +106,11 @@
                     </div>
                     
                     
-                    <div id="div_three" title="" class="llamadas_div_three">
+                    <div id="div_three" title="" class="crmconfigconsultas_div_three">
                         <div class="columns" >
                             <div class=" fixed column">
                                 <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Registro de Llamada</strong></a></li>
+                                    <li><a href="#tabx-1"><strong>Configuraci&oacute;n de Consultas</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -114,86 +120,48 @@
                                     <div id="tabx-1" class="contenidoPes" >
                                         <table border="0" width="700px;">
                                             <tr>
-                                               <td colspan="18">&nbsp;</td>                      
-                                            </tr>
-                                            <tr>
-                                                <td width="90px">&nbsp;Agente</td>
-                                                <td colspan="4">
-                                                    <select name="select_agente" style="width:230px;">
-                                                        <option value="0" selected="yes">--Seleccione Agente--</option>
-                                                    </select>
-                                                </td>
-                                                <td>&nbsp;</td>
-                                                <td></td>
-                                                <input type="hidden" name="select_tipo" style="width:80px;"><!--<select name="select_tipo" style="width:120px;"></select>-->
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>&nbsp;Fechas del:</td>
-                                                <td width="30px;"><input type="text" name="fecha_inicial" style="width:80px;"></td>
-                                                <td align="center">al</td>
-                                                <td width="30px;"><input type="text" name="fecha_final" style="width:80px;"></td>
-                                                <td>&nbsp;&nbsp;&nbsp;</td>
-                                                <!--<td>Estatus</td>
-                                                 <td><select name="estatus" style="width:120px;"></select></td>-->
-                                                <td><input type="button" name="buscar" value="Consultar" style="width:80px; border-radius:5px;"</td>
-                                                
-                                            </tr>
-                                            <tr>
                                                 <td colspan="18">&nbsp;</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="18">
-                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend><b>Resultados</b></legend>
+                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend><b>Registro de Visitas</b></legend>
                                                         <ol>
-                                                            <table border="0" width="100%">
+                                                            <table border="0" width="100%"  class="registro_visitas">
+                                                                
                                                                 <tr>
                                                                     <td>&nbsp;Metas</td>
-                                                                    <td><input type="text" name="metas" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="checkbox" name="metas_visita" ></td>
                                                                     <td></td>
                                                                     <td>Total&nbsp;</td>
-                                                                    <td><input type="text" name="totales" style="width:70px;" readOnly="true"></td>
+                                                                    <td><input type="checkbox" name="totales_visita" ></td>
                                                                     <td>&nbsp;</td>
                                                                     <td>% Cumplido&nbsp;</td>
-                                                                    <td><input type="text" name="porcentaje" style="width:70px;" readOnly="true"></td>
-                                               
+                                                                    <td><input type="checkbox" name="cumplido_visita"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>Con Exito&nbsp;</td>
+                                                                    <td><input type="checkbox" name="conexito_visita"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>Con Oportunidad&nbsp;</td>
+                                                                    <td><input type="checkbox" name="conoportunidad_visita"></td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td colspan="13">&nbsp;</td>
+                                                                    <td colspan="14">&nbsp;</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td>&nbsp;Entrantes</td>
-                                                                    <td><input type="text" name="entrantes" style="width:70px;" readOnly="true"></td>
+                                                                    <td>&nbsp;Con Seguimiento</td>
+                                                                    <td><input type="checkbox" name="seguimiento_visita" ></td>
+                                                                    <td></td>
+                                                                    <td>% Efectividad&nbsp;</td>
+                                                                    <td><input type="checkbox" name="efectividad_visita" ></td>
                                                                     <td>&nbsp;</td>
-
-                                                                    <td>Salientes</td>
-                                                                    <td><input type="text" name="salientes" style="width:70px;" readOnly="true"></td>
+                                                                    <td>% Gesti&oacute;n&nbsp;</td>
+                                                                    <td><input type="checkbox" name="gestion_visita"></td>
                                                                     <td>&nbsp;</td>
-                                                                    <td>Planeadas</td>
-                                                                    <td><input type="text" name="planeadas" style="width:70px;" readOnly="true"></td>
+                                                                    <td>% Avance&nbsp;</td>
+                                                                    <td><input type="checkbox" name="avance_visita"></td>
                                                                     <td>&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-
-                                                                <tr>
-                                                                    <td>&nbsp;Con Exito</td>
-                                                                    <td><input type="text" name="con_exito" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;</td>
-
-                                                                    <td>Con Cita</td>
-                                                                    <td><input type="text" name="con_cita" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>Con Seguimiento</td>
-                                                                    <td><input type="text" name="con_seguimiento" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
+                                                                    <td></td>
                                                                 </tr>
                                                             </table>
                                                         </ol>
@@ -202,64 +170,203 @@
                                                 
                                             </tr>
                                             <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            
-                                           
-                                            <tr>
                                                 <td colspan="18">
-                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend>&nbsp;<b>Evaluaci&oacute;n</b></legend>
+                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend><b>Registro de Llamadas</b></legend>
                                                         <ol>
-                                                            <table border="0" width="70%">
+                                                            <table border="0" width="100%" class="registro_llamadas">
                                                                 <tr>
-                                                                    <td>&nbsp;% Efectividad</td>
-                                                                    <td><input type="text" name="efectividad" style="width:90px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-
-                                                                    <td>% Gesti&oacute;n</td>
-                                                                    <td><input type="text" name="gestion" style="width:90px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;Metas</td>
+                                                                    <td><input type="checkbox" name="metas_llamadas" ></td>
                                                                     <td></td>
-                                                                    <td></td>
+                                                                    <td>Total&nbsp;</td>
+                                                                    <td><input type="checkbox" name="total_llamadas" ></td>
                                                                     <td>&nbsp;</td>
+                                                                    <td>% Cumplido&nbsp;</td>
+                                                                    <td><input type="checkbox" name="cumplido_llamadas"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>Entrantes&nbsp;</td>
+                                                                    <td><input type="checkbox" name="entrantes_llamadas"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>Salientes&nbsp;</td>
+                                                                    <td><input type="checkbox" name="salientes_llamadas"></td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td colspan="10">&nbsp;</td>
+                                                                    <td colspan="14">&nbsp;</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td>&nbsp;% Avance</td>
-                                                                    <td><input type="text" name="avance" style="width:90px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-
-                                                                    <td>% Planeaci&oacute;n</td>
-                                                                    <td><input type="text" name="planeacion" style="width:90px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;Planeadas</td>
+                                                                    <td><input type="checkbox" name="planeadas_llamadas" ></td>
                                                                     <td></td>
-                                                                    <td></td>
+                                                                    <td>Con Exito&nbsp;</td>
+                                                                    <td><input type="checkbox" name="con_exito_llamadas" ></td>
                                                                     <td>&nbsp;</td>
+                                                                    <td>Con Cita&oacute;n&nbsp;</td>
+                                                                    <td><input type="checkbox" name="con_cita_llamadas"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>Con Seguimiento&nbsp;</td>
+                                                                    <td><input type="checkbox" name="conseguimiento_llamadas"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Efectividad&nbsp;</td>
+                                                                    <td><input type="checkbox" name="efectividad_llamadas"></td>
                                                                 </tr>
-
+                                                                <tr>
+                                                                    <td colspan="14">&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>&nbsp;% Gestión</td>
+                                                                    <td><input type="checkbox" name="gestion_llamadas" ></td>
+                                                                    <td></td>
+                                                                    <td>% Avance&nbsp;</td>
+                                                                    <td><input type="checkbox" name="avance_llamadas" ></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Planeaci&oacute;n&nbsp;</td>
+                                                                    <td><input type="checkbox" name="planeacion_llamadas"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td></td>
+                                                                </tr>
                                                             </table>
                                                         </ol>
                                                     </fieldset>
                                                 </td>
+                                                
+                                            </tr>                                           
+                                            <tr>
+                                                <td colspan="18">
+                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend><b>Registro de Casos</b></legend>
+                                                        <ol>
+                                                            <table border="0" width="100%" class="registro_casos">
+                                                                
+                                                                <tr>
+                                                                    <td>&nbsp;% Facturaci&oacute;n</td>
+                                                                    <td><input type="checkbox" name="facturacion_casos" ></td>
+                                                                    <td></td>
+                                                                    <td>% Producto&nbsp;</td>
+                                                                    <td><input type="checkbox" name="producto_casos" ></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% % Garant&iacute;a&nbsp;</td>
+                                                                    <td><input type="checkbox" name="garantia_casos"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Distribuci&oacute;n&nbsp;</td>
+                                                                    <td><input type="checkbox" name="distribucion_casos"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Da&ntilde;os&nbsp;</td>
+                                                                    <td><input type="checkbox" name="danos_casos"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="14">&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>&nbsp;% Devoluciones</td>
+                                                                    <td><input type="checkbox" name="devoluciones_casos" ></td>
+                                                                    <td></td>
+                                                                    <td>% Cobranza&nbsp;</td>
+                                                                    <td><input type="checkbox" name="cobranza_casos" ></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Varios&oacute;n&nbsp;</td>
+                                                                    <td><input type="checkbox" name="varios_casos"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            </table>
+                                                        </ol>
+                                                    </fieldset>
+                                                </td>
+                                                
                                             </tr>
+                                            
+                                            <tr>
+                                                <td colspan="18">
+                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend><b>Registro de Oportunidades</b></legend>
+                                                        <ol>
+                                                            <table border="0" width="100%" class="registro_oportunidades">
+                                                                
+                                                                <tr>
+                                                                    <td>&nbsp;Metas</td>
+                                                                    <td><input type="checkbox" name="metas_oportunidades" ></td>
+                                                                    <td></td>
+                                                                    <td>Total Metas&nbsp;</td>
+                                                                    <td><input type="checkbox" name="total_metas_oportunidades" ></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>Montos Meta&nbsp;</td>
+                                                                    <td><input type="checkbox" name="montos_meta_oportunidades"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>Total Montos&nbsp;</td>
+                                                                    <td><input type="checkbox" name="total_montos_oportunidades"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Metas Cumplidas&nbsp;</td>
+                                                                    <td><input type="checkbox" name="metas_cumplidas_oportunidades"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="14">&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>&nbsp;% Montos Cumplidas</td>
+                                                                    <td><input type="checkbox" name="montos_cumplidas_oportunidades" ></td>
+                                                                    <td></td>
+                                                                    <td>% Inicial&nbsp;</td>
+                                                                    <td><input type="checkbox" name="inicial_oportunidades" ></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Seguimiento&nbsp;</td>
+                                                                    <td><input type="checkbox" name="seguimiento_oportunidades"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Visitas&nbsp;</td>
+                                                                    <td><input type="checkbox" name="visitas_oportunidades"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Cotización&nbsp;</td>
+                                                                    <td><input type="checkbox" name="cotizacion_oportunidades"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="14">&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>&nbsp;% Negociaci&oacute;n</td>
+                                                                    <td><input type="checkbox" name="negociacion_oportunidades" ></td>
+                                                                    <td></td>
+                                                                    <td>% Cierre&nbsp;</td>
+                                                                    <td><input type="checkbox" name="cierre_oportunidades" ></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Ganados&nbsp;</td>
+                                                                    <td><input type="checkbox" name="ganados_oportunidades"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>% Perdidos&nbsp;</td>
+                                                                    <td><input type="checkbox" name="perdidos_oportunidades"></td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            </table>
+                                                        </ol>
+                                                    </fieldset>
+                                                </td>
+                                                
+                                            </tr>
+                                            
                                         </table>
                                     </div>			                                    
                                 </div>
                             </div>
-
-
-                            <div class="fixed column" id="botones" style="width:740px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            
+                            
+                            <div class="fixed column" id="botones" style="width:740px; background:; text-align:right;; position:absolute;margin-top:4px;">
                                 <table border="0">
+                                        <tr><td colspan="10" height="7"></td></tr>
                                         <tr>
-                                                <td width="650"></td>
-                                                
-                                                <td width="30"></td>
-                                                <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
+                                            <td width="559"></td>
+                                            <td>
+                                                <input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
+                                            </td>
+                                            <td width="30"></td>
+                                            <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
                                         </tr>
                                 </table>
-
                             </div>
                         </div>
                     </div>
@@ -267,625 +374,8 @@
                
         </form>
         <!-- Registro de Visitas-->
-        <form id="formaCrmRegistroVisitas" action="edit.json" method="POST" >
-        <!--clase la quite por causar problemas      tabulador -->
-                <div id="div_one" class="panelcito_modal visitas_div_one"  style="display:none;" title="">
-                
-                
-                <input type="hidden" name="status">
-                <input type="hidden" name="etapa">
-                
-					
-                    <div id="div_two" title="" class="visitas_div_two">
-                        <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:735px; padding-left:6px;"><strong>Consultas</strong></div>
-                            <div class="fixed column" style="width:20px; height:25px;">
-                                <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    
-                    <div id="div_three" title="" class="visitas_div_three">
-                        <div class="columns" >
-                            <div class=" fixed column">
-                                <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Registro de Visita</strong></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="columns" style="background:#731F6C;">
-                            <div class="container" style="background:white;">
-                                <div class="fixed column" class="content_x" >
-                                    <div id="tabx-1" class="contenidoPes" >
-                                        <table border="0" width="700px;">
-                                            <tr>
-                                               <td colspan="18">&nbsp;</td>                      
-                                            </tr>
-                                            
-                                           
-                                            <tr>
-                                                <td width="90px">&nbsp;Agente</td>
-                                                <td colspan="4">
-                                                    <select name="select_agente" style="width:230px;">
-                                                        <option value="0" selected="yes">--Seleccione Agente--</option>
-                                                    </select>
-                                                </td>
-                                                <td>&nbsp;</td>
-                                                <td></td>
-                                                <input type="hidden" name="select_tipo" style="width:80px;"><!--<select name="select_tipo" style="width:120px;"></select>-->
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>&nbsp;Fechas del:</td>
-                                                <td width="30px;"><input type="text" name="fecha_inicial" style="width:80px;"></td>
-                                                <td align="center">al</td>
-                                                <td width="30px;"><input type="text" name="fecha_final" style="width:80px;"></td>
-                                                <td>&nbsp;&nbsp;&nbsp;</td>
-                                                <!--<td>Estatus</td>
-                                                <td><select name="estatus" style="width:120px;"></select></td>-->
-                                                <td><input type="button" name="buscar" value="Consultar" style="width:80px; border-radius:5px;"</td>
-                                                
-                                                
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">
-                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend><b>Resultados</b></legend>
-                                                        <ol>
-                                                            <table border="0" width="100%">
-                                                                <tr>
-                                                                    <td>&nbsp;Metas</td>
-                                                                    <td><input type="text" name="metas" style="width:70px;" readOnly="true"></td>
-                                                                    <td></td>
-                                                                    <td>Total&nbsp;</td>
-                                                                    <td><input type="text" name="totales" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>% Cumplido&nbsp;</td>
-                                                                    <td><input type="text" name="porcentaje" style="width:70px;" readOnly="true"></td>
-                                               
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                                
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-
-                                                                <tr>
-                                                                    <td>&nbsp;Con Exito</td>
-                                                                    <td><input type="text" name="con_exito" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-
-                                                                    <td>Con Oportunidad</td>
-                                                                    <td><input type="text" name="con_cita" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>Con Seguimiento</td>
-                                                                    <td><input type="text" name="con_seguimiento" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                            </table>
-                                                        </ol>
-                                                    </fieldset>
-                                                </td>
-                                                
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">
-                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend>&nbsp;<b>Evaluaci&oacute;n</b></legend>
-                                                        <ol>
-                                                            <table border="0" width="100%">
-                                                                <tr>
-                                                                    <td colspan="2">&nbsp;% Efectividad</td>
-                                                                    <td><input type="text" name="efectividad" style="width:90px;" readOnly="true"></td>
-                                                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-
-                                                                    <td colspan="2">% Gesti&oacute;n</td>
-                                                                    <td><input type="text" name="gestion" style="width:90px;" readOnly="true"></td>
-                                                                    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                                                    <td colspan="2">&nbsp;% Avance</td>
-                                                                    <td><input type="text" name="avance" style="width:90px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="10">&nbsp;</td>
-                                                                </tr>
-                                                                
-                                                            </table>
-                                                        </ol>
-                                                    </fieldset>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>			                                    
-                                </div>
-                            </div>
 
 
-                            <div class="fixed column" id="botones" style="width:740px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
-                                <table border="0">
-                                        <tr>
-                                                <td width="650"></td>
-                                                
-                                                <td width="30"></td>
-                                                <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
-                                        </tr>
-                                </table>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               
-        </form>
-        
-        <!-- Registro de Casos-->
-        <form id="formaCrmRegistroCasos" action="edit.json" method="POST" >
-        <!--clase la quite por causar problemas      tabulador -->
-                <div id="div_one" class="panelcito_modal casos_div_one"  style="display:none;" title="">
-                    
-                    <input type="hidden" name="etapa">
-                
-					
-                    <div id="div_two" title="" class="casos_div_two">
-                        <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:735px; padding-left:6px;"><strong>Consultas</strong></div>
-                            <div class="fixed column" style="width:20px; height:25px;">
-                                <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    
-                    <div id="div_three" title="" class="casos_div_three">
-                        <div class="columns" >
-                            <div class=" fixed column">
-                                <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Registro de Casos</strong></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="columns" style="background:#731F6C;">
-                            <div class="container" style="background:white;">
-                                <div class="fixed column" class="content_x" >
-                                    <div id="tabx-1" class="contenidoPes" >
-                                        <table border="0" width="700px;">
-                                            <tr>
-                                               <td colspan="18">&nbsp;</td>                      
-                                            </tr>
-                                            <tr>
-                                                <td width="90px">&nbsp;Agente</td>
-                                                <td >
-                                                    <select name="select_agente" style="width:230px;">
-                                                        <option value="0" selected="yes">--Seleccione Agente--</option>
-                                                    </select>
-                                                </td>
-                                                <td colspan="2">&nbsp;&nbsp;&nbsp;</td>
-                                                <td colspan="2"></td>
-                                                <td><input type="hidden" name="select_tipo" style="width:80px;"><!--<select name="select_tipo" style="width:120px;"></select>--></td>
-                                                <td>&nbsp;&nbsp;&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td>&nbsp;Fechas del:</td>
-                                                <td width="30px;"><input type="text" name="fecha_inicial" style="width:80px;"></td>
-                                                <td align="center">al</td>
-                                                <td width="30px;"><input type="text" name="fecha_final" style="width:80px;"></td>
-                                                <td>&nbsp;&nbsp;&nbsp;</td>
-                                                <td>Estatus</td>
-                                                <td><select name="estatus" style="width:120px;"></select></td>
-                                                <td><input type="button" name="buscar" value="Consultar" style="width:80px; border-radius:5px;"</td>
-                                                
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">
-                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend><b>Resultados</b></legend>
-                                                        <ol>
-                                                            <table border="0" width="100%">
-                                                                <tr>
-                                                                    <td>&nbsp;% Facturaci&oacute;n</td>
-                                                                    <td><input type="text" name="casos_facturacion" style="width:70px;" readOnly="true"></td>
-                                                                    <td></td>
-                                                                    <td>% Producto&nbsp;</td>
-                                                                    <td><input type="text" name="casos_producto" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>% Garant&iacute;a</td>
-                                                                    <td><input type="text" name="casos_garantia" style="width:70px;" readOnly="true"></td>
-                                               
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>&nbsp;% Distribuci&oacute;n</td>
-                                                                    <td><input type="text" name="casos_distribucion" style="width:70px;" readOnly="true"></td>
-                                                                    <td></td>
-                                                                    <td>% Da&ntilde;os&nbsp;</td>
-                                                                    <td><input type="text" name="casos_danos" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>% Devoluciones</td>
-                                                                    <td><input type="text" name="casos_devoluciones" style="width:70px;" readOnly="true"></td>
-                                               
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>&nbsp;% Cobranza</td>
-                                                                    <td><input type="text" name="casos_cobranza" style="width:70px;" readOnly="true" ></td>
-                                                                    <td></td>
-                                                                    <td>% Varios&nbsp;</td>
-                                                                    <td><input type="text" name="casos_varios" style="width:70px;" readOnly="true"></td>
-                                                                    <td></td>
-                                                                    
-                                                                </tr>
-                                                                
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                            </table>
-                                                        </ol>
-                                                    </fieldset>
-                                                </td>
-                                                
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr> 
-                                        </table>
-                                    </div>			                                    
-                                </div>
-                            </div>
-
-
-                            <div class="fixed column" id="botones" style="width:740px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
-                                <table border="0">
-                                        <tr>
-                                                <td width="650"></td>
-                                                
-                                                <td width="30"></td>
-                                                <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
-                                        </tr>
-                                </table>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               
-        </form>
-        
-        <!-- Registro de Oportunidades-->
-        <form id="formaCrmRegistroOportunidades" action="edit.json" method="POST" >
-        <!--clase la quite por causar problemas tabulador -->
-                <div id="div_one" class="panelcito_modal oportunidades_div_one"  style="display:none;" title="">
-                
-                    <input type="hidden" name="select_tipo">
-                    <input type="hidden" name="estatus">
-                
-					
-                    <div id="div_two" title="" class="oportunidades_div_two">
-                        <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:735px; padding-left:6px;"><strong>Consultas</strong></div>
-                            <div class="fixed column" style="width:20px; height:25px;">
-                                <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    
-                    <div id="div_three" title="" class="oportunidades_div_three">
-                        <div class="columns" >
-                            <div class=" fixed column">
-                                <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Registro de Oportunidades</strong></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="columns" style="background:#731F6C;">
-                            <div class="container" style="background:white;">
-                                <div class="fixed column" class="content_x" >
-                                    <div id="tabx-1" class="contenidoPes" >
-                                        <table border="0" width="700px;">
-                                            <tr>
-                                               <td colspan="18">&nbsp;</td>                      
-                                            </tr>
-                                            
-                                           
-                                            <tr>
-                                                <td width="90px">&nbsp;Agente</td>
-                                                <td colspan="4">
-                                                    <select name="select_agente" style="width:230px;">
-                                                        <option value="0" selected="yes">--Seleccione Agente--</option>
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td>&nbsp;Fechas del:</td>
-                                                <td width="30px;"><input type="text" name="fecha_inicial" style="width:80px;"></td>
-                                                <td align="center">al</td>
-                                                <td width="30px;"><input type="text" name="fecha_final" style="width:80px;"></td>
-                                                <td>&nbsp;&nbsp;&nbsp;</td>
-                                                <td>Etapa</td>
-                                                 <td><select name="etapa" style="width:120px;"></select></td>
-                                                <td><input type="button" name="buscar" value="Consultar" style="width:80px; border-radius:5px;"</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">
-                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend><b>Resultados</b></legend>
-                                                        <ol>
-                                                            <table border="0" width="100%">
-                                                                <tr>
-                                                                    <td>&nbsp;Metas</td>
-                                                                    <td><input type="text" name="metas" style="width:70px;" readOnly="true"></td>
-                                                                    <td></td>
-                                                                    <td>Total Metas&nbsp;</td>
-                                                                    <td><input type="text" name="totales" style="width:70px;" readOnly="true"></td>
-                                                                    
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>&nbsp;Montos Meta&nbsp;</td>
-                                                                    <td><input type="text" name="montos" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;&nbsp;</td>
-                                                                    <td>Total Montos&nbsp;</td>
-                                                                    <td><input type="text" name="totales_monto" style="width:70px;" readOnly="true"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    
-                                                                    <td>&nbsp;% Metas Cumplidas&nbsp;</td>
-                                                                    <td><input type="text" name="porcentaje" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>% Montos Cumplidas&nbsp;</td>
-                                                                    <td><input type="text" name="porcentaje_montos" style="width:70px;" readOnly="true"></td>
-                                                                    
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-
-                                                                <tr>
-                                                                    <td>&nbsp;% Inicial</td>
-                                                                    <td><input type="text" name="por_inicial" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-
-                                                                    <td>% Seguimiento</td>
-                                                                    <td><input type="text" name="por_seguimiento" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>% Visitas</td>
-                                                                    <td><input type="text" name="por_visitas" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>&nbsp;% Cotizaci&oacute;n</td>
-                                                                    <td><input type="text" name="por_cotizacion" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-
-                                                                    <td>% Negociaci&oacute;n</td>
-                                                                    <td><input type="text" name="por_negociacion" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>% Cierre</td>
-                                                                    <td><input type="text" name="por_cierre" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>&nbsp;% Ganados</td>
-                                                                    <td><input type="text" name="por_ganados" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-
-                                                                    <td>% Perdidos</td>
-                                                                    <td><input type="text" name="por_perdidos" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    
-                                                                </tr>
-                                                                
-                                                            </table>
-                                                        </ol>
-                                                    </fieldset>
-                                                </td>
-                                                
-                                            </tr>
-                                            
-                                        </table>
-                                    </div>			                                    
-                                </div>
-                            </div>
-
-
-                            <div class="fixed column" id="botones" style="width:740px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
-                                <table border="0">
-                                        <tr>
-                                                <td width="650"></td>
-                                                
-                                                <td width="30"></td>
-                                                <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
-                                        </tr>
-                                </table>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               
-        </form>
-        
-        <!-- Registro de Prospectos/Contactos/Clientes-->
-        <form id="formaCrmRegistroVarios" action="edit.json" method="POST" >
-        <!--clase la quite por causar problemas      tabulador -->
-                <div id="div_one" class="panelcito_modal registro_div_one"  style="display:none;" title="">
-                
-                <input type="hidden" name="status">
-                <input type="hidden" name="etapa">
-                
-					
-                    <div id="div_two" title="" class="registro_div_two">
-                        <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:735px; padding-left:6px;"><strong>Consultas</strong></div>
-                            <div class="fixed column" style="width:20px; height:25px;">
-                                <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    
-                    <div id="div_three" title="" class="registro_div_three">
-                        <div class="columns" >
-                            <div class=" fixed column">
-                                <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Prospectos/Contactos/Clientes</strong></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="columns" style="background:#731F6C;">
-                            <div class="container" style="background:white;">
-                                <div class="fixed column" class="content_x" >
-                                    <div id="tabx-1" class="contenidoPes" >
-                                        <table border="0" width="700px;">
-                                            <tr>
-                                               <td colspan="18">&nbsp;</td>                      
-                                            </tr>
-                                            
-                                           
-                                            <tr>
-                                                <td width="90px">&nbsp;Agente</td>
-                                                <td colspan="4">
-                                                    <select name="select_agente" style="width:230px;">
-                                                        <option value="0" selected="yes">--Seleccione Agente--</option>
-                                                    </select>
-                                                </td>
-                                                <td>&nbsp;</td>
-                                                <td></td>
-                                                <td><input type="hidden" name="select_tipo" style="width:80px;"><!--<select name="select_tipo" style="width:120px;"></select>--></td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td>&nbsp;Fechas del:</td>
-                                                <td width="30px;"><input type="text" name="fecha_inicial" style="width:80px;"></td>
-                                                <td align="center">al</td>
-                                                <td width="30px;"><input type="text" name="fecha_final" style="width:80px;"></td>
-                                                <td>&nbsp;&nbsp;&nbsp;</td>
-                                                <!--<td>Estatus</td>
-                                                 <td><select name="estatus" style="width:120px;"></select></td>-->
-                                                <td><input type="button" name="buscar" value="Consultar" style="width:80px; border-radius:5px;"</td>
-                                                
-                                                
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">
-                                                    <fieldset style="border: solid 1px #313E74; groove #fff; background:#FAFAFA; width:100%;" class="gral"><legend><b>Resultados</b></legend>
-                                                        <ol>
-                                                            <table border="0" width="100%">
-                                                                <tr>
-                                                                    <td>&nbsp;Metas</td>
-                                                                    <td><input type="text" name="metas" style="width:70px;" readOnly="true"></td>
-                                                                    <td></td>
-                                                                    <td>Total&nbsp;</td>
-                                                                    <td><input type="text" name="totales" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>% Cumplido&nbsp;</td>
-                                                                    <td><input type="text" name="porcentaje" style="width:70px;" readOnly="true"></td>
-                                               
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                                
-                                                                <tr>
-                                                                    <td>&nbsp;Contactos</td>
-                                                                    <td><input type="text" name="contactos" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    
-                                                                    <!--<td>Prospectos</td>
-                                                                    <td><input type="text" name="prospectos" style="width:70px;" readOnly="true"></td>
-                                                                    <td>&nbsp;</td>
-                                                                    <td>Clientes</td>
-                                                                    <td><input type="text" name="clientes" style="width:70px;" readOnly="true"></td>
-                                                                    -->
-                                                                    <td>&nbsp;</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="13">&nbsp;</td>
-                                                                </tr>
-                                                            </table>
-                                                        </ol>
-                                                    </fieldset>
-                                                </td>
-                                                
-                                            </tr>
-                                            <tr>
-                                                <td colspan="18">&nbsp;</td>
-                                            </tr>
-                                        </table>
-                                    </div>			                                    
-                                </div>
-                            </div>
-
-
-                            <div class="fixed column" id="botones" style="width:740px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
-                                <table border="0">
-                                        <tr>
-                                                <td width="650"></td>
-                                                
-                                                <td width="30"></td>
-                                                <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
-                                        </tr>
-                                </table>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               
-        </form>
         
         
         #include("${layoutfooter}")
