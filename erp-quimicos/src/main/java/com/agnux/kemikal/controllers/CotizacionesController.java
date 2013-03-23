@@ -222,6 +222,26 @@ public class CotizacionesController {
     
     
     
+    //Obtener el Tipo de Cambio de Acuerdo a la Moneda Seleccionada
+    @RequestMapping(method = RequestMethod.POST, value="/getValorTc.json")
+    public @ResponseBody HashMap<String, String> getValorTcJson(
+            @RequestParam(value="idmon", required=false) String idmon,
+            Model model
+        ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        
+        if(idmon==null || idmon.equals("")){
+            idmon="0";
+        }
+        
+        jsonretorno= this.getPocDao().getTipoCambioActualPorIdMoneda(Integer.parseInt(idmon));
+        
+        return jsonretorno;
+    }
+    
+    
+    
     @RequestMapping(method = RequestMethod.POST, value="/getCotizacion.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCotizacionJson(
             @RequestParam(value="id_cotizacion", required=true) String id_cotizacion,
@@ -410,6 +430,9 @@ public class CotizacionesController {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> tipoCambio = new HashMap<String, String>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -417,7 +440,15 @@ public class CotizacionesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        jsonretorno.put("Presentaciones", this.getPocDao().getPresentacionesProducto(sku, lista_precio, id_empresa));
+        
+        presentaciones = this.getPocDao().getPresentacionesProducto(sku, lista_precio, id_empresa);
+        Integer idmon = Integer.parseInt(presentaciones.get(0).get("id_moneda"));
+        
+        tipoCambio = this.getPocDao().getTipoCambioActualPorIdMoneda(idmon);
+        datos.add(tipoCambio);
+        
+        jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Datos", datos);
         
         return jsonretorno;
     }

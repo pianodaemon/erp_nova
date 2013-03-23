@@ -27,6 +27,8 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getCondicionesDePago();
     public Double getTipoCambioActual();
+    public HashMap<String, String> getTipoCambioActualPorIdMoneda(Integer idMoneda);
+    
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal);
     
     //metodos para aplicativo pedidos y autorizacion de pedidos

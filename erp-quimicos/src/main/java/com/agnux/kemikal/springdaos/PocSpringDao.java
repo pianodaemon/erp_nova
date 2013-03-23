@@ -570,6 +570,28 @@ public class PocSpringDao implements PocInterfaceDao{
         return valor_tipo_cambio;
     }
     
+    //obtiene el tipo de cambio actual por Id de la Moneda Seleccionada
+    @Override
+    public HashMap<String, String> getTipoCambioActualPorIdMoneda(Integer idMoneda) {
+        HashMap<String, String> valorRetorno = new HashMap<String, String>();
+        String valor="0.0000";
+        
+        String sql_busqueda = "select count(valor) FROM (SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id="+idMoneda+" ORDER BY momento_creacion DESC LIMIT 1) AS sbt;";
+        int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
+        
+        System.out.println(sql_busqueda);
+        
+        if(rowCount > 0){
+            String sql_to_query = "SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id="+idMoneda+" ORDER BY momento_creacion DESC LIMIT 1;";
+            Map<String, Object> tipo_cambio = this.getJdbcTemplate().queryForMap(sql_to_query);
+            valor = StringHelper.roundDouble(tipo_cambio.get("valor").toString(),4);
+        }
+        
+        valorRetorno.put("valor", valor);
+        
+        return valorRetorno;
+    }
+    
     
     //obtiene valor del impuesto. retorna 0.16
     @Override
@@ -1008,9 +1030,11 @@ public class PocSpringDao implements PocInterfaceDao{
         
         if(lista_precio.equals("0")){
             precio=" 0::double precision  AS precio,"
+                    + " 0::integer  AS id_moneda,"
                     + "'1'::character varying  AS exis_prod_lp ";
         }else{
             precio=" (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 0 ELSE inv_pre.precio_"+lista_precio+" END ) AS precio,"
+                    + "(CASE WHEN inv_pre.gral_mon_id_pre"+lista_precio+" IS NULL THEN 0 ELSE inv_pre.gral_mon_id_pre"+lista_precio+" END ) AS id_moneda,"
                  + " (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 'El producto con &eacute;sta presentaci&oacute;n no se encuentra en el cat&aacute;logo de Listas de Precios.\nEs necesario asignarle un precio.' ELSE '1' END ) AS exis_prod_lp ";
         }
         
@@ -1052,6 +1076,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("decimales",rs.getString("decimales"));
                     row.put("precio",StringHelper.roundDouble(rs.getString("precio"),2));
                     row.put("exis_prod_lp",rs.getString("exis_prod_lp"));
+                    row.put("id_moneda",String.valueOf(rs.getInt("id_moneda")));
                     return row;
                 }
             }
