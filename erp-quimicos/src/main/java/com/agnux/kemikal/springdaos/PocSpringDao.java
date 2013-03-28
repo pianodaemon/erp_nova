@@ -881,7 +881,7 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-
+    
     
     
     
@@ -1712,19 +1712,26 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot.observaciones, "
                     + "proceso_id, "
                     + "poc_cot.incluye_img_desc, "
-                    + "poc_cot.tipo_cambio,"
+                    + "(CASE WHEN poc_cot.gral_mon_id=1 THEN 1 ELSE poc_cot.tipo_cambio END) AS tipo_cambio,"
                     + "poc_cot.gral_mon_id, "
+                    + "gral_mon.descripcion_abr AS moneda_abr,"
                     + "poc_cot.cxc_agen_id, "
                     + "(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'yyyy-mm-dd') ELSE to_char(poc_cot.fecha::timestamp with time zone,'yyyy-mm-dd') END) AS fecha,"
                     + "(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE  gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE  gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE  gral_empleados.apellido_materno END) AS nombre_usuario,"
                     + "(CASE WHEN gral_puestos.titulo IS NULL THEN '' ELSE gral_puestos.titulo END) AS puesto_usuario, "
-                    + "(CASE WHEN gral_empleados.correo_empresa IS NULL THEN '' ELSE gral_empleados.correo_empresa END) AS correo_agente "
+                    + "(CASE WHEN gral_empleados.correo_empresa IS NULL THEN '' ELSE gral_empleados.correo_empresa END) AS correo_agente,"
+                    + "poc_cot.subtotal, "
+                    + "poc_cot.impuesto,"
+                    + "poc_cot.total,"
+                    + "poc_cot.incluye_iva,"
+                    + "poc_cot.dias_vigencia "
                 + "FROM poc_cot "
                 + "LEFT JOIN gral_usr ON gral_usr.id=poc_cot.gral_usr_id_creacion "
                 + "LEFT JOIN  gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
                 + "LEFT JOIN  gral_puestos ON gral_puestos.id=gral_empleados.gral_puesto_id "
+                + "JOIN gral_mon ON gral_mon.id=poc_cot.gral_mon_id"
                 + " WHERE poc_cot.id=? ";
-        
+        //poc_cot.fecha + poc_cot.dias_vigencia AS fecha_vencimiento
         System.out.println("getCotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm_cotizacion = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
@@ -1735,6 +1742,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("tipo",String.valueOf(rs.getInt("tipo")));
                     row.put("moneda_id",String.valueOf(rs.getInt("gral_mon_id")));
+                    row.put("monedaAbr",rs.getString("moneda_abr"));
                     row.put("proceso_id",String.valueOf(rs.getInt("proceso_id")));
                     row.put("folio",rs.getString("folio"));
                     row.put("observaciones",rs.getString("observaciones"));
@@ -1745,7 +1753,12 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("nombre_usuario",rs.getString("nombre_usuario"));
                     row.put("puesto_usuario",rs.getString("puesto_usuario"));
                     row.put("correo_agente",rs.getString("correo_agente"));
-                    
+                    row.put("subtotal",StringHelper.roundDouble(rs.getString("subtotal"),2));
+                    row.put("impuesto",StringHelper.roundDouble(rs.getString("impuesto"),2));
+                    row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
+                    row.put("dias_vigencia",String.valueOf(rs.getInt("dias_vigencia")));
+                    row.put("incluye_iva",String.valueOf(rs.getBoolean("incluye_iva")));
+                            
                     return row;
                 }
             }
@@ -1886,7 +1899,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot_detalle.precio_unitario, "
                     + "poc_cot_detalle.gral_mon_id as moneda_id, "
                     + "gral_mon.descripcion_abr AS moneda_abr, "
-                    + "(poc_cot_detalle.cantidad * poc_cot_detalle.precio_unitario) AS importe "
+                    + "(poc_cot_detalle.cantidad * poc_cot_detalle.precio_unitario) AS importe,"
+                    + "poc_cot_detalle.gral_impto_id as id_imp,"
+                    + "poc_cot_detalle.valor_imp "
                 + "FROM poc_cot_detalle  "
                 + "LEFT JOIN inv_prod on inv_prod.id = poc_cot_detalle.inv_prod_id  "
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id  "
@@ -1915,6 +1930,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
                     row.put("moneda_abr",rs.getString("moneda_abr"));
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2));
+                    row.put("id_imp",String.valueOf(rs.getInt("id_imp")));
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2));
                     return row;
                 }
             }
@@ -1959,6 +1976,46 @@ public class PocSpringDao implements PocInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+    
+    
+    
+    //obtiene los INCOTERMS para mostrarlas a la cotizacion
+    //los option del select se forman desde el query
+    @Override
+    public ArrayList<HashMap<String, String>> getCotizacion_Incoterms(Integer id_emp, Integer id_cot) {
+        String sql_query=""
+                + "SELECT "
+                    + "id,"
+                    + "titulo,"
+                    + "(CASE WHEN cot_id IS NOT NULL THEN true ELSE false END )AS mostrar_pdf, "
+                    + "(CASE WHEN cot_id IS NOT NULL THEN '<option value=\"'||id||'\" selected=\"yes\">'||titulo||'</option>' ELSE '<option value=\"'||id||'\">'||titulo||'</option>' END )AS opcion_select "
+                + "FROM("
+                    + "SELECT "
+                        + "incoterms.id,"
+                        + "(CASE WHEN incoterms.nombre IS NULL THEN '' ELSE incoterms.nombre END)||' - '||(CASE WHEN incoterms.descripcion_esp IS NULL THEN '' ELSE incoterms.descripcion_esp END) AS titulo,"
+                        + "incotermxcot.poc_cot_id AS cot_id "
+                    + "FROM poc_cot_incoterms AS incoterms "
+                    + "LEFT JOIN poc_cot_incoterm_x_cot AS incotermxcot ON (incotermxcot.poc_cot_incoterms_id=incoterms.id AND incotermxcot.poc_cot_id="+id_cot+") "
+                    + "WHERE incoterms.borrado_logico=FALSE AND incoterms.gral_emp_id="+id_emp+""
+                + ") AS sbt;";
+                
+        System.out.println("getIncoterms: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_query, 
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("mostrar_pdf",String.valueOf(rs.getBoolean("mostrar_pdf")));
+                    row.put("opcion_select",rs.getString("opcion_select"));
                     return row;
                 }
             }
@@ -2109,7 +2166,4 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
 }

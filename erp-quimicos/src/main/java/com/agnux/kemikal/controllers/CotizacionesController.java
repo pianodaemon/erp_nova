@@ -258,6 +258,7 @@ public class CotizacionesController {
         ArrayList<HashMap<String, String>> valorIva = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> agentes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> incoterms = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
         HashMap<String, String> tc = new HashMap<String, String>();
@@ -273,7 +274,7 @@ public class CotizacionesController {
         extra.put("mod_crm", userDat.get("incluye_crm"));
         arrayExtra.add(0,extra);
         
-        if( (id_cotizacion.equals("0"))==false  ){
+        if( !id_cotizacion.equals("0")  ){
             datosCotizacion = this.getPocDao().getCotizacion_Datos(Integer.parseInt(id_cotizacion));
             if(datosCotizacion.get(0).get("tipo").equals("1")){
                 DatosCliPros = this.getPocDao().getCotizacion_DatosCliente(Integer.parseInt(id_cotizacion));
@@ -289,6 +290,7 @@ public class CotizacionesController {
         tipoCambioActual.add(0,tc);
         
         agentes = this.getPocDao().getAgentes(id_empresa, id_sucursal);
+        incoterms = this.getPocDao().getCotizacion_Incoterms(id_empresa, Integer.parseInt(id_cotizacion));
         
         jsonretorno.put("datosCotizacion", datosCotizacion);
         jsonretorno.put("DatosCP", DatosCliPros);
@@ -298,6 +300,7 @@ public class CotizacionesController {
         jsonretorno.put("Extras", arrayExtra);
         jsonretorno.put("Tc", tipoCambioActual);
         jsonretorno.put("Agentes", agentes);
+        jsonretorno.put("Incoterms", incoterms);
         
         return jsonretorno;
     }
@@ -542,6 +545,9 @@ public class CotizacionesController {
             @RequestParam(value="id_cliente", required=true) String id_cliente,
             @RequestParam(value="observaciones", required=true) String observaciones,
             @RequestParam(value="check_descripcion_larga", required=false) String check_descripcion_larga,
+            @RequestParam(value="check_incluye_iva", required=false) String check_incluye_iva,
+            @RequestParam(value="select_accion", required=true) String select_accion,
+            @RequestParam(value="vigencia", required=true) String vigencia,
             @RequestParam(value="tc", required=true) String tc,
             @RequestParam(value="moneda", required=true) String moneda_id,
             @RequestParam(value="fecha", required=true) String fecha,
@@ -554,7 +560,11 @@ public class CotizacionesController {
             @RequestParam(value="cantidad", required=true) String[] cantidad,
             @RequestParam(value="precio", required=true) String[] precio,
             @RequestParam(value="monedagrid", required=true) String[] monedagrid,
+            @RequestParam(value="id_imp_prod", required=true) String[] id_imp_prod,
+            @RequestParam(value="valor_imp", required=true) String[] valor_imp,
             @RequestParam(value="notr", required=true) String[] notr,
+            @RequestParam(value="select_incoterms", required=false) String[] select_incoterms,
+            
             @ModelAttribute("user") UserSessionData user,
             Model model
         ) {
@@ -568,22 +578,44 @@ public class CotizacionesController {
             String command_selected = "new";
             String actualizo = "0";
             
+            command_selected=select_accion;
+            /*
             if( identificador==0 ){
                 command_selected = "new";
             }else{
                 command_selected = "edit";
             }
+            */
             
             for(int i=0; i<eliminado.length; i++) { 
                 //Imprimir el contenido de cada celda 
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + precio[i] +"___" + monedagrid[i]+"___"+notr[i]+"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + precio[i] +"___" + monedagrid[i]+"___"+notr[i]+"___"+id_imp_prod[i]+"___"+valor_imp[i]+"'";
                 //System.out.println("arreglo["+i+"] = "+arreglo[i]);
             }
             
             //serializar el arreglo
             String extra_data_array = StringUtils.join(arreglo, ",");
             
+            System.out.println("tamaño: "+select_incoterms.length);
+            
+            System.out.println("select_incoterms: "+select_incoterms);
+            String incoterms="";
+            int primerIncoterm = 0;
+            if(select_incoterms != null){
+                for(int i=0; i<select_incoterms.length; i++) { 
+                    if(primerIncoterm==0){
+                        incoterms = select_incoterms[i];
+                        primerIncoterm++;
+                    }else{
+                        incoterms += ","+select_incoterms[i];
+                        primerIncoterm++;
+                    }
+                }
+                
+            }
+            
             check_descripcion_larga = StringHelper.verificarCheckBox(check_descripcion_larga);
+            check_incluye_iva = StringHelper.verificarCheckBox(check_incluye_iva);
             
             String data_string = 
                     app_selected + "___"+ 
@@ -597,7 +629,10 @@ public class CotizacionesController {
                     tc+"___"+
                     moneda_id+"___"+
                     fecha+"___"+
-                    select_agente;
+                    select_agente+"___"+
+                    vigencia+"___"+
+                    check_incluye_iva+"___"+
+                    incoterms;
             
             succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
             
@@ -644,10 +679,11 @@ public class CotizacionesController {
     
     
     
-    @RequestMapping(value = "/getGeneraPdfCotizacion/{id_cotizacion}/{incluye_img}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/getGeneraPdfCotizacion/{id_cotizacion}/{incluye_img}/{incluye_iva}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getGeneraPdfCotizacionJson(
                 @PathVariable("id_cotizacion") Integer id_cotizacion,
                 @PathVariable("incluye_img") String incluye_img,
+                @PathVariable("incluye_iva") String incluye_iva,
                 @PathVariable("iu") String id_user,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
@@ -667,6 +703,7 @@ public class CotizacionesController {
         
         ArrayList<HashMap<String, String>> condiciones_comerciales = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> politicas_pago = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> incoterms = new ArrayList<HashMap<String, String>>();
         
         System.out.println("Generando PDF de Cotizacion");
         
@@ -722,6 +759,8 @@ public class CotizacionesController {
         //obtiene las politicas de pago para la cotizacion
         politicas_pago = this.getPocDao().getCotizacion_PolitizasPago(id_empresa);
         
+        incoterms = this.getPocDao().getCotizacion_Incoterms(id_empresa, id_cotizacion);
+        
         lista_productos = this.getPocDao().getCotizacion_DatosGrid(id_cotizacion);
         datos.put("ruta_logo", rutaLogoEmpresa);
         datos.put("file_out", fileout);
@@ -737,6 +776,16 @@ public class CotizacionesController {
         datos.put("correo_agente", datosCotizacion.get(0).get("correo_agente"));
         datos.put("saludo", saludo.get("saludo"));
         datos.put("despedida", despedida.get("despedida"));
+        datos.put("subtotal", datosCotizacion.get(0).get("subtotal"));
+        datos.put("impuesto", datosCotizacion.get(0).get("impuesto"));
+        datos.put("total", datosCotizacion.get(0).get("total"));
+        datos.put("dias_vigencia", datosCotizacion.get(0).get("dias_vigencia"));
+        datos.put("monedaAbr", datosCotizacion.get(0).get("monedaAbr"));
+        
+        //esta variable viene desde la vista
+        //hay un campo en la base de datos pero, no se esta utilizando en el pdf
+        datos.put("incluiyeIvaPdf", incluye_iva);
+        
         
         if(datosCotizacion.get(0).get("tipo").equals("1")){
             datosCliPros = this.getPocDao().getCotizacion_DatosCliente(id_cotizacion);
@@ -756,7 +805,7 @@ public class CotizacionesController {
         datosReceptor.put("clieContacto", datosCliPros.get(0).get("contacto"));
         datosReceptor.put("clieRazonSocial", datosCliPros.get(0).get("razon_social"));
                 
-        pdfCotizacion pdf = new pdfCotizacion(HeaderFooter, datosEmisor, datos,datosReceptor,lista_productos, condiciones_comerciales, politicas_pago);
+        pdfCotizacion pdf = new pdfCotizacion(HeaderFooter, datosEmisor, datos,datosReceptor,lista_productos, condiciones_comerciales, politicas_pago, incoterms);
         pdf.ViewPDF();
         
         

@@ -43,6 +43,7 @@ public class pdfCotizacion {
     private ArrayList<HashMap<String, String>> lista_productos = new ArrayList<HashMap<String, String>>();
     private ArrayList<HashMap<String, String>> condiciones_comerciales = new ArrayList<HashMap<String, String>>();
     private ArrayList<HashMap<String, String>> politicas_pago = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> incoterms = new ArrayList<HashMap<String, String>>();
     private String ruta_logo;
     private String file_out;
     private String dirImgProd;
@@ -59,7 +60,13 @@ public class pdfCotizacion {
     private String correo_agente;
     private String saludo;
     private String despedida;
-
+    private String diasVigencia;
+    private String total;
+    private String impuesto;
+    private String subtotal;
+    private String incluyeIva;
+    private String monedaAbr;
+    
     private String emisorRazonSocial;
     private String emisorRfc;
     private String emisorCalle;
@@ -85,11 +92,12 @@ public class pdfCotizacion {
     private String clieContacto;
     
     //-----Ccostructor para hacer seters-------------
-    public pdfCotizacion(HashMap<String, String> HeaderFooter, HashMap<String, String> datosEmisor, HashMap<String, String> datos, HashMap<String, String> datosCliente, ArrayList<HashMap<String, String>> lista_productos, ArrayList<HashMap<String, String>> condiciones_comerciales, ArrayList<HashMap<String, String>> politicas_pago) throws URISyntaxException {
+    public pdfCotizacion(HashMap<String, String> HeaderFooter, HashMap<String, String> datosEmisor, HashMap<String, String> datos, HashMap<String, String> datosCliente, ArrayList<HashMap<String, String>> lista_productos, ArrayList<HashMap<String, String>> condiciones_comerciales, ArrayList<HashMap<String, String>> politicas_pago, ArrayList<HashMap<String, String>> incoterms) throws URISyntaxException {
         this.setDatosHeaderFooter(HeaderFooter);
         this.setLista_productos(lista_productos);
         this.setCondiciones_comerciales(condiciones_comerciales);
         this.setPoliticas_pago(politicas_pago);
+        this.setIncoterms(incoterms);
         this.setRuta_logo(datos.get("ruta_logo"));
         this.setFile_out(datos.get("file_out"));
         this.setDirImgProd(datos.get("dirImagenes"));
@@ -106,6 +114,12 @@ public class pdfCotizacion {
         this.setCorreo_agente(datos.get("correo_agente"));
         this.setSaludo(datos.get("saludo"));
         this.setDespedida(datos.get("despedida"));
+        this.setDiasVigencia(datos.get("dias_vigencia"));
+        this.setTotal(datos.get("total"));
+        this.setImpuesto(datos.get("impuesto"));
+        this.setSubtotal(datos.get("subtotal"));
+        this.setIncluyeIva(datos.get("incluiyeIvaPdf"));
+        this.setMonedaAbr(datos.get("monedaAbr"));
         
         this.setEmisorCalle(datosEmisor.get("emp_calle"));
         this.setEmisorColonia(datosEmisor.get("emp_colonia"));
@@ -512,6 +526,130 @@ public class pdfCotizacion {
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 tablaPartidas.addCell(cell);
             }
+            
+            
+            if(this.getIncluyeIva().equals("true")){
+                //FILA SUBTOTAL
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setColspan(2);
+                cell.setBorder(0);
+                tablaPartidas.addCell(cell);
+
+                if(this.getIncluyeImgDesc().equals("true")){
+                    cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell.setColspan(2);
+                    cell.setBorder(0);
+                    tablaPartidas.addCell(cell);
+                }
+                
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setColspan(3);
+                cell.setBorder(0);
+                tablaPartidas.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("Subtotal", smallFontBold));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                tablaPartidas.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getSubtotal()), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                tablaPartidas.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tablaPartidas.addCell(cell);
+                
+                //FILA IVA
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setColspan(2);
+                cell.setBorder(0);
+                tablaPartidas.addCell(cell);
+                
+                if(this.getIncluyeImgDesc().equals("true")){
+                    cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell.setColspan(2);
+                    cell.setBorder(0);
+                    tablaPartidas.addCell(cell);
+                }
+
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setColspan(3);
+                cell.setBorder(0);
+                tablaPartidas.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("I.V.A.", smallFontBold));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                tablaPartidas.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getImpuesto()), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                tablaPartidas.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tablaPartidas.addCell(cell);
+
+                //FILA TOTAL
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setColspan(2);
+                cell.setBorder(0);
+                tablaPartidas.addCell(cell);
+
+                if(this.getIncluyeImgDesc().equals("true")){
+                    cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell.setColspan(2);
+                    cell.setBorder(0);
+                    tablaPartidas.addCell(cell);
+                }
+                
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setColspan(3);
+                cell.setBorder(0);
+                tablaPartidas.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("Total", smallFontBold));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                tablaPartidas.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getTotal()), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                tablaPartidas.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tablaPartidas.addCell(cell);
+            }
+            
             tablaPartidas.setSpacingAfter(10f);
             document.add(tablaPartidas);
             //TERMINA TABLA PARA EL LISTADO DE PRODUCTOS---------------------------
@@ -537,10 +675,45 @@ public class pdfCotizacion {
                 document.add(tableObser);
             }
             
+            
+            
+            if (this.getPoliticas_pago().size() > 0){
+                //tabla para las observaciones
+                PdfPTable tableIncoterms = new PdfPTable(1);
+                
+                cell = new PdfPCell(new Paragraph("INCOTERMS\n", smallBoldFontBlack));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorder(0);
+                cell.setColspan(2);
+                tableIncoterms.addCell(cell);
+                
+                Iterator it3;
+                it3 = this.getIncoterms().iterator();
+                while(it3.hasNext()){
+                    HashMap<String,String> map = (HashMap<String,String>)it3.next();
+                    
+                    if(map.get("mostrar_pdf").equals("true")){
+                        String condicion = esteAtributoSeDejoNulo(map.get("titulo"));
+                        cell = new PdfPCell(new Paragraph(condicion, smallFont));
+                        cell.setVerticalAlignment(Element.ALIGN_TOP);
+                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell.setBorder(0);
+                        tableIncoterms.addCell(cell);
+                    }
+                }
+                tableIncoterms.setSpacingAfter(10f);
+                document.add(tableIncoterms);
+            }
+            
+            
+            
+            
             float [] widths3 = {0.2f,10};
             if (this.getCondiciones_comerciales().size() > 0){
                 //tabla para las observaciones
                 PdfPTable tableCondicionesComerciales = new PdfPTable(widths3);
+                int incluyeNota=0;
                 
                 Iterator it2;
                 it2 = this.getCondiciones_comerciales().iterator();
@@ -557,7 +730,45 @@ public class pdfCotizacion {
                         cell.setBorder(0);
                         cell.setColspan(2);
                         tableCondicionesComerciales.addCell(cell);
+                        
+                        if(Integer.parseInt(this.getDiasVigencia())>0){
+                            if(incluyeNota==0){
+                                cell = new PdfPCell(new Paragraph(".", smallBoldFontBlack));
+                                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                                cell.setBorder(0);
+                                tableCondicionesComerciales.addCell(cell);
+                                
+                                cell = new PdfPCell(new Paragraph("LA COTIZACIÓN TIENE UNA VIGENCIA DE "+this.getDiasVigencia()+" DIAS CONTADOS A PARTIR DE LA FECHA DE EXPEDICIÓN.", smallFont));
+                                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                                cell.setBorder(0);
+                                tableCondicionesComerciales.addCell(cell);
+                                
+                                incluyeNota++;
+                            }
+                        }
+                        
                     }else{
+                        
+                        if(Integer.parseInt(this.getDiasVigencia())>0){
+                            if(incluyeNota==0){
+                                cell = new PdfPCell(new Paragraph(".", smallBoldFontBlack));
+                                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                                cell.setBorder(0);
+                                tableCondicionesComerciales.addCell(cell);
+
+                                cell = new PdfPCell(new Paragraph("LA COTIZACIóN TIENE UNA VIGENCIA DE "+this.getDiasVigencia()+" DIAS CONTADOS A PARTIR DE LA FECHA DE EXPEDICIÓN.", smallFont));
+                                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                                cell.setBorder(0);
+                                tableCondicionesComerciales.addCell(cell);
+                                
+                                incluyeNota++;
+                            }
+                        }
+                        
                         cell = new PdfPCell(new Paragraph(".", smallBoldFontBlack));
                         cell.setVerticalAlignment(Element.ALIGN_TOP);
                         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -571,6 +782,9 @@ public class pdfCotizacion {
                         tableCondicionesComerciales.addCell(cell);
                     }
                     
+                    
+                    
+                    
                 }
                 tableCondicionesComerciales.setSpacingAfter(10f);
                 document.add(tableCondicionesComerciales);
@@ -579,15 +793,6 @@ public class pdfCotizacion {
             if (this.getPoliticas_pago().size() > 0){
                 //tabla para las observaciones
                 PdfPTable tablePoliticasPago = new PdfPTable(widths3);
-                /*
-                //fila vacia
-                cell = new PdfPCell(new Paragraph("", smallBoldFontBlack));
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setBorder(0);
-                cell.setColspan(2);
-                tablePoliticasPago.addCell(cell);
-                */
                 
                 cell = new PdfPCell(new Paragraph("POLITICAS DE PAGO\n", smallBoldFontBlack));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -960,6 +1165,14 @@ public class pdfCotizacion {
         this.politicas_pago = politicas_pago;
     }
     
+    public ArrayList<HashMap<String, String>> getIncoterms() {
+        return incoterms;
+    }
+
+    public void setIncoterms(ArrayList<HashMap<String, String>> incoterms) {
+        this.incoterms = incoterms;
+    }
+    
     public String getClieCalle() {
         return clieCalle;
     }
@@ -1271,4 +1484,51 @@ public class pdfCotizacion {
         this.correo_agente = correo_agente;
     }
     
+    public String getDiasVigencia() {
+        return diasVigencia;
+    }
+
+    public void setDiasVigencia(String diasVigencia) {
+        this.diasVigencia = diasVigencia;
+    }
+
+    public String getImpuesto() {
+        return impuesto;
+    }
+
+    public void setImpuesto(String impuesto) {
+        this.impuesto = impuesto;
+    }
+
+    public String getIncluyeIva() {
+        return incluyeIva;
+    }
+
+    public void setIncluyeIva(String incluyeIva) {
+        this.incluyeIva = incluyeIva;
+    }
+
+    public String getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(String subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
+    }
+    
+    public String getMonedaAbr() {
+        return monedaAbr;
+    }
+
+    public void setMonedaAbr(String monedaAbr) {
+        this.monedaAbr = monedaAbr;
+    }
 }
