@@ -15,19 +15,171 @@ $(function() {
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
 	var controller = $contextpath.val()+"/controllers/crmbigpicture";
-    
+        
 	//Barra para las acciones
 	$('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
 	
 	var $new_consulta = $('#consultas').find('input[name=buscar]');
         var $configurar_consultas = $('#consultas').find('input[name=configurar_consultas]');
-        var $select_opciones =$('#consultas').find('select[name=consultar_como]');
+        var $busqueda_agente =$('#consultas').find('select[name=busqueda_agente]');
+        var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
+        var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
 	//alert($new_consulta);
+        var $buscar_consulta =$('#consultas').find('input[name=buscar]');
+        
 	
 	//aqui va el titulo del catalogo
 	$('#barra_titulo').find('#td_titulo').append('Consultas');
 	
 	
+        //esto se hace para reinicar los valores del select de agentes
+        var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+        $arreglo2 = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+        
+        $.post(input_json2,$arreglo2,function(data){
+            //Alimentando los campos select_agente
+            $busqueda_agente.children().remove();
+            var agente_hmtl = '';
+            if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+                agente_hmtl += '<option value="0" >[-- Selecionar Agente --]</option>';
+            }
+
+            $.each(data['Agentes'],function(entryIndex,agente){
+                if(parseInt(agente['id'])==parseInt(data['Extra'][0]['id_agente'])){
+                    agente_hmtl += '<option value="' + agente['id'] + '" selected="yes">' + agente['nombre_agente'] + '</option>';
+                }else{
+                    //si exis_rol_admin es mayor que cero, quiere decir que el usuario logueado es un administrador
+                    if(parseInt(data['Extra'][0]['exis_rol_admin']) > 0){
+                        agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_agente'] + '</option>';
+                    }
+                }
+            });
+            $busqueda_agente.append(agente_hmtl);
+        });
+        
+        
+        /*Programacion de los campos tipo fecha*/
+        $fecha_inicial.attr('readonly',true);
+        $fecha_final.attr('readonly',true);
+        
+        //valida la fecha seleccionada
+        function mayor(fecha, fecha2){
+            var xMes=fecha.substring(5, 7);
+            var xDia=fecha.substring(8, 10);
+            var xAnio=fecha.substring(0,4);
+            var yMes=fecha2.substring(5, 7);
+            var yDia=fecha2.substring(8, 10);
+            var yAnio=fecha2.substring(0,4);
+            if (xAnio > yAnio){
+                return(true);
+            }else{
+                if (xAnio == yAnio){
+                    if (xMes > yMes){
+                        return(true);
+                    }
+                    if (xMes == yMes){
+                        if (xDia > yDia){
+                            return(true);
+                        }else{
+                            return(false);
+                        }
+                    }else{
+                        return(false);
+                    }
+                }else{
+                    return(false);
+                }
+            }
+        }
+        //muestra la fecha actual
+        var mostrarFecha = function mostrarFecha(){
+            var ahora = new Date();
+            var anoActual = ahora.getFullYear();
+            var mesActual = ahora.getMonth();
+            mesActual = mesActual+1;
+            mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+            var diaActual = ahora.getDate();
+            diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+            var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
+            return Fecha;
+        }
+        //----------------------------------------------------------------
+        
+        $fecha_inicial.DatePicker({
+            format:'Y-m-d',
+            date: $(this).val(),
+            current: $(this).val(),
+            starts: 1,
+            position: 'bottom',
+            locale: {
+                days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+                daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+                daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+                months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+                monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+                weekMin: 'se'
+            },
+            onChange: function(formated, dates){
+                var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+                $fecha_inicial.val(formated);
+                if (formated.match(patron) ){
+                    var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
+                    if (valida_fecha==true){
+                        jAlert("Fecha no valida",'! Atencion');
+                        $fecha_inicial.val(mostrarFecha());
+                    }else{
+                        $fecha_inicial.DatePickerHide();
+                    }
+                }
+            }
+        });
+
+        $fecha_inicial.click(function (s){
+            var a=$('div.datepicker');
+            a.css({'z-index':100});
+        });
+        
+        mostrarFecha($fecha_inicial.val());
+        //fecha final
+        
+        $fecha_final.DatePicker({
+            format:'Y-m-d',
+            date: $(this).val(),
+            current: $(this).val(),
+            starts: 1,
+            position: 'bottom',
+            locale: {
+                days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+                daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+                daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+                months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+                monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+                weekMin: 'se'
+            },
+            onChange: function(formated, dates){
+                var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+                $fecha_final.val(formated);
+                if (formated.match(patron) ){
+                    var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
+                    if (valida_fecha==true){
+                        jAlert("Fecha no valida",'! Atencion');
+                        $fecha_final.val(mostrarFecha());
+                    }else{
+                        $fecha_final.DatePickerHide();
+                    }
+                }
+            }
+	});
+        $fecha_final.click(function (s){
+            var a=$('div.datepicker');
+            a.css({'z-index':100});
+	});
+        mostrarFecha($fecha_final.val());
+        
+        
+        
+        
+        
 	$tabs_li_funcionalidad = function(){
 		$('#forma-registro-window').find('#submit').mouseover(function(){
 			$('#forma-registro-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
@@ -66,18 +218,281 @@ $(function() {
 		});
 	}
         
+        var $div_tabla_resultados= $('#tablaresultadosvisitas');
+        var html_trs="";
         
+        $buscar_consulta.click(function(event){
+            $div_tabla_resultados.children().remove();
+            var html_trs="";
+            var arreglo_parametros = { iu:$('#lienzo_recalculable').find('input[name=iu]').val(), agente:$busqueda_agente.val(),
+            fecha_inicio:$fecha_inicial.val(), fecha_fin:$fecha_final.val()};
+            
+            //var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
+            //var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
+            var restful_json_service = controller + '/getResultadosConsulta.json'
+            
+            $.post(restful_json_service,arreglo_parametros,function(entry){
+                
+            $div_tabla_resultados.children().remove();
+                
+                if(entry['bigPicture'].length > 0){
+                    
+                    trh_visitas = '';
+                    tr_visitas = '';
+                    if(entry['ConfigData'][0]['metas_visita'] == 'true'){
+                        trh_visitas += '<th>Meta</th>';
+                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visita_meta']+'<tr>';
+                    }
+                    if(entry['ConfigData'][0]['totales_visita'] == 'true'){
+                        trh_visitas += '<th>Total</th>';
+                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visitas_totales']+'<tr>';
+                    }
+                    if(entry['ConfigData'][0]['cumplido_visita'] == 'true'){
+                        trh_visitas += '<th>Cumplido</th>';
+                        tr_visitas += '<tr>'+entry['bigPicture'][0]['porcentaje_visitas']+'<tr>';
+                    }
+                    if(entry['ConfigData'][0]['conexito_visita'] == 'true'){
+                        trh_visitas += '<th>Exitosas</th>';
+                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visitas_con_exito']+'<tr>';
+                    }
+                    if(entry['ConfigData'][0]['conoportunidad_visita'] == 'true'){
+                        trh_visitas += '<th>Con Oportunidad</th>';
+                        tr_visitas += '<tr>'+entry['bigPicture'][0]['oport_visitas']+'<tr>';
+                    }
+                    if(entry['ConfigData'][0]['seguimiento_visita'] == 'true'){
+                        trh_visitas += '<th>Con Seguimiento</th>';
+                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visitas_con_seguimiento']+'<tr>';
+                    }
+                    if(entry['ConfigData'][0]['efectividad_visita'] == 'true'){
+                        trh_visitas += '<th>Con Seguimiento</th>';
+                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visitas_con_seguimiento']+'<tr>';
+                    }
+                    if(entry['ConfigData'][0]['gestion_visita'] == 'true'){
+                        trh_visitas += '';
+                        tr_visitas += '';
+                    }
+                    if(entry['ConfigData'][0]['avance_visita'] == 'true'){
+                        trh_visitas += '';
+                        tr_visitas += '';
+                    }
+                    
+                    
+                    
+                    
+                    
+                    
+                    trh_oportunidades = '';
+                    tr_oportunidades = '';
+                    if(entry['ConfigData'][0]['visitas_oportunidades'] == 'true'){
+                        trh_oportunidades = '';
+                        tr_oportunidades = '';
+                    }
+                    if(entry['ConfigData'][0]['metas_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    if(entry['ConfigData'][0]['montos_meta_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    if(entry['ConfigData'][0]['cierre_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    if(entry['ConfigData'][0]['cotizacion_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    if(entry['ConfigData'][0]['inicial_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    if(entry['ConfigData'][0]['negociacion_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    
+                    if(entry['ConfigData'][0]['seguimiento_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    
+                    if(entry['ConfigData'][0]['metas_cumplidas_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    if(entry['ConfigData'][0]['total_metas_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    if(entry['ConfigData'][0]['montos_cumplidas_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    if(entry['ConfigData'][0]['total_montos_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    if(entry['ConfigData'][0]['ganados_oportunidades'] == 'true'){
+                        trh_oportunidades += '';
+                        tr_oportunidades += '';
+                    }
+                    
+                    
+                    
+                    trh_casos = '';
+                    tr_casos = '';
+                    if(entry['ConfigData'][0]['cobranza_casos'] == 'true'){
+                        trh_casos += '';
+                        tr_casos += '';
+                    }
+                    if(entry['ConfigData'][0]['facturacion_casos'] == 'true'){
+                        trh_casos += '';
+                        tr_casos += '';
+                    }
+                    if(entry['ConfigData'][0]['danos_casos'] == 'true'){
+                        trh_casos += '';
+                        tr_casos += '';
+                    }
+                    
+                    if(entry['ConfigData'][0]['devoluciones_casos'] == 'true'){
+                        trh_casos += '';
+                        tr_casos += '';
+                    }
+                    if(entry['ConfigData'][0]['producto_casos'] == 'true'){
+                        trh_casos += '';
+                        tr_casos += '';
+                    }
+                    
+                    if(entry['ConfigData'][0]['distribucion_casos'] == 'true'){
+                        trh_casos += '';
+                        tr_casos += '';
+                    }
+                    
+                    if(entry['ConfigData'][0]['varios_casos'] == 'true'){
+                        trh_casos += '';
+                        tr_casos += '';
+                    }
+                    if(entry['ConfigData'][0]['garantia_casos'] == 'true'){
+                        trh_casos += '';
+                        tr_casos += '';
+                    }
+                    
+                    
+                    trh_llamadas = '';
+                    tr_llamadas = '';
+                    if(entry['ConfigData'][0]['planeacion_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['planeadas_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['metas_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['con_exito_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['efectividad_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['salientes_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['cumplido_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['con_cita_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['total_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['entrantes_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['gestion_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['avance_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    if(entry['ConfigData'][0]['conseguimiento_llamadas'] == 'true'){
+                        trh_llamadas += '';
+                        tr_llamadas += '';
+                    }
+                    
+                    
+                    
+                    
+                    /*
+                    html_trs+='<table id="resultados" >'
+                    html_trs+='<thead><tr>'
+                    html_trs+='<td >Empeado</td>'
+                    html_trs+='<td >Fecha&nbsp;Visita</td>'
+                    html_trs+='<td >Nombre&nbsp;del&nbsp;contacto</td>'
+                    html_trs+='<td >Motivo&nbsp;Visita</td>'
+                    html_trs+='<td width="10">Tipo&nbsp;Seguimiento</td>'
+                    html_trs+='<td width="10">Calificacion&nbsp;visita</td>'
+                    html_trs+='<td width="50">Existe&nbsp;Oportunidad</td>'
+                    html_trs+='<td width="10">Resultado</td>'
+                    html_trs+='</tr></thead>'
+
+
+                        for(var i=0; i<entry['Datos'].length; i++){
+                                            html_trs+='<tr>'
+                                            html_trs+='<td >'+entry['Datos'][i]["nombre_empleado"]+'</td>'
+                                            html_trs+='<td >'+entry['Datos'][i]["fecha_visita"]+'</td>'
+                                            html_trs+='<td >'+entry['Datos'][i]["nombre_contacto"]+'</td>'
+                                            html_trs+='<td >'+entry['Datos'][i]["motivo_visita"]+'</td>'
+                                            html_trs+='<td >'+entry['Datos'][i]["tipo_seguimiento_visita"]+'</td>'
+                                            html_trs+='<td >'+entry['Datos'][i]["calificacion_visita"]+'</td>'
+                                            html_trs+='<td >'+entry['Datos'][i]["existe_oportunidad"]+'</td>'
+                                            html_trs+='<td >'+entry['Datos'][i]["resultado"]+'</td>'
+                                            html_trs+=' </tr>'
+                        }
+
+                                            html_trs +='<tfoot>';
+                                                html_trs +='<tr>';
+                                                html_trs +='<td colspan="8" align="center">&nbsp;</td>';
+                                                html_trs +='</tr>';
+                                            html_trs +='</tfoot>';
+                                            html_trs +='</table>';
+                                            $div_tabla_resultados.append(html_trs);
+                    */
+                }else{  
+                    jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
+                }
+                var height2 = $('#cuerpo').css('height');
+                var alto = parseInt(height2)-275;
+                var pix_alto=alto+'px';
+                $('#resultados').tableScroll({height:parseInt(pix_alto)});
+                
+            });
+            
+        });
         
         
         /* Aqui empieza el codigo para este aplicativo */
         //Plugin de registro de Prospectos/Contactos/Clientes
             $registro_config_consultas = function(){
-                var usuario;
                 
                 
                 var id_to_show = 0;
                 $(this).modalPanelCrmConfigConsultas();
-                var form_to_show = 'formaCrmConfigConsultas';
+                var form_to_show = 'formCrmConfigConsultas';
                 $('#' + form_to_show).each (function(){this.reset();});
                 var $forma_selected = $('#' + form_to_show).clone();
                 $forma_selected.attr({id : form_to_show + id_to_show});
@@ -257,6 +672,7 @@ $(function() {
                         jAlert(valida,'! Atencion');
                     }
                 });
+                
                 $totales_visita.click(function(){
                     valida = $valida_checks_seleccionados($registro_visitas);
                     if(valida != "true"){
@@ -602,10 +1018,11 @@ $(function() {
                             var remove = function() {$(this).remove();};
                             $('#forma-crmconfigconsultas-overlay').fadeOut(remove);
 
-                            $get_datos_grid();
+                            //$get_datos_grid();
                         }else{
                             // Desaparece todas las interrogaciones si es que existen
                             $('#forma-crmconfigconsultas-window').find('div.interrogacion').css({'display':'none'});
+                            
                             /*
                             var valor = data['success'].split('___');
                             //muestra las interrogaciones
