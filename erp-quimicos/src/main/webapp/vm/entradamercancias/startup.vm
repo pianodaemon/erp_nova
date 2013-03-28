@@ -48,19 +48,19 @@
 			
 			<tr>
 				<td width="10"></td>
-				<td width="10">Tipo Documento</td>
+				<td width="10">Tipo&nbsp;Documento</td>
 				<td width="15"></td>
 				<td width="70">Folio</td>
 				<td width="15"></td>
-				<td width="90">Orden Compra</td>
+				<td width="90">Orden&nbsp;Compra</td>
 				<td width="15"></td>
-				<td width="80">Folio Doc.</td>
+				<td width="80">Folio&nbsp;Doc.</td>
 				<td width="15"></td>
 				<td width="170">Proveedor</td>
 				<td width="15"></td>
-				<td width="100">C&oacute;digo Producto</td>
+				<td width="100">C&oacute;digo&nbsp;Producto</td>
 				<td width="15"></td>
-				<td width="180">Descripci&oacute;n Producto</td>
+				<td width="180">Descripci&oacute;n&nbsp;Producto</td>
 				
 				<td width="30"></td>
 				<td></td>

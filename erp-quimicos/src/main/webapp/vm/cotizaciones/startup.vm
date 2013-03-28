@@ -154,7 +154,7 @@
                                                     <td width="260"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td valign="top" width="740" height="90" id="td1"> 
+                                                    <td valign="top" width="740" height="70" id="td1"> 
                                                         <table border="0" class="gral">
                                                             <!--<tr><td colspan="5" height="5"></td></tr>-->
                                                             <tr id="tr_tipo">
@@ -191,10 +191,7 @@
                                                                 <td width="60"><input type="text" name="folio" style="width:60px;" readOnly="true"></td>
                                                                 <td width="70" align="right"><span id="etiqueta_accion">Acci&oacute;n&nbsp;</span></td>
                                                                 <td width="80">
-                                                                    <select name="select_accion" style="width:80px;">
-																		<option value="update">Actualizar</option>
-																		<option value="new">Nuevo</option>
-                                                                    </select>
+                                                                    <select name="select_accion" style="width:80px;"></select>
                                                                 </td>
                                                             </tr>
                                                             <tr><td colspan="9" height="5"></td></tr>
@@ -220,25 +217,64 @@
                                                     <td width="10"></td>
                                                     <!--<td width="60"></td>-->
 													
-                                                    <td width="460" colspan="2" valign="top" id="td2">
+                                                    <td width="460" colspan="2" rowspan="2" height="70" valign="top" id="td2">
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330" colspan="4">Observaciones</td>
+                                                                <td width="330" colspan="5">Observaciones</td>
                                                                 <td width="10"></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330"  colspan="4"><textarea name="observaciones" rows="4" cols="15" style="width:330px; resize:none;"></textarea></td>
+                                                                <td width="330"  colspan="5"><textarea name="observaciones" rows="4" cols="15" style="width:330px; resize:none;"></textarea></td>
                                                                 <td width="10"></td>
                                                             </tr>
-                                                            <tr><td colspan="4" height="5"></td></tr>
+                                                            <tr><td colspan="5" height="5"></td></tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="165">Incluir&nbsp;imagen&nbsp;y&nbsp;descripci&oacute;n&nbsp;larga</td>
+                                                                <td width="165" colspan="2">Incluir&nbsp;imagen&nbsp;y&nbsp;descripci&oacute;n&nbsp;larga</td>
                                                                 <td width="45"><input type="checkbox" name="check_descripcion_larga" ></td>
                                                                 <td width="100">Incluir&nbsp;IVA&nbsp;y&nbsp;totales</td>
                                                                 <td width="20"><input type="checkbox" name="check_incluye_iva" ></td>
+                                                                <td width="10"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="10" height="10"></td>
+                                                                <td width="70"></td>
+                                                                <td width="95"></td>
+                                                                <td width="45"></td>
+                                                                <td width="100"></td>
+                                                                <td width="20"></td>
+                                                                <td width="10"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="10">&nbsp;</td>
+                                                                <td width="70" >Incoterms</td>
+                                                                <td width="95" colspan="4">
+																	<!--<select  multiple="multiple" style="width: 260px; height:58px;"></select>-->
+																	
+																	<select name="select_incoterms" multiple="multiple" title="Incoterms" size="5">
+																		<!--
+																		<option value="1">Option 1</option>
+																		<option value="2">Option 2</option>
+																		<option value="3">Option 3</option>
+																		<option value="4">Option 4</option>
+																		<option value="5">Option 5</option>
+																		<option value="6">Option 6</option>
+																		<option value="7">Option 7</option>
+																		<option value="8">Option 8</option>
+																		<option value="9">Option 9</option>
+																		<option value="10">Option 10</option>
+																		<option value="11">Option 11</option>
+																		<option value="12">Option 12</option>
+																		-->
+																	</select>
+                                                                </td>
+                                                                <!--
+                                                                <td width="45"></td>
+                                                                <td width="100"></td>
+                                                                <td width="20"></td>
+                                                                -->
                                                                 <td width="10"></td>
                                                             </tr>
                                                         </table>
@@ -246,8 +282,38 @@
                                                 </tr>
                                                 
                                                 <tr>
-                                                    <td colspan="4">
+                                                    <td>
 														<table border="0" class="gral">
+															
+                                                            <tr>
+                                                                <td width="10"></td>
+                                                                <td width="70">Agente</td>
+                                                                <td width="80" colspan="4"><select name="select_agente" style="width:230px;"></select></td>
+                                                                <!--
+                                                                <td width="30"></td>
+                                                                <td width="60">Tipo&nbsp;Cambio</td>
+                                                                <td width="60"></td>
+                                                                -->
+                                                                <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_agente"></div></td>
+                                                                <td width="35">Vigencia&nbsp;</td>
+                                                                <td width="30"><input type="text" name="vigencia" value="0" maxlength="5" style="width:30px;"></td>
+                                                                <td width="40">d&iacute;as</td>
+                                                                <td width="25"></td>
+                                                            </tr>
+															
+                                                            <tr>
+                                                                <td width="10" height="8"></td>
+                                                                <td width="70"></td>
+                                                                <td width="80"></td>
+                                                                <td width="30"></td>
+                                                                <td width="60"></td>
+                                                                <td width="60"></td>
+                                                                <td width="25"></td>
+                                                                <td width="35"></td>
+                                                                <td width="70" colspan="2"></td>
+                                                                <td width="25"></td>
+                                                            </tr>
+															
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="70">Moneda</td>
@@ -261,22 +327,21 @@
                                                                 <td width="60">Tipo&nbsp;Cambio</td>
                                                                 <td width="60">
 																	<input type="text" name="tc" value="0.0000" style="width:60px;" maxlength="8">
-																	<input type="text" name="tc_original" value="0.0000">
+																	<input type="hidden" name="tc_original" value="0.0000">
 																</td>
                                                                 <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_tc"></div></td>
                                                                 
                                                                 <td width="35">Fecha&nbsp;</td>
-                                                                <td width="70"><input type="text" name="fecha" style="width:70px;" readOnly="true"></td>
+                                                                <td width="70" colspan="2"><input type="text" name="fecha" style="width:70px;" readOnly="true"></td>
                                                                 <td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_fecha"></div></td>
-                                                                <td width="48">Vigencia</td>
-                                                                <td width="30"><input type="text" name="vigencia" value="180" style="width:30px;" readOnly="true"></td>
-                                                                <td width="45">d&iacute;as</td>
-                                                                <td width="45">Agente</td>
-                                                                <td width="190"><select name="select_agente" style="width:190px;"></select></td>
-                                                                <td width="15"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_agente"></div></td>
                                                             </tr>
                                                         </table>
                                                     </td>
+                                                    <td width="10"></td>
+                                                    <!--
+                                                    <td width="90"></td>
+                                                    <td width="260"></td>
+                                                    -->
                                                 </tr>
                                                 
                                                 
@@ -333,11 +398,6 @@
                                                         
                                                     </td>
                                                 </tr>
-
-
-
-
-
 
 
                                                 <tr>
