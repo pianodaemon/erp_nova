@@ -98,10 +98,16 @@ public interface CrmInterfaceDao {
 
     public ArrayList<HashMap<String, Object>> getContactos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getContacto_Datos(Integer id);
-
+    
     //CRM  Reporte
     //CRM  Reporte de visitas
     public ArrayList<HashMap<String, String>> getVisitas(String fecha_inicial, String fecha_final,Integer id_empresa);
     //fin de reportes de CRM
+    
+    //CRM  Configuracion de consultas
+    public ArrayList<HashMap<String, String>> getDatosConfigConsulta(Integer empresa, Integer empleado_id);
+    public ArrayList<HashMap<String, String>> getResultadosBigPicture(Integer id_usuario,Integer  id_empresa,String agente,String fecha_inicio,String fecha_fin);
+    //FIN CRM  Configuracion de consultas
+    
 
 }

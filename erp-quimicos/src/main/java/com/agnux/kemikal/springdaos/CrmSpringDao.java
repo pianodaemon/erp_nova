@@ -1658,7 +1658,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getContacto_Datos(Integer id) {
-
+        
         String sql_to_query = "SELECT crm_contactos.*, ("
                 + "CASE WHEN tipo_contacto=1 THEN  "
                 + "(select tmp_crmcli.cxc_clie_id||'___'||cxc_clie.rfc||'___'||cxc_clie.razon_social as cliente from "
@@ -1675,6 +1675,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
             new Object[]{}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("folio",rs.getString("folio"));
@@ -1689,12 +1690,12 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("email2",rs.getString("email2"));
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("cliente",rs.getString("cliente"));
-
+                    
                     row.put("gral_empleado_id",String.valueOf(rs.getInt("gral_empleado_id")));
                     row.put("tipo_contacto",String.valueOf(rs.getInt("tipo_contacto")));
                     row.put("gral_emp_id",String.valueOf(rs.getInt("gral_emp_id")));
                     row.put("gral_suc_id",String.valueOf(rs.getInt("gral_suc_id")));
-
+                    
                     return row;
                 }
             }
@@ -1751,6 +1752,193 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
         return hm;
     }
     //fin del reporte de visitas
-
+    
+    
+     //obtiene todos los parametros de de acuerdo a el usuario ya  ala empresa
+    @Override
+    public ArrayList<HashMap<String, String>> getDatosConfigConsulta(Integer id_empresa, Integer usuario_id) {
+        String sql_to_query = "SELECT * FROM crm_config_consultas where gral_emp_id="+id_empresa+" AND gral_usr_id_creacion="+usuario_id+" limit 1;";
+        System.out.println("sql_to_query:"+sql_to_query);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    
+                    row.put("id",String.valueOf(rs.getInt("id")) );
+                    row.put("metas_visita",String.valueOf(rs.getBoolean("metas_visita")) );
+                    row.put("totales_visita",String.valueOf(rs.getBoolean("totales_visita")) );
+                    row.put("cumplido_visita",String.valueOf(rs.getBoolean("cumplido_visita")) );
+                    row.put("conexito_visita",String.valueOf(rs.getBoolean("conexito_visita")) );
+                    row.put("conoportunidad_visita",String.valueOf(rs.getBoolean("conoportunidad_visita")) );
+                    row.put("seguimiento_visita",String.valueOf(rs.getBoolean("seguimiento_visita")) );
+                    row.put("efectividad_visita",String.valueOf(rs.getBoolean("efectividad_visita")) );
+                    row.put("gestion_visita",String.valueOf(rs.getBoolean("gestion_visita")) );
+                    row.put("avance_visita",String.valueOf(rs.getBoolean("avance_visita")) );
+                    row.put("metas_llamadas",String.valueOf(rs.getBoolean("metas_llamadas")) );
+                    row.put("total_llamadas",String.valueOf(rs.getBoolean("total_llamadas")) );
+                    row.put("cumplido_llamadas",String.valueOf(rs.getBoolean("cumplido_llamadas")) );
+                    row.put("entrantes_llamadas",String.valueOf(rs.getBoolean("entrantes_llamadas")) );
+                    row.put("salientes_llamadas",String.valueOf(rs.getBoolean("salientes_llamadas")) );
+                    row.put("planeadas_llamadas",String.valueOf(rs.getBoolean("planeadas_llamadas")) );
+                    row.put("con_exito_llamadas",String.valueOf(rs.getBoolean("con_exito_llamadas")) );
+                    row.put("con_cita_llamadas",String.valueOf(rs.getBoolean("con_cita_llamadas")) );
+                    row.put("conseguimiento_llamadas",String.valueOf(rs.getBoolean("conseguimiento_llamadas")) );
+                    row.put("efectividad_llamadas",String.valueOf(rs.getBoolean("efectividad_llamadas")) );
+                    row.put("gestion_llamadas",String.valueOf(rs.getBoolean("gestion_llamadas")) );
+                    row.put("avance_llamadas",String.valueOf(rs.getBoolean("avance_llamadas")) );
+                    row.put("planeacion_llamadas",String.valueOf(rs.getBoolean("planeacion_llamadas")) );
+                    row.put("facturacion_casos",String.valueOf(rs.getBoolean("facturacion_casos")) );
+                    row.put("producto_casos",String.valueOf(rs.getBoolean("producto_casos")) );
+                    row.put("garantia_casos",String.valueOf(rs.getBoolean("garantia_casos")) );
+                    row.put("distribucion_casos",String.valueOf(rs.getBoolean("distribucion_casos")) );
+                    
+                    row.put("danos_casos",String.valueOf(rs.getBoolean("danos_casos")) );
+                    row.put("devoluciones_casos",String.valueOf(rs.getBoolean("devoluciones_casos")) );
+                    row.put("cobranza_casos",String.valueOf(rs.getBoolean("cobranza_casos")) );
+                    row.put("varios_casos",String.valueOf(rs.getBoolean("varios_casos")) );
+                    row.put("metas_oportunidades",String.valueOf(rs.getBoolean("metas_oportunidades")) );
+                    row.put("total_metas_oportunidades",String.valueOf(rs.getBoolean("total_metas_oportunidades")) );
+                    row.put("montos_meta_oportunidades",String.valueOf(rs.getBoolean("montos_meta_oportunidades")) );
+                    row.put("total_montos_oportunidades",String.valueOf(rs.getBoolean("total_montos_oportunidades")) );
+                    row.put("metas_cumplidas_oportunidades",String.valueOf(rs.getBoolean("metas_cumplidas_oportunidades")) );
+                    row.put("montos_cumplidas_oportunidades",String.valueOf(rs.getBoolean("montos_cumplidas_oportunidades")) );
+                    row.put("inicial_oportunidades",String.valueOf(rs.getBoolean("inicial_oportunidades")) );
+                    row.put("seguimiento_oportunidades",String.valueOf(rs.getBoolean("seguimiento_oportunidades")) );
+                    
+                    row.put("visitas_oportunidades",String.valueOf(rs.getBoolean("visitas_oportunidades")) );
+                    row.put("cotizacion_oportunidades",String.valueOf(rs.getBoolean("cotizacion_oportunidades")) );
+                    row.put("negociacion_oportunidades",String.valueOf(rs.getBoolean("negociacion_oportunidades")) );
+                    row.put("cierre_oportunidades",String.valueOf(rs.getBoolean("cierre_oportunidades")) );
+                    row.put("ganados_oportunidades",String.valueOf(rs.getBoolean("ganados_oportunidades")) );
+                    row.put("seguimiento_oportunidades",String.valueOf(rs.getBoolean("seguimiento_oportunidades")) );
+                    
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //obtiene todos los parametros de de acuerdo a el usuario ya  ala empresa
+    @Override
+    public ArrayList<HashMap<String, String>> getResultadosBigPicture(Integer id_usuario,Integer  id_empresa,String agente,String fecha_inicio,String fecha_fin) {
+        String sql_to_query = "select * from crm_consultas_bigpicture("+id_usuario+", "+agente+", "+id_empresa+", '"+fecha_inicio+"', '"+fecha_fin+"')" +
+                   "as foo(cantidad_llamadas integer,llamadas_totales integer," +
+        		"llamadas_entrantes integer," +
+			"llamadas_salientes integer," +
+			"llamadas_planeadas integer," +
+			"llamadas_con_exito integer," +
+			"llamadas_con_cita integer," +
+			"llamadas_con_seguimiento integer," +
+			"porcentaje_llamadas double precision," +
+			"efectividad_llamadas double precision ," +
+			"avance_llamadas double precision," +
+			"gestion_llamadas double precision," +
+			"planeacion double precision," +
+			"visita_meta integer," +
+			"visitas_totales integer," +
+			"" +
+			"visitas_con_exito integer," +
+			"visitas_con_cita integer," +
+			"visitas_con_seguimiento integer," +
+			"porcentaje_visitas double precision," +
+			"efectividad_visitas double precision," +
+			"avance_visitas double precision," +
+			"gestion_visitas double precision," +
+			"casos_totales integer," +
+			"casos_facturacion double precision," +
+			"" +
+			"casos_producto double precision," +
+			"casos_garantia double precision," +
+			"casos_distribucion double precision," +
+			"casos_danos double precision," +
+			"casos_devoluciones double precision," +
+			"casos_cobranza double precision," +
+			"casos_varios double precision," +
+			"" +
+			"metas_oport integer," +
+			"total_metas_oport integer," +
+			"monto_metas_oport double precision," +
+			"total_montos_oport double precision," +
+			"metas_cumplidas double precision," +
+			"montos_cumplidos double precision," +
+			"oport_inicial double precision," +
+			"oport_seguimiento double precision," +
+			"oport_visitas double precision," +
+			"oport_cotizacion double precision," +
+			"oport_negociacion double precision," +
+			"oport_cierre double precision," +
+			"oport_ganados double precision," +
+			"oport_perdidos double precision );";
+        
+        System.out.println("sql_to_query:"+sql_to_query);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    
+                    row.put("cantidad_llamadas",String.valueOf(rs.getInt("cantidad_llamadas")) );
+                    row.put("llamadas_totales",String.valueOf(rs.getInt("llamadas_totales")) );
+                    row.put("llamadas_entrantes",String.valueOf(rs.getInt("llamadas_entrantes")) );
+                    row.put("llamadas_salientes",String.valueOf(rs.getInt("llamadas_salientes")) );
+                    row.put("llamadas_planeadas",String.valueOf(rs.getInt("llamadas_planeadas")) );
+                    row.put("llamadas_con_exito",String.valueOf(rs.getInt("llamadas_con_exito")) );
+                    row.put("llamadas_con_cita",String.valueOf(rs.getInt("llamadas_con_cita")) );
+                    row.put("llamadas_con_seguimiento",String.valueOf(rs.getInt("llamadas_con_seguimiento")) );
+                    row.put("porcentaje_llamadas",StringHelper.roundDouble(rs.getDouble("porcentaje_llamadas"),2));
+                    row.put("efectividad_llamadas",StringHelper.roundDouble(rs.getDouble("efectividad_llamadas"),2));
+                    row.put("avance_llamadas",StringHelper.roundDouble(rs.getDouble("avance_llamadas"),2));
+                    row.put("gestion_llamadas",StringHelper.roundDouble(rs.getDouble("gestion_llamadas"),2));
+                    row.put("planeacion",StringHelper.roundDouble(rs.getDouble("planeacion"),2));
+                    row.put("visita_meta",String.valueOf(rs.getInt("visita_meta")) );
+                    row.put("visitas_totales",String.valueOf(rs.getInt("visitas_totales")) );
+                    
+                    row.put("visitas_con_exito",String.valueOf(rs.getInt("visitas_con_exito")) );
+                    row.put("visitas_con_cita",String.valueOf(rs.getInt("visitas_con_cita")) );
+                    row.put("visitas_con_seguimiento",String.valueOf(rs.getInt("visitas_con_seguimiento")) );
+                    row.put("porcentaje_visitas",StringHelper.roundDouble(rs.getDouble("porcentaje_visitas"),2));
+                    row.put("efectividad_visitas",StringHelper.roundDouble(rs.getDouble("efectividad_visitas"),2));
+                    row.put("avance_visitas",StringHelper.roundDouble(rs.getDouble("avance_visitas"),2));
+                    row.put("gestion_visitas",StringHelper.roundDouble(rs.getDouble("gestion_visitas"),2));
+                    row.put("casos_totales",String.valueOf(rs.getInt("casos_totales")) );
+                    row.put("casos_facturacion",StringHelper.roundDouble(rs.getDouble("casos_facturacion"),2));
+                    
+                    row.put("casos_producto",StringHelper.roundDouble(rs.getDouble("casos_producto"),2));
+                    row.put("casos_garantia",StringHelper.roundDouble(rs.getDouble("casos_garantia"),2));
+                    row.put("casos_distribucion",StringHelper.roundDouble(rs.getDouble("casos_distribucion"),2));
+                    row.put("casos_danos",StringHelper.roundDouble(rs.getDouble("casos_danos"),2));
+                    row.put("casos_devoluciones",StringHelper.roundDouble(rs.getDouble("casos_devoluciones"),2));
+                    row.put("casos_cobranza",StringHelper.roundDouble(rs.getDouble("casos_cobranza"),2));
+                    row.put("casos_varios",StringHelper.roundDouble(rs.getDouble("casos_varios"),2));
+                    
+                    row.put("metas_oport",String.valueOf(rs.getInt("metas_oport")) );
+                    row.put("total_metas_oport",String.valueOf(rs.getInt("total_metas_oport")) );
+                    row.put("monto_metas_oport",StringHelper.roundDouble(rs.getDouble("monto_metas_oport"),2));
+                    row.put("total_montos_oport",StringHelper.roundDouble(rs.getDouble("total_montos_oport"),2));
+                    row.put("metas_cumplidas",StringHelper.roundDouble(rs.getDouble("metas_cumplidas"),2));
+                    row.put("montos_cumplidos",StringHelper.roundDouble(rs.getDouble("montos_cumplidos"),2));
+                    row.put("oport_inicial",StringHelper.roundDouble(rs.getDouble("oport_inicial"),2));
+                    row.put("oport_seguimiento",StringHelper.roundDouble(rs.getDouble("oport_seguimiento"),2));
+                    row.put("oport_visitas",StringHelper.roundDouble(rs.getDouble("oport_visitas"),2));
+                    row.put("oport_cotizacion",StringHelper.roundDouble(rs.getDouble("oport_cotizacion"),2));
+                    row.put("oport_negociacion",StringHelper.roundDouble(rs.getDouble("oport_negociacion"),2));
+                    row.put("oport_cierre",StringHelper.roundDouble(rs.getDouble("oport_cierre"),2));
+                    row.put("oport_ganados",StringHelper.roundDouble(rs.getDouble("oport_ganados"),2));
+                    row.put("oport_perdidos",StringHelper.roundDouble(rs.getDouble("oport_perdidos"),2));
+                               
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
 }
 
