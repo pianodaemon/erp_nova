@@ -17,6 +17,7 @@
         -->
 
         <!--  js for this catalogo -->
+        <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/crmbigpicture/modalboxCrmConfigConsultas.js"></script>
         
         <script type="text/javascript" src="../../js/implements/crmbigpicture/index.js" ></script>
@@ -47,36 +48,56 @@
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td >
-                    <div class="consultas" style="width:600px; display:block; margin:10px; background:#fff; border-radius:4px;">
+                    <div class="consultas" style="width:750px; display:block; margin:10px; background:#fff; border-radius:4px;">
                         <table border="0" width=70%" id="consultas">
                             <tr>
-                                <td colspan="11">&nbsp;</td>
+                                <td colspan="19">&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>&nbsp;</td>
-                                <td>Consultar</td>
+                                <td>Agente</td>
                                 <td>&nbsp;</td>
-                                <td colspan="2">
-                                    
-                                    <select name="consultar_como" style="width:210px">
-                                        
-                                    </select>
-                                    
+                                <td>&nbsp;</td>
+                                <td>Fecha Inicial</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>Fecha Final</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                <td></td>
+                                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                <td></td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td >
+                                    <select name="busqueda_agente" style="width:160px"></select>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td >
+                                    <INPUT TYPE="text" name="fecha_inicial" style="width:100px;">
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td >
+                                    <INPUT TYPE="text" name="fecha_final" style="width:100px;">
                                 </td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <td><input type="button" name="buscar" value="Ver" style="width:90px; border-radius:5px;"></td>
+                                <td><input type="button" name="buscar" value="Consultar" style="width:90px; border-radius:5px;"></td>
                                 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                 <td><input type="button" name="configurar_consultas" value="Configurar Consultas" style="width:140px; border-radius:5px;"></td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
-                                
                             </tr>
                             <tr>
-                                <td colspan="11">&nbsp;</td>
+                                <td colspan="19">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td colspan="11">&nbsp;</td>
+                                <td colspan="19">&nbsp;</td>
                             </tr>
                         </table>
                     </div>
@@ -84,12 +105,16 @@
             </tr>
             <tr>
                 <td>&nbsp;&nbsp;</td>
-                <td ></td>
+                <td>
+                    <div id="tablaresultadosconsultas">
+                            <!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
+                    </div>
+                </td>
             </tr>
         </table>
         
         <!--form for crmconfigconsultas -->
-        <form id="formaCrmConfigConsultas" action="edit.json" method="POST" >
+        <form id="formCrmConfigConsultas" action="edit.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal crmconfigconsultas_div_one"  style="display:none;" title="">
                 
