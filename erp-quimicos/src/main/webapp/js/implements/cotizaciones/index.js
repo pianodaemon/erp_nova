@@ -1037,7 +1037,7 @@ $(function() {
 				
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 					trr += '<input type="text" name="precio" class="precio'+ tr +'" value="'+precioCambiado+'" id="cost" style="width:76px;">';
-					trr += '<input type="text" value="'+precioOriginal+'" class="precor'+ tr +'" id="precor" style="width:76px;">';
+					trr += '<input type="hidden" value="'+precioOriginal+'" class="precor'+ tr +'" id="precor" style="width:76px;">';
 				trr += '</td>';
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
@@ -1047,8 +1047,8 @@ $(function() {
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
 					trr += '<input type="text" 	name="importe" 	class="import'+ tr +'" value="'+importe+'" id="import" readOnly="true" style="width:66px; text-align:right;">';
 					trr += '<input type="hidden" name="id_imp_prod"   value="'+  $id_impuesto.val() +'" id="idimppord">';
-					trr += '<input type="text" name="valor_imp"     value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
-					trr += '<input type="text" name="totimpuesto'+ tr +'" id="totimp" value="'+importeImpuesto+'">';
+					trr += '<input type="hidden" name="valor_imp"     value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
+					trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+importeImpuesto+'">';
 				trr += '</td>';
 				
 			trr += '</tr>';
@@ -1261,7 +1261,7 @@ $(function() {
 			$('#forma-cotizacions-window').find('input[name=nombre_producto]').val('');
 			
 			//asignar enfoque al campo cantidad que se acaba de agregar
-			//$grid_productos.find('.cant'+ tr).focus();
+			$grid_productos.find('.cant'+ tr).focus();
 			
 		}else{
 			jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
@@ -1324,16 +1324,16 @@ $(function() {
 			if(this.checked){
 				$('#forma-cotizacions-window').find('.cotizacions_div_one').find('#tabla_totales').show();
 				if(incluyeCrm=='true'){
-					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'560px'});
+					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'565px'});
 				}else{
-					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'590px'});
+					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'595px'});
 				}
 			}else{
 				$('#forma-cotizacions-window').find('.cotizacions_div_one').find('#tabla_totales').hide();
 				if(incluyeCrm=='true'){
-					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'490px'});
+					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'495px'});
 				}else{
-					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'490px'});
+					$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'495px'});
 				}
 			}
 		});
@@ -1507,6 +1507,66 @@ $(function() {
 	
 	
 	
+	//vencido
+	
+	//habilitar y deshabilitar campos
+	$habilitarDeshabilitarCampos = function(accion, $select_tipo_cotizacion, $folio, $nocontrolcliente, $razon_cliente, $observaciones, $select_moneda, $tc, $fecha, $vigencia, $select_agente, $select_incoterms, $sku_producto, $nombre_producto, $busca_sku, $agregar_producto, $grid_productos, $subtotal, $impuesto, $total, $submit_actualizar, $check_descripcion_larga, $check_incluye_iva){
+		if(accion=='deshabilitar'){
+			$select_tipo_cotizacion.attr('disabled','-1');
+			$folio.attr('disabled','-1');
+			$nocontrolcliente.attr('disabled','-1');
+			$razon_cliente.attr('disabled','-1');
+			$observaciones.attr('disabled','-1');
+			$select_moneda.attr('disabled','-1');
+			$tc.attr('disabled','-1');
+			$fecha.attr('disabled','-1');
+			$vigencia.attr('disabled','-1');
+			$select_agente.attr('disabled','-1');
+			$check_descripcion_larga.attr('disabled','-1');
+			$check_incluye_iva.attr('disabled','-1');
+			$select_incoterms.attr('disabled','-1');
+			$sku_producto.attr('disabled','-1');
+			$nombre_producto.attr('disabled','-1');
+			$busca_sku.hide();
+			$agregar_producto.hide();
+			$grid_productos.find('input').attr('disabled','-1');
+			$grid_productos.find('select').attr('disabled','-1');
+			$grid_productos.find('a').hide();
+			$subtotal.attr('disabled','-1');
+			$impuesto.attr('disabled','-1');
+			$total.attr('disabled','-1');
+			$submit_actualizar.hide();
+		}else{
+			$select_tipo_cotizacion.removeAttr('disabled');
+			$folio.removeAttr('disabled');
+			$nocontrolcliente.removeAttr('disabled');
+			$razon_cliente.removeAttr('disabled');
+			$observaciones.removeAttr('disabled');
+			$select_moneda.removeAttr('disabled');
+			$tc.removeAttr('disabled');
+			$fecha.removeAttr('disabled');
+			$vigencia.removeAttr('disabled');
+			$select_agente.removeAttr('disabled');
+			$check_descripcion_larga.removeAttr('disabled');
+			$check_incluye_iva.removeAttr('disabled');
+			$select_incoterms.removeAttr('disabled');
+			$sku_producto.removeAttr('disabled');
+			$nombre_producto.removeAttr('disabled');
+			$busca_sku.show();
+			$agregar_producto.show();
+			$grid_productos.find('input').removeAttr('disabled');
+			$grid_productos.find('select').removeAttr('disabled');
+			$grid_productos.find('a').show();
+			$subtotal.removeAttr('disabled');
+			$impuesto.removeAttr('disabled');
+			$total.removeAttr('disabled');
+			$submit_actualizar.show();
+		}
+	}//termina habilitar y deshabilitar campos
+	
+	
+	
+	
 	
 	//nueva cotizacion
 	$new_cotizacion.click(function(event){
@@ -1546,6 +1606,8 @@ $(function() {
 		var $total_tr = $('#forma-cotizacions-window').find('input[name=total_tr]');
 		var $select_tipo_cotizacion = $('#forma-cotizacions-window').find('select[name=select_tipo_cotizacion]');
 		var $folio = $('#forma-cotizacions-window').find('input[name=folio]');
+		
+		var $etiqueta_accion = $('#forma-cotizacions-window').find('#etiqueta_accion');
 		var $select_accion = $('#forma-cotizacions-window').find('select[name=select_accion]');
 		
 		var $busca_cliente = $('#forma-cotizacions-window').find('a[href*=busca_cliente]');
@@ -1612,6 +1674,10 @@ $(function() {
 		
 		//ocultar boton de generar pdf. Solo debe estar activo en editar
 		$boton_genera_pdf.hide();
+		$etiqueta_accion.hide();
+		$select_accion.hide();
+		
+		
 		//$descripcion_larga.hide();
 		$tr_tipo.hide();
 		$dir_cliente.attr('readonly',true);
@@ -1752,7 +1818,7 @@ $(function() {
 			$select_incoterms.append(incoterms_hmtl);
 			
 			if(entry['Extras'][0]['mod_crm']=='true'){
-				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'550px'});
+				$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'565px'});
 				$tr_tipo.show();//mostrar tr para escoger el tipo destino de la cotizacion
 			}
 			$aplicar_evento_click_checkbox_incluye_iva($check_incluye_iva, entry['Extras'][0]['mod_crm']);
@@ -2098,7 +2164,7 @@ $(function() {
 				
 				var $busca_cliente = $('#forma-cotizacions-window').find('a[href*=busca_cliente]');
 				var $id_cliente = $('#forma-cotizacions-window').find('input[name=id_cliente]');
-				var $no_control_cliente = $('#forma-cotizacions-window').find('input[name=nocontrolcliente]');
+				var $nocontrolcliente = $('#forma-cotizacions-window').find('input[name=nocontrolcliente]');
 				var $rfc_cliente = $('#forma-cotizacions-window').find('input[name=rfccliente]');
 				var $razon_cliente = $('#forma-cotizacions-window').find('input[name=razoncliente]');
 				var $dir_cliente = $('#forma-cotizacions-window').find('input[name=dircliente]');
@@ -2142,22 +2208,22 @@ $(function() {
 				var $submit_actualizar = $('#forma-cotizacions-window').find('#submit');
 				
 				
-				//$select_moneda_original.hide();
+				$select_moneda_original.hide();
 				//ocultar boton de generar pdf. Solo debe estar activo en editar
 				//$boton_genera_pdf.hide();
 				//$descripcion_larga.hide();
 				$tr_tipo.hide();
-				$no_control_cliente.attr('readonly',true);
+				$nocontrolcliente.attr('readonly',true);
 				$razon_cliente.attr('readonly',true);
 				$dir_cliente.attr('readonly',true);
-				$no_control_cliente.css({'background' : '#F0F0F0'});
+				$nocontrolcliente.css({'background' : '#F0F0F0'});
 				$razon_cliente.css({'background' : '#F0F0F0'});
 				$folio.css({'background' : '#F0F0F0'});
 				$dir_cliente.css({'background' : '#F0F0F0'});
 				$contactocliente.css({'background' : '#F0F0F0'});
 				//$fecha.css({'background' : '#F0F0F0'});
 				
-				$no_control_cliente.focus();
+				$nocontrolcliente.focus();
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -2274,7 +2340,7 @@ $(function() {
 					
 					
 					if(entry['Extras'][0]['mod_crm']=='true'){
-						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'560px'});
+						$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'565px'});
 						$tr_tipo.show();//mostrar tr para escoger el tipo destino de la cotizacion
 					}
 					
@@ -2291,7 +2357,7 @@ $(function() {
 					
 					
 					$id_cliente.val(entry['DatosCP'][0]['cliente_id']);
-					$no_control_cliente.val(entry['DatosCP'][0]['numero_control']);
+					$nocontrolcliente.val(entry['DatosCP'][0]['numero_control']);
 					$rfc_cliente.val(entry['DatosCP'][0]['rfc']);
 					$razon_cliente.val(entry['DatosCP'][0]['razon_social']);
 					$dir_cliente.val(entry['DatosCP'][0]['direccion']);
@@ -2306,17 +2372,17 @@ $(function() {
 						$('#forma-cotizacions-window').find('.cotizacions_div_one').find('#tabla_totales').show();
 						
 						if(entry['Extras'][0]['mod_crm']=='true'){
-							$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'560px'});
+							$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'565px'});
 						}else{
-							$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'590px'});
+							$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'595px'});
 						}
 						
 					}else{
 						$('#forma-cotizacions-window').find('.cotizacions_div_one').find('#tabla_totales').hide();
 						if(entry['Extras'][0]['mod_crm']=='true'){
-							$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'490px'});
+							$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'495px'});
 						}else{
-							$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'490px'});
+							$('#forma-cotizacions-window').find('.cotizacions_div_one').css({'height':'495px'});
 						}
 					}
 					
@@ -2406,6 +2472,8 @@ $(function() {
 						});
 					}
 					
+					
+					
 					//agregar producto al grid
 					$agregar_producto.click(function(event){
 						event.preventDefault();
@@ -2475,8 +2543,27 @@ $(function() {
 						$grid_productos.find('select[name=monedagrid]').append(moneda_grid_hmtl);
 					});
 					
+					
 					//aplicar multiselect
 					$select_incoterms.multiselect();
+					
+					
+					$select_accion.change(function(){
+						var valor = $(this).val();
+						if(valor=='edit'){
+							if(entry['datosCotizacion'][0]['vencido']=='true'){
+								$habilitarDeshabilitarCampos('deshabilitar', $select_tipo_cotizacion, $folio, $nocontrolcliente, $razon_cliente, $observaciones, $select_moneda, $tc, $fecha, $vigencia, $select_agente, $select_incoterms, $sku_producto, $nombre_producto, $busca_sku, $agregar_producto, $grid_productos, $subtotal, $impuesto, $total, $submit_actualizar, $check_descripcion_larga, $check_incluye_iva);
+							}
+						}else{
+							if(entry['datosCotizacion'][0]['vencido']=='true'){
+								$habilitarDeshabilitarCampos('habilitar', $select_tipo_cotizacion, $folio, $nocontrolcliente, $razon_cliente, $observaciones, $select_moneda, $tc, $fecha, $vigencia, $select_agente, $select_incoterms, $sku_producto, $nombre_producto, $busca_sku, $agregar_producto, $grid_productos, $subtotal, $impuesto, $total, $submit_actualizar, $check_descripcion_larga, $check_incluye_iva);
+							}
+						}
+					});
+					
+					if(entry['datosCotizacion'][0]['vencido']=='true'){
+						$habilitarDeshabilitarCampos('deshabilitar', $select_tipo_cotizacion, $folio, $nocontrolcliente, $razon_cliente, $observaciones, $select_moneda, $tc, $fecha, $vigencia, $select_agente, $select_incoterms, $sku_producto, $nombre_producto, $busca_sku, $agregar_producto, $grid_productos, $subtotal, $impuesto, $total, $submit_actualizar, $check_descripcion_larga, $check_incluye_iva);
+					}
 					
 				});//termina llamada json
 				
@@ -2485,6 +2572,7 @@ $(function() {
 				var accion_hmtl = '<option value="edit">Actualizar</option>';
 				accion_hmtl += '<option value="new">Nuevo</option>';
 				$select_accion.append(accion_hmtl);
+				
 				
 				//aplicar tipo de cambio a todos los precios al cambiar valor de tipo de cambio
 				$tc.blur(function(){
