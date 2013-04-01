@@ -1636,7 +1636,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     +"poc_cot.folio,"
                     + "(CASE WHEN poc_cot.tipo=1 THEN 'CLIENTE' ELSE 'PROSPECTO' END ) as tipo, "
                     +"cxc_clie.razon_social AS cliente,"
-                    +"(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'dd/mm/yyyy') ELSE to_char(poc_cot.fecha::timestamp with time zone,'dd/mm/yyyy') END) AS fecha_creacion, "
+                    +"(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'dd/mm/yyyy') ELSE to_char(poc_cot.fecha::timestamp with time zone,'dd/mm/yyyy') END) AS fecha_creacion,"
+                    + "(CASE WHEN poc_cot.fecha IS NULL THEN to_char((to_char(poc_cot.momento_creacion,'yyyy-mm-dd')::date+dias_vigencia)::timestamp with time zone,'dd/mm/yyyy') ELSE to_char((fecha+dias_vigencia)::timestamp with time zone,'dd/mm/yyyy') END ) AS fecha_vencimiento, "
                     + "(CASE WHEN cxc_agen.nombre IS NULL THEN '' ELSE cxc_agen.nombre END ) AS nombre_agente "
             +"FROM poc_cot "
             +"JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id  "
@@ -1652,6 +1653,7 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "(CASE WHEN poc_cot.tipo=1 THEN 'CLIENTE' ELSE 'PROSPECTO' END ) as tipo, "
                         +"cxc_clie.razon_social AS cliente,"
                         +"(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'dd/mm/yyyy') ELSE to_char(poc_cot.fecha::timestamp with time zone,'dd/mm/yyyy') END) AS fecha_creacion, "
+                        + "(CASE WHEN poc_cot.fecha IS NULL THEN to_char((to_char(poc_cot.momento_creacion,'yyyy-mm-dd')::date+dias_vigencia)::timestamp with time zone,'dd/mm/yyyy') ELSE to_char((fecha+dias_vigencia)::timestamp with time zone,'dd/mm/yyyy') END ) AS fecha_vencimiento, "
                         + "(CASE WHEN cxc_agen.nombre IS NULL THEN '' ELSE cxc_agen.nombre END ) AS nombre_agente "
                 +"FROM poc_cot "
                 +"JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id  "
@@ -1666,6 +1668,7 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "(CASE WHEN poc_cot.tipo=1 THEN 'CLIENTE' ELSE 'PROSPECTO' END ) as tipo, "
                         +"(CASE WHEN poc_cot.tipo=1 THEN cxc_clie.razon_social ELSE crm_prospectos.razon_social END) AS cliente,"
                         +"(CASE WHEN poc_cot.fecha IS NULL THEN to_char(poc_cot.momento_creacion,'dd/mm/yyyy') ELSE to_char(poc_cot.fecha::timestamp with time zone,'dd/mm/yyyy') END) AS fecha_creacion, "
+                        + "(CASE WHEN poc_cot.fecha IS NULL THEN to_char((to_char(poc_cot.momento_creacion,'yyyy-mm-dd')::date+dias_vigencia)::timestamp with time zone,'dd/mm/yyyy') ELSE to_char((fecha+dias_vigencia)::timestamp with time zone,'dd/mm/yyyy') END ) AS fecha_vencimiento, "
                         + "(CASE WHEN cxc_agen.nombre IS NULL THEN '' ELSE cxc_agen.nombre END ) AS nombre_agente "
                 +"FROM poc_cot "
                 +"LEFT JOIN poc_cot_clie ON poc_cot_clie.poc_cot_id=poc_cot.id  "
@@ -1692,6 +1695,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("tipo",rs.getString("tipo"));
                     row.put("cliente",rs.getString("cliente"));
                     row.put("fecha",rs.getString("fecha_creacion"));
+                    row.put("fecha_vencimiento",rs.getString("fecha_vencimiento"));
                     row.put("nombre_agente",rs.getString("nombre_agente"));
                     return row;
                 }
@@ -1724,7 +1728,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot.impuesto,"
                     + "poc_cot.total,"
                     + "poc_cot.incluye_iva,"
-                    + "poc_cot.dias_vigencia "
+                    + "poc_cot.dias_vigencia,"
+                    + "(fecha+dias_vigencia) AS fecha_vencimiento,"
+                    + "(CASE WHEN (fecha+dias_vigencia)::timestamp with time zone<=now() THEN true ELSE false END) AS vencido "
                 + "FROM poc_cot "
                 + "LEFT JOIN gral_usr ON gral_usr.id=poc_cot.gral_usr_id_creacion "
                 + "LEFT JOIN  gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
@@ -1758,7 +1764,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
                     row.put("dias_vigencia",String.valueOf(rs.getInt("dias_vigencia")));
                     row.put("incluye_iva",String.valueOf(rs.getBoolean("incluye_iva")));
-                            
+                    
+                    row.put("fecha_vencimiento",rs.getString("fecha_vencimiento"));
+                    row.put("vencido",String.valueOf(rs.getBoolean("vencido")));
                     return row;
                 }
             }

@@ -559,12 +559,12 @@ public class pdfCotizacion {
                 cell.setBorder(0);
                 tablaPartidas.addCell(cell);
                 
-                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getSubtotal()), smallFont));
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getSubtotal()), smallFontBold));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 tablaPartidas.addCell(cell);
                 
-                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFont));
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFontBold));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 tablaPartidas.addCell(cell);
@@ -585,7 +585,7 @@ public class pdfCotizacion {
                     cell.setBorder(0);
                     tablaPartidas.addCell(cell);
                 }
-
+                
                 cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -599,12 +599,12 @@ public class pdfCotizacion {
                 cell.setBorder(0);
                 tablaPartidas.addCell(cell);
 
-                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getImpuesto()), smallFont));
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getImpuesto()), smallFontBold));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 tablaPartidas.addCell(cell);
 
-                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFont));
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFontBold));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 tablaPartidas.addCell(cell);
@@ -639,12 +639,12 @@ public class pdfCotizacion {
                 cell.setBorder(0);
                 tablaPartidas.addCell(cell);
                 
-                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getTotal()), smallFont));
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getTotal()), smallFontBold));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 tablaPartidas.addCell(cell);
 
-                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFont));
+                cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFontBold));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 tablaPartidas.addCell(cell);
@@ -677,35 +677,47 @@ public class pdfCotizacion {
             
             
             
-            if (this.getPoliticas_pago().size() > 0){
-                //tabla para las observaciones
-                PdfPTable tableIncoterms = new PdfPTable(1);
-                
-                cell = new PdfPCell(new Paragraph("INCOTERMS\n", smallBoldFontBlack));
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setBorder(0);
-                cell.setColspan(2);
-                tableIncoterms.addCell(cell);
-                
-                Iterator it3;
-                it3 = this.getIncoterms().iterator();
-                while(it3.hasNext()){
-                    HashMap<String,String> map = (HashMap<String,String>)it3.next();
-                    
+            if (this.getPoliticas_pago().size() > 0){                
+                int contSeleccionados=0;
+                Iterator it4;
+                it4 = this.getIncoterms().iterator();
+                while(it4.hasNext()){
+                    HashMap<String,String> map = (HashMap<String,String>)it4.next();
                     if(map.get("mostrar_pdf").equals("true")){
-                        String condicion = esteAtributoSeDejoNulo(map.get("titulo"));
-                        cell = new PdfPCell(new Paragraph(condicion, smallFont));
-                        cell.setVerticalAlignment(Element.ALIGN_TOP);
-                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        cell.setBorder(0);
-                        tableIncoterms.addCell(cell);
+                        contSeleccionados++;
                     }
                 }
-                tableIncoterms.setSpacingAfter(10f);
-                document.add(tableIncoterms);
+                
+                //mostrar solo cuando exista seleccionados
+                if(contSeleccionados>0){
+                    //tabla para los incoterms
+                    PdfPTable tableIncoterms = new PdfPTable(1);
+                    
+                    cell = new PdfPCell(new Paragraph("INCOTERMS\n", smallBoldFontBlack));
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell.setBorder(0);
+                    cell.setColspan(2);
+                    tableIncoterms.addCell(cell);
+                    
+                    Iterator it3;
+                    it3 = this.getIncoterms().iterator();
+                    while(it3.hasNext()){
+                        HashMap<String,String> map = (HashMap<String,String>)it3.next();
+
+                        if(map.get("mostrar_pdf").equals("true")){
+                            String condicion = esteAtributoSeDejoNulo(map.get("titulo"));
+                            cell = new PdfPCell(new Paragraph(condicion, smallFont));
+                            cell.setVerticalAlignment(Element.ALIGN_TOP);
+                            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            cell.setBorder(0);
+                            tableIncoterms.addCell(cell);
+                        }
+                    }
+                    tableIncoterms.setSpacingAfter(10f);
+                    document.add(tableIncoterms);
+                }
             }
-            
             
             
             

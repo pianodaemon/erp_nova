@@ -103,6 +103,7 @@ public class CotizacionesController {
         }
         
         infoConstruccionTabla.put("fecha","Fecha:90");
+        infoConstruccionTabla.put("fecha_vencimiento","Vencimiento:90");
         infoConstruccionTabla.put("nombre_agente","Agente de Ventas:250");
         
         ModelAndView x = new ModelAndView("cotizaciones/startup", "title", "Cotizaciones");
@@ -596,9 +597,9 @@ public class CotizacionesController {
             //serializar el arreglo
             String extra_data_array = StringUtils.join(arreglo, ",");
             
-            System.out.println("tamaño: "+select_incoterms.length);
+            //System.out.println("tamaño: "+select_incoterms.length);
             
-            System.out.println("select_incoterms: "+select_incoterms);
+            //System.out.println("select_incoterms: "+select_incoterms);
             String incoterms="";
             int primerIncoterm = 0;
             if(select_incoterms != null){

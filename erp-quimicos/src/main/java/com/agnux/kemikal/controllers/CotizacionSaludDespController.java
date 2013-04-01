@@ -76,7 +76,7 @@ public class CotizacionSaludDespController {
         infoConstruccionTabla.put("titulo", "Titulo:450");
         infoConstruccionTabla.put("status", "Estatus:90");
         
-        ModelAndView x = new ModelAndView("cotizacionsaludodesp/startup", "title", "Actializador de Saludo y Despedida");
+        ModelAndView x = new ModelAndView("cotizacionsaludodesp/startup", "title", "Actualizador de Saludo y Despedida");
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());

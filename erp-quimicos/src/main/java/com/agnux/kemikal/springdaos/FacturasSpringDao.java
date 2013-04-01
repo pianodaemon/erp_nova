@@ -953,12 +953,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
                     row.put("noIdentificacion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("sku"))));
                     row.put("descripcion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("descripcion"))));
-                    
+                    /*
                     if( rfc.equals("PIS850531CS4") ){
                         row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("presentacion"))));
                     }else{
                         row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("unidad"))));
                     }
+                    */
+                    row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("unidad"))));
                     
                     row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     row.put("numero_aduana","");
