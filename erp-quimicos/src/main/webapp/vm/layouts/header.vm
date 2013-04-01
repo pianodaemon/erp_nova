@@ -13,7 +13,6 @@
 	<!--Multiselect-->
 	<link rel="stylesheet" href="../../css/components/jquery-ui/jquery-ui.css" type="text/css">
 	<link rel="stylesheet" href="../../css/components/MultiSelect/jquery.multiselect.css" type="text/css">
-	<!--<link rel="stylesheet" href="../../css/components/MultiSelect/style.css" type="text/css">-->
 	
 	<script type="text/javascript" src="../../js/jquery.js" charset="utf-8"></script>
 	<script type="text/javascript" src="../../js/elastic.js" charset="utf-8"></script>
