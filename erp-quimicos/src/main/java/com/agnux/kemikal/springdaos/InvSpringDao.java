@@ -7262,71 +7262,12 @@ public class InvSpringDao implements InvInterfaceDao{
     }
     //------------termina metodos para aplicativo Actualizador de Precios
 
-    @Override
-    public ArrayList<HashMap<String, String>> getMovimientos(Integer tipo_movimiento,Integer id_almacen,String codigo, String descripcion,String fecha_inicial,String fecha_final ,Integer id_empresa) {
-        String where = "";
-	if(!codigo.equals("")){
-		where=" AND inv_prod.sku ilike "+codigo+"";
-	}
-	if(id_almacen != 0 ){
-		where +=" AND inv_prod.tipo_de_producto_id="+id_almacen;
-	}
-	if(!descripcion.equals("")){
-		where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
-	}
 
-        String sql_to_query = ""
-                + "SELECT  "
-  + "inv_prod.sku as codigo,  "
-  + "inv_prod.descripcion,   "
-  + "inv_mov.referencia,   "
-  + "inv_mov_tipos.id,  "
-  + "inv_mov_tipos.titulo as tipo_movimiento,   "
-  + "inv_mov.fecha_mov as fecha_movimiento,   "
-  + "gral_emp.id as id_empresa,   "
-  + "gral_emp.titulo as nombre_empresa,   "
-  + "gral_suc.id as id_sucursal,   "
-  + "gral_suc.titulo as nombre_sucursal,   "
-  + "inv_alm.id as id_almacen,  "
-  + "inv_alm.titulo as nombre_almacen,   "
-  + "inv_mov_detalle.cantidad,   "
-  + "inv_mov_detalle.alm_destino_id ,   "
-  + "inv_mov_detalle.alm_origen_id,   "
-  + "inv_mov_detalle.costo  "
-  + "FROM inv_mov_detalle  "
-+ "JOIN inv_mov ON inv_mov.id = inv_mov_detalle.inv_mov_id   "
-+ "JOIN inv_mov_tipos  ON inv_mov_tipos.id = inv_mov.inv_mov_tipo_id  "
-+ "JOIN inv_prod ON  inv_prod.id = inv_mov_detalle.producto_id  "
-+ "JOIN gral_emp ON gral_emp.id = inv_prod.empresa_id  "
-+ "JOIN gral_suc ON gral_suc.id  = inv_prod.sucursal_id  "
-+ "JOIN inv_alm  ON inv_alm.id = inv_mov_detalle.alm_origen_id  "
-+ "WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
-        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-
-        ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_to_query,
-            new Object[]{}, new RowMapper(){
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id",String.valueOf(rs.getInt("id")));
-                    row.put("sku",rs.getString("sku"));
-                    row.put("descripcion",rs.getString("descripcion"));
-                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
-                    row.put("unidad",rs.getString("unidad"));
-                    row.put("tipo",rs.getString("tipo"));
-                    row.put("decimales",String.valueOf(rs.getInt("decimales")));
-                    return row;
-                }
-            }
-        );
-        return hm_datos_productos;
-    }
 
     //Metodo que extrae losmovimientos
     @Override
     public ArrayList<HashMap<String, String>> getMovimientos(Integer tipo_movimiento,Integer id_almacen,String codigo, String descripcion,String fecha_inicial,String fecha_final ,Integer id_empresa, Integer id_usuario) {
-        String sql_to_query = "select * from Producto_movimientos("+tipo_movimiento+","+id_almacen+","+id_empresa+",'"+fecha_inicial+"', '"+fecha_final+"' ,"+id_usuario+",'"+codigo+"','"+descripcion+"'  )   "
+        String sql_to_query = "select * from inv_Reporte_movimientos("+tipo_movimiento+","+id_almacen+","+id_empresa+",'"+fecha_inicial+"', '"+fecha_final+"' ,"+id_usuario+",'"+codigo+"','"+descripcion+"'  )   "
 	+"  as foo(  "
 		+"  codigo character varying,  "
 		+"  descripcion character varying,  "
@@ -7343,7 +7284,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
         System.out.println("Ejecutando query: "+ sql_to_query);
 
-        ArrayList<HashMap<String, String>> hm_datos_exitencias = (ArrayList<HashMap<String, String>>)
+        ArrayList<HashMap<String, String>> hm_datos_existencias = (ArrayList<HashMap<String, String>>)
         this.jdbcTemplate.query(sql_to_query,
             new Object[]{}, new RowMapper(){
                 @Override
@@ -7364,7 +7305,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 }
             }
         );
-        return hm_datos_exitencias;
+        return hm_datos_existencias;
     }
 
 
