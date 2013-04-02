@@ -28,6 +28,17 @@
 										<a href="#" class="accessible">Cotizaciones &raquo;</a>
 										<ul>
 											<li>
+												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
+												<ul>
+													<!--
+													<li class="topline"><a href="../cotincoterms/startup.agnux">Condiciones Comerciales</a></li>
+													<li class="topline"><a href="../cotincoterms/startup.agnux">Pol&iacute;ticas de Pago</a></li>
+													-->
+													<li class="topline"><a href="../cotincoterms/startup.agnux">Incoterms</a></li>
+													
+												</ul>
+											</li>
+											<li>
 												<a href="#" class="menulink_">Procesos &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../cotizaciones/startup.agnux">Cotizaci&oacute;n</a></li>
@@ -37,8 +48,6 @@
 												<a href="#" class="menulink_">Configuraciones &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../cotizacionsaludodesp/startup.agnux">Saludo y Despedida</a></li>
-													<li class="topline"><a href="../cotizaciones/startup.agnux">Condiciones Comerciales</a></li>
-													<li class="topline"><a href="../cotizaciones/startup.agnux">Pol&iacute;ticas de Pago</a></li>
 												</ul>
 											</li>
 										</ul>

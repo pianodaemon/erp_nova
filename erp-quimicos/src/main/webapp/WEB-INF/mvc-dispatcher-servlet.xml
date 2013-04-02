@@ -55,14 +55,14 @@
         
         
         <!--Conexion a bd instance01 LOCAL-->
-        <!--
+        
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://localhost:5432/kathion" />
 	     <property name="username" value="ms" />
 	     <property name="password" value="ms" />
 	</bean>
-        -->
+        
         
         <!--Conexion a bd instance01 PRUEBA EN INTERNET es lo mismo para KATHION Y KEMIKAL-->
         <!--
@@ -76,14 +76,14 @@
         
         
         <!--Conexion a bd saar SAAR-->
-        
+        <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://localhost:5432/saar" />
 	     <property name="username" value="saar" />
 	     <property name="password" value="saar" />
 	</bean>
-        
+        -->
         
         
         <!--Conexion a bd NOVASOL-->
