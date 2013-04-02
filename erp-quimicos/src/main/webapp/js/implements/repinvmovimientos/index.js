@@ -553,7 +553,7 @@ if(entry['Movimientos'].length > 0 ){
 
 
 }else{
-    jAlert("Esta consulta no genero rsultados",'Atencion!!!');
+    jAlert("Esta consulta no genero Resultados",'Atencion!!!');
 }
 
 
