@@ -315,9 +315,6 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, Object>> getInvActualizaPrecio_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
 
     //reporte inv movimientos
-    public ArrayList<HashMap<String, String>> getMovimientos(Integer id_tipo_movimiento, Integer id_alamacen,String codigo, String descripcion,String fecha_inicial,String fecha_final,Integer id_empresa);
-
-    //reporte inv movimientos
     public ArrayList<HashMap<String, String>> getMovimientos(Integer id_tipo_movimiento, Integer id_alamacen,String codigo, String descripcion,String fecha_inicial,String fecha_final,Integer id_empresa, Integer id_usuario);
 
 
