@@ -167,7 +167,7 @@ public class CentroCostosController {
             @RequestParam(value="centrocosto", required=true) String titulo,
             @RequestParam(value="descripcion", required=true) String descripcion,
             Model model,@ModelAttribute("user") UserSessionData user
-            ) {
+        ) {
 
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();

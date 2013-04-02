@@ -83,4 +83,9 @@ public interface PocInterfaceDao{
     //aplicativo actualizador de Saludo y Despedida para Cotizaciones
     public ArrayList<HashMap<String, Object>> getCotizacionSaludoDespedida_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, String>> getCotizacionSaludoDespedida_Datos(Integer id);
+    
+    
+    //metodos para catalogo de incoterms para cotizaciones
+    public ArrayList<HashMap<String, Object>> getCotIncoterms_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, String>> getCotIncoterms_Datos(Integer id);
 }

@@ -2174,4 +2174,64 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
+    
+    
+    //metodos para Catalogo de Incoterms-----------------------------------------------------------------
+    @Override
+    public ArrayList<HashMap<String, Object>> getCotIncoterms_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+	String sql_to_query = ""
+                + "SELECT "
+                    + "poc_cot_incoterms.id, "
+                    + "poc_cot_incoterms.nombre, "
+                    + "poc_cot_incoterms.descripcion_esp AS descripcion "
+                + "FROM poc_cot_incoterms "
+                + "JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot_incoterms.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("data_string: "+data_string);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    //obtiene datos de un Incoterm
+    @Override
+    public ArrayList<HashMap<String, String>> getCotIncoterms_Datos(Integer id) {
+        String sql_query = "SELECT id,nombre,descripcion_esp,descripcion_ing FROM poc_cot_incoterms WHERE id=?;";
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("descripcion_esp",rs.getString("descripcion_esp"));
+                    row.put("descripcion_ing",rs.getString("descripcion_ing"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
 }
