@@ -6691,7 +6691,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("id_almacen",String.valueOf(rs.getInt("id_almacen")));
-                    row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),2));
+                    row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),4));
                     row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), 4));
 
                     return row;
@@ -6886,7 +6886,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
-                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),2));
+                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
                     return row;
                 }
             }
@@ -7107,7 +7107,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
         String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
         //System.out.println("ControlCostos_PaginaGrid: "+sql_to_query);
-
+        
         ArrayList<HashMap<String, Object>> hm125 = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(pageSize),new Integer(offset)}, new RowMapper(){

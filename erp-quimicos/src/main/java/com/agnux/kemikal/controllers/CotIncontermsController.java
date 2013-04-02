@@ -103,7 +103,7 @@ public class CotIncontermsController {
     
     
     @RequestMapping(value="/getAllIncoterms.json", method = RequestMethod.POST)
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllCentrosJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllIncotermsJson(
            @RequestParam(value="orderby", required=true) String orderby,
            @RequestParam(value="desc", required=true) String desc,
            @RequestParam(value="items_por_pag", required=true) int items_por_pag,
@@ -112,7 +112,7 @@ public class CotIncontermsController {
            @RequestParam(value="input_json", required=true) String input_json,
            @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
            @RequestParam(value="iu", required=true) String id_user_cod,
-           Model modcel) {
+       Model modcel) {
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
