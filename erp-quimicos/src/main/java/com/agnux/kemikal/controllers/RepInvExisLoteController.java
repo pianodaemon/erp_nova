@@ -196,6 +196,7 @@ public class RepInvExisLoteController {
             @RequestParam(value="id_lote", required=true) String[] id_lote,
             @RequestParam(value="selec", required=true) String[] selec,
             @RequestParam(value="cant", required=true) String[] cant,
+            @RequestParam(value="cantProd", required=true) String[] cantProd,
             @RequestParam(value="select_medida", required=true) String[] select_medida,
             @RequestParam(value="tipo_prod", required=true) String[] tipo_prod,
             Model model,
@@ -211,8 +212,6 @@ public class RepInvExisLoteController {
         String lote_interno="";
         String ip_cliente = request.getRemoteAddr();
         
-        System.out.println("ip_cliente1: "+ip_cliente);
-        
         ip_cliente = ip_cliente.replace(".", "");
         
         int contador=0;
@@ -220,6 +219,10 @@ public class RepInvExisLoteController {
             if(selec[i].equals("1")){
                 datosLote = new LinkedHashMap<String, Object>();
                 datosLote = this.getInvDao().getDatosEtiquetaLote(Integer.parseInt(id_lote[i]), Integer.parseInt(tipo_prod[i]), Integer.parseInt(select_medida[i]));
+                
+                //agrega la cantidad que se le indica desde la interfaz de usuario, para que salgha en la etiqueta
+                datosLote.put("producto_cantidad", String.valueOf(cantProd[i]));
+                
                 lote_interno = String.valueOf(datosLote.get("lote_interno"));
                 datosLote.put("cuerpo_titulo", "Etiqueta_Compras");
                 

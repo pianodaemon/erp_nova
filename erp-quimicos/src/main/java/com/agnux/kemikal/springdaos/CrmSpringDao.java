@@ -1814,6 +1814,7 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
                     row.put("cierre_oportunidades",String.valueOf(rs.getBoolean("cierre_oportunidades")) );
                     row.put("ganados_oportunidades",String.valueOf(rs.getBoolean("ganados_oportunidades")) );
                     row.put("seguimiento_oportunidades",String.valueOf(rs.getBoolean("seguimiento_oportunidades")) );
+                    row.put("perdidos_oportunidades",String.valueOf(rs.getBoolean("perdidos_oportunidades")) );
                     
                     return row;
                 }
@@ -1827,7 +1828,8 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
     @Override
     public ArrayList<HashMap<String, String>> getResultadosBigPicture(Integer id_usuario,Integer  id_empresa,String agente,String fecha_inicio,String fecha_fin) {
         String sql_to_query = "select * from crm_consultas_bigpicture("+id_usuario+", "+agente+", "+id_empresa+", '"+fecha_inicio+"', '"+fecha_fin+"')" +
-                   "as foo(cantidad_llamadas integer,llamadas_totales integer," +
+                   "as foo(cantidad_llamadas integer," +
+                        "llamadas_totales integer," +
         		"llamadas_entrantes integer," +
 			"llamadas_salientes integer," +
 			"llamadas_planeadas integer," +
@@ -1840,7 +1842,7 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
 			"gestion_llamadas double precision," +
 			"planeacion double precision," +
 			"visita_meta integer," +
-			"visitas_totales integer," +
+			"visitas_totales integer," +//15
 			"" +
 			"visitas_con_exito integer," +
 			"visitas_con_cita integer," +
@@ -1850,7 +1852,7 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
 			"avance_visitas double precision," +
 			"gestion_visitas double precision," +
 			"casos_totales integer," +
-			"casos_facturacion double precision," +
+			"casos_facturacion double precision," +//9
 			"" +
 			"casos_producto double precision," +
 			"casos_garantia double precision," +
@@ -1858,7 +1860,7 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
 			"casos_danos double precision," +
 			"casos_devoluciones double precision," +
 			"casos_cobranza double precision," +
-			"casos_varios double precision," +
+			"casos_varios double precision," +//7
 			"" +
 			"metas_oport integer," +
 			"total_metas_oport integer," +
@@ -1873,7 +1875,7 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
 			"oport_negociacion double precision," +
 			"oport_cierre double precision," +
 			"oport_ganados double precision," +
-			"oport_perdidos double precision );";
+			"oport_perdidos double precision );";//14
         
         System.out.println("sql_to_query:"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -1898,7 +1900,7 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
                     row.put("gestion_llamadas",StringHelper.roundDouble(rs.getDouble("gestion_llamadas"),2));
                     row.put("planeacion",StringHelper.roundDouble(rs.getDouble("planeacion"),2));
                     row.put("visita_meta",String.valueOf(rs.getInt("visita_meta")) );
-                    row.put("visitas_totales",String.valueOf(rs.getInt("visitas_totales")) );
+                    row.put("visitas_totales",String.valueOf(rs.getInt("visitas_totales")) );//15
                     
                     row.put("visitas_con_exito",String.valueOf(rs.getInt("visitas_con_exito")) );
                     row.put("visitas_con_cita",String.valueOf(rs.getInt("visitas_con_cita")) );
@@ -1908,7 +1910,7 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
                     row.put("avance_visitas",StringHelper.roundDouble(rs.getDouble("avance_visitas"),2));
                     row.put("gestion_visitas",StringHelper.roundDouble(rs.getDouble("gestion_visitas"),2));
                     row.put("casos_totales",String.valueOf(rs.getInt("casos_totales")) );
-                    row.put("casos_facturacion",StringHelper.roundDouble(rs.getDouble("casos_facturacion"),2));
+                    row.put("casos_facturacion",StringHelper.roundDouble(rs.getDouble("casos_facturacion"),2));//9
                     
                     row.put("casos_producto",StringHelper.roundDouble(rs.getDouble("casos_producto"),2));
                     row.put("casos_garantia",StringHelper.roundDouble(rs.getDouble("casos_garantia"),2));
@@ -1916,7 +1918,7 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
                     row.put("casos_danos",StringHelper.roundDouble(rs.getDouble("casos_danos"),2));
                     row.put("casos_devoluciones",StringHelper.roundDouble(rs.getDouble("casos_devoluciones"),2));
                     row.put("casos_cobranza",StringHelper.roundDouble(rs.getDouble("casos_cobranza"),2));
-                    row.put("casos_varios",StringHelper.roundDouble(rs.getDouble("casos_varios"),2));
+                    row.put("casos_varios",StringHelper.roundDouble(rs.getDouble("casos_varios"),2));//7
                     
                     row.put("metas_oport",String.valueOf(rs.getInt("metas_oport")) );
                     row.put("total_metas_oport",String.valueOf(rs.getInt("total_metas_oport")) );
@@ -1931,7 +1933,7 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
                     row.put("oport_negociacion",StringHelper.roundDouble(rs.getDouble("oport_negociacion"),2));
                     row.put("oport_cierre",StringHelper.roundDouble(rs.getDouble("oport_cierre"),2));
                     row.put("oport_ganados",StringHelper.roundDouble(rs.getDouble("oport_ganados"),2));
-                    row.put("oport_perdidos",StringHelper.roundDouble(rs.getDouble("oport_perdidos"),2));
+                    row.put("oport_perdidos",StringHelper.roundDouble(rs.getDouble("oport_perdidos"),2));//14
                                
                     return row;
                 }

@@ -237,6 +237,7 @@ public class CrmBigpictureController {
             @RequestParam(value="negociacion_oportunidades", required=false) String negociacion_oportunidades,
             @RequestParam(value="cierre_oportunidades", required=false) String cierre_oportunidades,
             @RequestParam(value="ganados_oportunidades", required=false) String ganados_oportunidades,
+            @RequestParam(value="perdidos_oportunidades", required=false) String perdidos_oportunidades,
             Model model,@ModelAttribute("user") UserSessionData user
             ) {
         
@@ -292,7 +293,7 @@ public class CrmBigpictureController {
         negociacion_oportunidades = StringHelper.verificarCheckBox(negociacion_oportunidades);
         cierre_oportunidades = StringHelper.verificarCheckBox(cierre_oportunidades);
         ganados_oportunidades = StringHelper.verificarCheckBox(ganados_oportunidades);
-        
+        perdidos_oportunidades = StringHelper.verificarCheckBox(perdidos_oportunidades);
         
         extra_data_array = "'sin datos'";
         
@@ -350,7 +351,8 @@ public class CrmBigpictureController {
             cotizacion_oportunidades+"___"+	
             negociacion_oportunidades+"___"+	
             cierre_oportunidades+"___"+	
-            ganados_oportunidades;
+            ganados_oportunidades+"___"+
+            perdidos_oportunidades;
         
         succes = this.getCrmDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
