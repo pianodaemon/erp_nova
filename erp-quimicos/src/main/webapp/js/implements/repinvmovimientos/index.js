@@ -59,7 +59,7 @@ $(function() {
 	//barra para el buscador
 	$('#barra_buscador').hide();
 
-	var $tabla_existencias = $('#lienzo_recalculable').find('#table_exis');
+	var $tabla_movimientos = $('#lienzo_recalculable').find('#table_movimientos');
 	var $select_tipo_mov = $('#lienzo_recalculable').find('select[name=select_tipo_mov]');
 	var $select_almacen = $('#lienzo_recalculable').find('select[name=select_almacen]');
 	var $codigo = $('#lienzo_recalculable').find('input[name=codigo]');
@@ -188,8 +188,8 @@ $(function() {
                 //seleccionar un producto del grid de resultados
                 $tabla_resultados.find('tr').click(function(){
                     //asignar  descripcion
-                    $codigo.val($(this).find('span.titulo_prod_buscador').html());
-                    $descripcion.val($(this).find('span.sku_prod_buscador').html());
+                    $codigo.val($(this).find('span.sku_prod_buscador').html());
+                    $descripcion.val($(this).find('span.titulo_prod_buscador').html());
 
                     //elimina la ventana de busqueda
                     var remove = function() {
@@ -381,40 +381,43 @@ $(function() {
 
 
 	$boton_genera_pdf.click(function(event){
-		event.preventDefault();
-                alert("funcionaaa wiiiii");
-/*
-		var codigo='';
-		var descripcion='';
-		var lote_interno='';
+		//event.preventDefault();
+                var codigo="";
+                var descripcion="";
 
-		if($codigo_producto.val()==''){
-			codigo = '0';
-		}else{
-			codigo = $codigo_producto.val();
-		}
 
-		if($descripcion.val()==''){
-			descripcion = '0';
-		}else{
-			descripcion = $descripcion.val();
-		}
+                if($codigo.val()== ""){
+                    codigo="0";
+                }else{
+                    codigo=$codigo.val();
+                }
+                if($descripcion.val()== ""){
+                    descripcion="0";
+                }else{
+                    descripcion=$descripcion.val();
+                }
 
-		if($lote_interno.val()==''){
-			lote_interno = '0';
-		}else{
-			lote_interno = $lote_interno.val();
-		}
 
-		var busqueda = $select_opciones.val() +"___"+ $select_almacen.val() +"___"+ codigo +"___"+ descripcion + "___"+lote_interno;
 
-		var input_json = config.getUrlForGetAndPost() + '/getReporteExistencias/'+busqueda+'/'+config.getUi()+'/out.json';
+		var cadena = $select_tipo_mov.val() +"___"+ $select_almacen.val() +"___"+ codigo+"___"+ descripcion + "___"+$fecha_inicial.val()+ "___"+$fecha_final.val();
+
+		var input_json = config.getUrlForGetAndPost() + '/getReporteMovimientos/'+cadena+'/'+config.getUi()+'/out.json';
+
+                if($select_tipo_mov.val()!=0){
 		if(parseInt($select_almacen.val()) > 0){
-			window.location.href=input_json;
+                    if($fecha_inicial.val()!= "" && $fecha_final.val() !=""){
+                        window.location.href=input_json;
+                    }else{
+                        jAlert("Se requieren ambas Fechas de movimiento.",'Atencion!!!!!');
+                    }
+
 		}else{
-			alert("Selecciona un Almacen.");
+			jAlert("Selecciona un Almacen.",'Atencion!!!!!');
 		}
-            */
+                }else{
+                    jAlert("Selecciona un Tipo de Movimiento.",'Atencion!!!!!');
+                }
+
 	});
 
 
@@ -423,17 +426,23 @@ $(function() {
 	var alto = parseInt(height2)-240;
 	var pix_alto=alto+'px';
 
-	$('#table_exis').tableScroll({height:parseInt(pix_alto)});
+	$('#table_movimientos').tableScroll({height:parseInt(pix_alto)});
 
 
 
 	//ejecutar busqueda del reporte
 	$boton_busqueda.click(function(event){
 
-		var primero=0;
-		$tabla_existencias.find('tbody').children().remove();
+
+		$tabla_movimientos.find('tbody').children().remove();
 		var input_json = config.getUrlForGetAndPost()+'/getMovimientos.json';
-		$arreglo = {'id_tipo_movimiento':$select_tipo_mov.val(),
+
+
+                //if($select_tipo_mov.val()!=0){
+		if(parseInt($select_almacen.val()) > 0){
+                    if($fecha_inicial.val()!= "" && $fecha_final.val() !=""){
+
+                        $arreglo = {'id_tipo_movimiento':$select_tipo_mov.val(),
                             'id_almacen':$select_almacen.val(),
                             'codigo':$codigo.val(),
                             'descripcion':$descripcion.val(),
@@ -441,62 +450,136 @@ $(function() {
                             'fecha_final':$fecha_final.val(),
                             'iu': config.getUi()
                             };
-		if(parseInt($select_almacen.val()) > 0){
+
 			$.post(input_json,$arreglo,function(entry){
-				$.each(entry['Movimientos'],function(entryIndex,exi){
-					var trCount = $("tr", $tabla_existencias.find('tbody')).size();
+//alert("entraa aqui");
 
-					var tr_first='';
-					if(primero==0){
-						tr_first='class="first"';
-						primero=1;
-					}else{
-						tr_first='';
-					}
+                            var suma_cantidad  = 0.0;
+                            var valor_unitario = 0.0;
+                            var valor_entrada  = 0.0;
+                            var valor_salida   = 0.0;
+                            var tmp=0;
+                            var trr='';
+//alert("este s el codigo:  "+codigo);
+if(entry['Movimientos'].length > 0 ){
+                        var codigo = entry['Movimientos']['0']['codigo'];
 
-					var tr = '<tr '+tr_first+'>';
-						tr += '<td width="20">';
-							tr += '<input type="hidden" name="id_lote" class="idlote'+trCount+'" value="'+exi['id_lote']+'">';
-							tr += '<input type="hidden" name="selec" class="selec'+trCount+'" value="0">';
-							tr += '<input type="checkbox" name="micheck" class="micheck'+trCount+'" value="true">';
-						tr += '</td>';
-						tr += '<td width="70">';
-							tr += '<input type="text" name="cant" class="cant'+trCount+'" value="" readOnly="true" style="width:68px; background:#dddddd; height:15px;">';
-							tr += '<input type="hidden" name="tipo_prod" value="'+exi['id_tipo_producto']+'">';
-						tr += '</td>';
-						tr += '<td width="70">';
-							tr += '<select name="select_medida" style="width:70px;">';
-							//aqui se carga el select con los tipos de iva
-							$.each(entry['MedidasEtiqueta'],function(entryIndex,med){
-								if(med['id'] == exi['id_medida_etiqueta']){
-									tr += '<option value="' + med['id'] + '"  selected="yes">' + med['titulo'] + '</option>';
-								}else{
-									tr += '<option value="' + med['id'] + '"  >' + med['titulo'] + '</option>';
-								}
-							});
-							tr += '</select>';
-						tr += '</td>';
-						tr += '<td width="120">'+exi['lote_int']+'</td>';
-						tr += '<td width="110">'+exi['lote_prov']+'</td>';
-						tr += '<td width="110">'+exi['codigo']+'</td>';
-						tr += '<td width="350">'+exi['descripcion']+'</td>';
-						tr += '<td width="100">'+exi['unidad_medida']+'</td>';
-						tr += '<td width="100" align="right">'+$(this).agregar_comas(parseFloat(exi['existencia']).toFixed(4))+'</td>';
-						tr += '<td width="100">'+exi['fecha_entrada']+'</td>';
-					tr += '</tr>';
-					$tabla_existencias.find('tbody').append(tr);
+                            trr += '<tr>';
+                                        trr += '<td width="100px">'+codigo+'</td>';
+                                        trr += '<td width="300px">'+entry['Movimientos']['0']['descripcion']+'</td>';
+                                        trr += '<td width="100px">&nbsp;</td>';
+                                        trr += '<td width="200px">&nbsp;</td>';
+                                        trr += '<td width="200px">&nbsp;</td>';
+                                        trr += '<td width="100px">&nbsp;</td>';
+                                        trr += '<td width="100px" align="right">Existencia&nbsp;Inicial:</td>';
+                                        trr += '<td width="100px">'+entry['Movimientos']['0']['existencia']+'</td>';
+                            trr += '</tr>';
+                            $.each(entry['Movimientos'],function(entryIndex,Movimentos){
 
-				});
+                                if( codigo==Movimentos['codigo'] ){
+                                        trr += '<tr>';
+                                             trr += '<td >'+Movimentos['referencia']+'</td>';
+                                             trr += '<td >'+Movimentos['tipo_movimiento']+'</td>';
+                                             trr += '<td >'+Movimentos['fecha_movimiento']+'</td>';
+                                             trr += '<td >'+Movimentos['sucursal']+'</td>';
+                                             trr += '<td >'+Movimentos['almacen']+'</td>';
+                                             trr += '<td >'+Movimentos['cantidad']+'</td>';
+                                             trr += '<td >'+Movimentos['costo']+'</td>';
+                                             trr += '<td >'+Movimentos['existencia_actual']+'</td>';
+                                         trr += '</tr>';
+
+
+                                        suma_cantidad  = parseFloat(suma_cantidad)  + parseFloat(Movimentos['cantidad']);
+                                        valor_unitario = parseFloat(valor_unitario) + parseFloat(Movimentos['costo']);
+                                        valor_entrada  = parseFloat(valor_entrada)  + parseFloat(Movimentos['costo']);
+                                        valor_salida   = parseFloat(valor_salida )  + parseFloat(Movimentos['costo']);
+
+                                }else{
+                                    trr += '<tr>';
+                                        trr += '<td colspan="4" align="right">Total por producto :</td>';
+                                        trr += '<td >'+parseFloat(suma_cantidad)+'</td>';
+                                        trr += '<td >'+parseFloat(valor_unitario)+'</td>';
+                                        trr += '<td >'+parseFloat(valor_entrada)+'</td>';
+                                        trr += '<td >'+parseFloat(valor_salida)+'</td>';
+                                    trr += '</tr>';
+
+                                    var suma_cantidad=0.0;
+                                    var valor_unitario = 0.0;
+                                    var valor_entrada  = 0.0;
+                                    var valor_salida   = 0.0;
+
+                                    trr += '<tr>';
+                                        trr += '<td colspan="8">ESPACIOOOOOOOOOOOOOOOOO</td>';
+                                    trr += '</tr>';
+
+                                    trr += '<tr>';
+                                        trr += '<td >'+Movimentos['codigo']+'</td>';
+                                        trr += '<td >'+Movimentos['descripcion']+'</td>';
+                                        trr += '<td >&nbsp;</td>';
+                                        trr += '<td >&nbsp;</td>';
+                                        trr += '<td >&nbsp;</td>';
+                                        trr += '<td >&nbsp;</td>';
+                                        trr += '<td align="right">Existencia Inicial:</td>';
+                                        trr += '<td >'+entry['Movimientos']['0']['existencia']+'</td>';
+                                    trr += '</tr>';
+
+                                    trr += '<tr>';
+                                        if(Movimentos['referencia']!= 'null'){
+                                            trr += '<td >'+Movimentos['referencia']+'</td>';
+                                        }else{
+                                            trr += '<td >s/referencia</td>';
+                                        }
+
+                                        trr += '<td >'+Movimentos['tipo_movimiento']+'</td>';
+                                        trr += '<td >'+Movimentos['fecha_movimiento']+'</td>';
+                                        trr += '<td >'+Movimentos['sucursal']+'</td>';
+                                        trr += '<td >'+Movimentos['almacen']+'</td>';
+                                        trr += '<td >'+Movimentos['cantidad']+'</td>';
+                                        trr += '<td >'+Movimentos['costo']+'</td>';
+                                        trr += '<td >'+Movimentos['existencia_actual']+'</td>';
+                               trr += '</tr>';
+
+                                    codigo=Movimentos['codigo'];
+                                    suma_cantidad=parseFloat(suma_cantidad) + parseFloat(Movimentos['cantidad']);
+                                    valor_unitario=parseFloat(valor_unitario) + parseFloat(Movimentos['costo']);
+                                    valor_entrada=parseFloat(valor_entrada) + parseFloat(Movimentos['costo']);
+                                    valor_salida = parseFloat(valor_salida )  +parseFloat(Movimentos['costo']);
+                                }
+
+                            });
+
+
+                            $tabla_movimientos.find('tbody').append(trr);
+
+
+}else{
+    jAlert("Esta consulta no genero rsultados",'Atencion!!!');
+}
+
 
 				var height2 = $('#cuerpo').css('height');
 				var alto = parseInt(height2)-240;
 				var pix_alto=alto+'px';
 
-				$('#table_exis').tableScroll({height:parseInt(pix_alto)});
+				$('#table_movimientos').tableScroll({height:parseInt(pix_alto)});
 			});//termina llamada json
+
+
+                    }else{
+                        jAlert("Se requieren ambas Fechas de movimiento.",'Atencion!!!!!');
+                    }
+
 		}else{
-			jAlert("Selecciona un Almacen.",'! Atencion');
+			jAlert("Selecciona un Almacen.",'Atencion!!!!!');
 		}
+            //}else{
+            //    jAlert("Selecciona un Tipo de Movimiento.",'Atencion!!!!!');
+            //}
+
+
+
+
+
 
 
 	});
