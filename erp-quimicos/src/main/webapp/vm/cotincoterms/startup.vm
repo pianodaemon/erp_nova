@@ -110,7 +110,7 @@
 												<td width="5"></td>
 												<td width="85">Nombre&nbsp;</td>
 												<td width="210"><INPUT TYPE="text" name="nombre" style="width:200px;"></td>
-												<td width="210"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_centrocosto"></div></td>
+												<td width="210"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombre"></div></td>
 												<td width="25"></td>
 												<td></td>
 											</tr>
@@ -121,7 +121,7 @@
 												<td width="5"></td>
 												<td width="100">Descripci&oacute;n&nbsp;espa&ntilde;ol</td>
 												<td colspan="2"><INPUT TYPE="text" name="descripcion_es" style="width:420px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_descripcion"></div></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_descripciones"></div></td>
 												<td></td>
 											</tr>
 											<tr>

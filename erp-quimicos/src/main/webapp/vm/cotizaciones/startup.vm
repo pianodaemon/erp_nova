@@ -33,7 +33,7 @@
 		<table class="table_acciones" style="display:none" border="0">
 			<tr>
 				<td width="15" height="30"></td>
-				<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Crear Nuevo Pedido</span></a></td>
+				<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Crear Nuevo</span></a></td>
 				<td width="15" height="30"></td>
 				<td height="30"><a href="visualiza_buscador" class="tooltip"><div class="onmouseOutVisualizaBuscador" id="vbuscador"></div><span>Busqueda</span></a> </td>
 			</tr>

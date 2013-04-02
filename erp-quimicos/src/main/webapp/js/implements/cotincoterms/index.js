@@ -259,11 +259,11 @@ $(function() {
 			$arreglo = {'id':id_to_show,
 						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
-			jConfirm('Realmente desea eliminar el Centro de Costo seleccionado', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar el Incoterm seleccionado', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("Los datos se han guardado con exito.", 'Atencion!');
+							jAlert("El Incoterm fue eliminado con exito.", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
@@ -309,7 +309,7 @@ $(function() {
 					if ( data['success'] == 'true' ){
 						var remove = function() { $(this).remove(); };
 						$('#forma-cotincoterms-overlay').fadeOut(remove);
-						jAlert("Los datos Centro de Costo se han actualizado.", 'Atencion!');
+						jAlert("Los datos se han actualizado.", 'Atencion!');
 						$get_datos_grid();
 					}
 					else{

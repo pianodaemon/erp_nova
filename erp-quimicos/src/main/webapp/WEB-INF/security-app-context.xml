@@ -176,7 +176,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/crmconsultas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CONSULTAS" /><!--Paco-->
         <intercept-url pattern="/controllers/crmreportevisitas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_REPORTE_VISITAS" /><!--Paco-->
         
-
+        
         
         
         <!--vale-->
