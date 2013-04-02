@@ -400,9 +400,9 @@
 													<li class="topline"><a href="../repinvexis/startup.agnux">Inventario</a></li>
 													<li class="topline"><a href="../repinvexislote/startup.agnux">Existencias en Lotes</a></li>
 													<li class="topline"><a href="../repinvkits/startup.agnux">Kits</a></li>
+													<li class="topline"><a href="../repinvmovimientos/startup.agnux">Movimientos</a></li>
 													
 													<!--
-													<li class="topline"><a href="../repinvmovimientos/startup.agnux">Movimientos</a></li>
 													<li class="topline"><a href="#">Existencias FÃ­sicas Capturadas</a></li>
 													-->
 												</ul>
@@ -528,6 +528,7 @@
 												<a href="#" class="sub">Consultas &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../crmconsultas/startup.agnux">Consultas</a></li>
+													<li class="topline"><a href="../crmbigpicture/startup.agnux">Resumen de Consultas</a></li>
 												</ul>
 											</li>
 											<li>
