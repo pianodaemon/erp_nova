@@ -171,12 +171,15 @@ $(function() {
 							tr += '<input type="hidden" name="selec" class="selec'+trCount+'" value="0">';
 							tr += '<input type="checkbox" name="micheck" class="micheck'+trCount+'" value="true">';
 						tr += '</td>';
-						tr += '<td width="70">';
-							tr += '<input type="text" name="cant" class="cant'+trCount+'" value="" readOnly="true" style="width:68px; background:#dddddd; height:15px;">';
+						tr += '<td width="60">';
+							tr += '<input type="text" name="cant" class="cant'+trCount+'" value="" readOnly="true" style="width:58px; background:#dddddd; height:15px;">';
 							tr += '<input type="hidden" name="tipo_prod" value="'+exi['id_tipo_producto']+'">';
 						tr += '</td>';
-						tr += '<td width="70">';
-							tr += '<select name="select_medida" style="width:70px;">';
+                                                tr += '<td width="60">';
+							tr += '<input type="text" name="cantProd" class="cantProd'+trCount+'" value="" readOnly="true" style="width:58px; background:#dddddd; height:15px;">';
+						tr += '</td>';
+						tr += '<td width="60">';
+							tr += '<select name="select_medida" style="width:58px;">';
 							//aqui se carga el select con los tipos de iva
 							$.each(entry['MedidasEtiqueta'],function(entryIndex,med){
 								if(med['id'] == exi['id_medida_etiqueta']){
@@ -187,9 +190,9 @@ $(function() {
 							});
 							tr += '</select>';
 						tr += '</td>';
-						tr += '<td width="120">'+exi['lote_int']+'</td>';
-						tr += '<td width="110">'+exi['lote_prov']+'</td>';
-						tr += '<td width="110">'+exi['codigo']+'</td>';
+						tr += '<td width="100">'+exi['lote_int']+'</td>';
+						tr += '<td width="100">'+exi['lote_prov']+'</td>';
+						tr += '<td width="100">'+exi['codigo']+'</td>';
 						tr += '<td width="350">'+exi['descripcion']+'</td>';
 						tr += '<td width="100">'+exi['unidad_medida']+'</td>';
 						tr += '<td width="100" align="right">'+$(this).agregar_comas(parseFloat(exi['existencia']).toFixed(4))+'</td>';
@@ -201,15 +204,28 @@ $(function() {
 					//aplicar click a los campso check del grid
 					$tabla_existencias.find('tbody').find('input.micheck'+trCount).click(function(event){
 						if( this.checked ){
-							$(this).parent().find('input[name=selec]').val("1");
-							$(this).parent().parent().find('input[name=cant]').css({'background' : '#ffffff'});
-							$(this).parent().parent().find('input[name=cant]').attr("readonly", false);//habilitar campo
-							$(this).parent().parent().find('input[name=cant]').val("1");
+                                                    //Para la cantidad de etiquertas
+                                                    $(this).parent().find('input[name=selec]').val("1");
+                                                    $(this).parent().parent().find('input[name=cant]').css({'background' : '#ffffff'});
+                                                    $(this).parent().parent().find('input[name=cant]').attr("readonly", false);//habilitar campo
+                                                    $(this).parent().parent().find('input[name=cant]').val("1");
+                                                        
+                                                    //Para la cantidad de productos
+                                                    $(this).parent().parent().find('input[name=cantProd]').css({'background' : '#ffffff'});
+                                                    $(this).parent().parent().find('input[name=cantProd]').attr("readonly", false);//habilitar campo
+                                                    $(this).parent().parent().find('input[name=cantProd]').val("1");
 						}else{
-							$(this).parent().find('input[name=selec]').val("0");
-							$(this).parent().parent().find('input[name=cant]').val("");
-							$(this).parent().parent().find('input[name=cant]').css({'background' : '#dddddd'});
-							$(this).parent().parent().find('input[name=cant]').attr("readonly", true);//deshabilitar campo
+                                                    
+                                                    //Para la cantidad de etiquetas
+                                                    $(this).parent().find('input[name=selec]').val("0");
+                                                    $(this).parent().parent().find('input[name=cant]').val("");
+                                                    $(this).parent().parent().find('input[name=cant]').css({'background' : '#dddddd'});
+                                                    $(this).parent().parent().find('input[name=cant]').attr("readonly", true);//deshabilitar campo
+                                                    
+                                                    //Para la cantidad de producto
+                                                    $(this).parent().parent().find('input[name=cantProd]').val("");
+                                                    $(this).parent().parent().find('input[name=cantProd]').css({'background' : '#dddddd'});
+                                                    $(this).parent().parent().find('input[name=cantProd]').attr("readonly", true);//deshabilitar campo
 						}
 					});
 					
@@ -223,7 +239,24 @@ $(function() {
 						}
 					});
 					
+                                        $tabla_existencias.find('tbody').find('input.cantProd'+trCount).keypress(function(e){
+						// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+						if (e.which == 8 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+							return true;
+						}else {
+							return false;
+						}
+					});
 					
+                                        //pone uno al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+					$tabla_existencias.find('tbody').find('input.cantProd'+trCount).blur(function(e){
+						if(parseFloat($(this).val())==0 || $(this).val()==""){
+							if($(this).parent().parent().find('input[name=selec]').val() == '1'){
+								$(this).val(1);
+							}
+						}
+					});
+                                        
 					//pone uno al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 					$tabla_existencias.find('tbody').find('input.cant'+trCount).blur(function(e){
 						if(parseFloat($(this).val())==0 || $(this).val()==""){

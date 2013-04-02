@@ -972,12 +972,13 @@ $(function() {
                                         //aliemtenta select de tipo de llamada
                                         $select_tipo_llamada.children().remove();
                                         var tipo_llamada_html ="";
-                                        if(parseInt(entry['Datos'][0]['tipo_llamada'])==1){
-                                            tipo_llamada_html= '<option value="1" selected="yes">Entrante</option>';
-                                            tipo_llamada_html += '<option value="0">Saliente</option>';
+                                        //alert(entry['Datos'][0]['tipo_llamada']);
+                                        if(parseInt(entry['Datos'][0]['tipo_llamada']) == 1){
+                                            tipo_llamada_html += '<option value="0">Entrante</option>';
+                                            tipo_llamada_html += '<option value="1" selected="yes">Saliente</option>';
                                         }else{
-                                            tipo_llamada_html= '<option value="1">Entrante</option>';
-                                            tipo_llamada_html= '<option value="0" selected="yes">Saliente</option>';
+                                            tipo_llamada_html += '<option value="0" selected="yes">Entrante</option>';
+                                            tipo_llamada_html += '<option value="1" >Saliente</option>';
                                         }
                                         $select_tipo_llamada.append(tipo_llamada_html);
                                         

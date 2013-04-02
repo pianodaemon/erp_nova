@@ -218,267 +218,264 @@ $(function() {
 		});
 	}
         
-        var $div_tabla_resultados= $('#tablaresultadosvisitas');
+        var $tablaresultadosvisitas= $('#tablaresultadosvisitas');//visitas
+        var $tablaresultadosllamadas= $('#tablaresultadosllamadas');//Llamadas
+        var $tablaresultadoscasos= $('#tablaresultadoscasos');//Casos
+        var $tablaresultadosoportunidades= $('#tablaresultadosoportunidades');//Oportunidades
+        
         var html_trs="";
         
         $buscar_consulta.click(function(event){
-            $div_tabla_resultados.children().remove();
-            var html_trs="";
+            
+            $tablaresultadosvisitas.children().remove();//visitas
+            $tablaresultadosllamadas.children().remove();//Llamadas
+            $tablaresultadoscasos.children().remove();//Casos
+            $tablaresultadosoportunidades.children().remove();//Oportunidades
+            
             var arreglo_parametros = { iu:$('#lienzo_recalculable').find('input[name=iu]').val(), agente:$busqueda_agente.val(),
             fecha_inicio:$fecha_inicial.val(), fecha_fin:$fecha_final.val()};
             
             //var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
             //var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
-            var restful_json_service = controller + '/getResultadosConsulta.json'
+            var restful_json_service = controller + '/getResultadosConsulta.json';
             
             $.post(restful_json_service,arreglo_parametros,function(entry){
-                
-            $div_tabla_resultados.children().remove();
                 
                 if(entry['bigPicture'].length > 0){
                     
                     trh_visitas = '';
                     tr_visitas = '';
                     if(entry['ConfigData'][0]['metas_visita'] == 'true'){
-                        trh_visitas += '<th>Meta</th>';
-                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visita_meta']+'<tr>';
+                        trh_visitas += '<th width="100">Meta</th>';
+                        tr_visitas += '<td>'+entry['bigPicture'][0]['visita_meta']+'</td>';
                     }
                     if(entry['ConfigData'][0]['totales_visita'] == 'true'){
-                        trh_visitas += '<th>Total</th>';
-                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visitas_totales']+'<tr>';
+                        trh_visitas += '<th width="100">Total</th>';
+                        tr_visitas += '<td>'+entry['bigPicture'][0]['visitas_totales']+'</td>';
                     }
                     if(entry['ConfigData'][0]['cumplido_visita'] == 'true'){
-                        trh_visitas += '<th>Cumplido</th>';
-                        tr_visitas += '<tr>'+entry['bigPicture'][0]['porcentaje_visitas']+'<tr>';
+                        trh_visitas += '<th width="100">Cumplido</th>';
+                        tr_visitas += '<td>'+entry['bigPicture'][0]['porcentaje_visitas']+'</td>';
                     }
                     if(entry['ConfigData'][0]['conexito_visita'] == 'true'){
-                        trh_visitas += '<th>Exitosas</th>';
-                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visitas_con_exito']+'<tr>';
+                        trh_visitas += '<th width="100">Exitosas</th>';
+                        tr_visitas += '<td>'+entry['bigPicture'][0]['visitas_con_exito']+'</td>';
                     }
                     if(entry['ConfigData'][0]['conoportunidad_visita'] == 'true'){
-                        trh_visitas += '<th>Con Oportunidad</th>';
-                        tr_visitas += '<tr>'+entry['bigPicture'][0]['oport_visitas']+'<tr>';
+                        trh_visitas += '<th width="100">Con Oportunidad</th>';
+                        tr_visitas += '<td>'+entry['bigPicture'][0]['oport_visitas']+'</td>';
                     }
                     if(entry['ConfigData'][0]['seguimiento_visita'] == 'true'){
-                        trh_visitas += '<th>Con Seguimiento</th>';
-                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visitas_con_seguimiento']+'<tr>';
+                        trh_visitas += '<th width="100">Con Seguimiento</th>';
+                        tr_visitas += '<td>'+entry['bigPicture'][0]['visitas_con_seguimiento']+'</td>';
                     }
                     if(entry['ConfigData'][0]['efectividad_visita'] == 'true'){
-                        trh_visitas += '<th>Con Seguimiento</th>';
-                        tr_visitas += '<tr>'+entry['bigPicture'][0]['visitas_con_seguimiento']+'<tr>';
+                        trh_visitas += '<th width="100">% Efectividad</th>';
+                        tr_visitas += '<td>'+entry['bigPicture'][0]['efectividad_visita']+'</td>';
                     }
                     if(entry['ConfigData'][0]['gestion_visita'] == 'true'){
-                        trh_visitas += '';
-                        tr_visitas += '';
+                        trh_visitas += '<th width="100">% Gestion</th>';
+                        tr_visitas += '<td>'+entry['bigPicture'][0]['gestion_visitas']+'</td>';
                     }
-                    if(entry['ConfigData'][0]['avance_visita'] == 'true'){
-                        trh_visitas += '';
-                        tr_visitas += '';
+                    if(entry['ConfigData'][0]['avance_visitas'] == 'true'){
+                        trh_visitas += '<th width="100">% Avance</th>';
+                        tr_visitas += '<td>'+entry['bigPicture'][0]['avance_visitas']+'</td>';
                     }
-                    
-                    
-                    
-                    
+                    var html_trs = '</br><table id="resultadosvisitas"><thead><tr>'+trh_visitas+'</tr></thead><tbody><tr>'+tr_visitas+'</tr></tbody></table>';
+                    $tablaresultadosvisitas.append(html_trs);
+                    //Listo
                     
                     
                     trh_oportunidades = '';
                     tr_oportunidades = '';
-                    if(entry['ConfigData'][0]['visitas_oportunidades'] == 'true'){
-                        trh_oportunidades = '';
-                        tr_oportunidades = '';
-                    }
                     if(entry['ConfigData'][0]['metas_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
+                        trh_oportunidades += '<th width="100">Metas</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['metas_oport']+'</td>';
                     }
                     if(entry['ConfigData'][0]['montos_meta_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
+                        trh_oportunidades += '<th width="100">Monto Meta</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['monto_metas_oport']+'</td>';
                     }
-                    if(entry['ConfigData'][0]['cierre_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
+                    if(entry['ConfigData'][0]['total_metas_oportunidades'] == 'true'){
+                        trh_oportunidades += '<th width="100">Total Metas</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['total_metas_oport']+'</td>';
                     }
-                    if(entry['ConfigData'][0]['cotizacion_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
-                    }
-                    if(entry['ConfigData'][0]['inicial_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
-                    }
-                    if(entry['ConfigData'][0]['negociacion_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
-                    }
-                    
-                    if(entry['ConfigData'][0]['seguimiento_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
+                    if(entry['ConfigData'][0]['total_montos_oport'] == 'true'){
+                        trh_oportunidades += '<th width="100">Total Montos</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['total_montos_oport']+'</td>';
                     }
                     
                     if(entry['ConfigData'][0]['metas_cumplidas_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
+                        trh_oportunidades += '<th width="100">Metas Cumplidas</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['total_montos_oport']+'</td>';
                     }
-                    if(entry['ConfigData'][0]['total_metas_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
+                    if(entry['ConfigData'][0]['metas_cumplidas_oportunidades'] == 'true'){
+                        trh_oportunidades += '<th width="100">Monto Cumplido</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['montos_cumplidos']+'</td>';
                     }
-                    if(entry['ConfigData'][0]['montos_cumplidas_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
+                    if(entry['ConfigData'][0]['inicial_oportunidades'] == 'true'){
+                        trh_oportunidades += '<th width="100">Inicial</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['oport_inicial']+'</td>';
                     }
-                    if(entry['ConfigData'][0]['total_montos_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
+                    if(entry['ConfigData'][0]['seguimiento_oportunidades'] == 'true'){
+                        trh_oportunidades += '<th width="120">Con Seguimiento</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['oport_seguimiento']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['conoportunidad_visita'] == 'true'){
+                        trh_oportunidades += '<th width="120">Con Visitas</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['oport_visitas']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['cotizacion_oportunidades'] == 'true'){
+                        trh_oportunidades += '<th width="120">Con Cotizaci&oacute;n</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['oport_cotizacion']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['negociacion_oportunidades'] == 'true'){
+                        trh_oportunidades += '<th width="120">Con Negociaci&oacute;n</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['oport_negociacion']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['seguimiento_oportunidades'] == 'true'){
+                        trh_oportunidades += '<th width="120">Con Cierre</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['oport_cierre']+'</td>';
                     }
                     if(entry['ConfigData'][0]['ganados_oportunidades'] == 'true'){
-                        trh_oportunidades += '';
-                        tr_oportunidades += '';
+                        trh_oportunidades += '<th width="100">Ganadas</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['oport_ganados']+'</td>';
                     }
+                    if(entry['ConfigData'][0]['perdidos_oportunidades'] == 'true'){
+                        trh_oportunidades += '<th width="100">Perdidas</th>';
+                        tr_oportunidades += '<td>'+entry['bigPicture'][0]['oport_perdidos']+'</td>';//falta en ConfigData
+                    }
+                    var html_trs = '</br><table id="resultadosoportunidades"><thead><tr>'+trh_oportunidades+'</tr></thead><tbody><tr>'+tr_oportunidades+'</tr></tbody></table>';
+                    $tablaresultadosoportunidades.append(html_trs);
+                    
                     
                     
                     
                     trh_casos = '';
                     tr_casos = '';
-                    if(entry['ConfigData'][0]['cobranza_casos'] == 'true'){
-                        trh_casos += '';
-                        tr_casos += '';
-                    }
                     if(entry['ConfigData'][0]['facturacion_casos'] == 'true'){
-                        trh_casos += '';
-                        tr_casos += '';
-                    }
-                    if(entry['ConfigData'][0]['danos_casos'] == 'true'){
-                        trh_casos += '';
-                        tr_casos += '';
-                    }
-                    
-                    if(entry['ConfigData'][0]['devoluciones_casos'] == 'true'){
-                        trh_casos += '';
-                        tr_casos += '';
+                        trh_casos += '<th width="100">% Facturacion</th>';
+                        tr_casos += '<td>'+entry['bigPicture'][0]['casos_facturacion']+'</td>';
                     }
                     if(entry['ConfigData'][0]['producto_casos'] == 'true'){
-                        trh_casos += '';
-                        tr_casos += '';
-                    }
-                    
-                    if(entry['ConfigData'][0]['distribucion_casos'] == 'true'){
-                        trh_casos += '';
-                        tr_casos += '';
-                    }
-                    
-                    if(entry['ConfigData'][0]['varios_casos'] == 'true'){
-                        trh_casos += '';
-                        tr_casos += '';
+                        trh_casos += '<th width="100">% Producto</th>';
+                        tr_casos += '<td>'+entry['bigPicture'][0]['casos_producto']+'</td>';
                     }
                     if(entry['ConfigData'][0]['garantia_casos'] == 'true'){
-                        trh_casos += '';
-                        tr_casos += '';
+                        trh_casos += '<th width="100">% Garantia</th>';
+                        tr_casos += '<td>'+entry['bigPicture'][0]['casos_garantia']+'</td>';
                     }
+                    if(entry['ConfigData'][0]['distribucion_casos'] == 'true'){
+                        trh_casos += '<th width="100">% Distribucion</th>';
+                        tr_casos += '<td>'+entry['bigPicture'][0]['casos_distribucion']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['danos_casos'] == 'true'){
+                        trh_casos += '<th width="100">% Da&ntilde;os</th>';
+                        tr_casos += '<td>'+entry['bigPicture'][0]['casos_danos']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['devoluciones_casos'] == 'true'){
+                        trh_casos += '<th width="100">% Devoluciones</th>';
+                        tr_casos += '<td>'+entry['bigPicture'][0]['casos_devoluciones']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['cobranza_casos'] == 'true'){
+                        trh_casos += '<th width="100">% Cobranza</th>';
+                        tr_casos += '<td>'+entry['bigPicture'][0]['casos_cobranza']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['varios_casos'] == 'true'){
+                        trh_casos += '<th width="100">% Varios</th>';
+                        tr_casos += '<td>'+entry['bigPicture'][0]['casos_varios']+'</td>';
+                    }
+                    var html_trs = '</br><table id="resultadoscasos"><thead><tr>'+trh_casos+'</tr></thead><tbody><tr>'+tr_casos+'</tr></tbody></table>';
+                    $tablaresultadoscasos.append(html_trs);
+                    //Listo
+                    
+                    
+                    
                     
                     
                     trh_llamadas = '';
                     tr_llamadas = '';
-                    if(entry['ConfigData'][0]['planeacion_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
-                    }
-                    if(entry['ConfigData'][0]['planeadas_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
-                    }
                     if(entry['ConfigData'][0]['metas_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
-                    }
-                    if(entry['ConfigData'][0]['con_exito_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
-                    }
-                    if(entry['ConfigData'][0]['efectividad_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
-                    }
-                    if(entry['ConfigData'][0]['salientes_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
+                        trh_llamadas += '<th width="100">Metas</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['cantidad_llamadas']+'</td>';
+                    }//
+                    if(entry['ConfigData'][0]['total_llamadas'] == 'true'){
+                        trh_llamadas += '<th width="100">Total</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['llamadas_totales']+'</td>';
                     }
                     if(entry['ConfigData'][0]['cumplido_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
-                    }
-                    if(entry['ConfigData'][0]['con_cita_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
-                    }
-                    if(entry['ConfigData'][0]['total_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
+                        trh_llamadas += '<th width="100">Total</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['porcentaje_llamadas']+'</td>';
                     }
                     if(entry['ConfigData'][0]['entrantes_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
+                        trh_llamadas += '<th width="100">% Entrantes</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['llamadas_entrantes']+'</td>';
                     }
-                    if(entry['ConfigData'][0]['gestion_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
+                    if(entry['ConfigData'][0]['salientes_llamadas'] == 'true'){
+                        trh_llamadas += '<th width="100">% Salientes</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['llamadas_salientes']+'</td>';
                     }
-                    if(entry['ConfigData'][0]['avance_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
+                    if(entry['ConfigData'][0]['planeadas_llamadas'] == 'true'){
+                        trh_llamadas += '<th width="100">% Planeadas</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['llamadas_planeadas']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['con_exito_llamadas'] == 'true'){
+                        trh_llamadas += '<th width="120">% Con Exito</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['llamadas_con_exito']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['con_cita_llamadas'] == 'true'){
+                        trh_llamadas += '<th width="120">% Con cita</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['llamadas_con_cita']+'</td>';
                     }
                     if(entry['ConfigData'][0]['conseguimiento_llamadas'] == 'true'){
-                        trh_llamadas += '';
-                        tr_llamadas += '';
+                        trh_llamadas += '<th width="120">% Con Seguimiento</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['llamadas_con_seguimiento']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['efectividad_llamadas'] == 'true'){
+                        trh_llamadas += '<th width="120">% Efectividad</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['efectividad_llamadas']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['gestion_llamadas'] == 'true'){
+                        trh_llamadas += '<th width="100">% Gesti&oacute;n</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['gestion_llamadas']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['avance_llamadas'] == 'true'){
+                        trh_llamadas += '<th width="100">% Avance</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['avance_llamadas']+'</td>';
+                    }
+                    if(entry['ConfigData'][0]['planeacion_llamadas'] == 'true'){
+                        trh_llamadas += '<th width="100">% Planeaci&oacute;n</th>';
+                        tr_llamadas += '<td>'+entry['bigPicture'][0]['planeacion']+'</td>';
                     }
                     
+                    var html_trs = '</br><table id="resultadosllamadas"><thead><tr>'+trh_llamadas+'</tr></thead><tbody><tr>'+tr_llamadas+'</tr></tbody></table>';
+                    $tablaresultadosllamadas.append(html_trs);
+                    //listo
                     
                     
-                    
-                    /*
-                    html_trs+='<table id="resultados" >'
-                    html_trs+='<thead><tr>'
-                    html_trs+='<td >Empeado</td>'
-                    html_trs+='<td >Fecha&nbsp;Visita</td>'
-                    html_trs+='<td >Nombre&nbsp;del&nbsp;contacto</td>'
-                    html_trs+='<td >Motivo&nbsp;Visita</td>'
-                    html_trs+='<td width="10">Tipo&nbsp;Seguimiento</td>'
-                    html_trs+='<td width="10">Calificacion&nbsp;visita</td>'
-                    html_trs+='<td width="50">Existe&nbsp;Oportunidad</td>'
-                    html_trs+='<td width="10">Resultado</td>'
-                    html_trs+='</tr></thead>'
-
-
-                        for(var i=0; i<entry['Datos'].length; i++){
-                                            html_trs+='<tr>'
-                                            html_trs+='<td >'+entry['Datos'][i]["nombre_empleado"]+'</td>'
-                                            html_trs+='<td >'+entry['Datos'][i]["fecha_visita"]+'</td>'
-                                            html_trs+='<td >'+entry['Datos'][i]["nombre_contacto"]+'</td>'
-                                            html_trs+='<td >'+entry['Datos'][i]["motivo_visita"]+'</td>'
-                                            html_trs+='<td >'+entry['Datos'][i]["tipo_seguimiento_visita"]+'</td>'
-                                            html_trs+='<td >'+entry['Datos'][i]["calificacion_visita"]+'</td>'
-                                            html_trs+='<td >'+entry['Datos'][i]["existe_oportunidad"]+'</td>'
-                                            html_trs+='<td >'+entry['Datos'][i]["resultado"]+'</td>'
-                                            html_trs+=' </tr>'
-                        }
-
-                                            html_trs +='<tfoot>';
-                                                html_trs +='<tr>';
-                                                html_trs +='<td colspan="8" align="center">&nbsp;</td>';
-                                                html_trs +='</tr>';
-                                            html_trs +='</tfoot>';
-                                            html_trs +='</table>';
-                                            $div_tabla_resultados.append(html_trs);
-                    */
-                }else{  
-                    jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!')
+                }else{
+                    jAlert("Esta consulta no genero ningun Resultado pruebe ingresando otros Parametros",'Atencion!!!!');
                 }
+                
                 var height2 = $('#cuerpo').css('height');
                 var alto = parseInt(height2)-275;
                 var pix_alto=alto+'px';
-                $('#resultados').tableScroll({height:parseInt(pix_alto)});
+                $('#resultadosvisitas').tableScroll({height:parseInt(pix_alto)});
+                
+                var height2 = $('#cuerpo').css('height');
+                var alto = parseInt(height2)-275;
+                var pix_alto=alto+'px';
+                $('#resultadosoportunidades').tableScroll({height:parseInt(pix_alto)});
+                
+                var height2 = $('#cuerpo').css('height');
+                var alto = parseInt(height2)-275;
+                var pix_alto=alto+'px';
+                $('#resultadoscasos').tableScroll({height:parseInt(pix_alto)});
+                
+                var height2 = $('#cuerpo').css('height');
+                var alto = parseInt(height2)-275;
+                var pix_alto=alto+'px';
+                $('#resultadosllamadas').tableScroll({height:parseInt(pix_alto)});
                 
             });
             
@@ -557,7 +554,7 @@ $(function() {
                 $negociacion_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=negociacion_oportunidades]');
                 $cierre_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=cierre_oportunidades]');
                 $ganados_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=ganados_oportunidades]');
-                
+                $perdidos_oportunidades =$('#forma-crmconfigconsultas-window').find('input[name=perdidos_oportunidades]');
                 
                 //funciona para seleccionar un checkbosx si en la base de datos indica que estara seleccionado
                 $is_check_checkbox = function(campo, valor){
@@ -621,7 +618,7 @@ $(function() {
                         $is_check_checkbox($negociacion_oportunidades, entry['Config']['0']['negociacion_oportunidades']);
                         $is_check_checkbox($cierre_oportunidades, entry['Config']['0']['cierre_oportunidades']);
                         $is_check_checkbox($ganados_oportunidades, entry['Config']['0']['ganados_oportunidades']);
-                        
+                        $is_check_checkbox($perdidos_oportunidades, entry['Config']['0']['perdidos_oportunidades']);
                     }else{
                         $identificador.attr({'value': 0});
                     }
@@ -976,6 +973,13 @@ $(function() {
                 });
                 $ganados_oportunidades.click(function(){
                     valida = $valida_checks_seleccionados($registro_oportunidades);
+                    if(valida != "true"){
+                        this.checked = false;
+                        jAlert(valida,'! Atencion');
+                    }
+                });
+                $perdidos_oportunidades.click(function(){
+                    valida = $valida_checks_seleccionados($perdidos_oportunidades);
                     if(valida != "true"){
                         this.checked = false;
                         jAlert(valida,'! Atencion');
