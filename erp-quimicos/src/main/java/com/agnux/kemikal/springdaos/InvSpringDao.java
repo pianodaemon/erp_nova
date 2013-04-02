@@ -1492,8 +1492,8 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_proveedor;
     }
-    
-    
+
+
     //buscar datos por Numero de Proveedor
     @Override
     public ArrayList<HashMap<String, String>> getDatosProveedorByNoProv(String noProveedor, Integer id_empresa) {
@@ -1533,8 +1533,8 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
 
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa) {
@@ -7107,7 +7107,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
         String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
         //System.out.println("ControlCostos_PaginaGrid: "+sql_to_query);
-        
+
         ArrayList<HashMap<String, Object>> hm125 = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(pageSize),new Integer(offset)}, new RowMapper(){
@@ -7322,5 +7322,53 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
+
+    //Metodo que extrae losmovimientos
+    @Override
+    public ArrayList<HashMap<String, String>> getMovimientos(Integer tipo_movimiento,Integer id_almacen,String codigo, String descripcion,String fecha_inicial,String fecha_final ,Integer id_empresa, Integer id_usuario) {
+        String sql_to_query = "select * from prueba_returning2("+tipo_movimiento+","+id_almacen+","+id_empresa+",'"+fecha_inicial+"', '"+fecha_final+"' ,"+id_usuario+",'"+codigo+"','"+descripcion+"'  )   "
+	+"  as foo(  "
+		+"  codigo character varying,  "
+		+"  descripcion character varying,  "
+		+"  existencia double precision,  "
+		+"  referencia character varying,  "
+		+"  tipo_movimiento character varying,  "
+		+"  fecha_movimiento character varying,  "
+		+"  sucursal character varying,  "
+		+"  almacen character varying,  "
+		+"  cantidad double precision,  "
+                +"  existencia_actual double precision,  "
+		+"  costo double precision  "
+	+"  );";
+
+        System.out.println("Ejecutando query: "+ sql_to_query);
+
+        ArrayList<HashMap<String, String>> hm_datos_exitencias = (ArrayList<HashMap<String, String>>)
+        this.jdbcTemplate.query(sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("existencia",rs.getString("existencia"));
+                    row.put("referencia",rs.getString("referencia"));
+                    row.put("tipo_movimiento",rs.getString("tipo_movimiento"));
+                    row.put("fecha_movimiento",rs.getString("fecha_movimiento"));
+                    row.put("sucursal",rs.getString("sucursal"));
+                    row.put("almacen",rs.getString("almacen"));
+                    row.put("cantidad",String.valueOf(rs.getInt("cantidad")));
+                    row.put("costo",String.valueOf(rs.getInt("costo")));
+                    row.put("existencia_actual",String.valueOf(rs.getInt("existencia_actual")));
+                    return row;
+                }
+            }
+        );
+        return hm_datos_exitencias;
+    }
+
+
+
+
 
 }
