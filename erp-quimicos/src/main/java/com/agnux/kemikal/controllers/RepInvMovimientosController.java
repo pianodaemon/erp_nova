@@ -3,17 +3,12 @@
  */
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
-import com.agnux.common.helpers.FileHelper;
-import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
-import com.agnux.kemikal.reportes.PdfReporteInvExisLotes;
 import com.agnux.kemikal.reportes.PdfReporteMovimientos;
-import com.agnux.xml.labels.EtiquetaCompras;
-import com.agnux.xml.labels.generandoxml;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -28,7 +23,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.TransformerException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -216,9 +210,9 @@ public class RepInvMovimientosController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
 
         Movimientos = this.getInvDao().getMovimientos(id_tipo_movimiento,id_almacen,codigo ,descripcion,fecha_inicial,fecha_final, id_empresa,id_usuario);
-
+        
         jsonretorno.put("Movimientos", Movimientos);
-
+        
         return jsonretorno;
     }
 
