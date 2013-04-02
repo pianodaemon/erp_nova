@@ -11,6 +11,7 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import com.agnux.kemikal.reportes.PdfReporteInvExisLotes;
+import com.agnux.kemikal.reportes.PdfReporteMovimientos;
 import com.agnux.xml.labels.EtiquetaCompras;
 import com.agnux.xml.labels.generandoxml;
 import com.itextpdf.text.DocumentException;
@@ -204,7 +205,7 @@ public class RepInvMovimientosController {
             @RequestParam(value = "iu", required = true) String id_user,
             Model model) {
 
-        log.log(Level.INFO, "Ejecutando getMovimientosJson de {0}", InvRepComprasNetasPorProductoController.class.getName());
+        log.log(Level.INFO, "Ejecutando getMovimientosJson de {0}", RepInvMovimientosController.class.getName());
         HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> Movimientos = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -214,13 +215,108 @@ public class RepInvMovimientosController {
 
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
 
-        Movimientos = this.getInvDao().getMovimientos(id_tipo_movimiento,id_almacen,codigo ,descripcion,fecha_inicial,fecha_final, id_empresa);
+        Movimientos = this.getInvDao().getMovimientos(id_tipo_movimiento,id_almacen,codigo ,descripcion,fecha_inicial,fecha_final, id_empresa,id_usuario);
 
         jsonretorno.put("Movimientos", Movimientos);
 
         return jsonretorno;
     }
 
+
+    //Genera pdf Reporte de Movimientos
+    @RequestMapping(value = "/getReporteMovimientos/{cadena}/{iu}/out.json", method = RequestMethod.GET )
+    public ModelAndView getGeneraPdfRemisionJson(
+                @PathVariable("cadena") String cadena,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request,
+                HttpServletResponse response,
+                Model model)
+        throws ServletException, IOException, URISyntaxException, DocumentException {
+
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> lista_movimientos = new ArrayList<HashMap<String, String>>();
+
+        System.out.println("Generando reporte de Movimientos");
+        Integer select_tipo_movimiento=0;
+        Integer select_almacen=0;
+        String codigo="";
+        String descripcion="";
+        String fecha_inicial="";
+        String fecha_final="";
+
+
+        String arrayCad [] = cadena.split("___");
+
+        select_tipo_movimiento = Integer.parseInt(arrayCad [0]);
+        select_almacen = Integer.parseInt(arrayCad [1]);
+        if(arrayCad [2].equals("0")){
+            codigo="";
+        }else{
+            codigo = arrayCad [2];
+        }
+
+        if(arrayCad [3].equals("0")){
+            descripcion="";
+        }else{
+            descripcion = arrayCad [3];
+        }
+
+       if(arrayCad [4].equals("0")){
+            fecha_inicial="%%";
+        }else{
+            fecha_inicial = arrayCad [4];
+        }
+        if(arrayCad [5].equals("0")){
+            fecha_final="%%";
+        }else{
+            fecha_final = arrayCad [5];
+        }
+
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        String rfc=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+
+        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+
+
+        String[] array_company = razon_social_empresa.split(" ");
+        String company_name= array_company[0].toLowerCase();
+        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+
+
+        File file_dir_tmp = new File(dir_tmp);
+        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+
+        String file_name = "REPMOVIMIENTOS_"+rfc+"_"+fecha_inicial+"_"+fecha_final+".pdf";
+
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+
+        //variable estatus agregado por paco
+        //obtiene las remisiones del periodo indicado
+        lista_movimientos = this.getInvDao().getMovimientos(select_tipo_movimiento,select_almacen,codigo ,descripcion,fecha_inicial,fecha_final, id_empresa,id_usuario);
+
+        //instancia a la clase que construye el pdf del reporte de facturas
+        PdfReporteMovimientos x = new PdfReporteMovimientos( fileout,ruta_imagen,razon_social_empresa,fecha_inicial,fecha_final,lista_movimientos);
+
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        int size = (int) file.length(); // Tamaño del archivo
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        response.setBufferSize(size);
+        response.setContentLength(size);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        FileCopyUtils.copy(bis, response.getOutputStream());
+        response.flushBuffer();
+
+        return null;
+    }
 
 
 
