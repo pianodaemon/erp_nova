@@ -7326,7 +7326,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //Metodo que extrae losmovimientos
     @Override
     public ArrayList<HashMap<String, String>> getMovimientos(Integer tipo_movimiento,Integer id_almacen,String codigo, String descripcion,String fecha_inicial,String fecha_final ,Integer id_empresa, Integer id_usuario) {
-        String sql_to_query = "select * from prueba_returning2("+tipo_movimiento+","+id_almacen+","+id_empresa+",'"+fecha_inicial+"', '"+fecha_final+"' ,"+id_usuario+",'"+codigo+"','"+descripcion+"'  )   "
+        String sql_to_query = "select * from Producto_movimientos("+tipo_movimiento+","+id_almacen+","+id_empresa+",'"+fecha_inicial+"', '"+fecha_final+"' ,"+id_usuario+",'"+codigo+"','"+descripcion+"'  )   "
 	+"  as foo(  "
 		+"  codigo character varying,  "
 		+"  descripcion character varying,  "
