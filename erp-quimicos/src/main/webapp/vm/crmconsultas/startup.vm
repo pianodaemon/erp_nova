@@ -628,9 +628,6 @@
                                                 <td>Etapa</td>
                                                  <td><select name="etapa" style="width:120px;"></select></td>
                                                 <td><input type="button" name="buscar" value="Consultar" style="width:80px; border-radius:5px;"</td>
-                                                
-                                                
-                                                
                                             </tr>
                                             <tr>
                                                 <td colspan="18">&nbsp;</td>
@@ -790,8 +787,8 @@
                                                     </select>
                                                 </td>
                                                 <td>&nbsp;</td>
-                                                <td>Ver como:</td>
-                                                <td><select name="select_tipo" style="width:100px;"></select></td>
+                                                <td></td>
+                                                <td><input type="hidden" name="select_tipo" style="width:80px;"><!--<select name="select_tipo" style="width:120px;"></select>--></td>
                                             </tr>
                                             <tr>
                                                 <td colspan="18">&nbsp;</td>
@@ -841,7 +838,7 @@
                                                                     <td>&nbsp;Contactos</td>
                                                                     <td><input type="text" name="contactos" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;</td>
-
+                                                                    
                                                                     <!--<td>Prospectos</td>
                                                                     <td><input type="text" name="prospectos" style="width:70px;" readOnly="true"></td>
                                                                     <td>&nbsp;</td>

@@ -28,8 +28,6 @@
         <script type="text/javascript" src="../../js/components/modalbox/crmconsultas/modalboxLlamadas.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/crmconsultas/modalboxOportunidades.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/crmconsultas/modalboxVisitas.js"></script>
-
-        <script type="text/javascript" src="../../js/implements/crmbigpicture/index.js" ></script>
         -->
         #include("${layoutmenu}")
         
@@ -106,7 +104,16 @@
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td>
-                    <div id="tablaresultadosconsultas">
+                    <div id="tablaresultadosvisitas">
+                            <!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
+                    </div>
+                    <div id="tablaresultadosllamadas">
+                            <!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
+                    </div>
+                    <div id="tablaresultadoscasos">
+                            <!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
+                    </div>
+                    <div id="tablaresultadosoportunidades">
                             <!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
                     </div>
                 </td>
