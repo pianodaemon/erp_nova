@@ -317,6 +317,8 @@ public interface InvInterfaceDao {
     //reporte inv movimientos
     public ArrayList<HashMap<String, String>> getMovimientos(Integer id_tipo_movimiento, Integer id_alamacen,String codigo, String descripcion,String fecha_inicial,String fecha_final,Integer id_empresa);
 
+    //reporte inv movimientos
+    public ArrayList<HashMap<String, String>> getMovimientos(Integer id_tipo_movimiento, Integer id_alamacen,String codigo, String descripcion,String fecha_inicial,String fecha_final,Integer id_empresa, Integer id_usuario);
 
 
 }
