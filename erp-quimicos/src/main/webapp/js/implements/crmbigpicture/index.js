@@ -218,6 +218,8 @@ $(function() {
 		});
 	}
         
+        var $content_results = $('.content_results');//Oportunidades
+        
         var $tablaresultadosvisitas= $('#tablaresultadosvisitas');//visitas
         var $tablaresultadosllamadas= $('#tablaresultadosllamadas');//Llamadas
         var $tablaresultadoscasos= $('#tablaresultadoscasos');//Casos
@@ -231,6 +233,7 @@ $(function() {
             $tablaresultadosllamadas.children().remove();//Llamadas
             $tablaresultadoscasos.children().remove();//Casos
             $tablaresultadosoportunidades.children().remove();//Oportunidades
+            $content_results.css({display : 'block'});
             
             var arreglo_parametros = { iu:$('#lienzo_recalculable').find('input[name=iu]').val(), agente:$busqueda_agente.val(),
             fecha_inicio:$fecha_inicial.val(), fecha_fin:$fecha_final.val()};
@@ -281,8 +284,10 @@ $(function() {
                         trh_visitas += '<th width="100">% Avance</th>';
                         tr_visitas += '<td>'+entry['bigPicture'][0]['avance_visitas']+'</td>';
                     }
-                    var html_trs = '</br><table id="resultadosvisitas"><thead><tr>'+trh_visitas+'</tr></thead><tbody><tr>'+tr_visitas+'</tr></tbody></table>';
-                    $tablaresultadosvisitas.append(html_trs);
+                    if(tr_visitas != ""){
+                        var html_trs = 'Vistas<table id="resultadosvisitas"><thead><tr>'+trh_visitas+'</tr></thead><tbody><tr>'+tr_visitas+'</tr></tbody></table></br>';
+                        $tablaresultadosvisitas.append(html_trs);
+                    }
                     //Listo
                     
                     
@@ -345,9 +350,11 @@ $(function() {
                         trh_oportunidades += '<th width="100">Perdidas</th>';
                         tr_oportunidades += '<td>'+entry['bigPicture'][0]['oport_perdidos']+'</td>';//falta en ConfigData
                     }
-                    var html_trs = '</br><table id="resultadosoportunidades"><thead><tr>'+trh_oportunidades+'</tr></thead><tbody><tr>'+tr_oportunidades+'</tr></tbody></table>';
-                    $tablaresultadosoportunidades.append(html_trs);
-                    
+                    if(tr_oportunidades != ""){
+                        var html_trs = 'Oportunidades<table id="resultadosoportunidades"><thead><tr>'+trh_oportunidades+'</tr></thead><tbody><tr>'+tr_oportunidades+'</tr></tbody></table></br></br>';
+                        $tablaresultadosoportunidades.append(html_trs);
+                        
+                    }
                     
                     
                     
@@ -385,8 +392,10 @@ $(function() {
                         trh_casos += '<th width="100">% Varios</th>';
                         tr_casos += '<td>'+entry['bigPicture'][0]['casos_varios']+'</td>';
                     }
-                    var html_trs = '</br><table id="resultadoscasos"><thead><tr>'+trh_casos+'</tr></thead><tbody><tr>'+tr_casos+'</tr></tbody></table>';
-                    $tablaresultadoscasos.append(html_trs);
+                    if(tr_casos != ""){
+                        var html_trs = 'Casos<table id="resultadoscasos"><thead><tr>'+trh_casos+'</tr></thead><tbody><tr>'+tr_casos+'</tr></tbody></table></br>';
+                        $tablaresultadoscasos.append(html_trs);
+                    }
                     //Listo
                     
                     
@@ -447,9 +456,10 @@ $(function() {
                         trh_llamadas += '<th width="100">% Planeaci&oacute;n</th>';
                         tr_llamadas += '<td>'+entry['bigPicture'][0]['planeacion']+'</td>';
                     }
-                    
-                    var html_trs = '</br><table id="resultadosllamadas"><thead><tr>'+trh_llamadas+'</tr></thead><tbody><tr>'+tr_llamadas+'</tr></tbody></table>';
-                    $tablaresultadosllamadas.append(html_trs);
+                    if(tr_llamadas != ""){
+                        var html_trs = 'Llamadas<table id="resultadosllamadas"><thead><tr>'+trh_llamadas+'</tr></thead><tbody><tr>'+tr_llamadas+'</tr></tbody></table></br>';
+                        $tablaresultadosllamadas.append(html_trs);
+                    }
                     //listo
                     
                     
