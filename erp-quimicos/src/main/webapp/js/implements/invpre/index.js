@@ -114,41 +114,6 @@ $(function() {
 		$get_datos_grid();
 	});
 	
-	//desencadena clic del Boton Buscar al pulsar enter en el campo busqueda_select_tipo_prod del producto
-	$busqueda_select_tipo_prod.keypress(function(e){
-		if(e.which == 13){
-			$buscar.trigger('click');
-			return false;
-		}
-	});
-	
-	
-	//desencadena clic del Boton Buscar al pulsar enter en el campo busqueda_codigo del producto
-	$busqueda_codigo.keypress(function(e){
-		if(e.which == 13){
-			$buscar.trigger('click');
-			return false;
-		}
-	});
-	
-	
-	//desencadena clic del Boton Buscar al pulsar enter en el campo busqueda_descripcion del producto
-	$busqueda_descripcion.keypress(function(e){
-		if(e.which == 13){
-			$buscar.trigger('click');
-			return false;
-		}
-	});
-
-
-	//desencadena clic del Boton Buscar al pulsar enter en el campo busqueda_select_pres del producto
-	$busqueda_select_pres.keypress(function(e){
-		if(e.which == 13){
-			$buscar.trigger('click');
-			return false;
-		}
-	});
-	
 	
 	$cargar_datos_buscador_principal= function(){
 		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosBuscadorPrincipal.json';
@@ -190,6 +155,7 @@ $(function() {
 		$busqueda_codigo.val('');
 		$busqueda_descripcion.val('');
 		$cargar_datos_buscador_principal();
+		$busqueda_codigo.focus();
 	});
 	
 	
@@ -232,6 +198,13 @@ $(function() {
 		};
 		$busqueda_codigo.focus();
 	});
+	
+	
+	//aplicar evento keypress a campos para ejecutar la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_descripcion, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_pres, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_tipo_prod, $buscar);
 	
 	
 	
@@ -438,29 +411,9 @@ $(function() {
 		}
 		
 		
-		//desencadena clic del boton Buscar producto al pulsar enter en el campo sku del producto
-		$campo_sku.keypress(function(e){
-			if(e.which == 13){
-				$buscar_plugin_producto.trigger('click');
-				return false;
-			}
-		});
-		
-		//desencadena clic del boton Buscar producto al pulsar enter en el campo_descripcion del producto
-		$campo_descripcion.keypress(function(e){
-			if(e.which == 13){
-				$buscar_plugin_producto.trigger('click');
-				return false;
-			}
-		});
-		
-		//desencadena clic del boton Buscar producto al pulsar enter sobre select_tipo_producto del producto
-		$select_tipo_producto.keypress(function(e){
-			if(e.which == 13){
-				$buscar_plugin_producto.trigger('click');
-				return false;
-			}
-		});
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_producto, $buscar_plugin_producto);
 		
 		$cancelar_plugin_busca_producto.click(function(event){
 			//event.preventDefault();
@@ -550,7 +503,7 @@ $(function() {
 			if( parseInt(elemento['id']) == parseInt(elemento_seleccionado) ){
 				select_html += '<option value="' + elemento['id'] + '" selected="yes">' + elemento['descripcion_abr'] + '</option>';
 			}else{
-				//select_html += '<option value="' + elemento['id'] + '" >' + elemento['descripcion_abr'] + '</option>';
+				select_html += '<option value="' + elemento['id'] + '" >' + elemento['descripcion_abr'] + '</option>';
 			}
 		});
 		$campo_select.append(select_html);
@@ -810,6 +763,7 @@ $(function() {
 		
 		//href para buscar producto
 		var $buscar_producto = $('#forma-invpre-window').find('a[href*=busca_producto]');
+		var $agrega_producto = $('#forma-invpre-window').find('a[href*=agrega_producto]');
 		
 		var $cerrar_plugin = $('#forma-invpre-window').find('#close');
 		var $cancelar_plugin = $('#forma-invpre-window').find('#boton_cancelar');
@@ -914,18 +868,52 @@ $(function() {
 		$buscar_producto.click(function(event){
 			event.preventDefault();
 			$busca_productos($select_presentacion, $productosku.val(), $producto_descripcion.val());
-		})
+		});
+		
+		
+		$agrega_producto.click(function(event){
+			event.preventDefault();
+			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
+			var $arreglo2 = {	'codigo':$productosku.val(),
+							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+						};
+			
+			$.post(input_json2,$arreglo2,function(entry2){
+				if(parseInt(entry2['Producto'].length) > 0 ){
+					$('#forma-invpre-window').find('input[name=producto_id]').val(entry2['Producto'][0]['id']);
+					$('#forma-invpre-window').find('input[name=productosku]').val(entry2['Producto'][0]['sku']);
+					$('#forma-invpre-window').find('input[name=producto_descripcion]').val(entry2['Producto'][0]['descripcion']);
+					$('#forma-invpre-window').find('input[name=producto_unidad]').val( entry2['Producto'][0]['unidad'] );
+					
+					//verifica si el arreglo  retorno datos
+					if (entry2['Presentaciones'].length > 0){
+						$select_presentacion.children().remove();
+						var html_pres = '';
+						$.each(entry2['Presentaciones'],function(entryIndex,pres){
+							html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+						});
+						$select_presentacion.append(html_pres);
+					}else{
+						$select_presentacion.children().remove();
+						var html_pres = '<option value="0">[-Presentaci&oacute;n--]</option>';
+						$select_presentacion.append(html_pres);
+					}
+				}
+			});
+		});
+		
+		
 		
 		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$productosku.keypress(function(e){
 			if(e.which == 13){
-				$buscar_producto.trigger('click');
+				$agrega_producto.trigger('click');
 				return false;
 			}
 		});
 		
-		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
+		//desencadena clic del href Buscar producto al pulsar enter en el campo sku del producto
 		$producto_descripcion.keypress(function(e){
 			if(e.which == 13){
 				$buscar_producto.trigger('click');
@@ -1154,12 +1142,14 @@ $(function() {
 			
 			//href para buscar producto
 			var $buscar_producto = $('#forma-invpre-window').find('a[href*=busca_producto]');
+			var $agrega_producto = $('#forma-invpre-window').find('a[href*=agrega_producto]');
 			
 			var $cerrar_plugin = $('#forma-invpre-window').find('#close');
 			var $cancelar_plugin = $('#forma-invpre-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-invpre-window').find('#submit');
 			
 			$buscar_producto.hide();
+			$agrega_producto.hide();
 			$producto_unidad.css({'background' : '#F0F0F0'});
 			$productosku.css({'background' : '#F0F0F0'});
 			$producto_descripcion.css({'background' : '#F0F0F0'});

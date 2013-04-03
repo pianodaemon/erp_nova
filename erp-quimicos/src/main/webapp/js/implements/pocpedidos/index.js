@@ -520,9 +520,10 @@ $(function() {
 			$('#forma-pocpedidos-window').find('input[name=dircliente]').val(dir_cliente);
 			$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
 		}
-		
-		//carga el select de monedas  con la moneda del cliente seleccionada por default
 		var moneda_hmtl = '';
+		
+		/*
+		//carga el select de monedas  con la moneda del cliente seleccionada por default
 		if(parseInt(num_lista_precio)>0){
 			//aquí se arma la cadena json para traer la moneda de la lista de precio
 			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaListaCliente.json';
@@ -550,6 +551,20 @@ $(function() {
 			});
 			$select_moneda.append(moneda_hmtl);
 		}
+		*/
+		
+		
+		$select_moneda.children().remove();
+		$.each(array_monedas ,function(entryIndex,moneda){
+			if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+				moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+			}else{
+				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+			}
+		});
+		$select_moneda.append(moneda_hmtl);
+		
+		
 		
 		//carga select de condiciones con los dias de Credito default del Cliente
 		$select_condiciones.children().remove();
@@ -1162,7 +1177,7 @@ $(function() {
 	
 	
 	//buscador de presentaciones disponibles para un producto
-	$buscador_presentaciones_producto = function($id_cliente,nocliente, sku_producto,$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio){
+	$buscador_presentaciones_producto = function($id_cliente,nocliente, sku_producto,$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, arrayMonedas){
 		//verifica si el campo rfc proveedor no esta vacio
 		var cliente_listaprecio=  $('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val();
 		if(nocliente != ''){
@@ -1212,6 +1227,7 @@ $(function() {
 										trr += '<span class="id_pres" style="display:none">'+pres['id_presentacion']+'</span>';
 										trr += '<span class="pres">'+pres['presentacion']+'</span>';
 										trr += '<span class="costo" style="display:none">'+pres['precio']+'</span>';
+										trr += '<span class="idmon" style="display:none">'+pres['id_moneda']+'</span>';
 										trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
 									trr += '</td>';
 								trr += '</tr>';
@@ -1244,11 +1260,11 @@ $(function() {
 								var pres = $(this).find('span.pres').html();
 								var num_dec = $(this).find('span.dec').html();
 								
-								var prec_unitario= $(this).find('span.costo').html();
-								var id_moneda=0;
+								var prec_unitario = $(this).find('span.costo').html();
+								var id_moneda = $(this).find('span.idmon').html();
 								
 								//llamada a la funcion que agrega el producto al grid
-								$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec);
+								$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas);
 								
 								//$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
 								
@@ -1366,239 +1382,270 @@ $(function() {
 	
 	
 	
-	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec){
+	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas){
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
+		var agregarTr=false;
 		
-		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
-		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
-			$valor_impuesto.val(0);
+		//verificamos si el grid no tiene registros
+		if(parseInt($("tr", $grid_productos).size())<=0){
+			//verificamos si la moneda del producto no es cero
+			if(parseInt(id_moneda)>0){
+				var moneda_prod='';
+				$select_moneda.children().remove();
+				$.each(arrayMonedas ,function(entryIndex,moneda){
+					if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+						moneda_prod += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+					}else{
+						//moneda_prod += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+					}
+				});
+				$select_moneda.append(moneda_prod);
+				agregarTr=true;
+			}
+		}else{
+			//si la moneda del pedido es igual a la moneda del producto, permitimos agregar
+			if(parseInt($select_moneda.val())==parseInt(id_moneda)){
+				agregarTr=true;
+			}
 		}
 		
-		var encontrado = 0;
-		//busca el sku y la presentacion en el grid
-		$grid_productos.find('tr').each(function (index){
-			if(( $(this).find('#skuprod').val() == sku.toUpperCase() )  && (parseInt($(this).find('#idpres').val())== parseInt(id_pres) ) && (parseInt($(this).find('#elim').val())!=0)){
-				encontrado=1;//el producto ya esta en el grid
-			}
-		});
 		
-		
-		if(parseInt(encontrado)!=1){//si el producto no esta en el grid entra aqui
-			//ocultamos el boton facturar para permitir Guardar los cambios  antes de facturar
-			$('#forma-pocpedidos-window').find('#facturar').hide();
-			//obtiene numero de trs
-			var tr = $("tr", $grid_productos).size();
-			tr++;
-			
-			var trr = '';
-			trr = '<tr>';
-				trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-					trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
-					trr += '<input type="hidden" 	name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
-					trr += '<input type="hidden" 	name="iddetalle" id="idd" value="0">';//este es el id del registro que ocupa el producto en la tabla pocpedidos_detalles
-					trr += '<input type="hidden" 	name="noTr" value="'+ tr +'">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
-					trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_prod +'">';
-					trr += '<input type="text" 		name="sku" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
-					trr += '<input type="text" 		name="nombre" 	value="'+ titulo +'" id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<input type="text" 		name="unidad'+ tr +'" 	value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-					trr += '<input type="hidden"    name="id_presentacion"  	value="'+  id_pres +'" id="idpres">';
-					trr += '<input type="hidden"    name="numero_decimales"     value="'+  num_dec +'" id="numdec">';
-					trr += '<input type="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input type="text" name="cantidad" value=" " class="cantidad'+ tr +'" id="cant" style="width:76px;">';
-				trr += '</td>';
-				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<input type="text" name="costo" value="'+ prec_unitario +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
-				trr += '</td>';
-				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<input type="text" name="importe'+ tr +'" value="" id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
-					trr += '<input type="hidden" name="id_imp_prod"   value="'+  $id_impuesto.val() +'" id="idimppord">';
-					trr += '<input type="hidden" name="valor_imp"     value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
-					trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="0">';
-				trr += '</td>';
-				
-				trr += '<td class="grid2" id="td_oculto'+ tr +'" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input type="text" 		name="produccion" 	value="" 	 class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
-					trr += '<input type="hidden"    name="existencia" 	value="0">';
-				trr += '</td>';
-				
-				var desactivado="";
-				var check="";
-				var valor_seleccionado="0";
-				
-				trr += '<td class="grid2" id="td_oculto'+ tr +'" style="font-size: 11px;  border:1px solid #C1DAD7;" width="20">';
-					trr += '<input type="checkbox" 	name="checkProd" class="checkProd'+ tr +'" '+check+' '+desactivado+'>';
-					trr += '<input type="hidden" 	name="seleccionado" value="'+valor_seleccionado+'">';//el 1 significa que el registro no ha sido eliminado
-				trr += '</td>';
-				
-			trr += '</tr>';
-            
-			$grid_productos.append(trr);
-			
-			
-			if($incluye_produccion.val()=='true'){
-				//aplicar evento click al check, cuando la empresa incluya modulo de produccion
-				$aplicar_evento_click_a_input_check($grid_productos.find('.checkProd'+ tr));
-				$grid_productos.find('.checkProd'+ tr).hide();//ocultar check porque es un registro nuevo, se debe mostrar  hasta que se genere un warning
-			}else{
-				//ocualtar campos,  cuando la empresa no incluya modulo de produccion
-				$grid_productos.find('#td_oculto'+tr).hide();
+		//si agregar es true, permitimos agregar el producto
+		if(agregarTr){
+			//si  el campo tipo de cambio es null o vacio, se le asigna un 0
+			if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
+				$valor_impuesto.val(0);
 			}
 			
-			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-			$grid_productos.find('#cant').focus(function(e){
-				if($(this).val() == ' '){
-						$(this).val('');
+			var encontrado = 0;
+			//busca el sku y la presentacion en el grid
+			$grid_productos.find('tr').each(function (index){
+				if(( $(this).find('#skuprod').val() == sku.toUpperCase() )  && (parseInt($(this).find('#idpres').val())== parseInt(id_pres) ) && (parseInt($(this).find('#elim').val())!=0)){
+					encontrado=1;//el producto ya esta en el grid
 				}
 			});
 			
-			//recalcula importe al perder enfoque el campo cantidad
-			$grid_productos.find('#cant').blur(function(){
-				if ($(this).val() == ''){
-					$(this).val(' ');
-				}
-				if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
-				{	//calcula el importe
-					$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
-					//redondea el importe en dos decimales
-					//$(this).parent().parent().find('#import').val( Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100 );
-					$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2) );
+			
+			if(parseInt(encontrado)!=1){//si el producto no esta en el grid entra aqui
+				//ocultamos el boton facturar para permitir Guardar los cambios  antes de facturar
+				$('#forma-pocpedidos-window').find('#facturar').hide();
+				//obtiene numero de trs
+				var tr = $("tr", $grid_productos).size();
+				tr++;
+				
+				var trr = '';
+				trr = '<tr>';
+					trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
+						trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
+						trr += '<input type="hidden" 	name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
+						trr += '<input type="hidden" 	name="iddetalle" id="idd" value="0">';//este es el id del registro que ocupa el producto en la tabla pocpedidos_detalles
+						trr += '<input type="hidden" 	name="noTr" value="'+ tr +'">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
+						trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_prod +'">';
+						trr += '<input type="text" 		name="sku" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
+						trr += '<input type="text" 		name="nombre" 	value="'+ titulo +'" id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+						trr += '<input type="text" 		name="unidad'+ tr +'" 	value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+						trr += '<input type="hidden"    name="id_presentacion"  	value="'+  id_pres +'" id="idpres">';
+						trr += '<input type="hidden"    name="numero_decimales"     value="'+  num_dec +'" id="numdec">';
+						trr += '<input type="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+					trr += '</td>';
+					trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+						trr += '<input type="text" name="cantidad" value=" " class="cantidad'+ tr +'" id="cant" style="width:76px;">';
+					trr += '</td>';
+					trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+						trr += '<input type="text" name="costo" value="'+ prec_unitario +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
+					trr += '</td>';
+					trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+						trr += '<input type="text" name="importe'+ tr +'" value="" id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
+						trr += '<input type="hidden" name="id_imp_prod"   value="'+  $id_impuesto.val() +'" id="idimppord">';
+						trr += '<input type="hidden" name="valor_imp"     value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
+						trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="0">';
+					trr += '</td>';
 					
-					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
-					$(this).parent().parent().find('#totimp').val( parseFloat( $(this).parent().parent().find('#import').val() ) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
+					trr += '<td class="grid2" id="td_oculto'+ tr +'" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+						trr += '<input type="text" 		name="produccion" 	value="" 	 class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
+						trr += '<input type="hidden"    name="existencia" 	value="0">';
+					trr += '</td>';
+					
+					var desactivado="";
+					var check="";
+					var valor_seleccionado="0";
+					
+					trr += '<td class="grid2" id="td_oculto'+ tr +'" style="font-size: 11px;  border:1px solid #C1DAD7;" width="20">';
+						trr += '<input type="checkbox" 	name="checkProd" class="checkProd'+ tr +'" '+check+' '+desactivado+'>';
+						trr += '<input type="hidden" 	name="seleccionado" value="'+valor_seleccionado+'">';//el 1 significa que el registro no ha sido eliminado
+					trr += '</td>';
+					
+				trr += '</tr>';
+				
+				$grid_productos.append(trr);
+				
+				
+				if($incluye_produccion.val()=='true'){
+					//aplicar evento click al check, cuando la empresa incluya modulo de produccion
+					$aplicar_evento_click_a_input_check($grid_productos.find('.checkProd'+ tr));
+					$grid_productos.find('.checkProd'+ tr).hide();//ocultar check porque es un registro nuevo, se debe mostrar  hasta que se genere un warning
 				}else{
-					$(this).parent().parent().find('#import').val('');
-					$(this).parent().parent().find('#totimp').val('');
+					//ocualtar campos,  cuando la empresa no incluya modulo de produccion
+					$grid_productos.find('#td_oculto'+tr).hide();
 				}
 				
+				//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+				$grid_productos.find('#cant').focus(function(e){
+					if($(this).val() == ' '){
+							$(this).val('');
+					}
+				});
 				
+				//recalcula importe al perder enfoque el campo cantidad
+				$grid_productos.find('#cant').blur(function(){
+					if ($(this).val() == ''){
+						$(this).val(' ');
+					}
+					if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
+					{	//calcula el importe
+						$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
+						//redondea el importe en dos decimales
+						//$(this).parent().parent().find('#import').val( Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100 );
+						$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2) );
+						
+						//calcula el impuesto para este producto multiplicando el importe por el valor del iva
+						$(this).parent().parent().find('#totimp').val( parseFloat( $(this).parent().parent().find('#import').val() ) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
+					}else{
+						$(this).parent().parent().find('#import').val('');
+						$(this).parent().parent().find('#totimp').val('');
+					}
+					
+					var numero_decimales = $(this).parent().parent().find('#numdec').val();
+					var patron = /^-?[0-9]+([,\.][0-9]{0,0})?$/;
+					if(parseInt(numero_decimales)==1){
+						patron = /^-?[0-9]+([,\.][0-9]{0,1})?$/;
+					}
+					if(parseInt(numero_decimales)==2){
+						patron = /^-?[0-9]+([,\.][0-9]{0,2})?$/;
+					}
+					if(parseInt(numero_decimales)==3){
+						patron = /^-?[0-9]+([,\.][0-9]{0,3})?$/;
+					}
+					if(parseInt(numero_decimales)==4){
+						patron = /^-?[0-9]+([,\.][0-9]{0,4})?$/;
+					}
+					
+					/*
+					if(patron.test($(this).val())){
+						alert("Si valido"+$(this).val());
+					}else{
+						alert("El numero de decimales es incorrecto: "+$(this).val());
+						$(this).val('')
+					}
+					*/
+					
+					if(!patron.test($(this).val())){
+						//alert("Si valido"+$(this).val());
+					}else{
+						
+					}
+					
+					$calcula_totales();//llamada a la funcion que calcula totales
+				});
 				
-				var numero_decimales = $(this).parent().parent().find('#numdec').val();
-				var patron = /^-?[0-9]+([,\.][0-9]{0,0})?$/;
-				if(parseInt(numero_decimales)==1){
-					patron = /^-?[0-9]+([,\.][0-9]{0,1})?$/;
-				}
-				if(parseInt(numero_decimales)==2){
-					patron = /^-?[0-9]+([,\.][0-9]{0,2})?$/;
-				}
-				if(parseInt(numero_decimales)==3){
-					patron = /^-?[0-9]+([,\.][0-9]{0,3})?$/;
-				}
-				if(parseInt(numero_decimales)==4){
-					patron = /^-?[0-9]+([,\.][0-9]{0,4})?$/;
-				}
+				//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+				$grid_productos.find('#cost').focus(function(e){
+					if($(this).val() == ' '){
+						$(this).val('');
+					}
+				});
+				
+				//recalcula importe al perder enfoque el campo costo
+				$grid_productos.find('#cost').blur(function(){
+					if ($(this).val() == ''){
+						$(this).val(' ');
+					}
+					
+					if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
+					{	//calcula el importe
+						$(this).parent().parent().find('#import').val( parseFloat($(this).val()) * parseFloat( $(this).parent().parent().find('#cant').val()) );
+						//redondea el importe en dos decimales
+						//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
+						$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
+						
+						//calcula el impuesto para este producto multiplicando el importe por el valor del iva
+						$(this).parent().parent().find('#totimp').val( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
+					}else{
+						$(this).parent().parent().find('#import').val('');
+						$(this).parent().parent().find('#totimp').val('');
+					}
+					$calcula_totales();//llamada a la funcion que calcula totales
+				});
+				
+				//validar campo costo, solo acepte numeros y punto
+				$permitir_solo_numeros( $grid_productos.find('#cost') );
+				$permitir_solo_numeros( $grid_productos.find('#cant') );
 				
 				/*
-				if(patron.test($(this).val())){
-					alert("Si valido"+$(this).val());
-				}else{
-					alert("El numero de decimales es incorrecto: "+$(this).val());
-					$(this).val('')
-				}
+				//validar campo costo, solo acepte numeros y punto
+				$grid_productos.find('#cost').keypress(function(e){
+					// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+					if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+						return true;
+					}else {
+						return false;
+					}
+				});
+				
+				//validar campo cantidad, solo acepte numeros y punto
+				$grid_productos.find('#cant').keypress(function(e){
+					// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+					if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+						return true;
+					}else {
+						return false;
+					}
+				});
 				*/
 				
-				if(!patron.test($(this).val())){
-					//alert("Si valido"+$(this).val());
-				}else{
-					
-				}
+				//elimina un producto del grid
+				$grid_productos.find('#delete'+ tr).bind('click',function(event){
+					event.preventDefault();
+					if(parseInt($(this).parent().find('#elim').val()) != 0){
+						//asigna espacios en blanco a todos los input de la fila eliminada
+						$(this).parent().parent().find('input').val(' ');
+						
+						//asigna un 0 al input eliminado como bandera para saber que esta eliminado
+						$(this).parent().find('#elim').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
+						
+						//oculta la fila eliminada
+						$(this).parent().parent().hide();
+						$calcula_totales();//llamada a la funcion que calcula totales
+					}
+				});
 				
-				$calcula_totales();//llamada a la funcion que calcula totales
-			});
-			
-			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-			$grid_productos.find('#cost').focus(function(e){
-				if($(this).val() == ' '){
-					$(this).val('');
-				}
-			});
-            
-			//recalcula importe al perder enfoque el campo costo
-			$grid_productos.find('#cost').blur(function(){
-				if ($(this).val() == ''){
-					$(this).val(' ');
-				}
+				//limpiar campos
+				$('#forma-pocpedidos-window').find('input[name=sku_producto]').val('');
+				$('#forma-pocpedidos-window').find('input[name=nombre_producto]').val('');
 				
-				if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
-				{	//calcula el importe
-					$(this).parent().parent().find('#import').val( parseFloat($(this).val()) * parseFloat( $(this).parent().parent().find('#cant').val()) );
-					//redondea el importe en dos decimales
-					//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
-					$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
-					
-					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
-					$(this).parent().parent().find('#totimp').val( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
-				}else{
-					$(this).parent().parent().find('#import').val('');
-					$(this).parent().parent().find('#totimp').val('');
-				}
-				$calcula_totales();//llamada a la funcion que calcula totales
-			});
-			
-			//validar campo costo, solo acepte numeros y punto
-			$permitir_solo_numeros( $grid_productos.find('#cost') );
-			$permitir_solo_numeros( $grid_productos.find('#cant') );
-			
-			/*
-			//validar campo costo, solo acepte numeros y punto
-			$grid_productos.find('#cost').keypress(function(e){
-				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-					return true;
-				}else {
-					return false;
-				}
-			});
-			
-			//validar campo cantidad, solo acepte numeros y punto
-			$grid_productos.find('#cant').keypress(function(e){
-				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-					return true;
-				}else {
-					return false;
-				}
-			});
-			*/
-			
-			//elimina un producto del grid
-			$grid_productos.find('#delete'+ tr).bind('click',function(event){
-				event.preventDefault();
-				if(parseInt($(this).parent().find('#elim').val()) != 0){
-					//asigna espacios en blanco a todos los input de la fila eliminada
-					$(this).parent().parent().find('input').val(' ');
-					
-					//asigna un 0 al input eliminado como bandera para saber que esta eliminado
-					$(this).parent().find('#elim').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
-					
-					//oculta la fila eliminada
-					$(this).parent().parent().hide();
-					$calcula_totales();//llamada a la funcion que calcula totales
-				}
-			});
-			
-			//limpiar campos
-			$('#forma-pocpedidos-window').find('input[name=sku_producto]').val('');
-			$('#forma-pocpedidos-window').find('input[name=nombre_producto]').val('');
-			
-			//asignar el enfoque al campo catidad
-			$grid_productos.find('.cantidad'+ tr).focus();
+				//asignar el enfoque al campo catidad
+				$grid_productos.find('.cantidad'+ tr).focus();
+				
+			}else{
+				jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+					$('#forma-pocpedidos-window').find('input[name=nombre_producto]').val('');
+					$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+				});
+			}
 			
 		}else{
-			jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+			jAlert('No puede agregar productos con precio en moneda diferente a la definida para el Pedido.', 'Atencion!', function(r) { 
 				$('#forma-pocpedidos-window').find('input[name=nombre_producto]').val('');
 				$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
 			});
@@ -1935,6 +1982,13 @@ $(function() {
 				}
 			});
 			
+			
+			//agregar producto al grid
+			$agregar_producto.click(function(event){
+				event.preventDefault();
+				$buscador_presentaciones_producto($id_cliente,$nocliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, entry['Monedas']);
+			});
+		
 		},"json");//termina llamada json
 		
 		
@@ -2083,11 +2137,6 @@ $(function() {
 			$busca_productos($sku_producto.val(), $nombre_producto.val());
 		});
 		
-		//agregar producto al grid
-		$agregar_producto.click(function(event){
-			event.preventDefault();
-			$buscador_presentaciones_producto($id_cliente,$nocliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio);
-		});
 		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$(this).aplicarEventoKeypressEjecutaTrigger($sku_producto, $agregar_producto);
@@ -2859,6 +2908,14 @@ $(function() {
 						});
 					}
 					
+					
+					
+					//agregar producto al grid
+					$agregar_producto.click(function(event){
+						event.preventDefault();
+						$buscador_presentaciones_producto($id_cliente, $nocliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio, entry['Monedas']);
+					});
+					
 				});//termina llamada json
                 
                 
@@ -2968,11 +3025,6 @@ $(function() {
 					$busca_productos($sku_producto.val(), $nombre_producto.val());
 				});
 				
-				//agregar producto al grid
-				$agregar_producto.click(function(event){
-					event.preventDefault();
-					$buscador_presentaciones_producto($id_cliente, $nocliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos,$select_moneda,$tipo_cambio);
-				});
 				
 				
 				//ejecutar clic del href Agregar producto al pulsar enter en el campo sku del producto

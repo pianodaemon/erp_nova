@@ -35,6 +35,7 @@ $(function() {
 	var $busqueda_select_marca = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_marca]');
 	var $busqueda_select_presentacion = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_presentacion]');
 	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
 	var $busqueda_select_ano = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_ano]');
 	var $busqueda_select_mes = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_mes]');
 	
@@ -56,6 +57,7 @@ $(function() {
 		valor_retorno += "marca" + signo_separador + $busqueda_select_marca.val()+ "|";
 		valor_retorno += "presentacion" + signo_separador + $busqueda_select_presentacion.val() + "|";
 		valor_retorno += "producto" + signo_separador + $busqueda_producto.val() + "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
 		valor_retorno += "ano" + signo_separador + $busqueda_select_ano.val() + "|";
 		valor_retorno += "mes" + signo_separador + $busqueda_select_mes.val();
 		return valor_retorno;
@@ -89,6 +91,7 @@ $(function() {
 	$aplicar_evento_keypress($busqueda_select_marca, $buscar);
 	$aplicar_evento_keypress($busqueda_select_presentacion, $buscar);
 	$aplicar_evento_keypress($busqueda_producto, $buscar);
+	$aplicar_evento_keypress($busqueda_codigo, $buscar);
 	$aplicar_evento_keypress($busqueda_select_ano, $buscar);
 	$aplicar_evento_keypress($busqueda_select_mes, $buscar);
 	$aplicar_evento_keypress($campo_busqueda_folio, $buscar);
@@ -134,6 +137,7 @@ $(function() {
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 		$.post(input_json_lineas,$arreglo,function(data){
 			$busqueda_producto.val('');
+			$busqueda_codigo.val('');
 		
 			//carga select de tipos de producto
 			$busqueda_select_tipo_prod.children().remove();
@@ -390,7 +394,7 @@ $(function() {
 	
 	
 	//buscador de productos
-	$busca_productos = function(producto, tipo_prod, marca, familia, subfamilia ){
+	$busca_productos = function(producto, codigo, tipo_prod, marca, familia, subfamilia ){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
@@ -440,6 +444,7 @@ $(function() {
 		});
 		* */
 		
+		$campo_sku.val(codigo);
 		$campo_descripcion.val(producto);
 		$campo_sku.focus();
 		
@@ -501,7 +506,7 @@ $(function() {
 		});
 		
 		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
-		if($campo_descripcion.val() != ''){
+		if($campo_descripcion.val()!='' || $campo_sku.val()!=''){
 			$buscar_plugin_producto.trigger('click');
 		}
 		
@@ -514,7 +519,7 @@ $(function() {
 			//event.preventDefault();
 			var remove = function() { $(this).remove(); };
 			$('#forma-buscaproducto-overlay').fadeOut(remove);
-			$('#forma-invcontrolcostos-window').find('input[name=producto]').focus();
+			$('#forma-invcontrolcostos-window').find('input[name=codigo]').focus();
 		});
 	}//termina buscador de productos
 
@@ -621,6 +626,7 @@ $(function() {
 		var $identificador = $('#forma-invcontrolcostos-window').find('input[name=identificador]');
 		var $folio = $('#forma-invcontrolcostos-window').find('input[name=folio]');
 		var $id_producto = $('#forma-invcontrolcostos-window').find('input[name=id_producto]');
+		var $codigo = $('#forma-invcontrolcostos-window').find('input[name=codigo]');
 		var $producto = $('#forma-invcontrolcostos-window').find('input[name=producto]');
 		var $buscar_producto = $('#forma-invcontrolcostos-window').find('#buscar_producto');
 		
@@ -631,8 +637,6 @@ $(function() {
 		var $select_presentacion = $('#forma-invcontrolcostos-window').find('select[name=select_presentacion]');
 		var $tipo_cambio = $('#forma-invcontrolcostos-window').find('input[name=tipo_cambio]');
 		
-		//var $check_costo_ultimo = $('#forma-invcontrolcostos-window').find('input[name=check_costo_ultimo]');
-		//var $check_costo_promedio = $('#forma-invcontrolcostos-window').find('input[name=check_costo_promedio]');
 		var $radio_costo_ultimo = $('#forma-invcontrolcostos-window').find('.radio_costo_ultimo');
 		var $radio_costo_promedio = $('#forma-invcontrolcostos-window').find('.radio_costo_promedio');
 		
@@ -920,6 +924,7 @@ $(function() {
 							'fam':$select_familia.val(),
 							'subfam':$select_subfamilia.val(),
 							'tipo_costo':tipo_costo,
+							'codigo':$codigo.val(),
 							'producto':$producto.val(),
 							'pres':$select_presentacion.val(),
 							'simulacion':simulacion,
@@ -1038,7 +1043,7 @@ $(function() {
 			//if($producto.val()=='') $producto.val("%%");
 			
 			//aqui se construye la cadena con los parametros de la busqueda
-			var cadena = $select_tipo_prod.val()+"___"+$select_marca.val()+"___"+$select_familia.val()+"___"+$select_subfamilia.val()+"___"+$producto.val()+"___"+$select_presentacion.val()+"___"+tipo_costo+"___"+simulacion+"___"+$costo_importacion.val()+"___"+$costo_directo.val()+"___"+$precio_minimo.val()+"___"+$tipo_cambio.val();
+			var cadena = $select_tipo_prod.val()+"___"+$select_marca.val()+"___"+$select_familia.val()+"___"+$select_subfamilia.val()+"___"+$producto.val()+"___"+$select_presentacion.val()+"___"+tipo_costo+"___"+simulacion+"___"+$costo_importacion.val()+"___"+$costo_directo.val()+"___"+$precio_minimo.val()+"___"+$tipo_cambio.val()+"___"+$codigo.val();
 			
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfReporteCostos/'+cadena+'/'+iu+'/out.json';
 			
@@ -1086,6 +1091,7 @@ $(function() {
 		$aplicar_evento_keypress($select_marca, $busqueda);
 		$aplicar_evento_keypress($select_familia, $busqueda);
 		$aplicar_evento_keypress($select_subfamilia, $busqueda);
+		$aplicar_evento_keypress($codigo, $busqueda);
 		$aplicar_evento_keypress($select_presentacion, $busqueda);
 		$aplicar_evento_keypress($radio_costo_ultimo, $busqueda);
 		$aplicar_evento_keypress($radio_costo_promedio, $busqueda);

@@ -39,24 +39,26 @@
         <!--Esta tabla va  en la barra de buscador -->
 		<table border="0" class="tabla_buscador" style="display:none">
 			<tr>
-				<td colspan="23">&nbsp;&nbsp;</td>
+				<td colspan="24">&nbsp;&nbsp;</td>
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="130">Tipo&nbsp;Producto</td>
-				<td width="20"></td>
+				<td width="10"></td>
 				<td width="100">Familia</td>
-				<td width="20"></td>
+				<td width="10"></td>
 				<td width="100">Subfamilia</td>
-				<td width="20">&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td width="100">Marca</td>
-				<td width="20">&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td width="105">Presentaci&oacute;n</td>
-				<td width="20"></td>
+				<td width="10"></td>
+				<td width="110">C&oacute;digo</td>
+				<td width="10"></td>
 				<td width="150">Producto</td>
-				<td width="20"></td>
-				<td width="50">A&ntilde;o</td>
-				<td width="15"></td>
+				<td width="10"></td>
+				<td width="55">A&ntilde;o</td>
+				<td width="10"></td>
 				<td width="90">Mes</td>
 				
 				<td></td>
@@ -73,44 +75,46 @@
 					</select>
 				</td>
 				
-				<td width="20"></td>
+				<td width="10"></td>
 				<td width="100">
 					<select name="busqueda_select_familia" style="width:100px;">
 						<option value="0" selected="yes">[-- --]</option>
 					</select>
 				</td>
-				<td width="20"></td>
+				<td width="10"></td>
 				<td width="100">
 					<select name="busqueda_select_subfamilia" style="width:100px;">
 						<option value="0" selected="yes">[-- --]</option>
 					</select>
 				</td>
 				
-				<td width="20"></td>
+				<td width="10"></td>
 				<td width="100">
 					<select name="busqueda_select_marca" style="width:100px;">
 						<option value="0" selected="yes">[-- --]</option>
 					</select>
 				</td>
 				
-				<td width="20"></td>
+				<td width="10"></td>
 				<td width="105">
 					<select name="busqueda_select_presentacion" style="width:105px;">
 						<option value="1" selected="yes">[-- --]</option>
 					</select>
 				</td>
+				<td width="10">&nbsp;</td>
+				<td width="110"><input type="text" name="busqueda_codigo" style="width:110px;"></td>
 				
-				<td width="20">&nbsp;</td>
+				<td width="10">&nbsp;</td>
 				<td width="150"><input type="text" name="busqueda_producto" style="width:150px;"></td>
 				
-				<td width="20"></td>
-				<td width="50">
-					<select name="busqueda_select_ano" style="width:50px;">
+				<td width="10"></td>
+				<td width="55">
+					<select name="busqueda_select_ano" style="width:55px;">
 						<option value="0" selected="yes">[-- --]</option>
 					</select>
 				</td>
 				
-				<td width="15"></td>
+				<td width="10"></td>
 				<td width="90">
 					<select name="busqueda_select_mes" style="width:90px;">
 						<option value="0" selected="yes">[-- --]</option>
@@ -180,7 +184,7 @@
 														<tr>
 															<td width="10"></td>
 															<td width="80">Tipo&nbsp;producto</td>
-															<td width="200"><select name="select_tipo_prod" style="width:200px;"></select></td>
+															<td width="200" colspan="2"><select name="select_tipo_prod" style="width:200px;"></select></td>
 															<td width="25"></td>
 															<td width="80"></td>
 															<td width="80">Marca</td>
@@ -190,7 +194,7 @@
 														<tr>
 															<td width="10" height="10"></td>
 															<td width="80"></td>
-															<td width="200"></td>
+															<td width="200" colspan="2"></td>
 															<td width="25"></td>
 															<td width="40"></td>
 															<td width="80"></td>
@@ -202,7 +206,7 @@
 														<tr>
 															<td width="10"></td>
 															<td width="80">Familia</td>
-															<td width="200"><select name="select_familia" style="width:200px;"></select></td>
+															<td width="200" colspan="2"><select name="select_familia" style="width:200px;"></select></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_familia"></div></td>
 															<td width="40"></td>
 															<td width="80">SubFamilia</td>
@@ -213,7 +217,8 @@
 														<tr>
 															<td width="10" height="10"></td>
 															<td width="80"></td>
-															<td width="200"></td>
+															<td width="150"></td>
+															<td width="50"></td>
 															<td width="25"></td>
 															<td width="40"></td>
 															<td width="80"></td>
@@ -222,28 +227,26 @@
 															<td width="100"></td>
 															<td width="25"></td>
 														</tr>
+														
 														<tr>
 															<td width="10"></td>
-															<td width="80">Producto</td>
-															<td width="345" colspan="4">
-																<input type="hidden" name="id_producto" value="0">
-																<input type="text" name="producto" style="width:345px;">
-															</td>
-															<!--
+															<td width="80">C&oacute;digo</td>
+															<td width="150"><input type="text" name="codigo" style="width:150px;"></td>
+															<td width="50"><a  href="busca_producto" id="buscar_producto">&nbsp;(Buscar)</a></td>
 															<td width="25"></td>
 															<td width="40"></td>
-															<td width="80"></td>
-															-->
-															<td width="75"><a  href="busca_producto" id="buscar_producto">&nbsp;(Buscar)</a></td>
-															<td width="25"></td>
-															<td width="100"></td>
+															<td width="80">Producto</td>
+															<td width="200" colspan="3">
+																<input type="hidden" name="id_producto" value="0">
+																<input type="text" name="producto" style="width:200px;">
+															</td>
 															<td width="25"></td>
 														</tr>
 														
 														<tr>
 															<td width="10" height="10"></td>
 															<td width="80"></td>
-															<td width="200"></td>
+															<td width="200" colspan="2"></td>
 															<td width="25"></td>
 															<td width="40"></td>
 															<td width="80"></td>
@@ -255,7 +258,7 @@
 														
 														<tr>
 															<td width="10" height="10"></td>
-															<td width="305" colspan="3" valign="top" rowspan="4">
+															<td width="305" colspan="4" valign="top" rowspan="4">
 																
 																<fieldset style="border: solid 1px #313E74;" class="gral">
 																	<legend>&nbsp;C&aacute;lculo&nbsp;a&nbsp;partir&nbsp;de</legend> 
@@ -347,7 +350,7 @@
 														</tr>
 														<tr>
 															<td width="50"></td>
-															<td width="110">Costo&nbsp;de&nbsp;Importaci&oacute;n</td>
+															<td width="110">I.G.I</td>
 															<td width="80" colspan="2"><input type="text" name="costo_importacion" style="width:80px; text-align:right"></td>
 															<td width="5">%</td>
 															<td width="30"></td>
@@ -357,7 +360,7 @@
 														</tr>
 														<tr>
 															<td width="50"></td>
-															<td width="110">Costo&nbsp;Directo</td>
+															<td width="110">G.I.</td>
 															<td width="80" colspan="2"><input type="text" name="costo_directo" style="width:80px; text-align:right"></td>
 															<td width="5">%</td>
 															<td width="30"></td>
@@ -460,7 +463,7 @@
 												<td width="200">&nbsp;Tipo de Cambio</td>
 												<td width="30"></td>
 												<td width="200"></td>
-												<td width="30" colspan="5">Los valores para los campos T.C., C.U., I.G.I., G.I., C.I.T., P.M. son en M.N.</td>
+												<td width="30" colspan="5"><!--Los valores para los campos T.C., C.U., I.G.I., G.I., C.I.T., P.M. son en M.N.--></td>
 												<!--
 												<td></td>
 												<td></td>

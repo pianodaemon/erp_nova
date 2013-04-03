@@ -140,6 +140,7 @@
 												<td width="60"></td>
 												<td width="240">Descripci&oacute;n</td>
 												<td width="10">&nbsp;</td>
+												<td width="60">&nbsp;</td>
 												<td width="80">Unidad</td>
 												<td width="10">&nbsp;</td>
 												<td width="120">Presentaci&oacute;n</td>
@@ -154,9 +155,10 @@
 													<input type="text" name="productosku" style="width:90px;">
 												</td>
 												<td width="10"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_productosku"></div></td>
-												<td width="60">&nbsp;<a href="busca_producto">(Buscar)</a></td>
+												<td width="60">&nbsp;<a href="agrega_producto">(Agregar)</a></td>
 												<td width="240"><input type="text" name="producto_descripcion" style="width:240px;"></td>
 												<td width="10">&nbsp;</td>
+												<td width="60">&nbsp;<a href="busca_producto">(Buscar)</a></td>
 												<td width="80">
 													<input type="text" name="producto_unidad" style="width:80px;" readOnly="true">
 												</td>
@@ -175,7 +177,7 @@
 											</tr>
 											<tr>
 												<td width="5">&nbsp;</td>
-												<td colspan="9">
+												<td colspan="10">
 													
 													<!-- tags interiores -->
 													<div class="invpre_div_three_interno">
