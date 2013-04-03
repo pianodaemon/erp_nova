@@ -476,7 +476,7 @@ if(entry['Movimientos'].length > 0 ){
                             trr += '</tr>';
                             $.each(entry['Movimientos'],function(entryIndex,Movimentos){
 
-                                if( codigo==Movimentos['codigo'] ){
+
                                         trr += '<tr>';
                                              trr += '<td >'+Movimentos['referencia']+'</td>';
                                              trr += '<td >'+Movimentos['tipo_movimiento']+'</td>';
@@ -494,57 +494,7 @@ if(entry['Movimientos'].length > 0 ){
                                         valor_entrada  = parseFloat(valor_entrada)  + parseFloat(Movimentos['costo']);
                                         valor_salida   = parseFloat(valor_salida )  + parseFloat(Movimentos['costo']);
 
-                                }else{
-                                    trr += '<tr>';
-                                        trr += '<td colspan="4" align="right">Total por producto :</td>';
-                                        trr += '<td >'+parseFloat(suma_cantidad)+'</td>';
-                                        trr += '<td >'+parseFloat(valor_unitario)+'</td>';
-                                        trr += '<td >'+parseFloat(valor_entrada)+'</td>';
-                                        trr += '<td >'+parseFloat(valor_salida)+'</td>';
-                                    trr += '</tr>';
 
-                                    var suma_cantidad=0.0;
-                                    var valor_unitario = 0.0;
-                                    var valor_entrada  = 0.0;
-                                    var valor_salida   = 0.0;
-
-                                    trr += '<tr>';
-                                        trr += '<td colspan="8">ESPACIOOOOOOOOOOOOOOOOO</td>';
-                                    trr += '</tr>';
-
-                                    trr += '<tr>';
-                                        trr += '<td >'+Movimentos['codigo']+'</td>';
-                                        trr += '<td >'+Movimentos['descripcion']+'</td>';
-                                        trr += '<td >&nbsp;</td>';
-                                        trr += '<td >&nbsp;</td>';
-                                        trr += '<td >&nbsp;</td>';
-                                        trr += '<td >&nbsp;</td>';
-                                        trr += '<td align="right">Existencia Inicial:</td>';
-                                        trr += '<td >'+entry['Movimientos']['0']['existencia']+'</td>';
-                                    trr += '</tr>';
-
-                                    trr += '<tr>';
-                                        if(Movimentos['referencia']!= 'null'){
-                                            trr += '<td >'+Movimentos['referencia']+'</td>';
-                                        }else{
-                                            trr += '<td >s/referencia</td>';
-                                        }
-
-                                        trr += '<td >'+Movimentos['tipo_movimiento']+'</td>';
-                                        trr += '<td >'+Movimentos['fecha_movimiento']+'</td>';
-                                        trr += '<td >'+Movimentos['sucursal']+'</td>';
-                                        trr += '<td >'+Movimentos['almacen']+'</td>';
-                                        trr += '<td >'+Movimentos['cantidad']+'</td>';
-                                        trr += '<td >'+Movimentos['costo']+'</td>';
-                                        trr += '<td >'+Movimentos['existencia_actual']+'</td>';
-                               trr += '</tr>';
-
-                                    codigo=Movimentos['codigo'];
-                                    suma_cantidad=parseFloat(suma_cantidad) + parseFloat(Movimentos['cantidad']);
-                                    valor_unitario=parseFloat(valor_unitario) + parseFloat(Movimentos['costo']);
-                                    valor_entrada=parseFloat(valor_entrada) + parseFloat(Movimentos['costo']);
-                                    valor_salida = parseFloat(valor_salida )  +parseFloat(Movimentos['costo']);
-                                }
 
                             });
 
