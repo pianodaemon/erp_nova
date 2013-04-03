@@ -321,11 +321,14 @@ public class PdfInvControlCosto {
             int altura_fila=11;
             
             //FILA 1
+            /*
             cell = new PdfPCell(new Paragraph("*  Los valores para los campos T.C., C.U., I.G.I., G.I., C.I.T., P.M. son en M.N.",smallFont));
             cell.setBorder(0);
             cell.setColspan(8);
             cell.setFixedHeight(altura_fila);
             tableAbreviaturas.addCell(cell);
+             */
+            
             /*
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorder(0);

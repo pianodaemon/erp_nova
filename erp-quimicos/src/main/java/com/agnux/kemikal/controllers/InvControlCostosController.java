@@ -161,6 +161,7 @@ public class InvControlCostosController {
         String marca = StringHelper.isNullString(String.valueOf(has_busqueda.get("marca")));
         String presentacion = StringHelper.isNullString(String.valueOf(has_busqueda.get("presentacion")));
         String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
+        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
         String ano = StringHelper.isNullString(String.valueOf(has_busqueda.get("ano")));
         String mes = StringHelper.isNullString(String.valueOf(has_busqueda.get("mes")));
         
@@ -176,7 +177,7 @@ public class InvControlCostosController {
         //se tomo la decision de utilizar el mismo proc porque se hace varios calculos y asi evitamos volver a construir codigo para el grid
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
-        String data_string = app_selected+"___"+id_usuario+"___"+tipo_producto+"___"+marca+"___"+familia+"___"+subfamilia+"___"+producto+"___"+presentacion+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tipo_cambio+"___"+ano+"___"+mes;
+        String data_string = app_selected+"___"+id_usuario+"___"+tipo_producto+"___"+marca+"___"+familia+"___"+subfamilia+"___"+producto+"___"+presentacion+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tipo_cambio+"___"+codigo+"___"+ano+"___"+mes;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getInvDao().countAll(data_string);
@@ -379,6 +380,7 @@ public class InvControlCostosController {
             @RequestParam(value="mar", required=true) String mar,
             @RequestParam(value="fam", required=true) String fam,
             @RequestParam(value="subfam", required=true) String subfam,
+            @RequestParam(value="codigo", required=true) String codigo,
             @RequestParam(value="producto", required=true) String producto,
             @RequestParam(value="pres", required=true) String pres,
             @RequestParam(value="tipo_costo", required=true) String tipo_costo,
@@ -423,7 +425,7 @@ public class InvControlCostosController {
         }
         
         
-        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___%"+producto+"%___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tc+"___"+ano+"___"+mes;
+        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___%"+producto+"%___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tc+"___"+codigo+"___"+ano+"___"+mes;
         
         productos = this.getInvDao().selectFunctionForInvReporte(app_selected, data_string);
         
@@ -443,7 +445,8 @@ public class InvControlCostosController {
             @RequestParam(value="select_marca", required=true) String select_marca,
             @RequestParam(value="select_familia", required=true) String select_familia,
             @RequestParam(value="select_subfamilia", required=true) String select_subfamilia,
-            @RequestParam(value="id_producto", required=true) String id_producto,
+            @RequestParam(value="codigo", required=true) String codigo,
+            @RequestParam(value="producto", required=true) String producto,
             @RequestParam(value="select_presentacion", required=true) String select_presentacion,
             @RequestParam(value="tipo_costo", required=true) String tipo_costo,
             @RequestParam(value="costo_importacion", required=true) String costo_importacion,
@@ -466,7 +469,7 @@ public class InvControlCostosController {
             
             command_selected = "edit";
             
-            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+select_tipo_prod+"___"+select_marca+"___"+select_familia+"___"+select_subfamilia+"___"+id_producto+"___"+select_presentacion+"___"+tipo_costo+"___"+costo_importacion+"___"+costo_directo+"___"+precio_minimo;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+select_tipo_prod+"___"+select_marca+"___"+select_familia+"___"+select_subfamilia+"___%"+producto+"%___%"+codigo+"%___"+select_presentacion+"___"+tipo_costo+"___"+costo_importacion+"___"+costo_directo+"___"+precio_minimo;
             
             actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
             

@@ -631,12 +631,14 @@ public class PdfInvActualizaPrecio {
             tableAbreviaturas.setKeepTogether(true);
             int altura_fila=11;
             
+            /*
             //FILA 1
             cell = new PdfPCell(new Paragraph("*  Los valores para el campo PMIN. son en M.N.",smallFont));
             cell.setBorder(0);
             cell.setColspan(8);
             cell.setFixedHeight(altura_fila);
             tableAbreviaturas.addCell(cell);
+            */
             
             //FILA 2
             cell = new PdfPCell(new Paragraph("PMIN.:",smallFont));

@@ -1583,9 +1583,51 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-
-
-
+    
+    
+    //busca datos de un producto en especifico a partir del codigo
+    @Override
+    public ArrayList<HashMap<String, String>> getDataProductBySku(String codigo, Integer id_empresa) {
+        String sql_to_query = ""
+                + "SELECT "
+                    +"inv_prod.id,"
+                    +"inv_prod.sku,"
+                    +"inv_prod.descripcion, "
+                    + "inv_prod.unidad_id, "
+                    + "inv_prod_unidades.titulo AS unidad, "
+                    +"inv_prod_tipos.titulo AS tipo,"
+                    + "inv_prod_unidades.decimales "
+		+"FROM inv_prod "
+                + "LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
+                + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "WHERE inv_prod.empresa_id="+id_empresa+" "
+                + "AND inv_prod.borrado_logico=false "
+                + "AND inv_prod.sku='"+codigo.toUpperCase()+"' "
+                + "LIMIT 1;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("decimales",String.valueOf(rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_PresentacionesProducto(String sku) {
         String sql_to_query = "SELECT "

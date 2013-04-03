@@ -278,6 +278,38 @@ public class InvPreController {
     
     
     
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/gatDatosProducto.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> gatDatosProductoJson(
+            @RequestParam(value="codigo", required=true) String codigo,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", InvPreController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> producto = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        producto = this.getInvDao().getDataProductBySku(codigo, id_empresa);
+        
+        if(producto.size()>0){
+            presentaciones=this.getInvDao().getProducto_PresentacionesON(Integer.parseInt(producto.get(0).get("id")));
+        }
+        
+        jsonretorno.put("Producto", producto);
+        jsonretorno.put("Presentaciones", presentaciones);
+        
+        return jsonretorno;
+    }
+    
     
     //obtiene las presentaciones de un producto en especifico
     @RequestMapping(method = RequestMethod.POST, value="/getPresentacionesProducto.json")
