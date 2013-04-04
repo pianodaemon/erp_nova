@@ -444,7 +444,6 @@ public class CotizacionesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        
         presentaciones = this.getPocDao().getPresentacionesProducto(sku, lista_precio, id_empresa);
         Integer idmon = Integer.parseInt(presentaciones.get(0).get("id_moneda"));
         
