@@ -1,78 +1,78 @@
 $(function() {
 
-	var config =  {
-		empresa: $('#lienzo_recalculable').find('input[name=emp]').val(),
-		sucursal: $('#lienzo_recalculable').find('input[name=suc]').val(),
-		tituloApp: 'Movimientos de Inventario',
-		contextpath : $('#lienzo_recalculable').find('input[name=contextpath]').val(),
+    var config =  {
+        empresa: $('#lienzo_recalculable').find('input[name=emp]').val(),
+        sucursal: $('#lienzo_recalculable').find('input[name=suc]').val(),
+        tituloApp: 'Movimientos de Inventario',
+        contextpath : $('#lienzo_recalculable').find('input[name=contextpath]').val(),
 
-		userName : $('#lienzo_recalculable').find('input[name=user]').val(),
-		ui : $('#lienzo_recalculable').find('input[name=iu]').val(),
+        userName : $('#lienzo_recalculable').find('input[name=user]').val(),
+        ui : $('#lienzo_recalculable').find('input[name=iu]').val(),
 
-		getUrlForGetAndPost : function(){
-			var url = document.location.protocol + '//' + document.location.host + this.getController();
-			return url;
-		},
+        getUrlForGetAndPost : function(){
+            var url = document.location.protocol + '//' + document.location.host + this.getController();
+            return url;
+        },
 
-		getEmp: function(){
-			return this.empresa;
-		},
+        getEmp: function(){
+            return this.empresa;
+        },
 
-		getSuc: function(){
-			return this.sucursal;
-		},
+        getSuc: function(){
+            return this.sucursal;
+        },
 
-		getUserName: function(){
-			return this.userName;
-		},
+        getUserName: function(){
+            return this.userName;
+        },
 
-		getUi: function(){
-			return this.ui;
-		},
-		getTituloApp: function(){
-			return this.tituloApp;
-		},
+        getUi: function(){
+            return this.ui;
+        },
+        getTituloApp: function(){
+            return this.tituloApp;
+        },
 
-		getController: function(){
-			return this.contextpath + "/controllers/repinvmovimientos";
-			//  return this.controller;
-		}
-	};
+        getController: function(){
+            return this.contextpath + "/controllers/repinvmovimientos";
+        //  return this.controller;
+        }
+    };
 
-	//desencadena evento del $campo_ejecutar al pulsar Enter en $campo
-	$aplicar_evento_keypress = function($campo, $campo_ejecutar){
-		$campo.keypress(function(e){
-			if(e.which == 13){
-				$campo_ejecutar.trigger('click');
-				return false;
-			}
-		});
-	}
+    //desencadena evento del $campo_ejecutar al pulsar Enter en $campo
+    $aplicar_evento_keypress = function($campo, $campo_ejecutar){
+        $campo.keypress(function(e){
+            if(e.which == 13){
+                $campo_ejecutar.trigger('click');
+                return false;
+            }
+        });
+    }
 
-	$('#header').find('#header1').find('span.emp').text(config.getEmp());
-	$('#header').find('#header1').find('span.suc').text(config.getSuc());
-        $('#header').find('#header1').find('span.username').text(config.getUserName());
-	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append(config.getTituloApp());
+    $('#header').find('#header1').find('span.emp').text(config.getEmp());
+    $('#header').find('#header1').find('span.suc').text(config.getSuc());
+    $('#header').find('#header1').find('span.username').text(config.getUserName());
+    //aqui va el titulo del catalogo
+    $('#barra_titulo').find('#td_titulo').append(config.getTituloApp());
 
-	$('#barra_acciones').hide();
-	//barra para el buscador
-	$('#barra_buscador').hide();
+    $('#barra_acciones').hide();
+    //barra para el buscador
+    $('#barra_buscador').hide();
 
-	var $tabla_movimientos = $('#lienzo_recalculable').find('#table_movimientos');
-	var $select_tipo_mov = $('#lienzo_recalculable').find('select[name=select_tipo_mov]');
-	var $select_almacen = $('#lienzo_recalculable').find('select[name=select_almacen]');
-	var $codigo = $('#lienzo_recalculable').find('input[name=codigo]');
-	var $descripcion = $('#lienzo_recalculable').find('input[name=descripcion]');
-	var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
-	var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
+    var $tabla_movimientos = $('#lienzo_recalculable').find('#table_movimientos');
+    var $select_tipo_mov = $('#lienzo_recalculable').find('select[name=select_tipo_mov]');
+    var $select_almacen = $('#lienzo_recalculable').find('select[name=select_almacen]');
+    var $codigo = $('#lienzo_recalculable').find('input[name=codigo]');
+    var $descripcion = $('#lienzo_recalculable').find('input[name=descripcion]');
+    var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
+    var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
 
-	var $buscar_producto = $('#lienzo_recalculable').find('#buscar_producto');
-	var $boton_busqueda = $('#lienzo_recalculable').find('#boton_busqueda');
-	var $boton_genera_pdf = $('#lienzo_recalculable').find('#boton_genera_pdf');
+    var $buscar_producto = $('#lienzo_recalculable').find('#buscar_producto');
+    var $boton_busqueda = $('#lienzo_recalculable').find('#boton_busqueda');
+    var $boton_genera_pdf = $('#lienzo_recalculable').find('#boton_genera_pdf');
 
 
-        //buscador de productos
+    //buscador de productos
     $busca_productos = function(sku_buscar,descripcion_buscar){
         $(this).modalPanel_Buscaproducto();
         var $dialogoc =  $('#forma-buscaproducto-window');
@@ -233,265 +233,275 @@ $(function() {
 
 
 
-	//valida la fecha seleccionada
-	function mayor(fecha, fecha2){
-		var xMes=fecha.substring(5, 7);
-		var xDia=fecha.substring(8, 10);
-		var xAnio=fecha.substring(0,4);
-		var yMes=fecha2.substring(5, 7);
-		var yDia=fecha2.substring(8, 10);
-		var yAnio=fecha2.substring(0,4);
+    //valida la fecha seleccionada
+    function mayor(fecha, fecha2){
+        var xMes=fecha.substring(5, 7);
+        var xDia=fecha.substring(8, 10);
+        var xAnio=fecha.substring(0,4);
+        var yMes=fecha2.substring(5, 7);
+        var yDia=fecha2.substring(8, 10);
+        var yAnio=fecha2.substring(0,4);
 
-		if (xAnio > yAnio){
-			return(true);
-		}else{
-			if (xAnio == yAnio){
-				if (xMes > yMes){
-					return(true);
-				}
-				if (xMes == yMes){
-					if (xDia > yDia){
-						return(true);
-					}else{
-						return(false);
-					}
-				}else{
-					return(false);
-				}
-			}else{
-				return(false);
-			}
-		}
-	}
-
-	//muestra la fecha actual
-	var mostrarFecha = function mostrarFecha(){
-		var ahora = new Date();
-		var anoActual = ahora.getFullYear();
-		var mesActual = ahora.getMonth();
-		mesActual = mesActual+1;
-		mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
-		var diaActual = ahora.getDate();
-		diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-		var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
-		return Fecha;
-	}
-	//----------------------------------------------------------------
-
-	$fecha_inicial.DatePicker({
-		format:'Y-m-d',
-		date: $(this).val(),
-		current: $(this).val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$fecha_inicial.val(formated);
-			if (formated.match(patron) ){
-				var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-
-				if (valida_fecha==true){
-					jAlert("Fecha no valida",'! Atencion');
-					$fecha_inicial.val(mostrarFecha());
-				}else{
-					$fecha_inicial.DatePickerHide();
-				}
-			}
-		}
-	});
-
-	$fecha_inicial.click(function (s){
-	var a=$('div.datepicker');
-		a.css({'z-index':100});
-	});
-	//$fecha_inicial.val(mostrarFecha());
-
-	$fecha_final.DatePicker({
-		format:'Y-m-d',
-		date: $(this).val(),
-		current: $(this).val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$fecha_final.val(formated);
-			if (formated.match(patron) ){
-				var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-
-				if (valida_fecha==true){
-					jAlert("Fecha no valida",'! Atencion');
-					$fecha_final.val(mostrarFecha());
-				}else{
-					$fecha_final.DatePickerHide();
-				}
-			}
-		}
-	});
-
-
-	$fecha_final.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100});
-	});
-
-	//aplicar mascara a campos para entrada manual de fecha
-	//9 indica que va a permitir captura de numeros solamante
-	$fecha_inicial.mask('9999-99-99');
-	$fecha_final.mask('9999-99-99');
-
-
-	//obtiene los almacenes para el reporte
-	var input_json = config.getUrlForGetAndPost()+'/getDatosBusqueda.json';
-	$arreglo = {'iu':iu = $('#lienzo_recalculable').find('input[name=iu]').val()};
-	$.post(input_json,$arreglo,function(entry){
-
-		$select_tipo_mov.children().remove();
-		var tm_hmtl = '<option value="0" >[--Todos--]</option>';
-		$.each(entry['Tmov'],function(entryIndex,tm){
-			tm_hmtl += '<option value="' + tm['id'] + '"  >' + tm['titulo'] + '</option>';
-		});
-		$select_tipo_mov.append(tm_hmtl);
-
-		$select_almacen.children().remove();
-		//var almacen_hmtl = '<option value="0" selected="yes">[--Seleccionar Almacen--]</option>';
-		var almacen_hmtl = '';
-		$.each(entry['Almacenes'],function(entryIndex,alm){
-			almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
-		});
-		$select_almacen.append(almacen_hmtl);
-
-	});//termina llamada json
-
-
-
-	$boton_genera_pdf.click(function(event){
-		//event.preventDefault();
-                var codigo="";
-                var descripcion="";
-
-
-                if($codigo.val()== ""){
-                    codigo="0";
-                }else{
-                    codigo=$codigo.val();
+        if (xAnio > yAnio){
+            return(true);
+        }else{
+            if (xAnio == yAnio){
+                if (xMes > yMes){
+                    return(true);
                 }
-                if($descripcion.val()== ""){
-                    descripcion="0";
+                if (xMes == yMes){
+                    if (xDia > yDia){
+                        return(true);
+                    }else{
+                        return(false);
+                    }
                 }else{
-                    descripcion=$descripcion.val();
+                    return(false);
                 }
+            }else{
+                return(false);
+            }
+        }
+    }
+
+    //muestra la fecha actual
+    var mostrarFecha = function mostrarFecha(){
+        var ahora = new Date();
+        var anoActual = ahora.getFullYear();
+        var mesActual = ahora.getMonth();
+        mesActual = mesActual+1;
+        mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+        var diaActual = ahora.getDate();
+        diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+        var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
+        return Fecha;
+    }
+    //----------------------------------------------------------------
+
+    $fecha_inicial.DatePicker({
+        format:'Y-m-d',
+        date: $(this).val(),
+        current: $(this).val(),
+        starts: 1,
+        position: 'bottom',
+        locale: {
+            days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+            daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+            daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+            months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+            monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+            weekMin: 'se'
+        },
+        onChange: function(formated, dates){
+            var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+            $fecha_inicial.val(formated);
+            if (formated.match(patron) ){
+                var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
+
+                if (valida_fecha==true){
+                    jAlert("Fecha no valida",'! Atencion');
+                    $fecha_inicial.val(mostrarFecha());
+                }else{
+                    $fecha_inicial.DatePickerHide();
+                }
+            }
+        }
+    });
+
+    $fecha_inicial.click(function (s){
+        var a=$('div.datepicker');
+        a.css({
+            'z-index':100
+        });
+    });
+    //$fecha_inicial.val(mostrarFecha());
+
+    $fecha_final.DatePicker({
+        format:'Y-m-d',
+        date: $(this).val(),
+        current: $(this).val(),
+        starts: 1,
+        position: 'bottom',
+        locale: {
+            days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+            daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+            daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+            months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+            monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+            weekMin: 'se'
+        },
+        onChange: function(formated, dates){
+            var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+            $fecha_final.val(formated);
+            if (formated.match(patron) ){
+                var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
+
+                if (valida_fecha==true){
+                    jAlert("Fecha no valida",'! Atencion');
+                    $fecha_final.val(mostrarFecha());
+                }else{
+                    $fecha_final.DatePickerHide();
+                }
+            }
+        }
+    });
+
+
+    $fecha_final.click(function (s){
+        var a=$('div.datepicker');
+        a.css({
+            'z-index':100
+        });
+    });
+
+    //aplicar mascara a campos para entrada manual de fecha
+    //9 indica que va a permitir captura de numeros solamante
+    $fecha_inicial.mask('9999-99-99');
+    $fecha_final.mask('9999-99-99');
+
+
+    //obtiene los almacenes para el reporte
+    var input_json = config.getUrlForGetAndPost()+'/getDatosBusqueda.json';
+    $arreglo = {
+        'iu':iu = $('#lienzo_recalculable').find('input[name=iu]').val()
+        };
+    $.post(input_json,$arreglo,function(entry){
+
+        $select_tipo_mov.children().remove();
+        var tm_hmtl = '<option value="0" >[--Todos--]</option>';
+        $.each(entry['Tmov'],function(entryIndex,tm){
+            tm_hmtl += '<option value="' + tm['id'] + '"  >' + tm['titulo'] + '</option>';
+        });
+        $select_tipo_mov.append(tm_hmtl);
+
+        $select_almacen.children().remove();
+        //var almacen_hmtl = '<option value="0" selected="yes">[--Seleccionar Almacen--]</option>';
+        var almacen_hmtl = '';
+        $.each(entry['Almacenes'],function(entryIndex,alm){
+            almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
+        });
+        $select_almacen.append(almacen_hmtl);
+
+    });//termina llamada json
 
 
 
-		var cadena = $select_tipo_mov.val() +"___"+ $select_almacen.val() +"___"+ codigo+"___"+ descripcion + "___"+$fecha_inicial.val()+ "___"+$fecha_final.val();
-
-		var input_json = config.getUrlForGetAndPost() + '/getReporteMovimientos/'+cadena+'/'+config.getUi()+'/out.json';
-
-
-		if(parseInt($select_almacen.val()) > 0){
-                    if(codigo !="" && descripcion !=""){
-                    if($fecha_inicial.val()!= "" && $fecha_final.val() !=""){
-                        window.location.href=input_json;
-                    }else{
-                        jAlert("Se requieren ambas Fechas de movimiento.",'Atencion!!!!!');
-                    }
-                    }else{
-                        jAlert("Se requieren codigo y descripcion",'Atencion!!!!!');
-                    }
-		}else{
-			jAlert("Selecciona un Almacen.",'Atencion!!!!!');
-		}
+    $boton_genera_pdf.click(function(event){
+        //event.preventDefault();
+        var codigo="";
+        var descripcion="";
 
 
-	});
+        if($codigo.val()== ""){
+            codigo="0";
+        }else{
+            codigo=$codigo.val();
+        }
+        if($descripcion.val()== ""){
+            descripcion="0";
+        }else{
+            descripcion=$descripcion.val();
+        }
 
 
 
-	var height2 = $('#cuerpo').css('height');
-	var alto = parseInt(height2)-240;
-	var pix_alto=alto+'px';
+        var cadena = $select_tipo_mov.val() +"___"+ $select_almacen.val() +"___"+ codigo+"___"+ descripcion + "___"+$fecha_inicial.val()+ "___"+$fecha_final.val();
 
-	$('#table_movimientos').tableScroll({height:parseInt(pix_alto)});
+        var input_json = config.getUrlForGetAndPost() + '/getReporteMovimientos/'+cadena+'/'+config.getUi()+'/out.json';
 
 
+        if(parseInt($select_almacen.val()) > 0){
+            if(codigo !="" && descripcion !=""){
+                if($fecha_inicial.val()!= "" && $fecha_final.val() !=""){
+                    window.location.href=input_json;
+                }else{
+                    jAlert("Se requieren ambas Fechas de movimiento.",'Atencion!!!!!');
+                }
+            }else{
+                jAlert("Se requieren codigo y descripcion",'Atencion!!!!!');
+            }
+        }else{
+            jAlert("Selecciona un Almacen.",'Atencion!!!!!');
+        }
 
-	//ejecutar busqueda del reporte
-	$boton_busqueda.click(function(event){
+
+    });
 
 
-		$tabla_movimientos.find('tbody').children().remove();
-		var input_json = config.getUrlForGetAndPost()+'/getMovimientos.json';
+
+    var height2 = $('#cuerpo').css('height');
+    var alto = parseInt(height2)-240;
+    var pix_alto=alto+'px';
+
+    $('#table_movimientos').tableScroll({
+        height:parseInt(pix_alto)
+        });
 
 
-                //if($select_tipo_mov.val()!=0){
-		if(parseInt($select_almacen.val()) > 0){
-                    if($fecha_inicial.val()!= "" && $fecha_final.val() !=""){
 
-                        $arreglo = {'id_tipo_movimiento':$select_tipo_mov.val(),
-                            'id_almacen':$select_almacen.val(),
-                            'codigo':$codigo.val(),
-                            'descripcion':$descripcion.val(),
-                            'fecha_inicial':$fecha_inicial.val(),
-                            'fecha_final':$fecha_final.val(),
-                            'iu': config.getUi()
-                            };
+    //ejecutar busqueda del reporte
+    $boton_busqueda.click(function(event){
 
-			$.post(input_json,$arreglo,function(entry){
-//alert("entraa aqui");
 
-                            var suma_cantidad  = 0.0;
-                            var valor_unitario = 0.0;
-                            var valor_entrada  = 0.0;
-                            var valor_salida   = 0.0;
-                            var tmp=0;
-                            var trr='';
-//alert("este s el codigo:  "+codigo);
-if(entry['Movimientos'].length > 0 ){
-                        var codigo = entry['Movimientos']['0']['codigo'];
+        $tabla_movimientos.find('tbody').children().remove();
+        var input_json = config.getUrlForGetAndPost()+'/getMovimientos.json';
+
+
+        //if($select_tipo_mov.val()!=0){
+        if(parseInt($select_almacen.val()) > 0){
+            if($codigo.val()!='' || $descripcion.val() !='' ){
+                if($fecha_inicial.val()!= "" && $fecha_final.val() !=""){
+
+                    $arreglo = {
+                        'id_tipo_movimiento':$select_tipo_mov.val(),
+                        'id_almacen':$select_almacen.val(),
+                        'codigo':$codigo.val(),
+                        'descripcion':$descripcion.val(),
+                        'fecha_inicial':$fecha_inicial.val(),
+                        'fecha_final':$fecha_final.val(),
+                        'iu': config.getUi()
+                    };
+
+                    $.post(input_json,$arreglo,function(entry){
+                        //alert("entraa aqui");
+
+                        var suma_cantidad  = 0.0;
+                        var valor_unitario = 0.0;
+                        var valor_entrada  = 0.0;
+                        var valor_salida   = 0.0;
+                        var tmp=0;
+                        var trr='';
+                        //alert("este s el codigo:  "+codigo);
+                        if(entry['Movimientos'].length > 0 ){
+                            var codigo = entry['Movimientos']['0']['codigo'];
 
                             trr += '<tr>';
-                                        trr += '<td width="100px" colspan="2">Codigo: '+codigo+'</td>';
-                                        trr += '<td width="300px" colspan="2">Descripcion: '+entry['Movimientos']['0']['descripcion']+'</td>';
-                                        trr += '<td width="200px">&nbsp;</td>';
-                                        trr += '<td width="100px">&nbsp;</td>';
-                                        trr += '<td width="100px" align="right">Existencia&nbsp;Inicial:</td>';
-                                        trr += '<td width="100px" align="right">'+entry['Movimientos']['0']['existencia']+'</td>';
+                            trr += '<td width="100px" colspan="2">Codigo: '+codigo+'</td>';
+                            trr += '<td width="300px" colspan="2">Descripcion: '+entry['Movimientos']['0']['descripcion']+'</td>';
+                            trr += '<td width="200px">&nbsp;</td>';
+                            trr += '<td width="100px">&nbsp;</td>';
+                            trr += '<td width="100px" align="right">Existencia&nbsp;Inicial:</td>';
+                            trr += '<td width="100px" align="right">'+entry['Movimientos']['0']['existencia']+'</td>';
                             trr += '</tr>';
                             $.each(entry['Movimientos'],function(entryIndex,Movimentos){
 
 
-                                        trr += '<tr>';
-                                             trr += '<td align="center">'+Movimentos['referencia']+'</td>';
-                                             trr += '<td align="left">'+Movimentos['tipo_movimiento']+'</td>';
-                                             trr += '<td align="center">'+Movimentos['fecha_movimiento']+'</td>';
-                                             trr += '<td align="left">'+Movimentos['sucursal']+'</td>';
-                                             trr += '<td align="left">'+Movimentos['almacen']+'</td>';
-                                             trr += '<td align="right">'+Movimentos['cantidad']+'</td>';
-                                             trr += '<td align="right">'+Movimentos['costo']+'</td>';
-                                             trr += '<td align="right">'+Movimentos['existencia_actual']+'</td>';
-                                         trr += '</tr>';
+                                trr += '<tr>';
+                                trr += '<td align="center">'+Movimentos['referencia']+'</td>';
+                                trr += '<td align="left">'+Movimentos['tipo_movimiento']+'</td>';
+                                trr += '<td align="center">'+Movimentos['fecha_movimiento']+'</td>';
+                                trr += '<td align="left">'+Movimentos['sucursal']+'</td>';
+                                trr += '<td align="left">'+Movimentos['almacen']+'</td>';
+                                trr += '<td align="right">'+Movimentos['cantidad']+'</td>';
+                                trr += '<td align="right">'+Movimentos['costo']+'</td>';
+                                trr += '<td align="right">'+Movimentos['existencia_actual']+'</td>';
+                                trr += '</tr>';
 
 
-                                        suma_cantidad  = parseFloat(suma_cantidad)  + parseFloat(Movimentos['cantidad']);
-                                        valor_unitario = parseFloat(valor_unitario) + parseFloat(Movimentos['costo']);
-                                        valor_entrada  = parseFloat(valor_entrada)  + parseFloat(Movimentos['costo']);
-                                        valor_salida   = parseFloat(valor_salida )  + parseFloat(Movimentos['costo']);
+                                suma_cantidad  = parseFloat(suma_cantidad)  + parseFloat(Movimentos['cantidad']);
+                                valor_unitario = parseFloat(valor_unitario) + parseFloat(Movimentos['costo']);
+                                valor_entrada  = parseFloat(valor_entrada)  + parseFloat(Movimentos['costo']);
+                                valor_salida   = parseFloat(valor_salida )  + parseFloat(Movimentos['costo']);
 
 
 
@@ -501,48 +511,53 @@ if(entry['Movimientos'].length > 0 ){
                             $tabla_movimientos.find('tbody').append(trr);
 
 
-}else{
-    jAlert("Esta consulta no genero Resultados",'Atencion!!!');
-}
+                        }else{
+                            jAlert("Esta consulta no genero Resultados",'Atencion!!!');
+                        }
 
 
-				var height2 = $('#cuerpo').css('height');
-				var alto = parseInt(height2)-240;
-				var pix_alto=alto+'px';
+                        var height2 = $('#cuerpo').css('height');
+                        var alto = parseInt(height2)-240;
+                        var pix_alto=alto+'px';
 
-				$('#table_movimientos').tableScroll({height:parseInt(pix_alto)});
-			});//termina llamada json
+                        $('#table_movimientos').tableScroll({
+                            height:parseInt(pix_alto)
+                            });
+                    });//termina llamada json
 
+                }else{
+                    jAlert("Se requieren ambas Fechas de movimiento.",'Atencion!!!!!');
+                }
+            }else{
 
-                    }else{
-                        jAlert("Se requieren ambas Fechas de movimiento.",'Atencion!!!!!');
-                    }
+                jAlert("Ingrese un codigo o una Descripcion.",'Atencion!!!!!');
+            }
 
-		}else{
-			jAlert("Selecciona un Almacen.",'Atencion!!!!!');
-		}
-            //}else{
-            //    jAlert("Selecciona un Tipo de Movimiento.",'Atencion!!!!!');
-            //}
-
-
-
-
-
-
-
-	});
+        }else{
+            jAlert("Selecciona un Almacen.",'Atencion!!!!!');
+        }
+    //}else{
+    //    jAlert("Selecciona un Tipo de Movimiento.",'Atencion!!!!!');
+    //}
 
 
 
 
-	$aplicar_evento_keypress($select_tipo_mov, $boton_busqueda);
-	$aplicar_evento_keypress($select_almacen, $boton_busqueda);
-	$aplicar_evento_keypress($codigo, $boton_busqueda);
-	$aplicar_evento_keypress($descripcion, $boton_busqueda);
-	$aplicar_evento_keypress($fecha_inicial, $boton_busqueda);
-	$aplicar_evento_keypress($fecha_final, $boton_busqueda);
-	$select_tipo_mov.focus();
+
+
+
+    });
+
+
+
+
+    $aplicar_evento_keypress($select_tipo_mov, $boton_busqueda);
+    $aplicar_evento_keypress($select_almacen, $boton_busqueda);
+    $aplicar_evento_keypress($codigo, $boton_busqueda);
+    $aplicar_evento_keypress($descripcion, $boton_busqueda);
+    $aplicar_evento_keypress($fecha_inicial, $boton_busqueda);
+    $aplicar_evento_keypress($fecha_final, $boton_busqueda);
+    $select_tipo_mov.focus();
 
 });
 
