@@ -72,7 +72,7 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getEntradas_DatosGrid(Integer id);
     public ArrayList<HashMap<String, String>> getEntradas_Impuestos();//catalogo  de productos y entradas de mercancias
     public ArrayList<HashMap<String, String>> getEntradas_TasaFletes();
-    public ArrayList<HashMap<String, String>> getEntradas_PresentacionesProducto(String sku);
+    public ArrayList<HashMap<String, String>> getEntradas_PresentacionesProducto(String sku, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getEntradas_TipoCambio(String fecha);
     public ArrayList<HashMap<String, String>> getEntradas_DatosOrdenCompra(String orden_compra, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getEntradas_DetallesOrdenCompra(Integer id_orden_compra);

@@ -1561,7 +1561,9 @@ public class InvSpringDao implements InvInterfaceDao{
 		+"FROM inv_prod "
                 + "LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
                 + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
+                + "WHERE inv_prod.empresa_id="+id_empresa+" "
+                + "AND inv_prod.borrado_logico=false "+where+" "
+                + "ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1629,7 +1631,7 @@ public class InvSpringDao implements InvInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getEntradas_PresentacionesProducto(String sku) {
+    public ArrayList<HashMap<String, String>> getEntradas_PresentacionesProducto(String sku, Integer id_empresa) {
         String sql_to_query = "SELECT "
                                 +"inv_prod.id,"
                                 +"inv_prod.sku,"
@@ -1641,7 +1643,9 @@ public class InvSpringDao implements InvInterfaceDao{
                         +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                         +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
                         +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
-                        +"where inv_prod.sku ILIKE '"+sku+"'";
+                        +"where inv_prod.sku ILIKE '"+sku+"' "
+                        + "AND inv_prod.borrado_logico=false "
+                        + "AND inv_prod.empresa_id="+id_empresa;
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
 

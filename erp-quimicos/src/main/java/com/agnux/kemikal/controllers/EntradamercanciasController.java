@@ -385,17 +385,22 @@ public class EntradamercanciasController {
     
     //obtiene los presentaciones del producto seleccionado
     @RequestMapping(method = RequestMethod.POST, value="/get_presentaciones_producto.json")
-    //public @ResponseBody HashMap<java.lang.String,java.lang.Object> getProveedorJson(
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPresentacionesproductoJson(
             @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getPresentacionesproductoJson de {0}", EntradamercanciasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> Presentaciones = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
         
-        Presentaciones = this.getInvDao().getEntradas_PresentacionesProducto(sku);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        Presentaciones = this.getInvDao().getEntradas_PresentacionesProducto(sku, id_empresa);
         
         jsonretorno.put("Presentaciones", Presentaciones);
         
