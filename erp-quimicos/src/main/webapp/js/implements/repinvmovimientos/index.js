@@ -403,20 +403,21 @@ $(function() {
 
 		var input_json = config.getUrlForGetAndPost() + '/getReporteMovimientos/'+cadena+'/'+config.getUi()+'/out.json';
 
-                if($select_tipo_mov.val()!=0){
+
 		if(parseInt($select_almacen.val()) > 0){
+                    if(codigo !="" && descripcion !=""){
                     if($fecha_inicial.val()!= "" && $fecha_final.val() !=""){
                         window.location.href=input_json;
                     }else{
                         jAlert("Se requieren ambas Fechas de movimiento.",'Atencion!!!!!');
                     }
-
+                    }else{
+                        jAlert("Se requieren codigo y descripcion",'Atencion!!!!!');
+                    }
 		}else{
 			jAlert("Selecciona un Almacen.",'Atencion!!!!!');
 		}
-                }else{
-                    jAlert("Selecciona un Tipo de Movimiento.",'Atencion!!!!!');
-                }
+
 
 	});
 
@@ -465,27 +466,25 @@ if(entry['Movimientos'].length > 0 ){
                         var codigo = entry['Movimientos']['0']['codigo'];
 
                             trr += '<tr>';
-                                        trr += '<td width="100px">'+codigo+'</td>';
-                                        trr += '<td width="300px">'+entry['Movimientos']['0']['descripcion']+'</td>';
-                                        trr += '<td width="100px">&nbsp;</td>';
-                                        trr += '<td width="200px">&nbsp;</td>';
+                                        trr += '<td width="100px" colspan="2">Codigo: '+codigo+'</td>';
+                                        trr += '<td width="300px" colspan="2">Descripcion: '+entry['Movimientos']['0']['descripcion']+'</td>';
                                         trr += '<td width="200px">&nbsp;</td>';
                                         trr += '<td width="100px">&nbsp;</td>';
                                         trr += '<td width="100px" align="right">Existencia&nbsp;Inicial:</td>';
-                                        trr += '<td width="100px">'+entry['Movimientos']['0']['existencia']+'</td>';
+                                        trr += '<td width="100px" align="right">'+entry['Movimientos']['0']['existencia']+'</td>';
                             trr += '</tr>';
                             $.each(entry['Movimientos'],function(entryIndex,Movimentos){
 
 
                                         trr += '<tr>';
-                                             trr += '<td >'+Movimentos['referencia']+'</td>';
-                                             trr += '<td >'+Movimentos['tipo_movimiento']+'</td>';
-                                             trr += '<td >'+Movimentos['fecha_movimiento']+'</td>';
-                                             trr += '<td >'+Movimentos['sucursal']+'</td>';
-                                             trr += '<td >'+Movimentos['almacen']+'</td>';
-                                             trr += '<td >'+Movimentos['cantidad']+'</td>';
-                                             trr += '<td >'+Movimentos['costo']+'</td>';
-                                             trr += '<td >'+Movimentos['existencia_actual']+'</td>';
+                                             trr += '<td align="center">'+Movimentos['referencia']+'</td>';
+                                             trr += '<td align="left">'+Movimentos['tipo_movimiento']+'</td>';
+                                             trr += '<td align="center">'+Movimentos['fecha_movimiento']+'</td>';
+                                             trr += '<td align="left">'+Movimentos['sucursal']+'</td>';
+                                             trr += '<td align="left">'+Movimentos['almacen']+'</td>';
+                                             trr += '<td align="right">'+Movimentos['cantidad']+'</td>';
+                                             trr += '<td align="right">'+Movimentos['costo']+'</td>';
+                                             trr += '<td align="right">'+Movimentos['existencia_actual']+'</td>';
                                          trr += '</tr>';
 
 
