@@ -1387,29 +1387,37 @@ $(function() {
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
+		var $num_lista_precio = $('#forma-pocpedidos-window').find('input[name=num_lista_precio]');
 		var agregarTr=false;
 		
-		//verificamos si el grid no tiene registros
-		if(parseInt($("tr", $grid_productos).size())<=0){
-			//verificamos si la moneda del producto no es cero
-			if(parseInt(id_moneda)>0){
-				var moneda_prod='';
-				$select_moneda.children().remove();
-				$.each(arrayMonedas ,function(entryIndex,moneda){
-					if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-						moneda_prod += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-					}else{
-						//moneda_prod += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-					}
-				});
-				$select_moneda.append(moneda_prod);
-				agregarTr=true;
+		//verificamos si la Lista de Precio trae moneda
+		if(parseInt($num_lista_precio.val())>0){
+			//verificamos si el grid no tiene registros
+			if(parseInt($("tr", $grid_productos).size())<=0){
+				//verificamos si la moneda del producto no es cero
+				if(parseInt(id_moneda)>0){
+					var moneda_prod='';
+					$select_moneda.children().remove();
+					$.each(arrayMonedas ,function(entryIndex,moneda){
+						if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+							moneda_prod += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+						}else{
+							//moneda_prod += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+						}
+					});
+					$select_moneda.append(moneda_prod);
+					agregarTr=true;
+				}
+			}else{
+				//si la moneda del pedido es igual a la moneda del producto, permitimos agregar
+				if(parseInt($select_moneda.val())==parseInt(id_moneda)){
+					agregarTr=true;
+				}
 			}
 		}else{
-			//si la moneda del pedido es igual a la moneda del producto, permitimos agregar
-			if(parseInt($select_moneda.val())==parseInt(id_moneda)){
-				agregarTr=true;
-			}
+			//aqui entra si el cliente no tiene asignado una lista de precio
+			//por default le permitimos agregar todos los productos
+			agregarTr=true;
 		}
 		
 		

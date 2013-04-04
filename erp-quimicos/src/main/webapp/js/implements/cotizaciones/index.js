@@ -859,10 +859,10 @@ $(function() {
 								trr += '</tr>';
 								$tabla_resultados.append(trr);
 							});//termina llamada json
-
+							
 							$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
 							$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
-
+							
 							$('tr:odd' , $tabla_resultados).hover(function () {
 								$(this).find('td').css({background : '#FBD850'});
 							}, function() {
@@ -967,9 +967,15 @@ $(function() {
 		var importeImpuesto=0.00;
 		var agregarTr=false;
 		
+		//verificamos si la Lista de Precio trae moneda
 		if(parseInt($num_lista_precio.val())>0){
 			//verificamos si el grid no tiene registros
 			if(parseInt($("tr", $grid_productos).size())<=0){
+				if(parseInt(idmonpre)==1){
+					$tc.val("1.0000");
+					$tc_original.val("1.0000");
+				}
+				
 				//verificamos si la moneda del producto no es cero
 				if(parseInt(idmonpre)>0){
 					var moneda_prod='';
@@ -1137,6 +1143,10 @@ $(function() {
 				if(descripcion=="" && imagen == ""){
 					$grid_productos.find('#desc'+tr).hide();
 					$grid_productos.find('.div_img'+tr).hide();
+				}
+				
+				if(parseInt($num_lista_precio.val())<=0){
+					idmonpre=$select_moneda.val();
 				}
 				
 				//carga el select de monedas  con la moneda del cliente seleccionada por default
