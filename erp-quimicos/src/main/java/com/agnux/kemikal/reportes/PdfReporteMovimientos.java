@@ -1,9 +1,3 @@
-//package com.agnux.kemikal.reportes;
-//public class PdfReporteMovimientos {}
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.agnux.kemikal.reportes;
 import com.agnux.common.helpers.StringHelper;
 import com.itextpdf.text.BaseColor;
@@ -34,8 +28,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
+/*
  * @author Vale Santos
  */
 public class PdfReporteMovimientos {
@@ -75,7 +68,7 @@ public class PdfReporteMovimientos {
 
             doc.open();
             //float [] widths = {3f, 3f, 3f, 3f, 3f, 3f, 4f};
-            float [] widths = {1.5f, 4f, 1.5f, 5f, 3f, 3f, 6f, 2f, 2f, 2f, 2f};
+            float [] widths = {2f, 4f, 2f, 5f, 5f, 3f, 3f, 3f};
             PdfPTable table = new PdfPTable(widths);
             PdfPCell cell;
 
@@ -83,24 +76,6 @@ public class PdfReporteMovimientos {
             table.setHeaderRows(1);
 
             // Encabezado de Celda
-            cell = new PdfPCell(new Paragraph("Codigo",headerFont));
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
-            table.addCell(cell);
-
-            cell = new PdfPCell(new Paragraph("Descripcion",headerFont));
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
-            table.addCell(cell);
-
             cell = new PdfPCell(new Paragraph("Referencia",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -112,7 +87,7 @@ public class PdfReporteMovimientos {
 
             cell = new PdfPCell(new Paragraph("Tipo Movimiento",headerFont));
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
@@ -156,7 +131,7 @@ public class PdfReporteMovimientos {
 
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("Valor unitario",headerFont));
+            cell = new PdfPCell(new Paragraph("Costo",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -166,7 +141,7 @@ public class PdfReporteMovimientos {
 
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("Valor entrada",headerFont));
+            cell = new PdfPCell(new Paragraph("Existencia",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -175,31 +150,46 @@ public class PdfReporteMovimientos {
             cell.setFixedHeight(13);
 
             table.addCell(cell);
-
-            cell = new PdfPCell(new Paragraph("Valor Salida",headerFont));
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
-
-            table.addCell(cell);
-
 
             if(listaMovimientos.size() > 0){
+
+
+            cell= new PdfPCell(new Paragraph("Codigo: "+listaMovimientos.get(0).get("codigo"),smallBoldFont2));
+            cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+            cell.setColspan(2);
+            cell.setBorder(0);
+            table.addCell(cell);
+            //Decripcion
+            cell= new PdfPCell(new Paragraph("Descripcion : "+listaMovimientos.get(0).get("descripcion"),smallBoldFont2));
+            cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+            cell.setColspan(2);
+            cell.setBorder(0);
+            table.addCell(cell);
+
+            cell= new PdfPCell(new Paragraph("",smallFont));
+            cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+            cell.setColspan(2);
+            cell.setBorder(0);
+            table.addCell(cell);
+
+            //exixtencia
+            cell= new PdfPCell(new Paragraph("Existencia Inicial",smallBoldFont2));
+            cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+            cell.setBorder(0);
+            table.addCell(cell);
+            //cantidad existente
+            cell= new PdfPCell(new Paragraph(listaMovimientos.get(0).get("existencia"),smallFont));
+            cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+            cell.setBorder(0);
+            table.addCell(cell);
+
+
+
+
                 for (int x=0; x<=listaMovimientos.size()-1;x++){
                     HashMap<String,String> registro = listaMovimientos.get(x);
-                    //columna Codigo
-                    cell= new PdfPCell(new Paragraph(registro.get("codigo"),smallFont));
-                    cell.setHorizontalAlignment (Element.ALIGN_LEFT);
-                    cell.setBorder(0);
-                    table.addCell(cell);
-                    //Decripcion
-                    cell= new PdfPCell(new Paragraph(registro.get("descripcion"),smallFont));
-                    cell.setHorizontalAlignment (Element.ALIGN_LEFT);
-                    cell.setBorder(0);
-                    table.addCell(cell);
+
+
                     //Referencia
                     cell= new PdfPCell(new Paragraph(registro.get("referencia"),smallFont));
                     cell.setHorizontalAlignment (Element.ALIGN_CENTER);
@@ -216,12 +206,12 @@ public class PdfReporteMovimientos {
                     cell.setBorder(0);
                     table.addCell(cell);
                     //sucursal
-                    cell= new PdfPCell(new Paragraph(registro.get("nombre_sucursal"),smallFont));
+                    cell= new PdfPCell(new Paragraph(registro.get("sucursal"),smallFont));
                     cell.setHorizontalAlignment (Element.ALIGN_CENTER);
                     cell.setBorder(0);
                     table.addCell(cell);
                     //Almacen
-                    cell= new PdfPCell(new Paragraph(registro.get("nombre_almacen"),smallFont));
+                    cell= new PdfPCell(new Paragraph(registro.get("almacen"),smallFont));
                     cell.setHorizontalAlignment (Element.ALIGN_CENTER);
                     cell.setBorder(0);
                     table.addCell(cell);
@@ -236,23 +226,19 @@ public class PdfReporteMovimientos {
                     cell.setBorder(0);
                     table.addCell(cell);
                     //Valor Entrada
-                    cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("costo")),smallFont));
+                    cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("existencia_actual")),smallFont));
                     cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                     cell.setBorder(0);
                     table.addCell(cell);
-                    //Valor Salida
-                    cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("costo")),smallFont));
-                    cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    table.addCell(cell);
+
 
 
                 }
             }else{
-                cell= new PdfPCell(new Paragraph("No hay Movimientos en el periodo seleccionado, selecciona fechas diferentes y vualva a generar el reporte",smallFont));
+                cell= new PdfPCell(new Paragraph("Esta consulta no genero ningun Resultado",smallFont));
                 cell.setHorizontalAlignment (Element.ALIGN_LEFT);
-                cell.setBorder(0);
-                cell.setColspan(11);
+                //cell.setBorder(0);
+                cell.setColspan(8);
                 cell.setFixedHeight(18);
                 table.addCell(cell);
             }
