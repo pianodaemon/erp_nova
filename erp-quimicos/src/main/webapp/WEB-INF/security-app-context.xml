@@ -107,7 +107,9 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_COTIZACION_CONF_SALUDO_DESPEDIDA,
         ROLE_PRO_REPORTE_PRODUCCION,
         ROLE_CRM_REPORTE_VISITAS,
-        ROLE_CATALOGO_INCOTERMS" />
+        ROLE_CATALOGO_INCOTERMS,
+        ROLE_ALTA_PRODUCTOS_EQUIV,
+        ROLE_REPORTE_INV_MOV" />
         
         
         
@@ -209,6 +211,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/repremision/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_REMISIONES" />
         <intercept-url pattern="/controllers/repinvkits/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_KITS" />
         <intercept-url pattern="/controllers/repremisionfacturada/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_REMISIONES_FACTURADAS" />
+        <intercept-url pattern="/controllers/repinvmovimientos/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_INV_MOV" />
         
         
         <!--Paco-->

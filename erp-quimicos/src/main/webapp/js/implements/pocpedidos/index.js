@@ -2498,7 +2498,7 @@ $(function() {
 							$select_moneda_original.val(moneda['id']);
 						}else{
 							if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])==4){
-								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+								//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 							}
 						}
 					});

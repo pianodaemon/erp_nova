@@ -465,7 +465,10 @@ $(function() {
 			//verifica si el campo sku no esta vacio para realizar busqueda
 			if(sku_producto != ''){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_presentaciones_producto.json';
-				$arreglo = {'sku':sku_producto	};
+				$arreglo = {
+							'sku':sku_producto,
+							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+						};
 				
 				var trr = '';
 				
