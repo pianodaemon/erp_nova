@@ -411,14 +411,14 @@ $(function() {
 
 
         if(parseInt($select_almacen.val()) > 0){
-            if(codigo !="" && descripcion !=""){
+            if($codigo.val()!='' || $descripcion.val() !='' ){
                 if($fecha_inicial.val()!= "" && $fecha_final.val() !=""){
                     window.location.href=input_json;
                 }else{
                     jAlert("Se requieren ambas Fechas de movimiento.",'Atencion!!!!!');
                 }
             }else{
-                jAlert("Se requieren codigo y descripcion",'Atencion!!!!!');
+                jAlert("Se requieren codigo o una descripcion",'Atencion!!!!!');
             }
         }else{
             jAlert("Selecciona un Almacen.",'Atencion!!!!!');
