@@ -38,6 +38,7 @@ $(function() {
 	var $tabla_existencias = $('#lienzo_recalculable').find('#table_exis');
 	var $select_opciones = $('#lienzo_recalculable').find('select[name=opciones]');
 	var $select_almacen = $('#lienzo_recalculable').find('select[name=select_almacen]');
+	var $select_tipo_costo = $('#lienzo_recalculable').find('select[name=select_tipo_costo]');
 	var $codigo_producto = $('#lienzo_recalculable').find('input[name=codigo]');
 	var $descripcion = $('#lienzo_recalculable').find('input[name=descripcion]');
 	var $genera_reporte_exis = $('#lienzo_recalculable').find('#genera_reporte_exis');
@@ -51,7 +52,12 @@ $(function() {
 		almacen_hmtl += '<option value="5">Valor M&aacute;ximo</option>';
 		almacen_hmtl += '<option value="6">Punto de Reorden</option>';
 	$select_opciones.append(almacen_hmtl);
-
+	
+	$select_tipo_costo.children().remove();
+	var tcosto_hmtl = '<option value="1" selected="yes">Costo Ultimo</option>';
+		tcosto_hmtl += '<option value="2">Costo Promedio</option>';
+	$select_tipo_costo.append(tcosto_hmtl);
+	
 
 	
 	$genera_reporte_exis.click(function(event){
@@ -71,7 +77,7 @@ $(function() {
 		}
 		
 		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-		var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getReporteExistencias/'+$select_opciones.val()+'/'+id_almacen+'/'+codigo_producto+'/'+descripcion+'/'+ iu +'/out.json';
+		var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getReporteExistencias/'+$select_opciones.val()+'/'+id_almacen+'/'+codigo_producto+'/'+descripcion+'/'+$select_tipo_costo.val()+'/'+ iu +'/out.json';
 		if(parseInt($select_almacen.val()) > 0){
 			window.location.href=input_json;
 		}else{
@@ -113,16 +119,17 @@ $(function() {
 					'almacen':id_almacen, 
 					'codigo':$codigo_producto.val(), 
 					'descripcion':$descripcion.val(),
+					'tipo_costo':$select_tipo_costo.val(),
 					'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 					};
 		if(parseInt($select_almacen.val()) > 0){
 			$.post(input_json,$arreglo,function(entry){
 				$.each(entry['Existencias'],function(entryIndex,exi){
 					if(primero==0){
-						$tabla_existencias.find('tbody').append('<tr class="first"><td width="110">'+exi['codigo_producto']+'</td><td width="350">'+exi['descripcion']+'</td><td width="100">'+exi['unidad_medida']+'</td><td width="90" align="right">'+$(this).agregar_comas(parseFloat(exi['existencias']).toFixed(2))+'</td><td width="120" align="right">'+exi['costo_unitario']+'</td><td width="120" align="right">'+exi['costo_total']+'</td></tr>');
+						$tabla_existencias.find('tbody').append('<tr class="first"><td width="110">'+exi['codigo_producto']+'</td><td width="400">'+exi['descripcion']+'</td><td width="100">'+exi['unidad_medida']+'</td><td width="90" align="right">'+$(this).agregar_comas(parseFloat(exi['existencias']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_unitario']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_total']).toFixed(2))+'</td><td width="60" align="center">'+exi['simbolo_moneda']+'</td></tr>');
 						primero=1;
 					}else{
-						$tabla_existencias.find('tbody').append('<tr><td width="110">'+exi['codigo_producto']+'</td><td width="350">'+exi['descripcion']+'</td><td width="100">'+exi['unidad_medida']+'</td><td width="90" align="right">'+$(this).agregar_comas(parseFloat(exi['existencias']).toFixed(2))+'</td><td width="120" align="right">'+exi['costo_unitario']+'</td><td width="120" align="right">'+exi['costo_total']+'</td></tr>');
+						$tabla_existencias.find('tbody').append('<tr><td width="110">'+exi['codigo_producto']+'</td><td width="400">'+exi['descripcion']+'</td><td width="100">'+exi['unidad_medida']+'</td><td width="90" align="right">'+$(this).agregar_comas(parseFloat(exi['existencias']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_unitario']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_total']).toFixed(2))+'</td><td width="60" align="center">'+exi['simbolo_moneda']+'</td></tr>');
 					}
 				});
 				
@@ -139,6 +146,7 @@ $(function() {
 	
 	$aplicar_evento_keypress($select_opciones, $buscar);
 	$aplicar_evento_keypress($select_almacen, $buscar);
+	$aplicar_evento_keypress($select_tipo_costo, $buscar);
 	$aplicar_evento_keypress($codigo_producto, $buscar);
 	$aplicar_evento_keypress($descripcion, $buscar);
 	$codigo_producto.focus();

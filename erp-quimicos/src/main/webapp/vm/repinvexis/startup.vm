@@ -34,11 +34,13 @@
 					<div >
 						<table border="0" style="display:block">
 							<tr class="rep_inv_exis">
-								<td colspan="13" height="8"></td>
+								<td colspan="15" height="8"></td>
 							</tr>
 							<tr class="rep_inv_exis">
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="130">Opciones</td>
+								<td width="20"></td>
+								<td width="130">Tipo de Costo</td>
 								<td width="20"></td>
 								<td width="200">Almacen</td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -49,18 +51,22 @@
 								<td width="50"></td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="50"></td>
-								<td width="80">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								<td width="45">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							</tr>
 							
 							
 							<tr class="rep_inv_exis">
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-								<td width="130"><SELECT NAME="opciones" style="width:130px;" title="Filtros para el reporte de Existencias en Inventario"></SELECT></td>
+								<td width="130"><select name="opciones" style="width:130px;" title="Filtros para el reporte de Existencias en Inventario"></select></td>
+								<td width="20"></td>
+								<td width="130">
+									<select name="select_tipo_costo" style="width:130px;"></select>
+								</td>
 								<td width="20"></td>
 								<td width="200">
-									<SELECT NAME="select_almacen" style="width:200px;">
+									<select name="select_almacen" style="width:200px;">
 										<option value="0" selected="yes">[--Seleccionar Almacen--]</option>
-									</SELECT>
+									</select>
 								</td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="90"><INPUT TYPE="text" name="codigo" style="width:90px;"></td>
@@ -70,29 +76,30 @@
 								<td width="50"><INPUT TYPE="button" id="boton_buscador" value="Buscar"></td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="50"><INPUT TYPE="button" id="genera_reporte_exis" value="Generar PDF"></td>
-								<td width="80">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								<td width="45">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							</tr>
 							<tr class="rep_inv_exis">
-								<td colspan="13"  height="8"></td>
+								<td colspan="15"  height="8"></td>
 							</tr>
 							
 							
 							
 							<tr>
-								<td colspan="13">&nbsp;&nbsp;</td>
+								<td colspan="15">&nbsp;&nbsp;</td>
 							</tr>
 							<tr>
-								<td colspan="13">
+								<td colspan="15">
 									
 										<table id="table_exis" cellspacing="0">
 											<thead>
 												<tr>
 													<td width="110">C&oacute;digo</td>
-													<td width="350">Descripci&oacute;n</td>
+													<td width="400">Descripci&oacute;n</td>
 													<td width="100">Unidad</td>
 													<td width="90">Existencia</td>
 													<td width="120">Costo&nbsp;Unitario</td>
 													<td width="120">Costo&nbsp;Total</td>
+													<td width="60">Moneda</td>
 												</tr>
 											</thead>
 											<tbody>

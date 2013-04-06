@@ -1196,7 +1196,7 @@ $(function() {
 					//verifica si el arreglo  retorno datos
 					if (entry['Presentaciones'].length > 0){
 						
-						if (entry['Presentaciones'][0]['exis_prod_lp']=='1'){
+						//if (entry['Presentaciones'][0]['exis_prod_lp']=='1'){
 							$(this).modalPanel_Buscapresentacion();
 							var $dialogoc =  $('#forma-buscapresentacion-window');
 							$dialogoc.append($('div.buscador_presentaciones').find('table.formaBusqueda_presentaciones').clone());
@@ -1229,6 +1229,7 @@ $(function() {
 										trr += '<span class="costo" style="display:none">'+pres['precio']+'</span>';
 										trr += '<span class="idmon" style="display:none">'+pres['id_moneda']+'</span>';
 										trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
+										trr += '<span class="exislp" style="display:none">'+pres['exis_prod_lp']+'</span>';
 									trr += '</td>';
 								trr += '</tr>';
 								$tabla_resultados.append(trr);
@@ -1259,12 +1260,18 @@ $(function() {
 								var id_pres = $(this).find('span.id_pres').html();
 								var pres = $(this).find('span.pres').html();
 								var num_dec = $(this).find('span.dec').html();
-								
 								var prec_unitario = $(this).find('span.costo').html();
 								var id_moneda = $(this).find('span.idmon').html();
+								var exislp = $(this).find('span.exislp').html();
 								
-								//llamada a la funcion que agrega el producto al grid
-								$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas);
+								if(exislp=='1'){
+									//llamada a la funcion que agrega el producto al grid
+									$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas);
+								}else{
+									jAlert(exislp, 'Atencion!', function(r) { 
+										$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+									});
+								}
 								
 								//$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
 								
@@ -1280,11 +1287,6 @@ $(function() {
 								$('#forma-buscapresentacion-overlay').fadeOut(remove);
 								$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
 							});
-						}else{
-							jAlert(entry['Presentaciones'][0]['exis_prod_lp'], 'Atencion!', function(r) { 
-								$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
-							});
-						}
 					}else{
 						jAlert('El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) { 
 							$('#forma-pocpedidos-window').find('input[name=titulo_producto]').val('');

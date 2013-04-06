@@ -827,9 +827,6 @@ $(function() {
 					
 					//verifica si el arreglo  retorno datos
 					if (entry['Presentaciones'].length > 0){
-						
-						if (entry['Presentaciones'][0]['exis_prod_lp']=='1'){
-							
 							$(this).modalPanel_Buscapresentacion();
 							var $dialogoc =  $('#forma-buscapresentacion-window');
 							$dialogoc.append($('div.buscador_presentaciones').find('table.formaBusqueda_presentaciones').clone());
@@ -855,6 +852,7 @@ $(function() {
 										trr += '<span class="idmonpre" style="display:none">'+pres['id_moneda']+'</span>';
 										trr += '<span class="img" style="display:none">'+pres['archivo_img']+'</span>';
 										trr += '<span class="desclarga" style="display:none">'+pres['descripcion_larga']+'</span>';
+										trr += '<span class="exislp" style="display:none">'+pres['exis_prod_lp']+'</span>';
 									trr += '</td>';
 								trr += '</tr>';
 								$tabla_resultados.append(trr);
@@ -889,6 +887,7 @@ $(function() {
 								var precio = $(this).find('span.precio').html();
 								//id de la moneda en la que viene el precio
 								var idmonpre = $(this).find('span.idmonpre').html();
+								var exislp = $(this).find('span.exislp').html();
 								
 								var cantidad = 0;
 								var importe = 0;
@@ -896,10 +895,16 @@ $(function() {
 								//pasamos ceros porque es nuevo
 								var idImp=0;
 								var valorImp=0;
-								
-								//aqui se pasan datos a la funcion que agrega el tr en el grid
-								//$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas, idImp, valorImp);
-								$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImp, valorImp);
+									
+								if(exislp=='1'){
+									//aqui se pasan datos a la funcion que agrega el tr en el grid
+									//$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas, idImp, valorImp);
+									$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImp, valorImp);
+								}else{
+									jAlert(exislp, 'Atencion!', function(r) { 
+										$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
+									});
+								}
 								
 								//elimina la ventana de busqueda
 								var remove = function() {$(this).remove();};
@@ -914,12 +919,6 @@ $(function() {
 								//regresa el enfoque al campo sku para permitir ingresar uno nuevo
 								$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
 							});
-							
-						}else{
-							jAlert(entry['Presentaciones'][0]['exis_prod_lp'], 'Atencion!', function(r) { 
-								$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
-							});
-						}
 						
 					}else{
 						jAlert('El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) { 
