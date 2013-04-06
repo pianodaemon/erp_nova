@@ -153,10 +153,11 @@ public class RepInvExisController {
     //obtiene la existencia de un Almacen en especifico
     @RequestMapping(method = RequestMethod.POST, value="/getExistencias.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getExistenciasJson(
-            @RequestParam("tipo") Integer tipo,
+            @RequestParam("tipo") Integer tipo_reporte,
             @RequestParam("almacen") Integer almacen,
             @RequestParam("codigo") String codigo_producto,
             @RequestParam("descripcion") String descripcion,
+            @RequestParam("tipo_costo") Integer tipo_costo,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
@@ -168,18 +169,12 @@ public class RepInvExisController {
         
         String codigo;
         String desc;
+        //Reporte de Existencias en Inventario
+        Integer app_selected=133;
+        String command_selected="reporte";
         
-        if(codigo_producto.equals("0")){
-            codigo = "%%";
-        }else{
-            codigo = codigo_producto;
-        }
-        
-        if(descripcion.equals("0")){
-            desc = "%%";
-        }else{
-            desc = descripcion;
-        }
+        codigo = "%"+codigo_producto+"%";
+        desc = "%"+descripcion+"%";
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -187,7 +182,10 @@ public class RepInvExisController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        existencias = this.getInvDao().getDatos_ReporteExistencias(id_usuario, almacen, codigo, desc, tipo);
+        String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+almacen+"___"+codigo+"___"+desc+"___"+tipo_reporte+"___"+tipo_costo;
+        //existencias = this.getInvDao().getDatos_ReporteExistencias(id_usuario, almacen, codigo, desc, tipo);
+        existencias = this.getInvDao().selectFunctionForInvReporte(app_selected,data_string);
+        
         
         jsonretorno.put("Existencias", existencias);
         
@@ -200,12 +198,13 @@ public class RepInvExisController {
     
     
    //Genera pdf de Reporte de Existencias en Inventario
-    @RequestMapping(value = "/getReporteExistencias/{tipo}/{almacen}/{codigo}/{descripcion}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/getReporteExistencias/{tipo}/{almacen}/{codigo}/{descripcion}/{tipo_costo}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getReporteExistenciasJson(
-                @PathVariable("tipo") Integer tipo,
+                @PathVariable("tipo") Integer tipo_reporte,
                 @PathVariable("almacen") Integer almacen,
                 @PathVariable("codigo") String codigo_producto,
                 @PathVariable("descripcion") String descripcion,
+                @PathVariable("tipo_costo") Integer tipo_costo,
                 @PathVariable("iu") String id_user,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
@@ -215,17 +214,20 @@ public class RepInvExisController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         String codigo;
         String desc;
+        //Reporte de Existencias en Inventario
+        Integer app_selected=133;
+        String command_selected="reporte";
         
         if(codigo_producto.equals("0")){
             codigo = "%%";
         }else{
-            codigo = codigo_producto;
+            codigo = "%"+codigo_producto+"%";;
         }
 
         if(descripcion.equals("0")){
             desc = "%%";
         }else{
-            desc = descripcion;
+            desc = "%"+descripcion+"%";
         }
         
         System.out.println("Generando Reporte de Existencias");
@@ -257,8 +259,10 @@ public class RepInvExisController {
         
         ArrayList<HashMap<String, String>> lista_existencias = new ArrayList<HashMap<String, String>>();
         
+        String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+almacen+"___"+codigo+"___"+desc+"___"+tipo_reporte+"___"+tipo_costo;
+        
         //obtiene las facturas del periodo indicado
-        lista_existencias = this.getInvDao().getDatos_ReporteExistencias(id_usuario, almacen, codigo, desc, tipo);
+        lista_existencias = this.getInvDao().selectFunctionForInvReporte(app_selected,data_string);
         
 //        String tipo = "";
         String fecha_actual = TimeHelper.getFechaActualYMD();
@@ -270,7 +274,7 @@ public class RepInvExisController {
         
         
         //instancia a la clase que construye el pdf del reporte de existencias
-        PdfReporteInventarioExistencias x = new PdfReporteInventarioExistencias( fileout, lista_existencias, razon_social_empresa,fecha_actual,tipo);
+        PdfReporteInventarioExistencias x = new PdfReporteInventarioExistencias( fileout, lista_existencias, razon_social_empresa,fecha_actual,tipo_reporte);
         
         
         System.out.println("Recuperando archivo: " + fileout);

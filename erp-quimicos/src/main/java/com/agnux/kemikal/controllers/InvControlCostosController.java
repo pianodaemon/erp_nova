@@ -104,7 +104,7 @@ public class InvControlCostosController {
         infoConstruccionTabla.put("costo_importacion", "I.G.I.:70");
         infoConstruccionTabla.put("costo_directo", "G.I.:70");
         infoConstruccionTabla.put("costo_referencia", "C.I.T.:70");
-        infoConstruccionTabla.put("precio_minimo", "P.M..:90");
+        infoConstruccionTabla.put("precio_minimo", "P.M.:90");
         infoConstruccionTabla.put("moneda_pm", "Moneda&nbsp;P.M.:90");
         
         

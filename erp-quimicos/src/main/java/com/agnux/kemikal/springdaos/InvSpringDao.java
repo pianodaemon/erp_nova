@@ -206,8 +206,52 @@ public class InvSpringDao implements InvInterfaceDao{
             );
             data=hm126;
         }
-
-
+        
+        
+        //este es para el Reporte de Existencias en Inventario
+        if(id_app==133){
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
+                                        + "id integer,"
+                                        +"valor_minimo double precision, "
+                                        +"valor_maximo double precision,"
+                                        +"punto_reorden double precision, "
+                                        +"almacen character varying, "
+					+"familia character varying, "
+					+"grupo character varying, "
+					+"linea character varying, "
+					+"codigo_producto character varying, "
+					+"descripcion character varying, "
+					+"unidad_medida character varying, "
+					+"existencias double precision, "
+					+"costo_unitario double precision, "
+					+"costo_total double precision, "
+                                        +"simbolo_moneda character varying "
+                                    +") ORDER BY descripcion ASC;";
+            //System.out.println("InvReporte: "+sql_to_query);
+            
+            ArrayList<HashMap<String, String>> hm133 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_to_query,
+                new Object[]{}, new RowMapper(){
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        HashMap<String, String> row = new HashMap<String, String>();
+                        row.put("almacen",rs.getString("almacen"));
+                        row.put("familia",rs.getString("familia"));
+                        row.put("grupo",rs.getString("grupo"));
+                        row.put("linea",rs.getString("linea"));
+                        row.put("codigo_producto",rs.getString("codigo_producto"));
+                        row.put("descripcion",rs.getString("descripcion"));
+                        row.put("unidad_medida",rs.getString("unidad_medida"));
+                        row.put("existencias",StringHelper.roundDouble(rs.getDouble("existencias"),2));
+                        row.put("costo_unitario",StringHelper.roundDouble(rs.getDouble("costo_unitario"),2));
+                        row.put("costo_total",StringHelper.roundDouble(rs.getDouble("costo_total"),2));
+                        row.put("simbolo_moneda",rs.getString("simbolo_moneda"));
+                        return row;
+                    }
+                }
+            );
+            data=hm133;
+        }
 
         return data;
     }
