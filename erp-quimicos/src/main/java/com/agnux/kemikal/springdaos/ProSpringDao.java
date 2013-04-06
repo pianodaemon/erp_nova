@@ -60,7 +60,7 @@ public class ProSpringDao implements ProInterfaceDao{
     public String selectFunctionForThisApp(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from pro_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        //System.out.println("Ejacutando Guardar:"+sql_to_query);
+        System.out.println("Ejacutando pro_adm_procesos:"+sql_to_query);
 
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         String valor_retorno="";
@@ -88,7 +88,7 @@ public class ProSpringDao implements ProInterfaceDao{
     public String selectFunctionForApp_Produccion(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from pro_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        //System.out.println("Ejacutando Guardar:"+sql_to_query);
+        System.out.println("Ejacutando pro_adm_procesos:"+sql_to_query);
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         String valor_retorno="";
 
@@ -102,9 +102,9 @@ public class ProSpringDao implements ProInterfaceDao{
 
     @Override
     public HashMap<String, String> getDocumentoByName(String doc, Integer id_empresa, Integer id_sucursal) {
-
+        
         String sql_to_query = "select * from pro_docs_calidad where borrado_logico=false and titulo ilike '"+doc+"' and gral_emp_id="+id_empresa+" and gral_suc_id="+id_sucursal;
-
+        
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
 
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
