@@ -576,6 +576,7 @@ $(function() {
                         trr += '<td width="80" class="grid1">';
                         trr += '<select id="unidad_default'+trCount+'" name="unidad_default" >';
                         unidad = unidad.toUpperCase();
+                        
                         if(/^KILO*|KILOGRAMO$/.test(unidad)){
                             trr += '<option value="'+unidad_id+'" name="unidad_id" selected="yes">'+unidad+'</option>';
                             trr += '<option value="0">LITRO</option>';
@@ -584,6 +585,7 @@ $(function() {
                             trr += '<option value="'+unidad_id+'" selected="yes">'+unidad+'</option>';
                             trr += '<option value="0">KILO</option>';
                         }
+                        
                         trr += '</select>';
                         trr += '<input type="hidden" name="densidad" value="'+densidad+'" >';
                         trr += '<input type="hidden" name="unidad_id" value="'+unidad_id+'" >';
@@ -687,7 +689,7 @@ $(function() {
                     trr += '<td width="80" class="grid1" align="center">';
                         trr += '<input type="text" name="sku'+trCount+'" value="'+sku+'"  class="borde_oculto" readOnly="true" style="width:88px;">';
                     trr += '</td>';
-                    trr += '<td width="200" class="grid1"><input type="text" name="descripcion'+trCount+'" value="'+descripcion+'"  class="borde_oculto" readOnly="true" style="width:198px;"></td>';
+                    trr += '<td width="446" class="grid1"><input type="text" name="descripcion'+trCount+'" value="'+descripcion+'"  class="borde_oculto" readOnly="true" style="width:198px;"></td>';
                     
                     if(id_reg == "0"){
                         trr += '<td width="100" class="grid1">';
@@ -994,7 +996,7 @@ $(function() {
                     trr += '<td width="100" class="grid1" align="center">';
                         trr += '<input type="text" name="sku'+trCount+'" value="'+sku+'"  class="borde_oculto" readOnly="true" style="width:98px;">';
                     trr += '</td>';
-                    trr += '<td width="220" class="grid1"><input type="text" name="descripcion'+trCount+'" value="'+descripcion+'"  class="borde_oculto" readOnly="true" style="width:208px;"></td>';
+                    trr += '<td width="446" class="grid1"><input type="text" name="descripcion'+trCount+'" value="'+descripcion+'"  class="borde_oculto" readOnly="true" style="width:208px;"></td>';
                     
                     trr += '<td width="100" class="grid1">';
                         trr += '<input type="text" name="subproceso" value="'+subprocesos['subproceso']+'"  class="borde_oculto" style="width:70px;" readOnly="true" >';
@@ -1191,21 +1193,6 @@ $(function() {
             var $campo_dureza = $('#forma-especificaciones-window').find('input[name=dureza]');
             var $campo_adherencia = $('#forma-especificaciones-window').find('input[name=adherencia]');
             var $campo_hidrogeno = $('#forma-especificaciones-window').find('input[name=hidrogeno]');
-            
-            /*
-            var $campo_fineza1 = $('#forma-especificaciones-window').find('input[name=fineza1]');
-            var $campo_viscosidad11 = $('#forma-especificaciones-window').find('input[name=viscosidad11]');
-            var $campo_viscosidad21 = $('#forma-especificaciones-window').find('input[name=viscosidad21]');
-            var $campo_viscosidad31 = $('#forma-especificaciones-window').find('input[name=viscosidad31]');
-            var $campo_densidad1 = $('#forma-especificaciones-window').find('input[name=densidad1]');
-            var $campo_volatil1 = $('#forma-especificaciones-window').find('input[name=volatil1]');
-            var $campo_cubriente1 = $('#forma-especificaciones-window').find('input[name=cubriente1]');
-            var $campo_tono1 = $('#forma-especificaciones-window').find('input[name=tono1]');
-            var $campo_brillo1 = $('#forma-especificaciones-window').find('input[name=brillo1]');
-            var $campo_dureza1 = $('#forma-especificaciones-window').find('input[name=dureza1]');
-            var $campo_adherencia1 = $('#forma-especificaciones-window').find('input[name=adherencia1]');
-            var $campo_hidrogeno1 = $('#forma-especificaciones-window').find('input[name=hidrogeno1]');
-            */
             
             //para desplegar los instrumentos en el select
             var $select_inst_fineza = $('#forma-especificaciones-window').find('select[name=inst_fineza]');
@@ -1777,7 +1764,7 @@ $(function() {
                     trr += '<td width="80" class="grid1" align="center">';
                         trr += '<input type="text" name="sku'+trCount+'" value="'+sku+'"  class="borde_oculto" readOnly="true" style="width:78px;">';
                     trr += '</td>';
-                    trr += '<td width="200" class="grid1"><input type="text" name="descripcion'+trCount+'" value="'+descripcion+'"  class="borde_oculto" readOnly="true" style="width:208px;"></td>';
+                    trr += '<td width="446" class="grid1"><input type="text" name="descripcion'+trCount+'" value="'+descripcion+'"  class="borde_oculto" readOnly="true" style="width:208px;"></td>';
                     
                     
                     trr += '<td width="100" class="grid1">';
@@ -1916,22 +1903,23 @@ $(function() {
                         
                         $.post(input_json,$arreglo,function(producto){
                             html_tabla = '<tr>';
-                                html_tabla += '<td colspan="8" width="885">';
+                                html_tabla += '<td colspan="8" width="1000">';
                                     //html_tabla += '<form id="guarda_lotes" action="guarda_lotes.json" method="POST" >';
                                         html_tabla += '<table class="detalle_por_prod" border="1">';
                                             html_tabla += '<header>';
-                                                html_tabla += '<td class="grid" width="70">&nbsp;#</td>';
-                                                html_tabla += '<td class="grid" width="80">&nbsp;Codigo</td>';
-                                                html_tabla += '<td class="grid" width="175">&nbsp;Descripci&oacute;n</td>';
-                                                html_tabla += '<td class="grid" width="80">&nbsp;Cantidad</td>';
-                                                html_tabla += '<td class="grid" width="80">&nbsp;Adicional</td>';
-                                                html_tabla += '<td class="grid" width="130" >&nbsp;Lote</td>';
-                                                html_tabla += '<td class="grid" width="50" >&nbsp;Exist</td>';
-                                                html_tabla += '<td class="grid" width="100" >&nbsp;Sucursal</td>';
-                                                html_tabla += '<td class="grid" width="110" >&nbsp;Almacen</td>';
+                                                html_tabla += '<td class="grid" width="70px">&nbsp;#</td>';
+                                                html_tabla += '<td class="grid" width="80px">&nbsp;Codigo</td>';
+                                                html_tabla += '<td class="grid" width="200px">&nbsp;Descripci&oacute;n</td>';
+                                                html_tabla += '<td class="grid" width="80px">&nbsp;Cantidad</td>';
+                                                html_tabla += '<td class="grid" width="90px">&nbsp;Adicional</td>';
+                                                html_tabla += '<td class="grid" width="90px">&nbsp;Uso Real</td>';
+                                                html_tabla += '<td class="grid" width="130px" >&nbsp;Lote</td>';
+                                                html_tabla += '<td class="grid" width="50px" >&nbsp;Exist</td>';
+                                                html_tabla += '<td class="grid" width="100px" >&nbsp;Sucursal</td>';
+                                                html_tabla += '<td class="grid" width="110px" >&nbsp;Almacen</td>';
                                             html_tabla += '</header>';
                                         html_tabla += '</table>';
-                                        html_tabla += '<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:890; height: 200px; border:1px solid #C1DAD7 !important;">';
+                                        html_tabla += '<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1000; height: 200px; border:1px solid #C1DAD7 !important;">';
                                             html_tabla += '<table class="detalle_por_prod" >';
                                                 html_tabla += '<tbody style="background-color: #FFFFFF;" valign="top" id="detalle_por_prod'+$id_producto.val()+$posicion.val()+'">';
                                                 html_tabla += '</tbody>';
@@ -2210,7 +2198,7 @@ $(function() {
             trCount++;
             
             tmp_html = '<tr>';
-                tmp_html += '<td width="70" class="grid1" align="center" >';
+                tmp_html += '<td width="70px" class="grid1" align="center" >';
                     
                     if(inv_osal_id == 0){
                         tmp_html += '<a href="#elimina_producto_componente" id="elimina_producto_componente'+trCount+'">';
@@ -2220,15 +2208,9 @@ $(function() {
                             tmp_html += "Eliminar";
                     }
                     
-                    /* html_tabla += '<td class="grid" width="80">&nbsp;#</td>';
-                                                html_tabla += '<td class="grid" width="90">&nbsp;Codigo</td>';
-                                                html_tabla += '<td class="grid" width="290">&nbsp;Descripci&oacute;n</td>';
-                                                html_tabla += '<td class="grid" width="100">&nbsp;Cantidad</td>';
-                                                html_tabla += '<td class="grid" width="90">&nbsp;Adicional</td>';
-                                                html_tabla += '<td class="grid" width="150" >&nbsp;Lote</td>';
-                                                html_tabla += '<td class="grid" width="90" >&nbsp;Almacen</td>';*/
+            
                 tmp_html += '</td>';
-                tmp_html += '<td width="80" class="grid1" align="center" >';
+                tmp_html += '<td width="80px" class="grid1" align="center" >';
                     tmp_html += '<input type="hidden" id="id_reg_parent" name="id_reg_parent" value="'+id_reg_parent+'">';
                     tmp_html += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
                     tmp_html += '<input type="hidden" id="inv_osal_id" name="inv_osal_id" value="'+inv_osal_id+'">';
@@ -2245,7 +2227,7 @@ $(function() {
                     
                 tmp_html += '</td>';
                 
-                tmp_html += '<td width="175" class="grid1">';
+                tmp_html += '<td width="200px" class="grid1">';
                     tmp_html += '<input type="text" name="descripcoin" value="'+$descripcion+'"  class="borde_oculto" style="width:150px;" readOnly="true" >';
                 tmp_html += '</td>';
                 tmp_html += '<td width="80" class="grid1">';
@@ -2255,11 +2237,14 @@ $(function() {
                         tmp_html += '<input type="text" name="cantidad_elemento" id="cantidad_elemento'+trCount+'" value="'+$cantidad+'"  class="borde_oculto" style="width:70px;" readOnly="true" >';
                     }
                 tmp_html += '</td>';
-                tmp_html += '<td width="80" class="grid1">';
+                tmp_html += '<td width="90px" class="grid1">';
                     tmp_html += '<input type="text" id="cantidad_adicional'+trCount+'" name="cantidad_adicional" value="'+cantidad_adicional+'"  style="width:70px;" readOnly="true">';
                 tmp_html += '</td>';
+                tmp_html += '<td width="90px" class="grid1">';
+                    tmp_html += '<input type="text" id="cantidad_real'+trCount+'" name="cantidad_real" value="'+$cantidad+'"  style="width:70px;" readOnly="true">';
+                tmp_html += '</td>';
                 
-                tmp_html += '<td width="130" class="grid1" >';
+                tmp_html += '<td width="130px" class="grid1" >';
                 
                 if(num_lote == " " || num_lote == ""){
                     if(inv_osal_id != 0){
@@ -2274,8 +2259,8 @@ $(function() {
                 }
                 
                 tmp_html += '</td>';
-                tmp_html += '<td width="50" class="grid1"><input type="text" name="existencia" id="existencia'+trCount+'" value="0"  style="width:50px;" readOnly="true"></td>';
-                tmp_html += '<td width="100" class="grid1">';
+                tmp_html += '<td width="50px" class="grid1"><input type="text" name="existencia" id="existencia'+trCount+'" value="0"  style="width:50px;" readOnly="true"></td>';
+                tmp_html += '<td width="100px" class="grid1">';
                 tmp_html += '<select name="sucursal" id="sucursal'+trCount+'" style="width:85px;">';
                 //para mostrar las sucursales en los componentes de la orden de produccion
                 selececcionado = 0;
@@ -2294,7 +2279,7 @@ $(function() {
                 
                 tmp_html += '</td>';
                 //para mostrar los almacenes en los componentes de la orden de produccion
-                tmp_html += '<td width="110" class="grid1">';
+                tmp_html += '<td width="110px" class="grid1">';
                 tmp_html += '<select name="almacen" id="almacen'+trCount+'" style="width:85px;">';
                 tmp_html += '<option value="0"  >[- Selecciona un almacen -]</option>';
                 selececcionado = 0;
@@ -2441,13 +2426,13 @@ $(function() {
                 
                 
                 tmp_html = '<tr>';
-                tmp_html += '<td width="70" class="grid1" align="center" >';
+                tmp_html += '<td width="70px" class="grid1" align="center" >';
                     tmp_html += '<a href="#elimina_producto_componente" id="elimina_producto_componente'+trCount+'">';
                         tmp_html += "Eliminar";
                     tmp_html += '</a>';
                 tmp_html += '</td>';
                 
-                tmp_html += '<td class="grid1" align="center" colspan="2" >';
+                tmp_html += '<td class="grid1" align="center" colspan="2" width="280px">';
                     tmp_html += '<input type="hidden" id="id_reg_parent" name="id_reg_parent" value="'+id_reg_parent+'">';
                     tmp_html += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
                     tmp_html += '<input type="hidden" id="inv_osal_id" name="inv_osal_id" value="0">';
@@ -2460,32 +2445,38 @@ $(function() {
                     tmp_html += '<input type="hidden" id="id_prod_detalle" name="id_prod_detalle" value="'+$id_prod_detalle +'">';
                 tmp_html += '</td>';
                 
-                tmp_html += '<td width="80" class="grid1">';
+                tmp_html += '<td width="80px" class="grid1">';
                     tmp_html += '<input type="text" name="cantidad_elemento" value="'+cantidad_elemento+'"  class="borde_oculto" style="width:70px;" readOnly="true" >';
                 tmp_html += '</td>';
-                tmp_html += '<td width="80" class="grid1">';
+                tmp_html += '<td width="90px" class="grid1">';
                     tmp_html += '<input type="text" name="cantidad_adicional" value="'+cantidad_adicional+'"  style="width:70px;" >';
                 tmp_html += '</td>';
+                tmp_html += '<td width="90px" class="grid1">';
+                    tmp_html += '<input type="text" id="cantidad_real'+trCount+'" name="cantidad_real" value="'+$cantidad+'"  style="width:70px;" readOnly="true">';
+                tmp_html += '</td>';
                 
-                tmp_html += '<td width="130" class="grid1">';
+                tmp_html += '<td width="130px" class="grid1">';
                     tmp_html += '<input type="text" name="lote" id="lote'+trCount+'" value=" "  style="width:100px;">';
                     tmp_html += '<a href="#remove_lote'+trCount+'" id="remove_lote'+trCount+'">-</a>';
                 tmp_html += '</td>';
                 
                 
                 
-                tmp_html += '<td width="50" class="grid1"><input type="text" name="existencia" id="existencia'+trCount+'" value="0"  style="width:50px;" readOnly="true"></td>';
-                tmp_html += '<td width="100" class="grid1">';
+                tmp_html += '<td width="50px" class="grid1"><input type="text" name="existencia" id="existencia'+trCount+'" value="0"  style="width:50px;" readOnly="true"></td>';
+                tmp_html += '<td width="100px" class="grid1">';
                 
                 tmp_html += '<select name="sucursal" id="sucursal'+trCount+'" style="width:85px;">';
                 tmp_html += '<option value="0"  >[- Selecciona una sucursal -]</option>';
+                
                 $.each(array_sucursales, function(entryIndex,item){
                     tmp_html += '<option value="' + item['id'] + '"  >' + item['sucursal'] + '</option>';
                 });
+                
                 tmp_html += '</select>';
                 tmp_html += '</td>';
+                
                 //para mostrar los almacenes en los componentes de la orden de produccion
-                tmp_html += '<td width="110" class="grid1">';
+                tmp_html += '<td width="110px" class="grid1">';
                 selececcionado = 0;
                 tmp_html += '<select name="almacen" id="almacen'+trCount+'" style="width:85px;">';
                 tmp_html += '<option value="0"  >[- Selecciona un almacen -]</option>';
@@ -2507,7 +2498,6 @@ $(function() {
                 $tmp_this_tr.find('#almacen'+trCount).change(function(event) {
                     event.preventDefault();
                     
-                    alert($(this).parent().parent().parent().html());
                     /*
                     //obtiene los tipos de almacen para el buscador
                     var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_existenciapor_producto.json';
@@ -2864,7 +2854,7 @@ $(function() {
                 html_header = '';
                 html_header += '<td class="grid" id="td_eliminar" width="61"><div class="delete">&nbsp;#</div></td>';
                 html_header += '<td class="grid" width="80">&nbsp;Codigo<td>';
-                html_header += '<td class="grid" width="200">&nbsp;Descripci&oacute;n</td>';
+                html_header += '<td class="grid" width="446">&nbsp;Descripci&oacute;n</td>';
                 html_header += '<td class="grid" width="100">&nbsp;Subproceso</td>';
                 html_header += '<td class="grid" width="100">&nbsp;Lote</td>';
                 html_header += '<td class="grid" width="100">&nbsp;Especificaciones</td>';
@@ -2878,7 +2868,7 @@ $(function() {
         
         
         $ocullta_de_acuerdo_a_el_tipo_y_estatus = function($tipo, estatus, cantidad_salida){
-            
+            //alert($tipo +"    "+ estatus);
             //tipos de preorden
             var $preorden_tipo_pedido = $('#forma-proordenproduccion-window').find('.tipo_pedido');
             var tipo_stock_laboratorio = $('#forma-proordenproduccion-window').find('.tipo_stock_laboratorio'); 
@@ -2938,7 +2928,7 @@ $(function() {
                     tipo_stock_laboratorio.show();
                     $buscar_producto.show();
                     $agregar_producto.show();
-                    $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'480px'});
+                    $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'505px'});
                 }
                 
                 if($tipo == 3){
@@ -2946,11 +2936,12 @@ $(function() {
                     tipo_stock_laboratorio.show();
                     $buscar_producto.show();
                     $agregar_producto.show();
-                    $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'480px'});
+                    $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'490px'});
                 }
             }
             
             if(estatus == "2"){
+                
                 $costo_ultimo.hide();
                 $costo_ultimo_text.hide();
                 $submit_actualizar.hide();
@@ -2968,6 +2959,7 @@ $(function() {
             }
             
             if(estatus == "3"){
+                
                 $costo_ultimo.hide();
                 $costo_ultimo_text.hide();
                 $submit_actualizar.hide();
@@ -3115,7 +3107,7 @@ $(function() {
             var $forma_selected = $('#' + form_to_show).clone();
             $forma_selected.attr({id : form_to_show + id_to_show});
             
-            $('#forma-proordenproduccion-window').css({"margin-left": -375, "margin-top": -230});
+            $('#forma-proordenproduccion-window').css({"margin-left": -415, "margin-top": -230});
             
             $forma_selected.prependTo('#forma-proordenproduccion-window');
             $forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -3286,6 +3278,7 @@ $(function() {
                     
                     array_almacenes = entry['Almacenes'];
                     
+                    $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'450px'});
                     $select_tipoorden.change(function(){
                         tipo_preorden = $select_tipoorden.val();
                         
@@ -3423,7 +3416,7 @@ $(function() {
                         var $forma_selected = $('#' + form_to_show).clone();
                         $forma_selected.attr({id : form_to_show + id_to_show});
                         
-                        $('#forma-proordenproduccion-window').css({"margin-left": -375, "margin-top": -230});
+                        $('#forma-proordenproduccion-window').css({"margin-left": -415, "margin-top": -230});
                         
                         $forma_selected.prependTo('#forma-proordenproduccion-window');
                         $forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
