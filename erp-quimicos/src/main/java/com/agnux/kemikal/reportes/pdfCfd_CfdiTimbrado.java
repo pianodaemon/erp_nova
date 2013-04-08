@@ -555,8 +555,13 @@ public final class pdfCfd_CfdiTimbrado {
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             table.addCell(cell);
             
+            String hora="";
+            if(this.getFacha_comprobante().contains("T")){
+                hora = fecha1[1];
+            }
+            
             //aqui debe ir la hora
-            cell = new PdfPCell(new Paragraph(fecha1[1],smallFont));
+            cell = new PdfPCell(new Paragraph(hora,smallFont));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
