@@ -718,7 +718,6 @@ $(function() {
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
-		var ncontrol_selec=0;
 		var html = '';
 		$select_filtro_por.children().remove();
 		html='<option value="0">[-- Opcion busqueda --]</option>';
@@ -726,7 +725,6 @@ $(function() {
 		if(numero_control != ''){
 			//asignamos el numero de control al campo de busqueda
 			$cadena_buscar.val(numero_control);
-			ncontrol_selec=1;
 			if(razon_social_cliente == ''){
 				html+='<option value="1" selected="yes">No. de control</option>';
 			}else{

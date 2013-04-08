@@ -44,6 +44,7 @@ $(function() {
 	var $cadena_busqueda = "";
 	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
 	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
+	var $busqueda_factura = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_factura]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
@@ -70,6 +71,7 @@ $(function() {
 		var signo_separador = "=";
 		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
+		valor_retorno += "factura" + signo_separador + $busqueda_factura.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val();
 		return valor_retorno;
@@ -86,10 +88,13 @@ $(function() {
 	});
 	
 	$limpiar.click(function(event){
-		$busqueda_factura.val('');
+		$busqueda_folio.val('');
 		$busqueda_cliente.val('');
+		$busqueda_factura.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
+		
+		$busqueda_factura.focus();
 	});
 	
 	
@@ -124,9 +129,15 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_folio.focus();
 	});
 	
-	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_factura, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
 	
 
 	//----------------------------------------------------------------
@@ -315,161 +326,242 @@ $(function() {
 	}
 	
 	
+	
+	var $agregarDatosClienteSeleccionado = function($select_moneda, $select_vendedor, array_monedas, array_vendedores, id_cliente, nocliente, razoncliente, empresa_immex, tasa_ret_immex, id_moneda, id_vendedor){
+		//asignar a los campos correspondientes los datos del cliente
+		$('#forma-notascredito-window').find('input[name=id_cliente]').val( id_cliente );
+		$('#forma-notascredito-window').find('input[name=nocliente]').val( nocliente );
+		$('#forma-notascredito-window').find('input[name=razoncliente]').val( razoncliente );
+		$('#forma-notascredito-window').find('input[name=empresa_immex]').val( empresa_immex );
+		$('#forma-notascredito-window').find('input[name=tasa_ret_immex]').val( tasa_ret_immex );
+		
+		//carga el select de monedas  con la moneda del cliente seleccionada por default
+		$select_moneda.children().remove();
+		var moneda_hmtl = '';
+		$.each(array_monedas ,function(entryIndex,moneda){
+			if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+				moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+			}else{
+				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+			}
+		});
+		$select_moneda.append(moneda_hmtl);
+		
+		
+		//carga select de vendedores
+		$select_vendedor.children().remove();
+		var hmtl_vendedor;
+		$.each(array_vendedores,function(entryIndex,vendedor){
+			if( parseInt(vendedor['id']) == parseInt(id_vendedor) ){
+				hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_vendedor'] + '</option>';
+			}else{
+				//hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
+			}
+		});
+		$select_vendedor.append(hmtl_vendedor);
+	};
+	
+	
 	//buscador de clientes
-	$busca_clientes = function($select_moneda, $select_vendedor, array_monedas, array_vendedores ){
-            //limpiar_campos_grids();
-            $(this).modalPanel_Buscacliente();
-            var $dialogoc =  $('#forma-buscacliente-window');
-            //var $dialogoc.prependTo('#forma-buscaproduct-window');
-            $dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
-            $('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -180});
+	$busca_clientes = function($select_moneda, $select_vendedor, array_monedas, array_vendedores, razon_social_cliente, numero_control ){
+		//limpiar_campos_grids();
+		$(this).modalPanel_Buscacliente();
+		var $dialogoc =  $('#forma-buscacliente-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
+		$('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -180});
+		
+		var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
+		var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
+		var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('#cencela');
+		
+		var $cadena_buscar = $('#forma-buscacliente-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscacliente-window').find('select[name=filtropor]');
+		
+		//funcionalidad botones
+		$busca_cliente_modalbox.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$busca_cliente_modalbox.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		   
+		$cancelar_plugin_busca_cliente.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		$cancelar_plugin_busca_cliente.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		
+		var html = '';
+		$select_filtro_por.children().remove();
+		html='<option value="0">[-- Opcion busqueda --]</option>';
+		
+		if(numero_control != ''){
+			//asignamos el numero de control al campo de busqueda
+			$cadena_buscar.val(numero_control);
+			if(razon_social_cliente == ''){
+				html+='<option value="1" selected="yes">No. de control</option>';
+			}else{
+				html+='<option value="1">No. de control</option>';
+			}
+		}else{
+			html+='<option value="1">No. de control</option>';
+		}
+		html+='<option value="2">RFC</option>';
+		if(razon_social_cliente != ''){
+			//asignamos la Razon Social del Cliente al campo Nombre
+			$cadena_buscar.val(razon_social_cliente);
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}else{
+			if(razon_social_cliente == '' && numero_control == ''){
+				html+='<option value="3" selected="yes">Razon social</option>';
+			}else{
+				html+='<option value="3">Razon social</option>';
+			}
+		}
+		html+='<option value="4">CURP</option>';
+		html+='<option value="5">Alias</option>';
+		$select_filtro_por.append(html);
+		
+		
+		$cadena_buscar.focus();
+		
+		
+		
+		//click buscar clientes
+		$busca_cliente_modalbox.click(function(event){
+			//event.preventDefault();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_clientes.json';
+			$arreglo = {	'cadena':$cadena_buscar.val(),
+							'filtro':$select_filtro_por.val(),
+							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+						}
 			
-            var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
-			var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
-			var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('#cencela');
-			
-            var $cadena_buscar = $('#forma-buscacliente-window').find('input[name=cadena_buscar]');
-            var $select_filtro_por = $('#forma-buscacliente-window').find('select[name=filtropor]');
-            
-            //funcionalidad botones
-			$busca_cliente_modalbox.mouseover(function(){
-				$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
-			});
-			$busca_cliente_modalbox.mouseout(function(){
-				$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
-			});
-			   
-			$cancelar_plugin_busca_cliente.mouseover(function(){
-				$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
-			});
-			$cancelar_plugin_busca_cliente.mouseout(function(){
-				$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
-			});
-            
-            var html = '';
-            $select_filtro_por.children().remove();
-            html='<option value="0">[-- Opcion busqueda --]</option>';
-            html+='<option value="1">No. de control</option>';
-            html+='<option value="2">RFC</option>';
-            html+='<option value="3">Razon social</option>';
-            html+='<option value="4">CURP</option>';
-            html+='<option value="5">Alias</option>';
-            $select_filtro_por.append(html);
-			
-			
-			
-            //click buscar clientes
-            $busca_cliente_modalbox.click(function(event){
-                //event.preventDefault();
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_clientes.json';
-                $arreglo = {	'cadena':$cadena_buscar.val(),
-                                'filtro':$select_filtro_por.val(),
-                                'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                            }
-                
-                var trr = '';
-                $tabla_resultados.children().remove();
-                $.post(input_json,$arreglo,function(entry){
-                    $.each(entry['clientes'],function(entryIndex,cliente){
-                        trr = '<tr>';
-                            trr += '<td width="80">';
-                                trr += '<input type="hidden" id="idclient" value="'+cliente['id']+'">';
-                                trr += '<input type="hidden" id="direccion" value="'+cliente['direccion']+'">';
-                                trr += '<input type="hidden" id="id_moneda" value="'+cliente['moneda_id']+'">';
-                                trr += '<input type="hidden" id="moneda" value="'+cliente['moneda']+'">';
-                                trr += '<input type="hidden" id="vendedor_id" value="'+cliente['cxc_agen_id']+'">';
-                                trr += '<input type="hidden" id="terminos_id" value="'+cliente['terminos_id']+'">';
-								trr += '<input type="hidden" id="emp_immex" value="'+cliente['empresa_immex']+'">';
-								trr += '<input type="hidden" id="tasa_immex" value="'+cliente['tasa_ret_immex']+'">';
-								trr += '<input type="hidden" id="cta_mn" value="'+cliente['cta_pago_mn']+'">';
-								trr += '<input type="hidden" id="cta_usd" value="'+cliente['cta_pago_usd']+'">';
-                                trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
-                            trr += '</td>';
-                            trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
-                            trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
-                        trr += '</tr>';
-                        
-                        $tabla_resultados.append(trr);
-                    });
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['clientes'],function(entryIndex,cliente){
+					trr = '<tr>';
+						trr += '<td width="80">';
+							trr += '<input type="hidden" id="idclient" value="'+cliente['id']+'">';
+							trr += '<input type="hidden" id="direccion" value="'+cliente['direccion']+'">';
+							trr += '<input type="hidden" id="id_moneda" value="'+cliente['moneda_id']+'">';
+							trr += '<input type="hidden" id="moneda" value="'+cliente['moneda']+'">';
+							trr += '<input type="hidden" id="vendedor_id" value="'+cliente['cxc_agen_id']+'">';
+							trr += '<input type="hidden" id="terminos_id" value="'+cliente['terminos_id']+'">';
+							trr += '<input type="hidden" id="emp_immex" value="'+cliente['empresa_immex']+'">';
+							trr += '<input type="hidden" id="tasa_immex" value="'+cliente['tasa_ret_immex']+'">';
+							trr += '<input type="hidden" id="cta_mn" value="'+cliente['cta_pago_mn']+'">';
+							trr += '<input type="hidden" id="cta_usd" value="'+cliente['cta_pago_usd']+'">';
+							trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
+						trr += '</td>';
+						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
+						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
+					trr += '</tr>';
 					
-                    $tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
-                    $tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+				
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//seleccionar un producto del grid de resultados
+				$tabla_resultados.find('tr').click(function(){
+					var id_cliente = $(this).find('#idclient').val();
+					var nocliente = $(this).find('span.no_control').html();
+					var razoncliente = $(this).find('span.razon').html();
+					var empresa_immex = $(this).find('#emp_immex').val();
+					var tasa_ret_immex = $(this).find('#tasa_immex').val();
+					var id_moneda=$(this).find('#id_moneda').val();
+					var id_vendedor=$(this).find('#vendedor_id').val();
 					
-                    $('tr:odd' , $tabla_resultados).hover(function () {
-                        $(this).find('td').css({background : '#FBD850'});
-                    }, function() {
-                        $(this).find('td').css({'background-color':'#e7e8ea'});
-                    });
-                    $('tr:even' , $tabla_resultados).hover(function () {
-                        $(this).find('td').css({'background-color':'#FBD850'});
-                    }, function() {
-                        $(this).find('td').css({'background-color':'#FFFFFF'});
-                    });
-                    
-                    //seleccionar un producto del grid de resultados
-                    $tabla_resultados.find('tr').click(function(){
-                        //asignar a los campos correspondientes el sku y y descripcion
-                        $('#forma-notascredito-window').find('input[name=id_cliente]').val($(this).find('#idclient').val());
-                        $('#forma-notascredito-window').find('input[name=nocliente]').val($(this).find('span.no_control').html());
-                        $('#forma-notascredito-window').find('input[name=razoncliente]').val($(this).find('span.razon').html());
-						$('#forma-notascredito-window').find('input[name=empresa_immex]').val($(this).find('#emp_immex').val());
-						$('#forma-notascredito-window').find('input[name=tasa_ret_immex]').val($(this).find('#tasa_immex').val());
-						//$('#forma-notascredito-window').find('input[name=cta_mn]').val($(this).find('#cta_mn').val());
-						//$('#forma-notascredito-window').find('input[name=cta_usd]').val($(this).find('#cta_usd').val());						
-						
-						var id_moneda=$(this).find('#id_moneda').val();
-						var id_vendedor=$(this).find('#vendedor_id').val();
-						
-						//carga el select de monedas  con la moneda del cliente seleccionada por default
-						$select_moneda.children().remove();
-						var moneda_hmtl = '';
-						$.each(array_monedas ,function(entryIndex,moneda){
-							if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-								moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-							}else{
-								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-							}
-						});
-						$select_moneda.append(moneda_hmtl);
-						
-						
-						//carga select de vendedores
-						$select_vendedor.children().remove();
-						var hmtl_vendedor;
-						$.each(array_vendedores,function(entryIndex,vendedor){
-							if( parseInt(vendedor['id']) == parseInt(id_vendedor) ){
-								hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_vendedor'] + '</option>';
-							}else{
-								//hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
-							}
-						});
-						$select_vendedor.append(hmtl_vendedor);
-						
-                        
-                        //elimina la ventana de busqueda
-                        var remove = function() {$(this).remove();};
-                        $('#forma-buscacliente-overlay').fadeOut(remove);
-                        //asignar el enfoque al campo sku del producto
-                    });
-                });
-            });//termina llamada json
+					//llamada a funcion que aguega datos del Cliente
+					$agregarDatosClienteSeleccionado($select_moneda, $select_vendedor, array_monedas, array_vendedores, id_cliente, nocliente, razoncliente, empresa_immex, tasa_ret_immex, id_moneda, id_vendedor);
+					
+					//elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscacliente-overlay').fadeOut(remove);
+					//asignar el enfoque al campo Razon Social del Cliente
+					$('#forma-notascredito-window').find('input[name=razoncliente]').focus();
+				});
+			});
+		});//termina llamada json
+		
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_buscar.val() != ''){
+			$busca_cliente_modalbox.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_cliente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_cliente_modalbox);
+		
+		
+		$cancelar_plugin_busca_cliente.click(function(event){
+			//event.preventDefault();
+			var remove = function() {$(this).remove();};
+			$('#forma-buscacliente-overlay').fadeOut(remove);
 			
-            $cancelar_plugin_busca_cliente.click(function(event){
-                //event.preventDefault();
-                var remove = function() {$(this).remove();};
-                $('#forma-buscacliente-overlay').fadeOut(remove);
-            });
+			//asignar el enfoque al campo Razon Social del Cliente
+			$('#forma-notascredito-window').find('input[name=razoncliente]').focus();
+		});
 	}//termina buscador de clientes
 	
 	
 	
+	var $agregarDatosFacturaSeleccionada = function($select_moneda,$select_vendedor, array_monedas, array_vendedores, $factura, $fecha_factura, $monto_factura, $aplicado, $saldo, factura, id_moneda, id_agente, monto_factura, saldo_factura, fecha_factura){
+		$('#forma-notascredito-window').find('input[name=id_moneda_factura]').val(id_moneda);
+		var monto_aplicado=parseFloat(monto_factura) - parseFloat(saldo_factura);
+		
+		$factura.val(factura);
+		$fecha_factura.val(fecha_factura);
+		$monto_factura.val( $(this).agregar_comas( parseFloat(monto_factura).toFixed(2)));
+		$aplicado.val( $(this).agregar_comas(monto_aplicado.toFixed(2)));
+		$saldo.val( $(this).agregar_comas(parseFloat(saldo_factura).toFixed(2)) );
+		
+		//carga el select de monedas  con la moneda del cliente seleccionada por default
+		$select_moneda.children().remove();
+		var moneda_hmtl = '';
+		$.each(array_monedas ,function(entryIndex,moneda){
+			if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+				moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+			}else{
+				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+			}
+		});
+		$select_moneda.append(moneda_hmtl);
+		
+		//carga select de vendedores
+		$select_vendedor.children().remove();
+		var hmtl_vendedor;
+		$.each(array_vendedores,function(entryIndex,vendedor){
+			if( parseInt(vendedor['id']) == parseInt(id_agente) ){
+				hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_vendedor'] + '</option>';
+			}else{
+				//hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
+			}
+		});
+		$select_vendedor.append(hmtl_vendedor);
+	};
 	
 	
-	
-	//buscador de facturas sin con saldo del cliente seleccionado
+	//buscador de facturas con saldo del cliente seleccionado
 	$busca_facturas = function($select_moneda,$select_vendedor, id_cliente, array_monedas, array_vendedores, $factura, $fecha_factura, $monto_factura, $aplicado, $saldo){
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFacturasCliente.json';
-		$arreglo = {'id_cliente':id_cliente	};
+		$arreglo = {'id_cliente':id_cliente, 'serie_folio':$factura.val()};
 		
 		var trr = '';
 		
@@ -537,52 +629,28 @@ $(function() {
 						var monto_factura = $(this).find('span.monto').html();
 						var saldo_factura = $(this).find('span.saldo').html();
 						var fecha_factura = $(this).find('span.fech_fac').html();
-						$('#forma-notascredito-window').find('input[name=id_moneda_factura]').val(id_moneda);
-						var monto_aplicado=parseFloat(monto_factura) - parseFloat(saldo_factura);
 						
-						$factura.val(factura);
-						$fecha_factura.val(fecha_factura);
-						$monto_factura.val( $(this).agregar_comas( parseFloat(monto_factura).toFixed(2)));
-						$aplicado.val( $(this).agregar_comas(monto_aplicado.toFixed(2)));
-						$saldo.val( $(this).agregar_comas(parseFloat(saldo_factura).toFixed(2)) );
-						
-						//carga el select de monedas  con la moneda del cliente seleccionada por default
-						$select_moneda.children().remove();
-						var moneda_hmtl = '';
-						$.each(array_monedas ,function(entryIndex,moneda){
-							if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-								moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-							}else{
-								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-							}
-						});
-						$select_moneda.append(moneda_hmtl);
-						
-						
-						//carga select de vendedores
-						$select_vendedor.children().remove();
-						var hmtl_vendedor;
-						$.each(array_vendedores,function(entryIndex,vendedor){
-							if( parseInt(vendedor['id']) == parseInt(id_agente) ){
-								hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_vendedor'] + '</option>';
-							}else{
-								//hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
-							}
-						});
-						$select_vendedor.append(hmtl_vendedor);
+						//llamada a la funcion para agregar datos de la factura
+						$agregarDatosFacturaSeleccionada($select_moneda,$select_vendedor, array_monedas, array_vendedores, $factura, $fecha_factura, $monto_factura, $aplicado, $saldo, factura, id_moneda, id_agente, monto_factura, saldo_factura, fecha_factura);
 						
 						//elimina la ventana de busqueda
 						var remove = function() {$(this).remove();};
 						$('#forma-buscafacturas-overlay').fadeOut(remove);
+						
+						$factura.focus();
 					});
 					
 					$cancelar_busca_remisiones.click(function(event){
 						//event.preventDefault();
 						var remove = function() {$(this).remove();};
 						$('#forma-buscafacturas-overlay').fadeOut(remove);
+						
+						$factura.focus();
 					});
 				}else{
-					jAlert("El cliente seleccionado no tiene Facturas pendientes de Pago.\nSeleccione un cliente diferente y haga click en Buscar.",'! Atencion');
+					jAlert('El cliente seleccionado no tiene Facturas pendientes de Pago.\nSeleccione un cliente diferente y haga click en Buscar.', 'Atencion!', function(r) { 
+						$('#forma-notascredito-window').find('input[name=nocliente]').focus(); 
+					});
 				}
 		});
 		
@@ -785,12 +853,26 @@ $(function() {
 		//$aplicar_evento_blur($importe);
 		//$aplicar_evento_focus($importe);
 		
+		$folio_nota_credito.css({'background' : '#F0F0F0'});
+		$fecha_factura.css({'background' : '#F0F0F0'});
+		$monto_factura.css({'background' : '#F0F0F0'});
+		$aplicado.css({'background' : '#F0F0F0'});
+		$saldo.css({'background' : '#F0F0F0'});
+		
 		$generar_nota_credito.attr('disabled','-1');
 		$cancelar_nota_credito.attr('disabled','-1');
 		$descargar_pdf.attr('disabled','-1');
 		$descargar_xml.attr('disabled','-1');
 		$fac_saldado.val('false');
 		$cancelado.hide();
+		
+		//quitar enter a todos los campos input
+		$('#forma-notascredito-window').find('input').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("Los datos se han guardado con &eacute;xito", 'Atencion!');
@@ -847,7 +929,7 @@ $(function() {
 			//buscador de clientes
 			$busca_cliente.click(function(event){
 				event.preventDefault();
-				$busca_clientes( $select_moneda,$select_vendedor, entry['Monedas'],entry['Vendedores'] );
+				$busca_clientes( $select_moneda,$select_vendedor, entry['Monedas'],entry['Vendedores'], $razon_cliente.val(), $no_cliente.val() );
 				$limpiar_campos($importe,$impuesto,$retencion,$total,$factura, $fecha_factura, $monto_factura, $monto_factura, $aplicado, $saldo, $fac_saldado);
 			});
 			
@@ -857,7 +939,9 @@ $(function() {
 				if ($razon_cliente.val()!=''){
 					$busca_facturas( $select_moneda,$select_vendedor,$id_cliente.val(), entry['Monedas'],entry['Vendedores'],$factura, $fecha_factura, $monto_factura, $aplicado, $saldo );
 				}else{
-					jAlert("Es necesario seleccionar un Cliente", 'Atencion!');
+					jAlert('Es necesario seleccionar un Cliente.', 'Atencion!', function(r) { 
+						$no_cliente.focus(); 
+					});
 				}
 			});
 			
@@ -876,6 +960,94 @@ $(function() {
 						});
 						$select_moneda.append(moneda_hmtl);
 					}
+				}
+			});
+			
+			//buscar y agregar datos del cliente al pulsar Enter
+			$no_cliente.keypress(function(e){
+				if(e.which == 13){
+					
+					var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoClient.json';
+					$arreglo2 = {'no_control':$no_cliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+					
+					$.post(input_json2,$arreglo2,function(entry2){
+						
+						if(parseInt(entry2['Cliente'].length) > 0 ){
+							var id_cliente = entry2['Cliente'][0]['id'];
+							var nocliente = entry2['Cliente'][0]['numero_control'];
+							var razoncliente = entry2['Cliente'][0]['razon_social'];
+							var empresa_immex = entry2['Cliente'][0]['empresa_immex'];
+							var tasa_ret_immex = entry2['Cliente'][0]['tasa_ret_immex'];
+							var id_moneda = entry2['Cliente'][0]['moneda_id'];
+							var id_vendedor = entry2['Cliente'][0]['cxc_agen_id'];
+							
+							//llamada a funcion que aguega datos del Cliente
+							$agregarDatosClienteSeleccionado($select_moneda, $select_vendedor, entry['Monedas'], entry['Vendedores'], id_cliente, nocliente, razoncliente, empresa_immex, tasa_ret_immex, id_moneda, id_vendedor);
+							
+						}else{
+							//limpiar campos del cliente
+							$('#forma-notascredito-window').find('input[name=id_cliente]').val(0);
+							$('#forma-notascredito-window').find('input[name=nocliente]').val('');
+							$('#forma-notascredito-window').find('input[name=razoncliente]').val('');
+							$('#forma-notascredito-window').find('input[name=empresa_immex]').val('');
+							$('#forma-notascredito-window').find('input[name=tasa_ret_immex]').val(0);
+							
+							jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
+								$('#forma-notascredito-window').find('input[name=nocliente]').focus(); 
+							});
+						}
+					},"json");//termina llamada json
+					
+					return false;
+				}
+			});
+			
+			
+			
+			//buscar y agregar datos de la Factura al pulsar Enter
+			$factura.keypress(function(e){
+				if(e.which == 13){
+					if ($no_cliente.val()!=''){
+						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosFactura.json';
+						$arreglo2 = {
+									'id_cliente':$id_cliente.val(),
+									'serie_folio':$factura.val(),  
+									'iu':$('#lienzo_recalculable').find('input[name=iu]').val() 
+								};
+						
+						$.post(input_json2,$arreglo2,function(entry2){
+							
+							if(parseInt(entry2['Factura'].length) > 0 ){
+								var factura = entry2['Factura'][0]['factura'];
+								var id_moneda = entry2['Factura'][0]['moneda_id'];
+								var id_agente = entry2['Factura'][0]['cxc_agen_id'];
+								var monto_factura = entry2['Factura'][0]['monto_factura'];
+								var saldo_factura = entry2['Factura'][0]['saldo_factura'];
+								var fecha_factura = entry2['Factura'][0]['fecha_factura'];
+								
+								//llamada a la funcion para agregar datos de la factura
+								$agregarDatosFacturaSeleccionada($select_moneda,$select_vendedor, entry['Monedas'], entry['Vendedores'], $factura, $fecha_factura, $monto_factura, $aplicado, $saldo, factura, id_moneda, id_agente, monto_factura, saldo_factura, fecha_factura);
+								
+							}else{
+								//limpiar campos de datos de la Factura
+								$factura.val('');
+								$fecha_factura.val('');
+								$monto_factura.val("0.00");
+								$aplicado.val("0.00");
+								$saldo.val("0.00");
+								$id_moneda_factura.val(0);
+								
+								jAlert('N&uacute;mero de Factura desconocido.', 'Atencion!', function(r) { 
+									$factura.focus(); 
+								});
+							}
+						},"json");//termina llamada json
+					}else{
+						jAlert('Es necesario seleccionar un Cliente.', 'Atencion!', function(r) { 
+							$no_cliente.focus(); 
+						});
+					}
+					return false;
 				}
 			});
 			
@@ -955,7 +1127,8 @@ $(function() {
 		
 		
 		
-		
+		//asignar el enfoque al cargar la ventana
+		$no_cliente.focus();
 		
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
@@ -1031,7 +1204,7 @@ $(function() {
 				$arreglo = {'id_nota_credito':id_to_show,
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 							};
-						
+							
 				var $identificador = $('#forma-notascredito-window').find('input[name=identificador]');
 				var $folio_nota_credito = $('#forma-notascredito-window').find('input[name=folio_nota_credito]');
 				var $generar = $('#forma-notascredito-window').find('input[name=generar]');
@@ -1074,6 +1247,15 @@ $(function() {
 				var $cancelar_plugin = $('#forma-notascredito-window').find('#boton_cancelar');
 				var $submit_actualizar = $('#forma-notascredito-window').find('#submit');
 				
+				$folio_nota_credito.css({'background' : '#F0F0F0'});
+				$no_cliente.css({'background' : '#F0F0F0'});
+				$razon_cliente.css({'background' : '#F0F0F0'});
+				$factura.css({'background' : '#F0F0F0'});
+				$fecha_factura.css({'background' : '#F0F0F0'});
+				$monto_factura.css({'background' : '#F0F0F0'});
+				$aplicado.css({'background' : '#F0F0F0'});
+				$saldo.css({'background' : '#F0F0F0'});
+				
 				$chkbox_aplicar_saldo.attr('disabled','-1');
 				$generar.val('false');
 				$fac_saldado.val('false');
@@ -1082,6 +1264,14 @@ $(function() {
 				$permitir_solo_numeros($tipo_cambio);
 				$permitir_solo_numeros($importe);
 				$cancelado.hide();
+				
+				//quitar enter a todos los campos input
+				$('#forma-notascredito-window').find('input').keypress(function(e){
+					if(e.which==13 ) {
+						return false;
+					}
+				});
+				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 						$('#forma-notascredito-window').find('div.interrogacion').css({'display':'none'});
