@@ -202,10 +202,13 @@
                                                                         <tr>
                                                                             <input type="hidden" name="identificador_cliente" value="0">
                                                                             <input type="hidden" name="factor" value="0">
-                                                                            <td width="95">RFC&nbsp;cliente: </td>
-                                                                            <td width="150"><INPUT TYPE="text" name="rfccliente" style="width:150px;" readOnly="true"></td>
+                                                                            <td width="95">No.&nbsp;Cliente </td>
+                                                                            <td width="150">
+																				<INPUT TYPE="hidden" name="rfccliente" style="width:150px;" readOnly="true">
+																				<INPUT TYPE="text" name="nocliente" style="width:150px; border:1px solid #000;">
+																			</td>
                                                                             <td width="25"></td>
-                                                                            <td width="80">Cliente:</td>
+                                                                            <td width="80">Razon&nbsp;Social</td>
                                                                             <td width="405" colspan="3"><INPUT TYPE="text" name="cliente" style="width:400px;"></td>
                                                                             <td width="25" class="oculta_anticipo"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_identificador_cliente"></td>
                                                                             <td width="80" class="oculta_anticipo"><a  href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
