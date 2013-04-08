@@ -35,7 +35,7 @@
 													<li class="topline"><a href="../cotincoterms/startup.agnux">Pol&iacute;ticas de Pago</a></li>
 													-->
 													<li class="topline"><a href="../cotincoterms/startup.agnux">Incoterms</a></li>
-													
+
 												</ul>
 											</li>
 											<li>
@@ -163,6 +163,7 @@
 													<li class="topline"><a href="../repantiguedadsaldocliente/startup.agnux">Antig&uuml;edad de Saldos</a></li>
 													<li class="topline"><a href="../repestadisticasanualesventas/startup.agnux">Estad&iacute;stico de Ventas Anuales Cliente</a></li>
 													<li class="topline"><a href="../repestadisticaanualventasproducto/startup.agnux">Estad&iacute;stico de Ventas Anuales Producto</a></li>
+                                                                                                        <li class="topline"><a href="../repclientes/startup.agnux">Direcciones de clientes</a></li>
 
 													<!--esto se agrego, estaba en menu cunetas por cobrar-->
 													<!--
@@ -384,7 +385,7 @@
 													<li><a href="../gralfichatecnica/startup.agnux">Ficha Tecnica</a></li>
 												</ul>
 											</li>
-											
+
 											<li>
 												<a href="#" class="sub">Reportes &raquo;</a>
 												<ul>
@@ -402,17 +403,17 @@
 													<li class="topline"><a href="../repinvkits/startup.agnux">Kits</a></li>
 													<li class="topline"><a href="../repinvmovimientos/startup.agnux">Movimientos</a></li>
 													<!--
-													
+
 													<li class="topline"><a href="#">Existencias FÃ­sicas Capturadas</a></li>
 													-->
 												</ul>
 											</li>
 										</ul>
 									</li>
-									
-									
-									
-									
+
+
+
+
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Bancos &raquo;</a>
 										<ul>
