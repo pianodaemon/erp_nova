@@ -17,7 +17,6 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.reportes.pdfCfd;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -188,10 +187,11 @@ public class NotasCreditoController {
         //variables para el buscador
         String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
         String cliente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cliente")))+"%";
+        String factura = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("factura")))+"%";
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+factura;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getFacdao().countAll(data_string);
@@ -242,6 +242,30 @@ public class NotasCreditoController {
     }
     
     
+    
+    //Obtener datos del cliente a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoClient.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataByNoClientJson(
+            @RequestParam(value="no_control", required=true) String no_control,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Cliente", this.getFacdao().getDatosClienteByNoCliente(no_control, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
     
     
     
@@ -298,20 +322,44 @@ public class NotasCreditoController {
     @RequestMapping(method = RequestMethod.POST, value="/getFacturasCliente.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getFacturasClienteJson(
             @RequestParam(value="id_cliente", required=true) Integer id_cliente,
+            @RequestParam(value="serie_folio", required=true) String serie_folio,
             Model model
-            ) {
+        ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
-        jsonretorno.put("Facturas", this.getFacdao().getNotasCredito_FacturasCliente(id_cliente));
+        jsonretorno.put("Facturas", this.getFacdao().getNotasCredito_FacturasCliente(id_cliente, serie_folio));
         
         return jsonretorno;
     }
     
     
     
-
-
+    
+    //Obtener datos de una factura en Especifico a partir del Serie Folio
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosFactura.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosFacturaJson(
+            @RequestParam(value="id_cliente", required=true) Integer id_cliente,
+            @RequestParam(value="serie_folio", required=true) String serie_folio,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        /*
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        */
+        jsonretorno.put("Factura", this.getFacdao().getNotasCredito_DatosFactura(id_cliente, serie_folio));
+        
+        return jsonretorno;
+    }
 
 
 
@@ -466,7 +514,7 @@ public class NotasCreditoController {
                         
                         //este es el timbre fiscal, solo es para cfdi con timbre fiscal. Aqui debe ir vacio
                         String sello_digital_sat = "";
-
+                        
                         String uuid = "";
                         
                         //conceptos para el pdfcfd

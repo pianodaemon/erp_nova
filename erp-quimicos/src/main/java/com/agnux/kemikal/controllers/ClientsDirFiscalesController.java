@@ -196,7 +196,8 @@ public class ClientsDirFiscalesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer id_sucursal = 0;
         
         jsonretorno.put("Cliente", this.getCxcDao().getDatosClienteByNoCliente(no_control, id_empresa, id_sucursal));
         
