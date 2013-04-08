@@ -108,6 +108,7 @@ public interface FacturasInterfaceDao {
     //Reporte de Remisiones creado el 28/06/2012 //variable estatus agregado por paco
     public ArrayList<HashMap<String, String>> getDatosReporteRemision(Integer opcion, String remision, String cliente, String fecha_inicial, String fecha_final, Integer id_empresa, Integer estatus);
     public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro,Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control, Integer id_empresa, Integer id_sucursal);
     
     
     //Reporte de Remisiones facturadas creado el 21/07/2012  por vale8490
@@ -117,7 +118,8 @@ public interface FacturasInterfaceDao {
     //metodos para notas de Credito
     public ArrayList<HashMap<String, Object>> getNotasCredito_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getNotasCredito_Datos(Integer id_cliente);
-    public ArrayList<HashMap<String, String>> getNotasCredito_FacturasCliente(Integer id_cliente);
+    public ArrayList<HashMap<String, String>> getNotasCredito_FacturasCliente(Integer id_cliente, String serie_folio);
+    public ArrayList<HashMap<String, String>> getNotasCredito_DatosFactura(Integer id_cliente, String serie_folio);
     
     //metodos para xml nota de credito
     public HashMap<String,String> getNotaCreditoCfd_Cfdi_Datos(Integer id_nota_credito);//este metodo se utiliza para Nota de Credito CFD y CFDI
