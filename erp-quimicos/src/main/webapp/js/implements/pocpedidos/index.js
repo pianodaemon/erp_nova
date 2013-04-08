@@ -825,176 +825,8 @@ $(function() {
 					var id_metodo_de_pago=$(this).find('#metodo_id').val();
 					var tiene_dir_fiscal=$(this).find('#tiene_df').val();
 					
+					//llamada a la funcion para agregar los datos del cliente seleccionado
 					$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal);
-					//$select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal
-					/*
-					//asignar a los campos correspondientes el sku y y descripcion
-					$('#forma-pocpedidos-window').find('input[name=id_cliente]').val($(this).find('#idclient').val());
-					$('#forma-pocpedidos-window').find('input[name=nocliente]').val($(this).find('span.no_control').html());
-					$('#forma-pocpedidos-window').find('input[name=razoncliente]').val($(this).find('span.razon').html());
-					$('#forma-pocpedidos-window').find('input[name=empresa_immex]').val($(this).find('#emp_immex').val());
-					$('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]').val($(this).find('#tasa_immex').val());
-					$('#forma-pocpedidos-window').find('input[name=cta_mn]').val($(this).find('#cta_mn').val());
-					$('#forma-pocpedidos-window').find('input[name=cta_usd]').val($(this).find('#cta_usd').val());
-					$('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val($(this).find('#lista_precios').val());
-					//por default asignamos cero para el campo id de Direccion Fiscal, esto significa que la direccion se tomara de la tabla de clientes
-					$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
-					
-					
-					if(tiene_dir_fiscal=='true'){
-						//llamada a la funcion que busca las direcciones fiscales del cliente.
-						//se le pasa como parametro el id del cliente
-						$buscador_direcciones_fiscales($('#forma-pocpedidos-window').find('input[name=id_cliente]').val());
-					}else{
-						//si no tiene varias direcciones fiscales, se asigna la direccion default
-						$('#forma-pocpedidos-window').find('input[name=dircliente]').val($(this).find('#direccion').val());
-						$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
-					}
-					
-					//carga el select de monedas  con la moneda del cliente seleccionada por default
-					var moneda_hmtl = '';
-					if(parseInt(num_lista_precio)>0){
-						//aquí se arma la cadena json para traer la moneda de la lista de precio
-						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaListaCliente.json';
-						$arreglo2 = { 'lista_precio':num_lista_precio }
-						$.post(input_json2,$arreglo2,function(entry2){
-							id_moneda=entry2['listaprecio'][0]['moneda_id'];
-							$select_moneda.children().remove();
-							$.each(array_monedas ,function(entryIndex,moneda){
-								if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-									moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-								}else{
-									//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-								}
-							});
-							$select_moneda.append(moneda_hmtl);
-						});
-					}else{
-						$select_moneda.children().remove();
-						$.each(array_monedas ,function(entryIndex,moneda){
-							if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-								moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-							}else{
-								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-							}
-						});
-						$select_moneda.append(moneda_hmtl);
-					}
-					
-					//carga select de condiciones con los dias de Credito default del Cliente
-					$select_condiciones.children().remove();
-					var hmtl_condiciones;
-					$.each(array_condiciones, function(entryIndex,condicion){
-						if( parseInt(condicion['id']) == parseInt(id_termino) ){
-							hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes">' + condicion['descripcion'] + '</option>';
-						}else{
-							hmtl_condiciones += '<option value="' + condicion['id'] + '" >' + condicion['descripcion'] + '</option>';
-						}
-					});
-					$select_condiciones.append(hmtl_condiciones);
-					
-					//carga select de vendedores
-					$select_vendedor.children().remove();
-					var hmtl_vendedor;
-					$.each(array_vendedores,function(entryIndex,vendedor){
-						if( parseInt(vendedor['id']) == parseInt(id_vendedor) ){
-							hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_agente'] + '</option>';
-						}else{
-							hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
-						}
-					});
-					$select_vendedor.append(hmtl_vendedor);
-					
-					//alert("id_metodo_de_pago: "+id_metodo_de_pago);
-					if(parseInt(id_metodo_de_pago)==0){
-						id_metodo_de_pago=6;//si el cliente no tiene asignado un metodo de pago, se le asigna por default 6=No Identificado
-					}
-					
-					//carga select de metodos de pago
-					$select_metodo_pago.children().remove();
-					var hmtl_metodo;
-					$.each(array_metodos_pago,function(entryIndex,metodo){
-						if ( parseInt(metodo['id']) == parseInt(id_metodo_de_pago) ){
-							hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes">' + metodo['titulo'] + '</option>';
-						}else{
-							hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
-						}
-					});
-					$select_metodo_pago.append(hmtl_metodo);
-					
-					
-					if(parseInt(id_metodo_de_pago)>0){
-						$no_cuenta.val('');
-						
-						//valor_metodo 2=Tarjeta Credito, 3=Tarjeta Debito
-						if(parseInt(id_metodo_de_pago)==2 || parseInt(id_metodo_de_pago)==3){
-							//si esta desahabilitado, hay que habilitarlo para permitir la captura de los digitos de la tarjeta.
-							if($no_cuenta.is(':disabled')) {
-								$no_cuenta.removeAttr('disabled');
-							}
-							
-							//quitar propiedad de solo lectura
-							$no_cuenta.removeAttr('readonly');
-							
-							if($etiqueta_digit.is(':disabled')) {
-								$etiqueta_digit.removeAttr('disabled');
-							}
-							
-							$etiqueta_digit.val('Ingrese los ultimos 4 Digitos de la Tarjeta');
-						}
-						
-						//id_metodo_de_pago 4=Cheque Nominativo, 5=Transferencia Electronica de Fondos
-						if(parseInt(id_metodo_de_pago)==4 || parseInt(id_metodo_de_pago)==5){
-							//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
-							if($no_cuenta.is(':disabled')) {
-								$no_cuenta.removeAttr('disabled');
-							}
-							
-							//fijar propiedad de solo lectura en verdadero
-							$no_cuenta.attr('readonly',true);
-							
-							if($etiqueta_digit.is(':disabled')) {
-								$etiqueta_digit.removeAttr('disabled');
-							}
-							
-							if(parseInt($select_moneda.val())==1){
-								$etiqueta_digit.val('Numero de Cuenta para pago en Pesos');
-								$no_cuenta.val($('#forma-pocpedidos-window').find('input[name=cta_mn]').val());
-							}else{
-								$etiqueta_digit.val('Numero de Cuenta en Dolares');
-								$no_cuenta.val($('#forma-pocpedidos-window').find('input[name=cta_usd]').val());
-							}
-						}
-						
-						//id_metodo_de_pago 1=Efectivo, 6=No Identificado
-						if(parseInt(id_metodo_de_pago)==1 || parseInt(id_metodo_de_pago)==6){
-							if(!$no_cuenta.is(':disabled')) {
-								$no_cuenta.attr('disabled','-1');
-							}
-							if(!$etiqueta_digit.is(':disabled')) {
-								$etiqueta_digit.attr('disabled','-1');
-							}
-						}
-						
-						//id_metodo_de_pago 7=NA(No Aplica)
-						if(parseInt(id_metodo_de_pago)==7){
-							$no_cuenta.show();
-							$no_cuenta.val('NA');
-							//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
-							if($no_cuenta.is(':disabled')) {
-								$no_cuenta.removeAttr('disabled');
-							}
-							if($etiqueta_digit.is(':disabled')) {
-								$etiqueta_digit.removeAttr('disabled');
-							}
-							if(parseInt($select_moneda.val())==1){
-								$etiqueta_digit.val('Numero de Cuenta para pago en Pesos');
-							}else{
-								$etiqueta_digit.val('Numero de Cuenta en Dolares');
-							}
-						}
-					}
-					*/
 					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -1167,7 +999,6 @@ $(function() {
 			$('#forma-pocpedidos-window').find('input[name=nombre_producto]').focus();
 		});
 		
-		
 	}//termina buscador de productos
 	
 	
@@ -1226,6 +1057,7 @@ $(function() {
 										trr += '<span class="pres">'+pres['presentacion']+'</span>';
 										trr += '<span class="costo" style="display:none">'+pres['precio']+'</span>';
 										trr += '<span class="idmon" style="display:none">'+pres['id_moneda']+'</span>';
+										trr += '<span class="tc" style="display:none">'+pres['tc']+'</span>';
 										trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
 										trr += '<span class="exislp" style="display:none">'+pres['exis_prod_lp']+'</span>';
 									trr += '</td>';
@@ -1250,6 +1082,7 @@ $(function() {
 							
 							//seleccionar un producto del grid de resultados
 							$tabla_resultados.find('tr').click(function(){
+								
 								//llamada a la funcion que busca y agrega producto al grid, se le pasa como parametro el lote y el almacen
 								var id_prod = $(this).find('span.id_prod').html();
 								var sku = $(this).find('span.sku').html();
@@ -1260,23 +1093,26 @@ $(function() {
 								var num_dec = $(this).find('span.dec').html();
 								var prec_unitario = $(this).find('span.costo').html();
 								var id_moneda = $(this).find('span.idmon').html();
+								//tipo de cambio de la moneda del producto
+								var tcMonProd = $(this).find('span.tc').html();
 								var exislp = $(this).find('span.exislp').html();
 								
-								if(exislp=='1'){
-									//llamada a la funcion que agrega el producto al grid
-									$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas);
+								if($tipo_cambio.val()!='' && $tipo_cambio.val()!=' '){
+									if(exislp=='1'){
+										//llamada a la funcion que agrega el producto al grid
+										$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd);
+									}else{
+										jAlert(exislp, 'Atencion!', function(r) { 
+											$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+										});
+									}
 								}else{
-									jAlert(exislp, 'Atencion!', function(r) { 
-										$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
-									});
+									jAlert('Es necesario ingresar el Tipo de Cambio.', 'Atencion!');
 								}
-								
-								//$nombre_producto.val(titulo);//muestra el titulo del producto en el campo nombre del producto de la ventana de cotizaciones
 								
 								//elimina la ventana de busqueda
 								var remove = function() {$(this).remove();};
 								$('#forma-buscapresentacion-overlay').fadeOut(remove);
-								
 							});
 							
 							$cancelar_plugin_busca_lotes_producto.click(function(event){
@@ -1383,46 +1219,67 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas){
+	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas, tcMonProd){
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
 		var $num_lista_precio = $('#forma-pocpedidos-window').find('input[name=num_lista_precio]');
-		var agregarTr=false;
+		
+		//esta es la moneda definida para el pedido
+		var idMonedaPedido = $select_moneda.val();
+		var precioOriginal = prec_unitario;
+		var precioCambiado = 0.00;
+		var importeImpuesto=0.00;
 		
 		//verificamos si la Lista de Precio trae moneda
 		if(parseInt($num_lista_precio.val())>0){
 			//verificamos si el grid no tiene registros
 			if(parseInt($("tr", $grid_productos).size())<=0){
-				//verificamos si la moneda del producto no es cero
-				if(parseInt(id_moneda)>0){
-					var moneda_prod='';
-					$select_moneda.children().remove();
-					$.each(arrayMonedas ,function(entryIndex,moneda){
-						if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-							moneda_prod += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-						}else{
-							//moneda_prod += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-						}
-					});
-					$select_moneda.append(moneda_prod);
-					agregarTr=true;
-				}
-			}else{
-				//si la moneda del pedido es igual a la moneda del producto, permitimos agregar
-				if(parseInt($select_moneda.val())==parseInt(id_moneda)){
-					agregarTr=true;
-				}
+				//aqui fijamos la moneda seleccionada para el pedido, esto evita que cambien la moneda
+				var moneda_prod='';
+				$select_moneda.children().remove();
+				$.each(arrayMonedas ,function(entryIndex,moneda){
+					if( parseInt(moneda['id']) == parseInt(idMonedaPedido) ){
+						moneda_prod += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+					}else{
+						//moneda_prod += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+					}
+				});
+				$select_moneda.append(moneda_prod);
 			}
+			
+			//si la moneda del Pedido es diferente a la moneda del Precio del Producto
+			//entonces convertimos el precio a la moneda del pedido de acuerdo al tipo de cambio actual
+			if( parseInt(idMonedaPedido) != parseInt(id_moneda) ){
+				
+				if(parseInt(idMonedaPedido)==1 && parseInt(id_moneda)!=1){
+					//si la moneda del pedido es pesos y la moneda del precio es diferente de Pesos,
+					//entonces calculamos su equivalente a pesos
+					precioCambiado = parseFloat( parseFloat(precioOriginal) * parseFloat(tcMonProd)).toFixed(4);
+				}
+				
+				if(parseInt(idMonedaPedido)!=1 && parseInt(id_moneda)==1){
+					//alert("precioOriginal:"+precioOriginal +"		tc_original:"+$tc_original.val());
+					//si la moneda original es dolar y la moneda del precio es Pesos, calculamos su equivalente a dolar
+					precioCambiado = parseFloat( parseFloat(precioOriginal) / parseFloat($tipo_cambio.val()) ).toFixed(4);
+				}
+				
+			}else{
+				precioCambiado = prec_unitario;
+			}
+			
 		}else{
-			//aqui entra si el cliente no tiene asignado una lista de precio
-			//por default le permitimos agregar todos los productos
-			agregarTr=true;
+			precioCambiado = prec_unitario;
 		}
 		
 		
-		//si agregar es true, permitimos agregar el producto
-		if(agregarTr){
+		
+		
+		
+			
+			
+			
+		
 			//si  el campo tipo de cambio es null o vacio, se le asigna un 0
 			if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
 				$valor_impuesto.val(0);
@@ -1471,7 +1328,7 @@ $(function() {
 						trr += '<input type="text" name="cantidad" value=" " class="cantidad'+ tr +'" id="cant" style="width:76px;">';
 					trr += '</td>';
 					trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-						trr += '<input type="text" name="costo" value="'+ prec_unitario +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
+						trr += '<input type="text" name="costo" value="'+ precioCambiado +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
 					trr += '</td>';
 					trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 						trr += '<input type="text" name="importe'+ tr +'" value="" id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
@@ -1652,12 +1509,6 @@ $(function() {
 				});
 			}
 			
-		}else{
-			jAlert('No puede agregar productos con precio en moneda diferente a la definida para el Pedido.', 'Atencion!', function(r) { 
-				$('#forma-pocpedidos-window').find('input[name=nombre_producto]').val('');
-				$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
-			});
-		}
 		
 	}//termina agregar producto al grid
 	

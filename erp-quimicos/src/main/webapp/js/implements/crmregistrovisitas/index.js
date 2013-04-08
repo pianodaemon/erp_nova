@@ -70,8 +70,8 @@ $(function() {
 		valor_retorno += "contacto" + signo_separador + $busqueda_contacto.val() + "|";
 		valor_retorno += "agente" + signo_separador + $busqueda_agente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
-		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val();
-		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
+		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|"
+		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val();
 		return valor_retorno;
 	};
 	
