@@ -589,7 +589,7 @@ public class CotizacionesController {
             
             for(int i=0; i<eliminado.length; i++) { 
                 //Imprimir el contenido de cada celda 
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + precio[i] +"___" + monedagrid[i]+"___"+notr[i]+"___"+id_imp_prod[i]+"___"+valor_imp[i]+"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(precio[i]) +"___" + monedagrid[i]+"___"+notr[i]+"___"+id_imp_prod[i]+"___"+valor_imp[i]+"'";
                 //System.out.println("arreglo["+i+"] = "+arreglo[i]);
             }
             

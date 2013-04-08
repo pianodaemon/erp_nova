@@ -1029,13 +1029,15 @@ public class PocSpringDao implements PocInterfaceDao{
         String precio = "";
         
         if(lista_precio.equals("0")){
-            precio=" 0::double precision  AS precio,"
-                    + " 0::integer  AS id_moneda,"
+            precio=" 0::double precision AS precio,"
+                    + "0::integer  AS id_moneda,"
+                    + "0::double precision AS tc,"
                     + "'1'::character varying  AS exis_prod_lp ";
         }else{
             precio=" (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 0 ELSE inv_pre.precio_"+lista_precio+" END ) AS precio,"
                     + "(CASE WHEN inv_pre.gral_mon_id_pre"+lista_precio+" IS NULL THEN 0 ELSE inv_pre.gral_mon_id_pre"+lista_precio+" END ) AS id_moneda,"
-                 + " (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 'El producto con &eacute;sta presentaci&oacute;n no se encuentra en el cat&aacute;logo de Listas de Precios.\nEs necesario asignarle un precio.' ELSE '1' END ) AS exis_prod_lp ";
+                    + "(CASE WHEN inv_pre.gral_mon_id_pre1 IS NULL THEN 0 ELSE (SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id=inv_pre.gral_mon_id_pre"+lista_precio+" ORDER BY momento_creacion DESC LIMIT 1) END ) AS tc, "
+                    + " (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 'El producto con &eacute;sta presentaci&oacute;n no se encuentra en el cat&aacute;logo de Listas de Precios.\nEs necesario asignarle un precio.' ELSE '1' END ) AS exis_prod_lp ";
         }
         
         sql_query = ""
@@ -1055,7 +1057,7 @@ public class PocSpringDao implements PocInterfaceDao{
             +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
             +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
             +"LEFT JOIN inv_pre ON (inv_pre.inv_prod_id=inv_prod.id AND inv_pre.inv_prod_presentacion_id=inv_prod_pres_x_prod.presentacion_id AND inv_pre.borrado_logico=false) "
-            +"WHERE  empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
+            +"WHERE  inv_prod.empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
         
         System.out.println("getPresentacionesProducto: "+sql_query);
         
@@ -1077,6 +1079,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("precio",StringHelper.roundDouble(rs.getString("precio"),2));
                     row.put("exis_prod_lp",rs.getString("exis_prod_lp"));
                     row.put("id_moneda",String.valueOf(rs.getInt("id_moneda")));
+                    row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
                     return row;
                 }
             }
@@ -1934,12 +1937,12 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("presentacion_id",rs.getString("presentacion_id"));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
-                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),2));
+                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4));
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
                     row.put("moneda_abr",rs.getString("moneda_abr"));
-                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2));
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4));
                     row.put("id_imp",String.valueOf(rs.getInt("id_imp")));
-                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2));
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),4));
                     return row;
                 }
             }
