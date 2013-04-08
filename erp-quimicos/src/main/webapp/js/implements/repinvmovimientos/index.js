@@ -487,14 +487,14 @@ $(function() {
 
 
                                 trr += '<tr>';
-                                trr += '<td align="center">'+Movimentos['referencia']+'</td>';
-                                trr += '<td align="left">'+Movimentos['tipo_movimiento']+'</td>';
-                                trr += '<td align="center">'+Movimentos['fecha_movimiento']+'</td>';
-                                trr += '<td align="left">'+Movimentos['sucursal']+'</td>';
-                                trr += '<td align="left">'+Movimentos['almacen']+'</td>';
-                                trr += '<td align="right">'+Movimentos['cantidad']+'</td>';
-                                trr += '<td align="right">'+Movimentos['costo']+'</td>';
-                                trr += '<td align="right">'+Movimentos['existencia_actual']+'</td>';
+                                trr += '<td width="100px" align="center">'+Movimentos['referencia']+'</td>';
+                                trr += '<td width="300px" align="left">'+Movimentos['tipo_movimiento']+'</td>';
+                                trr += '<td width="100px" align="center">'+Movimentos['fecha_movimiento']+'</td>';
+                                trr += '<td width="200px" align="left">'+Movimentos['sucursal']+'</td>';
+                                trr += '<td width="200px" align="left">'+Movimentos['almacen']+'</td>';
+                                trr += '<td width="100px" align="right">'+Movimentos['cantidad']+'</td>';
+                                trr += '<td width="100px" align="right">'+Movimentos['costo']+'</td>';
+                                trr += '<td width="100px" align="right">'+Movimentos['existencia_actual']+'</td>';
                                 trr += '</tr>';
 
 
