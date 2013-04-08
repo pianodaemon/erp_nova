@@ -1212,32 +1212,44 @@ public class CxcSpringDao implements CxcInterfaceDao{
     }
 
 
-
+    //obtener datos del cliente a partir del Numero de Control
     @Override
     public ArrayList<HashMap<String, Object>> getDatosClienteByNoCliente(String no_control, Integer id_empresa, Integer id_sucursal) {
-	String sql_query = "SELECT "
-                                    +"sbt.id,"
-                                    +"sbt.numero_control,"
-                                    +"sbt.rfc,"
-                                    +"sbt.razon_social,"
-                                    +"sbt.direccion,"
-                                    +"sbt.moneda_id,"
-                                    +"gral_mon.descripcion as moneda "
-                            +"FROM(SELECT cxc_clie.id,"
-                                            +"cxc_clie.numero_control,"
-                                            +"cxc_clie.rfc, "
-                                            +"cxc_clie.razon_social,"
-                                            +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
-                                            +"cxc_clie.moneda as moneda_id "
-                                    +"FROM cxc_clie "
-                                    + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                                    + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                                    + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                                    +" WHERE empresa_id ="+id_empresa+"  "
-                                    +" AND cxc_clie.borrado_logico=false  AND  cxc_clie.numero_control='"+no_control+"'"
-                            +") AS sbt "
-                            +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id;";
+
+        String where="";
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND sucursal_id="+id_sucursal;
+        }
+
+	String sql_query = ""
+                + "SELECT "
+                        +"sbt.id,"
+                        +"sbt.numero_control,"
+                        +"sbt.rfc,"
+                        +"sbt.razon_social,"
+                        +"sbt.direccion,"
+                        +"sbt.moneda_id,"
+                        +"gral_mon.descripcion as moneda "
+                +"FROM(SELECT cxc_clie.id,"
+                                +"cxc_clie.numero_control,"
+                                +"cxc_clie.rfc, "
+                                +"cxc_clie.razon_social,"
+                                +"cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp as direccion, "
+                                +"cxc_clie.moneda as moneda_id "
+                        +"FROM cxc_clie "
+                        + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
+                        + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
+                        + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                        +" WHERE empresa_id ="+id_empresa+"  "
+                        +" AND cxc_clie.borrado_logico=false  "+where+" "
+                        + "AND  cxc_clie.numero_control='"+no_control.toUpperCase()+"'"
+                +") AS sbt "
+                +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ORDER BY sbt.id LIMIT 1;";
+
         System.out.println("getDatosCliente: "+sql_query);
+
         ArrayList<HashMap<String, Object>> hm_cli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -3660,10 +3672,6 @@ return subfamilias;
 
     //AQUI TERMINA METODOS PARA CATALOGO DE DIRECCIONES FISCALES DE CLIENTES
     //**********************************************************************************************************************
-
-
-
-
     @Override
     public ArrayList<HashMap<String, String>> getListaClientes(Integer empresa_id , Integer agente_id) {
         String cadena_where="";
@@ -3711,6 +3719,7 @@ return subfamilias;
         );
         return hm;
     }
+
 
 
 }
