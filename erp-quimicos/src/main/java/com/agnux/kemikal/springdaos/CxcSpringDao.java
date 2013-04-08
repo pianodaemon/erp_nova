@@ -3663,4 +3663,54 @@ return subfamilias;
 
 
 
+
+    @Override
+    public ArrayList<HashMap<String, String>> getListaClientes(Integer empresa_id , Integer agente_id) {
+        String cadena_where="";
+        if (agente_id != 0){
+        cadena_where="and  cxc_clie.cxc_agen_id="+agente_id;
+        }
+        String sql_query = " select cxc_clie.id,   "
+                        +"   cxc_clie.numero_control,   "
+                        +"   cxc_clie.rfc,   "
+                        +"   cxc_clie.curp,   "
+                        +"   cxc_clie.razon_social,   "
+                        +"   cxc_clie.telefono1||',   '||telefono2 as telefonos,   "
+                        +"   cxc_clie.fax,   "
+                        +"   cxc_clie.email,   "
+                        +"   cxc_clie.calle||',  #'||cxc_clie.numero||', '||cxc_clie.colonia||', '|| gral_mun.titulo||' C.P.'||cxc_clie.cp||', '||gral_edo.titulo||', '||gral_pais.titulo as direccion_cliente   "
+
+                        +"   from cxc_clie    "
+                        +"   join cxc_agen on cxc_agen.id = cxc_clie.cxc_agen_id   "
+                        +"   join gral_pais on gral_pais.id=cxc_clie.pais_id   "
+                        +"   join gral_edo on gral_edo.id=cxc_clie.estado_id   "
+                        +"   join gral_mun on gral_mun.id=cxc_clie.municipio_id   "
+                        +"   where  cxc_clie.empresa_id=" +empresa_id+" "+cadena_where;
+
+        System.out.print(sql_query);
+
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("curp",rs.getString("curp"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("telefonos",rs.getString("telefonos"));
+                    row.put("fax",rs.getString("fax"));
+                    row.put("email",rs.getString("email"));
+                    row.put("direccion_cliente",rs.getString("direccion_cliente"));
+
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+
 }
