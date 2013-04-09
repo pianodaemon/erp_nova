@@ -37,7 +37,7 @@ $(function() {
 
 
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Politicas de Pago');
+	$('#barra_titulo').find('#td_titulo').append('Condiciones Comerciales');
 
 	//barra para el buscador
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
@@ -162,12 +162,13 @@ $(function() {
 
 
 
-	//nuevo politica da pago
+	//nuevo condicion comercial
 	$new_cotcondicionescomerciales.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
 
 		$(this).modalPanel_cotcondicionescomerciales();
+
 
 		var form_to_show = 'formacotcondicionescomerciales';
 		$('#' + form_to_show).each (function(){   this.reset(); });
@@ -297,7 +298,7 @@ $(function() {
 					if ( data['success'] == 'true' ){
 						var remove = function() { $(this).remove(); };
 						$('#forma-cotcondicionescomerciales-overlay').fadeOut(remove);
-						jAlert("La Politica de Pago se ha actualizado.", 'Atencion!');
+						jAlert("La condicion Comercial se ha actualizado.", 'Atencion!');
 						$get_datos_grid();
 					}
 					else{
@@ -324,8 +325,8 @@ $(function() {
 
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$campo_id.attr({ 'value' : entry['Politicas_Pago']['0']['id'] });
-					$campo_titulo.attr({ 'value' : entry['Politicas_Pago']['0']['descripcion'] });
+					$campo_id.attr({ 'value' : entry['Condicion_Comercial']['0']['id'] });
+					$campo_titulo.attr({ 'value' : entry['Condicion_Comercial']['0']['descripcion'] });
 				},"json");//termina llamada json
 
 
@@ -347,11 +348,11 @@ $(function() {
 	}
 
     $get_datos_grid = function(){
-        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllgetcotcondicionescomerciales.json';
+        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllgetCotCondicionesComerciales.json';
 
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 
-        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllgetcotcondicionescomerciales.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllgetCotCondicionesComerciales.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
 
         $.post(input_json,$arreglo,function(data){
 
