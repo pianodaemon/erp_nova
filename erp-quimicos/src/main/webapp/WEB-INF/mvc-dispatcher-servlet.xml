@@ -64,7 +64,7 @@
 	</bean>
         
         
-        <!--Conexion a bd instance01 PRUEBA EN INTERNET es lo mismo para KATHION Y KEMIKAL-->
+        <!--Conexion a bd instance01 es lo mismo para KATHION Y KEMIKAL-->
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
@@ -247,5 +247,8 @@
              <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
         </bean>
         
+        <bean name="daoEnv" class="com.agnux.kemikal.springdaos.EnvSpringDao">
+             <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
+        </bean>
         
 </beans>
