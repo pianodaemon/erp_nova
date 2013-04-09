@@ -15,7 +15,7 @@ public interface PocInterfaceDao{
     public HashMap<String, String> selectFunctionValidateAaplicativo(String data, Integer idApp, String extra_data_array);
     public String selectFunctionForThisApp(String campos_data, String extra_data_array);
     public int countAll(String data_string);
-    
+
     public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getBuscadorProspectos(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
@@ -28,9 +28,9 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getCondicionesDePago();
     public Double getTipoCambioActual();
     public HashMap<String, String> getTipoCambioActualPorIdMoneda(Integer idMoneda);
-    
+
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal);
-    
+
     //metodos para aplicativo pedidos y autorizacion de pedidos
     public ArrayList<HashMap<String, Object>> getPocPedidos_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getPocPedido_Datos(Integer id_pedido);
@@ -39,33 +39,33 @@ public interface PocInterfaceDao{
     public HashMap<String, String>  getPocPedido_Parametros(Integer id_emp, Integer id_suc);
     public ArrayList<HashMap<String, String>> getPocPedido_DireccionesFiscalesCliente(Integer id_cliente);
     public HashMap<String, String> getDatosPDF(Integer id_pedido);
-    
+
     //metodos para aplicativo Remisiones de CLientes
     public ArrayList<HashMap<String, Object>> getRemisiones_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getRemisiones_Datos(Integer id_remision);
     public ArrayList<HashMap<String, String>> getRemisiones_DatosGrid(Integer id_remision);
     public ArrayList<HashMap<String, String>> getMetodosPago();
-    
+
     public HashMap<String, String> getRemisiones_DatosPdf(Integer id_remision);
     public ArrayList<HashMap<String, String>> getRemisiones_ConceptosPdf(Integer id_remision, String rfc_empresa);
-    
-    
+
+
     //metodos para generar reporte Pedidos
     public ArrayList<HashMap<String,String>>getReportePedidos(Integer opcion, Integer agente, String cliente, String fecha_inicial, String fecha_final,Integer id_empresa);
     //metodo para alimentar el select de agentes
     public ArrayList<HashMap<String,String>> getAgente(Integer id_empresa);
     //metodo para alimentar el select de los estados de los pedidos
     public ArrayList<HashMap<String,String>> getEstadoPedido();
-    
-    
-    
+
+
+
     //reporte de Articulos Reservados   pocDao(Proceso Comercial).
     public ArrayList<HashMap<String, String>> getReporteArticulosReservados( Integer id_empresa, Integer id_usuario,String codigo, String descripcion);
-    
+
     //trae la lista de precios
     public ArrayList<HashMap<String, String>> getListaPrecio(Integer lista_precio);
-    
-    
+
+
     //metodos para aplicativo de Cotizaciones
     public ArrayList<HashMap<String, Object>> getCotizacion_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getCotizacion_Datos(Integer id_cot);
@@ -78,14 +78,27 @@ public interface PocInterfaceDao{
     public HashMap<String, String> getUserRol(Integer id_user);
     public HashMap<String, String> getCotizacion_Saludo(Integer id_empresa);
     public HashMap<String, String> getCotizacion_Despedida(Integer id_empresa);
-    
-    
+
+
     //aplicativo actualizador de Saludo y Despedida para Cotizaciones
     public ArrayList<HashMap<String, Object>> getCotizacionSaludoDespedida_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, String>> getCotizacionSaludoDespedida_Datos(Integer id);
-    
-    
+
+
     //metodos para catalogo de incoterms para cotizaciones
     public ArrayList<HashMap<String, Object>> getCotIncoterms_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getCotIncoterms_Datos(Integer id);
+
+
+    //Catalogo de politicas de Pago
+    public ArrayList<HashMap<String, Object>> getCotPoliticas_de_Pago_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getCotPoliticas_de_Pago_Datos(Integer id);
+
+	//Catalogo de condiciones de Venta
+    public ArrayList<HashMap<String, Object>> getCotCondiciones_de_Venta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getCotCondiciones_de_Venta_Datos(Integer id);
+
+
+
+
 }
