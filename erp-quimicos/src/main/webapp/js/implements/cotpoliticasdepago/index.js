@@ -216,7 +216,7 @@ $(function() {
 		var options = { dataType :  'json', success : respuestaProcesada };
 		$forma_selected.ajaxForm(options);
 
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCotPoliticasdePago.json';
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCotCondicionescomerciales.json';
 		$arreglo = {'id':id_to_show};
 
 		$.post(input_json,$arreglo,function(entry){
@@ -289,7 +289,7 @@ $(function() {
 
 			if(accion_mode == 'edit'){
 
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCotPoliticasdePago.json';
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCotCondicionesComerciales.json';
 				$arreglo = {'id':id_to_show};
 
 
@@ -347,11 +347,11 @@ $(function() {
 	}
 
     $get_datos_grid = function(){
-        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllgetCotpoliticasdePago.json';
+        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllgetCotCondicionesComerciales.json';
 
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 
-        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllgetcotpoliticasdepago.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllgetCotCondicionesComerciales.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
 
         $.post(input_json,$arreglo,function(data){
 
