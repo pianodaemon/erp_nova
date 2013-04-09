@@ -1,6 +1,6 @@
 (function($){
 	$.fn.extend({
-		modalPanel_cotcondicionesdeventa: function() {
+		modalPanel_cotcondicionescomerciales: function() {
 
 		    /*
 		    //Our function for hiding the modalbox
@@ -23,9 +23,9 @@
 
 
 			//Create our overlay object
-			var overlay = $("<div id='forma-cotcondicionesdeventa-overlay'></div>");
+			var overlay = $("<div id='forma-cotcondicionescomerciales-overlay'></div>");
 			//Create our modal window
-			var modalWindow = $("<div id='forma-cotcondicionesdeventa-window'></div>");
+			var modalWindow = $("<div id='forma-cotcondicionescomerciales-window'></div>");
 
 			//return this.each(function() {
 				//Listen for clicks on objects passed to the plugin
@@ -59,7 +59,7 @@
 					//		"margin-top": -250,
 					//	});
 					//modalWindow.css("opacity", 1.0);
-					$("#forma-cotcondicionesdeventa-overlay").append(modalWindow);
+					$("#forma-cotcondicionescomerciales-overlay").append(modalWindow);
 					//modalWindow.fadeIn(50);
 
 
