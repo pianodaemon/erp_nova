@@ -109,7 +109,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_CRM_REPORTE_VISITAS,
         ROLE_CATALOGO_INCOTERMS,
         ROLE_ALTA_PRODUCTOS_EQUIV,
-        ROLE_REPORTE_INV_MOV" />
+        ROLE_REPORTE_INV_MOV,
+        ROLE_CXC_REPORTE_CLIENTES" />
         
         
         
@@ -212,6 +213,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/repinvkits/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_KITS" />
         <intercept-url pattern="/controllers/repremisionfacturada/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_REMISIONES_FACTURADAS" />
         <intercept-url pattern="/controllers/repinvmovimientos/startup.agnux" access="ROLE_ADMIN,ROLE_REPORTE_INV_MOV" />
+        <intercept-url pattern="/controllers/repclientes/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_REPORTE_CLIENTES" />
         
         
         <!--Paco-->
