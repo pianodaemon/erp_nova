@@ -7,12 +7,12 @@
 
         <!--  css for this catalogo -->
 
-        <link rel="stylesheet" href="../../css/modalbox/cotcondicionescomerciales/formaCotcondicionesdeVenta.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/cotcondicionescomerciales/formaCotcondicionesComerciales.css" type="text/css" />
 
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
 
-        <script type="text/javascript" src="../../js/components/modalbox/cotcondicionescomerciales/modalboxCotCondicionedeVenta.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/cotcondicionescomerciales/modalboxCotCondicionescomerciales.js"></script>
         <script type="text/javascript" src="../../js/implements/cotcondicionescomerciales/index.js" ></script>
 
         #include("${layoutmenu}")
