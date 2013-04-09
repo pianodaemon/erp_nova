@@ -9,9 +9,9 @@ import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
+import com.agnux.kemikal.interfacedaos.EnvInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.interfacedaos.PocInterfaceDao;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -66,9 +66,9 @@ public class EnvConfController {
     //dao para Modulo de Envasado
     @Autowired
     @Qualifier("daoEnv")
-    private PocInterfaceDao envDao;
+    private EnvInterfaceDao envDao;
 
-    public PocInterfaceDao getEnvDao() {
+    public EnvInterfaceDao getEnvDao() {
         return envDao;
     }
 
