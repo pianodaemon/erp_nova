@@ -22,24 +22,24 @@ import java.util.Map;
  */
 public class PocSpringDao implements PocInterfaceDao{
     private JdbcTemplate jdbcTemplate;
-    
+
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }
-    
+
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-    
-    
+
+
     @Override
     public HashMap<String, String> selectFunctionValidateAaplicativo(String data, Integer idApp, String string_array) {
         String sql_to_query = "select erp_fn_validaciones_por_aplicativo from erp_fn_validaciones_por_aplicativo('"+data+"',"+idApp+",array["+string_array+"]);";
         //System.out.println("Validacion:"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -51,32 +51,32 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
+
     @Override
     public String selectFunctionForThisApp(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from poc_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
-        
+
         System.out.println("Ejacutando Guardar:"+sql_to_query);
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         //return update;
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
-        
+
         valor_retorno = update.get("poc_adm_procesos").toString();
-        
+
         return valor_retorno;
     }
-    
-    
+
+
     @Override
     public int countAll(String data_string) {
         String sql_busqueda = "select id from gral_bus_catalogos('"+data_string+"') as foo (id integer)";
         String sql_to_query = "select count(id)::int as total from ("+sql_busqueda+") as subt";
-        
+
         int rowCount = this.getJdbcTemplate().queryForInt(sql_to_query);
         return rowCount;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, Object>> getPocPedidos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
@@ -98,10 +98,10 @@ public class PocSpringDao implements PocInterfaceDao{
                             + "LEFT JOIN gral_suc ON gral_suc.id=erp_proceso.sucursal_id "
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_pedidos.id "
                             + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("data_string: "+data_string);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -120,10 +120,10 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //obtiene datos del header del pedido
     @Override
     public ArrayList<HashMap<String, String>> getPocPedido_Datos(Integer id_pedido) {
@@ -172,9 +172,9 @@ public class PocSpringDao implements PocInterfaceDao{
         + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
         + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = poc_pedidos.cxc_clie_df_id "
         + "WHERE poc_pedidos.id="+id_pedido;
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -216,9 +216,9 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getPocPedido_DatosGrid(Integer id_pedido) {
         String sql_query = ""
@@ -243,10 +243,10 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_pedidos_detalle.presentacion_id "
                 + "WHERE poc_pedidos_detalle.poc_pedido_id="+id_pedido;
-        
+
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -262,10 +262,10 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
-                    
+
                     row.put("gral_imp_id",String.valueOf(rs.getInt("gral_imp_id")));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
-                    
+
                     row.put("valor_check",rs.getString("valor_check"));
                     row.put("valor_selecionado",String.valueOf(rs.getInt("valor_selecionado")));
                     row.put("cant_produccion",StringHelper.roundDouble(rs.getDouble("cant_produccion"),2) );
@@ -275,13 +275,13 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_grid;
     }
-    
-    
-    
+
+
+
    @Override
     public HashMap<String, String> getDatosPDF(Integer id_pedido) {
         HashMap<String, String> mappdf = new HashMap<String, String>();
-       
+
         String sql_query = ""
         + "SELECT poc_pedidos.id,"
                 + "poc_pedidos.folio,"
@@ -330,13 +330,13 @@ public class PocSpringDao implements PocInterfaceDao{
         + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
         + "LEFT JOIN gral_usr ON gral_usr.id = poc_pedidos.gral_usr_id_autoriza "
         + "LEFT JOIN gral_empleados ON gral_empleados.id = gral_usr.gral_empleados_id  "
-        + "LEFT JOIN cxc_agen ON cxc_agen.id = poc_pedidos.cxc_agen_id "  
+        + "LEFT JOIN cxc_agen ON cxc_agen.id = poc_pedidos.cxc_agen_id "
         + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = poc_pedidos.cxc_clie_df_id "
         + "WHERE poc_pedidos.id="+id_pedido;
-        
+
         System.out.println("DatosPdfPedido:"+sql_query);
         Map<String, Object> mapdatosquery = this.getJdbcTemplate().queryForMap(sql_query);
-        
+
         mappdf.put("pedido_id", mapdatosquery.get("id").toString());
         mappdf.put("folio", mapdatosquery.get("folio").toString());
         mappdf.put("proceso_flujo_id", mapdatosquery.get("proceso_flujo_id").toString());
@@ -347,7 +347,7 @@ public class PocSpringDao implements PocInterfaceDao{
         mappdf.put("cliente_id", mapdatosquery.get("cliente_id").toString() );
         mappdf.put("numero_control", mapdatosquery.get("numero_control").toString() );
         mappdf.put("razon_social", mapdatosquery.get("razon_social").toString() );
-        
+
         mappdf.put("calle", mapdatosquery.get("calle").toString() );
         mappdf.put("numero", mapdatosquery.get("numero").toString() );
         mappdf.put("colonia", mapdatosquery.get("colonia").toString() );
@@ -357,34 +357,34 @@ public class PocSpringDao implements PocInterfaceDao{
         mappdf.put("cp", mapdatosquery.get("cp").toString() );
         mappdf.put("rfc", mapdatosquery.get("rfc").toString() );
         mappdf.put("telefono", mapdatosquery.get("telefono").toString() );
-        
+
         mappdf.put("observaciones", mapdatosquery.get("observaciones").toString() );
         mappdf.put("monto_retencion", mapdatosquery.get("monto_retencion").toString() );
         mappdf.put("nombre_autorizo_pedido", mapdatosquery.get("nombre_autorizo_pedido").toString() );
         mappdf.put("nombre_agente", mapdatosquery.get("nombre_agente").toString() );
-        
+
         //mappdf.put("direccion", mapdatosquery.get("direccion").toString() );
         mappdf.put("subtotal", StringHelper.roundDouble(mapdatosquery.get("subtotal").toString(),2) );
         mappdf.put("impuesto", StringHelper.roundDouble(mapdatosquery.get("impuesto").toString(),2) );
         mappdf.put("total", StringHelper.roundDouble(mapdatosquery.get("total").toString(),2) );
         mappdf.put("tipo_cambio", StringHelper.roundDouble(mapdatosquery.get("tipo_cambio").toString(),2) );
-        mappdf.put("cxc_agen_id", mapdatosquery.get("cxc_agen_id").toString() ); 
-        mappdf.put("cxp_prov_credias_id", mapdatosquery.get("cxp_prov_credias_id").toString() ); 
-        mappdf.put("orden_compra", mapdatosquery.get("orden_compra").toString() ); 
-        mappdf.put("fecha_compromiso", mapdatosquery.get("fecha_compromiso").toString() ); 
-        mappdf.put("lugar_entrega", mapdatosquery.get("lugar_entrega").toString() ); 
-        mappdf.put("transporte", mapdatosquery.get("transporte").toString() ); 
-        mappdf.put("cancelado", mapdatosquery.get("cancelado").toString() ); 
-        mappdf.put("tasa_retencion_immex", mapdatosquery.get("tasa_retencion_immex").toString() ); 
-        mappdf.put("fecha_expedicion", mapdatosquery.get("fecha_expedicion").toString() ); 
-        mappdf.put("cancelado", mapdatosquery.get("cancelado").toString() ); 
-        
+        mappdf.put("cxc_agen_id", mapdatosquery.get("cxc_agen_id").toString() );
+        mappdf.put("cxp_prov_credias_id", mapdatosquery.get("cxp_prov_credias_id").toString() );
+        mappdf.put("orden_compra", mapdatosquery.get("orden_compra").toString() );
+        mappdf.put("fecha_compromiso", mapdatosquery.get("fecha_compromiso").toString() );
+        mappdf.put("lugar_entrega", mapdatosquery.get("lugar_entrega").toString() );
+        mappdf.put("transporte", mapdatosquery.get("transporte").toString() );
+        mappdf.put("cancelado", mapdatosquery.get("cancelado").toString() );
+        mappdf.put("tasa_retencion_immex", mapdatosquery.get("tasa_retencion_immex").toString() );
+        mappdf.put("fecha_expedicion", mapdatosquery.get("fecha_expedicion").toString() );
+        mappdf.put("cancelado", mapdatosquery.get("cancelado").toString() );
+
         return mappdf;
     }
-    
-    
-   
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getPocPedido_Almacenes(Integer id_sucursal) {
         String sql_to_query = "SELECT inv_alm.id, inv_alm.titulo FROM fac_par JOIN inv_alm ON inv_alm.id=fac_par.inv_alm_id WHERE gral_suc_id="+id_sucursal+";";
@@ -403,16 +403,16 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_monedas;
     }
-    
-    
-    
+
+
+
     @Override
     public HashMap<String, String> getPocPedido_Parametros(Integer id_emp, Integer id_suc) {
         HashMap<String, String> mapDatos = new HashMap<String, String>();
         String sql_query = "SELECT * FROM fac_par WHERE gral_emp_id="+id_emp+" AND gral_suc_id="+id_suc+";";
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
-        
+
         mapDatos.put("gral_suc_id", String.valueOf(map.get("gral_suc_id")));
         mapDatos.put("gral_suc_id_consecutivo", String.valueOf(map.get("gral_suc_id_consecutivo")));
         mapDatos.put("cxc_mov_tipo_id", String.valueOf(map.get("cxc_mov_tipo_id")));
@@ -425,16 +425,16 @@ public class PocSpringDao implements PocInterfaceDao{
         mapDatos.put("permitir_servicios", String.valueOf(map.get("permitir_servicios")));
         mapDatos.put("permitir_articulos", String.valueOf(map.get("permitir_articulos")));
         mapDatos.put("permitir_kits", String.valueOf(map.get("permitir_kits")));
-        
+
         return mapDatos;
     }
 
-    
-    
-    
-    
+
+
+
+
     //obtiene direcciones fiscales del cliente, esta dirección es la que se utilizará para facturar el pedido
-    //si el cliente no tiene Direcciones Fisacles registradas en la tabla cxc_cliedf, 
+    //si el cliente no tiene Direcciones Fisacles registradas en la tabla cxc_cliedf,
     //nunca ejecutará esta busqueda porque tomará por default la dirección que está en cxc_clie
     @Override
     public ArrayList<HashMap<String, String>> getPocPedido_DireccionesFiscalesCliente(Integer id_cliente) {
@@ -460,9 +460,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "FROM ( "
                         + "SELECT  'DEFAULT'::character varying AS tipo_dir, cxc_clie.id AS id_cliente, 0::integer AS id_df, cxc_clie.calle, cxc_clie.numero AS numero_interior, cxc_clie.numero_exterior, cxc_clie.colonia, cxc_clie.cp AS cp, cxc_clie.pais_id, cxc_clie.estado_id, cxc_clie.municipio_id "
                         + "FROM cxc_clie  WHERE cxc_clie.id=? "
-                        
+
                         + "UNION "
-                        
+
                         + "SELECT 'DIRFISCAL'::character varying AS tipo_dir, cxc_clie_df.cxc_clie_id AS id_cliente, cxc_clie_df.id AS id_df,  cxc_clie_df.calle, cxc_clie_df.numero_interior, cxc_clie_df.numero_exterior, cxc_clie_df.colonia, cxc_clie_df.cp AS cp, cxc_clie_df.gral_pais_id AS pais_id, cxc_clie_df.gral_edo_id AS estado_id, cxc_clie_df.gral_mun_id AS municipio_id FROM cxc_clie_df  "
                         + "WHERE cxc_clie_df.borrado_logico=false AND cxc_clie_df.cxc_clie_id=? "
                     + ")AS sbt_dir "
@@ -471,9 +471,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "LEFT JOIN gral_mun ON gral_mun.id = sbt_dir.municipio_id "
                 + ") AS sbt1 "
                 + "ORDER BY sbt1.tipo_dir;";
-        
+
         System.out.println("DireccionesFiscalesCliente: "+sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> dir = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id_cliente), new Integer(id_cliente)}, new RowMapper(){
@@ -490,9 +490,9 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return dir;
     }
-   
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getMonedas() {
         String sql_to_query = "SELECT id, descripcion, descripcion_abr FROM  gral_mon WHERE borrado_logico=FALSE AND ventas=TRUE ORDER BY id ASC;";
@@ -512,7 +512,7 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_monedas;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT cxc_agen.id, cxc_agen.nombre AS nombre_agente "
@@ -520,9 +520,9 @@ public class PocSpringDao implements PocInterfaceDao{
                                 +"JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=cxc_agen.gral_usr_id "
                                 +"JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
                                 +"WHERE gral_suc.empresa_id="+id_empresa+" ORDER BY cxc_agen.id;";
-        
+
         System.out.println("Obtener agentes:"+sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm_vendedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -537,9 +537,9 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_vendedor;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getCondicionesDePago() {
         String sql_to_query = "SELECT id,descripcion FROM cxc_clie_credias WHERE borrado_logico=FALSE;";
@@ -557,8 +557,8 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     //obtiene el tipo de cambio actual
     @Override
     public Double getTipoCambioActual() {
@@ -566,33 +566,33 @@ public class PocSpringDao implements PocInterfaceDao{
         String sql_to_query = "SELECT valor AS tipo_cambio FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id=2 ORDER BY momento_creacion DESC LIMIT 1;";
         Map<String, Object> tipo_cambio = this.getJdbcTemplate().queryForMap(sql_to_query);
         Double valor_tipo_cambio = Double.parseDouble(StringHelper.roundDouble(tipo_cambio.get("tipo_cambio").toString(),4));
-        
+
         return valor_tipo_cambio;
     }
-    
+
     //obtiene el tipo de cambio actual por Id de la Moneda Seleccionada
     @Override
     public HashMap<String, String> getTipoCambioActualPorIdMoneda(Integer idMoneda) {
         HashMap<String, String> valorRetorno = new HashMap<String, String>();
         String valor="0.0000";
-        
+
         String sql_busqueda = "select count(valor) FROM (SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id="+idMoneda+" ORDER BY momento_creacion DESC LIMIT 1) AS sbt;";
         int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
-        
+
         System.out.println(sql_busqueda);
-        
+
         if(rowCount > 0){
             String sql_to_query = "SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id="+idMoneda+" ORDER BY momento_creacion DESC LIMIT 1;";
             Map<String, Object> tipo_cambio = this.getJdbcTemplate().queryForMap(sql_to_query);
             valor = StringHelper.roundDouble(tipo_cambio.get("valor").toString(),4);
         }
-        
+
         valorRetorno.put("valor", valor);
-        
+
         return valorRetorno;
     }
-    
-    
+
+
     //obtiene valor del impuesto. retorna 0.16
     @Override
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal) {
@@ -603,7 +603,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "FROM gral_suc "
                 + "JOIN gral_imptos ON gral_imptos.id=gral_suc.gral_impto_id "
                 + "WHERE gral_imptos.borrado_logico=FALSE AND gral_suc.id=?";
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_valoriva = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -619,9 +619,9 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_valoriva;
     }
-    
-    
-    
+
+
+
     //buscador de clientes
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
@@ -642,7 +642,7 @@ public class PocSpringDao implements PocInterfaceDao{
 	if(filtro == 5){
             where=" AND cxc_clie.alias ilike '%"+cadena.toUpperCase()+"%'";
 	}
-	
+
 	String sql_query = "SELECT "
                                     +"sbt.id, "
                                     +"sbt.numero_control, "
@@ -687,9 +687,9 @@ public class PocSpringDao implements PocInterfaceDao{
                                     + " AND cxc_clie.borrado_logico=false  "+where+" "
                             +") AS sbt "
                             +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id ";
-                            
+
         System.out.println("BuscadorClientes: "+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm_cli = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -713,16 +713,16 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
                     row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
                     row.put("contacto",rs.getString("contacto"));
-                    
+
                     return row;
                 }
             }
         );
         return hm_cli;
     }
-    
-    
-    
+
+
+
     //buscador de clientes
     @Override
     public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal) {
@@ -771,9 +771,9 @@ public class PocSpringDao implements PocInterfaceDao{
                                     + " AND cxc_clie.numero_control='"+no_control.toUpperCase()+"'"
                             +") AS sbt "
                             +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id LIMIT 1;";
-                            
+
         System.out.println("getDatosClienteByNoCliente: "+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm_cli = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -797,18 +797,18 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
                     row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
                     row.put("contacto",rs.getString("contacto"));
-                    
+
                     return row;
                 }
             }
         );
         return hm_cli;
     }
-    
-    
+
+
     //Buscador de Prospectos
     //Se utiliza en cotizaciones, cuando el proyecto incluye modulo de CRM.
-    //Varios de los campos se les asigna un valor por default, solo es para que sea igual que el de clientes 
+    //Varios de los campos se les asigna un valor por default, solo es para que sea igual que el de clientes
     //porque se utiliza en la misma ventana de busqueda
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProspectos(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
@@ -822,7 +822,7 @@ public class PocSpringDao implements PocInterfaceDao{
 	if(filtro == 3){
             where=" AND crm_prospectos.razon_social ilike '%"+cadena.toUpperCase()+"%'";
 	}
-	
+
 	String sql_query = ""
                 + "SELECT "
                     + "crm_prospectos.id, "
@@ -848,9 +848,9 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "JOIN gral_mun ON gral_mun.id=crm_prospectos.municipio_id  "
                 + "WHERE crm_prospectos.gral_emp_id="+id_empresa+" "
                 + "AND crm_prospectos.borrado_logico=false  "+where+";";
-                            
+
         System.out.println("BuscadorProspectos: "+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -874,17 +874,17 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
                     row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
                     row.put("contacto",rs.getString("contacto"));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getDatosProspectoByNoControl(String no_control, Integer id_empresa, Integer id_sucursal) {
 	String sql_query = ""
@@ -912,9 +912,9 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "JOIN gral_mun ON gral_mun.id=crm_prospectos.municipio_id  "
                 + "WHERE crm_prospectos.gral_emp_id="+id_empresa+" "
                 + "AND crm_prospectos.borrado_logico=false AND crm_prospectos.numero_control='"+no_control.toUpperCase()+"';";
-                            
+
         System.out.println("getDatosProspecto: "+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -938,17 +938,17 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
                     row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
                     row.put("contacto",rs.getString("contacto"));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     //buscador de tipos de producto
     @Override
     public ArrayList<HashMap<String, String>> getProductoTipos() {
@@ -967,10 +967,10 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_tp;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa) {
         String where = "";
@@ -983,7 +983,7 @@ public class PocSpringDao implements PocInterfaceDao{
 	if(!descripcion.equals("")){
 		where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
 	}
-        
+
         String sql_to_query = ""
                          + "SELECT "
                             +"inv_prod.id, "
@@ -993,13 +993,13 @@ public class PocSpringDao implements PocInterfaceDao{
                             + "inv_prod_unidades.titulo AS unidad, "
                             +"inv_prod_tipos.titulo AS tipo, "
                             + "inv_prod_unidades.decimales "
-                            
+
 		+"FROM inv_prod "
                 + "LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
                 + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                 + "WHERE inv_prod.empresa_id="+id_empresa+" AND inv_prod.borrado_logico=false "+where+" ORDER BY inv_prod.descripcion;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1021,13 +1021,13 @@ public class PocSpringDao implements PocInterfaceDao{
         return hm_datos_productos;
     }
 
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku,String lista_precio, Integer id_empresa) {
         String sql_query = "";
         String precio = "";
-        
+
         if(lista_precio.equals("0")){
             precio=" 0::double precision AS precio,"
                     + "0::integer  AS id_moneda,"
@@ -1039,7 +1039,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "(CASE WHEN inv_pre.gral_mon_id_pre1 IS NULL THEN 0 ELSE (SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id=inv_pre.gral_mon_id_pre"+lista_precio+" ORDER BY momento_creacion DESC LIMIT 1) END ) AS tc, "
                     + " (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 'El producto con &eacute;sta presentaci&oacute;n no se encuentra en el cat&aacute;logo de Listas de Precios.\nEs necesario asignarle un precio.' ELSE '1' END ) AS exis_prod_lp ";
         }
-        
+
         sql_query = ""
             + "SELECT "
                     +"inv_prod.id,"
@@ -1058,9 +1058,9 @@ public class PocSpringDao implements PocInterfaceDao{
             +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
             +"LEFT JOIN inv_pre ON (inv_pre.inv_prod_id=inv_prod.id AND inv_pre.inv_prod_presentacion_id=inv_prod_pres_x_prod.presentacion_id AND inv_pre.borrado_logico=false) "
             +"WHERE  inv_prod.empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
-        
+
         System.out.println("getPresentacionesProducto: "+sql_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -1086,8 +1086,8 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     @Override
     public ArrayList<HashMap<String, Object>> getRemisiones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
@@ -1110,11 +1110,11 @@ public class PocSpringDao implements PocInterfaceDao{
                             +"LEFT JOIN gral_mon ON gral_mon.id=fac_rems.moneda_id "
                             +"JOIN ("+sql_busqueda+") as subt on subt.id=fac_rems.id "
                             + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("sql_to_query: "+sql_to_query);
         //System.out.println("data_string: "+data_string);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1132,10 +1132,10 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
+
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getMetodosPago() {
         String sql_to_query = "SELECT id, titulo FROM fac_metodos_pago WHERE borrado_logico=false;";
@@ -1154,9 +1154,9 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //obtiene datos de la remision para visualizar al consultar
     @Override
     public ArrayList<HashMap<String, String>> getRemisiones_Datos(Integer id_remision) {
@@ -1189,10 +1189,10 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "LEFT JOIN erp_proceso ON erp_proceso.id = fac_rems.proceso_id  "
                 + "LEFT JOIN gral_mon ON gral_mon.id = fac_rems.moneda_id  "
                 + "LEFT JOIN cxc_clie ON cxc_clie.id=fac_rems.cxc_clie_id   "
-                + "WHERE fac_rems.id="+id_remision; 
+                + "WHERE fac_rems.id="+id_remision;
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1226,8 +1226,8 @@ public class PocSpringDao implements PocInterfaceDao{
             }
         );
         return hm;
-    }    
-    
+    }
+
 
     @Override
     public ArrayList<HashMap<String, String>> getRemisiones_DatosGrid(Integer id_remision) {
@@ -1253,7 +1253,7 @@ public class PocSpringDao implements PocInterfaceDao{
 
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1276,11 +1276,11 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_grid;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     @Override
     public HashMap<String, String> getRemisiones_DatosPdf(Integer id_remision) {
         HashMap<String, String> datos = new HashMap<String, String>();
@@ -1323,9 +1323,9 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "JOIN cxc_agen ON cxc_agen.id=fac_rems.cxc_agen_id "
                 + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_rems.cxc_clie_df_id "
                 + "WHERE fac_rems.id="+id_remision;
-        
+
         Map<String, Object> hm = this.getJdbcTemplate().queryForMap(sql_to_query);
-        
+
         datos.put("id_remision", hm.get("id_remision").toString());
         datos.put("folio", hm.get("folio").toString());
         datos.put("subtotal", StringHelper.roundDouble(hm.get("subtotal").toString(),2));
@@ -1353,11 +1353,11 @@ public class PocSpringDao implements PocInterfaceDao{
         datos.put("vendedor", hm.get("vendedor").toString());
         datos.put("cliente_telefono", hm.get("cliente_telefono").toString());
         datos.put("cancelado", hm.get("cancelado").toString());
-        return datos; 
+        return datos;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getRemisiones_ConceptosPdf(Integer id_remision, String rfc_empresa) {
         final String rfc = rfc_empresa;
@@ -1375,9 +1375,9 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = fac_rems_detalles.inv_prod_presentacion_id "
                 + "WHERE fac_rems_detalles.fac_rems_id= "+id_remision;
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1386,13 +1386,13 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     //row.put("unidad",rs.getString("unidad"));
                     //row.put("presentacion",rs.getString("presentacion"));
-                    
+
                     if( rfc.equals("PIS850531CS4") ){
                         row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("presentacion"))));
                     }else{
                         row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("unidad"))));
                     }
-                    
+
                     row.put("cantidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad")),2));
                     row.put("precio_unitario",StringHelper.roundDouble(String.valueOf(rs.getDouble("precio_unitario")),2));
                     row.put("importe",StringHelper.roundDouble(String.valueOf(rs.getDouble("importe")),2));
@@ -1402,28 +1402,28 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
    //obtiene lista de peidos de un periodo
     @Override
     public ArrayList<HashMap<String, String>> getReportePedidos(Integer opcion, Integer agente, String cliente, String fecha_inicial, String fecha_final,Integer id_empresa) {
         String where="";
-        
+
         if (opcion!=0){
             where+=" AND erp_proceso.proceso_flujo_id="+opcion;
         }
-        
+
         if (agente!=0){
             where+=" AND poc_pedidos.cxc_agen_id="+agente;
         }
-        
+
         if (!cliente.equals("")){
             where+=" AND cxc_clie.razon_social ILIKE '%"+cliente+"%'";
         }
-        
+
         String sql_to_query = ""
                 + "SELECT "
                         + "folio,"
@@ -1460,7 +1460,7 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "AND (to_char(poc_pedidos.momento_creacion,'yyyymmdd')::integer BETWEEN  to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer) "
                 + ") AS sbt "
                 + "ORDER BY id";
-            
+
         System.out.println("Buscando facturas: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1486,9 +1486,9 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_facturas;
     }
-    
+
     //alimenta el select de los agentes en reporte de pedidos
-    
+
     @Override
     public ArrayList<HashMap<String, String>> getAgente(Integer id_empresa) {
         String sql_to_query = "SELECT cxc_agen.id, cxc_agen.nombre "
@@ -1497,23 +1497,23 @@ public class PocSpringDao implements PocInterfaceDao{
                                +"join gral_usr_suc on gral_usr_suc.gral_usr_id= gral_usr.id "
                                +"join gral_suc on gral_suc.id =gral_usr_suc.gral_suc_id "
                                +"WHERE gral_suc.empresa_id ="+id_empresa;
-                                      
-        
+
+
         ArrayList<HashMap<String,String>> hmtl_agente =(ArrayList<HashMap<String,String>>) this.jdbcTemplate.query(
             sql_to_query,new Object[]{},new RowMapper(){
-                
+
              @Override
              public Object mapRow(ResultSet rs,int rowNum) throws SQLException{
                  HashMap<String, String > row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("nombre",String.valueOf(rs.getString("nombre")));
-                    return row; 
+                    return row;
              }
             }
         );
-        
+
         return hmtl_agente;
-                
+
     }
     @Override
     public ArrayList<HashMap<String, String>> getEstadoPedido() {
@@ -1524,25 +1524,25 @@ public class PocSpringDao implements PocInterfaceDao{
                               +"ORDER BY titulo";
         ArrayList<HashMap<String,String>> hmtl_agente =(ArrayList<HashMap<String,String>>) this.jdbcTemplate.query(
             sql_to_query,new Object[]{},new RowMapper(){
-                
+
              @Override
              public Object mapRow(ResultSet rs,int rowNum) throws SQLException{
                  HashMap<String, String > row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("titulo",String.valueOf(rs.getString("titulo")));
-                    return row; 
+                    return row;
              }
             }
         );
-        
+
         return hmtl_agente;
-                
+
     }
 
-    
-    
-    
-    
+
+
+
+
     //metodo para reporte de articulos reservados
     @Override
     public ArrayList<HashMap<String, String>> getReporteArticulosReservados(Integer id_empresa,Integer id_usuario,String codigo, String descripcion) {
@@ -1551,11 +1551,11 @@ public class PocSpringDao implements PocInterfaceDao{
         if(!codigo.equals("")){
             cadena_where=" and inv_prod.sku ILIKE '%"+codigo +"%'";
         }
-        
+
         if(!descripcion.equals("")){
             cadena_where=" and inv_prod.descripcion ILIKE '%"+descripcion +"%'";
         }
-        
+
        String sql_to_query =""
                + "SELECT  "
                    + "poc_pedidos.id as id_pedido, "
@@ -1577,11 +1577,11 @@ public class PocSpringDao implements PocInterfaceDao{
                + "WHERE poc_pedidos.cancelado=false AND erp_proceso.proceso_flujo_id IN (2,4) "
                + "AND erp_proceso.empresa_id= "+id_empresa +" "+cadena_where
                + "  order by sku asc ";
-      
+
        System.out.println("Articulos Reservados:"+ sql_to_query);
-       
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_to_query, 
+                sql_to_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1595,24 +1595,24 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("importe",String.valueOf(rs.getDouble("importe")));
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    
+
                     return row;
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, String>> getListaPrecio(Integer lista_precio) {
-        String sql_query="SELECT "  
+        String sql_query="SELECT "
                         +"gral_mon_id_pre"+lista_precio+" as moneda_id "
                         + "FROM inv_pre "
                         + " LIMIT 1 ";
-                           
+
         System.out.println("Resultado de la Moneda de lista: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_query, 
+                sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1622,17 +1622,17 @@ public class PocSpringDao implements PocInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
+
     @Override
     public ArrayList<HashMap<String, Object>> getCotizacion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_to_query="";
-        
+
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
-        
+
         String cad[]=data_string.split("___");
-        
+
         if (cad[6].equals("1")){
             sql_to_query = "SELECT DISTINCT "
                     +"poc_cot.id,"
@@ -1680,15 +1680,15 @@ public class PocSpringDao implements PocInterfaceDao{
                 +"LEFT JOIN crm_prospectos ON crm_prospectos.id=poc_cot_prospecto.crm_prospecto_id "
                 +"LEFT JOIN cxc_agen ON cxc_agen.id=poc_cot.cxc_agen_id  "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot.id "
-                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";  
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
             }
         }
-        
-        
+
+
         System.out.println("data_string: "+data_string);
         System.out.println("PaginaGrid: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1704,10 +1704,10 @@ public class PocSpringDao implements PocInterfaceDao{
                 }
             }
         );
-        return hm;  
+        return hm;
     }
-    
-    
+
+
     //obtiene datos de la cotizacion
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_Datos(Integer id) {
@@ -1743,7 +1743,7 @@ public class PocSpringDao implements PocInterfaceDao{
         //poc_cot.fecha + poc_cot.dias_vigencia AS fecha_vencimiento
         System.out.println("getCotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm_cotizacion = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1767,7 +1767,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
                     row.put("dias_vigencia",String.valueOf(rs.getInt("dias_vigencia")));
                     row.put("incluye_iva",String.valueOf(rs.getBoolean("incluye_iva")));
-                    
+
                     row.put("fecha_vencimiento",rs.getString("fecha_vencimiento"));
                     row.put("vencido",String.valueOf(rs.getBoolean("vencido")));
                     return row;
@@ -1776,8 +1776,8 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_cotizacion;
     }
-    
-    //obtine datos del cliente 
+
+    //obtine datos del cliente
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_DatosCliente(Integer id) {
         String sql_query = ""
@@ -1803,10 +1803,10 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
                     + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
                     + "WHERE poc_cot_clie.poc_cot_id=?;";
-        
+
         //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1832,8 +1832,8 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     //obtiene datos del prospecto
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_DatosProspecto(Integer id) {
@@ -1860,10 +1860,10 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "JOIN gral_edo ON gral_edo.id = crm_prospectos.estado_id "
                     + "JOIN gral_mun ON gral_mun.id = crm_prospectos.municipio_id "
                     + "WHERE poc_cot_prospecto.poc_cot_id=?;";
-        
+
         //System.out.println("Obteniendo datos de la cotizacion: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1883,15 +1883,15 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("pais",rs.getString("pais"));
                     row.put("cp",rs.getString("cp"));
                     row.put("telefono",rs.getString("telefono"));
-                    
+
                     return row;
                 }
             }
         );
         return hm;
     }
-    
-    
+
+
 
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_DatosGrid(Integer id) {
@@ -1920,9 +1920,9 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "LEFT JOIN gral_mon on gral_mon.id = poc_cot_detalle.gral_mon_id  "
                 + "WHERE poc_cot_detalle.poc_cot_id= ? "
                 + "ORDER BY poc_cot_detalle.id";
-        
+
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1949,16 +1949,16 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_grid;
     }
-    
-    
+
+
     //obtiene las condiciones comerciales que se mostraran en el pdf de la cotizacion
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_CondicionesComerciales(Integer id_emp) {
         String sql_query="SELECT id, descripcion FROM poc_cot_condiciones_com WHERE gral_emp_id="+id_emp+" AND borrado_logico=false ORDER BY id;";
-        
+
         System.out.println("getCondicionesComerciales: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_query, 
+                sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1969,18 +1969,18 @@ public class PocSpringDao implements PocInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
+
+
     //obtiene las politicas de pago para la cotizacion
     @Override
     public ArrayList<HashMap<String, String>> getCotizacion_PolitizasPago(Integer id_emp) {
         String sql_query="SELECT id, descripcion FROM poc_cot_politicas_pago WHERE gral_emp_id="+id_emp+" AND borrado_logico=false ORDER BY id;";
-        
+
         System.out.println("getPoliticasPago: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_query, 
+                sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1991,11 +1991,11 @@ public class PocSpringDao implements PocInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
+
+
+
     //obtiene los INCOTERMS para mostrarlas a la cotizacion
     //los option del select se forman desde el query
     @Override
@@ -2015,10 +2015,10 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "LEFT JOIN poc_cot_incoterm_x_cot AS incotermxcot ON (incotermxcot.poc_cot_incoterms_id=incoterms.id AND incotermxcot.poc_cot_id="+id_cot+") "
                     + "WHERE incoterms.borrado_logico=FALSE AND incoterms.gral_emp_id="+id_emp+""
                 + ") AS sbt;";
-                
+
         System.out.println("getIncoterms: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-                sql_query, 
+                sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2031,39 +2031,39 @@ public class PocSpringDao implements PocInterfaceDao{
                 }
             }
         );
-        return hm; 
+        return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public HashMap<String, String> getUserRol(Integer id_user) {
         HashMap<String, String> data = new HashMap<String, String>();
-        
+
         //verificar si el usuario tiene  rol de ADMINISTTRADOR
         //si exis es mayor que cero, el usuario si es ADMINISTRADOR
         String sql_to_query = "SELECT count(gral_usr_id) AS exis_rol_admin FROM gral_usr_rol WHERE gral_usr_id="+id_user+" AND gral_rol_id=1;";
-        
+
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
-        
+
         data.put("exis_rol_admin",map.get("exis_rol_admin").toString().toUpperCase());
-        
+
         return data;
     }
-    
-    
+
+
     //obtener SALUDO
     @Override
     public HashMap<String, String> getCotizacion_Saludo(Integer id_empresa) {
         HashMap<String, String> retorno = new HashMap<String, String>();
         String sql_busqueda = "SELECT count(id) FROM poc_cot_saludo_despedida WHERE tipo='SALUDO' AND status=true AND gral_emp_id="+id_empresa;
-        
+
         int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
-        
+
         if(rowCount > 0){
             String sql_to_query = "SELECT titulo FROM poc_cot_saludo_despedida WHERE tipo='SALUDO' AND status=true AND gral_emp_id="+id_empresa;
             HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
-                sql_to_query, 
+                sql_to_query,
                 new Object[]{}, new RowMapper() {
                     @Override
                     public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2073,27 +2073,27 @@ public class PocSpringDao implements PocInterfaceDao{
                     }
                 }
             );
-            
+
             retorno=hm;
         }else{
             retorno.put("saludo", "");
         }
-        
-        return retorno; 
+
+        return retorno;
     }
-    
+
     //obtener DESPEDIDA
     @Override
     public HashMap<String, String> getCotizacion_Despedida(Integer id_empresa) {
         HashMap<String, String> retorno = new HashMap<String, String>();
         String sql_busqueda = "SELECT count(id) FROM poc_cot_saludo_despedida WHERE tipo='DESPEDIDA' AND status=true AND gral_emp_id="+id_empresa;
-        
+
         int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
-        
+
         if(rowCount > 0){
             String sql_to_query = "SELECT titulo FROM poc_cot_saludo_despedida WHERE tipo='DESPEDIDA' AND status=true AND gral_emp_id="+id_empresa;
             HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
-                sql_to_query, 
+                sql_to_query,
                 new Object[]{}, new RowMapper() {
                     @Override
                     public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2103,18 +2103,18 @@ public class PocSpringDao implements PocInterfaceDao{
                     }
                 }
             );
-            
+
             retorno=hm;
         }else{
             retorno.put("despedida", "");
         }
-        
-        return retorno; 
-    }
-    
 
-    
-    
+        return retorno;
+    }
+
+
+
+
     //metodos para Actualizador de Saludo y Despedida para Cotizaciones-----------------------------------------------------------------
     @Override
     public ArrayList<HashMap<String, Object>> getCotizacionSaludoDespedida_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
@@ -2128,10 +2128,10 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "FROM poc_cot_saludo_despedida "
                 + "JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot_saludo_despedida.id "
                 + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("data_string: "+data_string);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2146,9 +2146,9 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //obtiene datos del saludo ó despedida
     @Override
     public ArrayList<HashMap<String, String>> getCotizacionSaludoDespedida_Datos(Integer id) {
@@ -2160,9 +2160,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "(CASE WHEN status=TRUE THEN 1 ELSE 2 END ) AS status "
                 + "FROM poc_cot_saludo_despedida "
                 + " WHERE poc_cot_saludo_despedida.id=? ";
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2177,8 +2177,8 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
+
+
     //metodos para Catalogo de Incoterms-----------------------------------------------------------------
     @Override
     public ArrayList<HashMap<String, Object>> getCotIncoterms_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
@@ -2191,10 +2191,10 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "FROM poc_cot_incoterms "
                 + "JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot_incoterms.id "
                 + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-        
+
         //System.out.println("data_string: "+data_string);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
-            sql_to_query, 
+            sql_to_query,
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2208,16 +2208,16 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     //obtiene datos de un Incoterm
     @Override
     public ArrayList<HashMap<String, String>> getCotIncoterms_Datos(Integer id) {
         String sql_query = "SELECT id,nombre,descripcion_esp,descripcion_ing FROM poc_cot_incoterms WHERE id=?;";
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,  
+            sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2232,9 +2232,139 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
+
+
+
+//Grid de politicas de Pago
+    @Override
+    public ArrayList<HashMap<String, Object>> getCotPoliticas_de_Pago_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+	String sql_to_query = ""
+                + "SELECT "
+                    + "poc_cot_politicas_pago.id, "
+                    + "poc_cot_politicas_pago.descripcion, "
+                    + "poc_cot_politicas_pago.borrado_logico, "
+                    + "poc_cot_politicas_pago.gral_emp_id, "
+                    + "poc_cot_politicas_pago.gral_suc_id "
+
+                + "FROM poc_cot_politicas_pago "
+                + "JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot_politicas_pago.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+
+        System.out.println("sql Busqueda : "+sql_busqueda);
+        System.out.println("Query para el Grid : "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("borrado_logico",rs.getString("borrado_logico"));
+                    row.put("empresa_id",rs.getString("gral_emp_id"));
+                    row.put("sucursal_id",rs.getString("gral_suc_id"));
+
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+     //obtiene las politicas de pago.
+    @Override
+    public ArrayList<HashMap<String, String>> getCotPoliticas_de_Pago_Datos(Integer id) {
+        String sql_query = "SELECT id,descripcion,borrado_logico,gral_emp_id,gral_suc_id FROM poc_cot_politicas_pago WHERE id=?;";
+
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("borrado_logico",rs.getString("borrado_logico"));
+                    row.put("empresa_id",rs.getString("gral_emp_id"));
+                    row.put("sucursal_id",rs.getString("gral_suc_id"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+//////////////////////////7
+
+//Grid de Condiciones de Venta
+    @Override
+    public ArrayList<HashMap<String, Object>> getCotCondiciones_de_Venta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+	String sql_to_query = ""
+                + "SELECT "
+                    + "poc_cot_condiciones_com.id, "
+                    + "poc_cot_condiciones_com.descripcion, "
+                    + "poc_cot_condiciones_com.borrado_logico, "
+                    + "poc_cot_condiciones_com.gral_emp_id, "
+                    + "poc_cot_condiciones_com.gral_suc_id "
+
+                + "FROM poc_cot_condiciones_com "
+                + "JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot_condiciones_com.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+
+        System.out.println("sql Busqueda : "+sql_busqueda);
+        System.out.println("Query para el Grid : "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("borrado_logico",rs.getString("borrado_logico"));
+                    row.put("empresa_id",rs.getString("gral_emp_id"));
+                    row.put("sucursal_id",rs.getString("gral_suc_id"));
+
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+     //obtiene las condiciones de Venta.
+    @Override
+    public ArrayList<HashMap<String, String>> getCotCondiciones_de_Venta_Datos(Integer id) {
+        String sql_query = "SELECT id,descripcion,borrado_logico,gral_emp_id,gral_suc_id FROM poc_cot_condiciones_com WHERE id=?;";
+
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("borrado_logico",rs.getString("borrado_logico"));
+                    row.put("empresa_id",rs.getString("gral_emp_id"));
+                    row.put("sucursal_id",rs.getString("gral_suc_id"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
