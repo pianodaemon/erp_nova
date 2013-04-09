@@ -13,12 +13,12 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/cotcondicionesdeventa";
+	var controller = $contextpath.val()+"/controllers/cotcondicionescomerciales";
 
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
     $('#barra_acciones').find('.table_acciones').css({'display':'block'});
-	var $new_cotcondicionesdeventa = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
+	var $new_cotcondicionescomerciales = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 
 	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
@@ -119,39 +119,39 @@ $(function() {
 
 	$tabs_li_funxionalidad = function(){
 
-		$('#forma-cotcondicionesdeventa-window').find('#submit').mouseover(function(){
-			$('#forma-cotcondicionesdeventa-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+		$('#forma-cotcondicionescomerciales-window').find('#submit').mouseover(function(){
+			$('#forma-cotcondicionescomerciales-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
 		});
-		$('#forma-cotcondicionesdeventa-window').find('#submit').mouseout(function(){
-			$('#forma-cotcondicionesdeventa-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+		$('#forma-cotcondicionescomerciales-window').find('#submit').mouseout(function(){
+			$('#forma-cotcondicionescomerciales-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/btn1.png)"});
 		});
-		$('#forma-cotcondicionesdeventa-window').find('#boton_cancelar').mouseover(function(){
-			$('#forma-cotcondicionesdeventa-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+		$('#forma-cotcondicionescomerciales-window').find('#boton_cancelar').mouseover(function(){
+			$('#forma-cotcondicionescomerciales-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
 		})
-		$('#forma-cotcondicionesdeventa-window').find('#boton_cancelar').mouseout(function(){
-			$('#forma-cotcondicionesdeventa-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
+		$('#forma-cotcondicionescomerciales-window').find('#boton_cancelar').mouseout(function(){
+			$('#forma-cotcondicionescomerciales-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
 		});
 
-		$('#forma-cotcondicionesdeventa-window').find('#close').mouseover(function(){
-			$('#forma-cotcondicionesdeventa-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		$('#forma-cotcondicionescomerciales-window').find('#close').mouseover(function(){
+			$('#forma-cotcondicionescomerciales-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
 		});
-		$('#forma-cotcondicionesdeventa-window').find('#close').mouseout(function(){
-			$('#forma-cotcondicionesdeventa-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		$('#forma-cotcondicionescomerciales-window').find('#close').mouseout(function(){
+			$('#forma-cotcondicionescomerciales-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
 		});
 
 
-		$('#forma-cotcondicionesdeventa-window').find(".contenidoPes").hide(); //Hide all content
-		$('#forma-cotcondicionesdeventa-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-		$('#forma-cotcondicionesdeventa-window').find(".contenidoPes:first").show(); //Show first tab content
+		$('#forma-cotcondicionescomerciales-window').find(".contenidoPes").hide(); //Hide all content
+		$('#forma-cotcondicionescomerciales-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+		$('#forma-cotcondicionescomerciales-window').find(".contenidoPes:first").show(); //Show first tab content
 
 		//On Click Event
-		$('#forma-cotcondicionesdeventa-window').find("ul.pestanas li").click(function() {
-			$('#forma-cotcondicionesdeventa-window').find(".contenidoPes").hide();
-			$('#forma-cotcondicionesdeventa-window').find("ul.pestanas li").removeClass("active");
+		$('#forma-cotcondicionescomerciales-window').find("ul.pestanas li").click(function() {
+			$('#forma-cotcondicionescomerciales-window').find(".contenidoPes").hide();
+			$('#forma-cotcondicionescomerciales-window').find("ul.pestanas li").removeClass("active");
 			var activeTab = $(this).find("a").attr("href");
-			$('#forma-cotcondicionesdeventa-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$('#forma-cotcondicionescomerciales-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
 			$(this).addClass("active");
 			return false;
 		});
@@ -163,28 +163,28 @@ $(function() {
 
 
 	//nuevo politica da pago
-	$new_cotcondicionesdeventa.click(function(event){
+	$new_cotcondicionescomerciales.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
 
-		$(this).modalPanel_cotcondicionesdeventa();
+		$(this).modalPanel_cotcondicionescomerciales();
 
-		var form_to_show = 'formacotcondicionesdeventa';
+		var form_to_show = 'formacotcondicionescomerciales';
 		$('#' + form_to_show).each (function(){   this.reset(); });
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({ id : form_to_show + id_to_show });
 
-		$('#forma-cotcondicionesdeventa-window').css({ "margin-left": -250, 	"margin-top": -200 });
-		$forma_selected.prependTo('#forma-cotcondicionesdeventa-window');
+		$('#forma-cotcondicionescomerciales-window').css({ "margin-left": -250, 	"margin-top": -200 });
+		$forma_selected.prependTo('#forma-cotcondicionescomerciales-window');
 		$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
 
-		var $campo_id = $('#forma-cotcondicionesdeventa-window').find('input[name=identificador]');
-		var $campo_titulo = $('#forma-cotcondicionesdeventa-window').find('input[name=titulo]');
+		var $campo_id = $('#forma-cotcondicionescomerciales-window').find('input[name=identificador]');
+		var $campo_titulo = $('#forma-cotcondicionescomerciales-window').find('input[name=titulo]');
 
-		var $cerrar_plugin = $('#forma-cotcondicionesdeventa-window').find('#close');
-		var $cancelar_plugin = $('#forma-cotcondicionesdeventa-window').find('#boton_cancelar');
-		var $submit_actualizar = $('#forma-cotcondicionesdeventa-window').find('#submit');
+		var $cerrar_plugin = $('#forma-cotcondicionescomerciales-window').find('#close');
+		var $cancelar_plugin = $('#forma-cotcondicionescomerciales-window').find('#boton_cancelar');
+		var $submit_actualizar = $('#forma-cotcondicionescomerciales-window').find('#submit');
 
 		$campo_id.attr({ 'value' : 0 });
 
@@ -192,12 +192,12 @@ $(function() {
 			if ( data['success'] == "true" ){
 				jAlert("La Politica fue dada de alta con &eacute;xito", 'Atencion!');
 				var remove = function() { $(this).remove(); };
-				$('#forma-cotcondicionesdeventa-overlay').fadeOut(remove);
+				$('#forma-cotcondicionescomerciales-overlay').fadeOut(remove);
 				//refresh_table();
 				$get_datos_grid();
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
-				$('#forma-cotcondicionesdeventa-window').find('div.interrogacion').css({'display':'none'});
+				$('#forma-cotcondicionescomerciales-window').find('div.interrogacion').css({'display':'none'});
 
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
@@ -205,7 +205,7 @@ $(function() {
 					tmp = data['success'].split('___')[element];
 					longitud = tmp.split(':');
 					if( longitud.length > 1 ){
-						$('#forma-cotcondicionesdeventa-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						$('#forma-cotcondicionescomerciales-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
@@ -216,7 +216,7 @@ $(function() {
 		var options = { dataType :  'json', success : respuestaProcesada };
 		$forma_selected.ajaxForm(options);
 
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getcotcondicionesdeventa.json';
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getcotcondicionescomerciales.json';
 		$arreglo = {'id':id_to_show};
 
 		$.post(input_json,$arreglo,function(entry){
@@ -226,12 +226,12 @@ $(function() {
 
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() { $(this).remove(); };
-			$('#forma-cotcondicionesdeventa-overlay').fadeOut(remove);
+			$('#forma-cotcondicionescomerciales-overlay').fadeOut(remove);
 		});
 
 		$cancelar_plugin.click(function(event){
 			var remove = function() { $(this).remove(); };
-			$('#forma-cotcondicionesdeventa-overlay').fadeOut(remove);
+			$('#forma-cotcondicionescomerciales-overlay').fadeOut(remove);
 			$buscar.trigger('click');
 		});
 
@@ -240,7 +240,7 @@ $(function() {
 
 	});
 
-	var carga_formacotcondicionesdeventa_for_datagrid00 = function(id_to_show, accion_mode){
+	var carga_formacotcondicionescomerciales_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar una entrada
 		if(accion_mode == 'cancel'){
 
@@ -264,45 +264,45 @@ $(function() {
 
 		}else{
 			//aqui  entra para editar un registro
-			var form_to_show = 'formacotcondicionesdeventa';
+			var form_to_show = 'formacotcondicionescomerciales';
 
 			$('#' + form_to_show).each (function(){   this.reset(); });
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({ id : form_to_show + id_to_show });
 
-			$(this).modalPanel_cotcondicionesdeventa();
-			$('#forma-cotcondicionesdeventa-window').css({ "margin-left": -350, 	"margin-top": -200 });
+			$(this).modalPanel_cotcondicionescomerciales();
+			$('#forma-cotcondicionescomerciales-window').css({ "margin-left": -350, 	"margin-top": -200 });
 
-			$forma_selected.prependTo('#forma-cotcondicionesdeventa-window');
+			$forma_selected.prependTo('#forma-cotcondicionescomerciales-window');
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 
 			$tabs_li_funxionalidad();
 
-			var $campo_id = $('#forma-cotcondicionesdeventa-window').find('input[name=identificador]');
-			var $campo_titulo = $('#forma-cotcondicionesdeventa-window').find('input[name=titulo]');
+			var $campo_id = $('#forma-cotcondicionescomerciales-window').find('input[name=identificador]');
+			var $campo_titulo = $('#forma-cotcondicionescomerciales-window').find('input[name=titulo]');
 
-			var $cerrar_plugin = $('#forma-cotcondicionesdeventa-window').find('#close');
-			var $cancelar_plugin = $('#forma-cotcondicionesdeventa-window').find('#boton_cancelar');
-			var $submit_actualizar = $('#forma-cotcondicionesdeventa-window').find('#submit');
+			var $cerrar_plugin = $('#forma-cotcondicionescomerciales-window').find('#close');
+			var $cancelar_plugin = $('#forma-cotcondicionescomerciales-window').find('#boton_cancelar');
+			var $submit_actualizar = $('#forma-cotcondicionescomerciales-window').find('#submit');
 
 
 
 			if(accion_mode == 'edit'){
 
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getcotcondicionesdeventa.json';
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getcotcondicionescomerciales.json';
 				$arreglo = {'id':id_to_show};
 
 
 				var respuestaProcesada = function(data){
 					if ( data['success'] == 'true' ){
 						var remove = function() { $(this).remove(); };
-						$('#forma-cotcondicionesdeventa-overlay').fadeOut(remove);
+						$('#forma-cotcondicionescomerciales-overlay').fadeOut(remove);
 						jAlert("La Politica de Pago se ha actualizado.", 'Atencion!');
 						$get_datos_grid();
 					}
 					else{
 						// Desaparece todas las interrogaciones si es que existen
-						$('#forma-cotcondicionesdeventa-window').find('div.interrogacion').css({'display':'none'});
+						$('#forma-cotcondicionescomerciales-window').find('div.interrogacion').css({'display':'none'});
 
 						var valor = data['success'].split('___');
 						//muestra las interrogaciones
@@ -310,7 +310,7 @@ $(function() {
 							tmp = data['success'].split('___')[element];
 							longitud = tmp.split(':');
 							if( longitud.length > 2 ){
-								$('#forma-cotcondicionesdeventa-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+								$('#forma-cotcondicionescomerciales-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
@@ -332,12 +332,12 @@ $(function() {
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() { $(this).remove(); };
-					$('#forma-cotcondicionesdeventa-overlay').fadeOut(remove);
+					$('#forma-cotcondicionescomerciales-overlay').fadeOut(remove);
 				});
 
 				$cerrar_plugin.bind('click',function(){
 					var remove = function() { $(this).remove(); };
-					$('#forma-cotcondicionesdeventa-overlay').fadeOut(remove);
+					$('#forma-cotcondicionescomerciales-overlay').fadeOut(remove);
 					$buscar.trigger('click');
 				});
 
@@ -347,16 +347,16 @@ $(function() {
 	}
 
     $get_datos_grid = function(){
-        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllgetcotcondicionesdeventa.json';
+        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllgetcotcondicionescomerciales.json';
 
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 
-        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllgetcotcondicionesdeventa.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllgetcotcondicionescomerciales.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
 
         $.post(input_json,$arreglo,function(data){
 
             //pinta_grid
-            $.fn.tablaOrdenable(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formacotcondicionesdeventa_for_datagrid00);
+            $.fn.tablaOrdenable(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formacotcondicionescomerciales_for_datagrid00);
 
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
