@@ -514,7 +514,7 @@ $(function() {
                     
                     trr = '<tr>';
                     if(id_reg == "0"){
-                        
+                            
                             trr += '<td width="65"  align="center" colspan="3" class="grid1">';
                                 trr += '<input type="hidden" id="delete" name="eliminar" value="1">';
                                 trr += '<input type="hidden" id="id_reg" name="id_reg" value="'+id_reg+'">';
@@ -1957,11 +1957,14 @@ $(function() {
                                 var trCount = $("tr", $tmp_tr).size();
                                 
                                 tmp_html = '<tr>';
-                                    tmp_html += '<td width="560" class="grid1" align="center" colspan="5">&nbsp;';
+                                    tmp_html += '<td class="grid1" align="center" colspan="4">&nbsp;';
                                         tmp_html += '<INPUT TYPE="button" id="agregar_producto_por_recuperacion'+trCount+'" name="guardar_producto_por_recuperacion" value="Agregar Producto" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;';
                                     tmp_html += '</td>';
                                     tmp_html += '<td width="100" class="grid1" >';
                                         tmp_html += '<INPUT TYPE="button" id="guardar_detalle_prod'+trCount+'" name="guardar_detalle_prod" value="Guardar" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;';
+                                    tmp_html += '</td>';
+                                    tmp_html += '<td width="100" class="grid1" >';
+                                        tmp_html += '<INPUT TYPE="button" id="guardar_uso_real_op'+trCount+'" name="guardar_uso_real_op" value="Cant. Usada" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;';
                                     tmp_html += '</td>';
                                     
                                 tmp_html += '</tr>';
@@ -1976,6 +1979,115 @@ $(function() {
                                 });
                                 
                                 
+                                
+                                //codigo, para guardar las cantidades reales utilizadas por cada lote
+                                $tmp_tr.find('#guardar_uso_real_op'+trCount).click(function(event){
+                                    event.preventDefault();
+                                    
+                                    $guardar_detalle_prod_tmp = $(this).parent().parent().parent().find('input[name=guardar_uso_real_op]');
+                                    
+                                    if( $guardar_detalle_prod_tmp != null ){
+                                        var $id_orden = $('#forma-proordenproduccion-window').find('input[name=id_orden]');
+                                        var $tipoorden = $('#forma-proordenproduccion-window').find('input[name=tipoorden]');
+                                        var $fecha_elavorar = $('#forma-proordenproduccion-window').find('input[name=fecha_elavorar]');
+                                        
+                                        var $command_selected = $('#forma-proordenproduccion-window').find('input[name=command_selected]');
+                                        var $proceso_flujo_id = $('#forma-proordenproduccion-window').find('input[name=proceso_flujo_id]');
+                                        var $observaciones = $('#forma-proordenproduccion-window').find('textarea[name=observaciones]');
+                                        
+                                        $command_selected.val(9);
+                                        
+                                        //alert($(this).parent().parent().parent().parent().parent().html());
+                                        
+                                        table_producto = $(this).parent().parent().parent().parent().parent();
+                                        
+                                        $id_prod = table_producto.find('input[name=inv_prod_id_elemento]');
+                                        $id_prod_detalle = table_producto.find('input[name=id_prod_detalle]');
+                                        $posicion_detalle = table_producto.find('input[name=posicion]');
+                                        $subproceso_id = table_producto.find('input[name=subproceso_id]');
+                                        
+                                        //subproceso_id
+                                        $id_tabla = '#detalle_por_prod'+$id_prod.val()+$posicion_detalle.val();
+                                        
+                                        table_producto_detalle = table_producto.find($id_tabla);
+                                        //detalle_por_prod3602
+                                        
+                                        
+                                        lotes_completos = 1;
+                                        cadena_pos = "";
+                                        table_producto_detalle.find('tr').each(function(){
+                                            
+                                            eliminar_tmp = $(this).find('input[name=eliminar]').val();
+                                            id_reg_tmp = $(this).find('input[name=id_reg]').val();//id de el registro ern la tabla
+                                            id_reg_parent = $(this).find('input[name=id_reg_parent]').val();
+                                            inv_prod_id_elemento_tmp = $(this).find('input[name=inv_prod_id_elemento]').val();
+                                            id_prod_detalle_tmp = $(this).find('input[name=id_prod_detalle]').val();//id de la materia prima
+                                            cantidad_elemento_tmp = $(this).find('input[name=cantidad_elemento]').val();//cantidad solicitar
+                                            cantidad_adicional_tmp = $(this).find('input[name=cantidad_adicional]').val();//cantidad adicional
+                                            lote_tmp = $(this).find('input[name=lote]').val();
+                                            id_reg_det = $(this).find('input[name=id_reg_det]').val();
+                                            inv_osal_id = $(this).find('input[name=inv_osal_id]').val();
+                                            almacen_id = $(this).find('select[name=almacen]').val();
+                                            sucursal_id = $(this).find('select[name=sucursal]').val();
+                                            agregado = $(this).find('input[name=agregado]').val();
+                                            cantidad_real_tmp = $(this).find('input[name=cantidad_real]').val();
+                                            //1___0___1483___12___d3da21c7-c4ba-49be-a241-9529336c5e75&&&1___0___158___0___2471c2a0-f253-4504-9bca-b7f843a5c72d&&&1___0___148___0___f84b5f6c-6cd4-45cb-a404-b532527f60e2&&&1___0___147___0___ &&&1___0___191___0___ &&&1___0___151___0___ &&&1___0___1493___0___ &&&1___0___1397___0___ &&&1___0___1390___0___ &&&1___0___374___0___ &&&1___0___378___0___ &&&1___0___1180___0___ &&&1___0___149___0___ &&&1___0___150___0___ &&&1___0___91___0___ &&&1___0___160___0___ &&&1___0___127___0___ &&&1___0___1483___0___ 
+                                            
+                                            if(eliminar_tmp != null && lote_tmp != null){
+                                                if(lote_tmp == "" || lote_tmp == " " ){
+                                                    lotes_completos = 0;
+                                                }
+                                                
+                                                cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+id_prod_detalle_tmp+"___"+ 
+                                                    cantidad_elemento_tmp+"___"+cantidad_adicional_tmp+"___"+lote_tmp+"___"+//inv_osal_id
+                                                    inv_prod_id_elemento_tmp+"___"+id_reg_parent+"___"+$subproceso_id.val()+
+                                                        "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"___"+sucursal_id+"___"+
+                                                        agregado+"___"+cantidad_real_tmp+"$$$$";
+                                            } 
+                                        });
+                                        
+                                        cadena_pos = cadena_pos.substring(0, (cadena_pos.length - 4 ));
+                                        jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
+                                            // If they confirmed, manually trigger a form submission
+                                            if (r){
+                                                var $id_formula = $('#forma-proordenproduccion-window').find('input[name=id_formula]');
+                                                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/guarda_lotes.json';
+                                                $arreglo = {
+                                                        'id':$id_orden.val(),
+                                                        'id_prod':$id_prod.val(),
+                                                        'tipoorden':8,
+                                                        'id_subproceso':$subproceso_id.val(),
+                                                        'cadena':cadena_pos,
+                                                        'command_selected':$command_selected.val() ,
+                                                        'observaciones': $observaciones.val(),
+                                                        'fecha_elavorar':$fecha_elavorar.val(),
+                                                        'id_formula':$id_formula.val(),
+                                                        'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+                                                    }
+                                                    
+                                                    $.post(input_json,$arreglo,function(data){
+                                                        if(data['success'] == "true"){
+                                                            var remove = function() {$(this).remove();};
+                                                            $('#forma-proordenproduccion-overlay').fadeOut(remove);
+                                                            jAlert("Lotes registrados", 'Atencion!');
+                                                        }else{
+                                                            var valor = data['success'].split('___');
+                                                            //muestra las interrogaciones
+                                                            for (var element in valor){
+                                                                tmp = data['success'].split('___')[element];
+                                                                longitud = tmp.split(':');
+                                                            }
+                                                        }
+                                                    });
+                                                    
+                                                    
+                                            }else{
+                                                return false;
+                                            }
+                                        });
+                                        
+                                    }
+                                });
                                 
                                 
                                 //codigo, para guardar los cambios en los productos del detalle de la formula, asi como los lotes
@@ -2028,6 +2140,7 @@ $(function() {
                                             almacen_id = $(this).find('select[name=almacen]').val();
                                             sucursal_id = $(this).find('select[name=sucursal]').val();
                                             agregado = $(this).find('input[name=agregado]').val();
+                                            cantidad_real_tmp = $(this).find('input[name=cantidad_real]').val();
                                             //1___0___1483___12___d3da21c7-c4ba-49be-a241-9529336c5e75&&&1___0___158___0___2471c2a0-f253-4504-9bca-b7f843a5c72d&&&1___0___148___0___f84b5f6c-6cd4-45cb-a404-b532527f60e2&&&1___0___147___0___ &&&1___0___191___0___ &&&1___0___151___0___ &&&1___0___1493___0___ &&&1___0___1397___0___ &&&1___0___1390___0___ &&&1___0___374___0___ &&&1___0___378___0___ &&&1___0___1180___0___ &&&1___0___149___0___ &&&1___0___150___0___ &&&1___0___91___0___ &&&1___0___160___0___ &&&1___0___127___0___ &&&1___0___1483___0___ 
                                             
                                             if(eliminar_tmp != null && lote_tmp != null){
@@ -2038,7 +2151,8 @@ $(function() {
                                                 cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+id_prod_detalle_tmp+"___"+ 
                                                     cantidad_elemento_tmp+"___"+cantidad_adicional_tmp+"___"+lote_tmp+"___"+//inv_osal_id
                                                     inv_prod_id_elemento_tmp+"___"+id_reg_parent+"___"+$subproceso_id.val()+
-                                                        "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"___"+sucursal_id+"___"+agregado+"$$$$";
+                                                        "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"___"+sucursal_id+"___"+
+                                                        agregado+"___"+cantidad_real_tmp+"$$$$";
                                             }
                                             
                                         });
@@ -2094,7 +2208,7 @@ $(function() {
                                                                     for (var element in valor){
                                                                             tmp = data['success'].split('___')[element];
                                                                             longitud = tmp.split(':');
-
+                                                                            
                                                                             if( longitud.length > 1 ){
                                                                                     $('#forma-proordenproduccion-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
                                                                                     .parent()
@@ -2241,7 +2355,7 @@ $(function() {
                     tmp_html += '<input type="text" id="cantidad_adicional'+trCount+'" name="cantidad_adicional" value="'+cantidad_adicional+'"  style="width:70px;" readOnly="true">';
                 tmp_html += '</td>';
                 tmp_html += '<td width="90px" class="grid1">';
-                    tmp_html += '<input type="text" id="cantidad_real'+trCount+'" name="cantidad_real" value="'+$cantidad+'"  style="width:70px;" readOnly="true">';
+                    tmp_html += '<input type="text" id="cantidad_real'+trCount+'" name="cantidad_real" value="'+$cantidad+'"  style="width:70px;" >';
                 tmp_html += '</td>';
                 
                 tmp_html += '<td width="130px" class="grid1" >';
@@ -3208,9 +3322,9 @@ $(function() {
                                 .parent()
                                 .css({'display':'block'})
                                 .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-
+                                
                                 //alert(tmp.split(':')[0]);
-
+                                
                                 if(parseInt($("tr", $tabla_productos_preorden).size())>0){
                                     for (var i=1;i<=parseInt($("tr", $tabla_productos_preorden).size());i++){
                                         if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='apoerario'+i) || (tmp.split(':')[0]=='equipo'+i) || (tmp.split(':')[0]=='equipo_adicional'+i)){
