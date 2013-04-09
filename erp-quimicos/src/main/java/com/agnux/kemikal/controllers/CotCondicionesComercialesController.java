@@ -41,10 +41,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/cotcondicionesdeventa/")
-public class CotCondicionesdeVentaController {
+@RequestMapping("/cotcondicionescomerciales/")
+public class CotCondicionesComercialesController {
     ResourceProject resource = new ResourceProject();
-    private static final Logger log  = Logger.getLogger(CotCondicionesdeVentaController.class.getName());
+    private static final Logger log  = Logger.getLogger(CotCondicionesComercialesController.class.getName());
 
     /*
     @Autowired
@@ -68,13 +68,13 @@ public class CotCondicionesdeVentaController {
             @ModelAttribute("user") UserSessionData user
             )throws ServletException, IOException {
 
-            log.log(Level.INFO, "Ejecutando starUp de {0}", CotCondicionesdeVentaController.class.getName());
+            log.log(Level.INFO, "Ejecutando starUp de {0}", CotCondicionesComercialesController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
 
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("descripcion", "Condicion de Venta:200");
 
-        ModelAndView x = new ModelAndView("cotcondicionesdeventa/startup", "title", "Condiciones de Venta");//nombre de la carpeta de la vista
+        ModelAndView x = new ModelAndView("cotcondicionescomerciales/startup", "title", "Condiciones comerciales");//nombre de la carpeta de la vista
 
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -102,8 +102,8 @@ public class CotCondicionesdeVentaController {
 
 
     //para el grid
-    @RequestMapping(value="/getAllgetCotCondicionesdeVenta.json", method = RequestMethod.POST)
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllgetCotpoliticasdePagoJson(
+    @RequestMapping(value="/getAllgetCotCondicionesComerciales.json", method = RequestMethod.POST)
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllgetCotCondicionesComercialesJson(
            @RequestParam(value="orderby", required=true) String orderby,
            @RequestParam(value="desc", required=true) String desc,
            @RequestParam(value="items_por_pag", required=true) int items_por_pag,
@@ -149,13 +149,13 @@ public class CotCondicionesdeVentaController {
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, value="/getCotPoliticasdePago.json")
+    @RequestMapping(method = RequestMethod.POST, value="/getCotCondicionescomerciales.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCotPoliticasdePagoJson(
             @RequestParam(value="id", required=true) Integer id,
             Model model
             ) {
 
-                log.log(Level.INFO, "Ejecutando getCotPoliticasdePagoJson de {0}", CotCondicionesdeVentaController.class.getName());
+                log.log(Level.INFO, "Ejecutando getCotPoliticasdePagoJson de {0}", CotCondicionesComercialesController.class.getName());
                 HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
                 ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
 
@@ -163,7 +163,7 @@ public class CotCondicionesdeVentaController {
                     datos = this.getPocDao().getCotPoliticas_de_Pago_Datos(id);
                 }
 
-                jsonretorno.put("Politicas_Pago", datos);
+                jsonretorno.put("Condicion_Comercial", datos);
 
                 return jsonretorno;
             }
