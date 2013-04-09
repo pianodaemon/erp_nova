@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/cotpoliticasdepago/")
+@RequestMapping("/cotcondicionesdeventa/")
 public class CotCondicionesdeVentaController {
     ResourceProject resource = new ResourceProject();
     private static final Logger log  = Logger.getLogger(CotCondicionesdeVentaController.class.getName());
