@@ -31,9 +31,10 @@
 												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
 												<ul>
 													<!--
-													<li class="topline"><a href="../cotincoterms/startup.agnux">Condiciones Comerciales</a></li>
-													<li class="topline"><a href="../cotincoterms/startup.agnux">Pol&iacute;ticas de Pago</a></li>
+														<li class="topline"><a href="../cotcondicionesdeventa/startup.agnux">Condiciones Comerciales</a></li>
 													-->
+													
+													<li class="topline"><a href="../cotpoliticasdepago/startup.agnux">Pol&iacute;ticas de Pago</a></li>
 													<li class="topline"><a href="../cotincoterms/startup.agnux">Incoterms</a></li>
 
 												</ul>
@@ -580,6 +581,7 @@
 												<ul>
 													<!--<li class="topline"><a href="#">F&oacute;rmulas</a></li>-->
 													<li class="topline"><a href="../proreporteproduccion/startup.agnux">Producci&oacute;n</a></li>
+													<!--<li class="topline"><a href="../proreportecalidad/startup.agnux">reporte de calidad</a></li>-->
 												</ul>
 											</li>
 										</ul>
