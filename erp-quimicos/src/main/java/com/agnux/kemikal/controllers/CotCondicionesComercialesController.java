@@ -118,7 +118,7 @@ public class CotCondicionesComercialesController {
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
 
         //Catalogo Zonas de  proveedores
-        Integer app_selected = 134;
+        Integer app_selected = 135;
 
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -178,7 +178,7 @@ public class CotCondicionesComercialesController {
 
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
-        Integer app_selected = 134;
+        Integer app_selected = 135;
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         String extra_data_array = "'sin datos'";
@@ -222,7 +222,7 @@ public class CotCondicionesComercialesController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
 
-        Integer app_selected = 134;
+        Integer app_selected = 135;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
