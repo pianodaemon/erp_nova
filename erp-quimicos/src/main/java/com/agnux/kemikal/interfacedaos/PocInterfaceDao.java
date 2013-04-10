@@ -95,8 +95,8 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getCotPoliticas_de_Pago_Datos(Integer id);
 
 	//Catalogo de condiciones de Venta
-    public ArrayList<HashMap<String, Object>> getCotCondiciones_de_Venta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-    public ArrayList<HashMap<String, String>> getCotCondiciones_de_Venta_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getCotCondiciones_comerciales_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getCotCondiciones_Comerciales_Datos(Integer id);
 
 
 
