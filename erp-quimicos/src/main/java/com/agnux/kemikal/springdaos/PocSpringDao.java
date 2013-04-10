@@ -2298,7 +2298,7 @@ public class PocSpringDao implements PocInterfaceDao{
 
 //Grid de Condiciones de Venta
     @Override
-    public ArrayList<HashMap<String, Object>> getCotCondiciones_de_Venta_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+    public ArrayList<HashMap<String, Object>> getCotCondiciones_comerciales_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
 	String sql_to_query = ""
                 + "SELECT "
@@ -2334,7 +2334,7 @@ public class PocSpringDao implements PocInterfaceDao{
     }
      //obtiene las condiciones de Venta.
     @Override
-    public ArrayList<HashMap<String, String>> getCotCondiciones_de_Venta_Datos(Integer id) {
+    public ArrayList<HashMap<String, String>> getCotCondiciones_Comerciales_Datos(Integer id) {
         String sql_query = "SELECT id,descripcion,borrado_logico,gral_emp_id,gral_suc_id FROM poc_cot_condiciones_com WHERE id=?;";
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
