@@ -42,7 +42,7 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td>Politica</td>
 				<td width="10">&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="Busqueda_Politica" style="width:150px;"></td>
+				<td><INPUT TYPE="text" name="Busqueda_Condicion" style="width:150px;"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -82,7 +82,7 @@
 
                     <div id="div_two" title="" class="cotcondicionescomerciales_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:460px; padding-left:6px;"><strong>Politicas de Pago</strong></div>
+                            <div class="fixed column" id="cierra" style="width:460px; padding-left:6px;"><strong>Condiciones Comerciales</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -94,7 +94,7 @@
                         <div class="columns" >
                             <div class=" fixed column">
                                 <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Politicas de Pago</strong></a></li>
+                                    <li><a href="#tabx-1"><strong>Condiciones Comerciales</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -106,7 +106,7 @@
                                         <table border="0">
 						<tr>
 							<td width="5"></td>
-							<td width="85">Condicion&nbsp;de&nbsp;Venta</td>
+							<td width="85">Condicion&nbsp;Comerciales:&nbsp;</td>
 							<td width="300"><INPUT TYPE="text" name="titulo" style="width:300px;"></td>
 							<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
 							<td width="25"></td>
