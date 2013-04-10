@@ -2312,7 +2312,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "JOIN ("+sql_busqueda+") as subt on subt.id=poc_cot_condiciones_com.id "
                 + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
 
-        System.out.println("sql Busqueda : "+sql_busqueda);
+        System.out.println("sql Busqueda  data string: "+data_string);
         System.out.println("Query para el Grid : "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
