@@ -46,15 +46,7 @@ public class CotCondicionesComercialesController {
     ResourceProject resource = new ResourceProject();
     private static final Logger log  = Logger.getLogger(CotCondicionesComercialesController.class.getName());
 
-    /*
-    @Autowired
-    @Qualifier("daoCxp")
-    private CxpInterfaceDao cxpDao;
 
-    public CxpInterfaceDao getCxpDao() {
-        return cxpDao;
-    }*/
-    //dao de procesos comerciales
     @Autowired
     @Qualifier("daoPoc")
     private PocInterfaceDao PocDao;
@@ -150,12 +142,12 @@ public class CotCondicionesComercialesController {
 
 
     @RequestMapping(method = RequestMethod.POST, value="/getCotCondicionescomerciales.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCotPoliticasdePagoJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getCotCondicionescomercialesJson(
             @RequestParam(value="id", required=true) Integer id,
             Model model
             ) {
 
-                log.log(Level.INFO, "Ejecutando getCotPoliticasdePagoJson de {0}", CotCondicionesComercialesController.class.getName());
+                log.log(Level.INFO, "Ejecutando getCotCondicionescomercialesJson de {0}", CotCondicionesComercialesController.class.getName());
                 HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
                 ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
 
