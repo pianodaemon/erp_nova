@@ -102,7 +102,7 @@
         
 		
         
-        <!--form for centros de costo -->
+        <!--form for envase -->
         <form id="formaenvconf00" action="edit.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal envconf_div_one"  style="display:none;" title="">
@@ -156,15 +156,15 @@
 															<td width="5"></td>
 															<td width="90">													
 																<input type="hidden" name="producto_id">
-																<input type="text" name="productosku" style="width:90px;">
+																<input type="text" name="codigo" style="width:90px;">
 															</td>
-															<td width="10"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_productosku"></div></td>
-															<td width="60">&nbsp;<a href="agrega_producto">(Agregar)</a></td>
-															<td width="240"><input type="text" name="producto_descripcion" style="width:240px;"></td>
+															<td width="10"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_codigo"></div></td>
+															<td width="60">&nbsp;<a href="agregar_producto" id="agregar_producto">(Agregar)</a></td>
+															<td width="240"><input type="text" name="descripcion" style="width:240px;"></td>
 															<td width="10">&nbsp;</td>
-															<td width="60">&nbsp;<a href="busca_producto">(Buscar)</a></td>
+															<td width="60">&nbsp;<a href="buscar_producto" id="buscar_producto">(Buscar)</a></td>
 															<td width="80">
-																<input type="text" name="producto_unidad" style="width:80px;" readOnly="true">
+																<input type="text" name="unidad" style="width:80px;" readOnly="true">
 															</td>
 															<td width="10">&nbsp;</td>
 															<td width="120">
@@ -195,11 +195,11 @@
 														<tr>
 															<td width="10"></td>
 															<td width="70">C&oacute;digo&nbsp;producto</td>
-															<td width="125"><input type="text" name="sku_producto" style="width:120px; border:1px solid #000;"></td>
-															<td width="70"><a href="agregar_producto">&nbsp;(Agregar)</a></td>
+															<td width="125"><input type="text" name="codigo_componente" style="width:120px; border:1px solid #000;"></td>
+															<td width="70"><a href="agregar_producto_componente">&nbsp;(Agregar)</a></td>
 															<td width="45">Nombre</td>
-															<td width="240"><input type="text" name="nombre_producto" style="width:280px;"></td>
-															<td width="55"><a href="busca_sku">&nbsp;(Buscar)</a></td>
+															<td width="240"><input type="text" name="nombre_componente" style="width:280px;"></td>
+															<td width="55"><a href="buscar_producto_componente">&nbsp;(Buscar)</a></td>
 															<td width="15"></td>
 														</tr>
 													</table>
@@ -212,16 +212,17 @@
 													<table >
 														<thead>
 															<tr>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="70"><div class="delete">&nbsp;#</div></td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="180">&nbsp;C&oacute;digo</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);"  width="330">&nbsp;Descripci&oacute;n</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="140">&nbsp;Cantidad</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60"><div class="delete">&nbsp;#</div></td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="130">&nbsp;C&oacute;digo</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);"  width="290">&nbsp;Descripci&oacute;n</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="90">&nbsp;Unidad</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="105">&nbsp;Cantidad</td>
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:850; height: 130px; border:1px solid #C1DAD7 !important;">	
-														<table id="grid_productos">
-															<tbody style="background-color: #FFFFFF;" valign="top">
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:700; height: 130px; border:1px solid #C1DAD7 !important;">	
+														<table>
+															<tbody id="grid_productos" style="background-color: #FFFFFF;" valign="top">
 																
 															</tbody>
 														</table>

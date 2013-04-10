@@ -188,7 +188,6 @@ $(function() {
 	
 	
 	$tabs_li_funxionalidad = function(){
-		
 		$('#forma-envconf-window').find('#submit').mouseover(function(){
 			$('#forma-envconf-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 			//$('#forma-invprodlineas-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
@@ -211,7 +210,6 @@ $(function() {
 			$('#forma-envconf-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
 		});
 		
-		
 		$('#forma-envconf-window').find(".contenidoPes").hide(); //Hide all content
 		$('#forma-envconf-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
 		$('#forma-envconf-window').find(".contenidoPes:first").show(); //Show first tab content
@@ -226,26 +224,154 @@ $(function() {
 			return false;
 		});
 		
-		
-		/*codigo para las pestañas internas*/
-		$('#forma-envconf-window').find(".contenidoPes_internas").hide(); //Hide all content
-		$('#forma-envconf-window').find("ul.pestanas_internas li:first").addClass("active_internas").show(); //Activate first tab
-		$('#forma-envconf-window').find(".contenidoPes_internas:first").show(); //Show first tab content
-		
-		//On Click Event
-		$('#forma-envconf-window').find("ul.pestanas_internas li").click(function() {
-			$('#forma-envconf-window').find(".contenidoPes_internas").hide();
-			$('#forma-envconf-window').find("ul.pestanas_internas li").removeClass("active_internas");
-			var activeTab = $(this).find("a").attr("href");
-			$('#forma-envconf-window').find( activeTab , "ul.pestanas_internas li" ).fadeIn().show();
-			$(this).addClass("active_internas");
-			return false;
+	}
+	
+	
+	$permitir_solo_numeros = function($campo){
+		//validar campo costo, solo acepte numeros y punto
+		$campo.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
 		});
 	}
 	
 	
+	var $agregarTr = function(id_producto, codigo, descripcion, unidad, cantidad){
+		//grid de productos
+		var $grid_productos = $('#forma-envconf-window').find('#grid_productos');
+		
+		//obtiene numero de trs
+		var noTr = $("tr", $grid_productos).size();
+		var encontrado = 0;
+		
+		if(parseInt(noTr)>0){
+			//busca el codigo del producto en el grid
+			$grid_productos.find('tr').each(function (index){
+				if(( $(this).find('input[name=cod]').val() == codigo.toUpperCase() ) && (parseInt($(this).find('input[name=eliminado]').val())!=0)){
+					encontrado=1;//el producto ya esta en el grid
+				}
+			});
+		}
+		
+		noTr++;
+		
+		if(parseInt(encontrado)<=0){//si el producto no esta en el grid entra aqui
+			var trr = '';
+			trr = '<tr>';
+				trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="58">';
+					trr += '<a href="elimina_producto" class="delete'+ noTr +'">Eliminar</a>';
+					trr += '<input type="hidden" 	name="eliminado" id="elim" class="elim'+ noTr +'" value="1">';
+					trr += '<input type="hidden" 	name="iddetalle" id="idd"  class="idd'+ noTr +'" value="0">';//este es el id del registro que ocupa el producto en la tabla detalle
+					trr += '<input type="hidden" 	name="noTr" value="'+ noTr +'">';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="130">';
+					trr += '<input type="hidden" 	name="idprod" id="idprod" value="'+ id_producto +'">';
+					trr += '<input type="text" 		name="cod" value="'+ codigo +'" id="cod" class="borde_oculto" readOnly="true" style="width:126px;">';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="290">';
+					trr += '<input type="text" 		name="desc" value="'+ descripcion +'" id="desc" class="borde_oculto" readOnly="true" style="width:286px;">';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+					trr += '<input type="text" 		name="uni" value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+				trr += '</td>';
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+					trr += '<input type="text" 		name="cant" value="'+ cantidad +'" id="cant" class="cant'+ noTr +'" style="width:76px;">';
+				trr += '</td>';
+			trr += '</tr>';
+			
+			$grid_productos.append(trr);
+			
+			$permitir_solo_numeros($grid_productos.find('input.cant'+ noTr));
+			
+			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+			$grid_productos.find('input.cant'+ noTr).focus(function(e){
+				if($(this).val().trim()==''){
+					$(this).val('');
+				}else{
+					if( parseFloat($(this).val())==0 ){
+						$(this).val('');
+					}
+				}
+			});
+			
+			//al perder enfoque el campo cantidad
+			$grid_productos.find('input.cant'+ noTr).blur(function(){
+				if($(this).val().trim()==''){
+					$(this).val(' ');
+				}
+			});
+			
+			//elimina un producto del grid
+			$grid_productos.find('.delete'+ noTr).bind('click',function(event){
+				event.preventDefault();
+				if(parseInt($(this).parent().find('#elim').val()) != 0){
+					//tomamos el id detalle
+					var idDetalle = $(this).parent().find('#idd').val();
+					
+					//asigna espacios en blanco a todos los input de la fila eliminada
+					$(this).parent().parent().find('input').val(' ');
+					
+					//asigna un 0 al input eliminado como bandera para saber que esta eliminado
+					$(this).parent().find('#elim').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
+					
+					//devolvemos el id detalle para conservar el id eliminado y eliminarlo de la tabla detalle
+					$(this).parent().find('#idd').val(idDetalle);
+					
+					//oculta la fila eliminada
+					$(this).parent().parent().hide();
+				}
+			});
+			
+			//Limpiar los campos Codigo y Nombre del producto
+			$('#forma-envconf-window').find('input[name=codigo_componente]').val('');
+			$('#forma-envconf-window').find('input[name=nombre_componente]').val('');
+			
+			//asignar el enfoque
+			$grid_productos.find('input.cant'+ noTr).focus();
+			
+		}else{
+			jAlert('El producto: '+codigo+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+				$('#forma-envconf-window').find('input[name=codigo_componente]').focus();
+			});
+		}
+	};
+	
+
+	
+	
+	var $agregarDatosProductoSeleccionado = function(id_producto, codigo, descripcion, unidad, arregloPres){
+		$('#forma-envconf-window').find('input[name=producto_id]').val(id_producto);
+		$('#forma-envconf-window').find('input[name=codigo]').val(codigo);
+		$('#forma-envconf-window').find('input[name=descripcion]').val(descripcion);
+		$('#forma-envconf-window').find('input[name=unidad]').val(unidad);
+		
+		if (parseInt(arregloPres.length) > 0){
+			$('#forma-envconf-window').find('select[name=select_presentacion]').children().remove();
+			var html_pres = '';
+			$.each(arregloPres,function(entryIndex,pres){
+				html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+			});
+			$('#forma-envconf-window').find('select[name=select_presentacion]').append(html_pres);
+		}else{
+			$('#forma-envconf-window').find('select[name=select_presentacion]').remove();
+			var html_pres = '<option value="0">[-Presentaci&oacute;n--]</option>';
+			$('#forma-envconf-window').find('select[name=select_presentacion]').append(html_pres);
+		}
+		
+		//asignar el enfoque
+		$('#forma-envconf-window').find('input[name=codigo_componente]').focus();
+	}
+	
+	
+	
+	
+	
 	//buscador de productos
-	$busca_productos = function($select_presentacion, sku, descripcion){
+	var $buscador_productos = function(tipoBusqueda, codigo, descripcion){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
@@ -277,33 +403,37 @@ $(function() {
 		$cancelar_plugin_busca_producto.mouseout(function(){
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
-		$campo_sku.val("");
 		
-		//buscar todos los tipos de productos
-		var input_json_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
-		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-		$.post(input_json_tipos,$arreglo,function(data){
-			//Llena el select tipos de productos en el buscador
-			$select_tipo_producto.children().remove();
-			var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
-			$.each(data['prodTipos'],function(entryIndex,pt){
-				if(parseInt(pt['id'])==1 ){
-					prod_tipos_html += '<option value="' + pt['id'] + '" selected="yes">' + pt['titulo'] + '</option>';
-				}else{
+		
+		//Llena el select tipos de productos en el buscador
+		$select_tipo_producto.children().remove();
+		var prod_tipos_html = '';
+		if(parseInt(tipoBusqueda)==1){
+			prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
+		}
+		$.each(arrayProdTipos,function(entryIndex,pt){
+			if(parseInt(tipoBusqueda)==1){
+				if(parseInt(pt['id'])!=4){
 					prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
 				}
-			});
-			$select_tipo_producto.append(prod_tipos_html);
+			}else{
+				//filtro para productos componentes
+				if(parseInt(pt['id'])==1){
+					prod_tipos_html += '<option value="' + pt['id'] + '"  selected="yes">' + pt['titulo'] + '</option>';
+				}
+			}
 		});
+		$select_tipo_producto.append(prod_tipos_html);
 		
-		$campo_sku.val(sku);
+		
+		$campo_sku.val(codigo);
 		$campo_descripcion.val(descripcion);
 		$campo_sku.focus();
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
 			//event.preventDefault();
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_productos.json';
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorProductos.json';
 			$arreglo = {	'sku':$campo_sku.val(),
 							'tipo':$select_tipo_producto.val(),
 							'descripcion':$campo_descripcion.val(),
@@ -313,16 +443,16 @@ $(function() {
 			var trr = '';
 			$tabla_resultados.children().remove();
 			$.post(input_json,$arreglo,function(entry){
-				$.each(entry['productos'],function(entryIndex,producto){
+				$.each(entry['Productos'],function(entryIndex,producto){
 					trr = '<tr>';
 						trr += '<td width="120">';
 							trr += '<input type="hidden" id="id_prod_buscador" value="'+producto['id']+'">';
-							trr += '<span class="sku_prod_buscador">'+producto['sku']+'</span>';
+							trr += '<span class="codigo_prod_buscador">'+producto['sku']+'</span>';
 						trr += '</td>';
-						trr += '<td width="280"><span class="titulo_prod_buscador">'+producto['descripcion']+'</span></td>';
+						trr += '<td width="280"><span class="descripcion_prod_buscador">'+producto['descripcion']+'</span></td>';
 						trr += '<td width="90">';
 							trr += '<span class="unidad_id" style="display:none;">'+producto['unidad_id']+'</span>';
-							trr += '<span class="utitulo">'+producto['unidad']+'</span>';
+							trr += '<span class="unidad_prod_buscador">'+producto['unidad']+'</span>';
 						trr += '</td>';
 						trr += '<td width="90"><span class="tipo_prod_buscador">'+producto['tipo']+'</span></td>';
 					trr += '</tr>';
@@ -348,38 +478,26 @@ $(function() {
 				$tabla_resultados.find('tr').click(function(){
 					//asignar a los campos correspondientes el sku y y descripcion
 					var id_producto = $(this).find('#id_prod_buscador').val();
-					$('#forma-envconf-window').find('input[name=producto_id]').val(id_producto);
-					$('#forma-envconf-window').find('input[name=productosku]').val($(this).find('span.sku_prod_buscador').html());
-					$('#forma-envconf-window').find('input[name=producto_descripcion]').val($(this).find('span.titulo_prod_buscador').html());
-					$('#forma-envconf-window').find('input[name=producto_unidad]').val($(this).find('span.utitulo').html());
-					
-					//aqui nos vamos a buscar las presentaciones del Producto seleccionado
-					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
-					$arreglo = {'id_prod':id_producto,
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							};
-					
-					$.post(input_json,$arreglo,function(entry){
-						//verifica si el arreglo  retorno datos
-						if (entry['Presentaciones'].length > 0){
-							$select_presentacion.children().remove();
-							var html_pres = '';
-							$.each(entry['Presentaciones'],function(entryIndex,pres){
-								html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
-							});
-							$select_presentacion.append(html_pres);
-						}else{
-							$select_presentacion.children().remove();
-							var html_pres = '<option value="0">[-Presentaci&oacute;n--]</option>';
-							$select_presentacion.append(html_pres);
-						}
-					});
+					var codigo = $(this).find('span.codigo_prod_buscador').html();
+					var descripcion = $(this).find('span.descripcion_prod_buscador').html();
+					var unidad = $(this).find('span.unidad_prod_buscador').html();
+					var cantidad=0;
+					if(parseInt(tipoBusqueda)==1){
+						//aqui nos vamos a buscar las presentaciones del Producto seleccionado
+						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
+						$arreglo = {'id_prod':id_producto,'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+						$.post(input_json,$arreglo,function(entry){
+							//llamada a la funcion para agregar los datos del Producto seleccionado
+							$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry['Presentaciones']);
+						});
+					}else{
+						//llamada a la funcion para agregar tr al Grid
+						$agregarTr(id_producto, codigo, descripcion, unidad, cantidad);
+					}
 					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
 					$('#forma-buscaproducto-overlay').fadeOut(remove);
-					
-					$('#forma-envconf-window').find('input[name=lista1]').focus();
 				});
 			});
 		});
@@ -388,7 +506,6 @@ $(function() {
 		if($campo_sku.val() != ''  ||  $campo_descripcion.val() != ''){
 			$buscar_plugin_producto.trigger('click');
 		}
-		
 		
 		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $buscar_plugin_producto);
 		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $buscar_plugin_producto);
@@ -400,233 +517,16 @@ $(function() {
 			$('#forma-buscaproducto-overlay').fadeOut(remove);
 			
 			//asignar el enfoque al campo sku del producto
-			$('#forma-envconf-window').find('input[name=productosku]').focus();
+			if(parseInt(tipoBusqueda)==1){
+				$('#forma-envconf-window').find('input[name=codigo]').focus();
+			}else{
+				$('#forma-envconf-window').find('input[name=codigo_componente]').focus();
+			}
 		});
 	}//termina buscador de productos
 	
-	
-	$permitir_solo_numeros = function($campo){
-		//validar campo costo, solo acepte numeros y punto
-		$campo.keypress(function(e){
-			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
-			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-				return true;
-			}else {
-				return false;
-			}
-		});
-	}
-	
-	$add_ceros = function($campo){
-		$campo.val("0.00");
-	}
-	
-	$accion_focus = function($campo){
-		//quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
-		$campo.focus(function(e){
-			$valor_tmp = $(this).val().split(",").join("");
-			
-			if( ($valor_tmp != '') && ($valor_tmp != ' ') && ($valor_tmp != null) ){
-				if(parseFloat($valor_tmp)<1){
-					$campo.val('');
-				}else{
-					$campo.val($(this).agregar_comas(parseFloat($valor_tmp).toFixed(2)));
-				}
-			}
-		});
-	}
-	
-	$accio_blur = function($campo){
-		//recalcula importe al perder enfoque el campo costo
-		$campo.blur(function(){
-			$valor_tmp = $(this).val().split(",").join("");
-			
-			if ($valor_tmp == ''  || $valor_tmp == null){
-					$(this).val('0.00');
-			}
-			
-			if( ($valor_tmp != '') && ($valor_tmp != ' ') ){
-				$campo.val($(this).agregar_comas(parseFloat($valor_tmp).toFixed(2)));
-			}else{
-				$(this).val('0.00');
-			}
-		});
-	}
-	
-     
-	//carga los campos select con los datos que recibe como parametro
-	$carga_campos_select = function($campo_select, arreglo_elementos, elemento_seleccionado, texto_elemento_cero){
-		$campo_select.children().remove();
-		var select_html = '<option value="0">'+texto_elemento_cero+'</option>';
-		for(var i in arreglo_elementos){
-			if( parseInt(i) == parseInt(elemento_seleccionado) ){
-				select_html += '<option value="' + i + '" selected="yes">' + arreglo_elementos[i] + '</option>';
-			}else{
-				select_html += '<option value="' + i + '"  >' + arreglo_elementos[i] + '</option>';
-			}
-		}
-		$campo_select.append(select_html);
-	}
-        
-        
-	//carga los campos select con los datos que recibe como parametro
-	$carga_campos_select_moneda = function($campo_select, arreglo_elementos, elemento_seleccionado, texto_elemento_cero){
-		$campo_select.children().remove();
-		var select_html = '';
-		
-		if(texto_elemento_cero != ""){
-			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
-		}
-		
-		$.each(arreglo_elementos,function(entryIndex,elemento){
-			if( parseInt(elemento['id']) == parseInt(elemento_seleccionado) ){
-				select_html += '<option value="' + elemento['id'] + '" selected="yes">' + elemento['descripcion_abr'] + '</option>';
-			}else{
-				select_html += '<option value="' + elemento['id'] + '" >' + elemento['descripcion_abr'] + '</option>';
-			}
-		});
-		$campo_select.append(select_html);
-	}
-        
-        
-	$aplicar_accion_focus_blur_y_solo_numeros = function($lista1,$lista2,$lista3,$lista4,$lista5,$lista6,$lista7,$lista8,$lista9,$lista10,$descto1,$descto2,$descto3,$descto4,$descto5,$descto6,$descto7,$descto8,$descto9,$descto10,$valor_default_l1,$valor_default_l2,$valor_default_l3,$valor_default_l4,$valor_default_l5,$valor_default_l6,$valor_default_l7,$valor_default_l8,$valor_default_l9,$valor_default_l10	){
-		/*para que permita solo numeros*/
-		$permitir_solo_numeros($lista1);
-		$permitir_solo_numeros($lista2);
-		$permitir_solo_numeros($lista3);
-		$permitir_solo_numeros($lista4);
-		$permitir_solo_numeros($lista5);
-		$permitir_solo_numeros($lista6);
-		$permitir_solo_numeros($lista7);
-		$permitir_solo_numeros($lista8);
-		$permitir_solo_numeros($lista9);
-		$permitir_solo_numeros($lista10);
-		$permitir_solo_numeros($descto1);
-		$permitir_solo_numeros($descto2);
-		$permitir_solo_numeros($descto3);
-		$permitir_solo_numeros($descto4);
-		$permitir_solo_numeros($descto5);
-		$permitir_solo_numeros($descto6);
-		$permitir_solo_numeros($descto7);
-		$permitir_solo_numeros($descto8);
-		$permitir_solo_numeros($descto9);
-		$permitir_solo_numeros($descto10);
-		$permitir_solo_numeros($valor_default_l1);
-		$permitir_solo_numeros($valor_default_l2);
-		$permitir_solo_numeros($valor_default_l3);
-		$permitir_solo_numeros($valor_default_l4);
-		$permitir_solo_numeros($valor_default_l5);
-		$permitir_solo_numeros($valor_default_l6);
-		$permitir_solo_numeros($valor_default_l7);
-		$permitir_solo_numeros($valor_default_l8);
-		$permitir_solo_numeros($valor_default_l9);
-		$permitir_solo_numeros($valor_default_l10);
-		
-		/*Aplica accion al obtener el enfoque*/
-		$accion_focus($lista1);
-		$accion_focus($lista2);
-		$accion_focus($lista3);
-		$accion_focus($lista4);
-		$accion_focus($lista5);
-		$accion_focus($lista6);
-		$accion_focus($lista7);
-		$accion_focus($lista8);
-		$accion_focus($lista9);
-		$accion_focus($lista10);
-		$accion_focus($descto1);
-		$accion_focus($descto2);
-		$accion_focus($descto3);
-		$accion_focus($descto4);
-		$accion_focus($descto5);
-		$accion_focus($descto6);
-		$accion_focus($descto7);
-		$accion_focus($descto8);
-		$accion_focus($descto9);
-		$accion_focus($descto10);
-		$accion_focus($valor_default_l1);
-		$accion_focus($valor_default_l2);
-		$accion_focus($valor_default_l3);
-		$accion_focus($valor_default_l4);
-		$accion_focus($valor_default_l5);
-		$accion_focus($valor_default_l6);
-		$accion_focus($valor_default_l7);
-		$accion_focus($valor_default_l8);
-		$accion_focus($valor_default_l9);
-		$accion_focus($valor_default_l10);
-		
-		
-		/*Aplica accion al perder el enfoque*/
-		$accio_blur($lista1);
-		$accio_blur($lista2);
-		$accio_blur($lista3);
-		$accio_blur($lista4);
-		$accio_blur($lista5);
-		$accio_blur($lista6);
-		$accio_blur($lista7);
-		$accio_blur($lista8);
-		$accio_blur($lista9);
-		$accio_blur($lista10);
-		$accio_blur($descto1);
-		$accio_blur($descto2);
-		$accio_blur($descto3);
-		$accio_blur($descto4);
-		$accio_blur($descto5);
-		$accio_blur($descto6);
-		$accio_blur($descto7);
-		$accio_blur($descto8);
-		$accio_blur($descto9);
-		$accio_blur($descto10);
-		$accio_blur($valor_default_l1);
-		$accio_blur($valor_default_l2);
-		$accio_blur($valor_default_l3);
-		$accio_blur($valor_default_l4);
-		$accio_blur($valor_default_l5);
-		$accio_blur($valor_default_l6);
-		$accio_blur($valor_default_l7);
-		$accio_blur($valor_default_l8);
-		$accio_blur($valor_default_l9);
-		$accio_blur($valor_default_l10);
-	}
-	
-	
-	$inicializa_valores = function($lista1,$lista2,$lista3,$lista4,$lista5,$lista6,$lista7,$lista8,$lista9,$lista10,$descto1,$descto2,$descto3,$descto4,$descto5,$descto6,$descto7,$descto8,$descto9,$descto10,$valor_default_l1,$valor_default_l2,$valor_default_l3,$valor_default_l4,$valor_default_l5,$valor_default_l6,$valor_default_l7,$valor_default_l8,$valor_default_l9,$valor_default_l10	){
-		/*para que inicialize en cero*/
-		$add_ceros($lista1);
-		$add_ceros($lista2);
-		$add_ceros($lista3);
-		$add_ceros($lista4);
-		$add_ceros($lista5);
-		$add_ceros($lista6);
-		$add_ceros($lista7);
-		$add_ceros($lista8);
-		$add_ceros($lista9);
-		$add_ceros($lista10);
-		$add_ceros($descto1);
-		$add_ceros($descto2);
-		$add_ceros($descto3);
-		$add_ceros($descto4);
-		$add_ceros($descto5);
-		$add_ceros($descto6);
-		$add_ceros($descto7);
-		$add_ceros($descto8);
-		$add_ceros($descto9);
-		$add_ceros($descto10);
-		$add_ceros($valor_default_l1);
-		$add_ceros($valor_default_l2);
-		$add_ceros($valor_default_l3);
-		$add_ceros($valor_default_l4);
-		$add_ceros($valor_default_l5);
-		$add_ceros($valor_default_l6);
-		$add_ceros($valor_default_l7);
-		$add_ceros($valor_default_l8);
-		$add_ceros($valor_default_l9);
-		$add_ceros($valor_default_l10);
-		
-	}
-
-        
-        
-	//nuevo centro de costo
+	        
+	//nuevo 
 	$new_invprodlineas.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
@@ -642,148 +542,58 @@ $(function() {
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
 		
-		var $campo_id = $('#forma-envconf-window').find('input[name=identificador]');
+		var $identificador = $('#forma-envconf-window').find('input[name=identificador]');
 		var $producto_id = $('#forma-envconf-window').find('input[name=producto_id]');
-		var $productosku = $('#forma-envconf-window').find('input[name=productosku]');
-		var $producto_descripcion = $('#forma-envconf-window').find('input[name=producto_descripcion]');
-		var $producto_unidad = $('#forma-envconf-window').find('input[name=producto_unidad]');
+		var $codigo = $('#forma-envconf-window').find('input[name=codigo]');
+		var $descripcion = $('#forma-envconf-window').find('input[name=descripcion]');
+		var $unidad = $('#forma-envconf-window').find('input[name=unidad]');
 		var $select_presentacion = $('#forma-envconf-window').find('select[name=select_presentacion]');
 		
-		var $lista1 = $('#forma-envconf-window').find('input[name=lista1]');
-		var $lista2 = $('#forma-envconf-window').find('input[name=lista2]');
-		var $lista3 = $('#forma-envconf-window').find('input[name=lista3]');
-		var $lista4 = $('#forma-envconf-window').find('input[name=lista4]');
-		var $lista5 = $('#forma-envconf-window').find('input[name=lista5]');
-		var $lista6 = $('#forma-envconf-window').find('input[name=lista6]');
-		var $lista7 = $('#forma-envconf-window').find('input[name=lista7]');
-		var $lista8 = $('#forma-envconf-window').find('input[name=lista8]');
-		var $lista9 = $('#forma-envconf-window').find('input[name=lista9]');
-		var $lista10 = $('#forma-envconf-window').find('input[name=lista10]');
-		var $select_moneda1 = $('#forma-envconf-window').find('select[name=select_moneda1]');
-		var $select_moneda2 = $('#forma-envconf-window').find('select[name=select_moneda2]');
-		var $select_moneda3 = $('#forma-envconf-window').find('select[name=select_moneda3]');
-		var $select_moneda4 = $('#forma-envconf-window').find('select[name=select_moneda4]');
-		var $select_moneda5 = $('#forma-envconf-window').find('select[name=select_moneda5]');
-		var $select_moneda6 = $('#forma-envconf-window').find('select[name=select_moneda6]');
-		var $select_moneda7 = $('#forma-envconf-window').find('select[name=select_moneda7]');
-		var $select_moneda8 = $('#forma-envconf-window').find('select[name=select_moneda8]');
-		var $select_moneda9 = $('#forma-envconf-window').find('select[name=select_moneda9]');
-		var $select_moneda10 = $('#forma-envconf-window').find('select[name=select_moneda10]');
-		var $descto1 = $('#forma-envconf-window').find('input[name=descto1]');
-		var $descto2 = $('#forma-envconf-window').find('input[name=descto2]');
-		var $descto3 = $('#forma-envconf-window').find('input[name=descto3]');
-		var $descto4 = $('#forma-envconf-window').find('input[name=descto4]');
-		var $descto5 = $('#forma-envconf-window').find('input[name=descto5]');
-		var $descto6 = $('#forma-envconf-window').find('input[name=descto6]');
-		var $descto7 = $('#forma-envconf-window').find('input[name=descto7]');
-		var $descto8 = $('#forma-envconf-window').find('input[name=descto8]');
-		var $descto9 = $('#forma-envconf-window').find('input[name=descto9]');
-		var $descto10 = $('#forma-envconf-window').find('input[name=descto10]');
+		//href para Agregar y Buscar producto
+		var $agregar_producto = $('#forma-envconf-window').find('#agregar_producto');
+		var $buscar_producto = $('#forma-envconf-window').find('#buscar_producto');
 		
-		var $valor_default_l1 = $('#forma-envconf-window').find('input[name=valor_default_l1]');
-		var $select_base_precio1 = $('#forma-envconf-window').find('select[name=select_base_precio1]');
-		var $select_operacion1 = $('#forma-envconf-window').find('select[name=select_operacion1]');
-		var $select_forma_calculo1 = $('#forma-envconf-window').find('select[name=select_forma_calculo1]');
-		var $select_tipo_redondeo1 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo1]');
+		//Codigo y Nombre del producto componente del Envase
+		var $codigo_componente = $('#forma-envconf-window').find('input[name=codigo_componente]');
+		var $nombre_componente = $('#forma-envconf-window').find('input[name=nombre_componente]');
 		
-		var $valor_default_l2 = $('#forma-envconf-window').find('input[name=valor_default_l2]');
-		var $select_base_precio2 = $('#forma-envconf-window').find('select[name=select_base_precio2]');
-		var $select_operacion2 = $('#forma-envconf-window').find('select[name=select_operacion2]');
-		var $select_forma_calculo2 = $('#forma-envconf-window').find('select[name=select_forma_calculo2]');
-		var $select_tipo_redondeo2 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo2]');
+		//href para Agregar y Buscar producto Elemento del Envase
+		var $agregar_producto_componente = $('#forma-envconf-window').find('a[href=agregar_producto_componente]');
+		var $buscar_producto_componente = $('#forma-envconf-window').find('a[href=buscar_producto_componente]');
 		
-		var $valor_default_l3 = $('#forma-envconf-window').find('input[name=valor_default_l3]');
-		var $select_base_precio3 = $('#forma-envconf-window').find('select[name=select_base_precio3]');
-		var $select_operacion3 = $('#forma-envconf-window').find('select[name=select_operacion3]');
-		var $select_forma_calculo3 = $('#forma-envconf-window').find('select[name=select_forma_calculo3]');
-		var $select_tipo_redondeo3 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo3]');
+		//grid de productos
+		var $grid_productos = $('#forma-envconf-window').find('#grid_productos');
 		
-		var $valor_default_l4 = $('#forma-envconf-window').find('input[name=valor_default_l4]');
-		var $select_base_precio4 = $('#forma-envconf-window').find('select[name=select_base_precio4]');
-		var $select_operacion4 = $('#forma-envconf-window').find('select[name=select_operacion4]');
-		var $select_forma_calculo4 = $('#forma-envconf-window').find('select[name=select_forma_calculo4]');
-		var $select_tipo_redondeo4 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo4]');
+		//grid de errores
+		var $grid_warning = $('#forma-envconf-window').find('#div_warning_grid').find('#grid_warning');
 		
-		var $valor_default_l5 = $('#forma-envconf-window').find('input[name=valor_default_l5]');
-		var $select_base_precio5 = $('#forma-envconf-window').find('select[name=select_base_precio5]');
-		var $select_operacion5 = $('#forma-envconf-window').find('select[name=select_operacion5]');
-		var $select_forma_calculo5 = $('#forma-envconf-window').find('select[name=select_forma_calculo5]');
-		var $select_tipo_redondeo5 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo5]');
-		
-		var $valor_default_l6 = $('#forma-envconf-window').find('input[name=valor_default_l6]');
-		var $select_base_precio6 = $('#forma-envconf-window').find('select[name=select_base_precio6]');
-		var $select_operacion6 = $('#forma-envconf-window').find('select[name=select_operacion6]');
-		var $select_forma_calculo6 = $('#forma-envconf-window').find('select[name=select_forma_calculo6]');
-		var $select_tipo_redondeo6 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo6]');
-		
-		var $valor_default_l7 = $('#forma-envconf-window').find('input[name=valor_default_l7]');
-		var $select_base_precio7 = $('#forma-envconf-window').find('select[name=select_base_precio7]');
-		var $select_operacion7 = $('#forma-envconf-window').find('select[name=select_operacion7]');
-		var $select_forma_calculo7 = $('#forma-envconf-window').find('select[name=select_forma_calculo7]');
-		var $select_tipo_redondeo7 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo7]');
-		
-		var $valor_default_l8 = $('#forma-envconf-window').find('input[name=valor_default_l8]');
-		var $select_base_precio8 = $('#forma-envconf-window').find('select[name=select_base_precio8]');
-		var $select_operacion8 = $('#forma-envconf-window').find('select[name=select_operacion8]');
-		var $select_forma_calculo8 = $('#forma-envconf-window').find('select[name=select_forma_calculo8]');
-		var $select_tipo_redondeo8 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo8]');
-		
-		var $valor_default_l9 = $('#forma-envconf-window').find('input[name=valor_default_l9]');
-		var $select_base_precio9 = $('#forma-envconf-window').find('select[name=select_base_precio9]');
-		var $select_operacion9 = $('#forma-envconf-window').find('select[name=select_operacion9]');
-		var $select_forma_calculo9 = $('#forma-envconf-window').find('select[name=select_forma_calculo9]');
-		var $select_tipo_redondeo9 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo9]');
-		
-		var $valor_default_l10 = $('#forma-envconf-window').find('input[name=valor_default_l10]');
-		var $select_base_precio10 = $('#forma-envconf-window').find('select[name=select_base_precio10]');
-		var $select_operacion10 = $('#forma-envconf-window').find('select[name=select_operacion10]');
-		var $select_forma_calculo10 = $('#forma-envconf-window').find('select[name=select_forma_calculo10]');
-		var $select_tipo_redondeo10 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo10]');
-		
-		//href para buscar producto
-		var $buscar_producto = $('#forma-envconf-window').find('a[href*=busca_producto]');
-		var $agrega_producto = $('#forma-envconf-window').find('a[href*=agrega_producto]');
 		
 		var $cerrar_plugin = $('#forma-envconf-window').find('#close');
 		var $cancelar_plugin = $('#forma-envconf-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-envconf-window').find('#submit');
 		
-		$campo_id.attr({'value' : 0});
+		$identificador.attr({'value' : 0});
 		$producto_id.attr({'value' : 0});
-		$producto_unidad.css({'background' : '#F0F0F0'});
+		$unidad.css({'background' : '#F0F0F0'});
 		
-		var elemento_seleccionado = 0;
-		var cadena_elemento_cero ="";
 		
 		
 		//quitar enter a todos los campos input
-		$('#forma-envconf-window').find('input[name=producto_descripcion]').keypress(function(e){
+		$('#forma-envconf-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
 				return false;
 			}
 		});
 		
-		//quitar enter a todos los campos input
-		$('#forma-envconf-window').find('input[name=productosku]').keypress(function(e){
-			if(e.which==13 ) {
-				return false;
-			}
-		});
 		
-		//quitar enter a todos los campos input
-		$('#forma-envconf-window').find('input[name=producto_unidad]').keypress(function(e){
-			if(e.which==13 ) {
-				return false;
-			}
-		});
-		
-		$productosku.focus();
+		//asignar el enfoque al cargar la ventana
+		$codigo.focus();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == 'true' ){
 				var remove = function() {$(this).remove();};
 				$('#forma-envconf-overlay').fadeOut(remove);
-				jAlert("Los precios se han actualizado.", 'Atencion!');
+				jAlert("Los datos de la configuraci&oacute;n se guardaron con &eacute;xito.", 'Atencion!');
 				$get_datos_grid();
 			}
 			else{
@@ -809,54 +619,101 @@ $(function() {
 		$forma_selected.ajaxForm(options);
 		
 		
-		
+		/*
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getConf.json';
 		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
 			
 		});//termina llamada json
-		
-		
+		*/
 		
 		$buscar_producto.click(function(event){
 			event.preventDefault();
-			$busca_productos($select_presentacion, $productosku.val(), $producto_descripcion.val());
+			//tipo=1 para buscar el producto Principal
+			var tipoBusqueda=1;
+			$buscador_productos(tipoBusqueda, $codigo.val(), $descripcion.val() );
 		});
 		
 		
-		$agrega_producto.click(function(event){
+		$agregar_producto.click(function(event){
 			event.preventDefault();
 			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
-			var $arreglo2 = {	'codigo':$productosku.val(),
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-						};
+			var $arreglo2 = {'codigo':$codigo.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 			
 			$.post(input_json2,$arreglo2,function(entry2){
 				if(parseInt(entry2['Producto'].length) > 0 ){
-					$('#forma-envconf-window').find('input[name=producto_id]').val(entry2['Producto'][0]['id']);
-					$('#forma-envconf-window').find('input[name=productosku]').val(entry2['Producto'][0]['sku']);
-					$('#forma-envconf-window').find('input[name=producto_descripcion]').val(entry2['Producto'][0]['descripcion']);
-					$('#forma-envconf-window').find('input[name=producto_unidad]').val( entry2['Producto'][0]['unidad'] );
+					var id_producto = entry2['Producto'][0]['id'];
+					var codigo = entry2['Producto'][0]['sku'];
+					var descripcion = entry2['Producto'][0]['descripcion'];
+					var unidad = entry2['Producto'][0]['unidad'];
 					
-					//verifica si el arreglo  retorno datos
-					if (entry2['Presentaciones'].length > 0){
-						$select_presentacion.children().remove();
-						var html_pres = '';
-						$.each(entry2['Presentaciones'],function(entryIndex,pres){
-							html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
-						});
-						$select_presentacion.append(html_pres);
-					}else{
-						$select_presentacion.children().remove();
-						var html_pres = '<option value="0">[-Presentaci&oacute;n--]</option>';
-						$select_presentacion.append(html_pres);
-					}
+					//llamada a la funcion para agregar datos del producto
+					$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry2['Presentaciones']);
+				}else{
+					jAlert('C&oacute;digo de Producto desconocido.', 'Atencion!', function(r) { 
+						$codigo.focus(); 
+					});
 				}
 			});
 		});
 		
 		
+		$codigo.keypress(function(e){
+			if(e.which == 13){
+				$agregar_producto.trigger('click');
+				return false;
+			}
+		});
+		
+		
+		//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto Principal, se ejecute el buscador
+		$(this).aplicarEventoKeypressEjecutaTrigger($descripcion, $buscar_producto);
+		
+		
+		//Buscar Productos Componentes
+		$buscar_producto_componente.click(function(event){
+			event.preventDefault();
+			//tipo=2 para buscar los productos Componentes
+			var tipoBusqueda=2;
+			$buscador_productos(tipoBusqueda, $codigo_componente.val(), $nombre_componente.val() );
+		});
+		
+		$agregar_producto_componente.click(function(event){
+			event.preventDefault();
+			var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
+			var $arreglo3 = {'codigo':$codigo_componente.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+			
+			$.post(input_json3,$arreglo3,function(entry3){
+				if(parseInt(entry3['Producto'].length) > 0 ){
+					var id_producto = entry3['Producto'][0]['id'];
+					var codigo = entry3['Producto'][0]['sku'];
+					var descripcion = entry3['Producto'][0]['descripcion'];
+					var unidad = entry3['Producto'][0]['unidad'];
+					var cantidad=0;
+					
+					//llamada a la funcion para agregar tr al grid
+					$agregarTr(id_producto, codigo, descripcion, unidad, cantidad);
+					
+				}else{
+					jAlert('C&oacute;digo de Producto desconocido.', 'Atencion!', function(r) { 
+						$codigo_componente.focus(); 
+					});
+				}
+			});
+		});
+		
+		
+		//agrega productos componentes al grid
+		$codigo_componente.keypress(function(e){
+			if(e.which == 13){
+				$agregar_producto_componente.trigger('click');
+				return false;
+			}
+		});
+		
+		//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto componente, se ejecute el buscador
+		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_componente, $buscar_producto_componente);
 		
 		
 		$cerrar_plugin.bind('click',function(){
@@ -871,7 +728,7 @@ $(function() {
 		});
 	});
 	
-        
+	
 	
 	var carga_formaenvconf00_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar 
@@ -881,20 +738,19 @@ $(function() {
 			$arreglo = {'id':id_to_show,
 						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
-			jConfirm('Realmente desea eliminar los precios para el producto', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar configuraci&oacute;n seleccionada?', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("Los precios fueron eliminados exitosamente", 'Atencion!');
+							jAlert("La configuraci&oacute;n  fue eliminada exitosamente.", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
-							jAlert("Los precios no puden ser eliminados", 'Atencion!');
+							jAlert("La configuraci&oacute;n no pudo ser eliminada.", 'Atencion!');
 						}
 					},"json");
 				}
 			});
-                    
 		}else{
 			//aqui  entra para editar un registro
 			var form_to_show = 'formaenvconf00';
@@ -910,148 +766,54 @@ $(function() {
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
-			
-			var $campo_id = $('#forma-envconf-window').find('input[name=identificador]');
+		
+			var $identificador = $('#forma-envconf-window').find('input[name=identificador]');
 			var $producto_id = $('#forma-envconf-window').find('input[name=producto_id]');
-			var $productosku = $('#forma-envconf-window').find('input[name=productosku]');
-			var $producto_descripcion = $('#forma-envconf-window').find('input[name=producto_descripcion]');
-			var $producto_unidad = $('#forma-envconf-window').find('input[name=producto_unidad]');
+			var $codigo = $('#forma-envconf-window').find('input[name=codigo]');
+			var $descripcion = $('#forma-envconf-window').find('input[name=descripcion]');
+			var $unidad = $('#forma-envconf-window').find('input[name=unidad]');
 			var $select_presentacion = $('#forma-envconf-window').find('select[name=select_presentacion]');
 			
-			var $lista1 = $('#forma-envconf-window').find('input[name=lista1]');
-			var $lista2 = $('#forma-envconf-window').find('input[name=lista2]');
-			var $lista3 = $('#forma-envconf-window').find('input[name=lista3]');
-			var $lista4 = $('#forma-envconf-window').find('input[name=lista4]');
-			var $lista5 = $('#forma-envconf-window').find('input[name=lista5]');
-			var $lista6 = $('#forma-envconf-window').find('input[name=lista6]');
-			var $lista7 = $('#forma-envconf-window').find('input[name=lista7]');
-			var $lista8 = $('#forma-envconf-window').find('input[name=lista8]');
-			var $lista9 = $('#forma-envconf-window').find('input[name=lista9]');
-			var $select_moneda1 = $('#forma-envconf-window').find('select[name=select_moneda1]');
-			var $select_moneda2 = $('#forma-envconf-window').find('select[name=select_moneda2]');
-			var $select_moneda3 = $('#forma-envconf-window').find('select[name=select_moneda3]');
-			var $select_moneda4 = $('#forma-envconf-window').find('select[name=select_moneda4]');
-			var $select_moneda5 = $('#forma-envconf-window').find('select[name=select_moneda5]');
-			var $select_moneda6 = $('#forma-envconf-window').find('select[name=select_moneda6]');
-			var $select_moneda7 = $('#forma-envconf-window').find('select[name=select_moneda7]');
-			var $select_moneda8 = $('#forma-envconf-window').find('select[name=select_moneda8]');
-			var $select_moneda9 = $('#forma-envconf-window').find('select[name=select_moneda9]');
-			var $select_moneda10 = $('#forma-envconf-window').find('select[name=select_moneda10]');
-			var $lista10 = $('#forma-envconf-window').find('input[name=lista10]');
-			var $descto1 = $('#forma-envconf-window').find('input[name=descto1]');
-			var $descto2 = $('#forma-envconf-window').find('input[name=descto2]');
-			var $descto3 = $('#forma-envconf-window').find('input[name=descto3]');
-			var $descto4 = $('#forma-envconf-window').find('input[name=descto4]');
-			var $descto5 = $('#forma-envconf-window').find('input[name=descto5]');
-			var $descto6 = $('#forma-envconf-window').find('input[name=descto6]');
-			var $descto7 = $('#forma-envconf-window').find('input[name=descto7]');
-			var $descto8 = $('#forma-envconf-window').find('input[name=descto8]');
-			var $descto9 = $('#forma-envconf-window').find('input[name=descto9]');
-			var $descto10 = $('#forma-envconf-window').find('input[name=descto10]');
+			//href para Agregar y Buscar producto
+			var $agregar_producto = $('#forma-envconf-window').find('#agregar_producto');
+			var $buscar_producto = $('#forma-envconf-window').find('#buscar_producto');
 			
-			var $valor_default_l1 = $('#forma-envconf-window').find('input[name=valor_default_l1]');
-			var $select_base_precio1 = $('#forma-envconf-window').find('select[name=select_base_precio1]');
-			var $select_operacion1 = $('#forma-envconf-window').find('select[name=select_operacion1]');
-			var $select_forma_calculo1 = $('#forma-envconf-window').find('select[name=select_forma_calculo1]');
-			var $select_tipo_redondeo1 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo1]');
+			//Codigo y Nombre del producto componente del Envase
+			var $codigo_componente = $('#forma-envconf-window').find('input[name=codigo_componente]');
+			var $nombre_componente = $('#forma-envconf-window').find('input[name=nombre_componente]');
 			
-			var $valor_default_l2 = $('#forma-envconf-window').find('input[name=valor_default_l2]');
-			var $select_base_precio2 = $('#forma-envconf-window').find('select[name=select_base_precio2]');
-			var $select_operacion2 = $('#forma-envconf-window').find('select[name=select_operacion2]');
-			var $select_forma_calculo2 = $('#forma-envconf-window').find('select[name=select_forma_calculo2]');
-			var $select_tipo_redondeo2 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo2]');
+			//href para Agregar y Buscar producto Elemento del Envase
+			var $agregar_producto_componente = $('#forma-envconf-window').find('a[href=agregar_producto_componente]');
+			var $buscar_producto_componente = $('#forma-envconf-window').find('a[href=buscar_producto_componente]');
 			
-			var $valor_default_l3 = $('#forma-envconf-window').find('input[name=valor_default_l3]');
-			var $select_base_precio3 = $('#forma-envconf-window').find('select[name=select_base_precio3]');
-			var $select_operacion3 = $('#forma-envconf-window').find('select[name=select_operacion3]');
-			var $select_forma_calculo3 = $('#forma-envconf-window').find('select[name=select_forma_calculo3]');
-			var $select_tipo_redondeo3 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo3]');
+			//grid de productos
+			var $grid_productos = $('#forma-envconf-window').find('#grid_productos');
 			
-			var $valor_default_l4 = $('#forma-envconf-window').find('input[name=valor_default_l4]');
-			var $select_base_precio4 = $('#forma-envconf-window').find('select[name=select_base_precio4]');
-			var $select_operacion4 = $('#forma-envconf-window').find('select[name=select_operacion4]');
-			var $select_forma_calculo4 = $('#forma-envconf-window').find('select[name=select_forma_calculo4]');
-			var $select_tipo_redondeo4 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo4]');
+			//grid de errores
+			var $grid_warning = $('#forma-envconf-window').find('#div_warning_grid').find('#grid_warning');
 			
-			var $valor_default_l5 = $('#forma-envconf-window').find('input[name=valor_default_l5]');
-			var $select_base_precio5 = $('#forma-envconf-window').find('select[name=select_base_precio5]');
-			var $select_operacion5 = $('#forma-envconf-window').find('select[name=select_operacion5]');
-			var $select_forma_calculo5 = $('#forma-envconf-window').find('select[name=select_forma_calculo5]');
-			var $select_tipo_redondeo5 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo5]');
-			
-			var $valor_default_l6 = $('#forma-envconf-window').find('input[name=valor_default_l6]');
-			var $select_base_precio6 = $('#forma-envconf-window').find('select[name=select_base_precio6]');
-			var $select_operacion6 = $('#forma-envconf-window').find('select[name=select_operacion6]');
-			var $select_forma_calculo6 = $('#forma-envconf-window').find('select[name=select_forma_calculo6]');
-			var $select_tipo_redondeo6 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo6]');
-			
-			var $valor_default_l7 = $('#forma-envconf-window').find('input[name=valor_default_l7]');
-			var $select_base_precio7 = $('#forma-envconf-window').find('select[name=select_base_precio7]');
-			var $select_operacion7 = $('#forma-envconf-window').find('select[name=select_operacion7]');
-			var $select_forma_calculo7 = $('#forma-envconf-window').find('select[name=select_forma_calculo7]');
-			var $select_tipo_redondeo7 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo7]');
-			
-			var $valor_default_l8 = $('#forma-envconf-window').find('input[name=valor_default_l8]');
-			var $select_base_precio8 = $('#forma-envconf-window').find('select[name=select_base_precio8]');
-			var $select_operacion8 = $('#forma-envconf-window').find('select[name=select_operacion8]');
-			var $select_forma_calculo8 = $('#forma-envconf-window').find('select[name=select_forma_calculo8]');
-			var $select_tipo_redondeo8 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo8]');
-			
-			var $valor_default_l9 = $('#forma-envconf-window').find('input[name=valor_default_l9]');
-			var $select_base_precio9 = $('#forma-envconf-window').find('select[name=select_base_precio9]');
-			var $select_operacion9 = $('#forma-envconf-window').find('select[name=select_operacion9]');
-			var $select_forma_calculo9 = $('#forma-envconf-window').find('select[name=select_forma_calculo9]');
-			var $select_tipo_redondeo9 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo9]');
-			
-			var $valor_default_l10 = $('#forma-envconf-window').find('input[name=valor_default_l10]');
-			var $select_base_precio10 = $('#forma-envconf-window').find('select[name=select_base_precio10]');
-			var $select_operacion10 = $('#forma-envconf-window').find('select[name=select_operacion10]');
-			var $select_forma_calculo10 = $('#forma-envconf-window').find('select[name=select_forma_calculo10]');
-			var $select_tipo_redondeo10 = $('#forma-envconf-window').find('select[name=select_tipo_redondeo10]');
-			
-			//href para buscar producto
-			var $buscar_producto = $('#forma-envconf-window').find('a[href*=busca_producto]');
-			var $agrega_producto = $('#forma-envconf-window').find('a[href*=agrega_producto]');
 			
 			var $cerrar_plugin = $('#forma-envconf-window').find('#close');
 			var $cancelar_plugin = $('#forma-envconf-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-envconf-window').find('#submit');
 			
+			$agregar_producto.hide();
 			$buscar_producto.hide();
-			$agrega_producto.hide();
-			$producto_unidad.css({'background' : '#F0F0F0'});
-			$productosku.css({'background' : '#F0F0F0'});
-			$producto_descripcion.css({'background' : '#F0F0F0'});
-			$productosku.attr('readonly',true);
-			$producto_descripcion.attr('readonly',true);
 			
+			$unidad.css({'background' : '#F0F0F0'});
+			$codigo.css({'background' : '#F0F0F0'});
+			$descripcion.css({'background' : '#F0F0F0'});
+			$codigo.attr('readonly',true);
+			$descripcion.attr('readonly',true);
 			
 			//quitar enter a todos los campos input
-			$('#forma-envconf-window').find('input[name=producto_descripcion]').keypress(function(e){
+			$('#forma-envconf-window').find('input').keypress(function(e){
 				if(e.which==13 ) {
 					return false;
 				}
 			});
-			
-			//quitar enter a todos los campos input
-			$('#forma-envconf-window').find('input[name=productosku]').keypress(function(e){
-				if(e.which==13 ) {
-					return false;
-				}
-			});
-			
-			//quitar enter a todos los campos input
-			$('#forma-envconf-window').find('input[name=producto_unidad]').keypress(function(e){
-				if(e.which==13 ) {
-					return false;
-				}
-			});
-			
-			
-			$lista1.focus();//asignar el cursor al campo Lista 1 al cargar la ventana
 			
 			if(accion_mode == 'edit'){
-                                
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getConf.json';
 				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
@@ -1059,7 +821,7 @@ $(function() {
 					if ( data['success'] == 'true' ){
 						var remove = function() {$(this).remove();};
 						$('#forma-envconf-overlay').fadeOut(remove);
-						jAlert("Los precios para este producto se han actualizado.", 'Atencion!');
+						jAlert("Los datos de la configuraci&oacute;n se han actualizado con &eacute;xito.", 'Atencion!');
 						$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
@@ -1082,7 +844,6 @@ $(function() {
 				
 				var options = {dataType :  'json', success : respuestaProcesada};
 				$forma_selected.ajaxForm(options);
-				
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
@@ -1114,6 +875,51 @@ $(function() {
 		
 				},"json");//termina llamada json
 				
+				
+				
+				//Buscar Productos Componentes
+				$buscar_producto_componente.click(function(event){
+					event.preventDefault();
+					//tipo=2 para buscar los productos Componentes
+					var tipoBusqueda=2;
+					$buscador_productos(tipoBusqueda, $codigo_componente.val(), $nombre_componente.val() );
+				});
+				
+				$agregar_producto_componente.click(function(event){
+					event.preventDefault();
+					var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
+					var $arreglo3 = {'codigo':$codigo_componente.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+					
+					$.post(input_json3,$arreglo3,function(entry3){
+						if(parseInt(entry3['Producto'].length) > 0 ){
+							var id_producto = entry3['Producto'][0]['id'];
+							var codigo = entry3['Producto'][0]['sku'];
+							var descripcion = entry3['Producto'][0]['descripcion'];
+							var unidad = entry3['Producto'][0]['unidad'];
+							var cantidad=0;
+							
+							//llamada a la funcion para agregar tr al grid
+							$agregarTr(id_producto, codigo, descripcion, unidad, cantidad);
+							
+						}else{
+							jAlert('C&oacute;digo de Producto desconocido.', 'Atencion!', function(r) { 
+								$codigo_componente.focus(); 
+							});
+						}
+					});
+				});
+				
+				
+				//agrega productos componentes al grid
+				$codigo_componente.keypress(function(e){
+					if(e.which == 13){
+						$agregar_producto_componente.trigger('click');
+						return false;
+					}
+				});
+				
+				//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto componente, se ejecute el buscador
+				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_componente, $buscar_producto_componente);
 				
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
