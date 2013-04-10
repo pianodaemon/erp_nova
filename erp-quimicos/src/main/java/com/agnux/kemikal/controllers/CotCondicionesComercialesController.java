@@ -64,7 +64,7 @@ public class CotCondicionesComercialesController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
 
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("descripcion", "Condicion comerciales:200");
+        infoConstruccionTabla.put("descripcion", "Condicion comerciales:500");
 
         ModelAndView x = new ModelAndView("cotcondicionescomerciales/startup", "title", "Condiciones comerciales");//nombre de la carpeta de la vista
 
