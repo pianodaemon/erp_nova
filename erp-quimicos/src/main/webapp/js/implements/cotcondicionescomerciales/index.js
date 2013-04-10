@@ -46,7 +46,7 @@ $(function() {
 
 
 	var $cadena_busqueda = "";
-	var $busqueda_politica = $('#barra_buscador').find('.tabla_buscador').find('input[name=Busqueda_Politica]');
+	var $busqueda_condicion = $('#barra_buscador').find('.tabla_buscador').find('input[name=Busqueda_Condicion]');
 
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
@@ -56,7 +56,7 @@ $(function() {
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "titulo" + signo_separador + $busqueda_politica.val() + "|";
+		valor_retorno += "titulo" + signo_separador + $busqueda_condicion.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
@@ -77,7 +77,7 @@ $(function() {
 
 	$limpiar.click(function(event){
 		event.preventDefault();
-		$busqueda_politica.val('');
+		$busqueda_condicion.val('');
 		//$busqueda_descripcion.val('');
 	});
 
@@ -191,7 +191,7 @@ $(function() {
 
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
-				jAlert("La Politica fue dada de alta con &eacute;xito", 'Atencion!');
+				jAlert("La Condicion fue dada de alta con &eacute;xito", 'Atencion!');
 				var remove = function() { $(this).remove(); };
 				$('#forma-cotcondicionescomerciales-overlay').fadeOut(remove);
 				//refresh_table();
@@ -249,15 +249,15 @@ $(function() {
 			$arreglo = {'id':id_to_show,
                                     'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
                                     };
-			jConfirm('Realmente desea eliminar la  Politica seleccionada', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar la  Condicion seleccionada', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("La Politica fue eliminada exitosamente", 'Atencion!');
+							jAlert("La Condicion fue eliminada exitosamente", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
-							jAlert("La Politica no pudo ser eliminada", 'Atencion!');
+							jAlert("La Condicion no pudo ser eliminada", 'Atencion!');
 						}
 					},"json");
 				}
@@ -290,7 +290,7 @@ $(function() {
 
 			if(accion_mode == 'edit'){
 
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getcotcondicionescomerciales.json';
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCotCondicionescomerciales.json';
 				$arreglo = {'id':id_to_show};
 
 
