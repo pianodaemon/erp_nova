@@ -234,7 +234,7 @@ public class EnvConfController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", InvPreController.class.getName());
+        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", EnvConfController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -259,7 +259,7 @@ public class EnvConfController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", InvPreController.class.getName());
+        log.log(Level.INFO, "Ejecutando gatDatosProductoJson de {0}", EnvConfController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> producto = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
