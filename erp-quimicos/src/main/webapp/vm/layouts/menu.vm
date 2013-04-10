@@ -30,10 +30,7 @@
 											<li>
 												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
 												<ul>
-													<!--
-														<li class="topline"><a href="../cotcondicionesdeventa/startup.agnux">Condiciones Comerciales</a></li>
-													-->
-													
+													<li class="topline"><a href="../cotcondicionescomerciales/startup.agnux">Condiciones Comerciales</a></li>
 													<li class="topline"><a href="../cotpoliticasdepago/startup.agnux">Pol&iacute;ticas de Pago</a></li>
 													<li class="topline"><a href="../cotincoterms/startup.agnux">Incoterms</a></li>
 
@@ -589,7 +586,7 @@
 
 
 
-									<!--
+									
 									<li class="accessible" >
 										<a href="http://jdsharp.us" class="accessible">Envasado &raquo;</a>
 										<ul>
@@ -607,7 +604,7 @@
 											</li>
 										</ul>
 									</li>
-									-->
+									
 
 
 
