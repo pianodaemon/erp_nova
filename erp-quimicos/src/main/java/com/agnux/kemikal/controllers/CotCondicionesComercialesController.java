@@ -72,7 +72,7 @@ public class CotCondicionesComercialesController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
 
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("descripcion", "Condicion de Venta:200");
+        infoConstruccionTabla.put("descripcion", "Condicion comerciales:200");
 
         ModelAndView x = new ModelAndView("cotcondicionescomerciales/startup", "title", "Condiciones comerciales");//nombre de la carpeta de la vista
 
@@ -140,7 +140,7 @@ public class CotCondicionesComercialesController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
 
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getPocDao().getCotPoliticas_de_Pago_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getPocDao().getCotCondiciones_comerciales_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
 
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
@@ -160,7 +160,7 @@ public class CotCondicionesComercialesController {
                 ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
 
                 if( id != 0  ){
-                    datos = this.getPocDao().getCotPoliticas_de_Pago_Datos(id);
+                    datos = this.getPocDao().getCotCondiciones_Comerciales_Datos(id);
                 }
 
                 jsonretorno.put("Condicion_Comercial", datos);
