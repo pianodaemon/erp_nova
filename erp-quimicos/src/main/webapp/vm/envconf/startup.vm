@@ -134,7 +134,7 @@
                                     <div id="tabx-1" class="contenidoPes">
 										
                                         <table border="0" style="margin:0; padding:0;">
-											<tr>
+											<tr class="gral">
 												<td width="700">
 													<table border="0">
 														<tr>
@@ -220,7 +220,7 @@
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:700; height: 130px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:700; height: 110px; border:1px solid #C1DAD7 !important;">	
 														<table>
 															<tbody id="grid_productos" style="background-color: #FFFFFF;" valign="top">
 																
@@ -229,6 +229,49 @@
 													</div>
 												</td>
 											</tr>
+											
+											<tr>
+												<td>
+													
+													<div id="div_warning_grid" style="display:none;">
+														
+														<table border ="0">
+															<tr>
+																<td width="10"></td>
+																<td  colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
+																<td width="10"></td>
+															</tr>
+															<tr>
+																<td width="10"></td>
+																<td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
+																<td width="90" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo</td>
+																<td width="160" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n</td>
+																<td width="410" class="td_head" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+																<td width="10"></td>
+															</tr>
+															<tr>
+																<td width="10"></td>
+																<td colspan="5"> 
+																	<div align="left" class="div_cont_grid_warning" style="width:700px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+																		<table id="grid_warning" border="0" style="width:680px;"">
+																			<!-- Aqui se muestran los warning
+																			<tr>
+																				<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>
+																				<td width="90"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:88px; color:red"></td>
+																				<td width="160"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:160px; color:red"></td>
+																				<td width="380"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:380px; color:red"></td>
+																			</tr>
+																			-->
+																		</table>
+																	</div>
+																</td>
+															</tr>
+														</table>
+													</div>
+													
+												</td>
+											</tr>
+											
 										</table>
                                     </div>
 									
