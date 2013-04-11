@@ -1987,6 +1987,7 @@ $(function() {
                                     $guardar_detalle_prod_tmp = $(this).parent().parent().parent().find('input[name=guardar_uso_real_op]');
                                     
                                     if( $guardar_detalle_prod_tmp != null ){
+                                        
                                         var $id_orden = $('#forma-proordenproduccion-window').find('input[name=id_orden]');
                                         var $tipoorden = $('#forma-proordenproduccion-window').find('input[name=tipoorden]');
                                         var $fecha_elavorar = $('#forma-proordenproduccion-window').find('input[name=fecha_elavorar]');
@@ -2043,7 +2044,7 @@ $(function() {
                                                     inv_prod_id_elemento_tmp+"___"+id_reg_parent+"___"+$subproceso_id.val()+
                                                         "___"+id_reg_det+"___"+inv_osal_id+"___"+almacen_id+"___"+sucursal_id+"___"+
                                                         agregado+"___"+cantidad_real_tmp+"$$$$";
-                                            } 
+                                            }
                                         });
                                         
                                         cadena_pos = cadena_pos.substring(0, (cadena_pos.length - 4 ));
@@ -2071,12 +2072,79 @@ $(function() {
                                                             $('#forma-proordenproduccion-overlay').fadeOut(remove);
                                                             jAlert("Lotes registrados", 'Atencion!');
                                                         }else{
+                                                            
+                                                            var $tabla_resultados = $('#forma-proordenproduccion-window').find('#tabla_resultado');
+                                                            
+                                                            //grids detalle pedido
+                                                            var $tabla_productos_preorden = $('#forma-proordenproduccion-window').find('#grid_productos_seleccionados').find('.detalle_por_prod');
+                                                            
+                                                            // Desaparece todas las interrogaciones si es que existen
+                                                            $('#forma-proordenproduccion-window').find('div.interrogacion').css({'display':'none'});
+                                                            
+                                                            /*
+                                                            $tabla_productos_preorden.find('input[name=persona]').css({'background' : '#ffffff'});
+                                                            $tabla_productos_preorden.find('input[name=equipo]').css({'background' : '#ffffff'});
+                                                            $tabla_productos_preorden.find('input[name=eq_adicional]').css({'background' : '#ffffff'});
+                                                            $tabla_productos_preorden.find('input[name=cantidad]').css({'background' : '#ffffff'});
+                                                            */
+                                                            
+                                                            $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'578px'});//con errores
+                                                            $('#forma-proordenproduccion-window').find('#div_warning_grid').css({'display':'none'});
+                                                            $('#forma-proordenproduccion-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+                                                            
+                                                            //alert($tabla_productos_preorden.html());
+                                                            
                                                             var valor = data['success'].split('___');
                                                             //muestra las interrogaciones
                                                             for (var element in valor){
-                                                                tmp = data['success'].split('___')[element];
-                                                                longitud = tmp.split(':');
+                                                                    tmp = data['success'].split('___')[element];
+                                                                    longitud = tmp.split(':');
+                                                                    
+                                                                    if( longitud.length > 1 ){
+                                                                            $('#forma-proordenproduccion-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+                                                                            .parent()
+                                                                            .css({'display':'block'})
+                                                                            .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+                                                                            
+                                                                            //alert(tmp.split(':')[0]);
+                                                                            
+                                                                            if(parseInt($("tr", $tabla_productos_preorden).size())>0){
+                                                                                    for (var i=1;i<=parseInt($("tr", $tabla_productos_preorden).size());i++){
+                                                                                        //alert(tmp.split(':')[0]);
+                                                                                        $(this).find('input[name=id_reg]').val();//id de el registro ern la tabla
+                                                                                            
+                                                                                            if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='lote'+i) ){
+                                                                                                
+                                                                                                $('#forma-proordenproduccion-window').find('#div_warning_grid').css({'display':'block'});
+                                                                                                //$grid_productos.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
+                                                                                                
+                                                                                                if(tmp.split(':')[0].substring(0, 9) == 'cantidad'+i){
+                                                                                                    $tabla_productos_preorden.find('#cantidad_real'+i).css({'background' : '#d41000'});
+                                                                                                }
+                                                                                                
+                                                                                                //alert(tmp.split(':')[0].substring(0, 5)+ "    " + i+ "    "+$tabla_productos_preorden.find('#lote'+i).val());
+                                                                                                if(tmp.split(':')[0].substring(0, 5) == 'lote'+i){
+                                                                                                    $tabla_productos_preorden.find('#lote'+i).css({'background' : '#d41000'});
+                                                                                                }
+                                                                                                
+                                                                                                var tr_warning = '<tr>';
+                                                                                                        tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+                                                                                                        tr_warning += '<td width="120"><INPUT TYPE="text" value="' + $tabla_productos_preorden.find('input[name=sku]').val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
+                                                                                                        tr_warning += '<td width="200"><INPUT TYPE="text" value="' + $tabla_productos_preorden.find('input[name=descripcoin]').val() + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
+                                                                                                        tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:485px; color:red"></td>';
+                                                                                                    tr_warning += '</tr>';
+                                                                                                    
+                                                                                                $('#forma-proordenproduccion-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+                                                                                                
+                                                                                            }
+                                                                                    }
+                                                                            }
+                                                                    }
                                                             }
+                                                            
+                                                            $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
+                                                            $('#forma-proconfigproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({'background-color' : '#e7e8ea'});
+                                                            
                                                         }
                                                     });
                                                     
@@ -2085,7 +2153,6 @@ $(function() {
                                                 return false;
                                             }
                                         });
-                                        
                                     }
                                 });
                                 
