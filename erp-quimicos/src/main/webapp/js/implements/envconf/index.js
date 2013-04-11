@@ -1053,6 +1053,7 @@ $(function() {
 				//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto componente, se ejecute el buscador
 				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_componente, $buscar_producto_componente);
 				
+				$codigo_componente.focus();
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
