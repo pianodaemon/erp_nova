@@ -90,11 +90,14 @@ $(function() {
 			$busqueda_select_tipo_prod.children().remove();
 			var prodtipos = '<option value="0">[--Seleccionar Tipo--]</option>';
 			$.each(data['ProdTipos'],function(entryIndex,tp){
+				prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
+				/*
 				if(parseInt(tp['id'])==1){
 					prodtipos += '<option value="' + tp['id'] + '" selected="yes">' + tp['titulo'] + '</option>';
 				}else{
 					prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
 				}
+				*/
 			});
 			$busqueda_select_tipo_prod.append(prodtipos);
 			
@@ -125,13 +128,14 @@ $(function() {
 		//carga select de tipos de producto
 		$busqueda_select_tipo_prod.children().remove();
 		var prodtipos = '<option value="0">[--Seleccionar Tipo--]</option>';
-		var prodtipos = '';
 		$.each(arrayProdTipos,function(entryIndex,tp){
+			/*
 			if(parseInt(tp['id'])==1){
 				prodtipos += '<option value="' + tp['id'] + '" selected="yes">' + tp['titulo'] + '</option>';
 			}else{
 				prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
-			}
+			}*/
+			prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
 		});
 		$busqueda_select_tipo_prod.append(prodtipos);
 		
@@ -633,9 +637,8 @@ $(function() {
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-envconf-window').find('div.interrogacion').css({'display':'none'});
-				//$('#forma-envconf-window').find('.envconf_div_one').css({'height':'390px'});//sin errores
-				$('#forma-envconf-window').find('.envconf_div_one').css({'height':'490px'});//con errores
-						
+				$('#forma-envconf-window').find('.envconf_div_one').css({'height':'390px'});//sin errores
+				
 				$grid_productos.find('#cant').css({'background' : '#ffffff'});
 				$grid_productos.find('#cost').css({'background' : '#ffffff'});
 				
@@ -661,6 +664,7 @@ $(function() {
 						if(tmp.split(':')[0].substring(0,4) == 'cant'){
 							
 							$('#forma-envconf-window').find('#div_warning_grid').css({'display':'block'});
+							$('#forma-envconf-window').find('.envconf_div_one').css({'height':'490px'});//con errores
 							$campo_input = $grid_productos.find('.'+campo);
 							$campo_input.css({'background' : '#d41000'});
 							
@@ -907,8 +911,7 @@ $(function() {
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-envconf-window').find('div.interrogacion').css({'display':'none'});
-						//$('#forma-envconf-window').find('.envconf_div_one').css({'height':'390px'});//sin errores
-						$('#forma-envconf-window').find('.envconf_div_one').css({'height':'490px'});//con errores
+						$('#forma-envconf-window').find('.envconf_div_one').css({'height':'390px'});//sin errores
 								
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
 						$grid_productos.find('#cost').css({'background' : '#ffffff'});
@@ -936,6 +939,8 @@ $(function() {
 								if(tmp.split(':')[0].substring(0,4) == 'cant'){
 									
 									$('#forma-envconf-window').find('#div_warning_grid').css({'display':'block'});
+									$('#forma-envconf-window').find('.envconf_div_one').css({'height':'490px'});//con errores
+									
 									$campo_input = $grid_productos.find('.'+campo);
 									$campo_input.css({'background' : '#d41000'});
 									

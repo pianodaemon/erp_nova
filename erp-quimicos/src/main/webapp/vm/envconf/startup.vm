@@ -59,7 +59,7 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="150">
 					<select name="busqueda_select_tipo_prod" style="width:150px;">
-						<option value="1" selected="yes">Prod. Terminado</option>
+						<option value="0">[--Seleccionar Tipo--]</option>
 					</select>
 				</td>
 				<td width="10"></td>
