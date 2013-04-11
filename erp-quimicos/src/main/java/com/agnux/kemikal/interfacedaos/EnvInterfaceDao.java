@@ -27,7 +27,8 @@ public interface EnvInterfaceDao {
     
     //metodos para Configuracion de Envasado
     public ArrayList<HashMap<String, Object>> getEnvConf_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
-    public ArrayList<HashMap<String, String>> getEnvConf_Datos(Integer id_producto);
+    public ArrayList<HashMap<String, String>> getEnvConf_Datos(Integer id);
+    public ArrayList<HashMap<String, String>> getEnvConf_DatosGrid(Integer id);
     
     
     

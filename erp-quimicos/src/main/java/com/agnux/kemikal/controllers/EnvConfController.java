@@ -4,7 +4,6 @@
  */
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
-import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -12,12 +11,7 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.EnvInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.itextpdf.text.DocumentException;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,9 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -204,6 +196,7 @@ public class EnvConfController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         //HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosEnvConf = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
@@ -213,10 +206,12 @@ public class EnvConfController {
         
         if( id != 0  ){
             datosEnvConf = this.getEnvDao().getEnvConf_Datos(id);
+            datosGrid = this.getEnvDao().getEnvConf_DatosGrid(id);
             presentaciones=this.getEnvDao().getProductoPresentacionesON(Integer.parseInt(datosEnvConf.get(0).get("producto_id")));
         }
         
         jsonretorno.put("Datos", datosEnvConf);
+        jsonretorno.put("DatosGrid", datosGrid);
         jsonretorno.put("Presentaciones", presentaciones);
         
         return jsonretorno;
@@ -303,10 +298,94 @@ public class EnvConfController {
     
     
     
+
+    //edicion y nuevo
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="identificador", required=true) Integer identificador,
+            @RequestParam(value="producto_id", required=true) String producto_id,
+            @RequestParam(value="select_presentacion", required=true) String select_presentacion,
+            @RequestParam(value="notr", required=false) String[] notr,
+            @RequestParam(value="iddetalle", required=false) String[] iddetalle,
+            @RequestParam(value="eliminado", required=false) String[] eliminado,
+            @RequestParam(value="idprod", required=false) String[] idprod,
+            @RequestParam(value="cant", required=false) String[] cant,
+            @ModelAttribute("user") UserSessionData user
+        ) {
+            
+            System.out.println("Guardar del Pedido");
+            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            HashMap<String, String> succes = new HashMap<String, String>();
+            
+            Integer app_selected = 136;
+            String command_selected = "new";
+            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            
+            String arreglo[];
+            arreglo = new String[notr.length];
+            
+            for(int i=0; i<notr.length; i++) { 
+                arreglo[i]= "'"+eliminado[i] +"___"+ notr[i] +"___" + iddetalle[i] +"___" + idprod[i] +"___" + cant[i] +"'";
+                System.out.println(arreglo[i]);
+            }
+            
+            //serializar el arreglo
+            String extra_data_array = StringUtils.join(arreglo, ",");
+            
+            if( identificador==0 ){
+                command_selected = "new";
+            }else{
+                command_selected = "edit";
+            }
+            
+            String data_string = 
+                    app_selected+"___"+
+                    command_selected+"___"+
+                    id_usuario+"___"+
+                    identificador+"___"+
+                    producto_id+"___"+
+                    select_presentacion;
+            //System.out.println("data_string: "+data_string);
+            
+            succes = this.getEnvDao().selectFunctionValidateAplicativo(data_string,extra_data_array);
+            
+            log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+            String actualizo = "0";
+            
+            if( String.valueOf(succes.get("success")).equals("true") ){
+                actualizo = this.getEnvDao().selectFunctionForThisApp(data_string, extra_data_array);
+                jsonretorno.put("actualizo",String.valueOf(actualizo));
+            }
+            
+            jsonretorno.put("success",String.valueOf(succes.get("success")));
+            
+            log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
     
     
     
     
-    
-    
+    //cambiar a borrado logico un registro
+    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
+    public @ResponseBody HashMap<String, String> logicDeleteJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        Integer app_selected = 136;
+        String command_selected = "delete";
+        String extra_data_array = "'sin datos'";
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        
+        System.out.println("Ejecutando borrado logico de Configuracion de Envase");
+        jsonretorno.put("success",String.valueOf( this.getEnvDao().selectFunctionForThisApp(data_string,extra_data_array)) );
+        
+        return jsonretorno;
+    }
 }

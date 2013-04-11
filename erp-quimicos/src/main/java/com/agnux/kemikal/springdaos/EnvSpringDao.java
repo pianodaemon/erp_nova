@@ -300,7 +300,6 @@ public class EnvSpringDao implements EnvInterfaceDao{
         
         //System.out.println("sql_to_query: "+sql_to_query);
         //System.out.println("id: "+id);
-        
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id)}, new RowMapper(){
@@ -321,6 +320,44 @@ public class EnvSpringDao implements EnvInterfaceDao{
     }
     
     
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getEnvConf_DatosGrid(Integer id) {
+        String sql_to_query = ""
+                + "SELECT "
+                    + "env_conf_det.id AS iddet, "
+                    + "env_conf_det.inv_prod_id AS id_prod, "
+                    + "inv_prod.sku AS codigo, "
+                    + "inv_prod.descripcion, "
+                    + "inv_prod_unidades.titulo AS unidad, "
+                    + "inv_prod_unidades.decimales AS precision, "
+                    + "env_conf_det.cantidad AS cant "
+                + "FROM env_conf_det "
+                + "JOIN inv_prod ON inv_prod.id=env_conf_det.inv_prod_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "WHERE env_conf_det.env_conf_id=?;";
+        
+        //System.out.println("sql_to_query: "+sql_to_query);
+        //System.out.println("id: "+id);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("iddet",String.valueOf(rs.getInt("iddet")));
+                    row.put("id_prod",String.valueOf(rs.getInt("id_prod")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("precision",String.valueOf(rs.getInt("precision")));
+                    row.put("cant",StringHelper.roundDouble(rs.getString("cant"),rs.getInt("precision")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
     
     
     //###### TERMINA METODOS PARA CONFIGURACION DE ENVASADO ############################################
