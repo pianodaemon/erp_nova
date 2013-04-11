@@ -293,8 +293,9 @@ public class PdfProOrdenProduccion {
                     HashMap<String,String> reg_element = prod_formula.get(k);
                     
                     
-                    Double cantidad = Double.parseDouble(reg_element.get("cantidad").toString() );
+                    Double cantidad = Double.parseDouble(reg_element.get("cantidad_usada").toString() );
                     Double cantidad_adicional = Double.parseDouble(reg_element.get("cantidad_adicional").toString());
+                    Double cantidad_usada = Double.parseDouble(reg_element.get("cantidad_usada").toString() );
                     
                     //1           
                     celdaF = new PdfPCell(new Paragraph(String.valueOf(reg_element.get("sku")),smallFont));
@@ -320,16 +321,26 @@ public class PdfProOrdenProduccion {
                     tablaFormX.addCell(celdaF);
                     
                     //2
-                    celdaF = new PdfPCell(new Paragraph(""+StringHelper.roundDouble(String.valueOf(cantidad), 4),smallFont));
-                    celdaF.setUseAscender(true);
-                    celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    celdaF.setUseDescender(true);
-                    celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    tablaFormX.addCell(celdaF);
+                    if(cantidad > 0){
+                        celdaF = new PdfPCell(new Paragraph(""+StringHelper.roundDouble(String.valueOf(cantidad_usada), 4),smallFont));
+                        celdaF.setUseAscender(true);
+                        celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celdaF.setUseDescender(true);
+                        celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        tablaFormX.addCell(celdaF);
+                    }else{
+                        celdaF = new PdfPCell(new Paragraph("",smallFont));
+                        celdaF.setUseAscender(true);
+                        celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celdaF.setUseDescender(true);
+                        celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        tablaFormX.addCell(celdaF);
+                    }
+                    
                     
                     if(cantidad_adicional > 0){
                         //2cantidad_adicional
-                        celdaF = new PdfPCell(new Paragraph(""+StringHelper.roundDouble(String.valueOf(cantidad_adicional), 4),smallFont));
+                        celdaF = new PdfPCell(new Paragraph(""+StringHelper.roundDouble(String.valueOf(cantidad_usada), 4),smallFont));
                         celdaF.setUseAscender(true);
                         celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celdaF.setUseDescender(true);
@@ -354,11 +365,11 @@ public class PdfProOrdenProduccion {
                     celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);     
                     tablaFormX.addCell(celdaF);
                     
-                    //agrega a la sum atoria la cantidad adicional
-                    sumatoria += cantidad_adicional;
+                    //agrega a la sum atoria la cantidad usada
+                    sumatoria += cantidad_usada;
                     
                     //agrega a la sum atoria la cantidad
-                    sumatoria += cantidad;
+                    //sumatoria += cantidad_usada;
                     contador++;
                 }
                 

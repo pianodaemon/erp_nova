@@ -3968,7 +3968,8 @@ public class ProSpringDao implements ProInterfaceDao{
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccionv2("+id_producto+","+id_orden+","+id_subproceso+", 0)  as "
                 + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
                 + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
-                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer, agregado boolean) order by elemento;";
+                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer, agregado boolean,"
+                + "cantidad_usada double precision, guardado boolean) order by elemento;";
 
         //and tmp_salida.cantidad_tmp=tmp_det.cantidad // se quito, por que no mostraba los lotes
         System.out.println("Ejecutando query de: "+ sql_to_query);
@@ -3996,6 +3997,9 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("inv_alm_id",String.valueOf(rs.getInt("inv_alm_id")));
                     row.put("gral_suc_id",String.valueOf(rs.getInt("gral_suc_id")));
                     row.put("agregado",String.valueOf(rs.getBoolean("agregado")));
+                    row.put("cantidad_usada",String.valueOf(rs.getDouble("cantidad_usada")));
+                    row.put("guardado",String.valueOf(rs.getBoolean("guardado")));
+                    
                     return row;
                 }
             }
@@ -4118,7 +4122,8 @@ public class ProSpringDao implements ProInterfaceDao{
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccionv2("+id_producto+","+id_orden+",1, 0)  as "
                 + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
                 + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
-                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer, agregado boolean) order by elemento";
+                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer, agregado boolean, "
+                + "cantidad_usada double precision, guardado boolean) order by elemento";
 
         //System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -4136,13 +4141,15 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("cantidad_adicional",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad_adicional")),4));
                     row.put("lote",rs.getString("lote"));
                     row.put("agregado",String.valueOf(rs.getBoolean("agregado")));
+                    row.put("cantidad_usada",String.valueOf(rs.getDouble("cantidad_usada")));
+                    row.put("guardado",String.valueOf(rs.getBoolean("guardado")));
                     return row;
                 }
             }
         );
         return hm;
     }
-
+    
     //obtiene datos de los productos de la formula para produccion
     private ArrayList<HashMap<String, String>> getOrdenProdEspecificacoinesProduccionSubproceso(String id,String id_subproceso, String orden_prod_id, String id_empresa){
         String sql_to_query = "select esp.* from "
@@ -4151,7 +4158,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join pro_subprocesos on pro_subprocesos.id=opd.pro_subprocesos_id "
                 + "where opd.pro_orden_prod_id="+orden_prod_id+" and opd.pro_subprocesos_id="+id_subproceso+") as tmp_det_orden "
                 + "left join pro_orden_prod_subp_esp as esp on esp.pro_orden_prod_det_id=tmp_det_orden.id;";
-
+        
         //System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
         ArrayList<HashMap<String, String>> hm_especificaciones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4159,12 +4166,12 @@ public class ProSpringDao implements ProInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-
+                    
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("pro_subprocesos_id",String.valueOf(rs.getInt("pro_subprocesos_id")));
                     row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
                     row.put("nivel_form",String.valueOf(rs.getInt("nivel_form")));
-
+                    
                     row.put("fineza_inicial",String.valueOf(rs.getInt("fineza_inicial")));
                     row.put("viscosidads_inicial",String.valueOf(rs.getInt("viscosidads_inicial")));
                     row.put("viscosidadku_inicial",String.valueOf(rs.getDouble("viscosidadku_inicial")));
@@ -4189,14 +4196,14 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("brillo_final",String.valueOf(rs.getDouble("brillo_final")));
                     row.put("dureza_final",rs.getString("dureza_final"));
                     row.put("adherencia_final",String.valueOf(rs.getDouble("adherencia_final")));
-
+                    
                     return row;
                 }
             }
         );
         return hm_especificaciones;
     }
-
+    
     //obtiene datos de los productos de la formula para produccion
     private ArrayList<HashMap<String, String>> getOrdenProdEspecificacoinesEstandarSubproceso(String producto_id,String id_subproceso,String id_empresa) {
 
@@ -4250,8 +4257,8 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("brillo_final",String.valueOf(rs.getDouble("brillo_final")));
                     row.put("dureza_final",rs.getString("dureza_final"));
                     row.put("adherencia_final",String.valueOf(rs.getDouble("adherencia_final")));
-
-
+                    
+                    
                     //put para los instrumentos
                     row.put("inst_fineza",String.valueOf(rs.getString("inst_fineza")));
                     row.put("inst_viscosidad1",String.valueOf(rs.getString("inst_viscosidad1")));
