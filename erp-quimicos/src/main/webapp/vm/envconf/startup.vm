@@ -156,7 +156,7 @@
 															<td width="5"></td>
 															<td width="90">													
 																<input type="hidden" name="producto_id">
-																<input type="text" name="codigo" style="width:90px;">
+																<input type="text" name="codigo" style="width:90px; border:1px solid #000;">
 															</td>
 															<td width="10"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_codigo"></div></td>
 															<td width="60">&nbsp;<a href="agregar_producto" id="agregar_producto">(Agregar)</a></td>

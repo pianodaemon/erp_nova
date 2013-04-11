@@ -453,7 +453,7 @@ $(function() {
 				}
 			}else{
 				//filtro para productos componentes
-				if(parseInt(pt['id'])==1){
+				if(parseInt(pt['id'])==7){
 					prod_tipos_html += '<option value="' + pt['id'] + '"  selected="yes">' + pt['titulo'] + '</option>';
 				}
 			}
