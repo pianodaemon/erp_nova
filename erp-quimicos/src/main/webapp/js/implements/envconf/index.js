@@ -283,7 +283,7 @@ $(function() {
 					trr += '<input type="text" 		name="uni" value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input type="text" 		name="cant" value="'+ cantidad +'" id="cant" class="cant'+ noTr +'" style="width:76px;">';
+					trr += '<input type="text" 		name="cant" value="'+ cantidad +'" id="cant" class="cant'+ noTr +'" style="width:76px;" maxlength="10">';
 				trr += '</td>';
 			trr += '</tr>';
 			
@@ -331,8 +331,8 @@ $(function() {
 					
 					if(!patron.test($(this).val())){
 						jAlert('El n&uacute;mero de decimales es incorrecto, solo debe ser '+noDec+'.', 'Atencion!', function(r) {
-							$(this).val('');
-							$(this).focus();
+							$grid_productos.find('input.cant'+ noTr).val('');
+							$grid_productos.find('input.cant'+ noTr).focus();
 						});
 					}else{
 						$(this).val( parseFloat($(this).val()).toFixed(noDec) );
