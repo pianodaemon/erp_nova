@@ -3993,7 +3993,7 @@ public class InvSpringDao implements InvInterfaceDao{
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
 
 	String sql_to_query = "SELECT inv_prod_presentaciones.id,inv_prod_presentaciones.titulo as descripcion, "
-                + "  (case when inv_prod_presentaciones.cantidad is null or inv_prod_presentaciones.cantidad ='' then 0 else inv_prod_presentaciones.cantidad end )as cantidad "
+                + "  (case when inv_prod_presentaciones.cantidad is null then 0 else inv_prod_presentaciones.cantidad end )as cantidad "
                                 +"FROM inv_prod_presentaciones "
                                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_prod_presentaciones.id "
                                 +"WHERE inv_prod_presentaciones.borrado_logico=false  "
