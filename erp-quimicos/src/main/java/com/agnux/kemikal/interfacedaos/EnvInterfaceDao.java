@@ -31,6 +31,11 @@ public interface EnvInterfaceDao {
     public ArrayList<HashMap<String, String>> getEnvConf_DatosGrid(Integer id);
     
     
+    //metodos para Aplicativo de Re-Envasado
+    public ArrayList<HashMap<String, Object>> getReEenv_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, String>> getReEenv_Datos(Integer id);
+    public ArrayList<HashMap<String, String>> getReEenv_DatosGrid(Integer id);
+    
     
     
     

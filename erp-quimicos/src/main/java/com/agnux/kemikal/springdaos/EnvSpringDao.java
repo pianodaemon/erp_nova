@@ -242,8 +242,9 @@ public class EnvSpringDao implements EnvInterfaceDao{
     
     
     
-    //###### METODOS PARA CONFIGURACION DE ENVASADO ###############
-    
+    /***************************************************************************
+    * METODOS PARA CONFIGURACION DE ENVASADO
+    ***************************************************************************/
     //Este metodo es para obtener datos del Grid y Paginado
     @Override
     public ArrayList<HashMap<String, Object>> getEnvConf_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
@@ -358,11 +359,128 @@ public class EnvSpringDao implements EnvInterfaceDao{
         );
         return hm;
     }
+    /*TERMINA METODOS PARA CONFIGURACION DE ENVASADO **************************/
     
     
-    //###### TERMINA METODOS PARA CONFIGURACION DE ENVASADO ############################################
+    
+    /***************************************************************************
+    * METODOS PARA APLICATIVO DE RE-ENVASADO
+    ***************************************************************************/
+    //Este metodo es para obtener datos del Grid y Paginado
+    @Override
+    public ArrayList<HashMap<String, Object>> getReEenv_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from env_bus_aplicativos(?) as foo (id integer)";
+	String sql_to_query = ""
+                + "SELECT DISTINCT "
+                    + "env_conf.id,"
+                    + "inv_prod.sku AS codigo,"
+                    + "inv_prod.descripcion,"
+                    + "inv_prod_unidades.titulo AS unidad,"
+                    + "inv_prod_presentaciones.titulo AS presentacion "
+                + "FROM env_conf "
+                + "JOIN inv_prod ON inv_prod.id=env_conf.inv_prod_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=env_conf.inv_prod_presentacion_id "
+                + "JOIN ("+sql_busqueda+") as subt on subt.id=env_conf.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("data_string: "+data_string);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
     
     
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getReEenv_Datos(Integer id) {
+        String sql_to_query = ""
+                + "SELECT "
+                    + "env_conf.id,"
+                    + "env_conf.inv_prod_id,"
+                    + "env_conf.inv_prod_presentacion_id,"
+                    + "inv_prod.sku AS codigo,"
+                    + "inv_prod.descripcion,"
+                    + "inv_prod_unidades.titulo AS unidad "
+                + "FROM env_conf "
+                + "JOIN inv_prod ON inv_prod.id=env_conf.inv_prod_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "WHERE env_conf.id=?;";
+        
+        //System.out.println("sql_to_query: "+sql_to_query);
+        //System.out.println("id: "+id);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("producto_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("presentacion_id",String.valueOf(rs.getInt("inv_prod_presentacion_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getReEenv_DatosGrid(Integer id) {
+        String sql_to_query = ""
+                + "SELECT "
+                    + "env_conf_det.id AS iddet, "
+                    + "env_conf_det.inv_prod_id AS id_prod, "
+                    + "inv_prod.sku AS codigo, "
+                    + "inv_prod.descripcion, "
+                    + "inv_prod_unidades.titulo AS unidad, "
+                    + "inv_prod_unidades.decimales AS precision, "
+                    + "env_conf_det.cantidad AS cant "
+                + "FROM env_conf_det "
+                + "JOIN inv_prod ON inv_prod.id=env_conf_det.inv_prod_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "WHERE env_conf_det.env_conf_id=?;";
+        
+        //System.out.println("sql_to_query: "+sql_to_query);
+        //System.out.println("id: "+id);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("iddet",String.valueOf(rs.getInt("iddet")));
+                    row.put("id_prod",String.valueOf(rs.getInt("id_prod")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("precision",String.valueOf(rs.getInt("precision")));
+                    row.put("cant",StringHelper.roundDouble(rs.getString("cant"),rs.getInt("precision")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
     
 
 
