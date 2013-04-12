@@ -25,7 +25,7 @@ $(function() {
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
     $('#barra_acciones').find('.table_acciones').css({'display':'block'});
-	var $new_invprodlineas = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
+	var $new = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
 	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
@@ -375,30 +375,38 @@ $(function() {
 		}
 	};
 	
-
 	
 	
-	var $agregarDatosProductoSeleccionado = function(id_producto, codigo, descripcion, unidad, arregloPres){
+	
+	var $agregarDatosProductoSeleccionado = function(id_producto, codigo, descripcion, unidad, arregloPres, arregloEnvases, noDec){
 		$('#forma-envreenv-window').find('input[name=producto_id]').val(id_producto);
 		$('#forma-envreenv-window').find('input[name=codigo]').val(codigo);
 		$('#forma-envreenv-window').find('input[name=descripcion]').val(descripcion);
 		$('#forma-envreenv-window').find('input[name=unidad]').val(unidad);
 		
+		var html_pres = '<option value="0" selected="yes">[-Presentaci&oacute;n--]</option>';
+		$('#forma-envreenv-window').find('select[name=select_presentacion_orig]').children().remove();
 		if (parseInt(arregloPres.length) > 0){
-			$('#forma-envreenv-window').find('select[name=select_presentacion]').children().remove();
-			var html_pres = '';
 			$.each(arregloPres,function(entryIndex,pres){
 				html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
 			});
-			$('#forma-envreenv-window').find('select[name=select_presentacion]').append(html_pres);
-		}else{
-			$('#forma-envreenv-window').find('select[name=select_presentacion]').remove();
-			var html_pres = '<option value="0">[-Presentaci&oacute;n--]</option>';
-			$('#forma-envreenv-window').find('select[name=select_presentacion]').append(html_pres);
 		}
+		$('#forma-envreenv-window').find('select[name=select_presentacion_orig]').append(html_pres);
+		
+		
+		var html_env = '<option value="0" selected="yes">[-Presentaci&oacute;n--]</option>';
+		$('#forma-envreenv-window').find('select[name=select_envases]').children().remove();
+		if (parseInt(arregloEnvases.length) > 0){
+			$.each(arregloEnvases,function(entryIndex,env){
+				html_env += '<option value="' + env['id'] + '"  >' + env['titulo'] + '</option>';
+			});
+		}else{
+			
+		}
+		$('#forma-envreenv-window').find('select[name=select_envases]').append(html_env);
 		
 		//asignar el enfoque
-		$('#forma-envreenv-window').find('input[name=codigo_componente]').focus();
+		//$('#forma-envreenv-window').find('input[name=codigo_componente]').focus();
 	}
 	
 	
@@ -406,7 +414,7 @@ $(function() {
 	
 	
 	//buscador de productos
-	var $buscador_productos = function(tipoBusqueda, codigo, descripcion){
+	var $buscador_productos = function(codigo, descripcion){
 		//limpiar_campos_grids();
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
@@ -443,19 +451,10 @@ $(function() {
 		//Llena el select tipos de productos en el buscador
 		$select_tipo_producto.children().remove();
 		var prod_tipos_html = '';
-		if(parseInt(tipoBusqueda)==1){
-			prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
-		}
+		prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
 		$.each(arrayProdTipos,function(entryIndex,pt){
-			if(parseInt(tipoBusqueda)==1){
-				if(parseInt(pt['id'])!=4){
-					prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
-				}
-			}else{
-				//filtro para productos componentes
-				if(parseInt(pt['id'])==7){
-					prod_tipos_html += '<option value="' + pt['id'] + '"  selected="yes">' + pt['titulo'] + '</option>';
-				}
+			if(parseInt(pt['id'])!=4){
+				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
 			}
 		});
 		$select_tipo_producto.append(prod_tipos_html);
@@ -527,11 +526,8 @@ $(function() {
 						$arreglo = {'id_prod':id_producto,'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 						$.post(input_json,$arreglo,function(entry){
 							//llamada a la funcion para agregar los datos del Producto seleccionado
-							$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry['Presentaciones']);
+							$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry['Presentaciones'], entry['Envases'], noDec);
 						});
-					}else{
-						//llamada a la funcion para agregar tr al Grid
-						$agregarTr(id_producto, codigo, descripcion, unidad, cantidad, iddetalle, noDec);
 					}
 					
 					//elimina la ventana de busqueda
@@ -564,9 +560,36 @@ $(function() {
 		});
 	}//termina buscador de productos
 	
+	
+	
+	
+	
+	//carga los campos select con los datos que recibe como parametro
+	$carga_campos_select = function($campo_select, arreglo_elementos, elemento_seleccionado, texto_elemento_cero, indiceId, indiceTitulo){
+		$campo_select.children().remove();
+		var select_html = '';
+		
+		if(texto_elemento_cero != ""){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
+		
+		$.each(arreglo_elementos,function(entryIndex,elemento){
+			if( parseInt(elemento['id']) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + elemento[indiceId] + '" selected="yes">' + elemento[indiceTitulo] + '</option>';
+			}else{
+				select_html += '<option value="' + elemento[indiceId] + '" >' + elemento[indiceTitulo] + '</option>';
+			}
+		});
+		$campo_select.append(select_html);
+	}
+	
+	
+	
+	
+	
 	        
 	//nuevo 
-	$new_invprodlineas.click(function(event){
+	$new.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
 		$(this).modalPanel_modalboxenvreenv();
@@ -582,23 +605,23 @@ $(function() {
 		$tabs_li_funxionalidad();
 		
 		var $identificador = $('#forma-envreenv-window').find('input[name=identificador]');
+		var $folio = $('#forma-envreenv-window').find('input[name=folio]');
+		var $select_estatus = $('#forma-envreenv-window').find('select[name=select_estatus]');
+		var $fecha = $('#forma-envreenv-window').find('input[name=fecha]');
+		var $select_empleado = $('#forma-envreenv-window').find('select[name=select_empleado]');
+		var $select_almacen_orig = $('#forma-envreenv-window').find('select[name=select_almacen_orig]');
 		var $producto_id = $('#forma-envreenv-window').find('input[name=producto_id]');
 		var $codigo = $('#forma-envreenv-window').find('input[name=codigo]');
 		var $descripcion = $('#forma-envreenv-window').find('input[name=descripcion]');
+		var $select_presentacion_orig = $('#forma-envreenv-window').find('select[name=select_presentacion_orig]');
+		var $exis_pres = $('#forma-envreenv-window').find('input[name=exis_pres]');
+		var $disp_pres = $('#forma-envreenv-window').find('input[name=disp_pres]');
 		var $unidad = $('#forma-envreenv-window').find('input[name=unidad]');
-		var $select_presentacion = $('#forma-envreenv-window').find('select[name=select_presentacion]');
+		var $exis_uni = $('#forma-envreenv-window').find('input[name=exis_uni]');
+		var $disp_uni = $('#forma-envreenv-window').find('input[name=disp_uni]');
 		
 		//href para Agregar y Buscar producto
-		var $agregar_producto = $('#forma-envreenv-window').find('#agregar_producto');
 		var $buscar_producto = $('#forma-envreenv-window').find('#buscar_producto');
-		
-		//Codigo y Nombre del producto componente del Envase
-		var $codigo_componente = $('#forma-envreenv-window').find('input[name=codigo_componente]');
-		var $nombre_componente = $('#forma-envreenv-window').find('input[name=nombre_componente]');
-		
-		//href para Agregar y Buscar producto Elemento del Envase
-		var $agregar_producto_componente = $('#forma-envreenv-window').find('a[href=agregar_producto_componente]');
-		var $buscar_producto_componente = $('#forma-envreenv-window').find('a[href=buscar_producto_componente]');
 		
 		//grid de productos
 		var $grid_productos = $('#forma-envreenv-window').find('#grid_productos');
@@ -606,15 +629,19 @@ $(function() {
 		//grid de errores
 		var $grid_warning = $('#forma-envreenv-window').find('#div_warning_grid').find('#grid_warning');
 		
-		
 		var $cerrar_plugin = $('#forma-envreenv-window').find('#close');
 		var $cancelar_plugin = $('#forma-envreenv-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-envreenv-window').find('#submit');
 		
 		$identificador.attr({'value' : 0});
 		$producto_id.attr({'value' : 0});
-		$unidad.css({'background' : '#F0F0F0'});
 		
+		$folio.css({'background' : '#F0F0F0'});
+		$exis_pres.css({'background' : '#F0F0F0'});
+		$disp_pres.css({'background' : '#F0F0F0'});
+		$unidad.css({'background' : '#F0F0F0'});
+		$exis_uni.css({'background' : '#F0F0F0'});
+		$disp_uni.css({'background' : '#F0F0F0'});
 		
 		
 		//quitar enter a todos los campos input
@@ -692,49 +719,72 @@ $(function() {
 		$forma_selected.ajaxForm(options);
 		
 		
-		/*
+		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getReenv.json';
 		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
 			
-		});//termina llamada json
+			var elemento_seleccionado=0;
+			var texto_elemento_cero='';
+			var indiceId = 'id';
+			var indiceTitulo = 'titulo';
+			$carga_campos_select($select_estatus, entry['Estatus'], elemento_seleccionado, texto_elemento_cero, indiceId, indiceTitulo);
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero='';
+			indiceId = 'id';
+			indiceTitulo = 'titulo';
+			$carga_campos_select($select_almacen_orig, entry['Almacenes'], elemento_seleccionado, texto_elemento_cero, indiceId, indiceTitulo);
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero='';
+			indiceId = 'id';
+			indiceTitulo = 'nombre_empleado';
+			$carga_campos_select($select_empleado, entry['Empleados'], elemento_seleccionado, texto_elemento_cero, indiceId, indiceTitulo);
+			
+			/*
+		$select_estatus
+		$select_empleado
+		$select_almacen_orig
+		$select_presentacion_orig
 		*/
+		
+		
+			
+			
+		});//termina llamada json
+		
 		
 		$buscar_producto.click(function(event){
 			event.preventDefault();
 			//tipo=1 para buscar el producto Principal
 			var tipoBusqueda=1;
-			$buscador_productos(tipoBusqueda, $codigo.val(), $descripcion.val() );
-		});
-		
-		
-		$agregar_producto.click(function(event){
-			event.preventDefault();
-			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
-			var $arreglo2 = {'codigo':$codigo.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-			
-			$.post(input_json2,$arreglo2,function(entry2){
-				if(parseInt(entry2['Producto'].length) > 0 ){
-					var id_producto = entry2['Producto'][0]['id'];
-					var codigo = entry2['Producto'][0]['sku'];
-					var descripcion = entry2['Producto'][0]['descripcion'];
-					var unidad = entry2['Producto'][0]['unidad'];
-					
-					//llamada a la funcion para agregar datos del producto
-					$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry2['Presentaciones']);
-				}else{
-					jAlert('C&oacute;digo de Producto desconocido.', 'Atencion!', function(r) { 
-						$codigo.focus(); 
-					});
-				}
-			});
+			$buscador_productos($codigo.val(), $descripcion.val() );
 		});
 		
 		
 		$codigo.keypress(function(e){
 			if(e.which == 13){
-				$agregar_producto.trigger('click');
+				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
+				var $arreglo2 = {'codigo':$codigo.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+				
+				$.post(input_json2,$arreglo2,function(entry2){
+					if(parseInt(entry2['Producto'].length) > 0 ){
+						var id_producto = entry2['Producto'][0]['id'];
+						var codigo = entry2['Producto'][0]['sku'];
+						var descripcion = entry2['Producto'][0]['descripcion'];
+						var unidad = entry2['Producto'][0]['unidad'];
+						var noDec = entry2['Producto'][0]['decimales'];
+						
+						//llamada a la funcion para agregar datos del producto
+						$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry2['Presentaciones'], entry2['Envases'], noDec);
+					}else{
+						jAlert('C&oacute;digo de Producto desconocido.', 'Atencion!', function(r) { 
+							$codigo.focus(); 
+						});
+					}
+				});
 				return false;
 			}
 		});
@@ -742,54 +792,6 @@ $(function() {
 		
 		//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto Principal, se ejecute el buscador
 		$(this).aplicarEventoKeypressEjecutaTrigger($descripcion, $buscar_producto);
-		
-		
-		//Buscar Productos Componentes
-		$buscar_producto_componente.click(function(event){
-			event.preventDefault();
-			//tipo=2 para buscar los productos Componentes
-			var tipoBusqueda=2;
-			$buscador_productos(tipoBusqueda, $codigo_componente.val(), $nombre_componente.val() );
-		});
-		
-		$agregar_producto_componente.click(function(event){
-			event.preventDefault();
-			var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
-			var $arreglo3 = {'codigo':$codigo_componente.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-			
-			$.post(input_json3,$arreglo3,function(entry3){
-				if(parseInt(entry3['Producto'].length) > 0 ){
-					var id_producto = entry3['Producto'][0]['id'];
-					var codigo = entry3['Producto'][0]['sku'];
-					var descripcion = entry3['Producto'][0]['descripcion'];
-					var unidad = entry3['Producto'][0]['unidad'];
-					var cantidad=0;
-					var iddetalle=0;
-					var noDec = entry3['Producto'][0]['decimales'];
-					
-					//llamada a la funcion para agregar tr al grid
-					$agregarTr(id_producto, codigo, descripcion, unidad, cantidad, iddetalle, noDec);
-					
-				}else{
-					jAlert('C&oacute;digo de Producto desconocido.', 'Atencion!', function(r) { 
-						$codigo_componente.focus(); 
-					});
-				}
-			});
-		});
-		
-		
-		//agrega productos componentes al grid
-		$codigo_componente.keypress(function(e){
-			if(e.which == 13){
-				$agregar_producto_componente.trigger('click');
-				return false;
-			}
-		});
-		
-		//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto componente, se ejecute el buscador
-		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_componente, $buscar_producto_componente);
-		
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
