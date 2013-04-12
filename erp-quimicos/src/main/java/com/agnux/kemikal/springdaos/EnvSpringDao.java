@@ -240,6 +240,84 @@ public class EnvSpringDao implements EnvInterfaceDao{
     }
     
     
+    //obtiene estatus en los que se puede encontrar el proceso de envasado o reenvasado
+    @Override
+    public ArrayList<HashMap<String, String>> getEstatus() {
+        String sql_query = "SELECT DISTINCT id,titulo FROM env_estatus order by id;";
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+
+        return hm;
+    }
+    
+    
+    
+    //Obtiene los almacenes de una sucursal
+    @Override
+    public ArrayList<HashMap<String, String>> getAlmacenes(Integer id_empresa, Integer id_sucursal) {
+	String sql_query = ""
+                + "SELECT DISTINCT "
+                    + "inv_alm.id, "
+                    + "inv_alm.titulo "
+                + "FROM inv_alm  "
+                + "JOIN inv_suc_alm ON inv_suc_alm.almacen_id = inv_alm.id "
+                + "JOIN gral_suc ON gral_suc.id = inv_suc_alm.sucursal_id "
+                + "WHERE gral_suc.empresa_id="+id_empresa+" "
+                + "AND gral_suc.id="+id_sucursal+" "
+                + "AND inv_alm.borrado_logico=FALSE;";
+        ArrayList<HashMap<String, String>> hm_alm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm_alm;
+    }
+
+    
+    
+    
+
+    //obtiene los Envases configurados para este producto
+    @Override
+    public ArrayList<HashMap<String, String>> getEnvasesPorProducto(Integer idProd) {
+        String sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE id IN (SELECT DISTINCT env_conf.inv_prod_presentacion_id FROM env_conf WHERE env_conf.inv_prod_id="+idProd+" AND env_conf.borrado_logico=FALSE) order by titulo;";
+        
+        System.out.println("getEnvases: "+sql_query);
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        
+        return hm;
+    }
+    
+    
     
     
     /***************************************************************************
@@ -480,10 +558,35 @@ public class EnvSpringDao implements EnvInterfaceDao{
         );
         return hm;
     }
-
     
+    
+    
+    //obtiene los empleados del almacen
+    @Override
+    public ArrayList<HashMap<String, String>> getReEenv_Empleados(Integer id_empresa) {
+        String sql_query = ""
+                + "SELECT "
+                    + "gral_empleados.id, "
+                    + "(CASE WHEN gral_empleados.clave  IS NULL THEN '' ELSE gral_empleados.clave END)||'  '||(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE gral_empleados.apellido_materno END) AS nombre_empleado "
+                + "FROM gral_empleados "
+                + "JOIN gral_puestos ON gral_puestos.id=gral_empleados.gral_puesto_id "
+                + "WHERE gral_empleados.gral_emp_id="+id_empresa+" "
+                + "AND gral_puestos.titulo ILIKE '%ALMACEN%';";
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("nombre_empleado",rs.getString("nombre_empleado"));
+                    return row;
+                }
+            }
+        );
 
-
+        return hm;
+    }
     
     
 }

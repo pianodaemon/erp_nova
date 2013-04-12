@@ -193,15 +193,19 @@ public class EnvReenvController {
         
         log.log(Level.INFO, "Ejecutando getConfJson de {0}", EnvReenvController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        //HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosenvreenv = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> empleados = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> estatus = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
-        //Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        //userDat = this.getHomeDao().getUserById(id_usuario);
-        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         if( id != 0  ){
             datosenvreenv = this.getEnvDao().getReEenv_Datos(id);
@@ -209,9 +213,16 @@ public class EnvReenvController {
             presentaciones=this.getEnvDao().getProductoPresentacionesON(Integer.parseInt(datosenvreenv.get(0).get("producto_id")));
         }
         
+        empleados = this.getEnvDao().getReEenv_Empleados(id_empresa);
+        almacenes = this.getEnvDao().getAlmacenes(id_empresa, id_sucursal);
+        estatus = this.getEnvDao().getEstatus();
+        
         jsonretorno.put("Datos", datosenvreenv);
         jsonretorno.put("DatosGrid", datosGrid);
         jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Empleados", empleados);
+        jsonretorno.put("Almacenes", almacenes);
+        jsonretorno.put("Estatus", estatus);
         
         return jsonretorno;
     }
@@ -257,6 +268,7 @@ public class EnvReenvController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> producto = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> envases = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         //decodificar id de usuario
@@ -266,13 +278,16 @@ public class EnvReenvController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         producto = this.getEnvDao().getDataProductBySku(codigo, id_empresa);
-        
+        Integer idProducto=0;
         if(producto.size()>0){
-            presentaciones=this.getEnvDao().getProductoPresentacionesON(Integer.parseInt(producto.get(0).get("id")));
+            idProducto = Integer.parseInt(producto.get(0).get("id"));
+            presentaciones=this.getEnvDao().getProductoPresentacionesON(idProducto);
+            envases=this.getEnvDao().getEnvasesPorProducto(idProducto);
         }
         
         jsonretorno.put("Producto", producto);
         jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Envases", envases);
         
         return jsonretorno;
     }
@@ -287,9 +302,13 @@ public class EnvReenvController {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> envases = new ArrayList<HashMap<String, String>>();
         
         presentaciones=this.getEnvDao().getProductoPresentacionesON(id_prod);
+        envases=this.getEnvDao().getEnvasesPorProducto(id_prod);
+        
         jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Envases", envases);
         
         return jsonretorno;
     }

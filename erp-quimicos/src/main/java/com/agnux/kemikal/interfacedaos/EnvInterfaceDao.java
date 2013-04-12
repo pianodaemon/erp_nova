@@ -24,6 +24,10 @@ public interface EnvInterfaceDao {
     public ArrayList<HashMap<String, String>> getProductoTipos();
     public ArrayList<HashMap<String, String>> getProductoPresentaciones(Integer id_producto, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProductoPresentacionesON(Integer id_producto);
+    public ArrayList<HashMap<String, String>> getEstatus();
+    public ArrayList<HashMap<String, String>> getAlmacenes(Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getEnvasesPorProducto(Integer idProd);
+    
     
     //metodos para Configuracion de Envasado
     public ArrayList<HashMap<String, Object>> getEnvConf_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
@@ -35,6 +39,7 @@ public interface EnvInterfaceDao {
     public ArrayList<HashMap<String, Object>> getReEenv_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getReEenv_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getReEenv_DatosGrid(Integer id);
+    public ArrayList<HashMap<String, String>> getReEenv_Empleados(Integer id_empresa);
     
     
     
