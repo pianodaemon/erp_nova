@@ -272,6 +272,10 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getBuscadorProductos_produccion(String sku,String tipo,String descripcion,Integer id_empresa);
 
     public ArrayList<HashMap<String, String>> getOperarios(Integer id_empresa);
+
+
+
+    public ArrayList<HashMap<String, String>> getReporteCalidad_Datos(Integer id_empresa);
     //fin de los reportes de produccion
 
 
