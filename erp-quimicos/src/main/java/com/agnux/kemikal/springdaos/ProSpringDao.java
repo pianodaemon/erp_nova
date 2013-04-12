@@ -102,9 +102,9 @@ public class ProSpringDao implements ProInterfaceDao{
 
     @Override
     public HashMap<String, String> getDocumentoByName(String doc, Integer id_empresa, Integer id_sucursal) {
-        
+
         String sql_to_query = "select * from pro_docs_calidad where borrado_logico=false and titulo ilike '"+doc+"' and gral_emp_id="+id_empresa+" and gral_suc_id="+id_sucursal;
-        
+
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
 
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
@@ -3775,7 +3775,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("pro_proceso_flujo_id",String.valueOf(rs.getInt("pro_proceso_flujo_id")));
                     row.put("pro_estruc_id",String.valueOf(rs.getInt("pro_estruc_id")));
                     row.put("costo_ultimo",StringHelper.roundDouble(String.valueOf(rs.getDouble("costo_ultimo")),4));
-                    
+
                     return row;
                 }
             }
@@ -3999,7 +3999,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("agregado",String.valueOf(rs.getBoolean("agregado")));
                     row.put("cantidad_usada",String.valueOf(rs.getDouble("cantidad_usada")));
                     row.put("guardado",String.valueOf(rs.getBoolean("guardado")));
-                    
+
                     return row;
                 }
             }
@@ -4149,7 +4149,7 @@ public class ProSpringDao implements ProInterfaceDao{
         );
         return hm;
     }
-    
+
     //obtiene datos de los productos de la formula para produccion
     private ArrayList<HashMap<String, String>> getOrdenProdEspecificacoinesProduccionSubproceso(String id,String id_subproceso, String orden_prod_id, String id_empresa){
         String sql_to_query = "select esp.* from "
@@ -4158,7 +4158,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join pro_subprocesos on pro_subprocesos.id=opd.pro_subprocesos_id "
                 + "where opd.pro_orden_prod_id="+orden_prod_id+" and opd.pro_subprocesos_id="+id_subproceso+") as tmp_det_orden "
                 + "left join pro_orden_prod_subp_esp as esp on esp.pro_orden_prod_det_id=tmp_det_orden.id;";
-        
+
         //System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
         ArrayList<HashMap<String, String>> hm_especificaciones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4166,12 +4166,12 @@ public class ProSpringDao implements ProInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    
+
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("pro_subprocesos_id",String.valueOf(rs.getInt("pro_subprocesos_id")));
                     row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
                     row.put("nivel_form",String.valueOf(rs.getInt("nivel_form")));
-                    
+
                     row.put("fineza_inicial",String.valueOf(rs.getInt("fineza_inicial")));
                     row.put("viscosidads_inicial",String.valueOf(rs.getInt("viscosidads_inicial")));
                     row.put("viscosidadku_inicial",String.valueOf(rs.getDouble("viscosidadku_inicial")));
@@ -4196,14 +4196,14 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("brillo_final",String.valueOf(rs.getDouble("brillo_final")));
                     row.put("dureza_final",rs.getString("dureza_final"));
                     row.put("adherencia_final",String.valueOf(rs.getDouble("adherencia_final")));
-                    
+
                     return row;
                 }
             }
         );
         return hm_especificaciones;
     }
-    
+
     //obtiene datos de los productos de la formula para produccion
     private ArrayList<HashMap<String, String>> getOrdenProdEspecificacoinesEstandarSubproceso(String producto_id,String id_subproceso,String id_empresa) {
 
@@ -4257,8 +4257,8 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("brillo_final",String.valueOf(rs.getDouble("brillo_final")));
                     row.put("dureza_final",rs.getString("dureza_final"));
                     row.put("adherencia_final",String.valueOf(rs.getDouble("adherencia_final")));
-                    
-                    
+
+
                     //put para los instrumentos
                     row.put("inst_fineza",String.valueOf(rs.getString("inst_fineza")));
                     row.put("inst_viscosidad1",String.valueOf(rs.getString("inst_viscosidad1")));
@@ -5063,6 +5063,52 @@ System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",rs.getString("id"));
                     row.put("nombre_operario",rs.getString("nombre_operario"));
+                    return row;
+                }
+            }
+        );
+        return hm_alm;
+    }
+
+
+     @Override
+    public ArrayList<HashMap<String, String>> getReporteCalidad_Datos(Integer id_empresa) {
+	String sql_query = "select  "
++"    1 ::integer  as id,  "
++"    'columna 1'::character varying  as columna_1,  "
++"    'columna 2'::character varying  as columna_2,  "
++"    'columna 3'::character varying  as columna_3,  "
++"    'columna 4'::character varying  as columna_4,  "
++"    'columna 5'::character varying  as columna_5,  "
++"    'columna 6'::character varying  as columna_6,  "
++"    'columna 7'::character varying  as columna_7,  "
++"    'columna 8'::character varying  as columna_8,  "
++"    'columna 9'::character varying  as columna_9,  "
++"    'columna 10'::character varying  as columna_10,  "
++"    'columna 11'::character varying  as columna_11,  "
++"    'columna 12'::character varying  as columna_12  "
+
++"    from inv_prod limit 50  ";
+                //select id ,titulo from pro_tipo_equipo where gral_emp_id="+id_empresa+" and borrado_logico=FALSE;";
+        ArrayList<HashMap<String, String>> hm_alm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("columna_1",rs.getString("columna_1"));
+                    row.put("columna_2",rs.getString("columna_2"));
+                    row.put("columna_3",rs.getString("columna_3"));
+                    row.put("columna_4",rs.getString("columna_4"));
+                    row.put("columna_5",rs.getString("columna_5"));
+                    row.put("columna_6",rs.getString("columna_6"));
+                    row.put("columna_7",rs.getString("columna_7"));
+                    row.put("columna_8",rs.getString("columna_8"));
+                    row.put("columna_9",rs.getString("columna_9"));
+                    row.put("columna_10",rs.getString("columna_10"));
+                    row.put("columna_11",rs.getString("columna_11"));
+                    row.put("columna_12",rs.getString("columna_12"));
                     return row;
                 }
             }
