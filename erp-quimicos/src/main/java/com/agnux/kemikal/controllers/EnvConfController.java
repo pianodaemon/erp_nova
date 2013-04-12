@@ -1,7 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*******************************************************************************
+ * Modulo: ENVASADO
+ * Aplicativo: CONFIGURACION DE ENVASADO
+ * @author Noe Martinez
+ * gpmarsan@gmail.com
+ * 09/abril/2013
+ *******************************************************************************/
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.StringHelper;
@@ -33,12 +36,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-/**
- *
- * @author Noe Martinez
- * gpmarsan@gmail.com
- * 09/abril/2013
- */
 
 @Controller
 @SessionAttributes({"user"})
