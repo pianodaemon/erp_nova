@@ -69,13 +69,13 @@ $(function() {
 
     $.post(input_json,$arreglo,function(entry){
         //aqui van los campos que se cargan desde un principio.
-        $select_agentes.children().remove();
-        var almacen_hmtl = '';
-        var almacen_hmtl = '<option value="0" selected="yes">[--Todos--]</option>';
-        $.each(entry['Agentes'],function(entryIndex,alm){
-            almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['nombre_agente'] + '</option>';
-        });
-        $select_agentes.append(almacen_hmtl);
+//        $select_agentes.children().remove();
+//        var almacen_hmtl = '';
+//        var almacen_hmtl = '<option value="0" selected="yes">[--Todos--]</option>';
+//        $.each(entry['Agentes'],function(entryIndex,alm){
+//            almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['nombre_agente'] + '</option>';
+//        });
+//        $select_agentes.append(almacen_hmtl);
     });//termina llamada json
 
     $boton_genera_pdf.click(function(event){
@@ -94,7 +94,7 @@ $(function() {
     //ejecutar busqueda del reporte
     $boton_busqueda.click(function(event){
         $tabla_clientes.find('tbody').children().remove();
-        var input_json = config.getUrlForGetAndPost()+'/getReporteCalidad.json';
+        var input_json = config.getUrlForGetAndPost()+'/getProReporteCalidad.json';
         $arreglo = {
             'id_agente':$select_agentes.val(),
             'iu': config.getUi()
@@ -108,15 +108,32 @@ $(function() {
             trr +='<td >Encabezado 2(s)</td>';
             trr +='<td >Encabezado 3</td>';
             trr +='<td >encabezado 4</td>';
+            trr +='<td >Encabezado 5</td>';
+            trr +='<td >Encabezado 6(s)</td>';
+            trr +='<td >Encabezado 7</td>';
+            trr +='<td >encabezado 8</td>';
+            trr +='<td >Encabezado 9</td>';
+            trr +='<td >Encabezado 10</td>';
+            trr +='<td >Encabezado 11</td>';
+            trr +='<td >encabezado 12</td>';
+
             trr +='</tr> </thead>';
 
-            if(entry['Clientes'].length > 0 ){
-                $.each(entry['Clientes'],function(entryIndex,cliente){
+            if(entry['Datos_R_Calidad'].length > 0 ){
+                $.each(entry['Datos_R_Calidad'],function(entryIndex,R_Calidad){
                     trr += '<tr>';
-                    trr += '<td width="200px">Registro 1</td>';
-                    trr += '<td >Registro 2</td>';
-                    trr += '<td width="150px">Registro 3</td>';
-                    trr += '<td >Registro 4</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_1']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_2']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_3']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_4']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_5']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_6']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_7']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_8']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_9']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_10']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_11']+'</td>';
+                    trr += '<td width="100px">'+R_Calidad['columna_12']+'</td>';
                     trr += '</tr>';
                 });
                 $tabla_clientes.find('tbody').append(trr);
