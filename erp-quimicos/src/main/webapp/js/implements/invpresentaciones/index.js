@@ -308,6 +308,7 @@ $(function() {
 			var $cancelar_plugin = $('#forma-presentaciones-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-presentaciones-window').find('#submit');
 
+                        $permitir_solo_numeros($cantidad);
 			if(accion_mode == 'edit'){
 
                             //aqui es el post que envia los datos a getpresentaciones.json
