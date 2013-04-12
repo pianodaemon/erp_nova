@@ -206,8 +206,8 @@ public class InvSpringDao implements InvInterfaceDao{
             );
             data=hm126;
         }
-        
-        
+
+
         //este es para el Reporte de Existencias en Inventario
         if(id_app==133){
             sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
@@ -228,7 +228,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                         +"simbolo_moneda character varying "
                                     +") ORDER BY descripcion ASC;";
             //System.out.println("InvReporte: "+sql_to_query);
-            
+
             ArrayList<HashMap<String, String>> hm133 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,
                 new Object[]{}, new RowMapper(){
@@ -1629,8 +1629,8 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-    
-    
+
+
     //busca datos de un producto en especifico a partir del codigo
     @Override
     public ArrayList<HashMap<String, String>> getDataProductBySku(String codigo, Integer id_empresa) {
@@ -1651,7 +1651,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "AND inv_prod.sku='"+codigo.toUpperCase()+"' "
                 + "LIMIT 1;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        
+
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1671,9 +1671,9 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
+
+
+
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_PresentacionesProducto(String sku, Integer id_empresa) {
         String sql_to_query = "SELECT "
@@ -3992,7 +3992,8 @@ public class InvSpringDao implements InvInterfaceDao{
     public ArrayList<HashMap<String, Object>> getPresentaciones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
 
-	String sql_to_query = "SELECT inv_prod_presentaciones.id,inv_prod_presentaciones.titulo as descripcion "
+	String sql_to_query = "SELECT inv_prod_presentaciones.id,inv_prod_presentaciones.titulo as descripcion, "
+                + "  (case when inv_prod_presentaciones.cantidad is null or inv_prod_presentaciones.cantidad ='' then 0 else inv_prod_presentaciones.cantidad end )as cantidad "
                                 +"FROM inv_prod_presentaciones "
                                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_prod_presentaciones.id "
                                 +"WHERE inv_prod_presentaciones.borrado_logico=false  "
@@ -4007,6 +4008,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
                     row.put("descripcion",rs.getString("descripcion"));
+                    row.put("cantidad",rs.getString("cantidad"));
 
 
                     return row;
@@ -4020,7 +4022,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getPresentaciones_Datos(Integer id_Presentacion) {
-        String sql_to_query = "SELECT inv_prod_presentaciones.id,inv_prod_presentaciones.titulo as descripcion  FROM inv_prod_presentaciones WHERE id ="+id_Presentacion;
+        String sql_to_query = "SELECT inv_prod_presentaciones.id,inv_prod_presentaciones.titulo as descripcion,inv_prod_presentaciones.cantidad  FROM inv_prod_presentaciones WHERE id ="+id_Presentacion;
 
         ArrayList<HashMap<String, String>> datos_presentaciones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4030,6 +4032,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("descripcion",rs.getString("descripcion"));
+                    row.put("cantidad",rs.getString("cantidad"));
 
 
 
