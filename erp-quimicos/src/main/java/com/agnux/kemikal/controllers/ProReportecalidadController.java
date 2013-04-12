@@ -1,9 +1,3 @@
-//package com.agnux.kemikal.controllers;
-//public class ProReportecalidadController {
-//}
-/*
- * Reporte de Movimientos de (KARDEX)
- */
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.obj.ResourceProject;
@@ -12,6 +6,7 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import com.agnux.kemikal.interfacedaos.ProInterfaceDao;
+import com.agnux.kemikal.reportes.PdfProReporteCalidad;
 import com.agnux.kemikal.reportes.PdfReporteMovimientos;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
@@ -134,8 +129,8 @@ public class ProReportecalidadController {
 
         log.log(Level.INFO, "Ejecutando getDatosBusquedaJson de {0}", ProReportecalidadController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> Almacenes = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> TiposMovimiento = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> Almacenes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> Datos_reporte_calidad = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
 
         //decodificar id de usuario
@@ -144,11 +139,11 @@ public class ProReportecalidadController {
 
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
 
-        Almacenes = this.getInvDao().getAlmacenes2(id_empresa);
-        TiposMovimiento = this.getInvDao().getAllTiposMovimientoInventario(id_empresa);
+        //Almacenes = this.getInvDao().getAlmacenes2(id_empresa);
+        Datos_reporte_calidad = this.getProDao().getReporteCalidad_Datos(id_empresa);
 
-        jsonretorno.put("Agentes", Almacenes);
-        jsonretorno.put("R_Calidad", TiposMovimiento);
+        //jsonretorno.put("Agentes", Almacenes);
+        jsonretorno.put("R_Calidad", Datos_reporte_calidad);
 
         return jsonretorno;
     }
@@ -200,34 +195,29 @@ public class ProReportecalidadController {
 //
 //
 //
-//    @RequestMapping(method = RequestMethod.POST, value = "/getMovimientos.json")
-//    public @ResponseBody
-//    HashMap<String, ArrayList<HashMap<String, String>>> getMovimientosJson(
-//            @RequestParam(value = "id_tipo_movimiento", required = true)Integer id_tipo_movimiento ,
-//            @RequestParam(value = "id_almacen", required = true) Integer id_almacen,
-//            @RequestParam(value = "codigo", required = true) String codigo,
-//            @RequestParam(value = "descripcion", required = true) String descripcion,
-//            @RequestParam(value = "fecha_inicial", required = true) String fecha_inicial,
-//            @RequestParam(value = "fecha_final", required = true) String fecha_final,
-//            @RequestParam(value = "iu", required = true) String id_user,
-//            Model model) {
-//
-//        log.log(Level.INFO, "Ejecutando getMovimientosJson de {0}", ProReportecalidadController.class.getName());
-//        HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
-//        ArrayList<HashMap<String, String>> Movimientos = new ArrayList<HashMap<String, String>>();
-//        HashMap<String, String> userDat = new HashMap<String, String>();
-//        //decodificar id de usuario
-//        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-//        userDat = this.getHomeDao().getUserById(id_usuario);
-//
-//        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-//
-//        Movimientos = this.getInvDao().getMovimientos(id_tipo_movimiento,id_almacen,codigo ,descripcion,fecha_inicial,fecha_final, id_empresa,id_usuario);
-//
-//        jsonretorno.put("Movimientos", Movimientos);
-//
-//        return jsonretorno;
-//    }
+    @RequestMapping(method = RequestMethod.POST, value = "/getProReporteCalidad.json")
+    public @ResponseBody
+    HashMap<String, ArrayList<HashMap<String, String>>> getMovimientosJson(
+            @RequestParam(value = "id_agente", required = true) String id_agente,
+            @RequestParam(value = "iu", required = true) String id_user,
+            Model model) {
+
+        log.log(Level.INFO, "Ejecutando getMovimientosJson de {0}", ProReportecalidadController.class.getName());
+        HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> Datos_Reporte_Calidad = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+
+        Datos_Reporte_Calidad = this.getProDao().getReporteCalidad_Datos(id_empresa);
+
+        jsonretorno.put("Datos_R_Calidad", Datos_Reporte_Calidad);
+
+        return jsonretorno;
+    }
 
 
     //Genera pdf Reporte de Movimientos
@@ -241,7 +231,7 @@ public class ProReportecalidadController {
         throws ServletException, IOException, URISyntaxException, DocumentException {
 
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> lista_movimientos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> Datos_Reporte_Calidad = new ArrayList<HashMap<String, String>>();
 
         System.out.println("Generando reporte de Calidad");
         Integer select=0;
@@ -251,7 +241,9 @@ public class ProReportecalidadController {
         String arrayCad [] = cadena.split("___");
 
         //ASIGNACION DE VALORES DEL AREGLO A VARIABLES
-        select = Integer.parseInt(arrayCad [0]);
+        //String parametro_1 = Integer.parseInt(arrayCad [0]);
+        String fecha_inicial="2012-01-01";
+        String fecha_final="2013-12-01";
 
 
         //decodificar id de usuario
@@ -280,11 +272,11 @@ public class ProReportecalidadController {
         String fileout = file_dir_tmp +"/"+  file_name;
 
 
-        //obtiene las remisiones del periodo indicado
-        //lista_movimientos = this.getInvDao().getMovimientos(select_tipo_movimiento,select_almacen,codigo ,descripcion,fecha_inicial,fecha_final, id_empresa,id_usuario);
+        //obtiene los datos Para el reporte de Calidad (Modulo de Produccion)
+        Datos_Reporte_Calidad = this.getProDao().getReporteCalidad_Datos(id_empresa);
 
-        //instancia a la clase que construye el pdf del reporte de facturas
-        //PdfReporteMovimientos x = new PdfReporteMovimientos( fileout,ruta_imagen,razon_social_empresa,fecha_inicial,fecha_final,lista_movimientos);
+        //instancia a la clase que construye el pdf del reporte de calidad
+        PdfProReporteCalidad x = new PdfProReporteCalidad( fileout,ruta_imagen,razon_social_empresa,fecha_inicial,fecha_final,Datos_Reporte_Calidad);
 
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
