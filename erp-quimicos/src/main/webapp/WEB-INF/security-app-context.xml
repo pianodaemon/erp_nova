@@ -113,7 +113,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_PRO_REPORTE_CALIDAD,
         ROLE_CXC_REPORTE_CLIENTES,
         ROLE_COT_POLITICAS_PAGO,
-        ROLE_ENV_CONFIGURACION" />
+        ROLE_ENV_CONFIGURACION,
+        ROLE_ENV_REENVASADO" />
         
         
         
@@ -172,6 +173,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         
         <!--MODULO DE ENVASADO-->
         <intercept-url pattern="/controllers/envconf/startup.agnux" access="ROLE_ADMIN,ROLE_ENV_CONFIGURACION" /><!--Noe-->
+        <intercept-url pattern="/controllers/envreenv/startup.agnux" access="ROLE_ADMIN,ROLE_ENV_REENVASADO" /><!--Noe-->
         
         <intercept-url pattern="/controllers/crmmotivosvisitas/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CATALOGO_MOTIVOS_VISITA" /><!--Luis-->
         <intercept-url pattern="/controllers/crmformascontacto/startup.agnux" access="ROLE_ADMIN,ROLE_CRM_CATALOGO_FORMAS_CONTACTO" /><!--Luis-->
