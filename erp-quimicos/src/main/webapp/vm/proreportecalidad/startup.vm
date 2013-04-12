@@ -26,7 +26,7 @@
 
         <form id="formaRepMov" action="print.json" method="POST" >
         <!--  otra parte -->
-        <table class="acciones" border ="1" width="1350px">
+        <table class="acciones" border ="0" width="1350px">
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td ></td>
@@ -40,7 +40,7 @@
 						</tr>
 						<tr>
 							<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-							<td width="180">Agentes:</td>
+							<td width="180">Opciones:</td>
 							<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="50"></td>
