@@ -166,7 +166,6 @@ public class EnvSpringDao implements EnvInterfaceDao{
         );
         return hm;
     }
-
     
     
     //obtiene tipos de productos
@@ -198,9 +197,9 @@ public class EnvSpringDao implements EnvInterfaceDao{
     public ArrayList<HashMap<String, String>> getProductoPresentaciones(Integer id_producto, Integer id_empresa) {
         String sql_query="";
         if(id_producto != 0){
-            sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE id NOT IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
+            sql_query = "SELECT id,titulo, cantidad FROM inv_prod_presentaciones WHERE id NOT IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
         }else{
-            sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE borrado_logico=FALSE order by titulo;";
+            sql_query = "SELECT id,titulo, cantidad FROM inv_prod_presentaciones WHERE borrado_logico=FALSE order by titulo;";
         }
         
         ArrayList<HashMap<String, String>> hm_pres= (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -211,6 +210,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",rs.getString("id"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("equivalencia",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     return row;
                 }
             }
@@ -222,7 +222,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
     //obtiene las presentaciones Asignadas a un producto en especifico
     @Override
     public ArrayList<HashMap<String, String>> getProductoPresentacionesON(Integer id_producto) {
-        String sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE id IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
+        String sql_query = "SELECT id,titulo, cantidad FROM inv_prod_presentaciones WHERE id IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
         
         ArrayList<HashMap<String, String>> hm_pres_on = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -232,6 +232,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",rs.getString("id"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("equivalencia",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     return row;
                 }
             }
@@ -297,7 +298,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
     //obtiene los Envases configurados para este producto
     @Override
     public ArrayList<HashMap<String, String>> getEnvasesPorProducto(Integer idProd) {
-        String sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE id IN (SELECT DISTINCT env_conf.inv_prod_presentacion_id FROM env_conf WHERE env_conf.inv_prod_id="+idProd+" AND env_conf.borrado_logico=FALSE) order by titulo;";
+        String sql_query = "SELECT id,titulo,cantidad FROM inv_prod_presentaciones WHERE id IN (SELECT DISTINCT env_conf.inv_prod_presentacion_id FROM env_conf WHERE env_conf.inv_prod_id="+idProd+" AND env_conf.borrado_logico=FALSE) order by titulo;";
         
         System.out.println("getEnvases: "+sql_query);
         
@@ -309,6 +310,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("equivalencia",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     return row;
                 }
             }
@@ -584,9 +586,32 @@ public class EnvSpringDao implements EnvInterfaceDao{
                 }
             }
         );
-
         return hm;
     }
+    
+    
+    
+    //obtiene las existencias de la presentacion de un Producto en un almacen en especifico
+    @Override
+    public ArrayList<HashMap<String, String>> getReEenv_Existencias(Integer id_prod, Integer id_pres, Integer id_alm) {
+        String sql_query = "SELECT exis, decimales FROM (SELECT (inv_exi_pres.cantidad::double precision - inv_exi_pres.reservado::double precision) AS exis, inv_prod_unidades.decimales FROM inv_exi_pres JOIN inv_prod ON inv_prod.id=inv_exi_pres.inv_prod_id JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id WHERE inv_exi_pres.inv_alm_id=? AND inv_exi_pres.inv_prod_id=? AND inv_exi_pres.inv_prod_presentacion_id=?)AS sbt WHERE exis>0;";
+        System.out.println("getExis: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_alm), new Integer(id_prod), new Integer(id_pres)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("decimales",String.valueOf(rs.getInt("decimales")));
+                    row.put("exis",StringHelper.roundDouble(rs.getString("exis"),rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
     
     
 }

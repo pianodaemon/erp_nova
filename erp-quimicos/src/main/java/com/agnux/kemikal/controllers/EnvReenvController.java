@@ -315,6 +315,33 @@ public class EnvReenvController {
     
     
     
+    //Obtiene la existencia de un Producto en una presentacion en un almacen
+    @RequestMapping(method = RequestMethod.POST, value="/getExisPres.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getExisPresJson(
+            @RequestParam(value="id_prod", required=true) Integer id_prod,
+            @RequestParam(value="id_pres", required=true) Integer id_pres,
+            @RequestParam(value="id_alm", required=true) Integer id_alm,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getExisPresJson de {0}", EnvReenvController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> existencias = new ArrayList<HashMap<String, String>>();
+        //HashMap<String, String> userDat = new HashMap<String, String>();
+        /*
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        */
+        existencias = this.getEnvDao().getReEenv_Existencias(id_prod, id_pres, id_alm);
+        
+        jsonretorno.put("Exis", existencias);
+        
+        return jsonretorno;
+    }
+    
     
 
     //edicion y nuevo
