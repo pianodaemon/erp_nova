@@ -155,57 +155,49 @@ $(function() {
 	$select_tipo_reporte.change(function(){
             
 		if(parseInt($(this).val())==0){
-                        $div_reporte_estados_de_cuenta.children().remove();
+			$div_reporte_estados_de_cuenta.children().remove();
 			$razon_cli.css({'background' : '#DDDDDD'});
 			$razon_cli.attr('readonly',true);
 			$busca_cliente.hide();
 			$razon_cli.val('');
 			$id_cliente_edo_cta.val(0);
                         
-                        //$select_agentes.hide(); 
-                        $select_agentes.children().remove();
-                        option='<option value="0">[----------------------------------]</option>';
-                        $select_agentes.append(option);	
-                    
-                    
+			//$select_agentes.hide(); 
+			$select_agentes.children().remove();
+			option='<option value="0">[----------------------------------]</option>';
+			$select_agentes.append(option);	
 		}
-                if(parseInt($(this).val())==1){
-                        $div_reporte_estados_de_cuenta.children().remove();
-                        //$select_agentes.hide(); 
-                        $select_agentes.children().remove();
-                        option='<option value="0">[----------------------------------]</option>';
-                        $select_agentes.append(option);
-                        
+		if(parseInt($(this).val())==1){
+			$div_reporte_estados_de_cuenta.children().remove();
+			//$select_agentes.hide(); 
+			$select_agentes.children().remove();
+			option='<option value="0">[----------------------------------]</option>';
+			$select_agentes.append(option);
 			$razon_cli.css({'background' : '#ffffff'});
 			$busca_cliente.show();
 		}
                 
-                if(parseInt($(this).val())==2){
-                        $div_reporte_estados_de_cuenta.children().remove();
-                        $razon_cli.css({'background' : '#DDDDDD'});
+		if(parseInt($(this).val())==2){
+			$div_reporte_estados_de_cuenta.children().remove();
+			$razon_cli.css({'background' : '#DDDDDD'});
 			$razon_cli.attr('readonly',true);
 			$busca_cliente.hide();
 			$razon_cli.val('');
 			$id_cliente_edo_cta.val(0);
-                    
-                    
-                        
-                        
-                        
-                        var arreglo_parametros = {	iu:config.getUi()
-						};
+			
+			var arreglo_parametros = {	iu:config.getUi()};
 			var restful_json_service = config.getUrlForGetAndPost() + '/get_cargando_agentes.json'
 			//alert(restful_json_service);
 			
 			$.post(restful_json_service,arreglo_parametros,function(entry){
-                            $select_agentes.children().remove();
-                            var agente_html = '<option value="0" selected="yes">[--Seleccionar Agente--]</option>';
-                            $.each(entry['Agentes'],function(entryIndex,agente){
-                                agente_html += '<option value="' + agente['id'] + '"  >' + agente['nombre_agente'] + '</option>';
-                            });
-                            $select_agentes.append(agente_html);
-                        });
-                 }
+				$select_agentes.children().remove();
+				var agente_html = '<option value="0" selected="yes">[--Seleccionar Agente--]</option>';
+				$.each(entry['Agentes'],function(entryIndex,agente){
+					agente_html += '<option value="' + agente['id'] + '"  >' + agente['nombre_agente'] + '</option>';
+				});
+				$select_agentes.append(agente_html);
+			});
+		}
                 
                 
 	});

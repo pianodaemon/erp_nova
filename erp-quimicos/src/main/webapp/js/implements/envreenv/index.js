@@ -18,7 +18,9 @@ $(function() {
     //arreglo para Tipos de Productos
     var arrayProdTipos;
     
-    //arreglo para Presentaciones de Productos
+    //arreglo de todas las Presentaciones de Productos
+    //aquí tambien se incluye el valor de la equivalencia
+    //Se utiliza en el buscador principal y en el plugin
     var arrayPresentaciones;
 	
 	
@@ -188,6 +190,53 @@ $(function() {
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_descripcion, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_pres, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_tipo_prod, $buscar);
+	
+	//------------------------------------------------------------------
+    //valida la fecha seleccionada
+    function mayor(fecha, fecha2){
+        var xMes=fecha.substring(5, 7);
+        var xDia=fecha.substring(8, 10);
+        var xAnio=fecha.substring(0,4);
+        var yMes=fecha2.substring(5, 7);
+        var yDia=fecha2.substring(8, 10);
+        var yAnio=fecha2.substring(0,4);
+
+        if (xAnio > yAnio){
+            return(true);
+        }else{
+            if (xAnio == yAnio){
+                if (xMes > yMes){
+                    return(true);
+                }
+                if (xMes == yMes){
+                    if (xDia > yDia){
+                        return(true);
+                    }else{
+                        return(false);
+                    }
+                }else{
+                    return(false);
+                }
+            }else{
+                return(false);
+            }
+        }
+    }
+
+    //muestra la fecha actual
+    var mostrarFecha = function mostrarFecha(){
+        var ahora = new Date();
+        var anoActual = ahora.getFullYear();
+        var mesActual = ahora.getMonth();
+        mesActual = mesActual+1;
+        mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+        var diaActual = ahora.getDate();
+        diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+        var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
+        return Fecha;
+    }
+    //------------------------------------------------------------------
+
 	
 	
 	
@@ -405,6 +454,9 @@ $(function() {
 		}
 		$('#forma-envreenv-window').find('select[name=select_envases]').append(html_env);
 		
+		//ocultar el buscador de productos
+		$('#forma-envreenv-window').find('#buscar_producto').hide();
+		
 		//asignar el enfoque
 		//$('#forma-envreenv-window').find('input[name=codigo_componente]').focus();
 	}
@@ -584,10 +636,43 @@ $(function() {
 	}
 	
 	
+	//vaciar campos
+	$vaciar_campos = function($producto_id, $codigo, $descripcion, $unidad, $exis_pres, $disp_pres, $exis_uni, $disp_uni, $select_presentacion_orig, $select_envases, $grid_productos, $buscar_producto){
+		$producto_id.attr(0);
+		$codigo.val('');
+		$descripcion.val('');
+		$unidad.val('');
+		$exis_pres.val('0.00');
+		$disp_pres.val('0.00');
+		$exis_uni.val('0.00');
+		$disp_uni.val('0.00');
+		
+		$select_presentacion_orig.children().remove();
+		var html_pres = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+		$select_presentacion_orig.append(html_pres);
+		
+		$select_envases.children().remove();
+		$select_envases.append(html_pres);
+		
+		$grid_productos.children().remove();
+		
+		$buscar_producto.show();
+	}
+
+
+	//convertir la Presentacion en cantidad de acuerdo a la Unidad de Medida del Producto
+	$convertirPresAUni = function(idPres, cantPres, arrayPres){
+		var valor=0;
+		$.each(arrayPres,function(entryIndex,pres){
+			if(parseInt(pres['id'])==parseInt(idPres)){
+				valor = parseFloat(cantPres) * parseFloat(pres['equivalencia']);
+			}
+		});
+		return valor;
+	}
 	
 	
 	
-	        
 	//nuevo 
 	$new.click(function(event){
 		event.preventDefault();
@@ -614,6 +699,7 @@ $(function() {
 		var $codigo = $('#forma-envreenv-window').find('input[name=codigo]');
 		var $descripcion = $('#forma-envreenv-window').find('input[name=descripcion]');
 		var $select_presentacion_orig = $('#forma-envreenv-window').find('select[name=select_presentacion_orig]');
+		var $select_envases = $('#forma-envreenv-window').find('select[name=select_envases]');
 		var $exis_pres = $('#forma-envreenv-window').find('input[name=exis_pres]');
 		var $disp_pres = $('#forma-envreenv-window').find('input[name=disp_pres]');
 		var $unidad = $('#forma-envreenv-window').find('input[name=unidad]');
@@ -633,8 +719,56 @@ $(function() {
 		var $cancelar_plugin = $('#forma-envreenv-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-envreenv-window').find('#submit');
 		
+		
+		$fecha.val(mostrarFecha());
+		
+		$fecha.DatePicker({
+			format:'Y-m-d',
+			date: $fecha.val(),
+			current: $fecha.val(),
+			starts: 1,
+			position: 'bottom',
+			locale: {
+				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+				weekMin: 'se'
+			},
+			onChange: function(formated, dates){
+				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+				$fecha.val(formated);
+				if (formated.match(patron) ){
+					var valida_fecha=mayor($fecha.val(),mostrarFecha());
+
+					if (valida_fecha==true){
+						jAlert("Fecha no valida",'! Atencion');
+						$fecha.val(mostrarFecha());
+					}else{
+						$fecha.DatePickerHide();
+					}
+				}
+			}
+		});
+
+		$fecha.click(function (s){
+			var a=$('div.datepicker');
+			a.css({
+				'z-index':100
+			});
+		});
+		
+		//aplicar mascara a campos para entrada manual de fecha
+		//9 indica que va a permitir captura de numeros solamante
+		$fecha.mask('9999-99-99');
+		
 		$identificador.attr({'value' : 0});
 		$producto_id.attr({'value' : 0});
+		$exis_pres.val('0.00');
+		$disp_pres.val('0.00');
+		$exis_uni.val('0.00');
+		$disp_uni.val('0.00');
 		
 		$folio.css({'background' : '#F0F0F0'});
 		$exis_pres.css({'background' : '#F0F0F0'});
@@ -642,7 +776,6 @@ $(function() {
 		$unidad.css({'background' : '#F0F0F0'});
 		$exis_uni.css({'background' : '#F0F0F0'});
 		$disp_uni.css({'background' : '#F0F0F0'});
-		
 		
 		//quitar enter a todos los campos input
 		$('#forma-envreenv-window').find('input').keypress(function(e){
@@ -718,13 +851,10 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
-		
-		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getReenv.json';
 		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
-			
 			var elemento_seleccionado=0;
 			var texto_elemento_cero='';
 			var indiceId = 'id';
@@ -744,31 +874,28 @@ $(function() {
 			$carga_campos_select($select_empleado, entry['Empleados'], elemento_seleccionado, texto_elemento_cero, indiceId, indiceTitulo);
 			
 			/*
-		$select_estatus
-		$select_empleado
-		$select_almacen_orig
-		$select_presentacion_orig
-		*/
-		
-		
-			
-			
+			$select_estatus
+			$select_empleado
+			$select_almacen_orig
+			$select_presentacion_orig
+			*/
 		});//termina llamada json
 		
 		
 		$buscar_producto.click(function(event){
 			event.preventDefault();
-			//tipo=1 para buscar el producto Principal
-			var tipoBusqueda=1;
 			$buscador_productos($codigo.val(), $descripcion.val() );
 		});
 		
+		//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto Principal, se ejecute el buscador
+		$(this).aplicarEventoKeypressEjecutaTrigger($descripcion, $buscar_producto);
 		
 		$codigo.keypress(function(e){
+			var valor=$(this).val();
+			
 			if(e.which == 13){
 				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
 				var $arreglo2 = {'codigo':$codigo.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-				
 				$.post(input_json2,$arreglo2,function(entry2){
 					if(parseInt(entry2['Producto'].length) > 0 ){
 						var id_producto = entry2['Producto'][0]['id'];
@@ -786,19 +913,84 @@ $(function() {
 					}
 				});
 				return false;
+			}else{
+				if (parseInt(e.which) == 8) {
+					//si se oprime la tecla borrar se vacia el campo codigo, descripcion
+					//tambien vaciamos los select de presentacion y envases(envases está oculto)
+					if(parseInt($("tr", $grid_productos).size())>0){
+						//si hay elementos en el grid, preguntar si se desea cambiar el producto seleccionado
+						jConfirm('Hay presentaciones en el Listado, \n&eacute;sta seguro que desea cambiar el Producto seleccionado?', 'Dialogo de Confirmacion', function(r) {
+							// If they confirmed, manually trigger a form submission
+							if (r) {
+								$vaciar_campos($producto_id, $codigo, $descripcion, $unidad, $exis_pres, $disp_pres, $exis_uni, $disp_uni, $select_presentacion_orig, $select_envases, $grid_productos, $buscar_producto);
+								return true;
+							}else{
+								$codigo.val(valor);
+								return false;
+							}
+						});
+					}else{
+						//si no hay elementos en el grid, vaciar sin preguntar
+						$vaciar_campos($producto_id, $codigo, $descripcion, $unidad, $exis_pres, $disp_pres, $exis_uni, $disp_uni, $select_presentacion_orig, $select_envases, $grid_productos, $buscar_producto);
+					}
+				}
 			}
 		});
 		
 		
-		//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto Principal, se ejecute el buscador
-		$(this).aplicarEventoKeypressEjecutaTrigger($descripcion, $buscar_producto);
+		
+		$select_presentacion_orig.change(function(){
+			var idPres = $(this).val();
+			if(parseInt(idPres)>0){
+				//buscar existencias al seleccionar una presentacion
+				var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getExisPres.json';
+				var $arreglo3 = {'id_prod':$producto_id.val(), 'id_pres':idPres, 'id_alm':$select_almacen_orig.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+				
+				$.post(input_json3,$arreglo3,function(entry3){
+					if(parseInt(entry3['Exis'].length) > 0 ){
+						var exisPres = entry3['Exis'][0]['exis'];
+						var noDec = entry3['Exis'][0]['decimales'];
+						
+						//llamada a la funcion que calcula la existencia convertido en la unidad del producto
+						var exisUnidad = $convertirPresAUni(idPres, exisPres, arrayPresentaciones);
+						
+						$exis_pres.val(exisPres);
+						$disp_pres.val(exisPres);
+						$exis_uni.val(parseFloat(exisUnidad).toFixed(noDec));
+						$disp_uni.val(parseFloat(exisUnidad).toFixed(noDec));
+						
+						//llamada a la funcion para agregar datos del producto
+						//$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry2['Presentaciones'], entry2['Envases'], noDec);
+					}else{
+						$exis_pres.val('0.00');
+						$disp_pres.val('0.00');
+						$exis_uni.val('0.00');
+						$disp_uni.val('0.00');
+						jAlert('No hay existencias en &eacute;sta Presentaci&oacute;n..', 'Atencion!', function(r) { 
+							$select_presentacion_orig.focus();
+						});
+					}
+				});
+				
+			}else{
+				$exis_pres.val('0.00');
+				$disp_pres.val('0.00');
+				$exis_uni.val('0.00');
+				$disp_uni.val('0.00');
+				jAlert('Es necesario seleccionar una Presentaci&oacute;n.', 'Atencion!', function(r) { $select_presentacion_orig.focus(); });
+			}
+		});
+		
+		
+		
+		
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_productos).size();
 			if(parseInt(trCount) > 0){
 				return true;
 			}else{
-				jAlert('Es necesario agregar productos en el listado.', 'Atencion!', function(r) { $codigo_componente.focus(); });
+				jAlert('Es necesario agregar productos en el listado.', 'Atencion!', function(r) { $codigo.focus(); });
 				return false;
 			}
 		});

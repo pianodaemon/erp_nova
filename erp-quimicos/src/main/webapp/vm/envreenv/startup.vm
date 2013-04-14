@@ -146,8 +146,8 @@
 																<select name="select_estatus" style="width:90px;"></select>
 															</td>
 															<td width="40"></td>
-															<td width="65">Programaci&oacute;n</td>
-															<td width="80"><input type="text" name="fecha" style="width:80px;" readonly="true"></td>
+															<td width="75">Programaci&oacute;n</td>
+															<td width="80"><input type="text" name="fecha" style="width:80px;" maxlength="10"></td>
 															<td width="5"></td>
 														</tr>
 														<tr><td colspan="9" height="8"></td></tr>
@@ -159,7 +159,7 @@
 																</select>
 															</td>
 															<td width="40"></td>
-															<td width="65"></td>
+															<td width="75"></td>
 															<td width="80"></td>
 															<td width="5"></td>
 														</tr>
@@ -172,7 +172,7 @@
 																</select>
 															</td>
 															<td width="40"></td>
-															<td width="65"></td>
+															<td width="75"></td>
 															<td width="80"></td>
 															<td width="5"></td>
 														</tr>
@@ -185,7 +185,7 @@
 															</td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
 															<td width="65">Descripci&oacute;n</td>
-															<td width="190" colspan="3"><input type="text" name="descripcion" style="width:190px;"></td>
+															<td width="200" colspan="3"><input type="text" name="descripcion" style="width:200px;"></td>
 															<td width="80">&nbsp;<a href="buscar_producto" id="buscar_producto">(Buscar)</a></td>
 															<td width="5"></td>
 														</tr>
@@ -200,22 +200,22 @@
 															</td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
 															<td width="65">Existencia</td>
-															<td width="90"><input type="text" name="exis_pres" style="width:80px; border:1px solid #000;" readonly="true"></td>
+															<td width="90"><input type="text" name="exis_pres" style="width:80px; text-align:right;" readonly="true"></td>
 															<td width="40"></td>
-															<td width="65">Disponible</td>
-															<td width="80"><input type="text" name="disp_pres" style="width:80px; border:1px solid #000;" readonly="true"></td>
+															<td width="75">Disponible</td>
+															<td width="80"><input type="text" name="disp_pres" style="width:80px; text-align:right;" readonly="true"></td>
 															<td width="5"></td>
 														</tr>
 														<tr><td colspan="9" height="8"></td></tr>
 														<tr>
 															<td width="70">Unidad</td>
-															<td width="120"><input type="text" name="unidad" style="width:120px; border:1px solid #000;" readonly="true"></td>
+															<td width="120"><input type="text" name="unidad" style="width:120px; " readonly="true"></td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
 															<td width="65">Existencia</td>
-															<td width="90"><input type="text" name="exis_uni" style="width:80px; border:1px solid #000;" readonly="true"></td>
+															<td width="90"><input type="text" name="exis_uni" style="width:80px; text-align:right;" readonly="true"></td>
 															<td width="40"></td>
-															<td width="65">Disponible</td>
-															<td width="80"><input type="text" name="disp_uni" style="width:80px; border:1px solid #000;" readonly="true"></td>
+															<td width="75">Disponible</td>
+															<td width="80"><input type="text" name="disp_uni" style="width:80px; text-align:right;" readonly="true"></td>
 															<td width="5"></td>
 														</tr>
 													</table>
