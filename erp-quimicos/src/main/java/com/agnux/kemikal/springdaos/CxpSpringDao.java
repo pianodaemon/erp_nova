@@ -1549,32 +1549,35 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     //obtiene datos para el buscador de proveedores
     @Override
-    public ArrayList<HashMap<String, String>> getProvFacturas_BuscadorProveedores(String rfc, String email, String razon_social, Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getProvFacturas_BuscadorProveedores(String rfc, String noProveedor, String razon_social, Integer id_empresa) {
         String where = "";
-	if(rfc.equals("")==false){
-            where=" AND cxp_prov.rfc ILIKE '%"+rfc+"%'";
-	}
         
-	if(email.equals("")==false){
-            where +=" AND cxp_prov.correo_electronico ILIKE '%"+email+"%'";
+	if(!rfc.equals("")){
+            where=" AND cxp_prov.rfc ILIKE '%"+rfc.toUpperCase()+"%'";
 	}
-        
-	if(razon_social.equals("")==false ){
-            where +=" AND (cxp_prov.razon_social ilike '%"+razon_social+"%' OR cxp_prov.razon_social ilike '%"+razon_social+"%')";
+
+	if(!noProveedor.equals("")){
+            where +=" AND cxp_prov.folio ILIKE '%"+noProveedor.toUpperCase()+"%'";
 	}
-        
-        String sql_to_query = "SELECT DISTINCT  cxp_prov.id, "
+
+	if(!razon_social.equals("")){
+            where +=" AND (cxp_prov.razon_social ilike '%"+razon_social.toUpperCase()+"%' OR cxp_prov.clave_comercial ilike '%"+razon_social.toUpperCase()+"%')";
+	}
+
+        String sql_to_query = "SELECT DISTINCT  "
+                                + "cxp_prov.id, "
                                 + "cxp_prov.rfc, "
+                                + "cxp_prov.folio AS no_proveedor, "
                                 + "cxp_prov.razon_social, "
-                                + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo ||' C.P. '||cxp_prov.cp as direccion, "
-                                + "cxp_prov.proveedortipo_id,  "
-                                + "cxp_prov.dias_credito_id  "
+                                + "cxp_prov.calle||' '||cxp_prov.numero||', '|| cxp_prov.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END) ||' C.P. '||cxp_prov.cp as direccion, "
+                                + "cxp_prov.proveedortipo_id,"
+                                + "cxp_prov.dias_credito_id,  "
+                                + "cxp_prov.moneda_id "
                             + "FROM cxp_prov "
                             + "JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
                             + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
                             + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
-                            + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico = false "+where;
-        
+                            + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico=false "+where;
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
         ArrayList<HashMap<String, String>> hm_datos_proveedor = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1584,16 +1587,63 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("no_proveedor",rs.getString("no_proveedor"));
                     row.put("rfc",rs.getString("rfc"));
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("direccion",rs.getString("direccion"));
                     row.put("proveedortipo_id",rs.getString("proveedortipo_id"));
                     row.put("dias_credito_id",String.valueOf(rs.getInt("dias_credito_id")));
+                    row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
                     return row;
                 }
             }
         );
         return hm_datos_proveedor;  
+    }
+    
+    
+    
+    //buscar datos por Numero de Proveedor
+    @Override
+    public ArrayList<HashMap<String, String>> getDatosProveedorByNoProv(String noProveedor, Integer id_empresa) {
+
+        String sql_to_query = "SELECT DISTINCT  cxp_prov.id, "
+                                + "cxp_prov.rfc, "
+                                + "cxp_prov.folio AS no_proveedor, "
+                                + "cxp_prov.razon_social, "
+                                + "cxp_prov.calle||' '||cxp_prov.numero||', '|| cxp_prov.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END) ||' C.P. '||cxp_prov.cp as direccion, "
+                                + "cxp_prov.proveedortipo_id,"
+                                + "cxp_prov.dias_credito_id,  "
+                                + "cxp_prov.moneda_id "
+                            + "FROM cxp_prov "
+                            + "LEFT JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
+                            + "LEFT JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
+                            + "LEFT JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
+                            + "WHERE empresa_id="+id_empresa+" "
+                            + "AND cxp_prov.borrado_logico=false "
+                            + "AND cxp_prov.folio='"+noProveedor.toUpperCase()+"' LIMIT 1;";
+
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("no_proveedor",rs.getString("no_proveedor"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("direccion",rs.getString("direccion"));
+                    row.put("proveedortipo_id",rs.getString("proveedortipo_id"));
+                    row.put("dias_credito_id",String.valueOf(rs.getInt("dias_credito_id")));
+                    row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    return row;
+                }
+            }
+        );
+        return hm;
     }
     
     
@@ -2033,6 +2083,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                         + "cxp_pagos.id, "
                         + "cxp_pagos.numero_transaccion, "
                         + "cxp_pagos.cxp_prov_id, "
+                        + "cxp_prov.folio AS no_proveedor, "
                         + "cxp_prov.rfc, "
                         + "cxp_prov.razon_social, "
                         + "cxp_pagos.moneda_id, "
@@ -2065,6 +2116,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("numero_transaccion",rs.getString("numero_transaccion"));
                     row.put("cxp_prov_id",String.valueOf(rs.getInt("cxp_prov_id")));
+                    row.put("no_proveedor",rs.getString("no_proveedor"));
                     row.put("rfc",rs.getString("rfc"));
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));

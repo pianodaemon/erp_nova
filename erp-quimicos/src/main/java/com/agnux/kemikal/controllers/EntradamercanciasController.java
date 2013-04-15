@@ -302,7 +302,6 @@ public class EntradamercanciasController {
 
     //obtiene los proveedores para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/get_proveedores.json")
-    //public @ResponseBody HashMap<java.lang.String,java.lang.Object> getProveedorJson(
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProveedoresJson(
             @RequestParam(value="rfc", required=true) String rfc,
             @RequestParam(value="no_prov", required=true) String no_prov,

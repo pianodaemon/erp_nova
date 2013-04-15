@@ -17,6 +17,7 @@ public interface CxpInterfaceDao {
     public String selectFunctionForThisApp(String campos_data, String extra_data_array);
     public String selectFunctionForCxpAdmProcesos(String campos_data, String extra_data_array);
     public ArrayList<HashMap<String, String>> getBuscadorProveedores(String rfc, String email, String razon_social, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getDatosProveedorByNoProv(String noProveedor, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getPaises();
     public ArrayList<HashMap<String, String>> getEntidadesForThisPais(String id_pais);
     public ArrayList<HashMap<String, String>> getLocalidadesForThisEntidad(String id_pais,String id_entidad);
