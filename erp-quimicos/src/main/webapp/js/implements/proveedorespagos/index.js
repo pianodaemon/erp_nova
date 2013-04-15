@@ -95,6 +95,19 @@ $(function() {
 	});
     
     
+
+    
+    
+	$limpiar.click(function(event){
+		event.preventDefault();
+		$busqueda_num_transaccion.val('');
+		$busqueda_factura.val('');
+		$busqueda_proveedor.val('');
+		$busqueda_fecha_inicial.val('');
+		$busqueda_fecha_final.val('');
+		
+		$busqueda_num_transaccion.focus();
+	});
     
 	TriggerClickVisializaBuscador = 0;
 	TriggerClickVisualizaGeneradorInforme=0;
@@ -131,11 +144,14 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_num_transaccion.focus();
 	});
 	
-	
-	
-	
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_num_transaccion, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_factura, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_proveedor, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
     
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada
@@ -393,15 +409,15 @@ $(function() {
 	
 	
 	//buscador de proveedores
-	$busca_proveedores = function($select_tipo_movimiento,$select_moneda,array_monedas){
+	$busca_proveedores = function($select_tipo_movimiento,$select_moneda,array_monedas, $no_proveedor, $proveedor){
 		$(this).modalPanel_Buscaproveedor();
 		var $dialogoc =  $('#forma-buscaproveedor-window');
 		$dialogoc.append($('div.buscador_proveedores').find('table.formaBusqueda_proveedores').clone());
 		$('#forma-buscaproveedor-window').css({ "margin-left": -200, 	"margin-top": -150  });
 		
 		var $tabla_resultados = $('#forma-buscaproveedor-window').find('#tabla_resultado');
+		var $campo_no_proveedor = $('#forma-buscaproveedor-window').find('input[name=campo_no_proveedor]');
 		var $campo_rfc = $('#forma-buscaproveedor-window').find('input[name=campo_rfc]');
-		var $campo_email = $('#forma-buscaproveedor-window').find('input[name=campo_email]');
 		var $campo_nombre = $('#forma-buscaproveedor-window').find('input[name=campo_nombre]');
 		
 		var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
@@ -424,12 +440,16 @@ $(function() {
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 	
+		$campo_no_proveedor.val($no_proveedor.val());
+		$campo_nombre.val($proveedor.val());
+		
+		$campo_nombre.focus();
 		
 		//click buscar proveedor
 		$buscar_plugin_proveedor.click(function(event){
 			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuacadorProveedores.json';
 			$arreglo = {    'rfc':$campo_rfc.val(),
-							'email':$campo_email.val(),
+							'no_prov':$campo_no_proveedor.val(),
 							'nombre':$campo_nombre.val(),
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 						}
@@ -443,6 +463,7 @@ $(function() {
 						trr += '<td width="120">';
 							trr += '<input type="hidden" id="id_prov" value="'+proveedor['id']+'">';
 							trr += '<input type="hidden" id="tipo_prov" value="'+proveedor['proveedortipo_id']+'">';
+							trr += '<input type="hidden" id="no_prov" value="'+proveedor['no_proveedor']+'">';
 							trr += '<input type="hidden" id="dias_cred_id" value="'+proveedor['dias_credito_id']+'">';
 							trr += '<input type="hidden" id="id_moneda" value="'+proveedor['moneda_id']+'">';
 							trr += '<span class="rfc">'+proveedor['rfc']+'</span>';
@@ -471,13 +492,19 @@ $(function() {
 				$tabla_resultados.find('tr').click(function(){
 					
 					//habilitar select de monedas y tipo de movimiento
+					if($select_tipo_movimiento.is(':disabled')) {
+						$select_tipo_movimiento.removeAttr('disabled');
+						$select_moneda.removeAttr('disabled');
+					}
+					/*
 					if($('#forma-proveedorespagos-window').find('input[name=proveedor]').is(':disabled')) {
 						$('#forma-proveedorespagos-window').find('input[name=proveedor]').removeAttr('disabled');
 						$select_tipo_movimiento.removeAttr('disabled');
 						$select_moneda.removeAttr('disabled');
 					}
-					
+					*/
 					//asignar a los campos correspondientes el id, rfc, nombre y id_moneda  del proveedor
+					$('#forma-proveedorespagos-window').find('input[name=no_proveedor]').val($(this).find('#no_prov').val());
 					$('#forma-proveedorespagos-window').find('input[name=id_proveedor]').val($(this).find('#id_prov').val());
 					$('#forma-proveedorespagos-window').find('input[name=proveedor]').val($(this).find('#razon_social').html());
 					
@@ -489,15 +516,26 @@ $(function() {
 					//elimina la ventana de busqueda
 					var remove = function() { $(this).remove(); };
 					$('#forma-buscaproveedor-overlay').fadeOut(remove);
+					
+					$('#forma-proveedorespagos-window').find('input[name=proveedor]').focus();
 				});
 			});
 		});
 		
+		if ($campo_no_proveedor.val()!='' || $campo_nombre.val()!=''){
+			$buscar_plugin_proveedor.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_no_proveedor, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_rfc, $buscar_plugin_proveedor);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_nombre, $buscar_plugin_proveedor);
 		
 		$cancelar_plugin_busca_proveedor.click(function(event){
 			//event.preventDefault();
 			var remove = function() { $(this).remove(); };
 			$('#forma-buscaproveedor-overlay').fadeOut(remove);
+			
+			$('#forma-proveedorespagos-window').find('input[name=proveedor]').focus();
 		});
 	}//termina buscador de proveedores
 	
@@ -584,7 +622,7 @@ $(function() {
 		if(accion == 'desahabilitar'){
 			if(!$fecha_pago.is(':disabled')) {
 				$no_transaccion.attr('disabled','-1');
-				$proveedor.attr('disabled','-1');
+				//$proveedor.attr('disabled','-1');
 				$select_tipo_movimiento.attr('disabled','-1');
 				$observaciones_pago.attr('disabled','-1');
 				$select_concepto.attr('disabled','-1');
@@ -609,7 +647,7 @@ $(function() {
 		if(accion == 'habilitar'){
 			if($fecha_pago.is(':disabled')) {
 				$no_transaccion.removeAttr('disabled');
-				$proveedor.removeAttr('disabled');
+				//$proveedor.removeAttr('disabled');
 				$select_tipo_movimiento.removeAttr('disabled');
 				$observaciones_pago.removeAttr('disabled');
 				$select_concepto.removeAttr('disabled');
@@ -834,7 +872,7 @@ $(function() {
 				$select_tipo_movimiento.attr({'disabled':true});
 				$select_moneda.attr({'disabled':true});
 				$tipo_cambio.attr("readonly", true);
-				$tipo_cambio.css({'background' : '#DDDDDD'});
+				$tipo_cambio.css({'background' : '#F0F0F0'});
 				//$campo_pagosxguardar.attr({ 'value' : 1});//existen pagos por guardar
 			}else{
 				//$campo_pagosxguardar.attr({ 'value' : 0});//no hay pagos por guardar
@@ -901,6 +939,7 @@ $(function() {
 		var $id_proveedor = $('#forma-proveedorespagos-window').find('input[name=id_proveedor]');
 		var $no_transaccion = $('#forma-proveedorespagos-window').find('input[name=no_transaccion]');
 		var $proveedor = $('#forma-proveedorespagos-window').find('input[name=proveedor]');
+		var $no_proveedor = $('#forma-proveedorespagos-window').find('input[name=no_proveedor]');
 		
 		var $busca_proveedor = $('#forma-proveedorespagos-window').find('a[href*=busca_proveedor]');
 		
@@ -918,11 +957,9 @@ $(function() {
 		var $select_chequera_transferencia = $('#forma-proveedorespagos-window').find('select[name=select_chequera_transferencia]');
 		var $select_chequera_tarjeta = $('#forma-proveedorespagos-window').find('select[name=select_chequera_tarjeta]');
 		
-		
 		var $num_cheque = $('#forma-proveedorespagos-window').find('input[name=num_cheque]');
 		var $referencia = $('#forma-proveedorespagos-window').find('input[name=referencia]');
 		var $num_tarjeta = $('#forma-proveedorespagos-window').find('input[name=num_tarjeta]');
-		
 		
 		var $monto_pago = $('#forma-proveedorespagos-window').find('input[name=monto_pago]');
 		var $pagosxguardar = $('#forma-proveedorespagos-window').find('input[name=pagosxguardar]');
@@ -942,7 +979,6 @@ $(function() {
 		var $registra_anticipo = $('#forma-proveedorespagos-window').find('#registra_anticipo');
         var $submit_registrar_cancelacion = $('#forma-proveedorespagos-window').find('#submit_cancel');
 		
-		
 		//$add_ceros($monto_pago);
 		//$permitir_solo_numeros($monto_pago);
 		//$accion_focus($monto_pago);
@@ -954,12 +990,12 @@ $(function() {
         //$pdf_pago.hide();
         $cancelar_pago.attr('disabled','-1');
         $pdf_pago.attr('disabled','-1');
-        $no_transaccion.css({'background' : '#DDDDDD'});
+        $no_transaccion.css({'background' : '#F0F0F0'});
         
         $submit_registrar_pago.hide();
         $submit_registrar_cancelacion.hide();
         $registra_anticipo.hide();
-        
+        $no_proveedor.focus();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -1008,8 +1044,50 @@ $(function() {
 			//buscador de proveedores
 			$busca_proveedor.click(function(event){
 				event.preventDefault();
-				$busca_proveedores($select_tipo_movimiento,$select_moneda,entry['Monedas'] );
+				$busca_proveedores($select_tipo_movimiento,$select_moneda,entry['Monedas'], $no_proveedor, $proveedor);
 			});
+			
+			
+			//ejecuta Busqueda de Datos del Proveedor al pulsar enter en el campo No. Proveedor
+			$no_proveedor.keypress(function(e){
+				if(e.which == 13){
+					var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoProv.json';
+					$arreglo2 = {'no_prov':$no_proveedor.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+					
+					$.post(input_json2,$arreglo2,function(entry2){
+						$id_proveedor.val('');
+						$no_proveedor.val('');
+						$proveedor.val('');
+						
+						if(parseInt(entry2['Proveedor'].length) > 0 ){
+							//habilitar select de monedas y tipo de movimiento
+							if($select_tipo_movimiento.is(':disabled')) {
+								$select_tipo_movimiento.removeAttr('disabled');
+								$select_moneda.removeAttr('disabled');
+							}
+							
+							//asignar a los campos correspondientes el id, rfc, nombre y id_moneda  del proveedor
+							$no_proveedor.val(entry2['Proveedor'][0]['no_proveedor']);
+							$id_proveedor.val(entry2['Proveedor'][0]['id']);
+							$proveedor.val(entry2['Proveedor'][0]['razon_social']);
+							
+							var elemento_seleccionado = entry2['Proveedor'][0]['moneda_id'];
+							var texto_elemento_cero=0;
+							//recargar selec de monedas, con la moneda del proveedor por default
+							$carga_campos_select($select_moneda, entry['Monedas'], elemento_seleccionado, texto_elemento_cero, "id", "descripcion");
+					
+						}else{
+							jAlert('N&uacute;mero de Proveedor desconocido.', 'Atencion!', function(r) { 
+								$no_proveedor.focus(); 
+							});
+						}
+					},"json");//termina llamada json
+					
+					return false;
+				}
+			});
+			
+						
 			
 			
 			$select_tipo_movimiento.change(function(){
@@ -1091,6 +1169,8 @@ $(function() {
 		});//termina llamada json
 		
 		
+		//aplicar evento para que al pulsar Enter sobre el campo proveedor se abra el buscador y ejecute la Busqueda
+		$(this).aplicarEventoKeypressEjecutaTrigger($proveedor, $busca_proveedor);
 		
 		//fecha pago
 		$fecha_pago.click(function (s){
@@ -1142,24 +1222,24 @@ $(function() {
 			
 			//efectivo
 			if(parseInt(forma_pago)==1){
-				$('#forma-proveedorespagos-window').find('.proveedorespagos_div_one').css({'height':'445px'});
+				$('#forma-proveedorespagos-window').find('.proveedorespagos_div_one').css({'height':'470px'});
 			}
 			
 			//cheque
 			if(parseInt(forma_pago)==2){
 				$tr_cheque.show();
-				$('#forma-proveedorespagos-window').find('.proveedorespagos_div_one').css({'height':'467px'});
+				$('#forma-proveedorespagos-window').find('.proveedorespagos_div_one').css({'height':'492px'});
 			}
 			//transferencia
 			if(parseInt(forma_pago)==3){
 				$tr_transferencia.show();
-				$('#forma-proveedorespagos-window').find('.proveedorespagos_div_one').css({'height':'467px'});
+				$('#forma-proveedorespagos-window').find('.proveedorespagos_div_one').css({'height':'492px'});
 			}
 			
 			//tarjeta
 			if(parseInt(forma_pago)==4){
 				$tr_tarjeta.show();
-				$('#forma-proveedorespagos-window').find('.proveedorespagos_div_one').css({'height':'467px'});
+				$('#forma-proveedorespagos-window').find('.proveedorespagos_div_one').css({'height':'492px'});
 			}
 			
 		});
@@ -1421,6 +1501,7 @@ $(function() {
 			var $id_proveedor = $('#forma-proveedorespagos-window').find('input[name=id_proveedor]');
 			var $no_transaccion = $('#forma-proveedorespagos-window').find('input[name=no_transaccion]');
 			var $proveedor = $('#forma-proveedorespagos-window').find('input[name=proveedor]');
+			var $no_proveedor = $('#forma-proveedorespagos-window').find('input[name=no_proveedor]');
 			
 			var $busca_proveedor = $('#forma-proveedorespagos-window').find('a[href*=busca_proveedor]');
 			
@@ -1465,13 +1546,17 @@ $(function() {
 			$tr_tarjeta.hide();
 			$busca_proveedor.hide();
 			$fecha_pago.attr("readonly", true);
+			$no_proveedor.attr("readonly", true);
+			$proveedor.attr("readonly", true);
 			$cancelar_pago.hide();
 			$pdf_pago.hide();
 			
 			$submit_registrar_pago.hide();
 			$submit_registrar_cancelacion.hide();
 			$registra_anticipo.hide();
-			$no_transaccion.css({'background' : '#DDDDDD'});
+			$no_transaccion.css({'background' : '#F0F0F0'});
+			$no_proveedor.css({'background' : '#F0F0F0'});
+			$proveedor.css({'background' : '#F0F0F0'});
 			
 			if(accion_mode == 'edit'){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPago.json';
@@ -1511,6 +1596,7 @@ $(function() {
 				$.post(input_json,$arreglo,function(entry){
 					$id_pago.attr({ 'value' : entry['Datos']['0']['id'] });
 					$id_proveedor.attr({ 'value' : entry['Datos']['0']['cxp_prov_id'] });
+					$no_proveedor.attr({ 'value' : entry['Datos']['0']['no_proveedor'] });
 					$no_transaccion.attr({ 'value' : entry['Datos']['0']['numero_transaccion'] });
 					$proveedor.attr({ 'value' : entry['Datos']['0']['razon_social'] });
 					$observaciones_pago.attr({ 'value' : entry['Datos']['0']['observaciones'] });

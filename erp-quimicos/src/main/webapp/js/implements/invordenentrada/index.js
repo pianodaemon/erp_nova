@@ -88,6 +88,8 @@ $(function() {
 			select_html += '<option value="' + i + '" >' + arrayTiposDocumento[i] + '</option>';
 		}
 		$campo_select_tipo_doc.append(select_html);
+		
+		$campo_busqueda_folio.focus();
 	});
 
 
@@ -130,8 +132,17 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		
+		$campo_busqueda_folio.focus();
 	});
 	
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_oc, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_factura, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_proveedor, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_select_tipo_doc, $buscar);
+		
 	$tabs_li_funxionalidad = function(){
 		var $select_prod_tipo = $('#forma-invordenentrada-window').find('select[name=prodtipo]');
 		$('#forma-invordenentrada-window').find('#submit').mouseover(function(){

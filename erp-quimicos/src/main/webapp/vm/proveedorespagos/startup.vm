@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>${title}</title>
-		
+
         #include("${layoutheader}")
-        
+
         <!--  css for this catalogo -->
         <link rel="stylesheet" href="../../css/modalbox/proveedorespagos/formaProveedorespagos.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/provfacturas/formaBuscaproveedor.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/proveedorespagos/formaBuscaFacturas.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/proveedorespagos/formaCancelaPago.css" type="text/css" />
-        
+
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/proveedorespagos/modalboxProveedorespagos.js"></script>
@@ -19,15 +19,15 @@
 		<script type="text/javascript" src="../../js/components/modalbox/proveedorespagos/modalboxCancelaPago.js"></script>
 		<script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         <script type="text/javascript" src="../../js/implements/proveedorespagos/index.js" ></script>
-        
+
         #include("${layoutmenu}")
-        
+
         <input type="hidden" name="contextpath" value="$url">
 		<input type="hidden" name="user" value="$username">
 		<input type="hidden" name="iu" value="$iu">
 		<input type="hidden" name="emp" value="$empresa">
 		<input type="hidden" name="suc" value="$sucursal">
-		
+
         <!--Esta tabla va  en la barra de acciones -->
 		<table class="table_acciones" style="display:none" border="0">
 			<tr>
@@ -37,8 +37,8 @@
 				<td height="30"><a href="visualiza_buscador" class="tooltip"><div class="onmouseOutVisualizaBuscador" id="vbuscador"></div><span>Busqueda</span></a>  </td>
 			</tr>
 		</table>
-		
-		
+
+
 		<!--Esta tabla va  en la barra de buscador -->
 		<table class="tabla_buscador" style="display:none" border="0">
 			<tr>
@@ -61,27 +61,27 @@
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="92"><INPUT TYPE="text" name="busqueda_num_transaccion" style="width:92px;"></td>
+				<td width="92"><input type="text" name="busqueda_num_transaccion" style="width:92px;"></td>
 				<td width="15">&nbsp;</td>
-				<td width="90"><INPUT TYPE="text" name="busqueda_factura" style="width:90px;"></td>
+				<td width="90"><input type="text" name="busqueda_factura" style="width:90px;"></td>
 				<td width="15">&nbsp;</td>
-				<td width="245"><INPUT TYPE="text" name="busqueda_proveedor" style="width:245px;"></td>
+				<td width="245"><input type="text" name="busqueda_proveedor" style="width:245px;"></td>
 				<td width="20">&nbsp;</td>
-				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-				<td width="90"><INPUT TYPE="text" name="busqueda_fecha_inicial" style="width:90px;"></td>
+				<td width="25"><img src="../../img/catalogo/calendario.png" align="top"></td>
+				<td width="90"><input type="text" name="busqueda_fecha_inicial" style="width:90px;"></td>
 				<td width="15"></td>
-				<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
-				<td width="90"><INPUT TYPE="text" name="busqueda_fecha_final" style="width:90px;"></td>
+				<td width="25"><img src="../../img/catalogo/calendario.png" align="top"></td>
+				<td width="90"><input type="text" name="busqueda_fecha_final" style="width:90px;"></td>
 				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="button" id="boton_buscador" class="onmouseOutBuscar"></td>
+				<td><input type="button" id="boton_buscador" class="onmouseOutBuscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td ><INPUT TYPE="button" id="boton_limpiar" class="onmouseOutLimpiar"></td>
+				<td ><input type="button" id="boton_limpiar" class="onmouseOutLimpiar"></td>
 			</tr>
 		</table>
-		
+
         <!--  otra parte -->
         <table class="acciones">
-			
+
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td >
@@ -93,15 +93,15 @@
                 <td ></td>
             </tr>
         </table>
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
+
         <!--form for pagos -->
         <!--<form id="formaPagos00" action="edit.json" method="POST" >-->
         <form id="formaPagos00">
@@ -109,7 +109,7 @@
 			<div id="div_one" class="panelcito_modal proveedorespagos_div_one"  style="display:none;" title="">
                 <input type="hidden" name="id_pago" value="0">
                 <input type="hidden" name="total_tr" value="0">
-                    
+
                     <div id="div_two" title="" class="proveedorespagos_div_two">
                         <div class="columns on-2">
                             <div class="fixed column" id="proveedorespagos_div_titulo_ventana" style="width:873px; padding-left:6px;"><strong>Registro de Pagos a Proveedores</strong></div>
@@ -118,8 +118,8 @@
                             </div>
                         </div>
                     </div>
-                    
-                    
+
+
                     <div id="div_three" title="" class="proveedorespagos_div_three">
                         <div class="columns" >
                             <div class=" fixed column">
@@ -131,26 +131,26 @@
                         <div class="columns" style="background:#731F6C;">
                             <div class="container" style="background:white;">
                                 <div class="fixed column" class="content_x" >
-									
-									
+
+
 									<div id="tabx-1" class="contenidoPes" >
-									
+
                                         <table border="0" style="margin:0; padding:0;">
-											
-                                            <tr class="uno">
-                                                <td></td>
-                                                <td>
+											<tr class="uno">
+												<td>
 													<table border="0">
 														<tbody>
 															<tr>
-																<input type="hidden" name="id_proveedor" value="0">
 																<td width="95">No.&nbsp;Transacci&oacute;n</td>
-																<td width="150"><INPUT TYPE="text" name="no_transaccion" style="width:150px; font-weight: bold;" readOnly="true"></td>
+																<td width="150"><input type="text" name="no_transaccion" style="width:150px; font-weight: bold;" readOnly="true"></td>
 																<td width="25"></td>
-																<td width="80">Proveedor:</td>
-																<td width="405" colspan="4"><INPUT TYPE="text" name="proveedor" style="width:405px;" readOnly="true"></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_idproveedor"></td>
-																<td width="80"><a  href="busca_proveedor">(Buscar&nbsp;)</a></td>
+																<td width="80"></td>
+																<td width="180"></td>
+																<td width="25"></td>
+																<td width="70"></td>
+																<td width="130"></td>
+																<td width="25"></td>
+																<td width="80"></td>
 															</tr>
 															<tr>
 																<td width="95" height="8"></td>
@@ -165,12 +165,33 @@
 																<td width="80"></td>
 															</tr>
 															<tr>
+																<td width="95">No.&nbsp;Proveedor</td>
+																<td width="150">
+																	<input type="hidden" name="id_proveedor" value="0">
+																	<input type="text" name="no_proveedor" style="width:150px; font-weight: bold;">
+																</td>
+																<td width="25"></td>
+																<td width="80">Razon Social</td>
+																<td width="405" colspan="4"><input type="text" name="proveedor" style="width:405px;"></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_idproveedor"></td>
+																<td width="80"><a  href="busca_proveedor">(Buscar&nbsp;)</a></td>
+															</tr>
+														</tbody>
+													</table>
+												</td>
+											</tr>
+
+                                            <tr class="uno">
+                                                <td>
+													<table border="0">
+														<tbody>
+															<tr>
 																<td width="95">Seleccionar&nbsp;Opci&oacute;n</td>
-																<td width="150"><SELECT NAME="select_tipo_movimiento" style="width:150px;"></SELECT></td>
+																<td width="150"><select name="select_tipo_movimiento" style="width:150px;"></select></td>
 																<td width="25"></td>
 																<td width="80">Concepto</td>
-																<td width="180"><SELECT NAME="select_concepto" style="width:180px;" title="Seleccionar un concepto"></SELECT></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_concepto"></td>
+																<td width="180"><select name="select_concepto" style="width:180px;" title="Seleccionar un concepto"></select></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_concepto"></td>
 																<td width="200" colspan="2"><span>Observaciones</span></td>
 																<td width="25"></td>
 																<td width="80"></td>
@@ -186,20 +207,20 @@
 																	<textarea name="observaciones_pago" rows="2" cols="100" style="width:300px; resize:none;"></textarea>
 																</td>
 															</tr>
-															
-															
-															
+
+
+
 															<!--  <tr style="display:none;" class="moneda">	-->
 															<tr class="moneda">
 																<td width="95">Moneda</td>
-																<td width="150"><SELECT NAME="select_moneda" style="width:150px;" title="Seleccione la moneda del Pago."></SELECT></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_moneda"></td>
+																<td width="150"><select name="select_moneda" style="width:150px;" title="Seleccione la moneda del Pago."></select></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_moneda"></td>
 																<td width="80">Tipo&nbsp;de&nbsp;Cambio</td>
-																<td width="180"><INPUT TYPE="text" name="tipo_cambio" style="width:180px;"></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipocambio"></td>
+																<td width="180"><input type="text" name="tipo_cambio" style="width:180px;"></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_tipocambio"></td>
 																<!--<td width="285" colspan="3"  class="pago_a"> </td>-->
 															</tr>
-															
+
 															<tr>
 																<td width="95" height="8"></td>
 																<td width="150"></td>
@@ -209,20 +230,20 @@
 																<td width="25"></td>
 																<!--<td width="285" colspan="3"  class="pago_a"> </td>-->
 															</tr>
-															
+
 															<!--  <tr style="display:none;" class="pago">	-->
 															<tr class="pago">
 																<td width="95">Forma&nbsp;de&nbsp;Pago</td>
-																<td width="150"><SELECT NAME="select_forma_pago" style="width:150px;" title="Seleccione la forma de pago"></SELECT> </td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_formapago"></td>
-																
+																<td width="150"><select name="select_forma_pago" style="width:150px;" title="Seleccione la forma de pago"></select> </td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_formapago"></td>
+
 																<td width="80">Fecha&nbsp;de&nbsp;Pago</td>
-																<td width="180"><INPUT TYPE="text" name="fecha_pago" style="width:180px;" title="Ingrese la fecha del pago"></td>
-																
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fechapago"></td>
+																<td width="180"><input type="text" name="fecha_pago" style="width:180px;" title="Ingrese la fecha del pago"></td>
+
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_fechapago"></td>
 																<!--<td width="285" colspan="3"  class="pago_a"></td>-->
 															</tr>
-															
+
 															<!--<tr Style="display:none" class="cheque">-->
 															<tr class="cheque">
 																<td width="95" height="8"></td>
@@ -236,75 +257,75 @@
 																<td width="25"></td>
 																<td width="80"></td>
 															</tr>
-															
+
 															<!-- <tr Style="display:none" class="cheque">	-->
 															<tr  class="cheque">
 																<td width="95">Banco</td>
-																<td width="150"><SELECT NAME="select_banco_cheque" style="width:150px;" title="Seleccione el banco"></SELECT></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_bancoempresa"></td>
+																<td width="150"><select name="select_banco_cheque" style="width:150px;" title="Seleccione el banco"></select></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_bancoempresa"></td>
 																<td width="80">Chequera</td>
-																<td width="180"><SELECT NAME="select_chequera_cheque" style="width:180px;" title="Seleccione el Numero de Cuenta"></SELECT></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocuenta"></td>
+																<td width="180"><select name="select_chequera_cheque" style="width:180px;" title="Seleccione el Numero de Cuenta"></select></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_nocuenta"></td>
 																<td width="70">No.&nbsp;Cheque</td>
-																<td width="130"><INPUT TYPE="text" name="num_cheque" style="width:130px;" title="Ingrese el numero de cheque" maxlength="50" readOnly="true"></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocheque"></td>
-																<td width="80"></td>
-															</tr>
-															
-															<tr class="transferencia">
-																<td width="95" height="8"></td>
-																<td width="150"></td>
-																<td width="25"></td>
-																<td width="80"></td>
-																<td width="180"></td>
-																<td width="25"></td>
-																<td width="70"></td>
-																<td width="130"></td>
-																<td width="25"></td>
-																<td width="80"></td>
-															</tr>
-															
-															<tr class="transferencia">
-																<td width="95">Banco</td>
-																<td width="150"><SELECT NAME="select_banco_transferencia" style="width:150px;"></SELECT></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_bancoempresa"></td>
-																<td width="80">Chequera</td>
-																<td width="180"><SELECT NAME="select_chequera_transferencia" style="width:180px;"></SELECT></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocuenta"></td>
-																<td width="70">Referencia</td>
-																<td width="130"><INPUT TYPE="text" name="referencia" style="width:130px;" title="Ingrese la referencia" maxlength="100"></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_referencia"></td>
-																<td width="80"></td>
-															</tr>
-															
-															<tr class="tarjeta">
-																<td width="95" height="8"></td>
-																<td width="150"></td>
-																<td width="25"></td>
-																<td width="80"></td>
-																<td width="180"></td>
-																<td width="25"></td>
-																<td width="70"></td>
-																<td width="130"></td>
-																<td width="25"></td>
-																<td width="80"></td>
-															</tr>
-															
-															<tr class="tarjeta">
-																<td width="95">Banco</td>
-																<td width="150"><SELECT NAME="select_banco_tarjeta" style="width:150px;"></SELECT></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_bancoempresa"></td>
-																<td width="80">Chequera</td>
-																<td width="180"><SELECT NAME="select_chequera_tarjeta" style="width:180px;"></SELECT></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocuenta"></td>
-																<td width="70">No.&nbsp;Tarjeta</td>
-																<td width="130"><INPUT TYPE="text" name="num_tarjeta" style="width:130px;" title="Ingrese el numero de tarjeta" maxlength="100"></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_notarjeta"></td>
+																<td width="130"><input type="text" name="num_cheque" style="width:130px;" title="Ingrese el numero de cheque" maxlength="50" readOnly="true"></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_nocheque"></td>
 																<td width="80"></td>
 															</tr>
 
-															
-															
+															<tr class="transferencia">
+																<td width="95" height="8"></td>
+																<td width="150"></td>
+																<td width="25"></td>
+																<td width="80"></td>
+																<td width="180"></td>
+																<td width="25"></td>
+																<td width="70"></td>
+																<td width="130"></td>
+																<td width="25"></td>
+																<td width="80"></td>
+															</tr>
+
+															<tr class="transferencia">
+																<td width="95">Banco</td>
+																<td width="150"><select name="select_banco_transferencia" style="width:150px;"></select></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_bancoempresa"></td>
+																<td width="80">Chequera</td>
+																<td width="180"><select name="select_chequera_transferencia" style="width:180px;"></select></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_nocuenta"></td>
+																<td width="70">Referencia</td>
+																<td width="130"><input type="text" name="referencia" style="width:130px;" title="Ingrese la referencia" maxlength="100"></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_referencia"></td>
+																<td width="80"></td>
+															</tr>
+
+															<tr class="tarjeta">
+																<td width="95" height="8"></td>
+																<td width="150"></td>
+																<td width="25"></td>
+																<td width="80"></td>
+																<td width="180"></td>
+																<td width="25"></td>
+																<td width="70"></td>
+																<td width="130"></td>
+																<td width="25"></td>
+																<td width="80"></td>
+															</tr>
+
+															<tr class="tarjeta">
+																<td width="95">Banco</td>
+																<td width="150"><select name="select_banco_tarjeta" style="width:150px;"></select></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_bancoempresa"></td>
+																<td width="80">Chequera</td>
+																<td width="180"><select name="select_chequera_tarjeta" style="width:180px;"></select></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_nocuenta"></td>
+																<td width="70">No.&nbsp;Tarjeta</td>
+																<td width="130"><input type="text" name="num_tarjeta" style="width:130px;" title="Ingrese el numero de tarjeta" maxlength="100"></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_notarjeta"></td>
+																<td width="80"></td>
+															</tr>
+
+
+
 															<tr class="monto">
 																<td width="95" height="8"></td>
 																<td width="150"></td>
@@ -317,22 +338,22 @@
 																<td width="25"></td>
 																<td width="80"></td>
 															</tr>
-															<tr class="monto">	
+															<tr class="monto">
 																<td width="95">Monto&nbsp;del&nbsp;Pago</td>
 																<td width="150">
-																	<INPUT TYPE="text" name="monto_pago" style="width:150px;" readOnly="true" title="Ingrese el monto del pago" maxlength="50">
+																	<input type="text" name="monto_pago" style="width:150px;" readOnly="true" title="Ingrese el monto del pago" maxlength="50">
 																	<input type="hidden" name="pagosxguardar" value="0">
 																</td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_montopago"></td>
+																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_montopago"></td>
 																<td width="80"></td>
 																<td width="180"></td>
 																<td width="25"></td>
 																<td width="70"></td>
-																<td width="130"><INPUT TYPE="button" id="cancelar_pago" value="Cancelar&nbsp;Pago" style="width:100px; font-weight: bold;"></td>
+																<td width="130"><input type="button" id="cancelar_pago" value="Cancelar&nbsp;Pago" style="width:100px; font-weight: bold;"></td>
 																<td width="25"></td>
-																<td width="80"><INPUT TYPE="button" id="pdf_pago" value="Generar&nbsp;PDF" style="width:80px; font-weight: bold;"></td>
+																<td width="80"><input type="button" id="pdf_pago" value="Generar&nbsp;PDF" style="width:80px; font-weight: bold;"></td>
 															</tr>
-															
+
 															<tr>
 																<td width="95" height="8"></td>
 																<td width="150"></td>
@@ -344,65 +365,55 @@
 																<td width="130"></td>
 																<td width="25"></td>
 																<td width="80"></td>
-															</tr>															
-															
+															</tr>
 
 															<!--<tr style="display:none" class="registros">	-->
 															<tr  class="registros">
 																<td colspan="10" style="border:1px solid #C1DAD7; border-right: 1px solid #FFFFFF; border-left: 1px solid #FFFFFF; font-size: 11px;">Relaci&oacute;n de Facturas</td>
 															</tr>
-															
+
 															<!-- <tr style="display:none" class="registros">	-->
 															<tr class="registros">
 																<td colspan="10" style="border-top: 1px solid #FFFFFF; border-bottom: 1px solid #FFFFFF; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
-																	
-																		<table >
-																			<thead>
-																				<tr class="registros_pagos">
-																					<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="15">#</td>
-																					<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60">Factura</td>
-																					<td class="grid" style="background-color: rgb(180, 180, 180);"  width="75">Monto</td>
-																					<td class="grid" style="background-color: rgb(180, 180, 180);" width="85">Pagos&nbsp;Aplicados</td>
-																					<td class="grid" style="background-color: rgb(180, 180, 180);" width="75">Saldo</td>
-																					<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">Saldar</td>
-																					<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">Denominaci&oacute;n</td>
-																					<td class="grid" style="background-color: rgb(180, 180, 180);" width="125">Tipo&nbsp;de&nbsp;Cambio</td>
-																					<td class="grid" style="background-color: rgb(180, 180, 180);" width="92">Fecha&nbsp;Ultimo&nbsp;pago</td>
-																					<td class="grid" style="background-color: rgb(180, 180, 180);" width="95">Fecha&nbsp;Facturaci&oacute;n</td>
-																				</tr>
-																			</thead>
+																	<table >
+																		<thead>
+																			<tr class="registros_pagos">
+																				<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="15">#</td>
+																				<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60">Factura</td>
+																				<td class="grid" style="background-color: rgb(180, 180, 180);"  width="75">Monto</td>
+																				<td class="grid" style="background-color: rgb(180, 180, 180);" width="85">Pagos&nbsp;Aplicados</td>
+																				<td class="grid" style="background-color: rgb(180, 180, 180);" width="75">Saldo</td>
+																				<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">Saldar</td>
+																				<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">Denominaci&oacute;n</td>
+																				<td class="grid" style="background-color: rgb(180, 180, 180);" width="125">Tipo&nbsp;de&nbsp;Cambio</td>
+																				<td class="grid" style="background-color: rgb(180, 180, 180);" width="92">Fecha&nbsp;Ultimo&nbsp;pago</td>
+																				<td class="grid" style="background-color: rgb(180, 180, 180);" width="95">Fecha&nbsp;Facturaci&oacute;n</td>
+																			</tr>
+																		</thead>
+																	</table>
+																	<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width: 100%; height: 120px; border:1px solid #C1DAD7 !important;">
+																		<table class="tabla_facturas">
+																			<tbody style="background-color: #FFFFFF;" valign="top" class="contenido_facturas">
+
+																			</tbody>
 																		</table>
-																		<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width: 100%; height: 120px; border:1px solid #C1DAD7 !important;">	
-																			<table class="tabla_facturas">
-																				<tbody style="background-color: #FFFFFF;" valign="top" class="contenido_facturas">
-																					
-																				</tbody>
-																			</table>
-																		</div>
-																	-
-																	
-																		
-																		
-																		
-																		
+																	</div>
 																</td>
 															</tr>
-															
-															
-															
+
 														</tbody>
 													</table>
 												</td>
 											</tr>
                                         </table>
 									</div><!--termina tabx-1-->
-									
-									
-									
+
+
+
                                 </div>
                             </div>
-							
-							
+
+
                             <div class="fixed column" id="botones" style="width:886px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
                                 <table border="0">
 									<tr>
@@ -419,15 +430,15 @@
                     </div>
                 </div>
         </form>
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
         <!--Buscador de Proveedores-->
-		<div class="buscador_proveedores" style="display:none;">	
+        <div class="buscador_proveedores" style="display:none;">	
 			<table width="100%" border="0" class="formaBusqueda_proveedores">
 				<tr>
 					<td>
@@ -451,12 +462,12 @@
 												</tr>
 												<tr>
 													<td width="10"></td>
-													<td width="45">RFC</td>
-													<td width="150"><INPUT TYPE="text" name="campo_rfc" style="width:150px;"></td>
+													<td width="75">No. Proovedor</td>
+													<td width="100"><input type="text" name="campo_no_proveedor" style="width:100px;"></td>
 													<td width="25"></td>
-													<td width="45">E-mail</td>
-													<td width="200"><INPUT TYPE="text" name="campo_email" style="width:200px;"></td>
-													<td width="120"></td>
+													<td width="45">RFC</td>
+													<td width="250"><input type="text" name="campo_rfc" style="width:250px;"></td>
+													<td width="90"></td>
 													<td></td>
 												</tr>
 												<tr>
@@ -464,12 +475,10 @@
 												</tr>
 												<tr>
 													<td width="10"></td>
-													<td width="45">Nombre</td>
-													<td colspan="4"><INPUT TYPE="text" name="campo_nombre" style="width:420px;"></td>
-													<td width="120"></td>
-													<td>
-														<INPUT TYPE="button" id="busca_proveedor_modalbox" class="onmouseOutBuscar">
-													</td>
+													<td width="75">Razon Social</td>
+													<td colspan="4"><input type="text" name="campo_nombre" style="width:420px;"></td>
+													<td width="90"></td>
+													<td><input type="button" id="busca_proveedor_modalbox" class="onmouseOutBuscar"></td>
 												</tr>
 											</table>
 											
@@ -536,7 +545,9 @@
 			</table>
 		</div>
         <!--Termina Buscador de Proveedores-->
-        
+
+
+
 		<form id="formaCancelaPago" action="edit.json" method="POST" >
 		<div id="div_one" class="panelcito_modal cancelapago_div_one"  style="display:none;" title="">
 			<div id="div_two" title="" class="cancelapago_div_two">
@@ -546,7 +557,7 @@
 				<div class="columns" style="background:#731F6C;">
 					<div class="container" style="background:white;">
 						<div class="fixed column" class="content_x" >
-							
+
 							<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
 								<tr>
 									<td width="10" height="10"></td>
@@ -560,7 +571,7 @@
 									<td width="10"></td>
 									<td width="120">Tipo&nbsp;Cancelaci&oacuten</td>
 									<td colspan="3" width="270" height="10" style="font-size:13px;">
-										<SELECT NAME="tipo_cancelacion" style="width:200px;"></SELECT>
+										<select name="tipo_cancelacion" style="width:200px;"></select>
 									</td>
 								</tr>
 								<tr>
@@ -578,11 +589,11 @@
 									</td>
 									<td width="10"></td>
 								</tr>
-								
+
 								<tr>
 									<td colspan="5" width="390" height="10"></td>
 								</tr>
-								
+
 								<tr>
 									<td width="10"></td>
 									<td width="120" align="center" colspan="2">
@@ -593,23 +604,23 @@
 									</td>
 									<td width="10"></td>
 								</tr>
-								
+
 							</table>
-							
+
 						</div>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>
 		</form>
-        
-        
-        
-        
+
+
+
+
         #include("${layoutfooter}")
-        
-        
+
+
     </body>
 </html>
 
