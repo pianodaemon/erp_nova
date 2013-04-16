@@ -5115,5 +5115,97 @@ System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
         );
         return hm_alm;
     }
+
+
+
+    @Override
+    public ArrayList<HashMap<String, String>> getReporteEnvasado_Datos(Integer id_empresa) {
+	String sql_query = "select  "
++"    1 ::integer  as id,  "
++"    'columna 1'::character varying  as columna_1,  "
++"    'columna 2'::character varying  as columna_2,  "
++"    'columna 3'::character varying  as columna_3,  "
++"    'columna 4'::character varying  as columna_4,  "
++"    'columna 5'::character varying  as columna_5,  "
++"    'columna 6'::character varying  as columna_6,  "
++"    'columna 7'::character varying  as columna_7,  "
++"    'columna 8'::character varying  as columna_8,  "
++"    'columna 9'::character varying  as columna_9,  "
++"    'columna 10'::character varying  as columna_10,  "
++"    'columna 11'::character varying  as columna_11,  "
++"    'columna 12'::character varying  as columna_12  "
+
++"    from inv_prod limit 50  ";
+                //select id ,titulo from pro_tipo_equipo where gral_emp_id="+id_empresa+" and borrado_logico=FALSE;";
+        ArrayList<HashMap<String, String>> hm_alm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("columna_1",rs.getString("columna_1"));
+                    row.put("columna_2",rs.getString("columna_2"));
+                    row.put("columna_3",rs.getString("columna_3"));
+                    row.put("columna_4",rs.getString("columna_4"));
+                    row.put("columna_5",rs.getString("columna_5"));
+                    row.put("columna_6",rs.getString("columna_6"));
+                    row.put("columna_7",rs.getString("columna_7"));
+                    row.put("columna_8",rs.getString("columna_8"));
+                    row.put("columna_9",rs.getString("columna_9"));
+                    row.put("columna_10",rs.getString("columna_10"));
+                    row.put("columna_11",rs.getString("columna_11"));
+                    row.put("columna_12",rs.getString("columna_12"));
+                    return row;
+                }
+            }
+        );
+        return hm_alm;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> getReportReenvasado_Datos(Integer id_empresa) {
+	String sql_query = "select  "
++"    1 ::integer  as id,  "
++"    'columna 1'::character varying  as columna_1,  "
++"    'columna 2'::character varying  as columna_2,  "
++"    'columna 3'::character varying  as columna_3,  "
++"    'columna 4'::character varying  as columna_4,  "
++"    'columna 5'::character varying  as columna_5,  "
++"    'columna 6'::character varying  as columna_6,  "
++"    'columna 7'::character varying  as columna_7,  "
++"    'columna 8'::character varying  as columna_8,  "
++"    'columna 9'::character varying  as columna_9,  "
++"    'columna 10'::character varying  as columna_10,  "
++"    'columna 11'::character varying  as columna_11,  "
++"    'columna 12'::character varying  as columna_12  "
+
++"    from inv_prod limit 50  ";
+                //select id ,titulo from pro_tipo_equipo where gral_emp_id="+id_empresa+" and borrado_logico=FALSE;";
+        ArrayList<HashMap<String, String>> hm_alm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("columna_1",rs.getString("columna_1"));
+                    row.put("columna_2",rs.getString("columna_2"));
+                    row.put("columna_3",rs.getString("columna_3"));
+                    row.put("columna_4",rs.getString("columna_4"));
+                    row.put("columna_5",rs.getString("columna_5"));
+                    row.put("columna_6",rs.getString("columna_6"));
+                    row.put("columna_7",rs.getString("columna_7"));
+                    row.put("columna_8",rs.getString("columna_8"));
+                    row.put("columna_9",rs.getString("columna_9"));
+                    row.put("columna_10",rs.getString("columna_10"));
+                    row.put("columna_11",rs.getString("columna_11"));
+                    row.put("columna_12",rs.getString("columna_12"));
+                    return row;
+                }
+            }
+        );
+        return hm_alm;
+    }
    //Fin de los metos para reportes de produccion
 }
