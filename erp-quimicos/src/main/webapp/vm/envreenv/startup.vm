@@ -148,9 +148,10 @@
 															<td width="40"></td>
 															<td width="75">Programaci&oacute;n</td>
 															<td width="80"><input type="text" name="fecha" style="width:80px;" maxlength="10"></td>
-															<td width="5"></td>
+															<td width="10"></td>
+															<td width="80"></td>
 														</tr>
-														<tr><td colspan="9" height="8"></td></tr>
+														<tr><td colspan="10" height="8"></td></tr>
 														<tr>
 															<td width="70">Empleado</td>
 															<td width="315" colspan="4">
@@ -159,11 +160,12 @@
 																</select>
 															</td>
 															<td width="40"></td>
-															<td width="75"></td>
+															<td width="75">Hora&nbsp;de&nbsp;Inicio</td>
+															<td width="80"><input type="text" name="hora" style="width:80px;" maxlength="8"></td>
+															<td width="10"></td>
 															<td width="80"></td>
-															<td width="5"></td>
 														</tr>
-														<tr><td colspan="9" height="8"></td></tr>
+														<tr><td colspan="10" height="8"></td></tr>
 														<tr>
 															<td width="70">Almacen</td>
 															<td width="315" colspan="4">
@@ -174,9 +176,10 @@
 															<td width="40"></td>
 															<td width="75"></td>
 															<td width="80"></td>
-															<td width="5"></td>
+															<td width="10"></td>
+															<td width="80"></td>
 														</tr>
-														<tr><td colspan="9" height="8"></td></tr>
+														<tr><td colspan="10" height="8"></td></tr>
 														<tr>
 															<td width="70">C&oacute;digo</td>
 															<td width="120">
@@ -187,9 +190,10 @@
 															<td width="65">Descripci&oacute;n</td>
 															<td width="200" colspan="3"><input type="text" name="descripcion" style="width:200px;"></td>
 															<td width="80">&nbsp;<a href="buscar_producto" id="buscar_producto">(Buscar)</a></td>
-															<td width="5"></td>
+															<td width="10"></td>
+															<td width="80"></td>
 														</tr>
-														<tr><td colspan="9" height="8"></td></tr>
+														<tr><td colspan="10" height="8"></td></tr>
 														<tr>
 															<td width="70">Presentaci&oacute;n</td>
 															<td width="120">
@@ -205,9 +209,10 @@
 															<td width="40"></td>
 															<td width="75">Disponible</td>
 															<td width="80"><input type="text" name="disp_pres" style="width:80px; text-align:right;" readonly="true"></td>
-															<td width="5"></td>
+															<td width="10"></td>
+															<td width="80"></td>
 														</tr>
-														<tr><td colspan="9" height="8"></td></tr>
+														<tr><td colspan="10" height="8"></td></tr>
 														<tr>
 															<td width="70">Unidad</td>
 															<td width="120">
@@ -220,7 +225,8 @@
 															<td width="40"></td>
 															<td width="75">Disponible</td>
 															<td width="80"><input type="text" name="disp_uni" style="width:80px; text-align:right;" readonly="true"></td>
-															<td width="5"></td>
+															<td width="10"></td>
+															<td width="80" align="right"><input type="button" id="generarpdf" value="Generar PDF" style="width:90px; font-weight: bold;"></td>
 														</tr>
 													</table>
 												</td>

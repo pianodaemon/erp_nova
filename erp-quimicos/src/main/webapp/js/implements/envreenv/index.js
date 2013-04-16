@@ -806,6 +806,7 @@ $(function() {
 		var $folio = $('#forma-envreenv-window').find('input[name=folio]');
 		var $select_estatus = $('#forma-envreenv-window').find('select[name=select_estatus]');
 		var $fecha = $('#forma-envreenv-window').find('input[name=fecha]');
+		var $hora = $('#forma-envreenv-window').find('input[name=hora]');
 		var $select_empleado = $('#forma-envreenv-window').find('select[name=select_empleado]');
 		var $select_almacen_orig = $('#forma-envreenv-window').find('select[name=select_almacen_orig]');
 		var $producto_id = $('#forma-envreenv-window').find('input[name=producto_id]');
@@ -820,6 +821,9 @@ $(function() {
 		var $no_dec = $('#forma-envreenv-window').find('input[name=no_dec]');
 		var $exis_uni = $('#forma-envreenv-window').find('input[name=exis_uni]');
 		var $disp_uni = $('#forma-envreenv-window').find('input[name=disp_uni]');
+		
+		//boton para Generar PDF
+		var $generarpdf = $('#forma-envreenv-window').find('#generarpdf');
 		
 		//href para Agregar y Buscar producto
 		var $buscar_producto = $('#forma-envreenv-window').find('#buscar_producto');
@@ -879,6 +883,7 @@ $(function() {
 		$fecha.mask('9999-99-99');
 		
 		$identificador.attr({'value' : 0});
+		$hora.attr({'value' : '00:00'});
 		$producto_id.attr({'value' : 0});
 		$exis_pres.val('0.00');
 		$disp_pres.val('0.00');
@@ -891,6 +896,9 @@ $(function() {
 		$unidad.css({'background' : '#F0F0F0'});
 		$exis_uni.css({'background' : '#F0F0F0'});
 		$disp_uni.css({'background' : '#F0F0F0'});
+		
+		//deshabilitar boton de generar pdf
+		$generarpdf.attr('disabled','-1');
 		
 		//quitar enter a todos los campos input
 		$('#forma-envreenv-window').find('input').keypress(function(e){
@@ -1140,6 +1148,8 @@ $(function() {
 		//aplicar el evento change
 		$aplicarEventoChange($select_presentacion_orig);
 		
+		//aplicar mascara para hora
+		$hora.TimepickerInputMask();
 		
 		
 		$submit_actualizar.bind('click',function(){
