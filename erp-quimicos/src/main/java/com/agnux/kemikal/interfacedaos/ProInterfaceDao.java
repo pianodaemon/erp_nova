@@ -276,6 +276,8 @@ public interface ProInterfaceDao {
 
 
     public ArrayList<HashMap<String, String>> getReporteCalidad_Datos(Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getReporteEnvasado_Datos(Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getReportReenvasado_Datos(Integer id_empresa);
     //fin de los reportes de produccion
 
 
