@@ -295,17 +295,37 @@ $(function() {
 		});
 	}
 	
-	
+	//Cuenta registros no eliminados del Grid
 	var $contarRegistrosActivos = function($grid_productos){
 		var encontrado=0;
-		
 		//busca el codigo del producto en el grid
 		$grid_productos.find('tr').each(function (index){
 			if(parseInt($(this).find('input[name=eliminado]').val())!=0){
 				encontrado++;//contador de Registros activos en el grid
 			}
 		});
-		
+		return encontrado;
+	}
+	
+	
+	//busca el almacen y presentacion en el Grid, esto para evitar que se repitan
+	var $buscarRegistroAlmacenPresentacion = function($grid_productos, idAlm, idPres, notr){
+		var encontrado=0;
+		//busca el codigo del producto en el grid
+		$grid_productos.find('tr').each(function (index){
+			var $regEliminado = $(this).find('input[name=eliminado]');
+			var $selectAlmDest = $(this).find('select[name=select_aml_dest]');
+			var $selectPresDest = $(this).find('select[name=select_pres_dest]');
+			var $noTr = $(this).find('input.notr'+ notr);
+			
+			if(parseInt($regEliminado.val())!=0){
+				if( (parseInt($selectAlmDest.val())==parseInt(idAlm))  &&  (parseInt($selectPresDest.val())==parseInt(idPres))){
+					if(parseInt($noTr.val())!=parseInt(notr)){
+						encontrado++;
+					}
+				}
+			}
+		});
 		return encontrado;
 	}
 	
@@ -313,25 +333,199 @@ $(function() {
 	//convertir la Presentacion en cantidad de acuerdo a la Unidad de Medida del Producto
 	$convertirPresAUni = function(idPres, cantPres, arrayPres){
 		var valor=0;
+		
+		//alert("idPres:"+idPres+"\ncantPres:"+cantPres);
+		
 		$.each(arrayPres,function(entryIndex,pres){
 			if(parseInt(pres['id'])==parseInt(idPres)){
 				valor = parseFloat(cantPres) * parseFloat(pres['equivalencia']);
 			}
 		});
 		return valor;
-	}
+	};
+	
+	
 	
 	//convertir la Cantidad de Unidades en cantidad de Presentaciones
 	$convertirUniAPres = function(idPres, cantUni, arrayPres){
 		var valor=0;
+		
+		//alert("idPres:"+idPres+"\ncantUni:"+cantUni);
 		$.each(arrayPres,function(entryIndex,pres){
 			if(parseInt(pres['id'])==parseInt(idPres)){
 				valor = parseFloat(cantUni) / parseFloat(pres['equivalencia']);
-				alert("idPres:"+idPres+"\ncantUni:"+cantUni+"\nequivalencia:"+pres['equivalencia']);
+				//alert("idPres:"+idPres+"\ncantUni:"+cantUni+"\nequivalencia:"+pres['equivalencia']);
 			}
 		});
 		return valor;
+	};
+	
+	
+	
+	//busca el almacen y presentacion en el Grid, esto para evitar que se repitan
+	var $calculoCantidadesAsignadosDisponibles = function(arregloEnv){
+		var $select_presentacion_original = $('#forma-envreenv-window').find('select[name=select_presentacion_orig]');
+		var $exis_pres = $('#forma-envreenv-window').find('input[name=exis_pres]');
+		var $disp_pres = $('#forma-envreenv-window').find('input[name=disp_pres]');
+		var $exis_uni = $('#forma-envreenv-window').find('input[name=exis_uni]');
+		var $disp_uni = $('#forma-envreenv-window').find('input[name=disp_uni]');
+		var noDecimales=0;
+		var sumaCantUnidad = 0.00;
+		
+		//grid de productos
+		var $grid_productos = $('#forma-envreenv-window').find('#grid_productos');
+		
+		//busca el codigo del producto en el grid
+		$grid_productos.find('tr').each(function (index){
+			var $regEliminado = $(this).find('input[name=eliminado]');
+			var idPresDest = $(this).find('select[name=select_pres_dest]').val();
+			var $cantPresDest = $(this).find('input[name=cantpres]');
+			var $cantUniTr = $(this).find('input[name=cantuni]');
+			noDecimales = $(this).find('input[name=noDec]').val();
+			var exisPresentaciones = 0.00;
+			var exisUnidadTr = 0.00;
+			var dispUniGlobal = 0.00;
+			var dispPresGlobal = 0.00;
+			
+			if(parseInt($regEliminado.val())!=0){
+				if($cantPresDest.val().trim()!=''){
+					if(parseFloat($cantPresDest.val())>0){
+						//llamada a la funcion que calcula la existencia convertido en la unidad del producto
+						exisUnidadTr = $convertirPresAUni(idPresDest, $cantPresDest.val(), arregloEnv);
+						//asignar cantidad de unidades resultado de la conversion de presentaciones a Unidad de Medida
+						$cantUniTr.val(parseFloat(exisUnidadTr).toFixed(noDecimales));
+						
+						sumaCantUnidad = parseFloat(sumaCantUnidad) + parseFloat(exisUnidadTr);
+						//alert("sumaCantUnidad:"+sumaCantUnidad);
+						
+						dispUniGlobal = parseFloat($exis_uni.val()) - parseFloat(sumaCantUnidad);
+						//alert("dispUniGlobal:"+dispUniGlobal);
+						
+						//asignar unidades disponibles
+						$disp_uni.val(parseFloat(dispUniGlobal).toFixed(noDecimales));
+						//alert("$disp_uni:"+$disp_uni.val());
+						
+						//para calcular las presentacion Global Disponible se utiliza el Arreglo de Presentaciones que se encuentra declarada a Nivel Global
+						dispPresGlobal = $convertirUniAPres($select_presentacion_original.val(), dispUniGlobal, arrayPresentaciones);
+						
+						//asignar presentaciones disponibles
+						$disp_pres.val(parseFloat(dispPresGlobal).toFixed(noDecimales));
+						
+					}
+				}
+				
+			}
+		});
 	}
+	
+	
+	
+	
+	
+	
+	
+	//aplicar evento change al select del Almacen Destino que esta en el Grid
+	$aplicarEventoChangeSelectAlmacenDestino = function($grid_productos, noTr){
+		//cambiar Almacen Destino
+		$grid_productos.find('select.amlDest'+ noTr).change(function(){
+			var idAlm = $(this).val();
+			var $idPresDest = $grid_productos.find('select.presDest'+ noTr);;
+			var $almDestId = $grid_productos.find('input.amlDestId'+ noTr)
+			
+			//llamada a la fucion que busca registro dentro del grid, con el mismo Almacen y Presentacion
+			//si lo encuentra regresa mayor que cero
+			var exisAlmPres = $buscarRegistroAlmacenPresentacion($grid_productos, idAlm, $idPresDest.val(), noTr);
+			
+			if(parseInt(exisAlmPres)>0){
+				//aqui entra porque ya existe un registro con el Mismo almacen destino y la mismam presentacion en el Grid,
+				//por lo tanto no hay que permitir este cambio de Presentacion.
+				jAlert('No se puede asignar &eacute;ste Almacen con &eacute;sta Presentaci&oacute;n, ya existe un registro igual.', 'Atencion!', function(r) { 
+					var html_select='';
+					$grid_productos.find('select.amlDest'+ noTr).find('option').each(function(){
+						if(parseInt($(this).val())==parseInt($almDestId.val())){
+							html_select += '<option value="' + $(this).val() + '" selected="yes">' + $(this).text() + '</option>';
+						}else{
+							html_select += '<option value="' + $(this).val() + '"  >' + $(this).text() + '</option>';
+						}
+					});
+					
+					$grid_productos.find('select.amlDest'+ noTr).children().remove();
+					$grid_productos.find('select.amlDest'+ noTr).append(html_select);
+					$grid_productos.find('select.amlDest'+ noTr).focus();
+				});
+			}else{
+				//aqui se asigna el id del Almacen seleccionado
+				$almDestId.val(idAlm);
+			}
+				
+		});
+	}
+	
+	
+	//aplicar evento change al select del Envase que esta en el Grid
+	$aplicarEventoChangeSelectPresDestino = function($grid_productos, noTr, $disp_pres, $disp_uni, arregloEnv){
+		//cambiar presentacion de Envase
+		$grid_productos.find('select.presDest'+ noTr).change(function(){
+			var idPres = $(this).val();
+			var $idAmlDest = $grid_productos.find('select.amlDest'+ noTr);
+			var $cantpres = $grid_productos.find('input.cantPres'+ noTr);
+			var $cantuni = $grid_productos.find('input[name=cantuni'+ noTr +']');
+			var noDecimales = $grid_productos.find('input.noDec'+ noTr).val();
+			var $presDestId = $grid_productos.find('input.presDestId'+ noTr)
+			
+			//llamada a la fucion que busca registro dentro del grid, con el mismo Almacen y Presentacion
+			//si lo encuentra regresa mayor que cero
+			var exisAlmPres = $buscarRegistroAlmacenPresentacion($grid_productos, $idAmlDest.val(), idPres, noTr);
+			
+			if(parseInt(exisAlmPres)<=0){
+				if(parseInt(idPres)>0){
+					if(parseFloat($disp_pres.val())>0){
+						$cantpres.css({'background' : '#ffffff'});
+						$cantpres.attr('readonly',false);
+						
+						var exisPresentaciones = $convertirUniAPres(idPres, $disp_uni.val(), arregloEnv);
+						
+						//llamada a la funcion que calcula la existencia convertido en la unidad del producto
+						var exisUnidad = $convertirPresAUni(idPres, exisPresentaciones, arregloEnv);
+						
+						$cantpres.val(parseFloat(exisPresentaciones).toFixed(noDecimales));
+						$cantuni.val(parseFloat(exisUnidad).toFixed(noDecimales));
+					}
+				}else{
+					$cantpres.css({'background' : '#F0F0F0'});
+					$cantpres.attr('readonly',true);
+					
+					$cantpres.val(parseFloat('0.00').toFixed(noDecimales));
+					$cantuni.val(parseFloat('0.00').toFixed(noDecimales));
+					
+					jAlert('Es necesario seleccionar una Presentaci&oacute;n.', 'Atencion!', function(r) { $grid_productos.find('select.presDest'+ noTr).focus(); });
+				}
+				
+				$presDestId.val(idPres);
+			}else{
+				//aqui entra porque ya existe un registro con el Mismo almacen destino y la mismam presentacion en el Grid,
+				//por lo tanto no hya que permitir este cambio de Presentacion.
+				jAlert('No se puede asignar &eacute;sta Presentaci&oacute;n para &eacute;ste Almacen, ya existe un registro igual.', 'Atencion!', function(r) { 
+					var html_select='';
+					$grid_productos.find('select.presDest'+ noTr).find('option').each(function(){
+						if(parseInt($(this).val())==parseInt($presDestId.val())){
+							html_select += '<option value="' + $(this).val() + '" selected="yes">' + $(this).text() + '</option>';
+						}else{
+							html_select += '<option value="' + $(this).val() + '"  >' + $(this).text() + '</option>';
+						}
+					});
+					
+					$grid_productos.find('select.presDest'+ noTr).children().remove();
+					$grid_productos.find('select.presDest'+ noTr).append(html_select);
+					$grid_productos.find('select.presDest'+ noTr).focus();
+				});
+			}
+			
+			//llamada a la funcion que calcula Cantidades Asignados y Disponibles
+			$calculoCantidadesAsignadosDisponibles(arregloEnv);
+		});
+	};
+	
 	
 	
 	
@@ -361,10 +555,11 @@ $(function() {
 				trr += '<a href="#" class="delete'+ noTr +'">&nbsp;&nbsp;-&nbsp;&nbsp;</a>';
 				trr += '<input type="hidden" 	name="eliminado" id="elim" class="elim'+ noTr +'" value="1">';
 				trr += '<input type="hidden" 	name="iddetalle" id="idd"  class="idd'+ noTr +'" value="'+idDet+'">';//este es el id del registro que ocupa el producto en la tabla detalle
-				trr += '<input type="hidden" 	name="notr" value="'+ noTr +'">';
+				trr += '<input type="hidden" 	name="notr" class="notr'+ noTr +'" value="'+ noTr +'">';
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
+				trr += '<input type="hidden" 	name="amlDestId" class="amlDestId'+ noTr +'" value="0">';
 				trr += '<select name="select_aml_dest" class="amlDest'+ noTr +'" style="width:176px;"></select>';
 			trr += '</td>';
 			
@@ -421,6 +616,9 @@ $(function() {
 		
 		//al perder enfoque el campo cantidad
 		$grid_productos.find('input.cantPres'+ noTr).blur(function(){
+			var idPres = $grid_productos.find('select.presDest'+ noTr).val();
+			var $cantuni = $grid_productos.find('input[name=cantuni'+ noTr +']');
+			
 			if($(this).val().trim()==''){
 				$(this).val(' ');
 			}else{
@@ -453,6 +651,13 @@ $(function() {
 					});
 				}else{
 					$(this).val( parseFloat($(this).val()).toFixed(noDec) );
+					
+					//llamada a la funcion que calcula la existencia convertido en la unidad del producto
+					var exisUnidad = $convertirPresAUni(idPres, $(this).val(), arregloEnv);
+					$cantuni.val(parseFloat(exisUnidad).toFixed(noDec));
+					
+					//llamada a la funcion que calcula Cantidades Asignados y Disponibles
+					$calculoCantidadesAsignadosDisponibles(arregloEnv);
 				}
 			}
 		});
@@ -508,39 +713,11 @@ $(function() {
 		$grid_productos.find('input.cantPres'+ noTr).attr('readonly',true);
 		$grid_productos.find('input.cantPres'+ noTr).css({'background' : '#F0F0F0'});
 		
-		//cambiar presentacion de Envase
-		$grid_productos.find('select.presDest'+ noTr).change(function(){
-			var idPres = $(this).val();
-			var $cantpres = $grid_productos.find('input.cantPres'+ noTr);
-			var $cantuni = $grid_productos.find('input[name=cantuni'+ noTr +']');
-			var noDecimales = $grid_productos.find('input.noDec'+ noTr).val();
-			var $presDestId = $grid_productos.find('input.presDestId'+ noTr)
-			
-			if(parseInt(idPres)>0){
-				if(parseFloat($exis_pres.val())>0){
-					$cantpres.css({'background' : '#ffffff'});
-					$cantpres.attr('readonly',false);
-					
-					var exisPresentaciones = $convertirUniAPres(idPres, $exis_uni.val(), arregloEnv);
-					
-					//llamada a la funcion que calcula la existencia convertido en la unidad del producto
-					var exisUnidad = $convertirPresAUni(idPres, exisPresentaciones, arregloEnv);
-					
-					$cantpres.val(parseFloat(exisPresentaciones).toFixed(noDecimales));
-					$cantuni.val(parseFloat(exisUnidad).toFixed(noDecimales));
-					
-					$presDestId.val(idPres);
-				}
-			}else{
-				$cantpres.css({'background' : '#F0F0F0'});
-				$cantpres.attr('readonly',true);
-				
-				$cantpres.val(parseFloat('0.00').toFixed(noDecimales));
-				$cantuni.val(parseFloat('0.00').toFixed(noDecimales));
-				
-				jAlert('Es necesario seleccionar una Presentaci&oacute;n.', 'Atencion!', function(r) { $grid_productos.find('select.presDest'+ noTr).focus(); });
-			}
-		});
+		//llamada a la funcion que aplica evento change al select de Presentacion destino que esta en el Grid
+		$aplicarEventoChangeSelectPresDestino($grid_productos, noTr, $disp_pres, $disp_uni, arregloEnv);
+		
+		//llamada a la funcion que aplica evento change al select de Almacen destino que esta en el Grid
+		$aplicarEventoChangeSelectAlmacenDestino($grid_productos, noTr);
 		
 		//asignar el enfoque
 		$grid_productos.find('input.cantPres'+ noTr).focus();
