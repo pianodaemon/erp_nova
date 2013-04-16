@@ -23,6 +23,8 @@ $(function() {
     //Se utiliza en el buscador principal y en el plugin
     var arrayPresentaciones;
 	
+	//arreglo para los Envases COnfigurados para este producto
+	var arregloEnvases;
 	
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -279,6 +281,7 @@ $(function() {
 		
 	}
 	
+
 	
 	$permitir_solo_numeros = function($campo){
 		//validar campo costo, solo acepte numeros y punto
@@ -293,147 +296,268 @@ $(function() {
 	}
 	
 	
-	var $agregarTr = function(id_producto, codigo, descripcion, unidad, cantidad, iddetalle, noDec){
+	var $contarRegistrosActivos = function($grid_productos){
+		var encontrado=0;
+		
+		//busca el codigo del producto en el grid
+		$grid_productos.find('tr').each(function (index){
+			if(parseInt($(this).find('input[name=eliminado]').val())!=0){
+				encontrado++;//contador de Registros activos en el grid
+			}
+		});
+		
+		return encontrado;
+	}
+	
+	
+	//convertir la Presentacion en cantidad de acuerdo a la Unidad de Medida del Producto
+	$convertirPresAUni = function(idPres, cantPres, arrayPres){
+		var valor=0;
+		$.each(arrayPres,function(entryIndex,pres){
+			if(parseInt(pres['id'])==parseInt(idPres)){
+				valor = parseFloat(cantPres) * parseFloat(pres['equivalencia']);
+			}
+		});
+		return valor;
+	}
+	
+	//convertir la Cantidad de Unidades en cantidad de Presentaciones
+	$convertirUniAPres = function(idPres, cantUni, arrayPres){
+		var valor=0;
+		$.each(arrayPres,function(entryIndex,pres){
+			if(parseInt(pres['id'])==parseInt(idPres)){
+				valor = parseFloat(cantUni) / parseFloat(pres['equivalencia']);
+				alert("idPres:"+idPres+"\ncantUni:"+cantUni+"\nequivalencia:"+pres['equivalencia']);
+			}
+		});
+		return valor;
+	}
+	
+	
+	
+	
+	var $agregarTr = function(idDet, idAlm, idPres, cantPres, unidad, cantUni, noDec, arregloEnv){
+		var $select_almacen_orig = $('#forma-envreenv-window').find('select[name=select_almacen_orig]');
+		var $select_presentacion_orig = $('#forma-envreenv-window').find('select[name=select_presentacion_orig]');
+		var $exis_pres = $('#forma-envreenv-window').find('input[name=exis_pres]');
+		var $disp_pres = $('#forma-envreenv-window').find('input[name=disp_pres]');
+		var $exis_uni = $('#forma-envreenv-window').find('input[name=exis_uni]');
+		var $disp_uni = $('#forma-envreenv-window').find('input[name=disp_uni]');
+		
 		//grid de productos
 		var $grid_productos = $('#forma-envreenv-window').find('#grid_productos');
 		
 		//obtiene numero de trs
 		var noTr = $("tr", $grid_productos).size();
-		var encontrado = 0;
-		
-		if(parseInt(noTr)>0){
-			//busca el codigo del producto en el grid
-			$grid_productos.find('tr').each(function (index){
-				if(( $(this).find('input[name=cod]').val() == codigo.toUpperCase() ) && (parseInt($(this).find('input[name=eliminado]').val())!=0)){
-					encontrado=1;//el producto ya esta en el grid
-				}
-			});
-		}
-		
 		noTr++;
+	
+		var trr = '';
+		trr = '<tr>';
+			trr += '<td class="grid" style="font-size:14px; font-weight:bold; border:1px solid #C1DAD7;" width="30">';
+				trr += '<a href="#" id="add" class="add'+ noTr +'">&nbsp;&nbsp;+&nbsp;&nbsp;</a>';
+			trr += '</td>';
+			
+			trr += '<td class="grid" style="font-size:15px; font-weight:bold; border:1px solid #C1DAD7;" width="30">';
+				trr += '<a href="#" class="delete'+ noTr +'">&nbsp;&nbsp;-&nbsp;&nbsp;</a>';
+				trr += '<input type="hidden" 	name="eliminado" id="elim" class="elim'+ noTr +'" value="1">';
+				trr += '<input type="hidden" 	name="iddetalle" id="idd"  class="idd'+ noTr +'" value="'+idDet+'">';//este es el id del registro que ocupa el producto en la tabla detalle
+				trr += '<input type="hidden" 	name="notr" value="'+ noTr +'">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
+				trr += '<select name="select_aml_dest" class="amlDest'+ noTr +'" style="width:176px;"></select>';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="130">';
+				trr += '<input type="hidden" 	name="presDestId" class="presDestId'+ noTr +'" value="0">';
+				trr += '<select name="select_pres_dest" class="presDest'+ noTr +'" style="width:126px;"></select>';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="85">';
+				trr += '<input type="text" 	name="cantpres" value="'+ cantPres +'" id="cantpres" class="cantPres'+ noTr +'" style="width:80px;" maxlength="10">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+				trr += '<input type="text" 	name="uni'+ noTr +'" value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+				trr += '<input type="hidden" 	name="noDec" class="noDec'+ noTr +'" value="'+ noDec +'">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="95">';
+				trr += '<input type="text" 	name="cantuni'+ noTr +'" id="cantuni" value="'+ cantUni +'" class="borde_oculto" readOnly="true" style="width:90px; text-align:right;">';
+			trr += '</td>';
+			
+		trr += '</tr>';
+		$grid_productos.append(trr);
 		
-		if(parseInt(encontrado)<=0){//si el producto no esta en el grid entra aqui
-			var trr = '';
-			trr = '<tr>';
-				trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="58">';
-					trr += '<a href="elimina_producto" class="delete'+ noTr +'">Eliminar</a>';
-					trr += '<input type="hidden" 	name="eliminado" id="elim" class="elim'+ noTr +'" value="1">';
-					trr += '<input type="hidden" 	name="iddetalle" id="idd"  class="idd'+ noTr +'" value="'+iddetalle+'">';//este es el id del registro que ocupa el producto en la tabla detalle
-					trr += '<input type="hidden" 	name="notr" value="'+ noTr +'">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="130">';
-					trr += '<input type="hidden" 	name="idprod" id="idprod" value="'+ id_producto +'">';
-					trr += '<input type="text" 		name="cod" value="'+ codigo +'" id="cod" class="borde_oculto" readOnly="true" style="width:126px;">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="290">';
-					trr += '<input type="text" 		name="desc" value="'+ descripcion +'" id="desc" class="borde_oculto" readOnly="true" style="width:286px;">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<input type="text" 		name="uni" value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
-				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input type="text" 		name="cant" value="'+ cantidad +'" id="cant" class="cant'+ noTr +'" style="width:76px;" maxlength="10">';
-				trr += '</td>';
-			trr += '</tr>';
-			
-			$grid_productos.append(trr);
-			
-			$permitir_solo_numeros($grid_productos.find('input.cant'+ noTr));
-			
-			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-			$grid_productos.find('input.cant'+ noTr).focus(function(e){
-				if($(this).val().trim()==''){
+		$permitir_solo_numeros($grid_productos.find('input.cantPres'+ noTr));
+		
+		//aqui clonamos el select de almacenes para cargar el select del grid
+		$select_almacen_orig.find('option').clone().appendTo($grid_productos.find('select.amlDest'+ noTr));
+		
+		//aqui clonamos el select de Envases del Producto para cargar el select del grid(el select de Envases esta oculto)
+		//$('#forma-envreenv-window').find('select[name=select_envases]').find('option').clone().appendTo($grid_productos.find('select.presDest'+ noTr));
+		
+		//cargamos los envases que son diferentes a la presentacion original
+		var html_env = '<option value="0" selected="yes">[-Presentaci&oacute;n--]</option>';
+		$grid_productos.find('select.presDest'+ noTr).children().remove();
+			$.each(arregloEnv,function(entryIndex,env){
+				if(parseInt($select_presentacion_orig.val()) != parseInt(env['id'])){
+					html_env += '<option value="' + env['id'] + '"  >' + env['titulo'] + '</option>';
+				}
+			});
+		$grid_productos.find('select.presDest'+ noTr).append(html_env);
+		
+		
+		//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+		$grid_productos.find('input.cantPres'+ noTr).focus(function(e){
+			if($(this).val().trim()==''){
+				$(this).val('');
+			}else{
+				if( parseFloat($(this).val())==0 ){
 					$(this).val('');
+				}
+			}
+		});
+		
+		//al perder enfoque el campo cantidad
+		$grid_productos.find('input.cantPres'+ noTr).blur(function(){
+			if($(this).val().trim()==''){
+				$(this).val(' ');
+			}else{
+				//validar numero de decimales
+				var patron = /^-?[0-9]+([,\.][0-9]{0,0})?$/;
+				
+				if(parseInt(noDec)==1){
+					patron = /^-?[0-9]+([,\.][0-9]{0,1})?$/;
+				}
+				if(parseInt(noDec)==2){
+					patron = /^-?[0-9]+([,\.][0-9]{0,2})?$/;
+				}
+				if(parseInt(noDec)==3){
+					patron = /^-?[0-9]+([,\.][0-9]{0,3})?$/;
+				}
+				if(parseInt(noDec)==4){
+					patron = /^-?[0-9]+([,\.][0-9]{0,4})?$/;
+				}
+				if(parseInt(noDec)==5){
+					patron = /^-?[0-9]+([,\.][0-9]{0,5})?$/;
+				}
+				if(parseInt(noDec)==6){
+					patron = /^-?[0-9]+([,\.][0-9]{0,6})?$/;
+				}
+				
+				if(!patron.test($(this).val())){
+					jAlert('El n&uacute;mero de decimales es incorrecto, solo debe ser '+noDec+'.', 'Atencion!', function(r) {
+						$grid_productos.find('input.cantPres'+ noTr).val('');
+						$grid_productos.find('input.cantPres'+ noTr).focus();
+					});
 				}else{
-					if( parseFloat($(this).val())==0 ){
-						$(this).val('');
-					}
+					$(this).val( parseFloat($(this).val()).toFixed(noDec) );
 				}
-			});
+			}
+		});
+		
+		
+		//Agregar nueva  fila al grid
+		$grid_productos.find('.add'+ noTr).bind('click',function(event){
+			event.preventDefault();
+			var idDetalle = 0;
+			var idAlmacen = 0;
+			var idPresentacion = 0;
+			var cantPresentacion = 0;
+			var unidadMedida = $grid_productos.find('input[name=uni'+ noTr +']').val();
+			var cantUnidad = 0; 
+			var noDecimales = noDec;
 			
-			//al perder enfoque el campo cantidad
-			$grid_productos.find('input.cant'+ noTr).blur(function(){
-				if($(this).val().trim()==''){
-					$(this).val(' ');
-				}else{
-					//validar numero de decimales
-					var patron = /^-?[0-9]+([,\.][0-9]{0,0})?$/;
-					
-					if(parseInt(noDec)==1){
-						patron = /^-?[0-9]+([,\.][0-9]{0,1})?$/;
-					}
-					if(parseInt(noDec)==2){
-						patron = /^-?[0-9]+([,\.][0-9]{0,2})?$/;
-					}
-					if(parseInt(noDec)==3){
-						patron = /^-?[0-9]+([,\.][0-9]{0,3})?$/;
-					}
-					if(parseInt(noDec)==4){
-						patron = /^-?[0-9]+([,\.][0-9]{0,4})?$/;
-					}
-					if(parseInt(noDec)==5){
-						patron = /^-?[0-9]+([,\.][0-9]{0,5})?$/;
-					}
-					if(parseInt(noDec)==6){
-						patron = /^-?[0-9]+([,\.][0-9]{0,6})?$/;
-					}
-					
-					if(!patron.test($(this).val())){
-						jAlert('El n&uacute;mero de decimales es incorrecto, solo debe ser '+noDec+'.', 'Atencion!', function(r) {
-							$grid_productos.find('input.cant'+ noTr).val('');
-							$grid_productos.find('input.cant'+ noTr).focus();
-						});
-					}else{
-						$(this).val( parseFloat($(this).val()).toFixed(noDec) );
-					}
+			$agregarTr(idDetalle, idAlmacen, idPresentacion, cantPresentacion, unidadMedida, cantUnidad, noDecimales, arregloEnv);
+		});
+		
+		
+		
+		
+		//elimina un producto del grid
+		$grid_productos.find('.delete'+ noTr).bind('click',function(event){
+			event.preventDefault();
+			if(parseInt($(this).parent().find('#elim').val()) != 0){
+				//tomamos el id detalle
+				var idDetalle = $(this).parent().find('#idd').val();
+				
+				//asigna espacios en blanco a todos los input de la fila eliminada
+				$(this).parent().parent().find('input').val(' ');
+				
+				//asigna un 0 al input eliminado como bandera para saber que esta eliminado
+				$(this).parent().find('#elim').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
+				
+				//devolvemos el id detalle para conservar el id eliminado y eliminarlo de la tabla detalle
+				$(this).parent().find('#idd').val(idDetalle);
+				
+				//oculta la fila eliminada
+				$(this).parent().parent().hide();
+				
+				//contar activos
+				var regAct = $contarRegistrosActivos($grid_productos);
+				alert(regAct);
+				if(parseInt(regAct)>0 ){
+					$('#forma-envreenv-window').find('input[name=valor_ant_pres]').val(0);
 				}
-			});
+			}
+		});
+		
+		
+		//por default el tr se agrega con estos valores
+		$grid_productos.find('input.cantPres'+ noTr).attr('readonly',true);
+		$grid_productos.find('input.cantPres'+ noTr).css({'background' : '#F0F0F0'});
+		
+		//cambiar presentacion de Envase
+		$grid_productos.find('select.presDest'+ noTr).change(function(){
+			var idPres = $(this).val();
+			var $cantpres = $grid_productos.find('input.cantPres'+ noTr);
+			var $cantuni = $grid_productos.find('input[name=cantuni'+ noTr +']');
+			var noDecimales = $grid_productos.find('input.noDec'+ noTr).val();
+			var $presDestId = $grid_productos.find('input.presDestId'+ noTr)
 			
-			//elimina un producto del grid
-			$grid_productos.find('.delete'+ noTr).bind('click',function(event){
-				event.preventDefault();
-				if(parseInt($(this).parent().find('#elim').val()) != 0){
-					//tomamos el id detalle
-					var idDetalle = $(this).parent().find('#idd').val();
+			if(parseInt(idPres)>0){
+				if(parseFloat($exis_pres.val())>0){
+					$cantpres.css({'background' : '#ffffff'});
+					$cantpres.attr('readonly',false);
 					
-					//asigna espacios en blanco a todos los input de la fila eliminada
-					$(this).parent().parent().find('input').val(' ');
+					var exisPresentaciones = $convertirUniAPres(idPres, $exis_uni.val(), arregloEnv);
 					
-					//asigna un 0 al input eliminado como bandera para saber que esta eliminado
-					$(this).parent().find('#elim').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
+					//llamada a la funcion que calcula la existencia convertido en la unidad del producto
+					var exisUnidad = $convertirPresAUni(idPres, exisPresentaciones, arregloEnv);
 					
-					//devolvemos el id detalle para conservar el id eliminado y eliminarlo de la tabla detalle
-					$(this).parent().find('#idd').val(idDetalle);
+					$cantpres.val(parseFloat(exisPresentaciones).toFixed(noDecimales));
+					$cantuni.val(parseFloat(exisUnidad).toFixed(noDecimales));
 					
-					//oculta la fila eliminada
-					$(this).parent().parent().hide();
+					$presDestId.val(idPres);
 				}
-			});
-			
-			//Limpiar los campos Codigo y Nombre del producto
-			$('#forma-envreenv-window').find('input[name=codigo_componente]').val('');
-			$('#forma-envreenv-window').find('input[name=nombre_componente]').val('');
-			
-			//asignar el enfoque
-			$grid_productos.find('input.cant'+ noTr).focus();
-			
-		}else{
-			jAlert('El producto: '+codigo+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
-				$('#forma-envreenv-window').find('input[name=codigo_componente]').focus();
-			});
-		}
+			}else{
+				$cantpres.css({'background' : '#F0F0F0'});
+				$cantpres.attr('readonly',true);
+				
+				$cantpres.val(parseFloat('0.00').toFixed(noDecimales));
+				$cantuni.val(parseFloat('0.00').toFixed(noDecimales));
+				
+				jAlert('Es necesario seleccionar una Presentaci&oacute;n.', 'Atencion!', function(r) { $grid_productos.find('select.presDest'+ noTr).focus(); });
+			}
+		});
+		
+		//asignar el enfoque
+		$grid_productos.find('input.cantPres'+ noTr).focus();
+		
 	};
 	
 	
 	
 	
-	var $agregarDatosProductoSeleccionado = function(id_producto, codigo, descripcion, unidad, arregloPres, arregloEnvases, noDec){
+	var $agregarDatosProductoSeleccionado = function(id_producto, codigo, descripcion, unidad, arregloPres, arregloEnv, noDec){
 		$('#forma-envreenv-window').find('input[name=producto_id]').val(id_producto);
 		$('#forma-envreenv-window').find('input[name=codigo]').val(codigo);
 		$('#forma-envreenv-window').find('input[name=descripcion]').val(descripcion);
 		$('#forma-envreenv-window').find('input[name=unidad]').val(unidad);
+		$('#forma-envreenv-window').find('input[name=no_dec]').val(noDec);
 		
-		var html_pres = '<option value="0" selected="yes">[-Presentaci&oacute;n--]</option>';
+		var html_pres = '<option value="0">[-Presentaci&oacute;n--]</option>';
 		$('#forma-envreenv-window').find('select[name=select_presentacion_orig]').children().remove();
 		if (parseInt(arregloPres.length) > 0){
 			$.each(arregloPres,function(entryIndex,pres){
@@ -442,23 +566,23 @@ $(function() {
 		}
 		$('#forma-envreenv-window').find('select[name=select_presentacion_orig]').append(html_pres);
 		
-		
 		var html_env = '<option value="0" selected="yes">[-Presentaci&oacute;n--]</option>';
 		$('#forma-envreenv-window').find('select[name=select_envases]').children().remove();
-		if (parseInt(arregloEnvases.length) > 0){
-			$.each(arregloEnvases,function(entryIndex,env){
+		if (parseInt(arregloEnv.length) > 0){
+			
+			$.each(arregloEnv,function(entryIndex,env){
 				html_env += '<option value="' + env['id'] + '"  >' + env['titulo'] + '</option>';
 			});
-		}else{
+			$('#forma-envreenv-window').find('select[name=select_envases]').append(html_env);
 			
+			//ocultar el buscador de productos
+			$('#forma-envreenv-window').find('#buscar_producto').hide();
+		}else{
+			jAlert('No se ha configurado Envase para &eacute;ste Producto.', 'Atencion!', function(r) { 
+				$('#forma-envreenv-window').find('input[name=codigo]').focus();
+			});
 		}
-		$('#forma-envreenv-window').find('select[name=select_envases]').append(html_env);
 		
-		//ocultar el buscador de productos
-		$('#forma-envreenv-window').find('#buscar_producto').hide();
-		
-		//asignar el enfoque
-		//$('#forma-envreenv-window').find('input[name=codigo_componente]').focus();
 	}
 	
 	
@@ -572,16 +696,17 @@ $(function() {
 					var iddetalle=0;
 					var noDec = $(this).find('span.dec').html();
 					
-					if(parseInt(tipoBusqueda)==1){
-						//aqui nos vamos a buscar las presentaciones del Producto seleccionado
-						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
-						$arreglo = {'id_prod':id_producto,'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-						$.post(input_json,$arreglo,function(entry){
-							//llamada a la funcion para agregar los datos del Producto seleccionado
-							$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry['Presentaciones'], entry['Envases'], noDec);
-						});
-					}
-					
+					//aqui nos vamos a buscar las presentaciones del Producto seleccionado
+					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
+					$arreglo = {'id_prod':id_producto,'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+					$.post(input_json,$arreglo,function(entry){
+						//se la asigna valor al arreglo global de Envases
+						arregloEnvases=entry['Envases'];
+						
+						//llamada a la funcion para agregar los datos del Producto seleccionado
+						$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry['Presentaciones'], entry['Envases'], noDec);
+					});
+
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
 					$('#forma-buscaproducto-overlay').fadeOut(remove);
@@ -658,18 +783,6 @@ $(function() {
 		
 		$buscar_producto.show();
 	}
-
-
-	//convertir la Presentacion en cantidad de acuerdo a la Unidad de Medida del Producto
-	$convertirPresAUni = function(idPres, cantPres, arrayPres){
-		var valor=0;
-		$.each(arrayPres,function(entryIndex,pres){
-			if(parseInt(pres['id'])==parseInt(idPres)){
-				valor = parseFloat(cantPres) * parseFloat(pres['equivalencia']);
-			}
-		});
-		return valor;
-	}
 	
 	
 	
@@ -699,10 +812,12 @@ $(function() {
 		var $codigo = $('#forma-envreenv-window').find('input[name=codigo]');
 		var $descripcion = $('#forma-envreenv-window').find('input[name=descripcion]');
 		var $select_presentacion_orig = $('#forma-envreenv-window').find('select[name=select_presentacion_orig]');
+		var $valor_ant_pres = $('#forma-envreenv-window').find('input[name=valor_ant_pres]');
 		var $select_envases = $('#forma-envreenv-window').find('select[name=select_envases]');
 		var $exis_pres = $('#forma-envreenv-window').find('input[name=exis_pres]');
 		var $disp_pres = $('#forma-envreenv-window').find('input[name=disp_pres]');
 		var $unidad = $('#forma-envreenv-window').find('input[name=unidad]');
+		var $no_dec = $('#forma-envreenv-window').find('input[name=no_dec]');
 		var $exis_uni = $('#forma-envreenv-window').find('input[name=exis_uni]');
 		var $disp_uni = $('#forma-envreenv-window').find('input[name=disp_uni]');
 		
@@ -873,12 +988,6 @@ $(function() {
 			indiceTitulo = 'nombre_empleado';
 			$carga_campos_select($select_empleado, entry['Empleados'], elemento_seleccionado, texto_elemento_cero, indiceId, indiceTitulo);
 			
-			/*
-			$select_estatus
-			$select_empleado
-			$select_almacen_orig
-			$select_presentacion_orig
-			*/
 		});//termina llamada json
 		
 		
@@ -904,6 +1013,9 @@ $(function() {
 						var unidad = entry2['Producto'][0]['unidad'];
 						var noDec = entry2['Producto'][0]['decimales'];
 						
+						//se la asigna valor al arreglo global de Envases
+						arregloEnvases=entry2['Envases'];
+						
 						//llamada a la funcion para agregar datos del producto
 						$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry2['Presentaciones'], entry2['Envases'], noDec);
 					}else{
@@ -923,6 +1035,7 @@ $(function() {
 							// If they confirmed, manually trigger a form submission
 							if (r) {
 								$vaciar_campos($producto_id, $codigo, $descripcion, $unidad, $exis_pres, $disp_pres, $exis_uni, $disp_uni, $select_presentacion_orig, $select_envases, $grid_productos, $buscar_producto);
+								arregloEnvases=null;
 								return true;
 							}else{
 								$codigo.val(valor);
@@ -939,49 +1052,93 @@ $(function() {
 		
 		
 		
-		$select_presentacion_orig.change(function(){
-			var idPres = $(this).val();
-			if(parseInt(idPres)>0){
-				//buscar existencias al seleccionar una presentacion
-				var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getExisPres.json';
-				var $arreglo3 = {'id_prod':$producto_id.val(), 'id_pres':idPres, 'id_alm':$select_almacen_orig.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+		
+		
+		
+		$aplicarEventoChange = function($campo_select){
+			$campo_select.change(function(){
+				var idPres = $(this).val();
 				
-				$.post(input_json3,$arreglo3,function(entry3){
-					if(parseInt(entry3['Exis'].length) > 0 ){
-						var exisPres = entry3['Exis'][0]['exis'];
-						var noDec = entry3['Exis'][0]['decimales'];
+				//contar registros activos en el grid
+				var regAct = $contarRegistrosActivos($grid_productos);
+				
+				if(parseInt(regAct)<=0 ){
+					if(parseInt(idPres)>0){
+						//buscar existencias al seleccionar una presentacion
+						var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getExisPres.json';
+						var $arreglo3 = {'id_prod':$producto_id.val(), 'id_pres':idPres, 'id_alm':$select_almacen_orig.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 						
-						//llamada a la funcion que calcula la existencia convertido en la unidad del producto
-						var exisUnidad = $convertirPresAUni(idPres, exisPres, arrayPresentaciones);
-						
-						$exis_pres.val(exisPres);
-						$disp_pres.val(exisPres);
-						$exis_uni.val(parseFloat(exisUnidad).toFixed(noDec));
-						$disp_uni.val(parseFloat(exisUnidad).toFixed(noDec));
-						
-						//llamada a la funcion para agregar datos del producto
-						//$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry2['Presentaciones'], entry2['Envases'], noDec);
+						$.post(input_json3,$arreglo3,function(entry3){
+							if(parseInt(entry3['Exis'].length) > 0 ){
+								var exisPres = entry3['Exis'][0]['exis'];
+								var noDec = entry3['Exis'][0]['decimales'];
+								
+								//llamada a la funcion que calcula la existencia convertido en la unidad del producto
+								var exisUnidad = $convertirPresAUni(idPres, exisPres, arrayPresentaciones);
+								
+								$exis_pres.val(exisPres);
+								$disp_pres.val(exisPres);
+								$exis_uni.val(parseFloat(exisUnidad).toFixed(noDec));
+								$disp_uni.val(parseFloat(exisUnidad).toFixed(noDec));
+								
+								var idDetalle = 0;
+								var idAlmacen = 0;
+								var idPresentacion = 0;
+								var cantPresentacion = 0;
+								var unidadMedida = $unidad.val();
+								var cantUnidad = 0;
+								var noDecimales = $no_dec.val();
+								
+								$agregarTr(idDetalle, idAlmacen, idPresentacion, cantPresentacion, unidadMedida, cantUnidad, noDecimales, arregloEnvases);
+								
+							}else{
+								$exis_pres.val('0.00');
+								$disp_pres.val('0.00');
+								$exis_uni.val('0.00');
+								$disp_uni.val('0.00');
+								jAlert('No hay existencias en &eacute;sta Presentaci&oacute;n..', 'Atencion!', function(r) { 
+									$campo_select.focus();
+								});
+							}
+						});
 					}else{
 						$exis_pres.val('0.00');
 						$disp_pres.val('0.00');
 						$exis_uni.val('0.00');
 						$disp_uni.val('0.00');
-						jAlert('No hay existencias en &eacute;sta Presentaci&oacute;n..', 'Atencion!', function(r) { 
-							$select_presentacion_orig.focus();
-						});
+						jAlert('Es necesario seleccionar una Presentaci&oacute;n.', 'Atencion!', function(r) { $campo_select.focus(); });
 					}
-				});
-				
-			}else{
-				$exis_pres.val('0.00');
-				$disp_pres.val('0.00');
-				$exis_uni.val('0.00');
-				$disp_uni.val('0.00');
-				jAlert('Es necesario seleccionar una Presentaci&oacute;n.', 'Atencion!', function(r) { $select_presentacion_orig.focus(); });
-			}
-		});
+					
+					$valor_ant_pres.val(idPres);
+				}else{
+					if(parseInt($valor_ant_pres.val())>0 ){
+						jAlert('No es posible cambiar la Presentaci&oacute;n, hay registros en el listado para envasar.\nElimine los Envases del listado para habilitar el cambio de la Presentaci&oacute;n.', 'Atencion!', function(r) { 
+							var html_select='';
+							
+							$campo_select.find('option').each(function(){
+								if(parseInt($(this).val())==parseInt($valor_ant_pres.val())){
+									html_select += '<option value="' + $(this).val() + '" selected="yes">' + $(this).text() + '</option>';
+								}else{
+									html_select += '<option value="' + $(this).val() + '"  >' + $(this).text() + '</option>';
+								}
+							});
+							
+							$campo_select.children().remove();
+							$campo_select.append(html_select);
+							
+							$campo_select.focus();
+						});
+					}else{
+						//aqui es una llamada recursiva a esta misma funcion
+						$aplicarEventoChange($campo_select);
+					}
+				}
+			});
+		}
 		
 		
+		//aplicar el evento change
+		$aplicarEventoChange($select_presentacion_orig);
 		
 		
 		
