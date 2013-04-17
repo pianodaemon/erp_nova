@@ -54,11 +54,14 @@ $(function() {
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
     
 	var $cadena_busqueda = "";
-	var $busqueda_select_tipo_prod = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_tipo_prod]');
+	
+	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
+	var $busqueda_select_alm_origen = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_alm_origen]');
 	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
 	var $busqueda_descripcion = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_descripcion]');
 	var $busqueda_select_pres = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_pres]');
-	
+	var $busqueda_select_empleado = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_empleado]');
+	var $busqueda_select_estado = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_estado]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	
@@ -66,10 +69,13 @@ $(function() {
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "tipo_prod" + signo_separador + $busqueda_select_tipo_prod.val() + "|";
+		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
+		valor_retorno += "almacen" + signo_separador + $busqueda_select_alm_origen.val() + "|";
 		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
 		valor_retorno += "descripcion" + signo_separador + $busqueda_descripcion.val() + "|";
 		valor_retorno += "presentacion" + signo_separador + $busqueda_select_pres.val() + "|";
+		valor_retorno += "empleado" + signo_separador + $busqueda_select_empleado.val() + "|";
+		valor_retorno += "estado" + signo_separador + $busqueda_select_estado.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
@@ -89,21 +95,18 @@ $(function() {
 		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosBuscadorPrincipal.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 		$.post(input_json_lineas,$arreglo,function(data){
-			
+			/*
 			//carga select de tipos de producto
 			$busqueda_select_tipo_prod.children().remove();
 			var prodtipos = '<option value="0">[--Seleccionar Tipo--]</option>';
 			$.each(data['ProdTipos'],function(entryIndex,tp){
 				prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
-				/*
-				if(parseInt(tp['id'])==1){
-					prodtipos += '<option value="' + tp['id'] + '" selected="yes">' + tp['titulo'] + '</option>';
-				}else{
-					prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
-				}
-				*/
+				
+				
 			});
 			$busqueda_select_tipo_prod.append(prodtipos);
+			*/
+			
 			
 			//carga select de Presentaciones
 			$busqueda_select_pres.children().remove();
@@ -126,32 +129,18 @@ $(function() {
 	
 	$limpiar.click(function(event){
 		event.preventDefault();
+		$busqueda_folio.val('');
 		$busqueda_codigo.val('');
 		$busqueda_descripcion.val('');
+		/*
+		$busqueda_select_alm_origen
+		$busqueda_select_pres
+		$busqueda_select_empleado
+		$busqueda_select_estado
+		*/
+		$cargar_datos_buscador_principal();
 		
-		//carga select de tipos de producto
-		$busqueda_select_tipo_prod.children().remove();
-		var prodtipos = '<option value="0">[--Seleccionar Tipo--]</option>';
-		$.each(arrayProdTipos,function(entryIndex,tp){
-			/*
-			if(parseInt(tp['id'])==1){
-				prodtipos += '<option value="' + tp['id'] + '" selected="yes">' + tp['titulo'] + '</option>';
-			}else{
-				prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
-			}*/
-			prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
-		});
-		$busqueda_select_tipo_prod.append(prodtipos);
-		
-		//carga select de Presentaciones
-		$busqueda_select_pres.children().remove();
-		var presentacion = '<option value="0">[-Presentaci&oacute;n--]</option>';
-		$.each(arrayPresentaciones,function(entryIndex,pres){
-			presentacion += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
-		});
-		$busqueda_select_pres.append(presentacion);
-		
-		$busqueda_codigo.focus();
+		$busqueda_folio.focus();
 	});
 	
 	
@@ -183,15 +172,18 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
-		$busqueda_codigo.focus();
+		$busqueda_folio.focus();
 	});
 	
 	
 	//aplicar evento keypress a campos para ejecutar la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_descripcion, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_alm_origen, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_pres, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_tipo_prod, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_empleado, $buscar);
+	
 	
 	//------------------------------------------------------------------
     //valida la fecha seleccionada
