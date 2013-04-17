@@ -114,7 +114,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_CXC_REPORTE_CLIENTES,
         ROLE_COT_POLITICAS_PAGO,
         ROLE_ENV_CONFIGURACION,
-        ROLE_ENV_REENVASADO" />
+        ROLE_ENV_REENVASADO,
+        ROLE_FAC_CONSULTA_CANCELACION" />
         
         
         
@@ -124,7 +125,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/cotizaciones/startup.agnux" access="ROLE_ADMIN,ROLE_COTIZACION" />
         <intercept-url pattern="/controllers/entradamercancias/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURAS_COMPRAS" />
         <intercept-url pattern="/controllers/prefacturas/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURACION" />
-        <intercept-url pattern="/controllers/facturas/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURACION" />
+        <intercept-url pattern="/controllers/facturas/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_CONSULTA_CANCELACION" />
         <intercept-url pattern="/controllers/carteras/startup.agnux" access="ROLE_ADMIN,ROLE_COBRANZA" />
         <intercept-url pattern="/controllers/agentes/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_AGENTE" />
         <intercept-url pattern="/controllers/clientsclasif1/startup.agnux" access="ROLE_ADMIN" />
