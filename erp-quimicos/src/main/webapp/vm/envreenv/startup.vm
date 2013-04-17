@@ -173,7 +173,7 @@
 																	<option value="0" selected="yes">[-- Seleccionar Almacen --]</option>
 																</select>
 															</td>
-															<td width="40"></td>
+															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_almacenorig"></div></td>
 															<td width="75"></td>
 															<td width="80"></td>
 															<td width="10"></td>
@@ -203,7 +203,7 @@
 																<select name="select_envases" style="width:120px; display:none;"></select>
 																<input type="hidden" name="valor_ant_pres" value="0">
 															</td>
-															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
+															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacionorig"></div></td>
 															<td width="65">Existencia</td>
 															<td width="90"><input type="text" name="exis_pres" style="width:80px; text-align:right;" readonly="true"></td>
 															<td width="40"></td>
@@ -222,7 +222,7 @@
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
 															<td width="65">Existencia</td>
 															<td width="90"><input type="text" name="exis_uni" style="width:80px; text-align:right;" readonly="true"></td>
-															<td width="40"></td>
+															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_exispres"></div></td>
 															<td width="75">Disponible</td>
 															<td width="80"><input type="text" name="disp_uni" style="width:80px; text-align:right;" readonly="true"></td>
 															<td width="10"></td>
@@ -305,8 +305,8 @@
 															<tr>
 																<td width="10"></td>
 																<td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
-																<td width="90" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo</td>
-																<td width="160" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n</td>
+																<td width="150" style="background-color:#A8A9AB; font-weight: bold;">Almacen Destino</td>
+																<td width="100" style="background-color:#A8A9AB; font-weight: bold;">Presentaci&oacute;n</td>
 																<td width="410" class="td_head" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
 																<td width="10"></td>
 															</tr>
@@ -318,8 +318,8 @@
 																			<!-- Aqui se muestran los warning
 																			<tr>
 																				<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>
-																				<td width="90"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:88px; color:red"></td>
-																				<td width="160"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:160px; color:red"></td>
+																				<td width="150"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:148px; color:red"></td>
+																				<td width="100"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:100px; color:red"></td>
 																				<td width="380"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:380px; color:red"></td>
 																			</tr>
 																			-->

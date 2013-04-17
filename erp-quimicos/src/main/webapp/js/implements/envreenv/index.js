@@ -406,8 +406,14 @@ $(function() {
 						//llamada a la funcion que calcula la existencia convertido en la unidad del producto
 						exisUnidadTr = $convertirPresAUni(idPresDest, $cantPresDest.val(), arregloEnv);
 						
+						//redondear
+						exisUnidadTr = parseFloat(exisUnidadTr).toFixed(noDecimales);
+						
 						sumaCantUnidad = parseFloat(sumaCantUnidad) + parseFloat(exisUnidadTr);
 						//alert("sumaCantUnidad:"+sumaCantUnidad);
+						
+						//redondear
+						sumaCantUnidad = parseFloat(sumaCantUnidad).toFixed(noDecimales);
 						
 						dispUniGlobal = parseFloat($exis_uni.val()) - parseFloat(sumaCantUnidad);
 						//alert("dispUniGlobal:"+dispUniGlobal);
@@ -999,7 +1005,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-envreenv-window').css({"margin-left": -390, 	"margin-top": -210});
+		$('#forma-envreenv-window').css({"margin-left": -390, 	"margin-top": -260});
 		$forma_selected.prependTo('#forma-envreenv-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
@@ -1122,10 +1128,11 @@ $(function() {
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-envreenv-window').find('div.interrogacion').css({'display':'none'});
-				$('#forma-envreenv-window').find('.envreenv_div_one').css({'height':'390px'});//sin errores
+				$('#forma-envreenv-window').find('.envreenv_div_one').css({'height':'450px'});//sin errores
 				
-				$grid_productos.find('#cant').css({'background' : '#ffffff'});
-				$grid_productos.find('#cost').css({'background' : '#ffffff'});
+				$grid_productos.find('select[name=select_aml_dest]').css({'background' : '#ffffff'});
+				$grid_productos.find('select[name=select_pres_dest]').css({'background' : '#ffffff'});
+				$grid_productos.find('input#cantpres').css({'background' : '#ffffff'});
 				
 				$('#forma-envreenv-window').find('#div_warning_grid').css({'display':'none'});
 				$('#forma-envreenv-window').find('#div_warning_grid').find('#grid_warning').children().remove();
@@ -1146,20 +1153,20 @@ $(function() {
 						var cantidad_existencia=0;
 						var  width_td=0;
 						
-						if(tmp.split(':')[0].substring(0,4) == 'cant'){
+						if((tmp.split(':')[0].substring(0,8) == 'cantPres') || (tmp.split(':')[0].substring(0,7) == 'amlDest') || (tmp.split(':')[0].substring(0,8) == 'presDest')){
 							
 							$('#forma-envreenv-window').find('#div_warning_grid').css({'display':'block'});
-							$('#forma-envreenv-window').find('.envreenv_div_one').css({'height':'490px'});//con errores
+							$('#forma-envreenv-window').find('.envreenv_div_one').css({'height':'555px'});//con errores
 							$campo_input = $grid_productos.find('.'+campo);
 							$campo_input.css({'background' : '#d41000'});
 							
-							var codigo_producto = $campo_input.parent().parent().find('input[name=cod]').val();
-							var titulo_producto = $campo_input.parent().parent().find('input[name=desc]').val();
+							var almacen_destino = $campo_input.parent().parent().find('select[name=select_aml_dest]').find('option:selected').text();
+							var presentacion_destino = $campo_input.parent().parent().find('select[name=select_pres_dest]').find('option:selected').text();
 							
 							var tr_warning = '<tr>';
 									tr_warning += '<td width="20"><div><img src="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
-									tr_warning += '<td width="90"><input type="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:88px; color:red"></td>';
-									tr_warning += '<td width="160"><input type="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:160px; color:red"></td>';
+									tr_warning += '<td width="150"><input type="text" value="' + almacen_destino + '" class="borde_oculto" readOnly="true" style="width:148px; color:red"></td>';
+									tr_warning += '<td width="100"><input type="text" value="' + presentacion_destino + '" class="borde_oculto" readOnly="true" style="width:100px; color:red"></td>';
 									tr_warning += '<td width="380"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:380px; color:red"></td>';
 							tr_warning += '</tr>';
 							
@@ -1193,7 +1200,8 @@ $(function() {
 			$carga_campos_select($select_almacen_orig, entry['Almacenes'], elemento_seleccionado, texto_elemento_cero, indiceId, indiceTitulo);
 			
 			elemento_seleccionado=0;
-			texto_elemento_cero='<option value="0">[-- Seleccionar Empleado --]</option>';
+			//texto_elemento_cero='<option value="0">[-- Seleccionar Empleado --]</option>';
+			texto_elemento_cero='';
 			indiceId = 'id';
 			indiceTitulo = 'nombre_empleado';
 			$carga_campos_select($select_empleado, entry['Empleados'], elemento_seleccionado, texto_elemento_cero, indiceId, indiceTitulo);
