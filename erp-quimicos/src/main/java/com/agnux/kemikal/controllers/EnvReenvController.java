@@ -400,14 +400,10 @@ public class EnvReenvController {
             arreglo = new String[notr.length];
             
             for(int i=0; i<notr.length; i++) { 
-                arreglo[i]= "'"+
-                        eliminado[i] +"___"+ 
-                        notr[i] +"___" + 
-                        iddetalle[i] +"___" + 
-                        select_aml_dest[i] +"___" + 
-                        idEnv[i] +"___" + 
-                        cantpres[i] +"___" + 
-                        noDec[i] +"'";
+                select_aml_dest[i] = StringHelper.verificarSelect(select_aml_dest[i]);
+                if(idEnv[i].equals("")){ idEnv[i]="0"; }
+                
+                arreglo[i]= "'"+eliminado[i] +"___"+ notr[i] +"___" + iddetalle[i] +"___" + select_aml_dest[i] +"___" + idEnv[i] +"___" + cantpres[i] +"'";
                 System.out.println(arreglo[i]);
             }
             
@@ -420,6 +416,12 @@ public class EnvReenvController {
                 command_selected = "edit";
             }
             
+            select_empleado = StringHelper.verificarSelect(select_empleado);
+            select_almacen_orig = StringHelper.verificarSelect(select_almacen_orig);
+            select_presentacion_orig = StringHelper.verificarSelect(select_presentacion_orig);
+            
+            if(producto_id.equals("")){ producto_id="0"; }
+            
             String data_string = 
                     app_selected+"___"+
                     command_selected+"___"+
@@ -431,11 +433,10 @@ public class EnvReenvController {
                     select_empleado+"___"+
                     select_almacen_orig+"___"+
                     producto_id+"___"+
-                    select_presentacion_orig+"___"+
-                    exis_pres+"___"+
-                    disp_pres;
+                    select_presentacion_orig;
+            
             //System.out.println("data_string: "+data_string);
-                    
+            
             succes = this.getEnvDao().selectFunctionValidateAplicativo(data_string,extra_data_array);
             
             log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
@@ -446,7 +447,8 @@ public class EnvReenvController {
                 jsonretorno.put("actualizo",String.valueOf(actualizo));
             }
             
-            jsonretorno.put("success",String.valueOf(succes.get("success")));
+            String successValidation = succes.get("success").replace("SALTOLINEA", "<br>");
+            jsonretorno.put("success",String.valueOf(successValidation));
             
             log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
         return jsonretorno;
