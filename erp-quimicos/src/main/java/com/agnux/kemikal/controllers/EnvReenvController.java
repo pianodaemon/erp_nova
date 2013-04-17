@@ -344,17 +344,46 @@ public class EnvReenvController {
     
     
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //edicion y nuevo
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="identificador", required=true) Integer identificador,
+            @RequestParam(value="select_estatus", required=true) String select_estatus,
+            @RequestParam(value="fecha", required=true) String fecha,
+            @RequestParam(value="hora", required=true) String hora,
+            @RequestParam(value="select_empleado", required=true) String select_empleado,
+            @RequestParam(value="select_almacen_orig", required=true) String select_almacen_orig,
             @RequestParam(value="producto_id", required=true) String producto_id,
-            @RequestParam(value="select_presentacion", required=true) String select_presentacion,
-            @RequestParam(value="notr", required=false) String[] notr,
-            @RequestParam(value="iddetalle", required=false) String[] iddetalle,
+            @RequestParam(value="select_presentacion_orig", required=true) String select_presentacion_orig,
+            @RequestParam(value="exis_pres", required=true) String exis_pres,
+            @RequestParam(value="disp_pres", required=true) String disp_pres,
             @RequestParam(value="eliminado", required=false) String[] eliminado,
-            @RequestParam(value="idprod", required=false) String[] idprod,
-            @RequestParam(value="cant", required=false) String[] cant,
+            @RequestParam(value="iddetalle", required=false) String[] iddetalle,
+            @RequestParam(value="select_aml_dest", required=false) String[] select_aml_dest,
+            @RequestParam(value="cantpres", required=false) String[] cantpres,
+            @RequestParam(value="idEnv", required=false) String[] idEnv,
+            @RequestParam(value="noDec", required=false) String[] noDec,
+            @RequestParam(value="notr", required=false) String[] notr,
             @ModelAttribute("user") UserSessionData user
         ) {
             
@@ -371,7 +400,14 @@ public class EnvReenvController {
             arreglo = new String[notr.length];
             
             for(int i=0; i<notr.length; i++) { 
-                arreglo[i]= "'"+eliminado[i] +"___"+ notr[i] +"___" + iddetalle[i] +"___" + idprod[i] +"___" + cant[i] +"'";
+                arreglo[i]= "'"+
+                        eliminado[i] +"___"+ 
+                        notr[i] +"___" + 
+                        iddetalle[i] +"___" + 
+                        select_aml_dest[i] +"___" + 
+                        idEnv[i] +"___" + 
+                        cantpres[i] +"___" + 
+                        noDec[i] +"'";
                 System.out.println(arreglo[i]);
             }
             
@@ -389,10 +425,17 @@ public class EnvReenvController {
                     command_selected+"___"+
                     id_usuario+"___"+
                     identificador+"___"+
+                    select_estatus+"___"+
+                    fecha+"___"+
+                    hora+"___"+
+                    select_empleado+"___"+
+                    select_almacen_orig+"___"+
                     producto_id+"___"+
-                    select_presentacion;
+                    select_presentacion_orig+"___"+
+                    exis_pres+"___"+
+                    disp_pres;
             //System.out.println("data_string: "+data_string);
-            
+                    
             succes = this.getEnvDao().selectFunctionValidateAplicativo(data_string,extra_data_array);
             
             log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));

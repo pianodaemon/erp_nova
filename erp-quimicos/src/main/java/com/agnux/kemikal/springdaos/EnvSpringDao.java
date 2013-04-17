@@ -298,7 +298,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
     //obtiene los Envases configurados para este producto
     @Override
     public ArrayList<HashMap<String, String>> getEnvasesPorProducto(Integer idProd) {
-        String sql_query = "SELECT id,titulo,cantidad FROM inv_prod_presentaciones WHERE id IN (SELECT DISTINCT env_conf.inv_prod_presentacion_id FROM env_conf WHERE env_conf.inv_prod_id="+idProd+" AND env_conf.borrado_logico=FALSE) order by titulo;";
+        String sql_query = "SELECT DISTINCT env_conf.id AS id_conf_env,tbl_pres.id,tbl_pres.titulo,tbl_pres.cantidad FROM env_conf JOIN inv_prod_presentaciones AS tbl_pres ON tbl_pres.id=env_conf.inv_prod_presentacion_id  WHERE env_conf.inv_prod_id="+idProd+" AND env_conf.borrado_logico=FALSE;";
         
         System.out.println("getEnvases: "+sql_query);
         
@@ -308,6 +308,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_env",String.valueOf(rs.getInt("id_conf_env")));
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("equivalencia",StringHelper.roundDouble(rs.getString("cantidad"),2));
