@@ -79,10 +79,13 @@ public class EnvReenvController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("folio", "Folio:80");
+        infoConstruccionTabla.put("almacen", "Almacen Origen:160");
         infoConstruccionTabla.put("codigo", "C&oacute;digo:120");
         infoConstruccionTabla.put("descripcion", "Descripci&oacute;n:300");
-        infoConstruccionTabla.put("unidad", "Unidad:150");
-        infoConstruccionTabla.put("presentacion", "Presentaci&oacute;n:160");
+        infoConstruccionTabla.put("presentacion", "Presentaci&oacute;n Origen:160");
+        infoConstruccionTabla.put("empleado", "Empleado:200");
+        infoConstruccionTabla.put("fecha", "Fecha:80");
+        infoConstruccionTabla.put("hora", "Hora:80");
         
         ModelAndView x = new ModelAndView("envreenv/startup", "title", "Proceso de Re-Envasado");
         x = x.addObject("layoutheader", resource.getLayoutheader());
@@ -127,11 +130,15 @@ public class EnvReenvController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
-        String tipo_prod = StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo_prod")));
+        String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
+        String almacen = StringHelper.isNullString(String.valueOf(has_busqueda.get("almacen")));
         String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
         String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
         String presentacion = StringHelper.isNullString(String.valueOf(has_busqueda.get("presentacion")));
-        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+codigo+"___"+descripcion+"___"+presentacion;
+        String empleado = StringHelper.isNullString(String.valueOf(has_busqueda.get("empleado")));
+        String estado = StringHelper.isNullString(String.valueOf(has_busqueda.get("estado")));
+        
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+almacen+"___"+codigo+"___"+descripcion+"___"+presentacion+"___"+empleado+"___"+estado;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getEnvDao().countAll(data_string);
@@ -166,19 +173,30 @@ public class EnvReenvController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> empleados = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> estatus = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         tiposProducto = this.getEnvDao().getProductoTipos();
         
         //Se le pasa como parametro el cero para que devuelva todas las presentaciones 
         presentaciones = this.getEnvDao().getProductoPresentaciones(0, id_empresa);
         
+        empleados = this.getEnvDao().getReEenv_Empleados(id_empresa);
+        almacenes = this.getEnvDao().getAlmacenes(id_empresa, id_sucursal);
+        estatus = this.getEnvDao().getEstatus();
+        
         jsonretorno.put("ProdTipos", tiposProducto);
         jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Empleados", empleados);
+        jsonretorno.put("Almacenes", almacenes);
+        jsonretorno.put("Estatus", estatus);
         return jsonretorno;
     }
     
