@@ -38,7 +38,7 @@ public interface EnvInterfaceDao {
     //metodos para Aplicativo de Re-Envasado
     public ArrayList<HashMap<String, Object>> getReEenv_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getReEenv_Datos(Integer id);
-    public ArrayList<HashMap<String, String>> getReEenv_DatosGrid(Integer id);
+    public ArrayList<HashMap<String, String>> getReEenv_DatosGrid(Integer id, Integer noDec);
     public ArrayList<HashMap<String, String>> getReEenv_Empleados(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getReEenv_Existencias(Integer id_prod, Integer id_pres, Integer id_alm);
     

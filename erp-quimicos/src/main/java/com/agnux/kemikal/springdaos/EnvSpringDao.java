@@ -502,16 +502,24 @@ public class EnvSpringDao implements EnvInterfaceDao{
     public ArrayList<HashMap<String, String>> getReEenv_Datos(Integer id) {
         String sql_to_query = ""
                 + "SELECT "
-                    + "env_conf.id,"
-                    + "env_conf.inv_prod_id,"
-                    + "env_conf.inv_prod_presentacion_id,"
+                    + "env_reenv.id,"
+                    + "env_reenv.folio,"
+                    + "env_reenv.inv_prod_id AS producto_id,"
                     + "inv_prod.sku AS codigo,"
                     + "inv_prod.descripcion,"
-                    + "inv_prod_unidades.titulo AS unidad "
-                + "FROM env_conf "
-                + "JOIN inv_prod ON inv_prod.id=env_conf.inv_prod_id "
+                    + "inv_prod_unidades.titulo AS unidad,"
+                    + "inv_prod_unidades.decimales AS no_dec,"
+                    + "env_reenv.inv_prod_presentacion_id AS presentacion_id,"
+                    + "env_reenv.inv_alm_id AS  almacen_id,"
+                    + "env_reenv.existencia,"
+                    + "env_reenv.fecha,"
+                    + "env_reenv.hora_inicio,"
+                    + "env_reenv.env_estatus_id AS estado_id, "
+                    + "env_reenv.gral_empleado_id AS empleado_id "
+                + "FROM env_reenv  "
+                + "JOIN inv_prod ON inv_prod.id=env_reenv.inv_prod_id "
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "WHERE env_conf.id=?;";
+                + "WHERE env_reenv.id=?;";
         
         //System.out.println("sql_to_query: "+sql_to_query);
         //System.out.println("id: "+id);
@@ -522,11 +530,19 @@ public class EnvSpringDao implements EnvInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
-                    row.put("producto_id",String.valueOf(rs.getInt("inv_prod_id")));
-                    row.put("presentacion_id",String.valueOf(rs.getInt("inv_prod_presentacion_id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("producto_id",String.valueOf(rs.getInt("producto_id")));
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
+                    row.put("almacen_id",String.valueOf(rs.getInt("almacen_id")));
+                    row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),rs.getInt("no_dec")));
+                    row.put("fecha",String.valueOf(rs.getDate("fecha")));
+                    row.put("hora",String.valueOf(rs.getTime("hora_inicio")));
+                    row.put("estado_id",String.valueOf(rs.getInt("estado_id")));
+                    row.put("empleado_id",String.valueOf(rs.getInt("empleado_id")));
                     return row;
                 }
             }
@@ -537,20 +553,19 @@ public class EnvSpringDao implements EnvInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getReEenv_DatosGrid(Integer id) {
+    public ArrayList<HashMap<String, String>> getReEenv_DatosGrid(Integer id, Integer noDec) {
+        final Integer noDecimales = noDec;
         String sql_to_query = ""
                 + "SELECT "
-                    + "env_conf_det.id AS iddet, "
-                    + "env_conf_det.inv_prod_id AS id_prod, "
-                    + "inv_prod.sku AS codigo, "
-                    + "inv_prod.descripcion, "
-                    + "inv_prod_unidades.titulo AS unidad, "
-                    + "inv_prod_unidades.decimales AS precision, "
-                    + "env_conf_det.cantidad AS cant "
-                + "FROM env_conf_det "
-                + "JOIN inv_prod ON inv_prod.id=env_conf_det.inv_prod_id "
-                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "WHERE env_conf_det.env_conf_id=?;";
+                    + "env_reenv_det.id AS iddet, "
+                    + "env_reenv_det.env_conf_id, "
+                    + "env_reenv_det.inv_alm_id, "
+                    + "env_reenv_det.inv_alm_id_env AS alm_id_env, "
+                    + "env_conf.inv_prod_presentacion_id AS pres_id, "
+                    + "env_reenv_det.cantidad "
+                + "FROM env_reenv_det "
+                + "JOIN env_conf ON env_conf.id=env_reenv_det.env_conf_id "
+                + "WHERE env_reenv_det.env_reenv_id=?;";
         
         //System.out.println("sql_to_query: "+sql_to_query);
         //System.out.println("id: "+id);
@@ -561,12 +576,11 @@ public class EnvSpringDao implements EnvInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("iddet",String.valueOf(rs.getInt("iddet")));
-                    row.put("id_prod",String.valueOf(rs.getInt("id_prod")));
-                    row.put("codigo",rs.getString("codigo"));
-                    row.put("descripcion",rs.getString("descripcion"));
-                    row.put("unidad",rs.getString("unidad"));
-                    row.put("precision",String.valueOf(rs.getInt("precision")));
-                    row.put("cant",StringHelper.roundDouble(rs.getString("cant"),rs.getInt("precision")));
+                    row.put("env_conf_id",String.valueOf(rs.getInt("env_conf_id")));
+                    row.put("inv_alm_id",String.valueOf(rs.getInt("inv_alm_id")));
+                    row.put("alm_id_env",String.valueOf(rs.getInt("alm_id_env")));
+                    row.put("pres_id",String.valueOf(rs.getInt("pres_id")));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),noDecimales));
                     return row;
                 }
             }

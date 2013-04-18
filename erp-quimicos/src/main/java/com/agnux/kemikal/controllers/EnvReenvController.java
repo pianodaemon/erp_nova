@@ -212,7 +212,7 @@ public class EnvReenvController {
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getConfJson de {0}", EnvReenvController.class.getName());
+        log.log(Level.INFO, "Ejecutando getReenvJson de {0}", EnvReenvController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosenvreenv = new ArrayList<HashMap<String, String>>();
@@ -221,17 +221,37 @@ public class EnvReenvController {
         ArrayList<HashMap<String, String>> empleados = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> estatus = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> envases = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> existencias = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer idProducto=0;
+        Integer idPres=0;
+        Integer idAlm=0;
+        Integer noDec=0;
         
         if( id != 0  ){
             datosenvreenv = this.getEnvDao().getReEenv_Datos(id);
-            datosGrid = this.getEnvDao().getReEenv_DatosGrid(id);
+            
+            noDec = Integer.parseInt(datosenvreenv.get(0).get("no_dec"));
+            
+            datosGrid = this.getEnvDao().getReEenv_DatosGrid(id, noDec);
+            
+            idProducto = Integer.parseInt(datosenvreenv.get(0).get("producto_id"));
+            idPres = Integer.parseInt(datosenvreenv.get(0).get("presentacion_id"));
+            idAlm = Integer.parseInt(datosenvreenv.get(0).get("almacen_id"));
+            
+            
             presentaciones=this.getEnvDao().getProductoPresentacionesON(Integer.parseInt(datosenvreenv.get(0).get("producto_id")));
+            envases=this.getEnvDao().getEnvasesPorProducto(idProducto);
+            
+            if(Integer.parseInt(datosenvreenv.get(0).get("estado_id"))==1){
+                existencias = this.getEnvDao().getReEenv_Existencias(idProducto, idPres, idAlm);
+            }
         }
         
         empleados = this.getEnvDao().getReEenv_Empleados(id_empresa);
@@ -244,6 +264,8 @@ public class EnvReenvController {
         jsonretorno.put("Empleados", empleados);
         jsonretorno.put("Almacenes", almacenes);
         jsonretorno.put("Estatus", estatus);
+        jsonretorno.put("Envases", envases);
+        jsonretorno.put("Exis", existencias);
         
         return jsonretorno;
     }
@@ -290,7 +312,9 @@ public class EnvReenvController {
         ArrayList<HashMap<String, String>> producto = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> envases = new ArrayList<HashMap<String, String>>();
+        
         HashMap<String, String> userDat = new HashMap<String, String>();
+        
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -400,6 +424,7 @@ public class EnvReenvController {
             @RequestParam(value="disp_pres", required=true) String disp_pres,
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
+            @RequestParam(value="select_aml_envase", required=false) String[] select_aml_envase,
             @RequestParam(value="select_aml_dest", required=false) String[] select_aml_dest,
             @RequestParam(value="cantpres", required=false) String[] cantpres,
             @RequestParam(value="idEnv", required=false) String[] idEnv,
@@ -422,9 +447,10 @@ public class EnvReenvController {
             
             for(int i=0; i<notr.length; i++) { 
                 select_aml_dest[i] = StringHelper.verificarSelect(select_aml_dest[i]);
+                select_aml_envase[i] = StringHelper.verificarSelect(select_aml_envase[i]);
                 if(idEnv[i].equals("")){ idEnv[i]="0"; }
                 
-                arreglo[i]= "'"+eliminado[i] +"___"+ notr[i] +"___" + iddetalle[i] +"___" + select_aml_dest[i] +"___" + idEnv[i] +"___" + cantpres[i] +"'";
+                arreglo[i]= "'"+eliminado[i] +"___"+ notr[i] +"___" + iddetalle[i] +"___" + select_aml_dest[i] +"___" + idEnv[i] +"___" + cantpres[i] +"___" + select_aml_envase[i] +"'";
                 System.out.println(arreglo[i]);
             }
             
