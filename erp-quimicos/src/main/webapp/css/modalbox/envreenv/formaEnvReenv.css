@@ -99,8 +99,8 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 .envreenv_div_one{
     /*background-image:url('Imagen/ven1.png');
     background-repeat:no-repeat;*/
-    width:740px;
-    height:450px;
+    width:920px;
+    height:430px;
     border-radius:10px;
     background-color:#e9e9e9;
     border:3px solid #454442;
@@ -111,7 +111,7 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 
 .envreenv_div_two{
     /*font-family:tahoma;*/
-    width:740px;
+    width:920px;
     height:28px;
     background-color:#454442;
     margin-top:0;
@@ -126,7 +126,7 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 .envreenv_div_three{
     /*font-family:tahoma;*/
     font-size:11px;
-    width:728px;
+    width:910px;
     /*height:180px;*/
     background-color:#e9e9e9;
     margin-top:5px;
