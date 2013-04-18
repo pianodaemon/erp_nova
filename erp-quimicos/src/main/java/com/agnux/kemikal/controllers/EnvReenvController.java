@@ -77,15 +77,16 @@ public class EnvReenvController {
         
         log.log(Level.INFO, "Ejecutando starUp de {0}", EnvReenvController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
-        infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("folio", "Folio:80");
-        infoConstruccionTabla.put("almacen", "Almacen Origen:160");
+        infoConstruccionTabla.put("id", "Acciones:70");
+        infoConstruccionTabla.put("folio", "Folio:70");
+        infoConstruccionTabla.put("almacen", "Almacen Origen:140");
         infoConstruccionTabla.put("codigo", "C&oacute;digo:120");
-        infoConstruccionTabla.put("descripcion", "Descripci&oacute;n:300");
-        infoConstruccionTabla.put("presentacion", "Presentaci&oacute;n Origen:160");
-        infoConstruccionTabla.put("empleado", "Empleado:200");
-        infoConstruccionTabla.put("fecha", "Fecha:80");
-        infoConstruccionTabla.put("hora", "Hora:80");
+        infoConstruccionTabla.put("descripcion", "Descripci&oacute;n:250");
+        infoConstruccionTabla.put("presentacion", "Presentaci&oacute;n:110");
+        infoConstruccionTabla.put("empleado", "Empleado:180");
+        infoConstruccionTabla.put("fecha", "Fecha:65");
+        infoConstruccionTabla.put("hora", "Hora:60");
+        infoConstruccionTabla.put("status", "Estado:70");
         
         ModelAndView x = new ModelAndView("envreenv/startup", "title", "Proceso de Re-Envasado");
         x = x.addObject("layoutheader", resource.getLayoutheader());
@@ -137,8 +138,10 @@ public class EnvReenvController {
         String presentacion = StringHelper.isNullString(String.valueOf(has_busqueda.get("presentacion")));
         String empleado = StringHelper.isNullString(String.valueOf(has_busqueda.get("empleado")));
         String estado = StringHelper.isNullString(String.valueOf(has_busqueda.get("estado")));
+        String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
+        String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+almacen+"___"+codigo+"___"+descripcion+"___"+presentacion+"___"+empleado+"___"+estado;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+almacen+"___"+codigo+"___"+descripcion+"___"+presentacion+"___"+empleado+"___"+estado+"___"+fecha_inicial+"___"+fecha_final;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getEnvDao().countAll(data_string);

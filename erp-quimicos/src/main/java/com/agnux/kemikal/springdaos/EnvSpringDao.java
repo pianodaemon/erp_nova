@@ -452,17 +452,24 @@ public class EnvSpringDao implements EnvInterfaceDao{
     public ArrayList<HashMap<String, Object>> getReEenv_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from env_bus_aplicativos(?) as foo (id integer)";
 	String sql_to_query = ""
-                + "SELECT DISTINCT "
-                    + "env_conf.id,"
+                + "SELECT "
+                    + "env_reenv.id,"
+                    + "env_reenv.folio,"
+                    + "inv_alm.titulo AS almacen,"
                     + "inv_prod.sku AS codigo,"
                     + "inv_prod.descripcion,"
-                    + "inv_prod_unidades.titulo AS unidad,"
-                    + "inv_prod_presentaciones.titulo AS presentacion "
-                + "FROM env_conf "
-                + "JOIN inv_prod ON inv_prod.id=env_conf.inv_prod_id "
-                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=env_conf.inv_prod_presentacion_id "
-                + "JOIN ("+sql_busqueda+") as subt on subt.id=env_conf.id "
+                    + "inv_prod_presentaciones.titulo AS  presentacion,"
+                    + "(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE gral_empleados.apellido_materno END) AS empleado,"
+                    + "to_char(env_reenv.fecha::timestamp with time zone, 'dd/mm/yyyy') AS fecha,"
+                    + "env_reenv.hora_inicio AS hora,"
+                    + "env_estatus.titulo AS status "
+                + "FROM env_reenv "
+                + "JOIN inv_alm ON inv_alm.id=env_reenv.inv_alm_id "
+                + "JOIN inv_prod ON inv_prod.id=env_reenv.inv_prod_id "
+                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=env_reenv.inv_prod_presentacion_id "
+                + "JOIN gral_empleados ON gral_empleados.id=env_reenv.gral_empleado_id "
+                + "JOIN env_estatus ON env_estatus.id=env_reenv.env_estatus_id "
+                + "JOIN ("+sql_busqueda+") as subt on subt.id=env_reenv.id "
                 + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
         //System.out.println("data_string: "+data_string);
@@ -473,10 +480,15 @@ public class EnvSpringDao implements EnvInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("almacen",rs.getString("almacen"));
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    row.put("unidad",rs.getString("unidad"));
                     row.put("presentacion",rs.getString("presentacion"));
+                    row.put("empleado",rs.getString("empleado"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("hora",rs.getTime("hora"));
+                    row.put("status",rs.getString("status"));
                     return row;
                 }
             }
