@@ -41,19 +41,21 @@
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="80">Folio</td>
+				<td width="70">Folio</td>
 				<td width="10"></td>
-				<td width="170">Almacen&nbsp;Origen</td>
+				<td width="150">Almacen&nbsp;Origen</td>
 				<td width="10"></td>
-				<td width="100">C&oacute;digo</td>
+				<td width="90">C&oacute;digo</td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="200">Descripci&oacute;n</td>
+				<td width="160">Descripci&oacute;n</td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="130">Presentaci&oacute;n&nbsp;Origen</td>
 				<td width="10"></td>
-				<td width="180">Empleado</td>
+				<td width="150">Empleado</td>
 				<td width="10"></td>
 				<td width="90">Estado</td>
+				<td width="10"></td>
+				<td colspan="5">Fecha&nbsp;de&nbsp;Re-Envasado</td>
 				<td width="20"></td>
 				<td></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -63,27 +65,27 @@
 			
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="80"><input type="text" name="busqueda_folio" style="width:80px;"></td>
+				<td width="70"><input type="text" name="busqueda_folio" style="width:70px;"></td>
 				<td width="10"></td>
-				<td width="170">
-					<select name="busqueda_select_alm_origen" style="width:170px;">
-						<option value="0">[--Seleccionar Almacen--]</option>
+				<td width="150">
+					<select name="busqueda_select_alm_origen" style="width:150px;">
+						<option value="0">[--Seleccionar--]</option>
 					</select>
 				</td>
 				<td width="10"></td>
-				<td><input type="text" name="busqueda_codigo" style="width:100px;"></td>
+				<td><input type="text" name="busqueda_codigo" style="width:90px;"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td><input type="text" name="busqueda_descripcion" style="width:200px;"></td>
+				<td><input type="text" name="busqueda_descripcion" style="width:160px;"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="130">
 					<select name="busqueda_select_pres" style="width:130px;">
-						<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>
+						<option value="0" selected="yes">[--Selecionar--]</option>
 					</select>
 				</td>
 				<td width="10"></td>
-				<td width="180">
-					<select name="busqueda_select_empleado" style="width:180px;">
-						<option value="0">[--Seleccionar Empleado--]</option>
+				<td width="150">
+					<select name="busqueda_select_empleado" style="width:150px;">
+						<option value="0">[--Seleccionar--]</option>
 					</select>
 				</td>
 				<td width="10"></td>
@@ -92,6 +94,12 @@
 						<option value="0">[--Todos--]</option>
 					</select>
 				</td>
+				<td width="10"></td>
+				<td width="20"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
+				<td width="70"><input type="text" name="busqueda_fecha_inicial" style="width:70px;" readOnly="true"></td>
+				<td width="5"></td>
+				<td width="20"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
+				<td width="70"><input type="text" name="busqueda_fecha_final" style="width:70px;" readOnly="true"></td>
 				
 				<td width="20"></td>
 				<td><input type="button" value="Buscar"></td>

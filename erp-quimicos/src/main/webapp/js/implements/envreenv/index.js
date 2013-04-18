@@ -62,6 +62,8 @@ $(function() {
 	var $busqueda_select_pres = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_pres]');
 	var $busqueda_select_empleado = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_empleado]');
 	var $busqueda_select_estado = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_estado]');
+	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
+	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	
@@ -76,6 +78,8 @@ $(function() {
 		valor_retorno += "presentacion" + signo_separador + $busqueda_select_pres.val() + "|";
 		valor_retorno += "empleado" + signo_separador + $busqueda_select_empleado.val() + "|";
 		valor_retorno += "estado" + signo_separador + $busqueda_select_estado.val() + "|";
+		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
+		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val()+ "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
@@ -132,6 +136,8 @@ $(function() {
 		$busqueda_folio.val('');
 		$busqueda_codigo.val('');
 		$busqueda_descripcion.val('');
+		$busqueda_fecha_inicial.val('');
+		$busqueda_fecha_final.val('');
 		/*
 		$busqueda_select_alm_origen
 		$busqueda_select_pres
@@ -231,6 +237,76 @@ $(function() {
     }
     //------------------------------------------------------------------
 
+	
+	$busqueda_fecha_inicial.click(function (s){
+		var a=$('div.datepicker');
+		a.css({'z-index':100});
+	});
+        
+	$busqueda_fecha_inicial.DatePicker({
+		format:'Y-m-d',
+		date: $(this).val(),
+		current: $(this).val(),
+		starts: 1,
+		position: 'bottom',
+		locale: {
+			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+			weekMin: 'se'
+		},
+		onChange: function(formated, dates){
+			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+			$busqueda_fecha_inicial.val(formated);
+			if (formated.match(patron) ){
+				var valida_fecha=mayor($busqueda_fecha_inicial.val(),mostrarFecha());
+				
+				if (valida_fecha==true){
+					jAlert("Fecha no valida",'! Atencion');
+					$busqueda_fecha_inicial.val(mostrarFecha());
+				}else{
+					$busqueda_fecha_inicial.DatePickerHide();	
+				}
+			}
+		}
+	});
+	
+	$busqueda_fecha_final.click(function (s){
+		var a=$('div.datepicker');
+		a.css({'z-index':100});
+	});
+	
+	$busqueda_fecha_final.DatePicker({
+		format:'Y-m-d',
+		date: $(this).val(),
+		current: $(this).val(),
+		starts: 1,
+		position: 'bottom',
+		locale: {
+			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+			weekMin: 'se'
+		},
+		onChange: function(formated, dates){
+			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+			$busqueda_fecha_final.val(formated);
+			if (formated.match(patron) ){
+				var valida_fecha=mayor($busqueda_fecha_final.val(),mostrarFecha());
+				
+				if (valida_fecha==true){
+					jAlert("Fecha no valida",'! Atencion');
+					$busqueda_fecha_final.val(mostrarFecha());
+				}else{
+					$busqueda_fecha_final.DatePickerHide();	
+				}
+			}
+		}
+	});
 	
 	
 	
@@ -1693,7 +1769,7 @@ $(function() {
         $.post(input_json,$arreglo,function(data){
             
             //pinta_grid
-            $.fn.tablaOrdenable(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formaenvreenv00_for_datagrid00);
+            $.fn.tablaOrdenableEdit(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formaenvreenv00_for_datagrid00);
 
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
