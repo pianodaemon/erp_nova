@@ -99,18 +99,14 @@ $(function() {
 		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosBuscadorPrincipal.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 		$.post(input_json_lineas,$arreglo,function(data){
-			/*
-			//carga select de tipos de producto
-			$busqueda_select_tipo_prod.children().remove();
-			var prodtipos = '<option value="0">[--Seleccionar Tipo--]</option>';
-			$.each(data['ProdTipos'],function(entryIndex,tp){
-				prodtipos += '<option value="' + tp['id'] + '"  >' + tp['titulo'] + '</option>';
-				
-				
-			});
-			$busqueda_select_tipo_prod.append(prodtipos);
-			*/
 			
+			//carga select de Almacenes
+			$busqueda_select_alm_origen.children().remove();
+			var alm_html = '<option value="0">[--Seleccionar--]</option>';
+			$.each(data['Almacenes'],function(entryIndex,alm){
+				alm_html += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
+			});
+			$busqueda_select_alm_origen.append(alm_html);
 			
 			//carga select de Presentaciones
 			$busqueda_select_pres.children().remove();
@@ -119,6 +115,22 @@ $(function() {
 				presentacion += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
 			});
 			$busqueda_select_pres.append(presentacion);
+			
+			//carga select de Empleados
+			$busqueda_select_empleado.children().remove();
+			var empl_html = '<option value="0">[--Seleccionar--]</option>';
+			$.each(data['Empleados'],function(entryIndex,empl){
+				empl_html += '<option value="' + empl['id'] + '"  >' + empl['nombre_empleado'] + '</option>';
+			});
+			$busqueda_select_empleado.append(empl_html);
+			
+			//carga select de Estatus
+			$busqueda_select_estado.children().remove();
+			var stat_html = '<option value="0">[--Todos--]</option>';
+			$.each(data['Estatus'],function(entryIndex,stat){
+				stat_html += '<option value="' + stat['id'] + '"  >' + stat['titulo'] + '</option>';
+			});
+			$busqueda_select_estado.append(stat_html);
 			
 			//asignar valores de presentaciones y tipo de Productos para utilizarlas mas adelante
 			arrayProdTipos = data['ProdTipos'];
@@ -138,12 +150,7 @@ $(function() {
 		$busqueda_descripcion.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
-		/*
-		$busqueda_select_alm_origen
-		$busqueda_select_pres
-		$busqueda_select_empleado
-		$busqueda_select_estado
-		*/
+		
 		$cargar_datos_buscador_principal();
 		
 		$busqueda_folio.focus();
@@ -189,6 +196,9 @@ $(function() {
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_alm_origen, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_pres, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_empleado, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_estado, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
 	
 	
 	//------------------------------------------------------------------
