@@ -139,7 +139,7 @@
 					
                     <div id="div_two" title="" class="envreenv_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:700px; padding-left:6px;"><strong>Proceso de Re-Envasado</strong></div>
+                            <div class="fixed column" id="cierra" style="width:880px; padding-left:6px;"><strong>Proceso de Re-Envasado</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -163,7 +163,7 @@
 										
                                         <table border="0" style="margin:0; padding:0;">
 											<tr class="gral">
-												<td width="700">
+												<td width="880">
 													<table border="0">
 														<tr>
 															<td width="70">Folio</td>
@@ -176,24 +176,12 @@
 															<td width="40"></td>
 															<td width="75">Programaci&oacute;n</td>
 															<td width="80"><input type="text" name="fecha" style="width:80px;" maxlength="10"></td>
-															<td width="10"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha"></div></td>
-															<td width="80"></td>
-														</tr>
-														<tr><td colspan="10" height="8"></td></tr>
-														<tr>
-															<td width="70">Empleado</td>
-															<td width="315" colspan="4">
-																<select name="select_empleado" style="width:315px;">
-																	<option value="0" selected="yes">[-- Seleccionar Empleado --]</option>
-																</select>
-															</td>
-															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_empleado"></div></td>
+															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha"></div></td>
 															<td width="75">Hora&nbsp;de&nbsp;Inicio</td>
 															<td width="80"><input type="text" name="hora" style="width:80px;" maxlength="8"></td>
-															<td width="10"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_hora"></div></td>
-															<td width="80"></td>
+															<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_hora"></div></td>
 														</tr>
-														<tr><td colspan="10" height="8"></td></tr>
+														<tr><td colspan="12" height="8"></td></tr>
 														<tr>
 															<td width="70">Almacen</td>
 															<td width="315" colspan="4">
@@ -202,12 +190,20 @@
 																</select>
 															</td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_almacenorig"></div></td>
+															<td width="75">Empleado</td>
+															<td width="275" colspan="4">
+																<select name="select_empleado" style="width:275px;">
+																	<option value="0" selected="yes">[-- Seleccionar Empleado --]</option>
+																</select>
+															</td>
+															<!--
+															<td width="40"></td>
 															<td width="75"></td>
 															<td width="80"></td>
-															<td width="10"></td>
-															<td width="80"></td>
+															-->
+															<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_empleado"></div></td>
 														</tr>
-														<tr><td colspan="10" height="8"></td></tr>
+														<tr><td colspan="12" height="8"></td></tr>
 														<tr>
 															<td width="70">C&oacute;digo</td>
 															<td width="120">
@@ -218,10 +214,12 @@
 															<td width="65">Descripci&oacute;n</td>
 															<td width="200" colspan="3"><input type="text" name="descripcion" style="width:200px;"></td>
 															<td width="80">&nbsp;<a href="buscar_producto" id="buscar_producto">(Buscar)</a></td>
-															<td width="10"></td>
+															<td width="40"></td>
+															<td width="75"></td>
 															<td width="80"></td>
+															<td width="25"></td>
 														</tr>
-														<tr><td colspan="10" height="8"></td></tr>
+														<tr><td colspan="12" height="8"></td></tr>
 														<tr>
 															<td width="70">Presentaci&oacute;n</td>
 															<td width="120">
@@ -237,10 +235,12 @@
 															<td width="40"></td>
 															<td width="75">Disponible</td>
 															<td width="80"><input type="text" name="disp_pres" style="width:80px; text-align:right;" readonly="true"></td>
-															<td width="10"></td>
+															<td width="40"></td>
+															<td width="75"></td>
 															<td width="80"></td>
+															<td width="25"></td>
 														</tr>
-														<tr><td colspan="10" height="8"></td></tr>
+														<tr><td colspan="12" height="8"></td></tr>
 														<tr>
 															<td width="70">Unidad</td>
 															<td width="120">
@@ -253,8 +253,10 @@
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_exispres"></div></td>
 															<td width="75">Disponible</td>
 															<td width="80"><input type="text" name="disp_uni" style="width:80px; text-align:right;" readonly="true"></td>
-															<td width="10"></td>
-															<td width="80" align="right"><input type="button" id="generarpdf" value="Generar PDF" style="width:90px; font-weight: bold;"></td>
+															<td width="40"></td>
+															<td width="155" colspan="2" align="right"><input type="button" id="generarpdf" value="Generar PDF" style="width:90px; font-weight: bold;"></td>
+															<!--<td width="80"></td>-->
+															<td width="25"></td>
 														</tr>
 													</table>
 												</td>
@@ -270,15 +272,16 @@
 														<thead>
 															<tr>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="68">#</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="180">&nbsp;Almacen Origen Envase</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="180">&nbsp;Almacen Destino</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="130">&nbsp;Presentaci&oacute;n</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="85">&nbsp;Cantidad</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="85">&nbsp;Cant.&nbsp;Pres.</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="90">&nbsp;Unidad</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="115">&nbsp;Cantidad</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="115">&nbsp;Cant.&nbsp;Uni.</td>
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:700; height: 110px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:880; height: 110px; border:1px solid #C1DAD7 !important;">	
 														<table>
 															<tbody id="grid_productos" style="background-color: #FFFFFF;" valign="top">
 																
@@ -290,8 +293,14 @@
 																	<td class="grid" style="font-size:15px; font-weight:bold; border:1px solid #C1DAD7;" width="30">
 																		<a href="#" class="delete">&nbsp;&nbsp;-&nbsp;&nbsp;</a>
 																	</td>
+																	
 																	<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">
-																		<input type="hidden" 	name="idprod" id="idprod" value="">
+																		<select name="select_aml_envase" style="width:176px;">
+																			<option value="0" selected="yes">[--Seleccionar Almacen--]</option>
+																		</select>
+																	</td>
+																	
+																	<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">
 																		<select name="select_aml_dest" style="width:176px;">
 																			<option value="0" selected="yes">[--Seleccionar Almacen--]</option>
 																		</select>
@@ -367,11 +376,11 @@
                                 </div>
                             </div>
                             
-                            <div class="fixed column" id="botones" style="width:700px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:880px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr><td colspan="4" height="7"></td></tr>
 									<tr>
-										<td width="559"></td>
+										<td width="739"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>
