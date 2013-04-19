@@ -483,7 +483,7 @@ public class ProductosController {
             @RequestParam(value="descripcion", required=false) String descripcion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getBuscadorCuentasContablesJson de {0}", ProductosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
