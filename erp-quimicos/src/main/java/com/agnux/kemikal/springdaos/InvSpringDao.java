@@ -429,7 +429,8 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "inv_prod.descripcion_corta, "
                         + "inv_prod.descripcion_larga, "
                         + "inv_prod.archivo_img, "
-                        + "inv_prod.archivo_pdf "
+                        + "inv_prod.archivo_pdf,"
+                        + "inv_prod.inv_prod_presentacion_id AS presentacion_id "
                 + "FROM inv_prod  "
                 + "LEFT JOIN cxp_prov ON cxp_prov.id=inv_prod.cxp_prov_id "
                 + "WHERE inv_prod.id=?";
@@ -477,6 +478,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion_larga",rs.getString("descripcion_larga"));
                     row.put("archivo_img",rs.getString("archivo_img"));
                     row.put("archivo_pdf",rs.getString("archivo_pdf"));
+                    row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
                     return row;
                 }
             }
@@ -827,7 +829,7 @@ public class InvSpringDao implements InvInterfaceDao{
         }else{
             sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE borrado_logico=FALSE order by titulo;";
         }
-
+        
         ArrayList<HashMap<String, String>> hm_pres= (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -6768,9 +6770,11 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
                 + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
                 + "WHERE inv_prod.empresa_id="+id_empresa+" "
-                + "AND inv_prod.borrado_logico=FALSE AND inv_exi.inv_alm_id="+id_almacen+" "
-                + "AND inv_exi.ano="+ano_actual+" AND inv_prod.sku='"+sku+"' "
-                + "ORDER BY inv_prod.descripcion;";
+                + "AND inv_prod.borrado_logico=FALSE "
+                + "AND inv_exi.inv_alm_id="+id_almacen+" "
+                + "AND inv_exi.ano="+ano_actual+" "
+                + "AND inv_prod.sku='"+sku.toUpperCase()+"' "
+                + "ORDER BY inv_prod.descripcion LIMIT 1;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -6885,7 +6889,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_prod.densidad, "
                     + "inv_prod_unidades.titulo AS unidad,  "
                     + "(inv_exi.exi_inicial - inv_exi.transito - inv_exi.reservado + inv_exi.entradas_1 + inv_exi.entradas_2 + inv_exi.entradas_3 + inv_exi.entradas_4 + inv_exi.entradas_5 + inv_exi.entradas_6 + inv_exi.entradas_7 + inv_exi.entradas_8 + inv_exi.entradas_9 + inv_exi.entradas_10 + inv_exi.entradas_11 + inv_exi.entradas_12 - inv_exi.salidas_1 - inv_exi.salidas_2 - inv_exi.salidas_3 - inv_exi.salidas_4 - inv_exi.salidas_5 - inv_exi.salidas_6 - inv_exi.salidas_7 - inv_exi.salidas_8 - inv_exi.salidas_9 - inv_exi.salidas_10 - inv_exi.salidas_11 - inv_exi.salidas_12) AS existencia, "
-                    + "inv_tras_det.cantidad_tras AS cant_traspaso "
+                    + "inv_tras_det.cantidad_tras AS cant_traspaso,"
+                    + "inv_tras_det.inv_prod_presentacion_id AS presentacion_id "
                 + "FROM inv_tras_det "
                 + "JOIN inv_prod ON inv_prod.id=inv_tras_det.inv_prod_id "
                 + "JOIN inv_exi ON inv_exi.inv_prod_id=inv_prod.id "
@@ -6908,17 +6913,17 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),4));
                     row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
                     row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), 4));
-
+                    row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
                     return row;
                 }
             }
         );
         return hm;
     }
-
-
-
-
+    
+    
+    
+    
     @Override
     public HashMap<String, String> getInvTraspasos_DatosPDF(Integer id) {
         HashMap<String, String> data = new HashMap<String, String>();

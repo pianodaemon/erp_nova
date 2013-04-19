@@ -536,6 +536,7 @@ public class ProductosController {
             @RequestParam(value="check_ventaext", required=false) String check_ventaext,
             @RequestParam(value="check_compraext", required=false) String check_compraext,
             @RequestParam(value="pres_on", required=true) String pres_on,
+            @RequestParam(value="select_pres_default", required=false) String select_pres_default,
             @RequestParam(value="densidad", required=false) String densidad,
             @RequestParam(value="valor_maximo", required=false) String valor_maximo,
             @RequestParam(value="valor_minimo", required=false) String valor_minimo,
@@ -620,6 +621,7 @@ public class ProductosController {
             valor_maximo = StringHelper.verificarSelect(valor_maximo);
             valor_minimo = StringHelper.verificarSelect(valor_minimo);
             punto_reorden = StringHelper.verificarSelect(punto_reorden);
+            select_pres_default = StringHelper.verificarSelect(select_pres_default);
             
             //verifica los campos CheckBox y les asigna true o false
             check_nolote = StringHelper.verificarCheckBox(check_nolote);
@@ -677,7 +679,8 @@ public class ProductosController {
                     nameimg+"___"+//38
                     namepdf+"___"+//39
                     descripcion_corta+"___"+//40
-                    descripcion_larga;//41
+                    descripcion_larga+"___"+//41
+                    select_pres_default;//42
             
             succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             

@@ -272,13 +272,14 @@ public class InvTraspasosController {
         log.log(Level.INFO, "Ejecutando getDatosProductoJson de {0}", InvTraspasosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
                 
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        
+        Integer idProducto = 0;
         //convertir en arreglo la fecha que viene de la vista
         String f [] = fecha.split("-");
         
@@ -287,7 +288,13 @@ public class InvTraspasosController {
         
         datos = this.getInvDao().getInvTraspasos_DatosProducto(sku.toUpperCase(), id_empresa, id_almacen, ano_actual);
         
+        if(datos.size()>0){
+            idProducto = Integer.parseInt(datos.get(0).get("id_producto"));
+            presentaciones = this.getInvDao().getProducto_PresentacionesON(idProducto);
+        }
+        
         jsonretorno.put("Producto", datos);
+        jsonretorno.put("Presentaciones", presentaciones);
         
         return jsonretorno;
     }
@@ -313,6 +320,7 @@ public class InvTraspasosController {
         ArrayList<HashMap<String, String>> sucursales = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtras = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> mapExtras = new HashMap<String, String>();
         
         //decodificar id de usuario
@@ -332,7 +340,6 @@ public class InvTraspasosController {
             almacenes = this.getInvDao().getAlmacenes(id_empresa);
         }
         
-        
         sucursales = this.getInvDao().getSucursales(id_empresa);
         
         mapExtras.put("fecha_actual", TimeHelper.getFechaActualYMD());
@@ -340,11 +347,15 @@ public class InvTraspasosController {
         
         arrayExtras.add(mapExtras);
         
+        //le pasamos el idProducto=0, esto para que nos devuelva todas las presentaciones disponibles
+        presentaciones = this.getInvDao().getProducto_Presentaciones(0);
+        
         jsonretorno.put("Datos", datosTraspaso);
         jsonretorno.put("DatosGrid", datosGrid);
         jsonretorno.put("Sucursales", sucursales);
         jsonretorno.put("Almacenes", almacenes);
         jsonretorno.put("Extras", arrayExtras);
+        jsonretorno.put("Presentaciones", presentaciones);
         
         return jsonretorno;
     }
@@ -367,6 +378,7 @@ public class InvTraspasosController {
             @RequestParam(value="no_tr", required=true)         String[] no_tr,
             @RequestParam(value="idproducto", required=true)    String[] idproducto,
             @RequestParam(value="cant_traspaso", required=true) String[] cant_traspaso,
+            @RequestParam(value="select_pres", required=true)    String[] select_pres,
             @ModelAttribute("user") UserSessionData user,
             Model model
         ) {
@@ -384,7 +396,7 @@ public class InvTraspasosController {
             Integer id_usuario= user.getUserId();//variable para el id  del usuario
             
             for(int i=0; i<no_tr.length; i++) {
-                arreglo[i]= "'"+idproducto[i]+"___"+cant_traspaso[i]+"___"+no_tr[i]+"'";
+                arreglo[i]= "'"+ idproducto[i] +"___"+ cant_traspaso[i] +"___"+ no_tr[i] +"___"+ select_pres[i] +"'";
                 System.out.println(arreglo[i]);
             }
             
