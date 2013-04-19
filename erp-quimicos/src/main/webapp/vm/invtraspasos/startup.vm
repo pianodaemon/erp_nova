@@ -280,8 +280,8 @@
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Presentaci&oacute;n</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;Kilos</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Existencia</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Cant.&nbsp;Traspaso</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Exis.&nbsp;Unidad</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Cant.&nbsp;Traspaso&nbsp;Unidad</td>
 																</tr>
 															</thead>
 														</table>
@@ -312,9 +312,9 @@
                                                                 <tr>
                                                                     <td width="10"></td>
                                                                     <td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
-                                                                    <td width="150" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo&nbsp;producto</td>
+                                                                    <td width="120" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo&nbsp;producto</td>
                                                                     <td width="200" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n</td>
-                                                                    <td width="430" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+                                                                    <td width="460" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
                                                                     <td width="10"></td>
                                                                 </tr>
                                                                 <tr>

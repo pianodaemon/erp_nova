@@ -894,8 +894,9 @@ $(function() {
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-invtraspasos-window').find('div.interrogacion').css({'display':'none'});
 				$grid_productos.find('input[name=cant_traspaso]').css({'background' : '#ffffff'});
-				$('#forma-invtraspasos-window').find('.invtraspasos_div_one').css({'height':'470px'});//sin errores
+				$grid_productos.find('select[name=select_pres]').css({'background' : '#ffffff'});
 				
+				$('#forma-invtraspasos-window').find('.invtraspasos_div_one').css({'height':'470px'});//sin errores
 				$('#forma-invtraspasos-window').find('#div_warning_grid').css({'display':'none'});
 				$('#forma-invtraspasos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 				
@@ -912,7 +913,8 @@ $(function() {
 						
 						var campo = tmp.split(':')[0];
 						
-						if(campo.substring(0, 13) == 'cant_traspaso'){
+						
+						if((campo.substring(0,13) == 'cant_traspaso') || (campo.substring(0,4) == 'pres')){
 							$('#forma-invtraspasos-window').find('.invtraspasos_div_one').css({'height':'575px'});//con errores
 							$('#forma-invtraspasos-window').find('#div_warning_grid').css({'display':'block'});
 							var $campo = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
@@ -922,9 +924,9 @@ $(function() {
 							
 							var tr_warning = '<tr>';
 									tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-									tr_warning += '<td width="150"><input type="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:150px; color:red"></td>';
+									tr_warning += '<td width="120"><input type="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:120px; color:red"></td>';
 									tr_warning += '<td width="200"><input type="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:200px; color:red"></td>';
-									tr_warning += '<td width="430"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:400px; color:red"></td>';
+									tr_warning += '<td width="460"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:430px; color:red"></td>';
 							tr_warning += '</tr>';
 							
 							$('#forma-invtraspasos-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);

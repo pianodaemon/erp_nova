@@ -1433,7 +1433,6 @@ $(function() {
 			
 			
 			$select_disponibles.find('option').attr("selected",false);
-			$select_disponibles.removeAttr('selected');
 			return logica;
 		});
 		
@@ -2516,8 +2515,25 @@ $(function() {
 						}
 					});
 					$campo_pres_on.attr({'value' : valor_campo}); 
+					
+					$select_disponibles.find('option').attr("selected",false);
+					
 					return logica;
 				});
+				
+				
+				
+				
+				$select_pres_default.change(function(){
+					var idPresDef = $(this).val();
+					
+					//seleccionar la presentación que sea igual a la seleccionada en el campo Default
+					$select_disponibles.find('option[value='+ idPresDef +']').attr("selected",true);
+					
+					//ejecutar la Click del href Agregar Presentacion
+					$agregar_pres.trigger('click');
+				});
+				
 				
 				
 				//validar campo tiempo de entrega, solo acepte numeros y punto
