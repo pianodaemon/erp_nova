@@ -131,7 +131,7 @@
 					
                     <div id="div_two" title="" class="invtraspasos_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:873px; padding-left:6px;"><strong>Traspaso</strong></div>
+                            <div class="fixed column" style="width:883px; padding-left:6px;"><strong>Traspaso</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -157,7 +157,7 @@
                                                 <tr>
                                                     <td width="520"></td>
                                                     <td width="10"></td>
-                                                    <td width="350"></td>
+                                                    <td width="360"></td>
                                                 </tr>
                                                 <tr>
                                                     <td valign="top" width="520"  > 
@@ -215,7 +215,7 @@
                                                     
                                                     <td width="10"></td>
                                                     
-                                                    <td width="350" valign="top">
+                                                    <td width="360" valign="top">
                                                         <table border="0">
                                                             <tr>
                                                                 <td width="10"></td>
@@ -254,10 +254,10 @@
                                                                 <td width="10"></td>
                                                                 <td width="70">C&oacute;digo&nbsp;producto</td>
                                                                 <td width="125"><input type="text" name="sku_producto" style="width:120px;"></td>
-                                                                <td width="50"><a  href="busca_sku">(Buscar)</a></td>
+                                                                <td width="60"><a  href="agregar_producto">&nbsp;(Agregar)</a></td>
                                                                 <td width="60">Descripci&oacute;n</td>
                                                                 <td width="300"><input type="text" name="nombre_producto" style="width:300px;" readOnly="true"></td>
-                                                                <td width="55"><a  href="agregar_producto">&nbsp;(Agregar)</a></td>
+                                                                <td width="55"><a  href="busca_sku">(Buscar)</a></td>
                                                                 <td width="15"></td>
                                                                 <td width="60" align="right"></td>
 																<td>&nbsp;&nbsp;</td>
@@ -275,18 +275,21 @@
 															<thead>
 																<tr>
 																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60"><div class="delete">&nbsp;#</div></td>
-																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="150">&nbsp;C&oacute;digo</td>
-																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="270">&nbsp;Descripci&oacute;n</td>
+																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;C&oacute;digo</td>
+																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="200">&nbsp;Descripci&oacute;n</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
-                                                                                                                                        <td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;Kilos</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;Kilos</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Existencia</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Cant.&nbsp;Traspaso</td>
 																</tr>
 															</thead>
 														</table>
-														<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:850; height: 150px; border:1px solid #C1DAD7 !important;">	
+														<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:860; height: 150px; border:1px solid #C1DAD7 !important;">	
 															<table>
 																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
+																							
+																	
 																	
 																</tbody>
 															</table>
@@ -343,10 +346,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:886px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
+                            <div class="fixed column" style="width:896px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="786"></td>
+										<td width="796"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>

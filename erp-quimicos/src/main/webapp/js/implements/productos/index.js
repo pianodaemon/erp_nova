@@ -179,7 +179,7 @@ $(function() {
 			}
 			
 			if(activeTab == '#tabx-2'){
-				$('#forma-product-window').find('.product_div_one').css({'height':'405px'});
+				$('#forma-product-window').find('.product_div_one').css({'height':'430px'});
 			}
 			
 			if(activeTab == '#tabx-3'){
@@ -892,6 +892,7 @@ $(function() {
 		var $select_disponibles= $('#forma-product-window').find('select[name=disponibles]');
 		var $select_seleccionados = $('#forma-product-window').find('select[name=seleccionados]');
 		var $campo_pres_on = $('#forma-product-window').find('input[name=pres_on]');
+		var $select_pres_default = $('#forma-product-window').find('select[name=select_pres_default]');
 		
 		//agregar y remover presentaciones
 		var $agregar_pres = $('#forma-product-window').find('a[href*=agregar_pres]');
@@ -940,12 +941,12 @@ $(function() {
 		var $limpiar_costvent = $('#forma-product-window').find('a[href=limpiar_costvent]');
 		var $limpiar_vent = $('#forma-product-window').find('a[href=limpiar_vent]');
                 
-                var $nameimg = $('#forma-product-window').find('input[name=nameimg]');
-                var $namepdf = $('#forma-product-window').find('input[name=namepdf]');
+		var $nameimg = $('#forma-product-window').find('input[name=nameimg]');
+		var $namepdf = $('#forma-product-window').find('input[name=namepdf]');
 		var $descripcion_corta = $('#forma-product-window').find('textarea[name=descripcion_corta]');
-                var $descripcion_larga = $('#forma-product-window').find('textarea[name=descripcion_larga]');
-                var $edito_pdf = $('#forma-product-window').find('input[name=edito_pdf]');
-                var $edito_imagen = $('#forma-product-window').find('input[name=edito_imagen]');
+		var $descripcion_larga = $('#forma-product-window').find('textarea[name=descripcion_larga]');
+		var $edito_pdf = $('#forma-product-window').find('input[name=edito_pdf]');
+		var $edito_imagen = $('#forma-product-window').find('input[name=edito_imagen]');
                 
 		var $cerrar_plugin = $('#forma-product-window').find('#close');
 		var $cancelar_plugin = $('#forma-product-window').find('#boton_cancelar');
@@ -978,57 +979,57 @@ $(function() {
 		$vent_ssscuenta.hide();
 		$vent_sssscuenta.hide();
 		
-                /*Codigo para subir la imagen*/
-                var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
-                var button_img = $('#forma-product-window').find('#upload_button_img'), interval;
-                new AjaxUpload(button_img,{
-                    action: input_json_upload, 
-                    name: 'file',
-                    onSubmit : function(file , ext){
-                        if (! (ext && /^(png*|jpg*)$/.test(ext))){
-                            jAlert("El formato de la imagen debe de ser .png", 'Atencion!');
-                            return false;
-                        } else {
-                            button_img.text('Cargando..');
-                            this.disable();
-                        }
-                    },
-                    onComplete: function(file, response){
-                        button_img.text('Cambiar Imagen');
-                        window.clearInterval(interval);
-                        this.enable();
-                        $nameimg.val(file);
-                        $edito_imagen.val(1);
-                        var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-                        var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/'+file+'/0/'+iu+'/out.json';
-                        $('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
-                    }
-                });
-                
-                /*Codigo para subir la pdf*/
-                var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
-                var button_pdf = $('#forma-product-window').find('#upload_button_pdf'), interval;
-                new AjaxUpload(button_pdf,{
-                    action: input_json_upload, 
-                    name: 'file',
-                    onSubmit : function(file , ext){
-                        if (! (ext && /^(pdf)$/.test(ext))){
-                            jAlert("El formato del archivo, puede ser .pdf", 'Atencion!');
-                            return false;
-                        } else {
-                            button_pdf.text('Cargando..');
-                            this.disable();
-                        }
-                    },
-                    onComplete: function(file, response){
-                        button_pdf.text('Cambiar PDF');
-                        window.clearInterval(interval);
-                        this.enable();
-                        $namepdf.val(file);
-                        $edito_pdf.val(1);
-                        $('#forma-product-window').find('#contenidofile_pdf').text(file);
-                    }
-                });
+		/*Codigo para subir la imagen*/
+		var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
+		var button_img = $('#forma-product-window').find('#upload_button_img'), interval;
+		new AjaxUpload(button_img,{
+			action: input_json_upload, 
+			name: 'file',
+			onSubmit : function(file , ext){
+				if (! (ext && /^(png*|jpg*)$/.test(ext))){
+					jAlert("El formato de la imagen debe de ser .png", 'Atencion!');
+					return false;
+				} else {
+					button_img.text('Cargando..');
+					this.disable();
+				}
+			},
+			onComplete: function(file, response){
+				button_img.text('Cambiar Imagen');
+				window.clearInterval(interval);
+				this.enable();
+				$nameimg.val(file);
+				$edito_imagen.val(1);
+				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+				var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/'+file+'/0/'+iu+'/out.json';
+				$('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
+			}
+		});
+		
+		/*Codigo para subir la pdf*/
+		var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
+		var button_pdf = $('#forma-product-window').find('#upload_button_pdf'), interval;
+		new AjaxUpload(button_pdf,{
+			action: input_json_upload, 
+			name: 'file',
+			onSubmit : function(file , ext){
+				if (! (ext && /^(pdf)$/.test(ext))){
+					jAlert("El formato del archivo, puede ser .pdf", 'Atencion!');
+					return false;
+				} else {
+					button_pdf.text('Cargando..');
+					this.disable();
+				}
+			},
+			onComplete: function(file, response){
+				button_pdf.text('Cambiar PDF');
+				window.clearInterval(interval);
+				this.enable();
+				$namepdf.val(file);
+				$edito_pdf.val(1);
+				$('#forma-product-window').find('#contenidofile_pdf').text(file);
+			}
+		});
                 
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -1265,6 +1266,12 @@ $(function() {
 			});
 			$select_disponibles.append(presentaciones_hmtl);
 			
+			$select_pres_default.children().remove();
+			presentaciones_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+			$.each(entry['Presentaciones'],function(entryIndex,pres){
+				presentaciones_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+			});
+			$select_pres_default.append(presentaciones_hmtl);
 			
 			$('.contenedor_grid_prod').css({'display':'none'});
 			//$('#forma-product-window').find('.product_div_one').css({'height':'250px'});
@@ -1423,8 +1430,26 @@ $(function() {
 			});
 			//alert(valor_campo);
 			$campo_pres_on.attr({'value' : valor_campo}); 
+			
+			
+			$select_disponibles.find('option').attr("selected",false);
+			$select_disponibles.removeAttr('selected');
 			return logica;
 		});
+		
+		
+		
+		
+		$select_pres_default.change(function(){
+			var idPresDef = $(this).val();
+			
+			//seleccionar la presentación que sea igual a la seleccionada en el campo Default
+			$select_disponibles.find('option[value='+ idPresDef +']').attr("selected",true);
+			
+			//ejecutar la Click del href Agregar Presentacion
+			$agregar_pres.trigger('click');
+		});
+		
 		
 		
 		$agregar_prod.click(function(event){
@@ -1662,6 +1687,10 @@ $(function() {
 							jAlert("El producto no pudo ser eliminado porque forma parte de una Formula o un KIT.\nElimine la Formula o KIT y despues proceda a eliminar el producto.", 'Atencion!');
 						}
 						
+						if ( entry['success'] == '05' ){
+							jAlert("El producto no pudo ser eliminado porque forma parte de la Configuraci&oacute;n de un Envase.\nElimine la configuraci&oacute;n del Envase en el M&oacute;dulo de Envasado y despu&oacute;s proceda a eliminar el producto.", 'Atencion!');
+						}
+						
 						$get_datos_grid();
 					});
 				};
@@ -1726,19 +1755,20 @@ $(function() {
 				var $check_ventaext = $('#forma-product-window').find('input[name=check_ventaext]');
 				var $check_compraext = $('#forma-product-window').find('input[name=check_compraext]');
 				
-                                //variables para controlar las imagenes y el pdf
-                                var $nameimg = $('#forma-product-window').find('input[name=nameimg]');
-                                var $namepdf = $('#forma-product-window').find('input[name=namepdf]');
-                                var $descripcion_corta = $('#forma-product-window').find('textarea[name=descripcion_corta]');
-                                var $descripcion_larga = $('#forma-product-window').find('textarea[name=descripcion_larga]');
-                                var $edito_pdf = $('#forma-product-window').find('input[name=edito_pdf]');
-                                var $edito_imagen = $('#forma-product-window').find('input[name=edito_imagen]');
-                                
+				//variables para controlar las imagenes y el pdf
+				var $nameimg = $('#forma-product-window').find('input[name=nameimg]');
+				var $namepdf = $('#forma-product-window').find('input[name=namepdf]');
+				var $descripcion_corta = $('#forma-product-window').find('textarea[name=descripcion_corta]');
+				var $descripcion_larga = $('#forma-product-window').find('textarea[name=descripcion_larga]');
+				var $edito_pdf = $('#forma-product-window').find('input[name=edito_pdf]');
+				var $edito_imagen = $('#forma-product-window').find('input[name=edito_imagen]');
+				
                                 
 				//presentaciones seleccionados y disponibles
 				var $select_disponibles= $('#forma-product-window').find('select[name=disponibles]');
 				var $select_seleccionados = $('#forma-product-window').find('select[name=seleccionados]');
 				var $campo_pres_on = $('#forma-product-window').find('input[name=pres_on]');
+				var $select_pres_default = $('#forma-product-window').find('select[name=select_pres_default]');
 				
 				//agregar y remover presentaciones
 				var $agregar_pres = $('#forma-product-window').find('a[href*=agregar_pres]');
@@ -1815,59 +1845,59 @@ $(function() {
 				$vent_ssscuenta.hide();
 				$vent_sssscuenta.hide();
 				
-                                /*Codigo para subir la imagen*/
-                                var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
-                                var button_img = $('#forma-product-window').find('#upload_button_img'), interval;
-                                new AjaxUpload(button_img,{
-                                    action: input_json_upload, 
-                                    name: 'file',
-                                    onSubmit : function(file , ext){
-                                        if (! (ext && /^(png*|jpg*)$/.test(ext))){
-                                            jAlert("El formato de la imagen debe de ser .png", 'Atencion!');
-                                            return false;
-                                        } else {
-                                            button_img.text('Cargando..');
-                                            this.disable();
-                                        }
-                                    },
-                                    onComplete: function(file, response){
-                                        button_img.text('Cambiar Imagen');
-                                        window.clearInterval(interval);
-                                        this.enable();
-                                        $nameimg.val(file);
-                                        $edito_imagen.val(1);
-                                        var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-                                        var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/'+file+'/0/'+iu+'/out.json';
-                                        
-                                        $('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
-                                    }
-                                });
-                                
-                                /*Codigo para subir la pdf*/
-                                var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
-                                var button_pdf = $('#forma-product-window').find('#upload_button_pdf'), interval;
-                                new AjaxUpload(button_pdf,{
-                                    action: input_json_upload, 
-                                    name: 'file',
-                                    onSubmit : function(file , ext){
-                                        if (! (ext && /^(pdf)$/.test(ext))){
-                                            jAlert("El formato del archivo, puede ser .pdf", 'Atencion!');
-                                            return false;
-                                        } else {
-                                            button_pdf.text('Cargando..');
-                                            this.disable();
-                                        }
-                                    },
-                                    onComplete: function(file, response){
-                                        button_pdf.text('Cambiar PDF');
-                                        window.clearInterval(interval);
-                                        this.enable();
-                                        $namepdf.val(file);
-                                        $edito_pdf.val(1);
-                                        $('#forma-product-window').find('#contenidofile_pdf').text(file);
-                                    }
-                                });
-                                
+				/*Codigo para subir la imagen*/
+				var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
+				var button_img = $('#forma-product-window').find('#upload_button_img'), interval;
+				new AjaxUpload(button_img,{
+					action: input_json_upload, 
+					name: 'file',
+					onSubmit : function(file , ext){
+						if (! (ext && /^(png*|jpg*)$/.test(ext))){
+							jAlert("El formato de la imagen debe de ser .png", 'Atencion!');
+							return false;
+						} else {
+							button_img.text('Cargando..');
+							this.disable();
+						}
+					},
+					onComplete: function(file, response){
+						button_img.text('Cambiar Imagen');
+						window.clearInterval(interval);
+						this.enable();
+						$nameimg.val(file);
+						$edito_imagen.val(1);
+						var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+						var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/'+file+'/0/'+iu+'/out.json';
+						
+						$('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
+					}
+				});
+				
+				/*Codigo para subir la pdf*/
+				var input_json_upload = document.location.protocol + '//' + document.location.host + '/'+controller+'/fileUpload.json';
+				var button_pdf = $('#forma-product-window').find('#upload_button_pdf'), interval;
+				new AjaxUpload(button_pdf,{
+					action: input_json_upload, 
+					name: 'file',
+					onSubmit : function(file , ext){
+						if (! (ext && /^(pdf)$/.test(ext))){
+							jAlert("El formato del archivo, puede ser .pdf", 'Atencion!');
+							return false;
+						} else {
+							button_pdf.text('Cargando..');
+							this.disable();
+						}
+					},
+					onComplete: function(file, response){
+						button_pdf.text('Cambiar PDF');
+						window.clearInterval(interval);
+						this.enable();
+						$namepdf.val(file);
+						$edito_pdf.val(1);
+						$('#forma-product-window').find('#contenidofile_pdf').text(file);
+					}
+				});
+				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == 'true' ){
 						var remove = function() {$(this).remove();};
@@ -2008,37 +2038,37 @@ $(function() {
 					$check_ventaext.attr('checked', (entry['Producto'][0]['venta_moneda_extranjera'] == 'true')? true:false );
 					$check_compraext.attr('checked', (entry['Producto'][0]['compra_moneda_extranjera'] == 'true')? true:false );
 					
-                                        $nameimg.attr('value', entry['Producto'][0]['archivo_img']);
-                                        $namepdf.attr('value', entry['Producto'][0]['archivo_pdf']);
-                                        $descripcion_corta.text(entry['Producto'][0]['descripcion_corta']);
-                                        $descripcion_larga.text(entry['Producto'][0]['descripcion_larga']);
-                                        
-                                        
-                                        if(entry['Producto'][0]['archivo_img'] != ""){
-                                            button_img.text('Cambiar Imagen');
-                                            $nameimg.val(entry['Producto'][0]['archivo_img']);
-                                            $edito_imagen.val(0);
-                                            var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-                                            var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/'+entry['Producto'][0]['archivo_img']+'/'+entry['Producto'][0]['id']+'/'+iu+'/out.json';
-                                            $('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
-                                        }
-                                        
-                                        if(entry['Producto'][0]['archivo_pdf'] != ""){
-                                            button_pdf.text('Cambiar PDF');
-                                            $namepdf.val(entry['Producto'][0]['archivo_pdf']);
-                                            $edito_pdf.val(0);
-                                            $('#forma-product-window').find('#contenidofile_pdf').text(entry['Producto'][0]['archivo_pdf']);
-                                        }
+					$nameimg.attr('value', entry['Producto'][0]['archivo_img']);
+					$namepdf.attr('value', entry['Producto'][0]['archivo_pdf']);
+					$descripcion_corta.text(entry['Producto'][0]['descripcion_corta']);
+					$descripcion_larga.text(entry['Producto'][0]['descripcion_larga']);
+					
+					
+					if(entry['Producto'][0]['archivo_img'] != ""){
+						button_img.text('Cambiar Imagen');
+						$nameimg.val(entry['Producto'][0]['archivo_img']);
+						$edito_imagen.val(0);
+						var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+						var input_json_img = document.location.protocol + '//' + document.location.host + '/' + controller + '/imgDownloadImg/'+entry['Producto'][0]['archivo_img']+'/'+entry['Producto'][0]['id']+'/'+iu+'/out.json';
+						$('#forma-product-window').find('#contenidofile_img').removeAttr("src").attr("src",input_json_img);
+					}
+					
+					if(entry['Producto'][0]['archivo_pdf'] != ""){
+						button_pdf.text('Cambiar PDF');
+						$namepdf.val(entry['Producto'][0]['archivo_pdf']);
+						$edito_pdf.val(0);
+						$('#forma-product-window').find('#contenidofile_pdf').text(entry['Producto'][0]['archivo_pdf']);
+					}
                                         
 					//estatus
 					$select_estatus.children().remove();
 					var status_html = '';		
 					if( entry['Producto'][0]['cxp_prov_id']=='true'){
-                                            status_html = '<option value="true" selected="yes">Activo</option>';
-                                            status_html += '<option value="false">Inactivo</option>';
+						status_html = '<option value="true" selected="yes">Activo</option>';
+						status_html += '<option value="false">Inactivo</option>';
 					}else{
-                                            status_html = '<option value="true">Activo</option>';
-                                            status_html += '<option value="false" selected="yes">Inactivo</option>';	
+						status_html = '<option value="true">Activo</option>';
+						status_html += '<option value="false" selected="yes">Inactivo</option>';	
 					}
 					$select_estatus.append(status_html);
 					
@@ -2273,6 +2303,19 @@ $(function() {
 						pres_hmtl += '<option value="' + preson['id'] + '"  >' + preson['titulo'] + '</option>';
 					});
 					$select_seleccionados.append(pres_hmtl);
+					
+					
+					//carga select de Presentacion Default
+					$select_pres_default.children().remove();
+					var pres_def_hmtl = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
+					$.each(entry['PresOn'],function(entryIndex,presdef){
+						if(parseInt(presdef['id']) == parseInt(entry['Producto'][0]['presentacion_id'])){
+							pres_def_hmtl += '<option value="' + presdef['id'] + '" selected="yes">' + presdef['titulo'] + '</option>';
+						}else{
+							pres_def_hmtl += '<option value="' + presdef['id'] + '"  >' + presdef['titulo'] + '</option>';
+						}
+					});
+					$select_pres_default.append(pres_def_hmtl);
 					
 					
 					$.each(entry['Ingredientes'],function(entryIndex,ingrediente){

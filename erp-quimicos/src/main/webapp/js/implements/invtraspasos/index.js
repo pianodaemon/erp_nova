@@ -466,7 +466,7 @@ $(function() {
 					//asignar a los campos correspondientes el sku y y descripcion
 					$('#forma-invtraspasos-window').find('input[name=sku_producto]').val($(this).find('span.sku_prod_buscador').html());
 					$('#forma-invtraspasos-window').find('input[name=nombre_producto]').val($(this).find('span.titulo_prod_buscador').html());
-                                        
+					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
 					$('#forma-buscaproducto-overlay').fadeOut(remove);
@@ -561,33 +561,33 @@ $(function() {
 		});
 	}
 	
-        $realiza_calculo_kilos = function($this_tr, $campo_input){
-            if($campo_input.val()=='0' || $campo_input.val()==""){
-                    $this_tr.find('input[name=cantidad_kilos]').val(0);
-            }else{
-                $densidad_tmp = parseFloat($this_tr.find('input[name=densidad_litro]').val());
-                cant_traspaso = $this_tr.find('input[name=cant_traspaso]').val();
-                
-                if(isNaN($densidad_tmp)){
-                    $this_tr.find('input[name=cantidad_kilos]').val(0);
-                }else{
-                    unidad = $this_tr.find('input[name=unidad]').val();
-                    unidad = unidad.toUpperCase();
-                    if(/^KILO*|KILOGRAMO$/.test(unidad)){
-                        $this_tr.find('input[name=cantidad_kilos]').val(cant_traspaso);
-                    }else{
-                        if(/^LITRO*|LITROS$/.test(unidad)){
-                            kilos = parseFloat(cant_traspaso) * ($densidad_tmp);
-                            $this_tr.find('input[name=cantidad_kilos]').val(parseFloat(kilos).toFixed(4));
-                        }else{
-                            $this_tr.find('input[name=cantidad_kilos]').val(0);
-                        }
-                    }
-                }
-            }
-        }
+	$realiza_calculo_kilos = function($this_tr, $campo_input){
+		if($campo_input.val()=='0' || $campo_input.val()==""){
+				$this_tr.find('input[name=cantidad_kilos]').val(0);
+		}else{
+			$densidad_tmp = parseFloat($this_tr.find('input[name=densidad_litro]').val());
+			cant_traspaso = $this_tr.find('input[name=cant_traspaso]').val();
+			
+			if(isNaN($densidad_tmp)){
+				$this_tr.find('input[name=cantidad_kilos]').val(0);
+			}else{
+				unidad = $this_tr.find('input[name=unidad]').val();
+				unidad = unidad.toUpperCase();
+				if(/^KILO*|KILOGRAMO$/.test(unidad)){
+					$this_tr.find('input[name=cantidad_kilos]').val(cant_traspaso);
+				}else{
+					if(/^LITRO*|LITROS$/.test(unidad)){
+						kilos = parseFloat(cant_traspaso) * ($densidad_tmp);
+						$this_tr.find('input[name=cantidad_kilos]').val(parseFloat(kilos).toFixed(4));
+					}else{
+						$this_tr.find('input[name=cantidad_kilos]').val(0);
+					}
+				}
+			}
+		}
+	}
         
-        //funcion para aplicar la conversion de litros a kilos, de acuerdo a la densidad
+	//funcion para aplicar la conversion de litros a kilos, de acuerdo a la densidad
 	$aplicar_evento_kilos_densidad = function( $campo_input, tipo){
             //tipo almacene, si se envio, para realizar el evento blur, o para solo hacer el calculo
             $this_tr = $campo_input.parent().parent();
@@ -678,27 +678,36 @@ $(function() {
 				trr += '<input type="hidden" 	name="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
 				trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="150">';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
 				trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_producto +'">';
-				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:146px;">';
+				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:106px;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="270">';
-				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:266px;">';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="200">';
+				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:196px;">';
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 				trr += '<input type="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:86px;">';
 			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+				trr += '<select name="select_pres" class="pres'+ noTr +'" style="width:116px;">';
+				trr += '</select>';
+			trr += '</td>';
+			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-                                trr += '<input type="hidden" name="densidad_litro" value="'+densidad+'">';
+				trr += '<input type="hidden" name="densidad_litro" value="'+densidad+'">';
 				trr += '<input type="text" name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="'+cant_traspaso+'" class="borde_oculto" readOnly="true" style="width:56px; text-align:right;">';
 			trr += '</td>';
+			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 				trr += '<input type="text" 		name="cantidad" value="'+$(this).agregar_comas(existencia)+'" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
-				trr += '<input type="text" 		name="cant_traspaso" value="'+cant_traspaso+'" class="cant_traspaso'+noTr+'" style="width:106px;">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+				trr += '<input type="text" 		name="cant_traspaso" value="'+ cant_traspaso +'" class="cant_traspaso'+noTr+'" style="width:96px; text-align:right;">';
 			trr += '</td>';
 		trr += '</tr>';
 		
@@ -733,46 +742,72 @@ $(function() {
 				var trr = '';
 				
 				$.post(input_json,$arreglo,function(entry){
-					//verifica si el arreglo retorno datos
+					//verifica si el arreglo retorno datos del Producto
 					if (entry['Producto'].length > 0){
-						var noTr = $("tr", $grid_productos).size();
-						noTr++;
 						
-						var id_producto = entry['Producto'][0]['id_producto'];
-						var codigo = entry['Producto'][0]['codigo'];
-						var descripcion = entry['Producto'][0]['descripcion'];
-						var unidad = entry['Producto'][0]['unidad'];
-						var existencia = entry['Producto'][0]['existencia'];
-                                                var densidad = entry['Producto'][0]['densidad'];
-						var cant_traspaso='0.00';
-						
-						var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad);
-						
-						$grid_productos.append(cadena_tr);
-						
-						$aplicar_evento_keypress($grid_productos.find('.cant_traspaso'+noTr));
-						$aplicar_evento_focus_input($grid_productos.find('.cant_traspaso'+noTr));
-						$aplicar_evento_blur_input($grid_productos.find('.cant_traspaso'+noTr));
-						
-						$aplicar_evento_eliminar($grid_productos.find('.delete'+noTr), arraySucursales, arrayAlmacenes);
-						
-                                                $aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+noTr), "blur");
-                                                
-						//fijar las opciones actuales de los select
-						$fijar_opciones_select($grid_productos, arraySucursales, arrayAlmacenes);
+						if (entry['Presentaciones'].length > 0){
+							var noTr = $("tr", $grid_productos).size();
+							noTr++;
 							
+							var id_producto = entry['Producto'][0]['id_producto'];
+							var codigo = entry['Producto'][0]['codigo'];
+							var descripcion = entry['Producto'][0]['descripcion'];
+							var unidad = entry['Producto'][0]['unidad'];
+							var existencia = entry['Producto'][0]['existencia'];
+							var densidad = entry['Producto'][0]['densidad'];
+							var cant_traspaso='0.00';
+							
+							var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad);
+							
+							$grid_productos.append(cadena_tr);
+							
+							$aplicar_evento_keypress($grid_productos.find('.cant_traspaso'+noTr));
+							$aplicar_evento_focus_input($grid_productos.find('.cant_traspaso'+noTr));
+							$aplicar_evento_blur_input($grid_productos.find('.cant_traspaso'+noTr));
+							
+							$aplicar_evento_eliminar($grid_productos.find('.delete'+noTr), arraySucursales, arrayAlmacenes);
+							
+							$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+noTr), "blur");
+							
+							//carga select con las Presentaciones del Producto
+							$grid_productos.find('select.pres'+noTr).children().remove();
+							var pres_hmtl = '';
+							$.each(entry['Presentaciones'],function(entryIndex,pres){
+								pres_hmtl += '<option value="' + pres['id'] + '">' + pres['titulo'] + '</option>';
+							});
+							$grid_productos.find('select.pres'+noTr).append(pres_hmtl);
+							
+							//fijar las opciones actuales de los select
+							$fijar_opciones_select($grid_productos, arraySucursales, arrayAlmacenes);
+						}else{
+							jAlert('El producto que intenta agregar no tiene Presentaciones Asignadas, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) {
+								$('#forma-invtraspasos-window').find('input[name=sku_producto]').val('');
+								$('#forma-invtraspasos-window').find('input[name=titulo_producto]').val('');
+								$('#forma-invtraspasos-window').find('input[name=titulo_producto]').focus();
+							});
+						}
 					}else{
-						jAlert("El producto que intenta agregar no existe en el almacen origen, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
-						$('#forma-invtraspasos-window').find('input[name=titulo_producto]').val('');
+						jAlert('El producto que intenta agregar no existe en el almacen origen, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) {
+							$('#forma-invtraspasos-window').find('input[name=sku_producto]').val('');
+							$('#forma-invtraspasos-window').find('input[name=titulo_producto]').val('');
+							$('#forma-invtraspasos-window').find('input[name=titulo_producto]').focus();
+						});
 					}
 				});
 			}else{
-				jAlert("El producto que intenta Agregar ya se encuentra en el listado.", 'Atencion!');
+				jAlert('El producto que intenta Agregar ya se encuentra en el listado.', 'Atencion!', function(r) {
+					$('#forma-invtraspasos-window').find('input[name=sku_producto]').val('');
+					$('#forma-invtraspasos-window').find('input[name=titulo_producto]').val('');
+					$('#forma-invtraspasos-window').find('input[name=sku_producto]').focus();
+				});
 			}
 		}else{
-			jAlert("Es necesario ingresar un C&oacute;digo de producto valido", 'Atencion!');
+			jAlert('Es necesario ingresar un C&oacute;digo de producto valido.', 'Atencion!', function(r) {
+				$('#forma-invtraspasos-window').find('input[name=sku_producto]').val('');
+				$('#forma-invtraspasos-window').find('input[name=titulo_producto]').val('');
+				$('#forma-invtraspasos-window').find('input[name=sku_producto]').focus();
+			});
 		}
-	
 	}//termina buscador de datos del producto
 	
     
@@ -1370,12 +1405,16 @@ $(function() {
 							var unidad = prodGrid['unidad'];
 							var existencia = prodGrid['existencia'];
 							var cant_traspaso=prodGrid['cant_traspaso'];
-                                                        var densidad=prodGrid['densidad'];
+							var densidad=prodGrid['densidad'];
 							
 							var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad);
 							
 							$grid_productos.append(cadena_tr);
 							$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+noTr), "");
+							
+							
+							
+							
 							
 						});
 						

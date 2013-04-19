@@ -551,9 +551,9 @@
 												<td width="60"></td>
 												<td width="40"></td>
 												<td width="50"></td>
-												<td width="195" colspan="2">Permitir&nbsp;Venta&nbsp;en&nbsp;moneda&nbsp;Extranjera</td>
-												<td width="180"><input type="checkbox" name="check_ventaext"></td>
-												<td width="25"></td>
+												<td width="195" colspan="2">Seleccionar presentaci&oacute;n default</td>
+												<td width="180"><select name="select_pres_default" style="width:180px;"></select></td>
+												<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presdefault"></div></td>
 												<td width="5"></td>
 											</tr>
 											<tr>
@@ -561,11 +561,29 @@
 											</tr>
 											<tr>
 												<td width="5" height="10"></td>
-												<td width="110">Valor&nbsp;Maximo</td>
+												<td width="110">Valor&nbsp;M&aacute;ximo</td>
 												<td width="5"></td>
 												<td width="50"><input type="text" name="valor_maximo" value="0" style="width:45px;" maxlength="10"></td>
-												<td width="50">&nbsp;Valor&nbsp;Minimo</td>
-												<td width="60"><input type="text" name="valor_minimo" value="0" style="width:60px;" maxlength="10"></td>
+												<td width="50"></td>
+												<td width="60"></td>
+												<td width="40"></td>
+												<td width="50"></td>
+												<td width="195" colspan="2">Permitir&nbsp;Venta&nbsp;en&nbsp;moneda&nbsp;Extranjera</td>
+												<td width="180"><input type="checkbox" name="check_ventaext"></td>
+												<td width="25"></td>
+												<td width="5"></td>
+											</tr>
+											
+											<tr>
+												<td width="5" height="13" colspan="13">&nbsp;</td>
+											</tr>
+											<tr>
+												<td width="5" height="10"></td>
+												<td width="110">Valor&nbsp;M&iacute;nimo</td>
+												<td width="5"></td>
+												<td width="50"><input type="text" name="valor_minimo" value="0" style="width:45px;" maxlength="10"></td>
+												<td width="50">&nbsp;</td>
+												<td width="60"></td>
 												<td width="40"></td>
 												<td width="50"></td>
 												<td width="195" colspan="2">Permitir&nbsp;Compra&nbsp;en&nbsp;moneda&nbsp;Extranjera</td>
@@ -573,6 +591,7 @@
 												<td width="25"></td>
 												<td width="5"></td>
 											</tr>
+											
 										</table>
 										
                                     </div><!--termina tabx-2-->
