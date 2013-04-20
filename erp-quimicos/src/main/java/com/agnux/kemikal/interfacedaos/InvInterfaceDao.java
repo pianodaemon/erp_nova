@@ -78,12 +78,13 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getEntradas_DetallesOrdenCompra(Integer id_orden_compra);
     public ArrayList<HashMap<String, String>> getProveedor_Contacto(Integer idProveedor);
     
-    
+    /*
     //Traspaso de mercancia
     public ArrayList<HashMap<String, String>> getTraspaso_Tipos();
     public ArrayList<HashMap<String, Object>> getTraspaso_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getTraspaso_Datos(Integer id_traspaso);
     public ArrayList<HashMap<String, String>> getTraspaso_DatosGrid(Integer id_traspaso);
+    */
     
     //reporte de existencias en invetario
     public ArrayList<HashMap<String, String>> getDatos_ReporteExistencias(Integer id_isuario, Integer id_almacen, String codigo_producto, String descripcion,Integer tipo);
@@ -292,6 +293,7 @@ public interface InvInterfaceDao {
     
     //METODOS PARA TRASPASOS
     public ArrayList<HashMap<String, String>> getInvTraspasos_DatosProducto(String sku,Integer id_empresa, Integer id_almacen, Integer ano_actual);
+    public ArrayList<HashMap<String, String>> getInvTraspasos_ExistenciaPresentacion(Integer id_prod, Integer id_pres, Integer id_alm);
     public ArrayList<HashMap<String, Object>> getInvTraspasos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, String>> getInvTraspasos_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getInvTraspasos_DatosGrid(Integer id, Integer id_almacen_origen);

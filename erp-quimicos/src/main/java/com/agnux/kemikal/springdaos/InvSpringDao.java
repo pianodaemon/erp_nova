@@ -754,7 +754,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene las presentaciones seleccionadas de un producto en especifico
     @Override
     public ArrayList<HashMap<String, String>> getProducto_PresentacionesON(Integer id_producto) {
-        String sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE id IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
+        String sql_query = "SELECT id,titulo, cantidad FROM inv_prod_presentaciones WHERE id IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
 
 
         ArrayList<HashMap<String, String>> hm_pres_on = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -765,6 +765,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",rs.getString("id"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("equiv",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     return row;
                 }
             }
@@ -798,7 +799,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene las unidades
     @Override
     public ArrayList<HashMap<String, String>> getProducto_Unidades() {
-	String sql_query = "SELECT id,titulo from inv_prod_unidades where borrado_logico=false";
+	String sql_query = "SELECT id,titulo,decimales from inv_prod_unidades where borrado_logico=false";
 
         ArrayList<HashMap<String, String>> hm_unidades = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -808,6 +809,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",rs.getString("id"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("no_dec",String.valueOf(rs.getInt("decimales")));
                     return row;
                 }
             }
@@ -825,9 +827,9 @@ public class InvSpringDao implements InvInterfaceDao{
     public ArrayList<HashMap<String, String>> getProducto_Presentaciones(Integer id_producto) {
         String sql_query="";
         if(id_producto != 0){
-            sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE id NOT IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
+            sql_query = "SELECT id,titulo,cantidad FROM inv_prod_presentaciones WHERE id NOT IN (SELECT presentacion_id FROM  inv_prod_pres_x_prod WHERE producto_id = "+id_producto+") order by titulo;";
         }else{
-            sql_query = "SELECT id,titulo FROM inv_prod_presentaciones WHERE borrado_logico=FALSE order by titulo;";
+            sql_query = "SELECT id,titulo,cantidad FROM inv_prod_presentaciones WHERE borrado_logico=FALSE order by titulo;";
         }
         
         ArrayList<HashMap<String, String>> hm_pres= (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -838,6 +840,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",rs.getString("id"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("equiv",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     return row;
                 }
             }
@@ -1746,7 +1749,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
 
 
-
+/*
     //obtiene  tipos de traspaso
     @Override
     public ArrayList<HashMap<String, String>> getTraspaso_Tipos() {
@@ -1891,7 +1894,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_grid;
     }
-
+*/
 
 
 
@@ -6763,6 +6766,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_prod.descripcion,"
                     + "inv_prod.densidad,"
                     + "inv_prod_unidades.titulo AS unidad, "
+                    + "inv_prod_unidades.decimales AS no_dec,  "
                     + "inv_exi.inv_alm_id AS id_almacen, "
                     + "(inv_exi.exi_inicial - inv_exi.transito - inv_exi.reservado + inv_exi.entradas_1 + inv_exi.entradas_2 + inv_exi.entradas_3 + inv_exi.entradas_4 + inv_exi.entradas_5 + inv_exi.entradas_6 + inv_exi.entradas_7 + inv_exi.entradas_8 + inv_exi.entradas_9 + inv_exi.entradas_10 + inv_exi.entradas_11 + inv_exi.entradas_12 - inv_exi.salidas_1 - inv_exi.salidas_2 - inv_exi.salidas_3 - inv_exi.salidas_4 - inv_exi.salidas_5 - inv_exi.salidas_6 - inv_exi.salidas_7 - inv_exi.salidas_8 - inv_exi.salidas_9 - inv_exi.salidas_10 - inv_exi.salidas_11 - inv_exi.salidas_12) AS existencia "
                 + "FROM inv_prod "
@@ -6787,10 +6791,11 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("codigo",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
                     row.put("id_almacen",String.valueOf(rs.getInt("id_almacen")));
-                    row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),4));
-                    row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), 4));
-
+                    row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),rs.getInt("no_dec")));
+                    row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), rs.getInt("no_dec")));
+                    
                     return row;
                 }
             }
@@ -6799,6 +6804,29 @@ public class InvSpringDao implements InvInterfaceDao{
     }
 
 
+    
+    //obtiene las existencias de la presentacion de un Producto en un almacen en especifico
+    @Override
+    public ArrayList<HashMap<String, String>> getInvTraspasos_ExistenciaPresentacion(Integer id_prod, Integer id_pres, Integer id_alm) {
+        String sql_query = "SELECT exis, decimales FROM (SELECT (inv_exi_pres.cantidad::double precision - inv_exi_pres.reservado::double precision) AS exis, inv_prod_unidades.decimales FROM inv_exi_pres JOIN inv_prod ON inv_prod.id=inv_exi_pres.inv_prod_id JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id WHERE inv_exi_pres.inv_alm_id=? AND inv_exi_pres.inv_prod_id=? AND inv_exi_pres.inv_prod_presentacion_id=?)AS sbt WHERE exis>0;";
+        System.out.println("getExisPres: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_alm), new Integer(id_prod), new Integer(id_pres)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("no_dec",String.valueOf(rs.getInt("decimales")));
+                    row.put("exis",StringHelper.roundDouble(rs.getString("exis"),rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
 
     @Override
     public ArrayList<HashMap<String, String>> getInvTraspasos_Datos(Integer id) {
@@ -6888,6 +6916,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_prod.descripcion, "
                     + "inv_prod.densidad, "
                     + "inv_prod_unidades.titulo AS unidad,  "
+                    + "inv_prod_unidades.decimales AS no_dec,  "
                     + "(inv_exi.exi_inicial - inv_exi.transito - inv_exi.reservado + inv_exi.entradas_1 + inv_exi.entradas_2 + inv_exi.entradas_3 + inv_exi.entradas_4 + inv_exi.entradas_5 + inv_exi.entradas_6 + inv_exi.entradas_7 + inv_exi.entradas_8 + inv_exi.entradas_9 + inv_exi.entradas_10 + inv_exi.entradas_11 + inv_exi.entradas_12 - inv_exi.salidas_1 - inv_exi.salidas_2 - inv_exi.salidas_3 - inv_exi.salidas_4 - inv_exi.salidas_5 - inv_exi.salidas_6 - inv_exi.salidas_7 - inv_exi.salidas_8 - inv_exi.salidas_9 - inv_exi.salidas_10 - inv_exi.salidas_11 - inv_exi.salidas_12) AS existencia, "
                     + "inv_tras_det.cantidad_tras AS cant_traspaso,"
                     + "inv_tras_det.inv_prod_presentacion_id AS presentacion_id "
@@ -6910,9 +6939,10 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
-                    row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),4));
-                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
-                    row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), 4));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("existencia",StringHelper.roundDouble(rs.getDouble("existencia"),rs.getInt("no_dec")));
+                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),rs.getInt("no_dec")));
+                    row.put("densidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("densidad")), rs.getInt("no_dec")));
                     row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
                     return row;
                 }
@@ -6966,6 +6996,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_prod.sku AS codigo, "
                     + "inv_prod.descripcion, "
                     + "inv_prod_unidades.titulo AS unidad,  "
+                    + "inv_prod_unidades.decimales AS no_dec,  "
                     + "inv_tras_det.cantidad_tras AS cant_traspaso "
                 + "FROM inv_tras_det "
                 + "JOIN inv_prod ON inv_prod.id=inv_tras_det.inv_prod_id "
@@ -6984,7 +7015,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
-                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),rs.getInt("no_dec")));
                     return row;
                 }
             }
@@ -7096,6 +7128,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_prod.densidad, "
                     + "inv_prod.descripcion, "
                     + "inv_prod_unidades.titulo AS unidad,  "
+                    + "inv_prod_unidades.decimales AS no_dec,  "
                     + "inv_otras_det.cantidad_tras AS cant_traspaso "
                 + "FROM inv_otras_det "
                 + "JOIN inv_prod ON inv_prod.id=inv_otras_det.inv_prod_id "
@@ -7115,8 +7148,9 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
-                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
-                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),4));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),rs.getInt("no_dec")));
+                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),rs.getInt("no_dec")));
                     return row;
                 }
             }
@@ -7132,8 +7166,11 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "SELECT DISTINCT "
                     + "inv_otras_det.id AS id_partida, "
                     + "inv_lote.lote_int,"
-                    + "inv_lote_mov_det.cantidad AS cant_traspaso "
+                    + "inv_lote_mov_det.cantidad AS cant_traspaso, "
+                    + "inv_prod_unidades.decimales AS no_dec "
                 + "FROM inv_otras_det "
+                + "JOIN inv_prod ON inv_prod.id=inv_otras_det.inv_prod_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                 + "JOIN inv_lote_mov_det ON inv_lote_mov_det.referencia_det_id=inv_otras_det.id "
                 + "JOIN inv_lote ON inv_lote.id=inv_lote_mov_det.inv_lote_id "
                 + "WHERE inv_otras_det.inv_otras_id=? "
@@ -7149,7 +7186,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id_partida",String.valueOf(rs.getInt("id_partida")));
                     row.put("lote_int",rs.getString("lote_int"));
-                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),4));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("cant_traspaso",StringHelper.roundDouble(rs.getDouble("cant_traspaso"),rs.getInt("no_dec")));
                     return row;
                 }
             }
