@@ -24,7 +24,7 @@ $(function() {
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
     $('#barra_acciones').find('.table_acciones').css({'display':'block'});
-    var $new_ajuste = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
+    var $new_traspaso = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
 	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
@@ -524,9 +524,6 @@ $(function() {
 		});
 	}
 	
-	
-	
-	
 	$aplicar_evento_focus = function( $campo_input ){
 		$campo_input.focus(function(e){
 			if($(this).val() == ' '){
@@ -561,7 +558,9 @@ $(function() {
 		});
 	}
 	
-	$realiza_calculo_kilos = function($this_tr, $campo_input){
+	
+	
+	$realiza_calculo_kilos = function($this_tr, $campo_input, noDec){
 		if($campo_input.val()=='0' || $campo_input.val()==""){
 				$this_tr.find('input[name=cantidad_kilos]').val(0);
 		}else{
@@ -578,7 +577,7 @@ $(function() {
 				}else{
 					if(/^LITRO*|LITROS$/.test(unidad)){
 						kilos = parseFloat(cant_traspaso) * ($densidad_tmp);
-						$this_tr.find('input[name=cantidad_kilos]').val(parseFloat(kilos).toFixed(4));
+						$this_tr.find('input[name=cantidad_kilos]').val(parseFloat(kilos).toFixed(noDec));
 					}else{
 						$this_tr.find('input[name=cantidad_kilos]').val(0);
 					}
@@ -586,18 +585,65 @@ $(function() {
 			}
 		}
 	}
+	
+	
+	//convertir la Presentacion en Unidad de acuerdo a la Equivalencia
+	$convertirPresAUni = function(idPres, cantPres, arrayPres){
+		var valor=0;
+		$.each(arrayPres,function(entryIndex,pres){
+			if(parseInt(pres['id'])==parseInt(idPres)){
+				valor = parseFloat(cantPres) * parseFloat(pres['equiv']);
+			}
+		});
+		return valor;
+	};
+	
+	
+	
+	
+	//convertir la Cantidad de Unidades en cantidad de Presentaciones
+	$convertirUniAPres = function(idPres, cantUni, arrayPres){
+		var valor=0;
+		//alert("idPres:"+idPres+"\ncantUni:"+cantUni);
+		$.each(arrayPres,function(entryIndex,pres){
+			if(parseInt(pres['id'])==parseInt(idPres)){
+				valor = parseFloat(cantUni) / parseFloat(pres['equiv']);
+			}
+		});
+		return valor;
+	};
+	
+	
         
 	//funcion para aplicar la conversion de litros a kilos, de acuerdo a la densidad
-	$aplicar_evento_kilos_densidad = function( $campo_input, tipo){
-            //tipo almacene, si se envio, para realizar el evento blur, o para solo hacer el calculo
-            $this_tr = $campo_input.parent().parent();
-            if(tipo == "blur"){
-                $campo_input.blur(function(e){
-                    $realiza_calculo_kilos($this_tr, $campo_input);
-                });
-            }else{
-                $realiza_calculo_kilos($this_tr, $campo_input);
-            }
+	$aplicar_evento_campo_cantidad = function( $campo_input, tipo, noDec, arrayPres){
+		//tipo almacene, si se envio, para realizar el evento blur, o para solo hacer el calculo
+		var $this_tr = $campo_input.parent().parent();
+		
+		if(tipo == "blur"){
+			$campo_input.blur(function(e){
+				$realiza_calculo_kilos($this_tr, $campo_input, noDec);
+				
+				var idPres = $this_tr.find('select[name=select_pres]').val();
+				var $cantUniTras = $this_tr.find('input[name=cant_traspaso]');
+				var $cantPresTras = $this_tr.find('input[name=cantTrasPres]');
+				var cantUniExis = quitar_comas($this_tr.find('input[name=cantidad]').val());
+				
+				//convertir las Unidades en Presentaciones
+				var exisPres = $convertirUniAPres(idPres, $cantUniTras.val(), arrayPres);
+				
+				if(parseFloat($cantUniTras.val()) > parseFloat(cantUniExis)){
+					jAlert('No es posible realizar un traspaso mayor a la Existencia de la Presentaci&oacute;n.', 'Atencion!', function(r) { 
+						$cantUniTras.val(parseFloat(0).toFixed(noDec));
+						$cantPresTras.val(parseFloat(0).toFixed(noDec));
+					});
+				}else{
+					$cantPresTras.val(parseFloat(exisPres).toFixed(noDec));
+				}
+			});
+		}else{
+			$realiza_calculo_kilos($this_tr, $campo_input);
+		}
 	}
         
 	
@@ -666,9 +712,123 @@ $(function() {
 	
 	
 	
+	//busca el almacen y presentacion en el Grid, esto para evitar que se repitan
+	var $buscarRegistroProductoPresentacion = function($grid_productos, idProd, idPres, notr){
+		var encontrado=0;
+		//busca el codigo del producto y Prresentacion en el grid
+		$grid_productos.find('tr').each(function (index){
+			var $regEliminado = $(this).find('input[name=eliminado]');
+			var $idProducto = $(this).find('input[name=idproducto]');
+			var $selectPres = $(this).find('select[name=select_pres]');
+			var $noTr = $(this).find('input[name=no_tr]');
+			
+			if(parseInt($regEliminado.val())!=0){
+				if( (parseInt($idProducto.val())==parseInt(idProd))  &&  (parseInt($selectPres.val())==parseInt(idPres))){
+					if(parseInt($noTr.val())!=parseInt(notr)){
+						encontrado++;
+					}
+				}
+			}
+		});
+		return encontrado;
+	}
+	
+	
+	//aplicar evento change al select de Presentaciones que esta en el Grid
+	$aplicarEventoChangeSelectPres = function($select_pres, idAlmOrigen, arregloPres){
+		//cambiar presentacion
+		$select_pres.change(function(){
+			var idPres = $(this).val();
+			var $this_tr = $(this).parent().parent();
+			$grid_productos = $(this).parent().parent().parent();
+			var idProd = $this_tr.find('input[name=idproducto]').val();
+			var notr = $this_tr.find('input[name=no_tr]').val();
+			
+			$exisPresTr = $this_tr.find('input[name=exis_pres]');
+			$exisUniTr = $this_tr.find('input[name=cantidad]');
+			$presIdSelecTr = $this_tr.find('input[name=presIdSeleccionado]');
+			$cantTrasPresTr = $this_tr.find('input[name=cantTrasPres]');
+			$cantTrasUniTr = $this_tr.find('input[name=cant_traspaso]');
+			
+			//asignar valores en cero
+			$exisPresTr.val(parseFloat(0).toFixed(2));
+			$exisUniTr.val(parseFloat(0).toFixed(2));
+			$cantTrasPresTr.val(parseFloat(0).toFixed(2));
+			$cantTrasUniTr.val(parseFloat(0).toFixed(2));
+			
+			if(parseInt(idPres) > 0 ){
+				//buscar existencia del producto y la presentacion en el Grid, esto para evitar que se repita
+				var exisProdPres = $buscarRegistroProductoPresentacion($grid_productos, idProd, idPres, notr);
+				
+				if(parseInt(exisProdPres)<=0){
+					//buscar existencias al seleccionar una presentacion
+					var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getExisPres.json';
+					var $arreglo3 = {'id_prod':idProd, 'id_pres':idPres, 'id_alm':idAlmOrigen, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+					
+					$.post(input_json3,$arreglo3,function(entry3){
+						if(parseInt(entry3['Existencia'].length) > 0 ){
+							var exisPres = entry3['Existencia'][0]['exis'];
+							var noDec = entry3['Existencia'][0]['no_dec'];
+							
+							//convertir la Cantidad de la Presentacion en cantidad de Unidades
+							var exisUnidad = $convertirPresAUni(idPres, exisPres, arregloPres);
+							
+							//asignar la existencia en Presentaciones
+							$exisPresTr.val(parseFloat(exisPres).toFixed(noDec));
+							
+							//asignar la existencia en Unidades
+							$exisUniTr.val(parseFloat(exisUnidad).toFixed(noDec));
+							
+							//agregar comas
+							$exisPresTr.val($(this).agregar_comas($exisPresTr.val()));
+							$exisUniTr.val($(this).agregar_comas($exisUniTr.val()));
+							
+							$presIdSelecTr.val(idPres);
+						}else{
+							//asignar la existencias en Cero
+							$exisPresTr.val(parseFloat(0.0).toFixed(noDec));
+							$exisUniTr.val(parseFloat(0.0).toFixed(noDec));
+							$presIdSelecTr.val(0);
+							
+							jAlert('No hay existencias en &eacute;sta Presentaci&oacute;n.', 'Atencion!', function(r) { 
+								$select_pres.focus();
+							});
+						}
+					});
+				}else{
+					//aqui entra porque el producto y la presentacion ya estan en el GRID
+					jAlert('No se puede seleccionar &eacute;sta Presentaci&oacute;n para &eacute;ste Producto, ya existe un registro igual.', 'Atencion!', function(r) { 
+						var html_select='';
+						$select_pres.find('option').each(function(){
+							if(parseInt($(this).val())==parseInt($presIdSelecTr.val())){
+								html_select += '<option value="' + $(this).val() + '" selected="yes">' + $(this).text() + '</option>';
+							}else{
+								html_select += '<option value="' + $(this).val() + '"  >' + $(this).text() + '</option>';
+							}
+						});
+						
+						$select_pres.children().remove();
+						$select_pres.append(html_select);
+						$select_pres.focus();
+					});
+				}
+			}else{
+				jAlert('Es necesario seleccionar una Presentaci&oacute;n para realizar el traspaso.', 'Atencion!', function(r) { 
+					$presIdSelecTr.val(idPres);
+					$select_pres.focus();
+				});
+			}				
+			//var 
+			
+			//$convertirUniAPres = function(idPres, cantUni, arrayPres){
+						
+		});
+	}
+	
+	
 	
 	//generar tr para agregar al grid
-	$genera_tr = function(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad){
+	$genera_tr = function(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad, exisPres, cantTraspasoPres){
 		var readOnly=''//esta variable indica si el campo costo ajuste va a ser editable o no de pendiendo del tipo de costo que se utiliza para el tipo de movimiento
 		
 		var trr = '';
@@ -679,13 +839,13 @@ $(function() {
 				trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
 				trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_producto +'">';
-				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:106px;">';
+				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:96px;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="200">';
-				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:196px;">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
+				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:176px;">';
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
@@ -693,21 +853,28 @@ $(function() {
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
-				trr += '<select name="select_pres" class="pres'+ noTr +'" style="width:116px;">';
-				trr += '</select>';
+				trr += '<input type="hidden" 	name="presIdSeleccionado" id="presId" value="0">';
+				trr += '<select name="select_pres" class="pres'+ noTr +'" style="width:116px;"></select>';
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
 				trr += '<input type="hidden" name="densidad_litro" value="'+densidad+'">';
-				trr += '<input type="text" name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="'+cant_traspaso+'" class="borde_oculto" readOnly="true" style="width:56px; text-align:right;">';
+				trr += '<input type="text" name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="'+ $(this).agregar_comas(cant_traspaso) +'" class="borde_oculto" readOnly="true" style="width:56px; text-align:right;">';
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 				trr += '<input type="text" 		name="cantidad" value="'+$(this).agregar_comas(existencia)+'" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-				trr += '<input type="text" 		name="cant_traspaso" value="'+ cant_traspaso +'" class="cant_traspaso'+noTr+'" style="width:96px; text-align:right;">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+				trr += '<input type="text" 		name="exis_pres" value="'+ $(this).agregar_comas(exisPres) +'" class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+				trr += '<input type="text" 		name="cant_traspaso" value="'+ $(this).agregar_comas(cant_traspaso) +'" class="cant_traspaso'+noTr+'" style="width:86px; text-align:right;">';
+			trr += '</td>';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+				trr += '<input type="text" 		name="cantTrasPres" value="'+ $(this).agregar_comas(cantTraspasoPres) +'" id="cantTrasPres'+noTr+'" class="borde_oculto" style="width:76px; text-align:right;">';
 			trr += '</td>';
 		trr += '</tr>';
 		
@@ -724,12 +891,14 @@ $(function() {
 		if(codigo_producto != ''){
 			
 			var encontrado = 0;
+			/*
 			//busca el sku y la presentacion en el grid
 			$grid_productos.find('tr').each(function (index){
-				if(($(this).find('input[name=codigo]').val() == codigo_producto.toUpperCase()) && (parseInt($(this).find('input[name=eliminado]').val())!=0) ){
+				if(($(this).find('input[name=codigo]').val()==codigo_producto.toUpperCase()) && (parseInt($(this).find('input[name=eliminado]').val())!=0) ){
 					encontrado=1;//el producto ya esta en el grid
 				}
 			});
+			*/
 			
 			if( parseInt(encontrado)==0 ){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosProducto.json';
@@ -753,11 +922,15 @@ $(function() {
 							var codigo = entry['Producto'][0]['codigo'];
 							var descripcion = entry['Producto'][0]['descripcion'];
 							var unidad = entry['Producto'][0]['unidad'];
-							var existencia = entry['Producto'][0]['existencia'];
-							var densidad = entry['Producto'][0]['densidad'];
-							var cant_traspaso='0.00';
+							var noDec = entry['Producto'][0]['no_dec'];
 							
-							var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad);
+							var existencia = parseFloat(entry['Producto'][0]['existencia']).toFixed(noDec);
+							var densidad = entry['Producto'][0]['densidad'];
+							var cant_traspaso=parseFloat(0).toFixed(noDec);
+							var exisPres = parseFloat(0).toFixed(noDec);
+							var cantTraspasoPres = parseFloat(0).toFixed(noDec);
+							
+							var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad, exisPres, cantTraspasoPres);
 							
 							$grid_productos.append(cadena_tr);
 							
@@ -767,18 +940,22 @@ $(function() {
 							
 							$aplicar_evento_eliminar($grid_productos.find('.delete'+noTr), arraySucursales, arrayAlmacenes);
 							
-							$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+noTr), "blur");
-							
 							//carga select con las Presentaciones del Producto
 							$grid_productos.find('select.pres'+noTr).children().remove();
-							var pres_hmtl = '';
+							var pres_hmtl = '<option value="0">[--Seleccionar--]</option>';
 							$.each(entry['Presentaciones'],function(entryIndex,pres){
 								pres_hmtl += '<option value="' + pres['id'] + '">' + pres['titulo'] + '</option>';
 							});
 							$grid_productos.find('select.pres'+noTr).append(pres_hmtl);
 							
+							$aplicar_evento_campo_cantidad($grid_productos.find('.cant_traspaso'+noTr), "blur", noDec, entry['Presentaciones']);
+							
 							//fijar las opciones actuales de los select
 							$fijar_opciones_select($grid_productos, arraySucursales, arrayAlmacenes);
+							
+							//llamada a la funcion que aplica Evento Change al select de Presentaciones
+							$aplicarEventoChangeSelectPres($grid_productos.find('select.pres'+noTr), id_alm, entry['Presentaciones']);
+							
 						}else{
 							jAlert('El producto que intenta agregar no tiene Presentaciones Asignadas, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) {
 								$('#forma-invtraspasos-window').find('input[name=sku_producto]').val('');
@@ -820,8 +997,8 @@ $(function() {
 	
 	
 	
-	//nuevo ajuste
-	$new_ajuste.click(function(event){
+	//nuevo Traspaso
+	$new_traspaso.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
 		
@@ -882,6 +1059,12 @@ $(function() {
 		$identificador.val(0);//para nueva pedido el id es 0
 		
 		
+		$folio.css({'background' : '#F0F0F0'});
+		$fecha_traspaso.css({'background' : '#F0F0F0'});
+		
+		$select_suc_origen.focus();
+		
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("El traspaso se guard&oacute; con &eacute;xito", 'Atencion!');
@@ -926,7 +1109,7 @@ $(function() {
 									tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
 									tr_warning += '<td width="120"><input type="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:120px; color:red"></td>';
 									tr_warning += '<td width="200"><input type="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:200px; color:red"></td>';
-									tr_warning += '<td width="460"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:430px; color:red"></td>';
+									tr_warning += '<td width="560"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:530px; color:red"></td>';
 							tr_warning += '</tr>';
 							
 							$('#forma-invtraspasos-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
@@ -959,7 +1142,6 @@ $(function() {
 				}
 			});
 			$select_suc_origen.append(suc_hmtl);
-			
 			
 			
 			//carga select con todos los Almacenes de la Sucursal seleccionada
@@ -1198,14 +1380,14 @@ $(function() {
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
 			$arreglo = {'identificador':id_to_show,
 						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
-			jConfirm('Realmente desea eliminar  la factura?', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar  la el registro?', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("La factura fue eliminada exitosamente", 'Atencion!');
+							jAlert("El registro se elimino con exito.", 'Atencion!');
 							$get_datos_grid();
 						}else{
-							jAlert("La factura no pudo ser eliminada", 'Atencion!');
+							jAlert("El registro no pudo ser eliminado.", 'Atencion!');
 						}
 					},"json");
 				}
@@ -1234,7 +1416,6 @@ $(function() {
 			$arreglo = {'identificador':id_to_show,
 						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 						};
-			
 			
 			var $identificador = $('#forma-invtraspasos-window').find('input[name=identificador]');
 			var $folio = $('#forma-invtraspasos-window').find('input[name=folio]');
@@ -1267,24 +1448,19 @@ $(function() {
 			var $cancelar_plugin = $('#forma-invtraspasos-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-invtraspasos-window').find('#submit');
 			
-			//$campo_factura.css({'background' : '#ffffff'});
-			
-			//ocultar boton de facturar y descargar pdf. Solo debe estar activo en editar
-			//$boton_descargarpdf.hide();
 			$identificador.val(0);//para nueva pedido el id es 0
 			$fecha_traspaso.val(mostrarFecha());
-			
-			
-			//$permitir_solo_numeros($no_cuenta);
-			//$no_cuenta.attr('disabled','-1');
-			//$etiqueta_digit.attr('disabled','-1');
 			
 			$busca_sku.hide();
 			$agregar_producto.hide();
 			$submit_actualizar.hide();
+			
+			$folio.css({'background' : '#F0F0F0'});
+			$fecha_traspaso.css({'background' : '#F0F0F0'});
+		
 			var respuestaProcesada = function(data){
 				if ( data['success'] == "true" ){
-					jAlert("El Ajuste se guard&oacute; con &eacute;xito", 'Atencion!');
+					jAlert("El Traspaso se guard&oacute; con &eacute;xito", 'Atencion!');
 					var remove = function() {$(this).remove();};
 					$('#forma-invtraspasos-overlay').fadeOut(remove);
 					$get_datos_grid();
@@ -1335,142 +1511,152 @@ $(function() {
 				}
 			
 			}		
-				var options = {datatype :  'json', success : respuestaProcesada};
-				$forma_selected.ajaxForm(options);
+			var options = {datatype :  'json', success : respuestaProcesada};
+			$forma_selected.ajaxForm(options);
+			
+			//aqui se cargan los campos al editar
+			$.post(input_json,$arreglo,function(entry){
+				$identificador.val(entry['Datos']['0']['id_traspaso']);
+				$folio.val(entry['Datos']['0']['folio']);
+				$fecha_traspaso.val(entry['Datos']['0']['fecha']);
+				$observaciones.text(entry['Datos']['0']['observaciones']);
 				
-				//aqui se cargan los campos al editar
-				$.post(input_json,$arreglo,function(entry){
-					$identificador.val(entry['Datos']['0']['id_traspaso']);
-					$folio.val(entry['Datos']['0']['folio']);
-					$fecha_traspaso.val(entry['Datos']['0']['fecha']);
-					$observaciones.text(entry['Datos']['0']['observaciones']);
-					
-					//carga select con todos los Sucursales de la Empresa
-					$select_suc_origen.children().remove();
-					var suc_hmtl = '';
-					$.each(entry['Sucursales'],function(entryIndex,suc){
-						if(suc['id'] == entry['Datos'][0]['suc_origen']){
-							suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">' + suc['sucursal'] + '</option>';
-						}
-					});
-					$select_suc_origen.append(suc_hmtl);
-					
-					//carga select con todos los Almacenes de la Sucursal seleccionada
-					$select_alm_origen.children().remove();
-					var almacen_hmtl = '';
-					$.each(entry['Almacenes'],function(entryIndex,almacen){
-						if(parseInt(entry['Datos'][0]['alm_origen'])==parseInt(almacen['id'])){
-							almacen_hmtl += '<option value="' + almacen['id'] + '">' + almacen['titulo'] + '</option>';
-						}
-					});
-					$select_alm_origen.append(almacen_hmtl);
-					
-					
-					
-					
-					
-					//carga select con todos los Sucursales de la Empresa
-					$select_suc_destino.children().remove();
-					suc_hmtl = '';
-					$.each(entry['Sucursales'],function(entryIndex,suc){
-						if(suc['id'] == entry['Datos'][0]['suc_destino']){
-							suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">' + suc['sucursal'] + '</option>';
-						}
-					});
-					$select_suc_destino.append(suc_hmtl);
-					
-					//carga select con todos los Almacenes de la Sucursal seleccionada
-					$select_alm_destino.children().remove();
-					almacen_hmtl = '';
-					$.each(entry['Almacenes'],function(entryIndex,almacen){
-						if(parseInt(entry['Datos'][0]['alm_destino'])==parseInt(almacen['id'])){
-							almacen_hmtl += '<option value="' + almacen['id'] + '">' + almacen['titulo'] + '</option>';
-						}
-					});
-					$select_alm_destino.append(almacen_hmtl);
-					
-					
-					
-					
-					
-					
-					
-					if (entry['DatosGrid'].length > 0){
-						
-						$.each(entry['DatosGrid'],function(entryIndex,prodGrid){
-							
-							var noTr = $("tr", $grid_productos).size();
-							noTr++;
-							var id_producto = prodGrid['producto_id'];
-							var codigo = prodGrid['codigo'];
-							var descripcion = prodGrid['descripcion'];
-							var unidad = prodGrid['unidad'];
-							var existencia = prodGrid['existencia'];
-							var cant_traspaso=prodGrid['cant_traspaso'];
-							var densidad=prodGrid['densidad'];
-							
-							var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad);
-							
-							$grid_productos.append(cadena_tr);
-							$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+noTr), "");
-							
-							
-							
-							
-							
-						});
-						
+				//carga select con todos los Sucursales de la Empresa
+				$select_suc_origen.children().remove();
+				var suc_hmtl = '';
+				$.each(entry['Sucursales'],function(entryIndex,suc){
+					if(suc['id'] == entry['Datos'][0]['suc_origen']){
+						suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">' + suc['sucursal'] + '</option>';
 					}
-					
-					
-					
-					$observaciones.attr({ 'readOnly':true });
-					$sku_producto.attr('disabled','-1');
-					$nombre_producto.attr('disabled','-1');
-					$grid_productos.find('input').attr({ 'readOnly':true });
-					$grid_productos.find('a').hide();
-					$grid_productos.find('input').keypress(function(e){
-						if(e.which==13 ) {
-							return false;
+				});
+				$select_suc_origen.append(suc_hmtl);
+				
+				//carga select con todos los Almacenes de la Sucursal seleccionada
+				$select_alm_origen.children().remove();
+				var almacen_hmtl = '';
+				$.each(entry['Almacenes'],function(entryIndex,almacen){
+					if(parseInt(entry['Datos'][0]['alm_origen'])==parseInt(almacen['id'])){
+						almacen_hmtl += '<option value="' + almacen['id'] + '">' + almacen['titulo'] + '</option>';
+					}
+				});
+				$select_alm_origen.append(almacen_hmtl);
+				
+				
+				//carga select con todos los Sucursales de la Empresa
+				$select_suc_destino.children().remove();
+				suc_hmtl = '';
+				$.each(entry['Sucursales'],function(entryIndex,suc){
+					if(suc['id'] == entry['Datos'][0]['suc_destino']){
+						suc_hmtl += '<option value="' + suc['id'] + '" selected="yes">' + suc['sucursal'] + '</option>';
+					}
+				});
+				$select_suc_destino.append(suc_hmtl);
+				
+				//carga select con todos los Almacenes de la Sucursal seleccionada
+				$select_alm_destino.children().remove();
+				almacen_hmtl = '';
+				$.each(entry['Almacenes'],function(entryIndex,almacen){
+					if(parseInt(entry['Datos'][0]['alm_destino'])==parseInt(almacen['id'])){
+						almacen_hmtl += '<option value="' + almacen['id'] + '">' + almacen['titulo'] + '</option>';
+					}
+				});
+				$select_alm_destino.append(almacen_hmtl);
+				
+				
+				if (entry['DatosGrid'].length > 0){						
+					$.each(entry['DatosGrid'],function(entryIndex,prodGrid){
+						var noTr = $("tr", $grid_productos).size();
+						noTr++;
+						var id_producto = prodGrid['producto_id'];
+						var codigo = prodGrid['codigo'];
+						var descripcion = prodGrid['descripcion'];
+						var unidad = prodGrid['unidad'];
+						var noDec = prodGrid['no_dec'];
+						var existencia = parseFloat(prodGrid['existencia']).toFixed(noDec);
+						var cant_traspaso = parseFloat(prodGrid['cant_traspaso']).toFixed(noDec);
+						var densidad=prodGrid['densidad'];
+						var idPres = prodGrid['presentacion_id'];
+						var exisPres = parseFloat(0).toFixed(noDec);
+						var cantTraspasoPres = parseFloat(0).toFixed(noDec);
+						
+						//convertir las Unidades en Presentaciones
+						var cantTraspasoPres = $convertirUniAPres(idPres, cant_traspaso, entry['Presentaciones']);
+						
+						var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad, exisPres, cantTraspasoPres);
+						
+						//agregar tr al grid
+						$grid_productos.append(cadena_tr);
+						
+						//carga select con las Presentaciones del Producto
+						$grid_productos.find('select.pres'+noTr).children().remove();
+						var pres_hmtl = '';
+						if (parseInt(idPres) <=0){
+							pres_hmtl = '<option value="0">[--Seleccionar--]</option>';
 						}
+						$.each(entry['Presentaciones'],function(entryIndex,pres){
+							if(parseInt(pres['id'])==parseInt(idPres)){
+								pres_hmtl += '<option value="' + pres['id'] + '" selected="yes">' + pres['titulo'] + '</option>';
+							}else{
+								//pres_hmtl += '<option value="' + pres['id'] + '">' + pres['titulo'] + '</option>';
+							}
+						});
+						$grid_productos.find('select.pres'+noTr).append(pres_hmtl);
+						
+						$aplicar_evento_campo_cantidad($grid_productos.find('.cant_traspaso'+noTr), "");
+						
 					});
 					
-				});//termina llamada json
-                
-                
-                
-				//descargar pdf de Ajustes
-				$descargarpdf.click(function(event){
-					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfTraspaso/'+$identificador.val()+'/'+iu+'/out.json';
-					window.location.href=input_json;
-				});
+				}
 				
 				
 				
-                
-				//deshabilitar tecla enter  en todo el plugin
-				$('#forma-invtraspasos-window').find('input').keypress(function(e){
+				$observaciones.attr({ 'readOnly':true });
+				$sku_producto.attr('disabled','-1');
+				$nombre_producto.attr('disabled','-1');
+				$grid_productos.find('input').attr({ 'readOnly':true });
+				$grid_productos.find('a').hide();
+				$grid_productos.find('input').keypress(function(e){
 					if(e.which==13 ) {
 						return false;
 					}
 				});
 				
-				
-				//Ligamos el boton cancelar al evento click para eliminar la forma
-				$cancelar_plugin.bind('click',function(){
-					var remove = function() {$(this).remove();};
-					$('#forma-invtraspasos-overlay').fadeOut(remove);
-				});
-				
-				$cerrar_plugin.bind('click',function(){
-					var remove = function() {$(this).remove();};
-					$('#forma-invtraspasos-overlay').fadeOut(remove);
-				});
-				
-			}
+			});//termina llamada json
+			
+			
+			
+			//descargar pdf de Ajustes
+			$descargarpdf.click(function(event){
+				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+				var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfTraspaso/'+$identificador.val()+'/'+iu+'/out.json';
+				window.location.href=input_json;
+			});
+			
+			
+			
+			
+			//deshabilitar tecla enter  en todo el plugin
+			$('#forma-invtraspasos-window').find('input').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
+			
+			
+			//Ligamos el boton cancelar al evento click para eliminar la forma
+			$cancelar_plugin.bind('click',function(){
+				var remove = function() {$(this).remove();};
+				$('#forma-invtraspasos-overlay').fadeOut(remove);
+			});
+			
+			$cerrar_plugin.bind('click',function(){
+				var remove = function() {$(this).remove();};
+				$('#forma-invtraspasos-overlay').fadeOut(remove);
+			});
+			
 		}
-	
+	}
+
 	
 	
     $get_datos_grid = function(){
