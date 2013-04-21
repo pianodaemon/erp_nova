@@ -1318,7 +1318,7 @@ $(function() {
 									tr_warning += '<td width="20"><div><img src="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
 									tr_warning += '<td width="150"><input type="text" value="' + almacen_destino + '" class="borde_oculto" readOnly="true" style="width:148px; color:red"></td>';
 									tr_warning += '<td width="100"><input type="text" value="' + presentacion_destino + '" class="borde_oculto" readOnly="true" style="width:100px; color:red"></td>';
-									tr_warning += '<td width="380"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:380px; color:red"></td>';
+									tr_warning += '<td width="560"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:560px; color:red"></td>';
 							tr_warning += '</tr>';
 							
 							$('#forma-envreenv-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
@@ -1746,7 +1746,7 @@ $(function() {
 											tr_warning += '<td width="20"><div><img src="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
 											tr_warning += '<td width="150"><input type="text" value="' + almacen_destino + '" class="borde_oculto" readOnly="true" style="width:148px; color:red"></td>';
 											tr_warning += '<td width="100"><input type="text" value="' + presentacion_destino + '" class="borde_oculto" readOnly="true" style="width:100px; color:red"></td>';
-											tr_warning += '<td width="380"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:380px; color:red"></td>';
+											tr_warning += '<td width="560"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:560px; color:red"></td>';
 									tr_warning += '</tr>';
 									
 									$('#forma-envreenv-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);

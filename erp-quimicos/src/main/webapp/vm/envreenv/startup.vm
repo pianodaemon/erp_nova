@@ -344,20 +344,20 @@
 																<td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
 																<td width="150" style="background-color:#A8A9AB; font-weight: bold;">Almacen Destino</td>
 																<td width="100" style="background-color:#A8A9AB; font-weight: bold;">Presentaci&oacute;n</td>
-																<td width="410" class="td_head" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+																<td width="590" class="td_head" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
 																<td width="10"></td>
 															</tr>
 															<tr>
 																<td width="10"></td>
 																<td colspan="5"> 
-																	<div align="left" class="div_cont_grid_warning" style="width:700px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
-																		<table id="grid_warning" border="0" style="width:680px;"">
+																	<div align="left" class="div_cont_grid_warning" style="width:880px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+																		<table id="grid_warning" border="0" style="width:860px;"">
 																			<!-- Aqui se muestran los warning
 																			<tr>
 																				<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>
 																				<td width="150"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:148px; color:red"></td>
 																				<td width="100"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:100px; color:red"></td>
-																				<td width="380"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:380px; color:red"></td>
+																				<td width="560"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:560px; color:red"></td>
 																			</tr>
 																			-->
 																		</table>
