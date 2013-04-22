@@ -383,7 +383,7 @@ public class EnvProcesoController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> existPres = new ArrayList<HashMap<String, String>>();
         
-        existPres=this.getEnvDao().getReEenv_Existencias( prod_id, pres_id, alm_id);
+        existPres=this.getEnvDao().getEnv_ExistenciasConf( prod_id, pres_id, alm_id);
         jsonretorno.put("existPres", existPres);
         
         return jsonretorno;
