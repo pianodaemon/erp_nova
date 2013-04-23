@@ -491,9 +491,54 @@ $(function() {
 		}
 	};
 	
-        
-        $add_trr_presentacion_enbasar = function(){
+        $calcula_cantidad = function(campo, control){
+            //$calcula_cantidad($(this), 'inpút');
             
+            var $grid_presntaciones = $('#forma-envproceso-window').find('#grid_productos');
+            var $exis_pres = $('#forma-envproceso-window').find('input[name=exis_pres]').val();
+            var $unidad = $('#forma-envproceso-window').find('input[name=unidad]').val();
+            
+            calculo_total = 0;
+            var $select_almacen_orig = $('#forma-envproceso-window').find('select[name=select_almacen_orig]');
+            var trCount = $('tr', $grid_presntaciones).each (function(){
+                //cantpres
+                //uni
+                //cantuni
+                var cantidad_tr = $(this).find('input[name=cantpres]').val();
+                var presentacion_id_tr = $(this).find('select[name=select_pres_dest]').val();
+                var factor = 0;
+                
+                $.each(arrayPresentacionEnv,function(entryIndex,pres){
+                    if(pres['id'] == presentacion_id_tr){
+                        factor = pres['equivalencia'];
+                    }
+                });
+                
+                calculo_tr = parseFloat(factor) * parseFloat(cantidad_tr);
+                
+                calculo_tr = parseFloat(parseFloat(calculo_tr).toFixed(4));
+                
+                $(this).find('input[name=cantuni]').val(calculo_tr);
+                $(this).find('input[name=uni]').val($unidad);
+                calculo_total = calculo_total + calculo_tr;
+                
+                if(parseFloat(calculo_total) >= parseFloat($exis_pres)){
+                    //Aqui mne quede, asdiuasiudiasd asid asudiasi dsd
+                    //alert("asdsd");
+                    //alert('   campo:'+campo.val() + '    control:' + control);
+                    
+                    if(control == 'input'){
+                        campo.val(0);
+                        campo.parent().parent().find('input[name=cantuni]').val(0);
+                    }
+                }
+
+            });
+            
+        }
+        
+        $add_trr_presentacion_enbasar = function(unidad){
+            var $producto_id = $('#forma-envproceso-window').find('input[name=producto_id]');
             var $grid_presntaciones = $('#forma-envproceso-window').find('#grid_productos');
             
             var $select_almacen_orig = $('#forma-envproceso-window').find('select[name=select_almacen_orig]');
@@ -509,10 +554,11 @@ $(function() {
                     html_tr += '<a href="#" class="delete'+trCount+'">&nbsp;&nbsp;-&nbsp;&nbsp;</a>';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
-                    html_tr += '<input type="hidden" name="idprod" id="idprod" value="">';
+                    html_tr += '<input type="hidden" name="idprod" id="idprod" value="'+$producto_id.val()+'">';
                     html_tr += '<select name="select_aml_origen" id="select_aml_origen'+trCount+'" style="width:156px;">';
                         html_tr += '<option value="0" selected="yes">[--Seleccionar Almacen--]</option>';
                         $.each(arrayAlmacenes,function(entryIndex,alm){
+                            //alert(alm['id']);
                             html_tr += '<option value="' + alm['id'] + '" selected="yes" >' + alm['titulo'] + '</option>';
                         });
                     html_tr += '</select>';
@@ -526,16 +572,15 @@ $(function() {
                     html_tr += '</select>';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="85">';
-                    html_tr += '<input type="text" 	name="cantpres" id="cantpres" value="0" style="width:80px;" maxlength="10">';
+                    html_tr += '<input type="text" 	name="cantpres" id="cantpres'+trCount+'" value="0" style="width:80px;" maxlength="10">';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
                     html_tr += '<input type="text" name="uni" value="" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="95">';
-                    html_tr += '<input type="text" 	name="cantpres" id="cantuni'+trCount+'" value="" class="borde_oculto" readOnly="true" style="width:90px; text-align:right;">';
+                    html_tr += '<input type="text" 	name="cantuni" id="cantuni'+trCount+'" value="" class="borde_oculto" readOnly="true" style="width:90px; text-align:right;">';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
-                    html_tr += '<input type="hidden" name="idprod" id="idprod" value="">';
                     html_tr += '<select name="select_aml_dest" id="select_aml_dest'+trCount+'" style="width:156px;">';
                         html_tr += '<option value="0" selected="yes">[--Seleccionar Almacen--]</option>';
                         $.each(arrayAlmacenes,function(entryIndex,alm){
@@ -559,76 +604,44 @@ $(function() {
                 $(this).parent().parent().find('#nuevo').val(0);
             });
             
-            /*
             $grid_presntaciones.find('#select_aml_origen'+trCount).change(function(event){
                 event.preventDefault();
+                var select_pres_dest = $(this).parent().parent().find('select[name=select_pres_dest]');
+                var idprod = $(this).parent().parent().find('input[name=idprod]');
+                var alm_id = $(this).val();
                 
-                existPres
-                
-            });
-            */
-            
-            $grid_presntaciones.find('#select_aml_origen'+trCount).change(function(event){
-                event.preventDefault();
-                var select_pres_dest = $(this).parent().parent('input[name=select_pres_dest]');
-                var idprod = $(this).parent().parent('input[name=idprod]');
-                alert(select_pres_dest.val());
-                
-                if((parseInt(select_pres_dest.val()) == 0) || isNaN(parseInt(select_pres_dest.val()))){
-                    jAlert("Seleccione una prentaci&oacute;n", 'Atencion!');
-                }else{
-                    
-                    /*Obtiene las presentaciones de el producto*/
-                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getExistPresentacion.json';
-                    $arreglo = {
-                        'alm_id':$(this).val(),
-                        'prod_id':idprod.val(),
-                        'pres_id':select_pres_dest.val()
-                    };
-                    
-                    $.post(input_json,$arreglo,function(entry){
-                        
-                        //carga select de Presentaciones
-                        $.each(entry['existPres'],function(entryIndex,exist){
-                            alert(exist['exis']);
-                        });
-                        
-                    });//termina llamada json
-                    
-                }
             });
             
             $grid_presntaciones.find('#select_pres_dest'+trCount).change(function(event){
                 event.preventDefault();
-                var select_aml_origen = $(this).parent().parent('input[name=select_aml_origen]');
-                var idprod = $(this).parent().parent('input[name=idprod]');
-                alert(select_aml_origen.val());
-                if((parseInt(select_aml_origen.val()) == 0 )  || isNaN(parseInt(select_aml_origen.val()))){
-                    jAlert("Seleccione un almacen", 'Atencion!');
-                }else{
-                    
-                    /*Obtiene las presentaciones de el producto*/
-                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getExistPresentacion.json';
-                    $arreglo = {
-                        'alm_id':select_aml_origen.val(),
-                        'prod_id':idprod.val(),
-                        'pres_id':$(this).val()
-                    };
-                    
-                    $.post(input_json,$arreglo,function(entry){
-                        
-                        //carga select de Presentaciones
-                        $.each(entry['existPres'],function(entryIndex,exist){
-                            alert(exist['exis']);
-                        });
-                        
-                    });//termina llamada json
-                }
+                
+                var select_aml_origen = $(this).parent().parent().find('select[name=select_aml_origen]');
+                var idprod = $(this).parent().parent().find('input[name=idprod]');
+                
             });
-            
-            $grid_presntaciones.find('#cantuni'+trCount).change(function(event){
-                event.preventDefault();
+            /*
+            $grid_presntaciones.find('#cantuni'+trCount).blur(function(){
                 alert("ssdd");
+            });
+            */
+            //al perder enfoque el campo cantidad
+            $grid_presntaciones.find('#cantpres'+trCount).blur(function(){
+                if($(this).val().trim()==''){
+                    $(this).val(' ');
+                }else{
+                    //validar numero de decimales
+                    var patron = /^-?[0-9]+([,\.][0-9]{0,0})?$/;
+                    
+                    if(!patron.test($(this).val())){
+                        jAlert('El n&uacute;mero de decimales es incorrecto, solo debe ser '+noDec+'.', 'Atencion!', function(r) {
+                            $grid_productos.find('input.cant'+ noTr).val('');
+                            $grid_productos.find('input.cant'+ noTr).focus();
+                        });
+                    }else{
+                        $(this).val( parseFloat($(this).val()).toFixed(4) );//aqui tengo que sustituirlo por el numero de decimales
+                        $calcula_cantidad($(this), 'input');
+                    }
+                }
             });
             
             //select_aml_dest
@@ -648,9 +661,9 @@ $(function() {
 	
 	
 	var $agregarDatosProductoSeleccionado = function(id_orden_buscador, id_prod_buscador, id_unidad_buscador, unidad_buscador
-                                                , folio_orden_buscador, codigo_prod_buscador, descripcion_prod_buscador,id_almacen_buscador,cantidad,  arregloPres){
+                                                , folio_orden_buscador, codigo_prod_buscador, descripcion_prod_buscador,id_almacen_buscador,cantidad, id_presentacion_buscador,  arregloPres){
 		
-                $grid_presntaciones = $('#forma-envproceso-window').find('.grid_productos');
+                var $grid_presntaciones = $('#forma-envproceso-window').find('#grid_productos');
                 $grid_presntaciones.children().remove();
                 
 		$('#forma-envproceso-window').find('input[name=producto_id]').val(id_prod_buscador);
@@ -674,7 +687,11 @@ $(function() {
                         $('#forma-envproceso-window').find('select[name=select_presentacion_orig]').children().remove();
 			var html_pres = '';
 			$.each(arregloPres,function(entryIndex,pres){
-				html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+                            if(parseInt(id_presentacion_buscador) == parseInt(pres['id'])){
+                                html_pres += '<option value="' + pres['id'] + '" selected="yes">' + pres['titulo'] + '</option>';
+                            }else{
+                                html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+                            }
 			});
 			$('#forma-envproceso-window').find('select[name=select_presentacion_orig]').append(html_pres);
                         
@@ -701,8 +718,9 @@ $(function() {
                             var presentacion = '<option value="0">[-Presentaci&oacute;n--]</option>';
                             $.each(entry['Presentaciones'],function(entryIndex,pres){
                                 if(pres['titulo'].toUpperCase() == unidad_buscador.toUpperCase()){
-                                    presentacion += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+                                    presentacion += '<option value="' + pres['id'] + '" selected="yes" >' + pres['titulo'] + '</option>';
                                 }
+                                
                             });
                             $select_presentacion_orig.append(presentacion);
                         });//termina llamada json
@@ -812,6 +830,7 @@ $(function() {
 						trr += '<td width="110">';
                                                         trr += '<input type="hidden" id="unidad_buscador" value="'+orden['unidad']+'">';
 							trr += '<input type="hidden" id="id_unidad_buscador" value="'+orden['unidad_id']+'">';
+                                                        trr += '<input type="hidden" id="id_presentacion_buscador" value="'+orden['inv_prod_presentacion_id']+'">';
 							trr += '<span class="unidad_buscador">'+orden['cantidad']+'</span>';
                                                         trr += '<input type="hidden" id="id_almacen_buscador" value="'+orden['inv_alm_id']+'">';
 						trr += '</td>';
@@ -840,6 +859,7 @@ $(function() {
 					var id_orden_buscador = $(this).find('#id_orden_buscador').val();
                                         var id_prod_buscador = $(this).find('#id_prod_buscador').val();
                                         var id_unidad_buscador = $(this).find('#id_unidad_buscador').val();
+                                        var id_presentacion_buscador = $(this).find('#id_presentacion_buscador').val();
                                         var unidad_buscador = $(this).find('#unidad_buscador').val();
                                         var id_almacen_buscador = $(this).find('#id_almacen_buscador').val();
                                         var cantidad_buscador = $(this).find('#cantidad_buscador').val();
@@ -853,7 +873,7 @@ $(function() {
                                         $arreglo = {'id_prod':id_prod_buscador,'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
                                         $.post(input_json,$arreglo,function(entry){
                                             $agregarDatosProductoSeleccionado(id_orden_buscador, id_prod_buscador, id_unidad_buscador, unidad_buscador
-                                                , folio_orden_buscador, codigo_prod_buscador, descripcion_prod_buscador,id_almacen_buscador,cantidad_buscador, entry['Presentaciones']);
+                                                , folio_orden_buscador, codigo_prod_buscador, descripcion_prod_buscador,id_almacen_buscador,cantidad_buscador,id_presentacion_buscador, entry['Presentaciones']);
                                                 //llamada a la funcion para agregar los datos del Producto seleccionado
                                         });
                                         
