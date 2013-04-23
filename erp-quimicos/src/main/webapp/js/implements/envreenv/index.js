@@ -1900,6 +1900,14 @@ $(function() {
 				},"json");//termina llamada json
 				
 				
+				
+				var iu =$('#lienzo_recalculable').find('input[name=iu]').val();
+				$generarpdf.click(function(event){
+					var cadena = $identificador.val();
+					var input_json =document.location.protocol + '//' + document.location.host + '/'+controller+'/getReportReenvasado/'+cadena+'/'+iu+'/out.json';
+					window.location.href=input_json;
+				});
+
 				$submit_actualizar.bind('click',function(){
 					var trCount = $("tr", $grid_productos).size();
 					if(parseInt(trCount) > 0){
