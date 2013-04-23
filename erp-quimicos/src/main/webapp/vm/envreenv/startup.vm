@@ -172,6 +172,7 @@
 															<td width="65">Estatus</td>
 															<td width="90">
 																<select name="select_estatus" style="width:90px;"></select>
+																<input type="hidden" name="estatus_anterior">
 															</td>
 															<td width="40"></td>
 															<td width="75">Programaci&oacute;n</td>

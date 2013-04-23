@@ -1164,6 +1164,7 @@ $(function() {
 		var $identificador = $('#forma-envreenv-window').find('input[name=identificador]');
 		var $folio = $('#forma-envreenv-window').find('input[name=folio]');
 		var $select_estatus = $('#forma-envreenv-window').find('select[name=select_estatus]');
+		var $estatus_anterior = $('#forma-envreenv-window').find('input[name=estatus_anterior]');
 		var $fecha = $('#forma-envreenv-window').find('input[name=fecha]');
 		var $hora = $('#forma-envreenv-window').find('input[name=hora]');
 		var $select_empleado = $('#forma-envreenv-window').find('select[name=select_empleado]');
@@ -1343,6 +1344,21 @@ $(function() {
 			var indiceId = 'id';
 			var indiceTitulo = 'titulo';
 			$carga_campos_select($select_estatus, entry['Estatus'], elemento_seleccionado, texto_elemento_cero, indiceId, indiceTitulo);
+			
+			
+			$select_estatus.children().remove();
+			var html_select = '';
+			$.each(entry['Estatus'],function(entryIndex,stat){
+				if(parseInt(stat['id'])==1){
+					html_select += '<option value="' + stat['id'] + '" selected="yes">' + stat['titulo'] + '</option>';
+				}else{
+					//html_select += '<option value="' + stat['id'] + '"  >' + stat['titulo'] + '</option>';
+				}
+			});
+			$select_estatus.append(html_select);
+			
+			
+			
 			
 			elemento_seleccionado=0;
 			texto_elemento_cero='';
@@ -1628,6 +1644,7 @@ $(function() {
 			var $identificador = $('#forma-envreenv-window').find('input[name=identificador]');
 			var $folio = $('#forma-envreenv-window').find('input[name=folio]');
 			var $select_estatus = $('#forma-envreenv-window').find('select[name=select_estatus]');
+			var $estatus_anterior = $('#forma-envreenv-window').find('input[name=estatus_anterior]');
 			var $fecha = $('#forma-envreenv-window').find('input[name=fecha]');
 			var $hora = $('#forma-envreenv-window').find('input[name=hora]');
 			var $select_empleado = $('#forma-envreenv-window').find('select[name=select_empleado]');
@@ -1776,7 +1793,12 @@ $(function() {
 					$valor_ant_pres.attr({'value' : entry['Datos'][0]['presentacion_id']});
 					
 					if(parseInt(entry['Datos'][0]['estado_id'])==1){
-						$exis_pres.attr({'value' : entry['Exis'][0]['exis']});
+						if(parseInt(entry['Exis'].length) > 0 ){
+							$exis_pres.attr({'value' : entry['Exis'][0]['exis']});
+						}else{
+							jAlert('No hay existencias del producto en la Presentacion Origen,\npuede que un proceso diferente haya consumido las existancias.', 'Atencion!');
+							$exis_pres.attr({'value' : '0.00'});
+						}
 					}else{
 						$exis_pres.attr({'value' : entry['Datos'][0]['existencia']});
 					}
@@ -1803,7 +1825,7 @@ $(function() {
 						}
 					});
 					$select_estatus.append(html_select);
-					
+					$estatus_anterior.val(entry['Datos'][0]['estado_id']);
 					
 					$select_empleado.children().remove();
 					html_select = '';
@@ -1878,6 +1900,24 @@ $(function() {
 				},"json");//termina llamada json
 				
 				
+				$submit_actualizar.bind('click',function(){
+					var trCount = $("tr", $grid_productos).size();
+					if(parseInt(trCount) > 0){
+						if(parseInt($select_estatus.val())>1){
+							if(parseInt($select_estatus.val())==parseInt($estatus_anterior.val())){
+								jAlert('Debe seleccionar el siguiente estatus para poder Actualizar el Registro.', 'Atencion!', function(r) { $codigo.focus(); });
+								return false;
+							}else{
+								return true;
+							}
+						}else{
+							return true;
+						}
+					}else{
+						jAlert('Es necesario agregar productos en el listado.', 'Atencion!', function(r) { $codigo.focus(); });
+						return false;
+					}
+				});
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
