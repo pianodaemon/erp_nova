@@ -41,8 +41,9 @@ public interface EnvInterfaceDao {
     public ArrayList<HashMap<String, String>> getReEenv_DatosGrid(Integer id, Integer noDec);
     public ArrayList<HashMap<String, String>> getReEenv_Empleados(Integer id_empresa);
     public ArrayList<HashMap<String, String>> getReEenv_Existencias(Integer id_prod, Integer id_pres, Integer id_alm);
-    
-    
+    public HashMap<String, String> getReport_Reenvasado_Header(Integer id_empresa,Integer id_env);
+    public ArrayList<HashMap<String, String>> getReport_Reenvasado_grid(Integer id_empresa,Integer id_env);
+
     
     
 }

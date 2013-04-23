@@ -15,7 +15,13 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.EnvInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
+import com.agnux.kemikal.reportes.PdfReenvasado;
+import com.itextpdf.text.DocumentException;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -33,7 +39,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -387,25 +395,6 @@ public class EnvReenvController {
         return jsonretorno;
     }
     
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -527,4 +516,90 @@ public class EnvReenvController {
         
         return jsonretorno;
     }
+    
+    
+    //Generando el reporte de Reenvasado
+    @RequestMapping(value = "/getReportReenvasado/{cadena}/{iu}/out.json", method = RequestMethod.GET )
+    public ModelAndView getReportReenvasadoJson(
+                @PathVariable("cadena") String cadena,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request,
+                HttpServletResponse response,
+                Model model)
+        throws ServletException, IOException, URISyntaxException, DocumentException {
+
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String>Datos_Reporte_Header = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>>Datos_Reporte_Grid = new ArrayList<HashMap<String, String>>();
+
+        System.out.println("Generando reporte de Reenvasado");
+        Integer select=0;
+
+
+
+        String arrayCad [] = cadena.split("___");
+
+        //ASIGNACION DE VALORES DEL AREGLO A VARIABLES
+        Integer id_env = Integer.parseInt(arrayCad [0]);
+
+
+
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        String rfc=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+
+        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+
+
+        String[] array_company = razon_social_empresa.split(" ");
+        String company_name= array_company[0].toLowerCase();
+        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+        Integer app_selected = 138;
+
+        File file_dir_tmp = new File(dir_tmp);
+        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+
+        String file_name = "REPORTE_REENVASADO_"+rfc+".pdf";
+
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+
+        Datos_Reporte_Header = this.getEnvDao().getReport_Reenvasado_Header(id_empresa,id_env);
+        Datos_Reporte_Header.put("emp_razon_social", razon_social_empresa);
+        Datos_Reporte_Header.put("emp_rfc", this.getGralDao().getRfcEmpresaEmisora(id_empresa));
+        Datos_Reporte_Header.put("emp_calle", this.getGralDao().getCalleDomicilioFiscalEmpresaEmisora(id_empresa));
+        Datos_Reporte_Header.put("emp_no_exterior", this.getGralDao().getNoExteriorDomicilioFiscalEmpresaEmisora(id_empresa));
+        Datos_Reporte_Header.put("emp_colonia", this.getGralDao().getColoniaDomicilioFiscalEmpresaEmisora(id_empresa));
+        Datos_Reporte_Header.put("emp_pais", this.getGralDao().getPaisDomicilioFiscalEmpresaEmisora(id_empresa));
+        Datos_Reporte_Header.put("emp_estado", this.getGralDao().getEstadoDomicilioFiscalEmpresaEmisora(id_empresa));
+        Datos_Reporte_Header.put("emp_municipio", this.getGralDao().getMunicipioDomicilioFiscalEmpresaEmisora(id_empresa));
+        Datos_Reporte_Header.put("emp_cp", this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa));
+
+
+        Datos_Reporte_Header.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
+        Datos_Reporte_Header.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+
+        Datos_Reporte_Grid   = this.getEnvDao().getReport_Reenvasado_grid(id_empresa,id_env);
+
+        PdfReenvasado x = new PdfReenvasado(Datos_Reporte_Header,Datos_Reporte_Grid,fileout,ruta_imagen);
+                      x.ViewPDF();
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        int size = (int) file.length(); // Tamaño del archivo
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        response.setBufferSize(size);
+        response.setContentLength(size);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        FileCopyUtils.copy(bis, response.getOutputStream());
+        response.flushBuffer();
+
+        return null;
+    }
+    
 }
