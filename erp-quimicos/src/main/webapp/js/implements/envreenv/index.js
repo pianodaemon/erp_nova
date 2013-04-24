@@ -665,7 +665,7 @@ $(function() {
 	
 	
 	
-	var $agregarTr = function(idDet, idAlm, idPres, cantPres, unidad, cantUni, noDec, arregloEnv, idConfEnv, idAlmEnv){
+	var $agregarTr = function(idDet, idAlm, idPres, cantPres, unidad, cantUni, noDec, arregloEnv, idConfEnv, idAlmEnv, idEstatus){
 		var $select_almacen_orig = $('#forma-envreenv-window').find('select[name=select_almacen_orig]');
 		var $select_presentacion_orig = $('#forma-envreenv-window').find('select[name=select_presentacion_orig]');
 		var $exis_pres = $('#forma-envreenv-window').find('input[name=exis_pres]');
@@ -703,7 +703,7 @@ $(function() {
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="130">';
-				trr += '<input type="hidden" 	name="presDestId" class="presDestId'+ noTr +'" value="0">';
+				trr += '<input type="hidden" 	name="presDestId" class="presDestId'+ noTr +'" value="'+idPres+'">';
 				trr += '<input type="hidden" 	name="idEnv" class="idEnv'+ noTr +'" value="'+ idConfEnv +'">';
 				trr += '<select name="select_pres_dest" class="presDest'+ noTr +'" style="width:126px;"></select>';
 			trr += '</td>';
@@ -742,7 +742,9 @@ $(function() {
 			if(parseInt(alm['id'])==parseInt(idAlmEnv)){
 				html_select += '<option value="' + alm['id'] + '" selected="yes">' + alm['titulo'] + '</option>';
 			}else{
-				html_select += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
+				if(parseInt(idEstatus)<=1){
+					html_select += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
+				}
 			}
 		});
 		$grid_productos.find('select.amlEnv'+ noTr).append(html_select);
@@ -755,7 +757,9 @@ $(function() {
 			if(parseInt(alm['id'])==parseInt(idAlm)){
 				html_select += '<option value="' + alm['id'] + '" selected="yes">' + alm['titulo'] + '</option>';
 			}else{
-				html_select += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
+				if(parseInt(idEstatus)<=1){
+					html_select += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
+				}
 			}
 		});
 		$grid_productos.find('select.amlDest'+ noTr).append(html_select);
@@ -763,14 +767,19 @@ $(function() {
 		
 		
 		//cargamos los envases que son diferentes a la presentacion original
-		var html_env = '<option value="0" selected="yes">[-Presentaci&oacute;n--]</option>';
+		var html_env = '';
+		if(parseInt(idEstatus)==0){
+			html_env = '<option value="0" selected="yes">[-Presentaci&oacute;n--]</option>';
+		}
 		$grid_productos.find('select.presDest'+ noTr).children().remove();
 		$.each(arregloEnv,function(entryIndex,env){
 			if(parseInt($select_presentacion_orig.val()) != parseInt(env['id'])){
 				if(parseInt(env['id'])==parseInt(idPres)){
 					html_env += '<option value="' + env['id'] + '" selected="yes">' + env['titulo'] + '</option>';
 				}else{
-					html_env += '<option value="' + env['id'] + '"  >' + env['titulo'] + '</option>';
+					if(parseInt(idEstatus)<=1){
+						html_env += '<option value="' + env['id'] + '"  >' + env['titulo'] + '</option>';
+					}
 				}
 			}
 		});
@@ -852,7 +861,8 @@ $(function() {
 			var noDecimales = noDec;
 			var idConfEnv = 0;
 			var idAlmEnv = 0;
-			$agregarTr(idDetalle, idAlmacen, idPresentacion, cantPresentacion, unidadMedida, cantUnidad, noDecimales, arregloEnv, idConfEnv, idAlmEnv);
+			var idEstatus = 0;
+			$agregarTr(idDetalle, idAlmacen, idPresentacion, cantPresentacion, unidadMedida, cantUnidad, noDecimales, arregloEnv, idConfEnv, idAlmEnv, idEstatus);
 		});
 		
 		
@@ -902,6 +912,17 @@ $(function() {
 		
 		//asignar el enfoque
 		$grid_productos.find('input.cantPres'+ noTr).focus();
+		
+		if(parseInt(idEstatus)>1){
+			$grid_productos.find('.delete'+ noTr).hide();
+			$grid_productos.find('.add'+ noTr).hide();
+			
+			if(parseInt(idEstatus)==4){
+				$grid_productos.find('input').attr('disabled','-1');
+				$grid_productos.find('select').attr('disabled','-1');
+			}
+		}
+		
 		
 	};
 	
@@ -1506,8 +1527,9 @@ $(function() {
 									var noDecimales = $no_dec.val();
 									var idConfEnv = 0;
 									var idAlmEnv = 0;
+									var idEstatus = 0;
 									
-									$agregarTr(idDetalle, idAlmacen, idPresentacion, cantPresentacion, unidadMedida, cantUnidad, noDecimales, arregloEnvases, idConfEnv, idAlmEnv);
+									$agregarTr(idDetalle, idAlmacen, idPresentacion, cantPresentacion, unidadMedida, cantUnidad, noDecimales, arregloEnvases, idConfEnv, idAlmEnv, idEstatus);
 									
 								}else{
 									$exis_pres.val('0.00');
@@ -1814,12 +1836,27 @@ $(function() {
 					$select_estatus.children().remove();
 					var html_select = '';
 					$.each(entry['Estatus'],function(entryIndex,stat){
-						if(parseInt(entry['Datos'][0]['estado_id']) == parseInt(stat['id'] )){
-							html_select += '<option value="' + stat['id'] + '" selected="yes">' + stat['titulo'] + '</option>';
-						}else{
-							if(parseInt(stat['id'] ) >= parseInt(entry['Datos'][0]['estado_id'])){
-								if(parseInt(entry['Datos'][0]['estado_id']) !=4){
+						if(parseInt(entry['Datos'][0]['estado_id']) == 1){
+							if(parseInt(entry['Datos'][0]['estado_id']) == parseInt(stat['id'] )){
+								html_select += '<option value="' + stat['id'] + '" selected="yes">' + stat['titulo'] + '</option>';
+							}else{
+								if(parseInt(stat['id'])==4){
 									html_select += '<option value="' + stat['id'] + '"  >' + stat['titulo'] + '</option>';
+								}else{
+									if( parseInt(stat['id']) >= parseInt(entry['Datos'][0]['estado_id']) && parseInt(stat['id']) <= (parseInt(entry['Datos'][0]['estado_id']) + parseInt(1)) ){
+										html_select += '<option value="' + stat['id'] + '"  >' + stat['titulo'] + '</option>';
+									}
+								}
+								
+							}
+						}else{
+							if(parseInt(entry['Datos'][0]['estado_id']) == parseInt(stat['id'] )){
+								html_select += '<option value="' + stat['id'] + '" selected="yes">' + stat['titulo'] + '</option>';
+							}else{
+								if( parseInt(stat['id']) >= parseInt(entry['Datos'][0]['estado_id']) && parseInt(stat['id']) <= (parseInt(entry['Datos'][0]['estado_id']) + parseInt(1)) ){
+									if(parseInt(stat['id']) !=4){
+										html_select += '<option value="' + stat['id'] + '"  >' + stat['titulo'] + '</option>';
+									}
 								}
 							}
 						}
@@ -1888,13 +1925,22 @@ $(function() {
 							var noDecimales = $no_dec.val();
 							var idConfEnv = envase['env_conf_id'];
 							var idAlmEnv = envase['alm_id_env'];
+							var idEstatus = entry['Datos'][0]['estado_id'];
 							
 							//llamada a la funcion que calcula la existencia convertido en la unidad del producto
 							cantUnidad = $convertirPresAUni(idPresentacion, cantPresentacion, arregloEnvases);
 							
 							//llamada a la funcion para agregar tr al grid
-							$agregarTr(idDetalle, idAlmacen, idPresentacion, cantPresentacion, unidadMedida, cantUnidad, noDecimales, arregloEnvases, idConfEnv, idAlmEnv);
+							$agregarTr(idDetalle, idAlmacen, idPresentacion, cantPresentacion, unidadMedida, cantUnidad, noDecimales, arregloEnvases, idConfEnv, idAlmEnv, idEstatus);
 						});
+					}
+					
+					
+					if(parseInt(entry['Datos'][0]['estado_id'])==4){
+						//deshabilitar y ocultar campos
+						$('#forma-envreenv-window').find('input').attr('disabled','-1');
+						$('#forma-envreenv-window').find('select').attr('disabled','-1');
+						$submit_actualizar.hide();
 					}
 					
 				},"json");//termina llamada json
