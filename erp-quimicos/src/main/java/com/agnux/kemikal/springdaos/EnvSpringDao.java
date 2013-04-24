@@ -749,6 +749,240 @@ public class EnvSpringDao implements EnvInterfaceDao{
         );
         return hm;
     }
+    /*TERMINA METODOS PARA EL PROCESO DE RE-ENVASADO **************************/
+    
+    
+    
+    /***************************************************************************
+    * METODOS PARA APLICATIVO DE ENVASADO
+    ***************************************************************************/
+    //Este metodo es para obtener datos del Grid y Paginado
+    @Override
+    public ArrayList<HashMap<String, Object>> getEnvProceso_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from env_bus_aplicativos(?) as foo (id integer)";
+	String sql_to_query = ""
+                + "SELECT DISTINCT "
+                    + "env_conf.id,"
+                    + "inv_prod.sku AS codigo,"
+                    + "inv_prod.descripcion,"
+                    + "inv_prod_unidades.titulo AS unidad,"
+                    + "inv_prod_presentaciones.titulo AS presentacion "
+                + "FROM env_conf "
+                + "JOIN inv_prod ON inv_prod.id=env_conf.inv_prod_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=env_conf.inv_prod_presentacion_id "
+                + "JOIN ("+sql_busqueda+") as subt on subt.id=env_conf.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("data_string: "+data_string);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getEnvProceso_Datos(Integer id) {
+        String sql_to_query = ""
+                + "SELECT "
+                    + "env_conf.id,"
+                    + "env_conf.inv_prod_id,"
+                    + "env_conf.inv_prod_presentacion_id,"
+                    + "inv_prod.sku AS codigo,"
+                    + "inv_prod.descripcion,"
+                    + "inv_prod_unidades.titulo AS unidad "
+                + "FROM env_conf "
+                + "JOIN inv_prod ON inv_prod.id=env_conf.inv_prod_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "WHERE env_conf.id=?;";
+        
+        //System.out.println("sql_to_query: "+sql_to_query);
+        //System.out.println("id: "+id);
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("producto_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("presentacion_id",String.valueOf(rs.getInt("inv_prod_presentacion_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+
+    
+    
+    
+    //###### TERMINA METODOS PARA PROCESO DE ENVASADO ############################################
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorOrdenProduccion(String folio, String sku, String descripcion, Integer id_empresa) {
+        String where = "";
+	if(!folio.equals("")){
+		folio="'%"+folio+"%'";
+	}else{
+            folio="'%%'";
+        }
+        
+        if(!sku.equals("")){
+		sku="'%"+sku+"%'";
+	}else{
+            sku="'%%'";
+        }
+        
+        if(!descripcion.equals("")){
+		descripcion="'%"+descripcion+"%'";
+	}else{
+            descripcion="'%%'";
+        }
+        
+        String sql_to_query = "select distinct id_op, folio, det_op.cantidad,producto.sku, producto.descripcion, producto.producto_id, producto.unidad_id , " +
+            "producto.unidad, (select inv_alm_id from pro_par where gral_emp_id=1 limit 1) as inv_alm_id,producto.inv_prod_presentacion_id  from (" +
+            "select pro_orden_prod.id as id_op, pro_orden_prod.folio from pro_orden_prod WHERE pro_orden_prod.folio ilike "+folio+" " +
+            "AND gral_emp_id="+id_empresa+") as ordenprod join pro_orden_prod_det as det_op on det_op.pro_orden_prod_id=ordenprod.id_op  join ( " +
+            "select productos.sku, productos.descripcion, productos.id as producto_id, unidad_id , inv_unidad.titulo as unidad," +
+            "productos.inv_prod_presentacion_id  from (" +
+            "select sku, descripcion, id, unidad_id, inv_prod_presentacion_id from inv_prod where sku ilike "+sku+" AND descripcion ilike "+descripcion+" " +
+            "AND empresa_id="+id_empresa+" AND tipo_de_producto_id in (1, 2)) as productos JOIN inv_prod_unidades as inv_unidad on " +
+            "inv_unidad.id=productos.unidad_id) as producto on producto.producto_id=det_op.inv_prod_id " +
+            "order by folio, producto.sku";
+                System.out.println("sql_to_query: "+sql_to_query);
+                
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        //distinct id_op, folio, det_op.cantidad,producto.sku, producto.descripcion,producto.producto_id, producto.unidad_id , producto.unidad
+        ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_op",String.valueOf(rs.getInt("id_op")));
+                    row.put("producto_id",String.valueOf(rs.getInt("producto_id")));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
+                    row.put("inv_alm_id",String.valueOf(rs.getInt("inv_alm_id")));
+                    row.put("inv_prod_presentacion_id",String.valueOf(rs.getInt("inv_prod_presentacion_id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),4));
+                    return row;
+                    
+                }
+            }
+        );
+        
+        return hm_datos_productos;
+        
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getProOrdenOperariosDisponibles(String cadena, Integer id_empresa) {
+        //String sql_to_query = "SELECT DISTINCT cve_pais ,pais_ent FROM municipios;";
+        String sql_to_query = "select emp_tmp.id, emp_tmp.nombre_pila||' '||emp_tmp.apellido_paterno||' '||emp_tmp.apellido_materno as titulo from ("
+                + "select id from gral_puestos where titulo ilike '%operad%' and gral_emp_id="+id_empresa+"  and borrado_logico=false ) as pu_tmp "
+                + "join "
+                + "gral_empleados as emp_tmp on emp_tmp.gral_puesto_id=pu_tmp.id  "
+                + "where emp_tmp.nombre_pila||' '||emp_tmp.apellido_paterno||' '||emp_tmp.apellido_materno ilike '"+cadena+"' and "
+                + "emp_tmp.gral_emp_id="+id_empresa+"  and emp_tmp.borrado_logico=false  order by "
+                + "emp_tmp.nombre_pila||' '||emp_tmp.apellido_paterno||' '||emp_tmp.apellido_materno  limit 10";
+        
+        ArrayList<HashMap<String, String>> docs = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return docs;
+    }
+
+
+
+    @Override
+    public ArrayList<HashMap<String, String>> getProOrdenEquipoDisponible(String cadena, Integer id_empresa) {
+        String sql_to_query = "select id, titulo from pro_equipos where titulo ilike '"+cadena+"' and gral_emp_id="+id_empresa+" and borrado_logico=false;";
+
+        ArrayList<HashMap<String, String>> docs = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return docs;
+    }
+    
+ //obtiene las existencias de la presentacion de un Producto en un almacen en especifico
+    @Override
+    public ArrayList<HashMap<String, String>> getEnv_ExistenciasConf(Integer id_prod, Integer id_pres, Integer id_alm) {
+        //String sql_query = "SELECT exis, decimales FROM (SELECT (inv_exi_pres.cantidad::double precision - inv_exi_pres.reservado::double precision) AS exis, inv_prod_unidades.decimales FROM inv_exi_pres JOIN inv_prod ON inv_prod.id=inv_exi_pres.inv_prod_id JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id WHERE inv_exi_pres.inv_alm_id=? AND inv_exi_pres.inv_prod_id=? AND inv_exi_pres.inv_prod_presentacion_id=?)AS sbt WHERE exis>0;";
+        
+        String sql_query = "select conf.inv_prod_id,conf.cantidad," +
+                "(CASE WHEN inv_exi_pres.cantidad is null THEN 0 ELSE inv_exi_pres.cantidad END) as cantidad_exist," +
+                "inv_prod.sku, inv_prod.descripcion  from (" +
+                "select env_conf_det.inv_prod_id, env_conf_det.cantidad from (" +
+                "select id from env_conf where inv_prod_id="+id_prod+" AND inv_prod_presentacion_id="+id_pres+" limit 1 " +
+                ") as conf_1 " +
+                "JOIN env_conf_det on env_conf_det.env_conf_id=conf_1.id ) as conf " +
+                "LEFT JOIN inv_exi_pres on (inv_exi_pres.inv_prod_id=conf.inv_prod_id " +
+                "AND inv_exi_pres.inv_alm_id="+id_alm+" )" +
+                "join inv_prod on inv_prod.id=conf.inv_prod_id";
+        
+        System.out.println("getExis: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),4));
+                    row.put("cantidad_exist",StringHelper.roundDouble(rs.getString("cantidad_exist"),4));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    /*TERMINA METODOS PARA EL PROCESO DE ENVASADO **************************/
+    
     
     
     
