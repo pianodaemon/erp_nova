@@ -595,14 +595,17 @@
 												<ul>
 													<li class="topline"><a href="../envconf/startup.agnux">Configuraci&oacute;n</a></li>
 													<li class="topline"><a href="../envreenv/startup.agnux">Re-Envasado</a></li>
+													<li class="topline"><a href="../envproceso/startup.agnux">Envasado</a></li>
 												</ul>
 											</li>
+											<!--
 											<li>
 												<a href="#" class="sub">Reportes</a>
 												<ul>
 													<li class="topline"><a href="#">xxxx</a></li>
 												</ul>
 											</li>
+											-->
 										</ul>
 									</li>
 									
