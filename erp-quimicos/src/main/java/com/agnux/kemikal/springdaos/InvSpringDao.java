@@ -82,7 +82,7 @@ public class InvSpringDao implements InvInterfaceDao{
     public String selectFunctionForApp_MovimientosInventario(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from inv_adm_movimientos('"+campos_data+"',array["+extra_data_array+"]);";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        //System.out.println("MovimientosInventario:"+sql_to_query);
+        System.out.println("getInvMovimientos:"+sql_to_query);
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -6808,7 +6808,7 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene las existencias de la presentacion de un Producto en un almacen en especifico
     @Override
     public ArrayList<HashMap<String, String>> getInvTraspasos_ExistenciaPresentacion(Integer id_prod, Integer id_pres, Integer id_alm) {
-        String sql_query = "SELECT exis, decimales FROM (SELECT (inv_exi_pres.cantidad::double precision - inv_exi_pres.reservado::double precision) AS exis, inv_prod_unidades.decimales FROM inv_exi_pres JOIN inv_prod ON inv_prod.id=inv_exi_pres.inv_prod_id JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id WHERE inv_exi_pres.inv_alm_id=? AND inv_exi_pres.inv_prod_id=? AND inv_exi_pres.inv_prod_presentacion_id=?)AS sbt WHERE exis>0;";
+        String sql_query = "SELECT exis, decimales FROM (SELECT (inv_exi_pres.inicial::double precision + inv_exi_pres.entradas::double precision - inv_exi_pres.salidas::double precision - inv_exi_pres.reservado::double precision) AS exis, inv_prod_unidades.decimales FROM inv_exi_pres JOIN inv_prod ON inv_prod.id=inv_exi_pres.inv_prod_id JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id WHERE inv_exi_pres.inv_alm_id=? AND inv_exi_pres.inv_prod_id=? AND inv_exi_pres.inv_prod_presentacion_id=?)AS sbt WHERE exis>0;";
         System.out.println("getExisPres: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
