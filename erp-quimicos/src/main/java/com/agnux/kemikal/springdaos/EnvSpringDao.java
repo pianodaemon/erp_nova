@@ -720,7 +720,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
                         +"    inv_prod_unidades.id as unidad_id,    "
                         +"    inv_prod_unidades.titulo as unidad,    "
                         +"    env_reenv_det.cantidad * inv_prod_presentaciones.cantidad as cantidad_unidad,"
-                        + "inv_prod_unidades.decimales AS nodec "
+                        + "inv_prod_unidades.decimales AS no_dec "
                         +"    FROM env_reenv_det "
                         +"    join env_conf on  env_conf.id = env_reenv_det.env_conf_id     "
                         +"    join inv_prod on inv_prod.id= env_conf.inv_prod_id    "

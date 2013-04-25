@@ -687,7 +687,7 @@ public class PdfReenvasado {
             cell_table_grid.setFixedHeight(13);
             table_grid.addCell(cell_table_grid);
 
-            cell_table_grid = new PdfPCell(new Paragraph("Cant. Presentación",headerFont));
+            cell_table_grid = new PdfPCell(new Paragraph("Cant. Pres.",headerFont));
             cell_table_grid.setUseAscender(true);
             cell_table_grid.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell_table_grid.setUseDescender(true);
