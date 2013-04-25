@@ -558,7 +558,7 @@ public class EnvReenvController {
 
         String[] array_company = razon_social_empresa.split(" ");
         String company_name= array_company[0].toLowerCase();
-        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+        String ruta_imagen = this.getGralDao().getImagesDir()+this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"_logo.png";
         Integer app_selected = 138;
 
         File file_dir_tmp = new File(dir_tmp);
@@ -587,7 +587,8 @@ public class EnvReenvController {
         Datos_Reporte_Grid   = this.getEnvDao().getReport_Reenvasado_grid(id_empresa,id_env);
 
         PdfReenvasado x = new PdfReenvasado(Datos_Reporte_Header,Datos_Reporte_Grid,fileout,ruta_imagen);
-                      x.ViewPDF();
+        x.ViewPDF();
+        
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         int size = (int) file.length(); // Tamaño del archivo

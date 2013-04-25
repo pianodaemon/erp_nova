@@ -643,32 +643,35 @@ public class EnvSpringDao implements EnvInterfaceDao{
     
     @Override
     public HashMap<String, String> getReport_Reenvasado_Header(Integer empresa_id,Integer id_env) {
-        String sql_query = " SELECT env_reenv.id, "
-        +"    inv_alm.id   as almacen_id,  "
-        +"    inv_alm.titulo as almacen, "
-        +"    inv_prod_unidades.id as unidad_id, "
-        +"    inv_prod_unidades.titulo as unidad, "
-        +"    inv_prod_presentaciones.id as     presentacion_id, "
-        +"    inv_prod_presentaciones.titulo as presentacion,  "
-        +"    env_reenv.folio,  "
-        +"    inv_prod.sku as codigo, "
-        +"    inv_prod.descripcion,  "
-        +"    env_reenv.existencia as existencia_presentacion,  "
-        +"    env_reenv.existencia * inv_prod_presentaciones.cantidad as existencia_unidad,  "
-        +"    env_reenv.fecha,  "
-        +"    env_reenv.hora_inicio,  "
-        +"    env_reenv.env_estatus_id,   "
-        +"    env_estatus.titulo as estado , "
-        +"    env_reenv.gral_empleado_id,  "
-        +"    gral_empleados.nombre_pila||'  '||gral_empleados.apellido_paterno||'  '||gral_empleados.apellido_materno as nombre_empleado  "
-        +"    FROM env_reenv "
-        +"    join inv_prod on inv_prod.id = env_reenv.inv_prod_id "
-        +"    join inv_prod_presentaciones  on inv_prod_presentaciones.id = env_reenv.inv_prod_presentacion_id  "
-        +"    join inv_alm on inv_alm.id = env_reenv.inv_alm_id  "
-        +"    join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id  "
-        +"    join env_estatus on env_estatus.id = env_reenv.env_estatus_id "
-        +"    join gral_empleados on gral_empleados.id=env_reenv.gral_empleado_id  "
-        +"    where env_reenv.gral_emp_id=? and env_reenv.id=?";
+        String sql_query = " "
+                + "SELECT "
+                    + "env_reenv.id, "
+                    +"    inv_alm.id   as almacen_id,  "
+                    +"    inv_alm.titulo as almacen, "
+                    +"    inv_prod_unidades.id as unidad_id, "
+                    +"    inv_prod_unidades.titulo as unidad, "
+                    +"    inv_prod_presentaciones.id as     presentacion_id, "
+                    +"    inv_prod_presentaciones.titulo as presentacion,  "
+                    +"    env_reenv.folio,  "
+                    +"    inv_prod.sku as codigo, "
+                    +"    inv_prod.descripcion,  "
+                    +"    env_reenv.existencia as existencia_presentacion,  "
+                    +"    env_reenv.existencia * inv_prod_presentaciones.cantidad as existencia_unidad,  "
+                    +"    env_reenv.fecha,  "
+                    +"    env_reenv.hora_inicio,  "
+                    +"    env_reenv.env_estatus_id,   "
+                    +"    env_estatus.titulo as estado , "
+                    +"    env_reenv.gral_empleado_id,  "
+                    +"    gral_empleados.nombre_pila||'  '||gral_empleados.apellido_paterno||'  '||gral_empleados.apellido_materno as nombre_empleado,"
+                    + "inv_prod_unidades.decimales AS no_dec "
+                +"    FROM env_reenv "
+                +"    join inv_prod on inv_prod.id = env_reenv.inv_prod_id "
+                +"    join inv_prod_presentaciones  on inv_prod_presentaciones.id = env_reenv.inv_prod_presentacion_id  "
+                +"    join inv_alm on inv_alm.id = env_reenv.inv_alm_id  "
+                +"    join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id  "
+                +"    join env_estatus on env_estatus.id = env_reenv.env_estatus_id "
+                +"    join gral_empleados on gral_empleados.id=env_reenv.gral_empleado_id  "
+                +"    where env_reenv.gral_emp_id=? and env_reenv.id=?";
 
         System.out.println("Reenvasado_header : "+sql_query);
 
@@ -685,8 +688,8 @@ public class EnvSpringDao implements EnvInterfaceDao{
                     row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("estado",rs.getString("estado"));
-                    row.put("existencia_presentacion",String.valueOf(rs.getDouble("existencia_presentacion")));
-                    row.put("existencia_unidad",String.valueOf(rs.getDouble("existencia_unidad")));
+                    row.put("existencia_presentacion",StringHelper.roundDouble(String.valueOf(rs.getDouble("existencia_presentacion")), rs.getInt("no_dec")));
+                    row.put("existencia_unidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("existencia_unidad")), rs.getInt("no_dec")));
                     row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("folio",rs.getString("folio"));
@@ -716,7 +719,8 @@ public class EnvSpringDao implements EnvInterfaceDao{
                         +"    env_reenv_det.cantidad as cantidad_presentacion ,   "
                         +"    inv_prod_unidades.id as unidad_id,    "
                         +"    inv_prod_unidades.titulo as unidad,    "
-                        +"    env_reenv_det.cantidad * inv_prod_presentaciones.cantidad as cantidad_unidad    "
+                        +"    env_reenv_det.cantidad * inv_prod_presentaciones.cantidad as cantidad_unidad,"
+                        + "inv_prod_unidades.decimales AS nodec "
                         +"    FROM env_reenv_det "
                         +"    join env_conf on  env_conf.id = env_reenv_det.env_conf_id     "
                         +"    join inv_prod on inv_prod.id= env_conf.inv_prod_id    "
@@ -740,8 +744,8 @@ public class EnvSpringDao implements EnvInterfaceDao{
                     row.put("almacen_destino",rs.getString("almacen_destino"));
                     row.put("presentacion_destino",rs.getString("presentacion"));
                     row.put("unidad_destino",rs.getString("unidad"));
-                    row.put("cantidad_presentacion",String.valueOf(rs.getDouble("cantidad_presentacion")));
-                    row.put("cantidad_unidad",String.valueOf(rs.getDouble("cantidad_unidad")));
+                    row.put("cantidad_presentacion",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad_presentacion")), rs.getInt("no_dec")));
+                    row.put("cantidad_unidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad_unidad")), rs.getInt("no_dec")));
 
                     return row;
                 }

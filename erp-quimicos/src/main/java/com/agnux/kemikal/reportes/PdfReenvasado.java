@@ -463,7 +463,7 @@ public class PdfReenvasado {
             table_datos.addCell(celltable_datos);
 
 
-            celltable_datos = new PdfPCell(new Paragraph("Empleado :",smallBoldFont));
+            celltable_datos = new PdfPCell(new Paragraph("Empleado:",smallBoldFont));
             celltable_datos.setBorderWidthBottom(0);
             celltable_datos.setBorderWidthTop(0);
             celltable_datos.setBorderWidthRight(0);
@@ -482,7 +482,7 @@ public class PdfReenvasado {
             celltable_datos.setHorizontalAlignment(Element.ALIGN_LEFT);
             table_datos.addCell(celltable_datos);
 ////////////////////////////
-            celltable_datos = new PdfPCell(new Paragraph("Almacen :",smallBoldFont));
+            celltable_datos = new PdfPCell(new Paragraph("Almacen:",smallBoldFont));
             celltable_datos.setBorderWidthBottom(0);
             celltable_datos.setBorderWidthTop(0);
             celltable_datos.setBorderWidthRight(0);
@@ -501,7 +501,7 @@ public class PdfReenvasado {
             celltable_datos.setHorizontalAlignment(Element.ALIGN_LEFT);
             table_datos.addCell(celltable_datos);
 ////////////////////////////
-            celltable_datos = new PdfPCell(new Paragraph("Codigo :",smallBoldFont));
+            celltable_datos = new PdfPCell(new Paragraph("Código:",smallBoldFont));
             celltable_datos.setBorderWidthBottom(0);
             celltable_datos.setBorderWidthTop(0);
             celltable_datos.setBorderWidthRight(0);
@@ -519,7 +519,7 @@ public class PdfReenvasado {
             celltable_datos.setHorizontalAlignment(Element.ALIGN_LEFT);
             table_datos.addCell(celltable_datos);
 
-            celltable_datos = new PdfPCell(new Paragraph("Descripcion :",smallBoldFont));
+            celltable_datos = new PdfPCell(new Paragraph("Descripción:",smallBoldFont));
             celltable_datos.setBorderWidthBottom(0);
             celltable_datos.setBorderWidthTop(0);
             celltable_datos.setBorderWidthRight(0);
@@ -539,7 +539,7 @@ public class PdfReenvasado {
             table_datos.addCell(celltable_datos);
 ////////////////////////////
 
-            celltable_datos = new PdfPCell(new Paragraph("Presentacion :",smallBoldFont));
+            celltable_datos = new PdfPCell(new Paragraph("Presentación:",smallBoldFont));
             celltable_datos.setBorderWidthBottom(0);
             celltable_datos.setBorderWidthTop(0);
             celltable_datos.setBorderWidthRight(0);
@@ -558,7 +558,7 @@ public class PdfReenvasado {
             table_datos.addCell(celltable_datos);
 
 
-            celltable_datos = new PdfPCell(new Paragraph("Existencia pres:",smallBoldFont));
+            celltable_datos = new PdfPCell(new Paragraph("Existencia Pres.:",smallBoldFont));
             celltable_datos.setBorderWidthBottom(0);
             celltable_datos.setBorderWidthTop(0);
             celltable_datos.setBorderWidthRight(0);
@@ -606,7 +606,7 @@ public class PdfReenvasado {
             celltable_datos.setHorizontalAlignment(Element.ALIGN_LEFT);
             table_datos.addCell(celltable_datos);
 
-            celltable_datos = new PdfPCell(new Paragraph("existencia unidad:",smallBoldFont));
+            celltable_datos = new PdfPCell(new Paragraph("Existencia Unidad:",smallBoldFont));
             celltable_datos.setBorderWidthBottom(0);
             celltable_datos.setBorderWidthTop(0);
             celltable_datos.setBorderWidthRight(0);
@@ -660,7 +660,7 @@ public class PdfReenvasado {
             table_grid.setKeepTogether(false);
             table_grid.setHeaderRows(1);
 
-            cell_table_grid = new PdfPCell(new Paragraph("ALMACEN ORIGEN",headerFont));
+            cell_table_grid = new PdfPCell(new Paragraph("Almacen Origen M.P.",headerFont));
             cell_table_grid.setUseAscender(true);
             cell_table_grid.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell_table_grid.setUseDescender(true);
@@ -669,7 +669,7 @@ public class PdfReenvasado {
             cell_table_grid.setFixedHeight(13);
             table_grid.addCell(cell_table_grid);
             // Encabezado de Celda
-            cell_table_grid = new PdfPCell(new Paragraph("ALMACEN DESTINO",headerFont));
+            cell_table_grid = new PdfPCell(new Paragraph("Almacen Destino",headerFont));
             cell_table_grid.setUseAscender(true);
             cell_table_grid.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell_table_grid.setUseDescender(true);
@@ -678,7 +678,7 @@ public class PdfReenvasado {
             cell_table_grid.setFixedHeight(13);
             table_grid.addCell(cell_table_grid);
 
-            cell_table_grid = new PdfPCell(new Paragraph("PRESENTACION",headerFont));
+            cell_table_grid = new PdfPCell(new Paragraph("Presentación",headerFont));
             cell_table_grid.setUseAscender(true);
             cell_table_grid.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell_table_grid.setUseDescender(true);
@@ -687,7 +687,7 @@ public class PdfReenvasado {
             cell_table_grid.setFixedHeight(13);
             table_grid.addCell(cell_table_grid);
 
-            cell_table_grid = new PdfPCell(new Paragraph("CANTIDAD PRES.",headerFont));
+            cell_table_grid = new PdfPCell(new Paragraph("Cant. Presentación",headerFont));
             cell_table_grid.setUseAscender(true);
             cell_table_grid.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell_table_grid.setUseDescender(true);
@@ -696,7 +696,7 @@ public class PdfReenvasado {
             cell_table_grid.setFixedHeight(13);
             table_grid.addCell(cell_table_grid);
 
-            cell_table_grid = new PdfPCell(new Paragraph("UNIDAD",headerFont));
+            cell_table_grid = new PdfPCell(new Paragraph("Unidad M.",headerFont));
             cell_table_grid.setUseAscender(true);
             cell_table_grid.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell_table_grid.setUseDescender(true);
@@ -705,7 +705,7 @@ public class PdfReenvasado {
             cell_table_grid.setFixedHeight(13);
             table_grid.addCell(cell_table_grid);
 
-            cell_table_grid = new PdfPCell(new Paragraph("CANTIDAD UNIDAD",headerFont));
+            cell_table_grid = new PdfPCell(new Paragraph("Cant. Unidad",headerFont));
             cell_table_grid.setUseAscender(true);
             cell_table_grid.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell_table_grid.setUseDescender(true);
