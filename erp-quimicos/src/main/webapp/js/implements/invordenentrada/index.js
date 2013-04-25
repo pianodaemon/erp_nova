@@ -737,6 +737,14 @@ $(function() {
 				var $submit_actualizar = $('#forma-invordenentrada-window').find('#submit');
 				//$submit_actualizar.hide();//ocultar boton para que no permita actualizar
 				
+				
+				$campo_factura.css({'background' : '#F0F0F0'});
+				$campo_ordencompra.css({'background' : '#F0F0F0'});
+				$campo_numeroguia.css({'background' : '#F0F0F0'});
+				$campo_expedicion.css({'background' : '#F0F0F0'});
+				$campo_tc.css({'background' : '#F0F0F0'});
+				
+				
 				$campo_flete.val(0);
 				$campo_factura.attr("readonly", true);
 				$campo_ordencompra.attr("readonly", true);

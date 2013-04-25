@@ -144,7 +144,7 @@
 														<tr>
 															<td width="10"></td>
 															<td width="70">Folio&nbsp;Entrada</td>
-															<td width="80"><INPUT TYPE="text" name="folio_entrada" style="width:80px;" readOnly="true"></td>
+															<td width="80"><INPUT TYPE="text" name="folio_entrada" style="width:80px; font-weight:bold;" readOnly="true"></td>
 															<td width="40"></td>
 															<td width="95">Tipo&nbsp;de&nbsp;movimiento</td>
 															<td width="250">
