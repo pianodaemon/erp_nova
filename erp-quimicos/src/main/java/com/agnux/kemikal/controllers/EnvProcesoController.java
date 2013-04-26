@@ -130,17 +130,17 @@ public class EnvProcesoController {
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
         //Configuracion de Envasado(ENV)
-        Integer app_selected = 136;
+        Integer app_selected = 137;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
-        String tipo_prod = StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo_prod")));
+        String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
         String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
         String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
-        String presentacion = StringHelper.isNullString(String.valueOf(has_busqueda.get("estatus")));
-        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+codigo+"___"+descripcion+"___"+presentacion;
+        String estatus = StringHelper.isNullString(String.valueOf(has_busqueda.get("estatus")));
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+codigo+"___"+descripcion+"___"+estatus;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getEnvDao().countAll(data_string);
@@ -389,5 +389,94 @@ public class EnvProcesoController {
         return jsonretorno;
     }
     
-    
+    //edicion y nuevo
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="identificador", required=true) Integer identificador,
+            @RequestParam(value="producto_id", required=true) String producto_id,
+            @RequestParam(value="produccion_id", required=true) String produccion_id,
+            @RequestParam(value="folio", required=true) String folio,
+            @RequestParam(value="fecha", required=true) String fecha,
+            @RequestParam(value="hora", required=true) String hora,
+            @RequestParam(value="select_estatus", required=true) String select_estatus,
+            @RequestParam(value="select_alm_orden_orig", required=true) String select_alm_orden_orig,
+            @RequestParam(value="select_pres_orden_orig", required=true) String select_pres_orden_orig,
+            @RequestParam(value="equipo", required=true) String equipo,
+            @RequestParam(value="operador", required=true) String operador,
+            @RequestParam(value="merma", required=true) String merma,
+            @RequestParam(value="exis_pres", required=true) String exis_pres,
+            
+            @RequestParam(value="eliminado", required=true) String[] eliminado,
+            @RequestParam(value="iddetalle", required=false) String[] iddetalle, //is de el registro que que ocupa en la tabla de el detalle
+            @RequestParam(value="noTr", required=false) String[] noTr, //numero de posicion de el tr en el grid
+            @RequestParam(value="idprod", required=true) String[] idprod,
+            @RequestParam(value="select_aml_origen", required=true) String[] select_aml_origen,
+            @RequestParam(value="select_pres_dest", required=false) String[] select_pres_dest,
+            @RequestParam(value="cantpres", required=false) String[] cantpres,
+            @RequestParam(value="cantuni", required=false) String[] cantuni,
+            @RequestParam(value="select_aml_dest", required=false) String[] select_aml_dest,
+            @RequestParam(value="idconf", required=false) String[] idconf,
+            
+            @ModelAttribute("user") UserSessionData user
+        ) {
+            
+            System.out.println("Guardar del Pedido");
+            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            HashMap<String, String> succes = new HashMap<String, String>();
+            
+            Integer app_selected = 137;
+            String command_selected = "new";
+            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            
+            String arreglo[];
+            arreglo = new String[noTr.length];
+            
+            for(int i=0; i<noTr.length; i++) { 
+                arreglo[i] = "'"+eliminado[i] +"___"+ noTr[i] +"___" + iddetalle[i] +"___" + idprod[i] +"___" + select_aml_origen[i];
+                arreglo[i] += "___" + select_pres_dest[i]+"___" + cantpres[i]+"___" + cantuni[i]+"___" + select_aml_dest[i]+"___" + idconf[i]+"'";
+                System.out.println(arreglo[i]);
+            }//idconf
+            
+            //serializar el arreglo
+            String extra_data_array = StringUtils.join(arreglo, ",");
+            
+            if( identificador==0 ){
+                command_selected = "new";
+            }else{
+                command_selected = "edit";
+            }
+            
+            String data_string = 
+                    app_selected+"___"+
+                    command_selected+"___"+
+                    id_usuario+"___"+
+                    identificador+"___"+
+                    producto_id+"___"+
+                    produccion_id+"___"+
+                    fecha+"___"+
+                    hora+"___"+
+                    select_alm_orden_orig+"___"+
+                    select_pres_orden_orig+"___"+
+                    equipo+"___"+
+                    operador+"___"+
+                    merma+"___"+
+                    exis_pres+"___"+
+                    select_estatus;
+            //System.out.println("data_string: "+data_string);
+            
+            succes = this.getEnvDao().selectFunctionValidateAplicativo(data_string,extra_data_array);
+            
+            log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+            String actualizo = "0";
+            
+            if( String.valueOf(succes.get("success")).equals("true") ){
+                actualizo = this.getEnvDao().selectFunctionForThisApp(data_string, extra_data_array);
+                jsonretorno.put("actualizo",String.valueOf(actualizo));
+            }
+            
+            jsonretorno.put("success",String.valueOf(succes.get("success")));
+            
+            log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
 }
