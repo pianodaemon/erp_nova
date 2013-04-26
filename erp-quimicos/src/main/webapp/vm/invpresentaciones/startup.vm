@@ -128,7 +128,7 @@
                                                                                         <td >
                                                                                                 <td width="270"><INPUT TYPE="text" name="cantidad" style="width:100px;"></td>
                                                                                         </td>
-                                                                                        <td ></td>
+                                                                                        <td ><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cant"></div></td>
                                                                                         <td ></td>
                                                                                         <td ></td>
                                                                                 </tr>

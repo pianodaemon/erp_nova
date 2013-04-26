@@ -10,7 +10,6 @@
 		
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
-        <!--<script type="text/javascript" src="../../js/components/modalbox/centrocostos/modalboxCentrocostos.js"></script>-->
         <script type="text/javascript" src="../../js/implements/repinvexis/index.js" ></script>
         <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
         
@@ -51,7 +50,7 @@
 								<td width="50"></td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="50"></td>
-								<td width="45">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								<td width="20">&nbsp;&nbsp;</td>
 							</tr>
 							
 							
@@ -76,49 +75,19 @@
 								<td width="50"><INPUT TYPE="button" id="boton_buscador" value="Buscar"></td>
 								<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 								<td width="50"><INPUT TYPE="button" id="genera_reporte_exis" value="Generar PDF"></td>
-								<td width="45">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								<td width="20">&nbsp;&nbsp;</td>
 							</tr>
 							<tr class="rep_inv_exis">
 								<td colspan="15"  height="8"></td>
 							</tr>
-							
-							
-							
 							<tr>
 								<td colspan="15">&nbsp;&nbsp;</td>
 							</tr>
 							<tr>
 								<td colspan="15">
-									
-										<table id="table_exis" cellspacing="0">
-											<thead>
-												<tr>
-													<td width="110">C&oacute;digo</td>
-													<td width="400">Descripci&oacute;n</td>
-													<td width="100">Unidad</td>
-													<td width="90">Existencia</td>
-													<td width="120">Costo&nbsp;Unitario</td>
-													<td width="120">Costo&nbsp;Total</td>
-													<td width="60">Moneda</td>
-												</tr>
-											</thead>
-											<tbody>
-											
-											</tbody>
-											<!--
-											<tfoot>
-												<tr>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-												</tr>
-											</tfoot>
-											-->
-										</table>
-									
+										<div id="table_exis">
+										
+										</div>
 								</td>
 							</tr>
 						</table>

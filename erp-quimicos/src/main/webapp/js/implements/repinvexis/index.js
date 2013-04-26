@@ -58,7 +58,24 @@ $(function() {
 		tcosto_hmtl += '<option value="2">Costo Promedio</option>';
 	$select_tipo_costo.append(tcosto_hmtl);
 	
-
+	
+	
+	
+	//busca el almacen y presentacion en el Grid, esto para evitar que se repitan
+	var $actualizarSumasMonedas = function($grid_monedas, idMon, cant){
+		var encontrado=0;
+		//busca el codigo del producto en el grid
+		$grid_monedas.find('tr').each(function (index){
+			var cantTr=$(this).find(':eq(5)').text();
+			
+			if(parseInt($(this).find(':eq(4)').text())==parseInt(idMon)){
+				$(this).find(':eq(5)').text(parseFloat(cantTr) + parseFloat(cant));
+			}
+		});
+		return encontrado;
+	}
+	
+	
 	
 	$genera_reporte_exis.click(function(event){
 		event.preventDefault();
@@ -101,19 +118,21 @@ $(function() {
 		$select_almacen.append(almacen_hmtl);
 	});//termina llamada json
 	
-	
+	/*
 	var height2 = $('#cuerpo').css('height');
 	var alto = parseInt(height2)-240;
 	var pix_alto=alto+'px';
 	
 	
-	$('#table_exis').tableScroll({height:parseInt(pix_alto)});
-	
+	//$('#table_exis').tableScroll({height:parseInt(pix_alto)});
+	*/
 	
 	$buscar.click(function(event){
 		var id_almacen = $select_almacen.val();
+		$tabla_existencias.children().remove();
+		
 		var primero=0;
-		$tabla_existencias.find('tbody').children().remove();
+		//$tabla_existencias.find('tbody').children().remove();
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getExistencias.json';
 		$arreglo = {'tipo':$select_opciones.val(), 
 					'almacen':id_almacen, 
@@ -122,22 +141,77 @@ $(function() {
 					'tipo_costo':$select_tipo_costo.val(),
 					'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 					};
+		
+		var acumuladoCostoTotalPesos=0;
+		var acumuladoCostoTotalDolar=0;
+		var acumuladoCostoTotalEuro=0;
+		
+		
+		
 		if(parseInt($select_almacen.val()) > 0){
+			
 			$.post(input_json,$arreglo,function(entry){
-				$.each(entry['Existencias'],function(entryIndex,exi){
-					if(primero==0){
-						$tabla_existencias.find('tbody').append('<tr class="first"><td width="110">'+exi['codigo_producto']+'</td><td width="400">'+exi['descripcion']+'</td><td width="100">'+exi['unidad_medida']+'</td><td width="90" align="right">'+$(this).agregar_comas(parseFloat(exi['existencias']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_unitario']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_total']).toFixed(2))+'</td><td width="60" align="center">'+exi['simbolo_moneda']+'</td></tr>');
-						primero=1;
-					}else{
-						$tabla_existencias.find('tbody').append('<tr><td width="110">'+exi['codigo_producto']+'</td><td width="400">'+exi['descripcion']+'</td><td width="100">'+exi['unidad_medida']+'</td><td width="90" align="right">'+$(this).agregar_comas(parseFloat(exi['existencias']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_unitario']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_total']).toFixed(2))+'</td><td width="60" align="center">'+exi['simbolo_moneda']+'</td></tr>');
+				
+				var html_reporte='';
+				var html_footer='';
+				
+				html_reporte = '<table id="repExis">';
+				html_reporte +='<thead><tr><td width="110">C&oacute;digo</td><td width="400">Descripci&oacute;n</td><td width="100">Unidad</td><td width="90">Existencia</td><td width="120">Costo&nbsp;Unitario</td><td width="120">Costo&nbsp;Total</td><td width="60">Moneda</td></tr></thead>';
+					
+				if(parseInt(entry['Existencias'].length) > 0){
+					
+					$.each(entry['Existencias'],function(entryIndex,exi){
+						if(primero==0){
+							html_reporte += '<tr class="first"><td width="110">'+exi['codigo_producto']+'</td><td width="400">'+exi['descripcion']+'</td><td width="100">'+exi['unidad_medida']+'</td><td width="90" align="right">'+$(this).agregar_comas(parseFloat(exi['existencias']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_unitario']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_total']).toFixed(2))+'</td><td width="60" align="center">'+exi['simbolo_moneda']+'</td></tr>';
+							primero=1;
+						}else{
+							html_reporte += '<tr><td width="110">'+exi['codigo_producto']+'</td><td width="400">'+exi['descripcion']+'</td><td width="100">'+exi['unidad_medida']+'</td><td width="90" align="right">'+$(this).agregar_comas(parseFloat(exi['existencias']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_unitario']).toFixed(2))+'</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(exi['costo_total']).toFixed(2))+'</td><td width="60" align="center">'+exi['simbolo_moneda']+'</td></tr>';
+						}
+						
+						if(parseInt(exi['moneda_id'])==1){
+							acumuladoCostoTotalPesos = parseFloat(acumuladoCostoTotalPesos) + parseFloat(parseFloat(exi['costo_total']).toFixed(2));
+						}
+						if(parseInt(exi['moneda_id'])==2){
+							acumuladoCostoTotalDolar = parseFloat(acumuladoCostoTotalDolar) + parseFloat(parseFloat(exi['costo_total']).toFixed(2));
+						}
+						if(parseInt(exi['moneda_id'])==3){
+							acumuladoCostoTotalEuro = parseFloat(acumuladoCostoTotalEuro) + parseFloat(parseFloat(exi['costo_total']).toFixed(2));
+						}
+						
+					});
+					
+					
+					if(parseFloat(acumuladoCostoTotalPesos)>0){
+						html_footer +='<tr><td width="110"></td><td width="400"></td><td width="100"></td><td width="90" align="right"> </td><td width="120" align="right">Suma&nbsp;Costo&nbsp;Total</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(acumuladoCostoTotalPesos).toFixed(2))+'</td><td width="60" align="center">Pesos</td></tr>';
 					}
-				});
+					
+					if(parseFloat(acumuladoCostoTotalDolar)>0){
+						html_footer +='<tr><td width="110"></td><td width="400"></td><td width="100"></td><td width="90" align="right"> </td><td width="120" align="right">Suma&nbsp;Costo&nbsp;Total</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(acumuladoCostoTotalDolar).toFixed(2))+'</td><td width="60" align="center">Dolares</td></tr>';
+					}
+					
+					if(parseFloat(acumuladoCostoTotalEuro)>0){
+						html_footer +='<tr><td width="110"></td><td width="400"></td><td width="100"></td><td width="90" align="right"> </td><td width="120" align="right">Suma&nbsp;Costo&nbsp;Total</td><td width="120" align="right">'+$(this).agregar_comas(parseFloat(acumuladoCostoTotalEuro).toFixed(2))+'</td><td width="60" align="center">Euros</td></tr>';
+					}
+					
+					
+
+					
+				}
+				
+				html_reporte +='<tfoot>';
+					html_reporte += html_footer;
+				html_reporte +='</tfoot>';
+				html_reporte += '</table>';
+				
+				$tabla_existencias.append(html_reporte);
 				
 				var height2 = $('#cuerpo').css('height');
-				var alto = parseInt(height2)-240;
+				var alto = parseInt(height2)-280;
 				var pix_alto=alto+'px';
 				
-				$('#table_exis').tableScroll({height:parseInt(pix_alto)});
+				$('#repExis').tableScroll({height:parseInt(pix_alto)});
+					
+				
 			});//termina llamada json
 		}else{
 			jAlert("Selecciona un Almacen.",'! Atencion');
