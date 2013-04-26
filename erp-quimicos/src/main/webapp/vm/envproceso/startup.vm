@@ -41,7 +41,7 @@
 			</tr>
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="150">Tipo&nbsp;de&nbsp;producto</td>
+				<td width="150">Folio</td>
 				<td width="10"></td>
 				<td width="100">C&oacute;digo</td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -57,16 +57,14 @@
 			
 			<tr>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td width="150">
-					<select name="busqueda_select_tipo_prod" style="width:150px;">
-						<option value="1" selected="yes">Prod. Terminado</option>
-					</select>
+				<td width="100">
+					<input type="text" name="busqueda_folio" style="width:100px;">
 				</td>
 				<td width="10"></td>
 				<td><input type="text" name="busqueda_codigo" style="width:100px;"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><input type="text" name="busqueda_descripcion" style="width:200px;"></td>
-				identificador<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="150">
                                     
                                     <select name="busqueda_select_estatus" style="width:150px;">
@@ -149,19 +147,15 @@
 															<td width="65">Estatus</td>
 															<td width="90">
 																<select name="select_estatus" style="width:90px;">
-																	<option value="0" selected="yes">Nuevo</option>
-																	<option value="0" >En proceso</option>
-																	<option value="0" >Finalizado</option>
-																	<option value="0" >Cancelado</option>
 																</select>
 															</td>
 															<td width="40"></td>
 															<td width="45">Fecha</td>
 															<td width="60"><input type="text" name="fecha" style="width:60px;"></td>
-															<td width="20"></td>
+															<td width="20"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha"></div></td>
                                                                                                                         <td width="45">Hora</td>
 															<td width="60"><input type="text" name="hora" style="width:60px;"></td>
-															<td width="5"></td>
+															<td width="5"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_hora"></div></td>
 														</tr>
                                                                                                                 <tr><td colspan="9" height="8"></td></tr>
 														<tr>
@@ -170,13 +164,13 @@
                                                                                                                             <input type="hidden" name="produccion_id">
                                                                                                                             <input type="text" name="folio_produccion" style="width:60px; border:1px solid #000;">
                                                                                                                         </td>
-                                                                                                                        <td width="20"></td>
+                                                                                                                        <td width="20"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_orden_produccion"></div></td>
 															<td width="70">C&oacute;digo</td>
 															<td width="80">
 																<input type="hidden" name="producto_id">
 																<input type="text" name="codigo" style="width:80px; border:1px solid #000;">
 															</td>
-															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
+															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_producto"></div></td>
 															<td width="65">Descripci&oacute;n</td>
 															<td width="130" colspan="3"><input type="text" name="descripcion" style="width:130px;"></td>
 															<td width="80">&nbsp;<a href="buscar_orden" id="buscar_orden">(Buscar)</a></td>
@@ -186,11 +180,11 @@
 														<tr>
                                                                                                                         <td width="70">Almacen</td>
 															<td width="150" colspan="3">
-																<select name="select_almacen_orig" style="width:150px;">
+																<select name="select_alm_orden_orig" style="width:150px;">
 																	<option value="0" selected="yes">[-- Seleccionar Almacen --]</option>
 																</select>
 															</td>
-															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_select_almacen_orig"></div></td>
+															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_almacen_op"></div></td>
 															<td width="65"></td>
 															<td width="45" ></td>
 															<td width="60">
@@ -202,11 +196,11 @@
 														<tr>
 															<td width="70">Presentaci&oacute;n</td>
 															<td width="80">
-																<select name="select_presentacion_orig" style="width:80px;">
+																<select name="select_pres_orden_orig" style="width:80px;">
 																	<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>
 																</select>
 															</td>
-															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
+															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion_op"></div></td>
 															<td width="65">Existencia</td>
 															<td width="90"><input type="text" name="exis_pres" style="width:80px; border:1px solid #000;"></td>
 															<td width="40"></td>
@@ -230,10 +224,10 @@
                                                                                                                 <tr>
 															<td width="70">Equipo</td>
 															<td width="80"><input type="text" name="equipo" style="width:80px; border:1px solid #000;"></td>
-															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
+															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_equipo"></div></td>
 															<td width="65">Operador</td>
 															<td width="90"><input type="text" name="operador" style="width:80px; border:1px solid #000;"></td>
-															<td width="40"></td>
+															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_operador"></div></td>
 															<td width="45">Merma</td>
 															<td width="60"><input type="text" name="merma" style="width:60px; border:1px solid #000;"></td>
 															<td width="5"></td>
