@@ -395,9 +395,10 @@
 													<li class="topline"><a href="#">Control de Existencias</a></li>
 													<li class="topline"><a href="#">Kardex</a></li>
 													-->
-													<li class="topline"><a href="../invetiquetas/startup.agnux">Impresi&oacute;n de Etiquetas</a></li>
 													<li class="topline"><a href="../repinvexis/startup.agnux">Inventario</a></li>
 													<li class="topline"><a href="../repinvexislote/startup.agnux">Existencias en Lotes</a></li>
+													<li class="topline"><a href="../repinvexispres/startup.agnux">Existencias en Presentaciones</a></li>
+													<li class="topline"><a href="../invetiquetas/startup.agnux">Impresi&oacute;n de Etiquetas</a></li>
 													<li class="topline"><a href="../repinvkits/startup.agnux">Kits</a></li>
 													<li class="topline"><a href="../repinvmovimientos/startup.agnux">Movimientos</a></li>
 													<!--
