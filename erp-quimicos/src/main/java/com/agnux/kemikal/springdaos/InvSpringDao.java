@@ -225,9 +225,10 @@ public class InvSpringDao implements InvInterfaceDao{
 					+"existencias double precision, "
 					+"costo_unitario double precision, "
 					+"costo_total double precision, "
+                                        +"moneda_id integer,"
                                         +"simbolo_moneda character varying "
                                     +") ORDER BY descripcion ASC;";
-            //System.out.println("InvReporte: "+sql_to_query);
+            System.out.println("InvReporte: "+sql_to_query);
 
             ArrayList<HashMap<String, String>> hm133 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,
@@ -245,6 +246,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         row.put("existencias",StringHelper.roundDouble(rs.getDouble("existencias"),2));
                         row.put("costo_unitario",StringHelper.roundDouble(rs.getDouble("costo_unitario"),2));
                         row.put("costo_total",StringHelper.roundDouble(rs.getDouble("costo_total"),2));
+                        row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
                         row.put("simbolo_moneda",rs.getString("simbolo_moneda"));
                         return row;
                     }

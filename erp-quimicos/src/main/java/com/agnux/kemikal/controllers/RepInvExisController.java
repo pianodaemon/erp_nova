@@ -165,6 +165,7 @@ public class RepInvExisController {
         log.log(Level.INFO, "Ejecutando getExistenciasJson de {0}", RepInvExisController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> existencias = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         String codigo;
@@ -186,8 +187,10 @@ public class RepInvExisController {
         //existencias = this.getInvDao().getDatos_ReporteExistencias(id_usuario, almacen, codigo, desc, tipo);
         existencias = this.getInvDao().selectFunctionForInvReporte(app_selected,data_string);
         
+        monedas = this.getInvDao().getMonedas();
         
         jsonretorno.put("Existencias", existencias);
+        jsonretorno.put("Monedas", monedas);
         
         return jsonretorno;
     }
@@ -211,6 +214,7 @@ public class RepInvExisController {
                 Model model)
             throws ServletException, IOException, URISyntaxException, DocumentException {
         
+        ArrayList<HashMap<String, String>> lista_existencias = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         String codigo;
         String desc;
@@ -252,26 +256,20 @@ public class RepInvExisController {
         File file_dir_tmp = new File(dir_tmp);
         System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        
         String file_name = "exis_inv_"+razon_social_empresa+".pdf";
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
-        
-        ArrayList<HashMap<String, String>> lista_existencias = new ArrayList<HashMap<String, String>>();
         
         String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+almacen+"___"+codigo+"___"+desc+"___"+tipo_reporte+"___"+tipo_costo;
         
         //obtiene las facturas del periodo indicado
         lista_existencias = this.getInvDao().selectFunctionForInvReporte(app_selected,data_string);
         
+        
 //        String tipo = "";
         String fecha_actual = TimeHelper.getFechaActualYMD();
         
         System.out.println("fecha_actual: "+fecha_actual);
-        
-        
-        
-        
         
         //instancia a la clase que construye el pdf del reporte de existencias
         PdfReporteInventarioExistencias x = new PdfReporteInventarioExistencias( fileout, lista_existencias, razon_social_empresa,fecha_actual,tipo_reporte);

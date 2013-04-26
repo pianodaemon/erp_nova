@@ -99,7 +99,7 @@ public final class PdfReporteInventarioExistencias {
             
             doc.open();
             //String[] columnas = {"No.Control","Nombre","No.Factura","Cliente","","Valor","% Comision","","Total Comision"};
-            float [] widths = {1f,1f, 1f,1f, 2.5f, 1f, 1f,0.1f, 1f,0.1f ,1f};//Tamaño de las Columnas.
+            float [] widths = {1f,0.8f, 1f,1f, 2f, 1f, 1f,0.5f, 0.8f,0.5f ,1f};//Tamaño de las Columnas.
             PdfPTable tabla = new PdfPTable(widths);
             PdfPCell cell;
             tabla.setKeepTogether(false);
@@ -133,7 +133,7 @@ public final class PdfReporteInventarioExistencias {
             //cell.setFixedHeight(13);
             tabla.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("CODIGO PRODUCTO",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("CÓDIGO",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setUseDescender(true);
@@ -143,7 +143,7 @@ public final class PdfReporteInventarioExistencias {
             tabla.addCell(cell);
             
             
-            cell = new PdfPCell(new Paragraph("DESCRIPCION",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("DESCRIPCIÓN",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setUseDescender(true);
@@ -153,7 +153,7 @@ public final class PdfReporteInventarioExistencias {
             //cell.setColspan(2);
             tabla.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("UNIDAD MEDIDA",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("UNIDAD",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
@@ -186,7 +186,7 @@ public final class PdfReporteInventarioExistencias {
             tabla.addCell(cell);
             
             
-            cell = new PdfPCell(new Paragraph("COSTO UNITARIO",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("COSTO U.",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
@@ -217,6 +217,13 @@ public final class PdfReporteInventarioExistencias {
             //cell.setFixedHeight(13);
             //cell.setColspan(2);
             tabla.addCell(cell);
+            
+            Double acumuladoCostoTotalPesos=0.0;
+            Double acumuladoCostoTotalDolar=0.0;
+            Double acumuladoCostoTotalEuro=0.0;
+            String simbolo_moneda_pesos="";
+            String simbolo_moneda_dolar="";
+            String simbolo_moneda_euro="";
             
             for (int x=0; x<=(lista_existencias.size())-1; x++){
                 HashMap<String, String> registro= lista_existencias.get(x);
@@ -314,7 +321,7 @@ public final class PdfReporteInventarioExistencias {
                         //cell.setColspan(2);
                         tabla.addCell(cell);
                         
-                        cell = new PdfPCell(new Paragraph("$",smallFont));
+                        cell = new PdfPCell(new Paragraph(registro.get("simbolo_moneda"),smallFont));
                         cell.setUseAscender(true);
                         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         cell.setUseDescender(true);
@@ -337,7 +344,7 @@ public final class PdfReporteInventarioExistencias {
                         //cell.setColspan(2);
                         tabla.addCell(cell);
                         
-                        cell = new PdfPCell(new Paragraph("$",smallFont));
+                        cell = new PdfPCell(new Paragraph(registro.get("simbolo_moneda"),smallFont));
                         cell.setUseAscender(true);
                         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         cell.setUseDescender(true);
@@ -435,7 +442,7 @@ public final class PdfReporteInventarioExistencias {
                         //cell.setColspan(2);
                         tabla.addCell(cell);
 
-                        cell = new PdfPCell(new Paragraph("$",smallFont));
+                        cell = new PdfPCell(new Paragraph(registro.get("simbolo_moneda"),smallFont));
                         cell.setUseAscender(true);
                         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         cell.setUseDescender(true);
@@ -458,7 +465,7 @@ public final class PdfReporteInventarioExistencias {
                         //cell.setColspan(2);
                         tabla.addCell(cell);
 
-                        cell = new PdfPCell(new Paragraph("$",smallFont));
+                        cell = new PdfPCell(new Paragraph(registro.get("simbolo_moneda"),smallFont));
                         cell.setUseAscender(true);
                         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         cell.setUseDescender(true);
@@ -576,7 +583,7 @@ public final class PdfReporteInventarioExistencias {
                     //cell.setColspan(2);
                     tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph("$",smallFont));
+                    cell = new PdfPCell(new Paragraph(registro.get("simbolo_moneda"),smallFont));
                     cell.setUseAscender(true);
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setUseDescender(true);
@@ -598,7 +605,7 @@ public final class PdfReporteInventarioExistencias {
                     //cell.setColspan(2);
                     tabla.addCell(cell);
 
-                    cell = new PdfPCell(new Paragraph("$",smallFont));
+                    cell = new PdfPCell(new Paragraph(registro.get("simbolo_moneda"),smallFont));
                     cell.setUseAscender(true);
                     cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell.setUseDescender(true);
@@ -624,10 +631,28 @@ public final class PdfReporteInventarioExistencias {
                     familia =registro.get("familia").toString();
                     grupo =registro.get("grupo").toString();
                     linea =registro.get("linea").toString();
-
+                    
                     sumatotalCU = sumatotalCU + Double.parseDouble(registro.get("costo_unitario").toString());
                     sumatotalCT = sumatotalCT + Double.parseDouble(registro.get("costo_total").toString());
                 }
+                
+                
+                if(Integer.parseInt(registro.get("moneda_id"))==1){
+                    acumuladoCostoTotalPesos = acumuladoCostoTotalPesos + Double.parseDouble(registro.get("costo_total"));
+                    simbolo_moneda_pesos = registro.get("simbolo_moneda");
+                }
+                if(Integer.parseInt(registro.get("moneda_id"))==2){
+                    acumuladoCostoTotalDolar = acumuladoCostoTotalDolar + Double.parseDouble(registro.get("costo_total"));
+                    simbolo_moneda_dolar = registro.get("simbolo_moneda");
+                }
+                
+                if(Integer.parseInt(registro.get("moneda_id"))==3){
+                    acumuladoCostoTotalEuro = acumuladoCostoTotalEuro + Double.parseDouble(registro.get("costo_total"));
+                    simbolo_moneda_euro = registro.get("simbolo_moneda");
+                }
+
+                
+                
             }
 
             cell= new PdfPCell(new Paragraph("",smallFont));
@@ -684,7 +709,73 @@ public final class PdfReporteInventarioExistencias {
             cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
             cell.setBorder(1);
             tabla.addCell(cell);
+            
+            
+            //fila vacia
+            
+            cell= new PdfPCell(new Paragraph("",smallFont));
+            cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+            cell.setColspan(11);
+            cell.setFixedHeight(10);
+            cell.setBorder(0);
+            tabla.addCell(cell);
+            
+                
+            if(acumuladoCostoTotalPesos>0){
+                cell= new PdfPCell(new Paragraph("Suma Monto Total Pesos",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setColspan(9);
+                cell.setBorder(1);
+                tabla.addCell(cell);
 
+                cell= new PdfPCell(new Paragraph(simbolo_moneda_pesos,smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(acumuladoCostoTotalPesos,2)),smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+            }            
+            
+            if(acumuladoCostoTotalDolar>0){
+                cell= new PdfPCell(new Paragraph("Suma Monto Total Dolares",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setColspan(9);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(simbolo_moneda_dolar,smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(acumuladoCostoTotalDolar,2)),smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+            }
+            
+            if(acumuladoCostoTotalEuro>0){
+                cell= new PdfPCell(new Paragraph("Suma Monto Total Dolares",smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setColspan(9);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(simbolo_moneda_euro,smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(acumuladoCostoTotalEuro,2)),smallFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+            }
+            
+            
             doc.add(tabla);
             doc.close();
 	} catch (FileNotFoundException ex) {

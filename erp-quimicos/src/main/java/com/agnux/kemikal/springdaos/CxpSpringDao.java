@@ -2698,32 +2698,35 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     //ESTO VA EN EL CXP SPRING DAO ES LO UNICO QUE AGREGUÉ
     @Override
-    public ArrayList<HashMap<String, String>> getProveedor_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, Integer id_moneda, String fecha_corte,Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getProveedor_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, String fecha_corte,Integer id_empresa) {
         
         String where_proveedor="";
         if(tipo_reporte==1){
             where_proveedor=" AND cxp_facturas.cxc_prov_id = "+id_cliente;
         }
         
-        String sql_to_query = " SELECT  cxp_facturas.serie_folio, "
-                + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy')as fecha_factura, "
-                + "cxp_facturas.orden_compra, "
-                + "cxp_facturas.monto_total, "
-                + "(cxp_facturas.total_pagos + cxp_facturas.total_notas_creditos) AS importe_pagado, "
-                + "(CASE WHEN cxp_facturas.fecha_ultimo_pago is null THEN ' /  / '  ELSE  to_char(cxp_facturas.fecha_ultimo_pago,'dd/mm/yyyy') END) AS fecha_ultimo_pago, "
-                + "cxp_facturas.saldo_factura, "
-                + "gral_mon.descripcion_abr, "
-                + "gral_mon.simbolo AS moneda_simbolo, "
-                + "cxp_prov.id, "
-                + "cxp_prov.razon_social "
+        String sql_to_query = " "
+                + "SELECT  "
+                    + "cxp_facturas.serie_folio, "
+                    + "cxp_facturas.moneda_id,"
+                    + "to_char(cxp_facturas.fecha_factura,'dd/mm/yyyy')as fecha_factura, "
+                    + "cxp_facturas.orden_compra, "
+                    + "cxp_facturas.monto_total, "
+                    + "(cxp_facturas.total_pagos + cxp_facturas.total_notas_creditos) AS importe_pagado, "
+                    + "(CASE WHEN cxp_facturas.fecha_ultimo_pago is null THEN '&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;'  ELSE  to_char(cxp_facturas.fecha_ultimo_pago,'dd/mm/yyyy') END) AS fecha_ultimo_pago, "
+                    + "cxp_facturas.saldo_factura, "
+                    + "gral_mon.descripcion_abr, "
+                    + "gral_mon.simbolo AS moneda_simbolo, "
+                    + "cxp_prov.id, "
+                    + "cxp_prov.razon_social "
                 + "FROM cxp_facturas "
                 + "JOIN cxp_prov on cxp_prov.id = cxp_facturas.cxc_prov_id "
                 + "JOIN gral_mon on gral_mon.id = cxp_facturas.moneda_id "
                 + "WHERE cxp_facturas.pagado=FALSE "
                 + "AND cxp_facturas.cancelacion=FALSE   "+ where_proveedor +" "
                 + "AND cxp_facturas.empresa_id="+ id_empresa + " "
-                + "AND cxp_facturas.moneda_id ="+ id_moneda
-                + "ORDER BY cxp_facturas.moneda_id, cxp_prov.razon_social, cxp_facturas.fecha_factura;"; 
+                //+ "AND cxp_facturas.moneda_id ="+ id_moneda
+                + "ORDER BY cxp_prov.id, cxp_facturas.moneda_id, cxp_facturas.fecha_factura;"; 
         
         System.out.println("Proveedor_DatosReporteEdoCta:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -2736,6 +2739,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     row.put("denominacion",rs.getString("descripcion_abr"));
                     row.put("moneda_simbolo",rs.getString("moneda_simbolo"));
                     row.put("serie_folio",rs.getString("serie_folio"));
+                    row.put("moneda_id",rs.getString("moneda_id"));
                     row.put("orden_compra",rs.getString("orden_compra"));
                     row.put("fecha_facturacion",rs.getString("fecha_factura"));
                     row.put("monto_total",StringHelper.roundDouble(rs.getDouble("monto_total"), 2));

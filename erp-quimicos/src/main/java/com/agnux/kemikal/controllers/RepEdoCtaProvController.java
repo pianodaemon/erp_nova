@@ -153,9 +153,9 @@ public class RepEdoCtaProvController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> facturasMN = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> facturasUSD = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> facturasEUR = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> facturas = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> facturasUSD = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> facturasEUR = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -164,15 +164,15 @@ public class RepEdoCtaProvController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         //obtiene facturas en pesos. Moneda 1
-        facturasMN = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_proveedor), 1, fecha_corte,id_empresa);
+        facturas = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_proveedor), fecha_corte,id_empresa);
         //obtiene facturas en dolares. Moneda 2
-        facturasUSD = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_proveedor), 2, fecha_corte, id_empresa);
+        //facturasUSD = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_proveedor), 2, fecha_corte, id_empresa);
         //obtiene facturas en EUROS. Moneda 3
-        facturasEUR = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_proveedor), 3, fecha_corte, id_empresa);
+        //facturasEUR = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,Integer.parseInt(id_proveedor), 3, fecha_corte, id_empresa);
         
-        jsonretorno.put("Facturasmn", facturasMN);
-        jsonretorno.put("Facturasusd", facturasUSD);
-        jsonretorno.put("FacturasEuros", facturasEUR);
+        jsonretorno.put("Facturas", facturas);
+        //jsonretorno.put("Facturasusd", facturasUSD);
+        //jsonretorno.put("FacturasEuros", facturasEUR);
         
         
         return jsonretorno;
@@ -225,19 +225,19 @@ public class RepEdoCtaProvController {
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
-        ArrayList<HashMap<String, String>> facturasMN = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> facturasUSD = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> facturasEUR = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> facturas = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> facturasUSD = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> facturasEUR = new ArrayList<HashMap<String, String>>();
         
         //obtiene facturas en pesos. Moneda 1
-        facturasMN = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,id_proveedor, 1, fecha_corte,id_empresa);
+        facturas = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,id_proveedor, fecha_corte,id_empresa);
         //obtiene facturas en dolares. Moneda 2
-        facturasUSD = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,id_proveedor, 2, fecha_corte, id_empresa);
+        //facturasUSD = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,id_proveedor, 2, fecha_corte, id_empresa);
         //obtiene facturas en Euros Moneda 3
-        facturasEUR = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,id_proveedor, 3, fecha_corte, id_empresa);
+        //facturasEUR = this.getCxpDao().getProveedor_DatosReporteEdoCta(tipo_reporte,id_proveedor, 3, fecha_corte, id_empresa);
         
         //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del proveedor
-        PdfEstadoCuentaProveedor x = new PdfEstadoCuentaProveedor( fileout,ruta_imagen,razon_social_empresa,fecha_corte,facturasMN,facturasUSD, facturasEUR);
+        PdfEstadoCuentaProveedor x = new PdfEstadoCuentaProveedor( fileout,ruta_imagen,razon_social_empresa,fecha_corte,facturas);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
