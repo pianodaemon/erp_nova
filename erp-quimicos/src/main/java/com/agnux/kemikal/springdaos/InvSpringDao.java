@@ -255,6 +255,51 @@ public class InvSpringDao implements InvInterfaceDao{
             data=hm133;
         }
 
+        
+        
+
+        //Reporte de Existencias por Presentaciones
+        if(id_app==139){
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo("
+					+"codigo character varying, "
+					+"descripcion character varying, "
+					+"unidad character varying, "
+                                        +"no_dec integer, "
+                                        +"idpres integer, "
+					+"presentacion character varying, "
+					+"exis_pres double precision, "
+					+"exis_uni double precision "
+                                    +") ORDER BY descripcion ASC;";
+            System.out.println("InvExiPres: "+sql_to_query);
+
+            ArrayList<HashMap<String, String>> hm139 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+                sql_to_query,
+                new Object[]{}, new RowMapper(){
+                    @Override
+                    public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        HashMap<String, String> row = new HashMap<String, String>();
+                        row.put("codigo",rs.getString("codigo"));
+                        row.put("descripcion",rs.getString("descripcion"));
+                        row.put("unidad",rs.getString("unidad"));
+                        row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                        row.put("idpres",rs.getString("idpres"));
+                        row.put("presentacion",rs.getString("presentacion"));
+                        row.put("exis_pres",StringHelper.roundDouble(rs.getDouble("exis_pres"),rs.getInt("no_dec")));
+                        row.put("exis_uni",StringHelper.roundDouble(rs.getDouble("exis_uni"),rs.getInt("no_dec")));
+                        return row;
+                    }
+                }
+            );
+            data=hm139;
+        }
+
+        
+        
+        
+        
+        
+        
+        
         return data;
     }
 

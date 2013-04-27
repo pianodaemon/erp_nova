@@ -169,6 +169,9 @@ public class RepInvExisPresController {
         Integer app_selected = 139; //Reporte de Existencias por Presentaciones
         String command_selected="reporte";
         
+        codigo = "%"+codigo+"%";
+        descripcion = "%"+descripcion+"%";
+        
         String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+tipo+"___"+almacen+"___"+codigo+"___"+descripcion+"___"+presentacion;
         
         existencias = this.getInvDao().selectFunctionForInvReporte(app_selected,data_string);
