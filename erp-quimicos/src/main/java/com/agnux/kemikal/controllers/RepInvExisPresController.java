@@ -15,6 +15,7 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import com.agnux.kemikal.reportes.PdfReporteInvExisLotes;
+import com.agnux.kemikal.reportes.PdfReporteInvExisPres;
 import com.agnux.xml.labels.EtiquetaCompras;
 import com.agnux.xml.labels.generandoxml;
 import com.itextpdf.text.DocumentException;
@@ -23,8 +24,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,7 +91,6 @@ public class RepInvExisPresController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", RepInvExisPresController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
-        
         ModelAndView x = new ModelAndView("repinvexispres/startup", "title", "Reporte de Existencias por Presentaciones");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
@@ -140,9 +143,6 @@ public class RepInvExisPresController {
     }
     
     
-    
-    
-    
     //obtiene la existencia de un Almacen en especifico
     @RequestMapping(method = RequestMethod.POST, value="/getExistencias.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getExistenciasJson(
@@ -165,7 +165,7 @@ public class RepInvExisPresController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer app_selected = 139; //Reporte de Existencias por Presentaciones
         String command_selected="reporte";
         
@@ -184,5 +184,107 @@ public class RepInvExisPresController {
     
     
     
+   //Genera pdf de Reporte de Existencias en Por Presentaciones
+    @RequestMapping(value = "/getReporteExisPres/{cadena}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getReporteExistenciasJson(
+                @PathVariable("cadena") String cadena,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request, 
+                HttpServletResponse response, 
+                Model model)
+            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> lista_existencias = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> datos = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer app_selected = 139; //Reporte de Existencias por Presentaciones
+        String command_selected="reporte";
+        
+        String cad[] = cadena.split("___");
+        
+        Integer tipo = Integer.parseInt(cad[0]);
+        Integer almacen = Integer.parseInt(cad[1]);
+        String codigo = cad[2];
+        String descripcion = cad[3];
+        String presentacion = cad[4];
+        
+        if(codigo.equals("0")){
+            codigo="";
+        }
+        
+        if(descripcion.equals("0")){
+            descripcion="";
+        }
+        
+        codigo = "%"+codigo+"%";
+        descripcion = "%"+descripcion+"%";
+        
+        System.out.println("Generando Reporte de Existencias por Presentaciones");
+        
+        String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+        
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+        File file_dir_tmp = new File(dir_tmp);
+        String file_name = "rep_exis_pres"+rfc_empresa+".pdf";
+        
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+        
+        //String fecha_actual = TimeHelper.getFechaActualYMD();
+        //System.out.println("fecha_actual: "+fecha_actual);
+        SimpleDateFormat formato = new SimpleDateFormat("'Impreso en' MMMMM d, yyyy 'a las' HH:mm:ss 'hrs.'");
+        String impreso_en = formato.format(new Date());
+        String nombre_almacen="";
+        almacenes = this.getInvDao().getAlmacenes2(id_empresa);
+        
+        Iterator it = almacenes.iterator();
+        while(it.hasNext()){
+            HashMap<String,String> map = (HashMap<String,String>)it.next();
+            if(almacen == Integer.parseInt(map.get("id"))){
+                nombre_almacen = "Almacen: "+map.get("titulo");
+            }
+            
+        }
+
+        datos.put("fileout", fileout);
+        datos.put("empresa", razon_social_empresa);
+        datos.put("titulo_reporte", "Reporte de Existencias por Presentaciones");
+        datos.put("almacen", nombre_almacen);
+        datos.put("fecha_impresion", impreso_en);
+        datos.put("codigo1", "");
+        datos.put("codigo2", "");
+        
+        String data_string = app_selected+"___"+id_usuario+"___"+command_selected+"___"+tipo+"___"+almacen+"___"+codigo+"___"+descripcion+"___"+presentacion;
+        
+        lista_existencias = this.getInvDao().selectFunctionForInvReporte(app_selected,data_string);
+        
+        //instancia a la clase que construye el pdf del reporte de existencias
+        PdfReporteInvExisPres pdf = new PdfReporteInvExisPres(lista_existencias, datos);
+        pdf.ViewPDF();
+        
+        
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        int size = (int) file.length(); // Tamaño del archivo
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        response.setBufferSize(size);
+        response.setContentLength(size);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        FileCopyUtils.copy(bis, response.getOutputStream());  	
+        response.flushBuffer();
+        
+        FileHelper.delete(fileout);
+        
+        return null;
+    } 
     
 }
