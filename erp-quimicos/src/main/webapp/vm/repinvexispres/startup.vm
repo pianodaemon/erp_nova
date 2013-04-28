@@ -52,7 +52,6 @@
 							<td width="30"></td>
 							<td width="50"></td>
 							<td width="10"></td>
-							<td width="70"></td>
 						</tr>
 						
 						<tr>
@@ -78,7 +77,6 @@
 							<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="50"><INPUT TYPE="button" id="genera_reporte" value="Generar PDF"></td>
 							<td width="10"></td>
-							<td width="70"></td>
 						</tr>					
 					</table>
                 </td>
@@ -94,17 +92,12 @@
 						<table id="table_exis" cellspacing="0">
 							<thead>
 								<tr>
-									<td width="20">#&nbsp;</td>
-									<td width="60">Cant. Et.&nbsp;</td>
-                                                                        <td width="60">Cant. Prod.</td>
-									<td width="60">Medida&nbsp;</td>
-									<td width="100">Lote&nbsp;Interno</td>
-									<td width="100">Lote&nbsp;Proveedor</td>
-									<td width="100">C&oacute;digo</td>
-									<td width="350">Descripci&oacute;n</td>
-									<td width="100">Unidad</td>
-									<td width="100">Existencia</td>
-									<td width="100">Fecha&nbsp;Entrada</td>
+									<td width="150">C&oacute;digo</td>
+									<td width="385">Descripci&oacute;n</td>
+									<td width="110">Unidad</td>
+									<td width="120">Presentaci&oacute;n</td>
+									<td width="110">Exis.&nbsp;Unidad</td>
+									<td width="100">Exis.&nbsp;Presentaci&oacute;n</td>
 								</tr>
 							</thead>
 							<tbody></tbody>
@@ -117,7 +110,6 @@
         </form>
         
         #include("${layoutfooter}")
-        
         
     </body>
 </html>	

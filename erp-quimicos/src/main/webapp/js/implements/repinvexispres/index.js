@@ -61,11 +61,10 @@ $(function() {
 	var $tabla_existencias = $('#lienzo_recalculable').find('#table_exis');
 	var $select_opciones = $('#lienzo_recalculable').find('select[name=opciones]');
 	var $select_almacen = $('#lienzo_recalculable').find('select[name=select_almacen]');
-	var $codigo_producto = $('#lienzo_recalculable').find('input[name=codigo]');
+	var $codigo = $('#lienzo_recalculable').find('input[name=codigo]');
 	var $descripcion = $('#lienzo_recalculable').find('input[name=descripcion]');
 	var $select_presentacion = $('#lienzo_recalculable').find('select[name=select_presentacion]');
 	var $genera_reporte_exis = $('#lienzo_recalculable').find('#genera_reporte');
-	var $imprimir = $('#lienzo_recalculable').find('#imprimir');
 	
 	var $buscar = $('#lienzo_recalculable').find('#boton_buscador');
 	var $forma_selected = $('#formaRepExisLote');
@@ -89,6 +88,14 @@ $(function() {
 			almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
 		});
 		$select_almacen.append(almacen_hmtl);
+		
+		$select_presentacion.children().remove();
+		var pres_hmtl = '<option value="0" selected="yes">[--Seleccionar --]</option>';
+		$.each(entry['Presentaciones'],function(entryIndex,pres){
+			pres_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+		});
+		$select_presentacion.append(pres_hmtl);
+		
 	});//termina llamada json
 	
 	
@@ -99,10 +106,10 @@ $(function() {
 		var codigo='';
 		var descripcion='';
 		
-		if($codigo_producto.val()==''){
+		if($codigo.val()==''){
 			codigo = '0';
 		}else{
-			codigo = $codigo_producto.val();
+			codigo = $codigo.val();
 		}
 		
 		if($descripcion.val()==''){
@@ -111,15 +118,9 @@ $(function() {
 			descripcion = $descripcion.val();
 		}
 		
-		if($lote_interno.val()==''){
-			lote_interno = '0';
-		}else{
-			lote_interno = $lote_interno.val();
-		}
-		
 		var busqueda = $select_opciones.val() +"___"+ $select_almacen.val() +"___"+ codigo +"___"+ descripcion + "___"+$select_presentacion.val();
 		
-		var input_json = config.getUrlForGetAndPost() + '/getReporteExistencias/'+busqueda+'/'+config.getUi()+'/out.json';
+		var input_json = config.getUrlForGetAndPost() + '/getReporteExisPres/'+busqueda+'/'+config.getUi()+'/out.json';
 		if(parseInt($select_almacen.val()) > 0){
 			window.location.href=input_json;
 		}else{
@@ -143,7 +144,7 @@ $(function() {
 		var input_json = config.getUrlForGetAndPost()+'/getExistencias.json';
 		$arreglo = {'tipo':$select_opciones.val(), 
 					'almacen':id_almacen, 
-					'codigo':$codigo_producto.val(), 
+					'codigo':$codigo.val(), 
 					'descripcion':$descripcion.val(),
 					'presentacion':$select_presentacion.val(),
 					'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
@@ -162,37 +163,12 @@ $(function() {
 					}
 					
 					var tr = '<tr '+tr_first+'>';
-						tr += '<td width="20">';
-							tr += '<input type="hidden" name="id_lote" class="idlote'+trCount+'" value="'+exi['id_lote']+'">';
-							tr += '<input type="hidden" name="selec" class="selec'+trCount+'" value="0">';
-							tr += '<input type="checkbox" name="micheck" class="micheck'+trCount+'" value="true">';
-						tr += '</td>';
-						tr += '<td width="60">';
-							tr += '<input type="text" name="cant" class="cant'+trCount+'" value="" readOnly="true" style="width:58px; background:#dddddd; height:15px;">';
-							tr += '<input type="hidden" name="tipo_prod" value="'+exi['id_tipo_producto']+'">';
-						tr += '</td>';
-						tr += '<td width="60">';
-							tr += '<input type="text" name="cantProd" class="cantProd'+trCount+'" value="" readOnly="true" style="width:58px; background:#dddddd; height:15px;">';
-						tr += '</td>';
-						tr += '<td width="60">';
-							tr += '<select name="select_medida" style="width:58px;">';
-							//aqui se carga el select con los tipos de iva
-							$.each(entry['MedidasEtiqueta'],function(entryIndex,med){
-								if(med['id'] == exi['id_medida_etiqueta']){
-									tr += '<option value="' + med['id'] + '"  selected="yes">' + med['titulo'] + '</option>';
-								}else{
-									tr += '<option value="' + med['id'] + '"  >' + med['titulo'] + '</option>';
-								}
-							});
-							tr += '</select>';
-						tr += '</td>';
-						tr += '<td width="100">'+exi['lote_int']+'</td>';
-						tr += '<td width="100">'+exi['lote_prov']+'</td>';
-						tr += '<td width="100">'+exi['codigo']+'</td>';
-						tr += '<td width="350">'+exi['descripcion']+'</td>';
-						tr += '<td width="100">'+exi['unidad_medida']+'</td>';
-						tr += '<td width="100" align="right">'+$(this).agregar_comas(parseFloat(exi['existencia']).toFixed(4))+'</td>';
-						tr += '<td width="100">'+exi['fecha_entrada']+'</td>';
+						tr += '<td width="150">'+exi['codigo']+'</td>';
+						tr += '<td width="385">'+exi['descripcion']+'</td>';
+						tr += '<td width="110">'+exi['unidad']+'</td>';
+						tr += '<td width="120">'+exi['presentacion']+'</td>';
+						tr += '<td width="110" align="right">'+$(this).agregar_comas(parseFloat(exi['exis_uni']).toFixed(parseInt(exi['no_dec'])))+'</td>';
+						tr += '<td width="100" align="right">'+$(this).agregar_comas(parseFloat(exi['exis_pres']).toFixed(parseInt(exi['no_dec'])))+'</td>';
 					tr += '</tr>';
 					$tabla_existencias.find('tbody').append(tr);
 					
@@ -210,13 +186,12 @@ $(function() {
 	});
 	
 	
-	
 	$aplicar_evento_keypress($select_opciones, $buscar);
 	$aplicar_evento_keypress($select_almacen, $buscar);
-	$aplicar_evento_keypress($codigo_producto, $buscar);
+	$aplicar_evento_keypress($codigo, $buscar);
 	$aplicar_evento_keypress($descripcion, $buscar);
-	$aplicar_evento_keypress($lote_interno, $buscar);
-	$codigo_producto.focus();
+	$aplicar_evento_keypress($select_presentacion, $buscar);
+	$codigo.focus();
     
 });
 
