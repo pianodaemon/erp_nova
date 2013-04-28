@@ -115,7 +115,6 @@ public class PdfReporteInvExisPres {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            
             cell = new PdfPCell(new Paragraph("Descripción",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -140,7 +139,6 @@ public class PdfReporteInvExisPres {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            
             cell = new PdfPCell(new Paragraph("Exis. Unidad",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -148,7 +146,6 @@ public class PdfReporteInvExisPres {
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
-            
             
             cell = new PdfPCell(new Paragraph("Exis. Pres.",smallBoldFont));
             cell.setUseAscender(true);
