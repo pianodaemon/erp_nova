@@ -289,7 +289,7 @@
 																<td width="10"></td>
 																<td colspan="5"> 
 																	<div align="left" class="div_cont_grid_warning" style="width:700px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
-																		<table id="grid_warning" border="0" style="width:680px;">
+																		<table id="grid_warning" border="0" style="width:780px;">
 																			<!-- Aqui se muestran los warning
 																			<tr>
 																				<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>
@@ -320,9 +320,9 @@
                             
                             <div class="fixed column" id="botones" style="width:880px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
-									<tr><td colspan="4" height="7"></td></tr>
+									<tr><td colspan="5" height="7"></td></tr>
 									<tr>
-										<td width="559"></td>
+										<td width="759"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>
