@@ -22,7 +22,7 @@ $(function() {
     var arrayEstatus;
     var arrayAlmacenes;
     var arrayPresentacionEnv;
-    
+    var decimales = 0;
     
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -88,7 +88,8 @@ $(function() {
 		var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosBuscadorPrincipal.json';
 		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 		$.post(input_json_lineas,$arreglo,function(data){
-			
+                    
+			/*
 			//carga select de tipos de producto
 			$busqueda_select_tipo_prod.children().remove();
 			var prodtipos = '<option value="0">[--Seleccionar Tipo--]</option>';
@@ -100,7 +101,7 @@ $(function() {
 				}
 			});
 			$busqueda_select_tipo_prod.append(prodtipos);
-                        
+                        */
                         
 			//carga select de Estatus
 			$busqueda_select_estatus.children().remove();
@@ -127,7 +128,7 @@ $(function() {
 		$busqueda_codigo.val('');
 		$busqueda_descripcion.val('');
                 $busqueda_folio.val('');
-		
+		/*
 		//carga select de tipos de producto
 		$busqueda_select_tipo_prod.children().remove();
 		var prodtipos = '<option value="0">[--Seleccionar Tipo--]</option>';
@@ -140,7 +141,7 @@ $(function() {
 			}
 		});
 		$busqueda_select_tipo_prod.append(prodtipos);
-		
+		*/
 		//carga select de Presentaciones
 		$busqueda_select_estatus.children().remove();
 		var presentacion = '<option value="0">[-Presentaci&oacute;n--]</option>';
@@ -189,7 +190,7 @@ $(function() {
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_descripcion, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_estatus, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_tipo_prod, $buscar);
+	//$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_tipo_prod, $buscar);
 	
 	
 	
@@ -971,7 +972,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-envproceso-window').css({"margin-left": -460, 	"margin-top": -210});
+		$('#forma-envproceso-window').css({"margin-left": -460, 	"margin-top": -270});
 		$forma_selected.prependTo('#forma-envproceso-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
@@ -1005,18 +1006,6 @@ $(function() {
 		//href para Agregar y Buscar producto
                 var $buscar_orden = $('#forma-envproceso-window').find('#buscar_orden');
                 
-                
-		//var $agregar_producto = $('#forma-envproceso-window').find('#agregar_producto');
-		//var $buscar_producto = $('#forma-envproceso-window').find('#buscar_producto');
-		
-		//Codigo y Nombre del producto componente del Envase
-		//var $codigo_componente = $('#forma-envproceso-window').find('input[name=codigo_componente]');
-		//var $nombre_componente = $('#forma-envproceso-window').find('input[name=nombre_componente]');
-		
-		//href para Agregar y Buscar producto Elemento del Envase
-		//var $agregar_producto_componente = $('#forma-envproceso-window').find('a[href=agregar_producto_componente]');
-		//var $buscar_producto_componente = $('#forma-envproceso-window').find('a[href=buscar_producto_componente]');
-		
 		//grid de productos
 		var $grid_productos = $('#forma-envproceso-window').find('#grid_productos');
 		
@@ -1049,24 +1038,59 @@ $(function() {
 			if ( data['success'] == 'true' ){
 				var remove = function() {$(this).remove();};
 				$('#forma-envproceso-overlay').fadeOut(remove);
-				jAlert("Los datos de la configuraci&oacute;n se guardaron con &eacute;xito.", 'Atencion!');
+				jAlert("Los datos del envasado se guardaron con &eacute;xito.", 'Atencion!');
 				$get_datos_grid();
 			}
 			else{
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-envproceso-window').find('div.interrogacion').css({'display':'none'});
-
+				$('#forma-envproceso-window').find('.envproceso_div_one').css({'height':'465px'});//sin errores
+                                
+                                $grid_productos.find('select[name=select_aml_origen]').css({'background' : '#ffffff'});
+				$grid_productos.find('select[name=select_pres_dest]').css({'background' : '#ffffff'});
+				$grid_productos.find('input[name=cantpres]').css({'background' : '#ffffff'});
+                                
+                                $('#forma-envproceso-window').find('#div_warning_grid').css({'display':'none'});
+				$('#forma-envproceso-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+                                
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
 				for (var element in valor){
-					tmp = data['success'].split('___')[element];
+					
+                                        tmp = data['success'].split('___')[element];
 					longitud = tmp.split(':');
 					if( longitud.length > 1 ){
-							$('#forma-envproceso-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-							.parent()
-							.css({'display':'block'})
-							.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+						$('#forma-envproceso-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						.parent()
+						.css({'display':'block'})
+						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+						
+						var campo = tmp.split(':')[0];
+						var $campo_input;
+						var cantidad_existencia=0;
+						var  width_td=0;
+						
+						if((tmp.split(':')[0].substring(0,8) == 'cantPres') || (tmp.split(':')[0].substring(0,7) == 'amlDest') || (tmp.split(':')[0].substring(0,8) == 'presDest') || (tmp.split(':')[0].substring(0,6) == 'amlEnv')){
+							
+							$('#forma-envproceso-window').find('#div_warning_grid').css({'display':'block'});
+							$('#forma-envproceso-window').find('.envreenv_div_one').css({'height':'550px'});//con errores
+							$campo_input = $grid_productos.find('.'+campo);
+							$campo_input.css({'background' : '#d41000'});
+							
+							var almacen_destino = $campo_input.parent().parent().find('select[name=select_aml_dest]').find('option:selected').text();
+							var presentacion_destino = $campo_input.parent().parent().find('select[name=select_pres_dest]').find('option:selected').text();
+							
+							var tr_warning = '<tr>';
+									tr_warning += '<td width="20"><div><img src="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
+									tr_warning += '<td width="150"><input type="text" value="' + almacen_destino + '" class="borde_oculto" readOnly="true" style="width:148px; color:red"></td>';
+									tr_warning += '<td width="100"><input type="text" value="' + presentacion_destino + '" class="borde_oculto" readOnly="true" style="width:100px; color:red"></td>';
+									tr_warning += '<td width="560"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:560px; color:red"></td>';
+							tr_warning += '</tr>';
+							
+							$('#forma-envproceso-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+						}
 					}
+                                        
 				}
 			}
 		}
@@ -1123,13 +1147,15 @@ $(function() {
                     
                     //carga select de Presentaciones
                     $select_estatus.children().remove();
-                    var presentacion = '<option value="0">[--Estatus--]</option>';
+                    var estatus_html = '<option value="0">[--Estatus--]</option>';
                     $.each(arrayEstatus,function(entryIndex,est){
-                        presentacion += '<option value="' + est['id'] + '"  >' + est['titulo'] + '</option>';
+                        if(parseInt(est['id']) == 1){
+                            estatus_html += '<option value="' + est['id'] + '" selected="yes" >' + est['titulo'] + '</option>';
+                        }else{
+                            estatus_html += '<option value="' + est['id'] + '"  >' + est['titulo'] + '</option>';
+                        }
                     });
-                    $select_estatus.append(presentacion);
-                    
-                    
+                    $select_estatus.append(estatus_html);
                     
                     arrayAlmacenes = entry['Almacenes'];
                     
@@ -1154,86 +1180,6 @@ $(function() {
                 $(this).aplicarEventoKeypressEjecutaTrigger($folio, $buscar_orden);
                 $(this).aplicarEventoKeypressEjecutaTrigger($codigo, $buscar_orden);
 		
-		/*
-		$agregar_producto.click(function(event){
-			event.preventDefault();
-			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
-			var $arreglo2 = {'codigo':$codigo.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-			
-			$.post(input_json2,$arreglo2,function(entry2){
-				if(parseInt(entry2['Producto'].length) > 0 ){
-					var id_producto = entry2['Producto'][0]['id'];
-					var codigo = entry2['Producto'][0]['sku'];
-					var descripcion = entry2['Producto'][0]['descripcion'];
-					var unidad = entry2['Producto'][0]['unidad'];
-					
-					//llamada a la funcion para agregar datos del producto
-					$agregarDatosProductoSeleccionado(id_producto, codigo, descripcion, unidad, entry2['Presentaciones']);
-				}else{
-					jAlert('C&oacute;digo de Producto desconocido.', 'Atencion!', function(r) { 
-						$codigo.focus(); 
-					});
-				}
-			});
-		});
-		
-		
-		$codigo.keypress(function(e){
-			if(e.which == 13){
-				$agregar_producto.trigger('click');
-				return false;
-			}
-		});
-		*/
-		
-		//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto Principal, se ejecute el buscador
-		
-		
-		/*
-		//Buscar Productos Componentes
-		$buscar_producto_componente.click(function(event){
-			event.preventDefault();
-			//tipo=2 para buscar los productos Componentes
-			var tipoBusqueda=2;
-			$buscador_productos(tipoBusqueda, $codigo_componente.val(), $nombre_componente.val() );
-		});
-		
-		$agregar_producto_componente.click(function(event){
-			event.preventDefault();
-			var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
-			var $arreglo3 = {'codigo':$codigo_componente.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-			
-			$.post(input_json3,$arreglo3,function(entry3){
-				if(parseInt(entry3['Producto'].length) > 0 ){
-					var id_producto = entry3['Producto'][0]['id'];
-					var codigo = entry3['Producto'][0]['sku'];
-					var descripcion = entry3['Producto'][0]['descripcion'];
-					var unidad = entry3['Producto'][0]['unidad'];
-					var cantidad=0;
-					
-					//llamada a la funcion para agregar tr al grid
-					$agregarTr(id_producto, codigo, descripcion, unidad, cantidad);
-					
-				}else{
-					jAlert('C&oacute;digo de Producto desconocido.', 'Atencion!', function(r) { 
-						$codigo_componente.focus(); 
-					});
-				}
-			});
-		});
-		
-		
-		//agrega productos componentes al grid
-		$codigo_componente.keypress(function(e){
-			if(e.which == 13){
-				$agregar_producto_componente.trigger('click');
-				return false;
-			}
-		});
-		
-		//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto componente, se ejecute el buscador
-		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_componente, $buscar_producto_componente);
-		*/
 		
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
@@ -1257,67 +1203,77 @@ $(function() {
 			$arreglo = {'id':id_to_show,
 						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
-			jConfirm('Realmente desea eliminar configuraci&oacute;n seleccionada?', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar el envasado seleccionado?', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("La configuraci&oacute;n  fue eliminada exitosamente.", 'Atencion!');
+							jAlert("El envasado fue eliminada exitosamente.", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
-							jAlert("La configuraci&oacute;n no pudo ser eliminada.", 'Atencion!');
+							jAlert("El envasado no pudo ser eliminada.", 'Atencion!');
 						}
 					},"json");
 				}
 			});
 		}else{
 			//aqui  entra para editar un registro
-			var form_to_show = 'formaenvconf00';
+			var form_to_show = 'formaenvproceso00';
 			
 			$('#' + form_to_show).each (function(){this.reset();});
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
-			$(this).modalPanel_modalboxenvconf();
-			$('#forma-envconf-window').css({"margin-left": -350, 	"margin-top": -200});
+			$(this).modalPanel_modalboxenvproceso();
+			$('#forma-envproceso-window').css({"margin-left": -460, 	"margin-top": -270});
 			
-			$forma_selected.prependTo('#forma-envconf-window');
-			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
+			$forma_selected.prependTo('#forma-envproceso-window');
+                        $forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
+                        $tabs_li_funxionalidad();
+                        
+                        
+                        
+			var $identificador = $('#forma-envproceso-window').find('input[name=identificador]');
+                
+                        var $folio = $('#forma-envproceso-window').find('input[name=folio]');
+                        var $fecha = $('#forma-envproceso-window').find('input[name=fecha]');
+                        var $hora = $('#forma-envproceso-window').find('input[name=hora]');
+                        var $producto_id = $('#forma-envproceso-window').find('input[name=producto_id]');
+                        var $codigo = $('#forma-envproceso-window').find('input[name=codigo]');
+                        var $descripcion = $('#forma-envproceso-window').find('input[name=descripcion]');
+                        var $produccion_id = $('#forma-envproceso-window').find('input[name=produccion_id]');
+                        var $folio_produccion = $('#forma-envproceso-window').find('input[name=folio_produccion]');
+                        var $exis_pres = $('#forma-envproceso-window').find('input[name=exis_pres]');
+                        var $disp_pres = $('#forma-envproceso-window').find('input[name=disp_pres]');
+                        var $unidad = $('#forma-envproceso-window').find('input[name=unidad]');
+                        var $exis_uni = $('#forma-envproceso-window').find('input[name=exis_uni]');
+                        var $disp_uni = $('#forma-envproceso-window').find('input[name=disp_uni]');
+                        var $equipo = $('#forma-envproceso-window').find('input[name=equipo]');
+                        var $operador = $('#forma-envproceso-window').find('input[name=operador]');
+                        var $merma = $('#forma-envproceso-window').find('input[name=merma]');
+
+                        var $select_presentacion_orig = $('#forma-envproceso-window').find('select[name=select_pres_orden_orig]');
+                        var $select_almacen_orig = $('#forma-envproceso-window').find('select[name=select_alm_orden_orig]');
+
+                        var $select_estatus = $('#forma-envproceso-window').find('select[name=select_estatus]');
+
+
+
+                        //href para Agregar y Buscar producto
+                        var $buscar_orden = $('#forma-envproceso-window').find('#buscar_orden');
+
+                        //grid de productos
+                        var $grid_productos = $('#forma-envproceso-window').find('#grid_productos');
+
+                        //grid de errores
+                        var $grid_warning = $('#forma-envproceso-window').find('#div_warning_grid').find('#grid_warning');
+                        var $cerrar_plugin = $('#forma-envproceso-window').find('#close');
+                        var $cancelar_plugin = $('#forma-envproceso-window').find('#boton_cancelar');
+                        var $submit_actualizar = $('#forma-envproceso-window').find('#submit');
+                        
 			
-			$tabs_li_funxionalidad();
-		
-			var $identificador = $('#forma-envconf-window').find('input[name=identificador]');
-			var $producto_id = $('#forma-envconf-window').find('input[name=producto_id]');
-			var $codigo = $('#forma-envconf-window').find('input[name=codigo]');
-			var $descripcion = $('#forma-envconf-window').find('input[name=descripcion]');
-			var $unidad = $('#forma-envconf-window').find('input[name=unidad]');
-			var $select_presentacion = $('#forma-envconf-window').find('select[name=select_presentacion]');
-			
-			//href para Agregar y Buscar producto
-			var $agregar_producto = $('#forma-envconf-window').find('#agregar_producto');
-			var $buscar_producto = $('#forma-envconf-window').find('#buscar_producto');
-			
-			//Codigo y Nombre del producto componente del Envase
-			var $codigo_componente = $('#forma-envconf-window').find('input[name=codigo_componente]');
-			var $nombre_componente = $('#forma-envconf-window').find('input[name=nombre_componente]');
-			
-			//href para Agregar y Buscar producto Elemento del Envase
-			var $agregar_producto_componente = $('#forma-envconf-window').find('a[href=agregar_producto_componente]');
-			var $buscar_producto_componente = $('#forma-envconf-window').find('a[href=buscar_producto_componente]');
-			
-			//grid de productos
-			var $grid_productos = $('#forma-envconf-window').find('#grid_productos');
-			
-			//grid de errores
-			var $grid_warning = $('#forma-envconf-window').find('#div_warning_grid').find('#grid_warning');
-			
-			
-			var $cerrar_plugin = $('#forma-envconf-window').find('#close');
-			var $cancelar_plugin = $('#forma-envconf-window').find('#boton_cancelar');
-			var $submit_actualizar = $('#forma-envconf-window').find('#submit');
-			
-			$agregar_producto.hide();
-			$buscar_producto.hide();
+			$buscar_orden.hide();
+			//$buscar_producto.hide();
 			
 			$unidad.css({'background' : '#F0F0F0'});
 			$codigo.css({'background' : '#F0F0F0'});
@@ -1333,37 +1289,113 @@ $(function() {
 			});
 			
 			if(accion_mode == 'edit'){
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getConf.json';
-				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+                            
+				//var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getConf.json';
+				//$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var respuestaProcesada = function(data){
-					if ( data['success'] == 'true' ){
-						var remove = function() {$(this).remove();};
-						$('#forma-envconf-overlay').fadeOut(remove);
-						jAlert("Los datos de la configuraci&oacute;n se han actualizado con &eacute;xito.", 'Atencion!');
-						$get_datos_grid();
-					}else{
-						// Desaparece todas las interrogaciones si es que existen
-						$('#forma-envconf-window').find('div.interrogacion').css({'display':'none'});
-						
-						var valor = data['success'].split('___');
-						//muestra las interrogaciones
-						for (var element in valor){
-							tmp = data['success'].split('___')[element];
-							longitud = tmp.split(':');
-							if( longitud.length > 1 ){
-								$('#forma-envconf-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-								.parent()
-								.css({'display':'block'})
-								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-							}
-						}
-					}
-				}
+                                        if ( data['success'] == 'true' ){
+                                                var remove = function() {$(this).remove();};
+                                                $('#forma-envproceso-overlay').fadeOut(remove);
+                                                jAlert("Los datos del envasado se guardaron con &eacute;xito.", 'Atencion!');
+                                                $get_datos_grid();
+                                        }
+                                        else{
+                                                // Desaparece todas las interrogaciones si es que existen
+                                                $('#forma-envproceso-window').find('div.interrogacion').css({'display':'none'});
+                                                $('#forma-envproceso-window').find('.envproceso_div_one').css({'height':'465px'});//sin errores
+
+                                                $grid_productos.find('select[name=select_aml_origen]').css({'background' : '#ffffff'});
+                                                $grid_productos.find('select[name=select_pres_dest]').css({'background' : '#ffffff'});
+                                                $grid_productos.find('input[name=cantpres]').css({'background' : '#ffffff'});
+
+                                                $('#forma-envproceso-window').find('#div_warning_grid').css({'display':'none'});
+                                                $('#forma-envproceso-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+
+                                                var valor = data['success'].split('___');
+                                                //muestra las interrogaciones
+                                                for (var element in valor){
+
+                                                        tmp = data['success'].split('___')[element];
+                                                        longitud = tmp.split(':');
+                                                        if( longitud.length > 1 ){
+                                                                $('#forma-envproceso-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+                                                                .parent()
+                                                                .css({'display':'block'})
+                                                                .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+
+                                                                var campo = tmp.split(':')[0];
+                                                                var $campo_input;
+                                                                var cantidad_existencia=0;
+                                                                var  width_td=0;
+
+                                                                if((tmp.split(':')[0].substring(0,8) == 'cantPres') || (tmp.split(':')[0].substring(0,7) == 'amlDest') || (tmp.split(':')[0].substring(0,8) == 'presDest') || (tmp.split(':')[0].substring(0,6) == 'amlEnv')){
+
+                                                                        $('#forma-envproceso-window').find('#div_warning_grid').css({'display':'block'});
+                                                                        $('#forma-envproceso-window').find('.envreenv_div_one').css({'height':'550px'});//con errores
+                                                                        $campo_input = $grid_productos.find('.'+campo);
+                                                                        $campo_input.css({'background' : '#d41000'});
+
+                                                                        var almacen_destino = $campo_input.parent().parent().find('select[name=select_aml_dest]').find('option:selected').text();
+                                                                        var presentacion_destino = $campo_input.parent().parent().find('select[name=select_pres_dest]').find('option:selected').text();
+
+                                                                        var tr_warning = '<tr>';
+                                                                                        tr_warning += '<td width="20"><div><img src="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
+                                                                                        tr_warning += '<td width="150"><input type="text" value="' + almacen_destino + '" class="borde_oculto" readOnly="true" style="width:148px; color:red"></td>';
+                                                                                        tr_warning += '<td width="100"><input type="text" value="' + presentacion_destino + '" class="borde_oculto" readOnly="true" style="width:100px; color:red"></td>';
+                                                                                        tr_warning += '<td width="560"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:560px; color:red"></td>';
+                                                                        tr_warning += '</tr>';
+
+                                                                        $('#forma-envproceso-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+                                                                }
+                                                        }
+
+                                                }
+                                        }
+                                }
 				
 				var options = {dataType :  'json', success : respuestaProcesada};
 				$forma_selected.ajaxForm(options);
-				
+                                
+                                //fecha de envasado
+                                $fecha.click(function (s){
+                                        var a=$('div.datepicker');
+                                        a.css({'z-index':100});
+                                });
+
+                                $fecha.DatePicker({
+                                        format:'Y-m-d',
+                                        date: $(this).val(),
+                                        current: $(this).val(),
+                                        starts: 1,
+                                        position: 'bottom',
+                                        locale: {
+                                                days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+                                                daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+                                                daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+                                                months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+                                                monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+                                                weekMin: 'se'
+                                        },
+                                        onChange: function(formated, dates){
+                                                var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+                                                $fecha.val(formated);
+                                                if (formated.match(patron) ){
+                                                        //var valida_fecha=mayor($fecha.val(),mostrarFecha());
+                                                        var valida_fecha=fecha_mayor($fecha.val(),mostrarFecha());
+                                                        if (valida_fecha==true){
+                                                                jAlert("Fecha no valida",'! Atencion');
+                                                                $fecha.val(mostrarFecha());
+                                                        }else{
+                                                                $fecha.DatePickerHide();	
+                                                        }
+                                                }
+                                        }
+                                });
+                                
+                                
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEnvProceso.json';
+                		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					
@@ -1394,64 +1426,21 @@ $(function() {
 		
 				},"json");//termina llamada json
 				
-				
-				
-				//Buscar Productos Componentes
-				$buscar_producto_componente.click(function(event){
-					event.preventDefault();
-					//tipo=2 para buscar los productos Componentes
-					var tipoBusqueda=2;
-					$buscador_productos(tipoBusqueda, $codigo_componente.val(), $nombre_componente.val() );
-				});
-				
-				$agregar_producto_componente.click(function(event){
-					event.preventDefault();
-					var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/gatDatosProducto.json';
-					var $arreglo3 = {'codigo':$codigo_componente.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-					
-					$.post(input_json3,$arreglo3,function(entry3){
-						if(parseInt(entry3['Producto'].length) > 0 ){
-							var id_producto = entry3['Producto'][0]['id'];
-							var codigo = entry3['Producto'][0]['sku'];
-							var descripcion = entry3['Producto'][0]['descripcion'];
-							var unidad = entry3['Producto'][0]['unidad'];
-							var cantidad=0;
-							
-							//llamada a la funcion para agregar tr al grid
-							$agregarTr(id_producto, codigo, descripcion, unidad, cantidad);
-							
-						}else{
-							jAlert('C&oacute;digo de Producto desconocido.', 'Atencion!', function(r) { 
-								$codigo_componente.focus(); 
-							});
-						}
-					});
-				});
-				
-				
-				//agrega productos componentes al grid
-				$codigo_componente.keypress(function(e){
-					if(e.which == 13){
-						$agregar_producto_componente.trigger('click');
-						return false;
-					}
-				});
-				
+                                
 				//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto componente, se ejecute el buscador
 				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_componente, $buscar_producto_componente);
 				
 				
-				//Ligamos el boton cancelar al evento click para eliminar la forma
-				$cancelar_plugin.bind('click',function(){
-					var remove = function() {$(this).remove();};
-					$('#forma-envconf-overlay').fadeOut(remove);
-				});
-				
 				$cerrar_plugin.bind('click',function(){
-					var remove = function() {$(this).remove();};
-					$('#forma-envconf-overlay').fadeOut(remove);
-					$buscar.trigger('click');
-				});
+                                        var remove = function() {$(this).remove();};
+                                        $('#forma-envproceso-overlay').fadeOut(remove);
+                                });
+                                
+                                $cancelar_plugin.click(function(event){
+                                        var remove = function() {$(this).remove();};
+                                        $('#forma-envproceso-overlay').fadeOut(remove);
+                                        $buscar.trigger('click');
+                                });
                                 
 				
 			}
