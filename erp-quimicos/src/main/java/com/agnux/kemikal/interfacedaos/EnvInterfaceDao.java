@@ -47,6 +47,7 @@ public interface EnvInterfaceDao {
     //metodos para Proceso de envasado
     public ArrayList<HashMap<String, Object>> getEnvProceso_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getEnvProceso_Datos(Integer id_producto);
+    public ArrayList<HashMap<String, String>> getEnvProcesoDetalle_Datos(Integer id_producto);
     public ArrayList<HashMap<String, String>> getBuscadorOrdenProduccion(String folio, String sku, String descripcion, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProOrdenOperariosDisponibles(String cadena, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProOrdenEquipoDisponible(String cadena, Integer id_empresa);

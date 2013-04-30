@@ -88,9 +88,11 @@ public class EnvProcesoController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", EnvProcesoController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("codigo", "C&oacute;digo:120");
+        infoConstruccionTabla.put("folio", "Folio:120");
+        infoConstruccionTabla.put("sku", "C&oacute;digo:120");
         infoConstruccionTabla.put("descripcion", "Descripci&oacute;n:300");
-        infoConstruccionTabla.put("unidad", "Unidad:150");
+        infoConstruccionTabla.put("estatus", "Estatus:150");
+        infoConstruccionTabla.put("cantidad", "Cantidad:120");
         infoConstruccionTabla.put("presentacion", "Presentaci&oacute;n:160");
         
         ModelAndView x = new ModelAndView("envproceso/startup", "title", "Envasado");
@@ -154,7 +156,7 @@ public class EnvProcesoController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getEnvDao().getEnvConf_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getEnvDao().getEnvProceso_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
@@ -203,9 +205,9 @@ public class EnvProcesoController {
         log.log(Level.INFO, "Ejecutando getConfJson de {0}", EnvProcesoController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> datosEnvConf = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosEnv = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosEnvDet = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -214,11 +216,13 @@ public class EnvProcesoController {
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         if( id != 0  ){
-            datosEnvConf = this.getEnvDao().getEnvConf_Datos(id);
-            presentaciones=this.getEnvDao().getProductoPresentacionesON(Integer.parseInt(datosEnvConf.get(0).get("producto_id")));
+            datosEnv = this.getEnvDao().getEnvProceso_Datos(id);
+            datosEnvDet = this.getEnvDao().getEnvProcesoDetalle_Datos(id);
+            presentaciones=this.getEnvDao().getProductoPresentacionesON(Integer.parseInt(datosEnv.get(0).get("inv_prod_id")));
         }
         
-        jsonretorno.put("Datos", datosEnvConf);
+        jsonretorno.put("Datos", datosEnv);
+        jsonretorno.put("DatosDet", datosEnvDet);
         jsonretorno.put("Presentaciones", presentaciones);
         jsonretorno.put("Almacenes", this.getEnvDao().getAlmacenes(id_empresa, id_sucursal));
         
