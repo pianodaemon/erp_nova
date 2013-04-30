@@ -6,6 +6,7 @@ package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.ArchivoInformeMensual;
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.cfd.v2.BeanFromCfdXml;
 import com.agnux.cfd.v2.CryptoEngine;
 import com.agnux.cfdi.BeanCancelaCfdi;
 import com.agnux.cfdi.BeanFromCfdiXml;
@@ -801,7 +802,7 @@ public class FacturasController {
             }
             
             String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ serieFolio +".xml");
-            System.out.println("cadena_xml: "+cadena_xml);
+            //System.out.println("cadena_xml: "+cadena_xml);
             try {
                 
                 String cadena_original = this.cadenaOriginal(cadena_xml, id_empresa, id_sucursal);
@@ -813,6 +814,12 @@ public class FacturasController {
                 String sello_digital_emisor = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal), cadena_original);
                 System.out.println("sello_digital_emisor: "+sello_digital_emisor);
                 
+                //BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+serieFolio +".xml");
+                
+                BeanFromCfdXml pop = new BeanFromCfdXml(dirSalidas+"/"+ serieFolio +".xml");
+                
+                //sacar la fecha del comprobante 
+                String fecha_comprobante=pop.getFecha();
                 
                 
                 //este es el timbre fiscal, solo es para cfdi con timbre fiscal. Aqui debe ir vacio
@@ -831,6 +838,7 @@ public class FacturasController {
                 datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
                 datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                 datosExtrasPdfCfd.put("uuid", uuid);
+                datosExtrasPdfCfd.put("fecha_comprobante", fecha_comprobante);
                 
                 //pdf factura
                 pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
@@ -855,7 +863,7 @@ public class FacturasController {
             
             
             String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ serieFolio +".xml");
-            System.out.println("cadena_xml: "+cadena_xml);
+            //System.out.println("cadena_xml: "+cadena_xml);
             
             try {
                 
