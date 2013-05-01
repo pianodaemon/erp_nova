@@ -829,7 +829,7 @@ public class PdfReenvasado {
             PdfPCell cell;
 
 
-            cell = new PdfPCell(new Paragraph("FOLIO",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("FOLIO DE RE-ENVASADO",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
