@@ -1145,7 +1145,7 @@ $(function() {
 		
 		$.post(input_json,$arreglo,function(entry){
                     
-                    //carga select de Presentaciones
+                    //carga select de Estatus
                     $select_estatus.children().remove();
                     var estatus_html = '<option value="0">[--Estatus--]</option>';
                     $.each(arrayEstatus,function(entryIndex,est){
@@ -1398,7 +1398,46 @@ $(function() {
                 		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					
+                                        
+                                        $identificador.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $folio.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $fecha.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $hora.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $producto_id.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $codigo.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $descripcion.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $produccion_id.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $folio_produccion.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $exis_pres.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $disp_pres.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $unidad.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $exis_uni.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $disp_uni.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $equipo.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $operador.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $merma.attr({'value' : entry['Datos'][0]['codigo']});
+                                        
+                                        
+                                        //carga select de Estatus
+                                        $select_estatus.children().remove();
+                                        var estatus_html = '<option value="0">[--Estatus--]</option>';
+                                        $.each(arrayEstatus,function(entryIndex,est){
+                                            if(parseInt(est['id']) == 1){
+                                                estatus_html += '<option value="' + est['id'] + '" selected="yes" >' + est['titulo'] + '</option>';
+                                            }else{
+                                                estatus_html += '<option value="' + est['id'] + '"  >' + est['titulo'] + '</option>';
+                                            }
+                                        });
+                                        $select_estatus.append(estatus_html);
+
+                                        arrayAlmacenes = entry['Almacenes'];
+                                        
+                                        
+                                        //$select_presentacion_orig = $('#forma-envproceso-window').find('select[name=select_pres_orden_orig]');
+                                        //$select_almacen_orig = $('#forma-envproceso-window').find('select[name=select_alm_orden_orig]');
+                                        
+                                        //$select_estatus = $('#forma-envproceso-window').find('select[name=select_estatus]');
+                                        
 					/*
 					$campo_id.attr({'value' : entry['envconf']['0']['id']});
 					$producto_id.attr({'value' : entry['envconf']['0']['inv_prod_id']});
