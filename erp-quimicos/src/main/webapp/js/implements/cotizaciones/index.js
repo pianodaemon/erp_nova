@@ -2368,7 +2368,9 @@ $(function() {
 						if(moneda['id'] == entry['datosCotizacion']['0']['moneda_id']){
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 						}else{
-							//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+							if(parseInt(entry['DatosCP'][0]['lista_precio']) < 1){
+								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion_abr'] + '</option>';
+							}
 						}
 						//moneda_hmtl2 += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 					});
@@ -2582,6 +2584,7 @@ $(function() {
 						var idMonSeleccionado = $(this).val();
 						var cambiarTcOriginal='false';
 						
+						
 						//si la moneda actual seleccionada es igual a la moneda original entonces permitir cambiar el tipo de cambio original
 						if( parseInt($select_moneda_original.val()) == parseInt($select_moneda.val()) ){
 							cambiarTcOriginal='true';
@@ -2597,7 +2600,7 @@ $(function() {
 						var moneda_grid_hmtl = '';
 						$.each(entry['Monedas'],function(entryIndex,moneda){
 							if(parseInt(idMonSeleccionado) == parseInt(moneda['id'])){
-								moneda_grid_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion_abr'] + '</option>';
+								moneda_grid_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion_abr'] + '</option>';
 							}
 						});
 						$grid_productos.find('select[name=monedagrid]').append(moneda_grid_hmtl);
