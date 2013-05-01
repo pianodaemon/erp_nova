@@ -586,24 +586,28 @@ public class PocSpringDao implements PocInterfaceDao{
             Map<String, Object> tipo_cambio = this.getJdbcTemplate().queryForMap(sql_to_query);
             valor = StringHelper.roundDouble(tipo_cambio.get("valor").toString(),4);
         }
-
+        
         valorRetorno.put("valor", valor);
-
+        
         return valorRetorno;
     }
-
-
-    //obtiene valor del impuesto. retorna 0.16
+    
+    
+    //obtiene valor del impuesto
+    //si el impuesto general de la empresa es es igual a la de la sucursal, retorna el de la Empresa
+    //Si el impuesto general de la empresa es diferente a la de la sucursal, retorna el de la sucursal
     @Override
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal) {
         String sql_to_query = ""
                 + "SELECT "
-                    + "gral_imptos.id AS id_impuesto, "
-                    + "gral_imptos.iva_1 AS valor_impuesto "
+                    + "(CASE WHEN impto_emp.id=impto_suc.id THEN (CASE WHEN impto_emp.id IS NULL THEN impto_suc.id ELSE impto_emp.id END) ELSE (CASE WHEN impto_suc.id IS NULL THEN impto_emp.id ELSE impto_suc.id END) END) AS id_impuesto, "
+                    + "(CASE WHEN impto_emp.id=impto_suc.id THEN (CASE WHEN impto_emp.id IS NULL THEN impto_suc.iva_1 ELSE impto_emp.iva_1 END) ELSE (CASE WHEN impto_suc.id IS NULL THEN impto_emp.iva_1 ELSE impto_suc.iva_1 END) END) AS valor_impuesto "
                 + "FROM gral_suc "
-                + "JOIN gral_imptos ON gral_imptos.id=gral_suc.gral_impto_id "
-                + "WHERE gral_imptos.borrado_logico=FALSE AND gral_suc.id=?";
-
+                + "JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
+                + "LEFT JOIN gral_imptos AS impto_suc ON (impto_suc.id=gral_suc.gral_impto_id AND impto_suc.borrado_logico=FALSE) "
+                + "LEFT JOIN gral_imptos AS impto_emp ON (impto_emp.id=gral_emp.gral_impto_id AND impto_emp.borrado_logico=FALSE) "
+                + "WHERE gral_suc.id=?";
+        
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_valoriva = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -993,7 +997,6 @@ public class PocSpringDao implements PocInterfaceDao{
                             + "inv_prod_unidades.titulo AS unidad, "
                             +"inv_prod_tipos.titulo AS tipo, "
                             + "inv_prod_unidades.decimales "
-
 		+"FROM inv_prod "
                 + "LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
                 + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
@@ -1020,9 +1023,9 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_datos_productos;
     }
-
-
-
+    
+    
+    
     @Override
     public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku,String lista_precio, Integer id_empresa) {
         String sql_query = "";
