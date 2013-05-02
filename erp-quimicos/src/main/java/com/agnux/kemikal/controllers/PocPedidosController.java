@@ -395,6 +395,7 @@ public class PocPedidosController {
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPresentacionesProductoJson(
             @RequestParam(value="sku", required=true) String sku,
             @RequestParam(value="lista_precios",required=true) String lista_precio,
+            @RequestParam(value="id_client", required=true) String idClient,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
@@ -407,8 +408,15 @@ public class PocPedidosController {
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        jsonretorno.put("Presentaciones", this.getPocDao().getPresentacionesProducto(sku,lista_precio,id_empresa));
+        ArrayList<HashMap<String, String>> ArrayPres = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> ArrayPresProcesado = new ArrayList<HashMap<String, String>>();
+        
+        ArrayPres = this.getPocDao().getPresentacionesProducto(sku,lista_precio,id_empresa);
+        ArrayPresProcesado = this.getPocDao().getVerificarImpuesto(id_sucursal, Integer.parseInt(idClient), ArrayPres);
+        
+        jsonretorno.put("Presentaciones", ArrayPresProcesado);
         
         return jsonretorno;
     }

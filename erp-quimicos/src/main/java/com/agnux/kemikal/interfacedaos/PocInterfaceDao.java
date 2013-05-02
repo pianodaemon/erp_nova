@@ -18,18 +18,21 @@ public interface PocInterfaceDao{
 
     public ArrayList<HashMap<String, String>> getBuscadorClientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getDatosClienteByNoCliente(String no_control,  Integer id_empresa, Integer id_sucursal);
+    public int getTipoClient(Integer idClient);//obtiene el tipo de cliente
     public ArrayList<HashMap<String, String>> getBuscadorProspectos(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getDatosProspectoByNoControl(String no_control, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProductoTipos();
     public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku,String lista_precio, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getVerificarImpuesto(Integer idSuc, Integer idTipoClient, ArrayList<HashMap<String, String>> productos);
     public ArrayList<HashMap<String, String>> getMonedas();
     public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getCondicionesDePago();
     public Double getTipoCambioActual();
     public HashMap<String, String> getTipoCambioActualPorIdMoneda(Integer idMoneda);
-
+    
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getValorivaById(Integer idImpto);
 
     //metodos para aplicativo pedidos y autorizacion de pedidos
     public ArrayList<HashMap<String, Object>> getPocPedidos_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);

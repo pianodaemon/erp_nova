@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 /**
  *
@@ -593,25 +594,55 @@ public class PocSpringDao implements PocInterfaceDao{
     }
     
     
-    //obtiene valor del impuesto
-    //si el impuesto general de la empresa es es igual a la de la sucursal, retorna el de la Empresa
-    //Si el impuesto general de la empresa es diferente a la de la sucursal, retorna el de la sucursal
+    //obtiene valor del impuesto de la sucursal
     @Override
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal) {
         String sql_to_query = ""
                 + "SELECT "
-                    + "(CASE WHEN impto_emp.id=impto_suc.id THEN (CASE WHEN impto_emp.id IS NULL THEN impto_suc.id ELSE impto_emp.id END) ELSE (CASE WHEN impto_suc.id IS NULL THEN impto_emp.id ELSE impto_suc.id END) END) AS id_impuesto, "
-                    + "(CASE WHEN impto_emp.id=impto_suc.id THEN (CASE WHEN impto_emp.id IS NULL THEN impto_suc.iva_1 ELSE impto_emp.iva_1 END) ELSE (CASE WHEN impto_suc.id IS NULL THEN impto_emp.iva_1 ELSE impto_suc.iva_1 END) END) AS valor_impuesto "
-                + "FROM gral_suc "
+                    + "(CASE WHEN impto_suc.id IS NULL THEN 0 ELSE impto_suc.id END) AS id_impuesto, "
+                    + "(CASE WHEN impto_suc.id IS NULL THEN 0 ELSE impto_suc.iva_1 END) AS valor_impuesto,"
+                    + "(CASE WHEN impto_emp.id IS NULL THEN 0 ELSE impto_emp.id END) AS id_impto_emp, "
+                    + "(CASE WHEN impto_emp.id IS NULL THEN 0 ELSE impto_emp.iva_1 END) AS valor_impto_emp "
+                + "FROM gral_suc  "
                 + "JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
-                + "LEFT JOIN gral_imptos AS impto_suc ON (impto_suc.id=gral_suc.gral_impto_id AND impto_suc.borrado_logico=FALSE) "
-                + "LEFT JOIN gral_imptos AS impto_emp ON (impto_emp.id=gral_emp.gral_impto_id AND impto_emp.borrado_logico=FALSE) "
-                + "WHERE gral_suc.id=?";
+                + "JOIN gral_imptos AS impto_suc ON (impto_suc.id=gral_suc.gral_impto_id AND impto_suc.borrado_logico=FALSE) "
+                + "JOIN gral_imptos AS impto_emp ON (impto_emp.id=gral_emp.gral_impto_id AND impto_emp.borrado_logico=FALSE) "
+                + "WHERE gral_suc.id=?;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_valoriva = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(id_sucursal)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_impuesto",String.valueOf(rs.getInt("id_impuesto")));
+                    row.put("valor_impuesto",StringHelper.roundDouble(rs.getString("valor_impuesto"),2));
+                    row.put("id_impto_emp",String.valueOf(rs.getInt("id_impto_emp")));
+                    row.put("valor_impto_emp",StringHelper.roundDouble(rs.getString("valor_impto_emp"),2));
+                    return row;
+                }
+            }
+        );
+        return hm_valoriva;
+    }
+
+
+    
+    //obtiene valor del Impuesto en Especifico a partir del Id
+    @Override
+    public ArrayList<HashMap<String, String>> getValorivaById(Integer idImpto) {
+        String sql_to_query = ""
+                + "SELECT "
+                    + "(CASE WHEN gral_imptos.id IS NULL THEN 0 ELSE gral_imptos.id END) AS id_impuesto, "
+                    + "(CASE WHEN gral_imptos.id IS NULL THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impuesto "
+                + "FROM gral_imptos "
+                + "WHERE gral_imptos.id=? AND gral_imptos.borrado_logico=FALSE;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_valoriva = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(idImpto)}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
@@ -623,8 +654,9 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_valoriva;
     }
-
-
+    
+    
+    
 
     //buscador de clientes
     @Override
@@ -1048,6 +1080,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     +"inv_prod.id,"
                     +"inv_prod.sku,"
                     +"inv_prod.descripcion AS titulo,"
+                    +"inv_prod.gral_impto_id AS id_impto_prod,"
+                    +"(CASE WHEN inv_prod.gral_impto_id=0 THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impto_prod, "
                     +"(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga,"
                     +"(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img,"
                     +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
@@ -1059,11 +1093,12 @@ public class PocSpringDao implements PocInterfaceDao{
             +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
             +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
             +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
+            +"LEFT JOIN gral_imptos ON gral_imptos.id=inv_prod.gral_impto_id "
             +"LEFT JOIN inv_pre ON (inv_pre.inv_prod_id=inv_prod.id AND inv_pre.inv_prod_presentacion_id=inv_prod_pres_x_prod.presentacion_id AND inv_pre.borrado_logico=false) "
             +"WHERE  inv_prod.empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
-
+        
         System.out.println("getPresentacionesProducto: "+sql_query);
-
+        
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -1071,6 +1106,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("id_impto_prod",String.valueOf(rs.getInt("id_impto_prod")));
+                    row.put("valor_impto_prod",StringHelper.roundDouble(rs.getString("valor_impto_prod"),2));
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("descripcion_larga",rs.getString("descripcion_larga"));
@@ -1087,9 +1124,104 @@ public class PocSpringDao implements PocInterfaceDao{
                 }
             }
         );
+        
         return hm;
     }
-
+    
+    
+    //obtener el tipo de Cliente
+    @Override
+    public int getTipoClient(Integer idClient) {
+        String sql_to_query = "SELECT (CASE WHEN clienttipo_id IS NULL THEN 0 ELSE clienttipo_id END) AS tipo_cliente FROM cxc_clie WHERE id="+idClient+";";
+        int rowType = this.getJdbcTemplate().queryForInt(sql_to_query);
+        return rowType;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getVerificarImpuesto(Integer idSuc, Integer idCliente, ArrayList<HashMap<String, String>> ArrayPres) {
+        ArrayList<HashMap<String, String>> ArrayHmPres = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> ArrayImpto = new ArrayList<HashMap<String, String>>();
+        String id_impto_suc="0";
+        String valor_impto_suc="0.00";
+        String id_impto_emp="0";
+        Integer tipo_cliente = getTipoClient(idCliente);
+        String id_impto_clie="0";
+        String valor_impto_clie="0.00";
+        
+        
+        if(tipo_cliente==2){
+            //si el cliente es extranjero, hay que obtener el valor del iva tasa cero
+            //idImpuesto=2 Iva tasa 0%
+            ArrayImpto = getValorivaById(2);
+            id_impto_clie = ArrayImpto.get(0).get("id_impuesto");
+            valor_impto_clie = ArrayImpto.get(0).get("valor_impuesto");
+        }else{
+            ArrayImpto = getValoriva(idSuc);
+            if(ArrayImpto.size()>0){
+                id_impto_suc = ArrayImpto.get(0).get("id_impuesto");
+                valor_impto_suc = ArrayImpto.get(0).get("valor_impuesto");
+                id_impto_emp = ArrayImpto.get(0).get("id_impto_emp");
+                //valor_impto_emp = ArrayImpto.get(0).get("valor_impto_emp");
+            }
+        }
+        
+        Iterator it = ArrayPres.iterator();
+        while(it.hasNext()){
+            HashMap<String,String> map = (HashMap<String,String>)it.next();
+            HashMap<String, String> rowmap = new HashMap<String, String>();
+            Integer idImptoProd = Integer.parseInt(map.get("id_impto_prod"));
+            
+            if(tipo_cliente==2){
+                rowmap.put("id_impto", id_impto_clie);
+                rowmap.put("valor_impto", valor_impto_clie);
+            }else{
+                if(idImptoProd!=0){
+                    if((Integer.parseInt(id_impto_emp) != idImptoProd)){
+                        //si el impuesto del producto es Diferente al Impuesto General de la empresa,
+                        //tomar impuesto del producto
+                        rowmap.put("id_impto", map.get("id_impto_prod"));
+                        rowmap.put("valor_impto", map.get("valor_impto_prod"));
+                    }else{
+                        //aqui entra si el Impuesto General de la Empresa es igual al impuesto del producto.
+                        //tomar impuesto de la sucursal
+                        rowmap.put("id_impto", id_impto_suc);
+                        rowmap.put("valor_impto", valor_impto_suc);
+                    }
+                }else{
+                    //si el impuesto del Producto es igual a cero,
+                    //tomar impuesto de la sucursal
+                    rowmap.put("id_impto", id_impto_suc);
+                    rowmap.put("valor_impto", valor_impto_suc);
+                }
+            }
+            
+            rowmap.put("id",  map.get("id"));
+            rowmap.put("sku", map.get("sku"));
+            rowmap.put("titulo", map.get("titulo"));
+            rowmap.put("descripcion_larga", map.get("descripcion_larga"));
+            rowmap.put("archivo_img", map.get("archivo_img"));
+            rowmap.put("unidad", map.get("unidad"));
+            rowmap.put("id_presentacion", map.get("id_presentacion"));
+            rowmap.put("presentacion", map.get("presentacion"));
+            rowmap.put("decimales", map.get("decimales"));
+            rowmap.put("precio", map.get("precio"));
+            rowmap.put("exis_prod_lp",map.get("exis_prod_lp"));
+            rowmap.put("id_moneda", map.get("id_moneda"));
+            rowmap.put("tc", map.get("tc"));
+            
+            System.out.println("id:"+rowmap.get("id")+"|sku:"+rowmap.get("sku")+"|titulo:"+rowmap.get("titulo")+"|unidad:"+rowmap.get("unidad")+"|idPres:"+rowmap.get("id_presentacion")+"|Pres:"+rowmap.get("presentacion")+"|noDec:"+rowmap.get("decimales")+"|precio:"+rowmap.get("precio")+"|exisLp:"+rowmap.get("exis_prod_lp")+"|idMon:"+rowmap.get("id_moneda")+"|tc:"+rowmap.get("tc")+"|idImpto:"+rowmap.get("id_impto")+"|valImpto:"+rowmap.get("valor_impto"));
+            
+            ArrayHmPres.add(rowmap);
+        }
+        
+        return ArrayHmPres;
+    }
+    
+    
+    
+    
 
     @Override
     public ArrayList<HashMap<String, Object>> getRemisiones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
