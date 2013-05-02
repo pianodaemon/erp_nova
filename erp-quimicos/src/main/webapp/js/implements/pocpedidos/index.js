@@ -1015,6 +1015,7 @@ $(function() {
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
 				$arreglo = {'sku':sku_producto,
 							'lista_precios':cliente_listaprecio,
+							'id_client':$id_cliente.val(),
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 						};
 				
@@ -1060,6 +1061,8 @@ $(function() {
 										trr += '<span class="tc" style="display:none">'+pres['tc']+'</span>';
 										trr += '<span class="dec" style="display:none">'+pres['decimales']+'</span>';
 										trr += '<span class="exislp" style="display:none">'+pres['exis_prod_lp']+'</span>';
+										trr += '<span class="idImpto" style="display:none">'+pres['id_impto']+'</span>';
+										trr += '<span class="valorImpto" style="display:none">'+pres['valor_impto']+'</span>';
 									trr += '</td>';
 								trr += '</tr>';
 								$tabla_resultados.append(trr);
@@ -1096,6 +1099,9 @@ $(function() {
 								//tipo de cambio de la moneda del producto
 								var tcMonProd = $(this).find('span.tc').html();
 								var exislp = $(this).find('span.exislp').html();
+								
+								var idImpto = $(this).find('span.idImpto').html();
+								var valorImpto = $(this).find('span.valorImpto').html();
 								
 								if($tipo_cambio.val()!='' && $tipo_cambio.val()!=' '){
 									if(exislp=='1'){
