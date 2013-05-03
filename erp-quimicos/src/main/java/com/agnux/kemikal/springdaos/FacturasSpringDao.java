@@ -288,6 +288,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 +"fac_docs_detalles.cantidad, "
                 +"fac_docs_detalles.precio_unitario, "
                 +"(fac_docs_detalles.cantidad * fac_docs_detalles.precio_unitario) AS importe,"
+                + "fac_docs_detalles.gral_imptos_id, "
                 + "fac_docs_detalles.valor_imp, "
                 + "fac_docs_detalles.cantidad_devolucion "
         +"FROM fac_docs_detalles "
@@ -313,6 +314,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
+                    row.put("id_impto",rs.getString("gral_imptos_id"));
                     row.put("tasa_iva",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
                     row.put("cant_dev",StringHelper.roundDouble(rs.getDouble("cantidad_devolucion"),2) );
                     return row;
@@ -668,7 +670,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     //este se utiliza en: 
     //xml de Factura CFD y Nota de Credito CFD
-    
     public void calcula_Totales_e_Impuestos(ArrayList<LinkedHashMap<String, String>> conceptos) throws SQLException{
         Double sumaImporte = 0.0;
         Double sumaImpuesto = 0.0;
@@ -727,6 +728,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                                         + "erp_prefacturas_detalles.cantidad,"
                                         + "erp_prefacturas_detalles.precio_unitario,"
                                         + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
+                                        + "erp_prefacturas_detalles.tipo_impuesto_id AS id_impto,"
                                         + "erp_prefacturas_detalles.valor_imp,"
                                         + "erp_prefacturas.tasa_retencion_immex,"
                                         + "erp_prefacturas.moneda_id,"
@@ -760,6 +762,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     row.put("valorUnitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
+                    row.put("id_impto",String.valueOf(rs.getInt("id_impto")));
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
                     row.put("importe_impuesto",StringHelper.roundDouble(rs.getDouble("importe_impuesto"),4) );
                     row.put("numero_aduana","");
                     row.put("fecha_aduana","");
@@ -769,7 +773,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("moneda_abr",rs.getString("moneda_abr"));
                     row.put("simbolo_moneda",rs.getString("simbolo_moneda"));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4) );
-                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
                     row.put("tasa_retencion",StringHelper.roundDouble(rs.getDouble("tasa_retencion_immex"),2) );
                     
                     //System.out.println(row.get("noIdentificacion")+"   "+row.get("descripcion")+"   "+row.get("cantidad")+"   "+row.get("valorUnitario")+"   "+row.get("importe")+"   "+row.get("importe_impuesto")+"   "+row.get("valor_imp")+"   "+row.get("tasa_retencion"));
@@ -804,16 +807,67 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     
+    
+    //obtiene todos los impuestos
+    @Override
+    public ArrayList<HashMap<String, String>> getImpuestos() {
+        String sql_to_query = "SELECT id AS id_impto, iva_1 AS tasa, 0::double precision AS importe FROM gral_imptos WHERE borrado_logico=FALSE;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> impuestos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query, new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_impto",rs.getString("id_impto"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
+                    return row;
+                }
+            }
+        );
+        return impuestos;
+    }
+    
+    
+    
+    
     //Éste método se utiliza para CFD y CFDI con Timbre Fiscal
     @Override
-    public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal) {
+    public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal, ArrayList<LinkedHashMap<String,String>> conceptos) {
         ArrayList<LinkedHashMap<String, String>>  impuestos = new ArrayList<LinkedHashMap<String, String>>();
+        ArrayList<HashMap<String, String>> imptos = new ArrayList<HashMap<String, String>>();
+        
+        imptos = getImpuestos();
+        
+        
         LinkedHashMap<String,String> impuesto = new LinkedHashMap<String,String>();
         impuesto.put("impuesto", "IVA");
         impuesto.put("importe", this.getImpuestoTrasladado());
         impuesto.put("tasa", this.getTasaIva(id_sucursal));
         
         impuestos.add(impuesto);
+        
+        Double sumaImpuesto1=0.0;//1;"IVA 16%";0.16
+        Double sumaImpuesto2=0.0;//2;"IVA TASA 0";0
+        Double sumaImpuesto3=0.0;//3;"IVA 11%";0.11
+        Double sumaImpuesto4=0.0;//4;"EXENTO";0
+        
+        //row.put("id_impto",String.valueOf(rs.getInt("id_impto")));
+        //row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
+        //row.put("importe_impuesto",StringHelper.roundDouble(rs.getDouble("importe_impuesto"),4) );
+        
+        
+        for (int x=0; x<=conceptos.size()-1;x++){
+            LinkedHashMap<String,String> con = conceptos.get(x);
+            
+            if(Integer.parseInt(con.get("id_impto"))==1){
+                sumaImpuesto1 = sumaImpuesto1 + Double.parseDouble(StringHelper.roundDouble(con.get("importe_impuesto"),2));
+            }
+            
+        }
+        
+        
         
         return impuestos;
     }

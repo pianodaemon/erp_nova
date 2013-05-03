@@ -696,7 +696,8 @@ public class PocSpringDao implements PocInterfaceDao{
                                     +"sbt.lista_precio, "
                                     +"sbt.metodo_pago_id, "
                                     +"tiene_dir_fiscal,"
-                                    +"sbt.contacto "
+                                    +"sbt.contacto,"
+                                    +"sbt.credito_suspendido "
                             +"FROM(SELECT cxc_clie.id, "
                                             +"cxc_clie.numero_control, "
                                             +"cxc_clie.rfc, "
@@ -712,7 +713,8 @@ public class PocSpringDao implements PocInterfaceDao{
                                             + "cxc_clie.cta_pago_usd,  "
                                             + "cxc_clie.lista_precio, "
                                             + "cxc_clie.fac_metodos_pago_id AS metodo_pago_id, "
-                                            + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal "
+                                            + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal,"
+                                            + "cxc_clie.credito_suspendido "
                                     +"FROM cxc_clie "
                                     + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
                                     + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
@@ -749,7 +751,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
                     row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
                     row.put("contacto",rs.getString("contacto"));
-
+                    row.put("credito_suspendido",String.valueOf(rs.getBoolean("credito_suspendido")));
+                    
                     return row;
                 }
             }
@@ -779,7 +782,8 @@ public class PocSpringDao implements PocInterfaceDao{
                                     +"sbt.lista_precio, "
                                     +"sbt.metodo_pago_id, "
                                     +"tiene_dir_fiscal,"
-                                    +"sbt.contacto "
+                                    +"sbt.contacto,"
+                                    +"sbt.credito_suspendido "
                             +"FROM(SELECT cxc_clie.id, "
                                             +"cxc_clie.numero_control, "
                                             +"cxc_clie.rfc, "
@@ -795,7 +799,8 @@ public class PocSpringDao implements PocInterfaceDao{
                                             + "cxc_clie.cta_pago_usd,  "
                                             + "cxc_clie.lista_precio, "
                                             + "cxc_clie.fac_metodos_pago_id AS metodo_pago_id, "
-                                            + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal "
+                                            + "(CASE WHEN tbldf.cxc_clie_id IS NULL THEN false ELSE true END ) AS tiene_dir_fiscal,"
+                                            + "cxc_clie.credito_suspendido "
                                     +"FROM cxc_clie "
                                     + "LEFT JOIN (SELECT DISTINCT cxc_clie_id FROM cxc_clie_df WHERE borrado_logico=false) AS tbldf ON tbldf.cxc_clie_id=cxc_clie.id "
                                     + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
@@ -833,7 +838,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("metodo_pago_id",String.valueOf(rs.getInt("metodo_pago_id")));
                     row.put("tiene_dir_fiscal",String.valueOf(rs.getBoolean("tiene_dir_fiscal")));
                     row.put("contacto",rs.getString("contacto"));
-
+                    row.put("credito_suspendido",String.valueOf(rs.getBoolean("credito_suspendido")));
                     return row;
                 }
             }
@@ -1153,8 +1158,8 @@ public class PocSpringDao implements PocInterfaceDao{
         
         if(tipo_cliente==2){
             //si el cliente es extranjero, hay que obtener el valor del iva tasa cero
-            //idImpuesto=2 Iva tasa 0%
-            ArrayImpto = getValorivaById(2);
+            //idImpuesto=4 Exento 0%
+            ArrayImpto = getValorivaById(4);
             id_impto_clie = ArrayImpto.get(0).get("id_impuesto");
             valor_impto_clie = ArrayImpto.get(0).get("valor_impuesto");
         }else{

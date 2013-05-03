@@ -621,7 +621,7 @@ public class PrefacturasController {
                     if(tipo_facturacion.equals("cfd")){
                         conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
                         impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
-                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal);
+                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos);
                         dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                         
                         command_selected = "facturar_cfd";

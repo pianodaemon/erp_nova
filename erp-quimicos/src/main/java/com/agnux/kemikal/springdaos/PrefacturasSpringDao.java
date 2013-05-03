@@ -139,7 +139,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     //obtiene los almacenes de la empresa indicada
     @Override
     public ArrayList<HashMap<String, Object>> getAlmacenes(Integer id_empresa) {
-	String sql_query = "SELECT inv_alm.id, inv_alm.titulo "
+	String sql_query = "SELECT DISTINCT inv_alm.id, inv_alm.titulo "
                         + "FROM inv_alm " 
                         + "JOIN inv_suc_alm ON inv_suc_alm.almacen_id = inv_alm.id "
                         + "JOIN gral_suc ON gral_suc.id = inv_suc_alm.sucursal_id  "

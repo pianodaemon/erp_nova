@@ -32,6 +32,7 @@ public interface FacturasInterfaceDao {
     
     public Double getTipoCambioActual();
     public ArrayList<HashMap<String, Object>> getValoriva(Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getImpuestos();
     
     public String getTipoFacturacion();
     
@@ -40,7 +41,7 @@ public interface FacturasInterfaceDao {
     public String getFechaComprobante();
     public ArrayList<LinkedHashMap<String, String>> getListaConceptosFacturaXml(Integer id_prefactura);
     public ArrayList<LinkedHashMap<String, String>> getImpuestosRetenidosFacturaXml();
-    public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal);
+    public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal, ArrayList<LinkedHashMap<String,String>> conceptos);
     public LinkedHashMap<String, String> getDatosExtrasFacturaXml(String id_prefactura, String tipo_cambio_vista, String id_usuario, String id_moneda, Integer id_empresa, Integer id_sucursal, String refacturar, Integer app_selected, String command_selected, String extra_data_array);
     
     public LinkedHashMap<String, String> getDatosExtrasCfdi(Integer id_factura);
