@@ -724,7 +724,7 @@ public class PrefacturasController {
                         
                         conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura);
                         impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
-                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal);
+                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos);
                         dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                         
                         //estos son requeridos para cfditf
@@ -777,8 +777,6 @@ public class PrefacturasController {
                             jsonretorno.put("folio",serieFolio);
                         }
                     }
-                    
-                    
                     
                 }
                 

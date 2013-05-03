@@ -340,11 +340,8 @@ public class BeanFacturadorCfdi {
             
             for(int j=0; j<lista_traslados.size();j++){
                 HashMap i = (HashMap) lista_traslados.get(j);
-            //for (LinkedHashMap<String, String> i : lista_traslados){
                 String template = "[Impuestos Trasladados]\ntrasladadoImpuesto|{0}\ntrasladadoImporte|{1}\ntrasladadoTasa|{2}\nsubtotalTrasladados|{3}\n";
-                //cadena_retorno += MessageFormat.format(template, i.get("impuesto"),i.get("importe"), i.get("tasa"),subtotalTrasladados);
                 cadena_retorno += MessageFormat.format(template, i.get("impuesto"),i.get("importe"), i.get("tasa"),i.get("importe"));
-            //}
             }
             
             return cadena_retorno;

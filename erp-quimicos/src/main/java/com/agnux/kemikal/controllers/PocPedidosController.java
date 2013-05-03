@@ -402,6 +402,8 @@ public class PocPedidosController {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> ArrayPres = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> ArrayPresProcesado = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -409,9 +411,6 @@ public class PocPedidosController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
-        
-        ArrayList<HashMap<String, String>> ArrayPres = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> ArrayPresProcesado = new ArrayList<HashMap<String, String>>();
         
         ArrayPres = this.getPocDao().getPresentacionesProducto(sku,lista_precio,id_empresa);
         ArrayPresProcesado = this.getPocDao().getVerificarImpuesto(id_sucursal, Integer.parseInt(idClient), ArrayPres);

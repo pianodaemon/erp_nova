@@ -428,13 +428,15 @@ public class CotizacionesController {
             @RequestParam(value="sku", required=true) String sku,
             @RequestParam(value="lista_precio",required=true) String lista_precio,
             @RequestParam(value="tipo",required=true) String tipo,
+            @RequestParam(value="id_client", required=true) String idClient,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> ArrayPres = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> ArrayPresProcesado = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> tipoCambio = new HashMap<String, String>();
         
@@ -443,14 +445,16 @@ public class CotizacionesController {
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        presentaciones = this.getPocDao().getPresentacionesProducto(sku, lista_precio, id_empresa);
-        Integer idmon = Integer.parseInt(presentaciones.get(0).get("id_moneda"));
+        ArrayPres = this.getPocDao().getPresentacionesProducto(sku, lista_precio, id_empresa);
+        ArrayPresProcesado = this.getPocDao().getVerificarImpuesto(id_sucursal, Integer.parseInt(idClient), ArrayPres);
+        Integer idmon = Integer.parseInt(ArrayPres.get(0).get("id_moneda"));
         
         tipoCambio = this.getPocDao().getTipoCambioActualPorIdMoneda(idmon);
         datos.add(tipoCambio);
         
-        jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Presentaciones", ArrayPresProcesado);
         jsonretorno.put("Datos", datos);
         
         return jsonretorno;

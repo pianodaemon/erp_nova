@@ -490,7 +490,7 @@ public final class BeanFromCfdXml {
 				}
 				ArrayList<LinkedHashMap<String,String>>lista = getListaRetenciones();
 				lista.add(retencion);
-				setListaRetenciones(listaRetenciones);
+				setListaRetenciones(lista);
 			}
 
 			if ("Traslado".equals(qName)) {
@@ -509,11 +509,13 @@ public final class BeanFromCfdXml {
 					if("tasa".equals(valor)){
 						String tasa = atts.getValue(i);
 						traslado.put("tasa", tasa);
+                                                System.out.println("traslado: "+tasa);
 					}
+                                        
 				}
 				ArrayList<LinkedHashMap<String,String>>lista = getListaTraslados();
 				lista.add(traslado);
-				setListaTraslados(listaTraslados);
+				setListaTraslados(lista);
 			}
 
 			if ("Addenda".equals(qName)) {

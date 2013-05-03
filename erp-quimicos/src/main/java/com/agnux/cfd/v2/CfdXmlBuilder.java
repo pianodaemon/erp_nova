@@ -81,7 +81,7 @@ public class CfdXmlBuilder {
 		Element element = tmp.createElement("Emisor");
 		element.setAttribute("nombre", razon_social_emisor );
 		element.setAttribute("rfc", rfc_emisor );
-
+                
 		Element extra = this.getDoc().createElement("DomicilioFiscal");
 		extra.setAttribute("calle",calle);
 		extra.setAttribute("codigoPostal",codigo_postal);
@@ -176,7 +176,7 @@ public class CfdXmlBuilder {
 		Element root = tmp.createElement("Impuestos");
 		root.setAttribute("totalImpuestosRetenidos", "@SUMIMPUESTOS_RETENIDOS");
 		root.setAttribute("totalImpuestosTrasladados", "@SUMIMPUESTOS_TRASLADADOS" );
-
+                
 		Element child_1 = tmp.createElement("Retenciones");
                 if (lista_de_retenidos.size() > 0){
                     for( LinkedHashMap<String,String> i : lista_de_retenidos ){
