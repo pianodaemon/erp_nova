@@ -540,7 +540,7 @@ $(function() {
             });
         }
         
-        $add_trr_presentacion_enbasar = function(unidad){
+        $add_trr_presentacion_enbasar = function(iddetalle, aml_origen, idconf,pres_dest_id, cantpres,uni,cantuni,aml_dest_id , estatus){
             var $producto_id = $('#forma-envproceso-window').find('input[name=producto_id]');
             var $grid_presntaciones = $('#forma-envproceso-window').find('#grid_productos');
             
@@ -554,7 +554,7 @@ $(function() {
                 html_tr += '</td>';
                 html_tr += '<td class="grid" style="font-size:14px; font-weight:bold; border:1px solid #C1DAD7;" width="30">';
                     html_tr += '<input type="hidden" name="eliminado" id="eliminado" value="1">';
-                    html_tr += '<input type="hidden" 	name="iddetalle" id="idd"  class="idd'+ trCount +'" value="0">';//este es el id del registro que ocupa el producto en la tabla detalle
+                    html_tr += '<input type="hidden" 	name="iddetalle" id="idd"  class="idd'+ trCount +'" value="'+iddetalle+'">';//este es el id del registro que ocupa el producto en la tabla detalle
                     html_tr += '<input type="hidden" 	name="noTr" value="'+ trCount +'">';//numero de posicion de el tr en el grid
                     html_tr += '<a href="#" class="delete'+trCount+'">&nbsp;&nbsp;-&nbsp;&nbsp;</a>';
                 html_tr += '</td>';
@@ -564,33 +564,67 @@ $(function() {
                         html_tr += '<option value="0" selected="yes">[--Seleccionar Almacen--]</option>';
                         $.each(arrayAlmacenes,function(entryIndex,alm){
                             //alert(alm['id']);
-                            html_tr += '<option value="' + alm['id'] + '" selected="yes" >' + alm['titulo'] + '</option>';
+                            if(estatus == 1){
+                                if(aml_origen == alm['id']){
+                                    html_tr += '<option value="' + alm['id'] + '" selected="yes" >' + alm['titulo'] + '</option>';
+                                }else{
+                                    html_tr += '<option value="' + alm['id'] + '" >' + alm['titulo'] + '</option>';
+                                }
+                            }else{
+                                if(aml_origen == alm['id']){
+                                    html_tr += '<option value="' + alm['id'] + '" selected="yes" >' + alm['titulo'] + '</option>';
+                                }
+                            }
                         });
                     html_tr += '</select>';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="130">';
-                    html_tr += '<input type="hidden" name="idconf" id="idconf" value="0">';//id de el registro en la tabla de configuracioones
+                    html_tr += '<input type="hidden" name="idconf" id="idconf" value="'+idconf+'">';//id de el registro en la tabla de configuracioones
                     html_tr += '<select name="select_pres_dest" id="select_pres_dest'+trCount+'" style="width:126px;">';
                         html_tr += '<option value="0" selected="yes">[--Presentacion--]</option>';
+                        
                         $.each(arrayPresentacionEnv,function(entryIndex,pres){
-                            html_tr += '<option value="' + pres['id'] + '" >' + pres['titulo'] + '</option>';
+                            //pres_dest_id
+                            if(estatus == 1){
+                                if(pres_dest_id == pres['id']){
+                                    html_tr += '<option value="' + pres['id'] + '" selected="yes" >' + pres['titulo'] + '</option>';
+                                }else{
+                                    html_tr += '<option value="' + pres['id'] + '" >' + pres['titulo'] + '</option>';
+                                }
+                            }else{
+                                if(pres_dest_id == pres['id']){
+                                    html_tr += '<option value="' + pres['id'] + '" selected="yes" >' + pres['titulo'] + '</option>';
+                                }
+                            }
+                            //html_tr += '<option value="' + pres['id'] + '" >' + pres['titulo'] + '</option>';
                         });
                     html_tr += '</select>';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="85">';
-                    html_tr += '<input type="text" 	name="cantpres" id="cantpres'+trCount+'" value="0" style="width:80px;" maxlength="10">';
+                    html_tr += '<input type="text" 	name="cantpres" id="cantpres'+trCount+'" value="'+cantpres+'" style="width:80px;" maxlength="10">';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-                    html_tr += '<input type="text" name="uni" value="" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+                    html_tr += '<input type="text" name="uni" value="" id="uni" class="borde_oculto" value="'+uni+'" readOnly="true" style="width:86px;">';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="95">';
-                    html_tr += '<input type="text" 	name="cantuni" id="cantuni'+trCount+'" value="" class="borde_oculto" readOnly="true" style="width:90px; text-align:right;">';
+                    html_tr += '<input type="text" 	name="cantuni" id="cantuni'+trCount+'" value="'+cantuni+'" class="borde_oculto" readOnly="true" style="width:90px; text-align:right;">';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
                     html_tr += '<select name="select_aml_dest" id="select_aml_dest'+trCount+'" style="width:156px;">';
                         html_tr += '<option value="0" selected="yes">[--Seleccionar Almacen--]</option>';
+                        //aml_dest_id
                         $.each(arrayAlmacenes,function(entryIndex,alm){
-                            html_tr += '<option value="' + alm['id'] + '" >' + alm['titulo'] + '</option>';
+                            if(estatus == 1){
+                                if(aml_dest_id == alm['id']){
+                                    html_tr += '<option value="' + alm['id'] + '" selected="yes" >' + alm['titulo'] + '</option>';
+                                }else{
+                                    html_tr += '<option value="' + alm['id'] + '" >' + alm['titulo'] + '</option>';
+                                }
+                            }else{
+                                if(aml_dest_id == alm['id']){
+                                    html_tr += '<option value="' + alm['id'] + '" selected="yes" >' + alm['titulo'] + '</option>';
+                                }
+                            }
                         });
                     html_tr += '</select>';
                 html_tr += '</td>';
@@ -600,7 +634,8 @@ $(function() {
             
             $grid_presntaciones.find('.add'+trCount).bind('click',function(event){
                 event.preventDefault();
-                $add_trr_presentacion_enbasar();
+                
+                $add_trr_presentacion_enbasar(0, 0, 0,0, 0,'',0,0 , 1);
             });
             
             $grid_presntaciones.find('.delete'+trCount).bind('click',function(event){
@@ -756,7 +791,8 @@ $(function() {
                                 arrayPresentacionEnv = entry['PresentacionEnvases'];
                                 
                                 //Sy hay configuracion de presentacion, agrega un elemento, de lo contrario arroja un mensaje de error.
-                                $add_trr_presentacion_enbasar();
+                                $add_trr_presentacion_enbasar(0, 0, 0,0, 0,'',0,0 , 1);
+                                //$add_trr_presentacion_enbasar();
                                 
                             }else{
                                 jAlert("No hay configurtaci&oacute;n para "+codigo_prod_buscador+"", 'Atencion!');
@@ -1362,7 +1398,7 @@ $(function() {
                                         var a=$('div.datepicker');
                                         a.css({'z-index':100});
                                 });
-
+                                /*
                                 $fecha.DatePicker({
                                         format:'Y-m-d',
                                         date: $(this).val(),
@@ -1392,82 +1428,120 @@ $(function() {
                                                 }
                                         }
                                 });
-                                
+                                */
                                 
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEnvProceso.json';
                 		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
                                         
-                                        $identificador.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $folio.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $fecha.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $hora.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $producto_id.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $codigo.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $descripcion.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $produccion_id.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $folio_produccion.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $exis_pres.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $disp_pres.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $unidad.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $exis_uni.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $disp_uni.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $equipo.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $operador.attr({'value' : entry['Datos'][0]['codigo']});
-                                        $merma.attr({'value' : entry['Datos'][0]['codigo']});
+                                        $identificador.attr({'value' : entry['Datos'][0]['id']});
+                                        $folio.attr({'value' : entry['Datos'][0]['folio']});
+                                        $fecha.attr({'value' : entry['Datos'][0]['fecha']});
+                                        $hora.attr({'value' : entry['Datos'][0]['hora']});
+                                        $producto_id.attr({'value' : entry['Datos'][0]['inv_prod_id']});
+                                        $codigo.attr({'value' : entry['Datos'][0]['sku']});
+                                        $descripcion.attr({'value' : entry['Datos'][0]['descripcion']});
+                                        $produccion_id.attr({'value' : entry['Datos'][0]['pro_orden_prod_id']});
+                                        $folio_produccion.attr({'value' : entry['Datos'][0]['folio_op']});
+                                        $exis_pres.attr({'value' : entry['Datos'][0]['cantidad']});
+                                        $disp_pres.attr({'value' : entry['Datos'][0]['cantidad']});
+                                        $unidad.attr({'value' : entry['Datos'][0]['unidad']});
+                                        $exis_uni.attr({'value' : entry['Datos'][0]['cantidad']});
+                                        $disp_uni.attr({'value' : entry['Datos'][0]['cantidad']});
+                                        $equipo.attr({'value' : entry['Datos'][0]['equipo']});
+                                        $operador.attr({'value' : entry['Datos'][0]['operador']});
+                                        $merma.attr({'value' : entry['Datos'][0]['merma']});
                                         
                                         
                                         //carga select de Estatus
                                         $select_estatus.children().remove();
                                         var estatus_html = '<option value="0">[--Estatus--]</option>';
                                         $.each(arrayEstatus,function(entryIndex,est){
-                                            if(parseInt(est['id']) == 1){
+                                            if(parseInt(est['id']) == parseInt(entry['Datos'][0]['env_estatus_id'])){
                                                 estatus_html += '<option value="' + est['id'] + '" selected="yes" >' + est['titulo'] + '</option>';
                                             }else{
                                                 estatus_html += '<option value="' + est['id'] + '"  >' + est['titulo'] + '</option>';
                                             }
                                         });
                                         $select_estatus.append(estatus_html);
-
+                                        
+                                        //carga select de Presentacion
+                                        $select_presentacion_orig.children().remove();
+                                        var presentacion_html = '<option value="0">[--Estatus--]</option>';
+                                        $.each(entry['Presentaciones'],function(entryIndex,pres){
+                                            if(parseInt(pres['id']) == parseInt(entry['Datos'][0]['inv_prod_presentaciones_id'])){
+                                                presentacion_html += '<option value="' + pres['id'] + '" selected="yes" >' + pres['titulo'] + '</option>';
+                                            }else{
+                                                presentacion_html += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+                                            }
+                                        });
+                                        $select_presentacion_orig.append(presentacion_html);
+                                        
+                                        
+                                        //carga select de Estatus
+                                        $select_almacen_orig.children().remove();
+                                        var alm_html = '<option value="0">[--Estatus--]</option>';
+                                        $.each(entry['Almacenes'],function(entryIndex,alm){
+                                            if(parseInt(alm['id']) == parseInt(entry['Datos'][0]['inv_alm_id'])){
+                                                alm_html += '<option value="' + alm['id'] + '" selected="yes" >' + alm['titulo'] + '</option>';
+                                            }else{
+                                                alm_html += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
+                                            }
+                                        });
+                                        $select_almacen_orig.append(alm_html);
+                                        
                                         arrayAlmacenes = entry['Almacenes'];
                                         
+                                        /*Obtiene las presentaciones de el producto*/
+                                        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesConfProducto.json';
+                                        $arreglo = {'id_prod':entry['Datos'][0]['inv_prod_id'] };
+
+                                        $.post(input_json,$arreglo,function(data){
+                                            //carga select de Presentaciones
+                                            if(data['PresentacionEnvases'] != null ){
+                                                
+                                                arrayPresentacionEnv = data['PresentacionEnvases'];
+                                                
+                                                $.each(entry['DatosDet'],function(entryIndex,element){
+                                                    id_presentacion = 0;
+                                                    equivalente = 0;
+                                                    $.each(arrayPresentacionEnv,function(entryIndex,pres){
+                                                        if(element['env_conf_id'] == pres['id_env']){
+                                                            id_presentacion = pres['id'];
+                                                            equivalente = pres['equivalencia'];
+                                                            cantuni = (parseFloat(element['cantidad']) * parseFloat(equivalente));
+                                                            //$add_trr_presentacion_enbasar();
+                                                            
+                                                            $add_trr_presentacion_enbasar(element['id'], element['inv_alm_id'], element['env_conf_id'],id_presentacion, element['cantidad'],
+                                                            entry['Datos'][0]['unidad'],cantuni,element['inv_alm_id_env'] , entry['Datos'][0]['env_estatus_id']);
+                                                        }
+                                                    });
+                                                });
+                                                
+                                                //Si hay configuracion de presentacion, agrega un elemento, de lo contrario arroja un mensaje de error.
+                                                //$add_trr_presentacion_enbasar();
+                                                
+                                            }else{
+                                                jAlert("No hay configurtaci&oacute;n para "+codigo_prod_buscador+"", 'Atencion!');
+                                            }
+
+                                        });//termina llamada json
                                         
-                                        //$select_presentacion_orig = $('#forma-envproceso-window').find('select[name=select_pres_orden_orig]');
-                                        //$select_almacen_orig = $('#forma-envproceso-window').find('select[name=select_alm_orden_orig]');
+                                        $hora.TimepickerInputMask();
                                         
-                                        //$select_estatus = $('#forma-envproceso-window').find('select[name=select_estatus]');
+                                       /*Autocompletar para los campos Equipo y operador*/
+                                        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAutocompleteOperarios.json';
+                                        $autocomplete_input($operador, input_json);
+
+                                        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAutocompleteEquipo.json';
+                                        $autocomplete_input($equipo, input_json);
                                         
-					/*
-					$campo_id.attr({'value' : entry['envconf']['0']['id']});
-					$producto_id.attr({'value' : entry['envconf']['0']['inv_prod_id']});
-					$productosku.attr({'value' : entry['envconf']['0']['sku']});
-					$producto_descripcion.attr({'value' : entry['envconf']['0']['titulo']});
-					$producto_unidad.attr({'value' : entry['envconf']['0']['utitulo']});
-					
-					$select_presentacion.children().remove();
-					var html_pres = '';
-					if(parseInt(entry['envconf']['0']['presentacion_id'])==0 ){
-						html_pres = '<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>';
-					}else{
-						html_pres = '';
-					}
-					
-					$.each(entry['Presentaciones'],function(entryIndex,pres){
-						if(parseInt(entry['envconf']['0']['presentacion_id']) == parseInt(pres['id'] )){
-							html_pres += '<option value="' + pres['id'] + '" selected="yes">' + pres['titulo'] + '</option>';
-						}else{
-							//html_pres += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
-						}
-					});
-					$select_presentacion.append(html_pres);
-					*/									
-		
 				},"json");//termina llamada json
 				
                                 
 				//aplicar evento click para que al pulsar Enter sobre el campo Descripcion de la busqueda del producto componente, se ejecute el buscador
-				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_componente, $buscar_producto_componente);
+				//$(this).aplicarEventoKeypressEjecutaTrigger($nombre_componente, $buscar_producto_componente);
 				
 				
 				$cerrar_plugin.bind('click',function(){
