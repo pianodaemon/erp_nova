@@ -498,49 +498,64 @@ $(function() {
 	
 	
 	
-	$agregarDatosClienteSeleccionado = function($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal){
-		//asignar a los campos correspondientes el sku y y descripcion
-		$('#forma-pocpedidos-window').find('input[name=id_cliente]').val( id_cliente );
-		$('#forma-pocpedidos-window').find('input[name=nocliente]').val( no_control );
-		$('#forma-pocpedidos-window').find('input[name=razoncliente]').val( razon_social );
-		$('#forma-pocpedidos-window').find('input[name=empresa_immex]').val( empresa_immex );
-		$('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]').val( tasa_ret_immex );
-		$('#forma-pocpedidos-window').find('input[name=cta_mn]').val( cuenta_mn );
-		$('#forma-pocpedidos-window').find('input[name=cta_usd]').val( cuenta_usd );
-		$('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val( num_lista_precio );
-		//por default asignamos cero para el campo id de Direccion Fiscal, esto significa que la direccion se tomara de la tabla de clientes
-		$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
-					
-		if(tiene_dir_fiscal=='true'){
-			//llamada a la funcion que busca las direcciones fiscales del cliente.
-			//se le pasa como parametro el id del cliente
-			$buscador_direcciones_fiscales($('#forma-pocpedidos-window').find('input[name=id_cliente]').val());
-		}else{
-			//si no tiene varias direcciones fiscales, se asigna la direccion default
-			$('#forma-pocpedidos-window').find('input[name=dircliente]').val(dir_cliente);
-			$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
-		}
-		var moneda_hmtl = '';
+	$agregarDatosClienteSeleccionado = function($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp){
 		
-		/*
-		//carga el select de monedas  con la moneda del cliente seleccionada por default
-		if(parseInt(num_lista_precio)>0){
-			//aquí se arma la cadena json para traer la moneda de la lista de precio
-			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaListaCliente.json';
-			$arreglo2 = { 'lista_precio':num_lista_precio }
-			$.post(input_json2,$arreglo2,function(entry2){
-				id_moneda=entry2['listaprecio'][0]['moneda_id'];
+		if(cred_susp=='false'){
+			//asignar a los campos correspondientes el sku y y descripcion
+			$('#forma-pocpedidos-window').find('input[name=id_cliente]').val( id_cliente );
+			$('#forma-pocpedidos-window').find('input[name=nocliente]').val( no_control );
+			$('#forma-pocpedidos-window').find('input[name=razoncliente]').val( razon_social );
+			$('#forma-pocpedidos-window').find('input[name=empresa_immex]').val( empresa_immex );
+			$('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]').val( tasa_ret_immex );
+			$('#forma-pocpedidos-window').find('input[name=cta_mn]').val( cuenta_mn );
+			$('#forma-pocpedidos-window').find('input[name=cta_usd]').val( cuenta_usd );
+			$('#forma-pocpedidos-window').find('input[name=num_lista_precio]').val( num_lista_precio );
+			//por default asignamos cero para el campo id de Direccion Fiscal, esto significa que la direccion se tomara de la tabla de clientes
+			$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
+			
+			if(tiene_dir_fiscal=='true'){
+				//llamada a la funcion que busca las direcciones fiscales del cliente.
+				//se le pasa como parametro el id del cliente
+				$buscador_direcciones_fiscales($('#forma-pocpedidos-window').find('input[name=id_cliente]').val());
+			}else{
+				//si no tiene varias direcciones fiscales, se asigna la direccion default
+				$('#forma-pocpedidos-window').find('input[name=dircliente]').val(dir_cliente);
+				$('#forma-pocpedidos-window').find('input[name=id_df]').val(0);
+			}
+			var moneda_hmtl = '';
+			
+			/*
+			//carga el select de monedas  con la moneda del cliente seleccionada por default
+			if(parseInt(num_lista_precio)>0){
+				//aquí se arma la cadena json para traer la moneda de la lista de precio
+				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMonedaListaCliente.json';
+				$arreglo2 = { 'lista_precio':num_lista_precio }
+				$.post(input_json2,$arreglo2,function(entry2){
+					id_moneda=entry2['listaprecio'][0]['moneda_id'];
+					$select_moneda.children().remove();
+					$.each(array_monedas ,function(entryIndex,moneda){
+						if( parseInt(moneda['id']) == parseInt(id_moneda) ){
+							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
+						}else{
+							//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+						}
+					});
+					$select_moneda.append(moneda_hmtl);
+				});
+			}else{
 				$select_moneda.children().remove();
 				$.each(array_monedas ,function(entryIndex,moneda){
 					if( parseInt(moneda['id']) == parseInt(id_moneda) ){
 						moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
 					}else{
-						//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+						moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 					}
 				});
 				$select_moneda.append(moneda_hmtl);
-			});
-		}else{
+			}
+			*/
+			
+			
 			$select_moneda.children().remove();
 			$.each(array_monedas ,function(entryIndex,moneda){
 				if( parseInt(moneda['id']) == parseInt(id_moneda) ){
@@ -550,134 +565,128 @@ $(function() {
 				}
 			});
 			$select_moneda.append(moneda_hmtl);
-		}
-		*/
-		
-		
-		$select_moneda.children().remove();
-		$.each(array_monedas ,function(entryIndex,moneda){
-			if( parseInt(moneda['id']) == parseInt(id_moneda) ){
-				moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
-			}else{
-				moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-			}
-		});
-		$select_moneda.append(moneda_hmtl);
-		
-		
-		
-		//carga select de condiciones con los dias de Credito default del Cliente
-		$select_condiciones.children().remove();
-		var hmtl_condiciones;
-		$.each(array_condiciones, function(entryIndex,condicion){
-			if( parseInt(condicion['id']) == parseInt(id_termino) ){
-				hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes">' + condicion['descripcion'] + '</option>';
-			}else{
-				hmtl_condiciones += '<option value="' + condicion['id'] + '" >' + condicion['descripcion'] + '</option>';
-			}
-		});
-		$select_condiciones.append(hmtl_condiciones);
-		
-		//carga select de vendedores
-		$select_vendedor.children().remove();
-		var hmtl_vendedor;
-		$.each(array_vendedores,function(entryIndex,vendedor){
-			if( parseInt(vendedor['id']) == parseInt(id_vendedor) ){
-				hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_agente'] + '</option>';
-			}else{
-				hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
-			}
-		});
-		$select_vendedor.append(hmtl_vendedor);
-		
-		//alert("id_metodo_de_pago: "+id_metodo_de_pago);
-		if(parseInt(id_metodo_de_pago)==0){
-			id_metodo_de_pago=6;//si el cliente no tiene asignado un metodo de pago, se le asigna por default 6=No Identificado
-		}
-		
-		//carga select de metodos de pago
-		$select_metodo_pago.children().remove();
-		var hmtl_metodo;
-		$.each(array_metodos_pago,function(entryIndex,metodo){
-			if ( parseInt(metodo['id']) == parseInt(id_metodo_de_pago) ){
-				hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes">' + metodo['titulo'] + '</option>';
-			}else{
-				hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
-			}
-		});
-		$select_metodo_pago.append(hmtl_metodo);
-		
-		
-		if(parseInt(id_metodo_de_pago)>0){
-			$no_cuenta.val('');
 			
-			//valor_metodo 2=Tarjeta Credito, 3=Tarjeta Debito
-			if(parseInt(id_metodo_de_pago)==2 || parseInt(id_metodo_de_pago)==3){
-				//si esta desahabilitado, hay que habilitarlo para permitir la captura de los digitos de la tarjeta.
-				if($no_cuenta.is(':disabled')) {
-					$no_cuenta.removeAttr('disabled');
-				}
-				
-				//quitar propiedad de solo lectura
-				$no_cuenta.removeAttr('readonly');
-				
-				if($etiqueta_digit.is(':disabled')) {
-					$etiqueta_digit.removeAttr('disabled');
-				}
-				
-				$etiqueta_digit.val('Ingrese los ultimos 4 Digitos de la Tarjeta');
-			}
 			
-			//id_metodo_de_pago 4=Cheque Nominativo, 5=Transferencia Electronica de Fondos
-			if(parseInt(id_metodo_de_pago)==4 || parseInt(id_metodo_de_pago)==5){
-				//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
-				if($no_cuenta.is(':disabled')) {
-					$no_cuenta.removeAttr('disabled');
-				}
-				
-				//fijar propiedad de solo lectura en verdadero
-				$no_cuenta.attr('readonly',true);
-				
-				if($etiqueta_digit.is(':disabled')) {
-					$etiqueta_digit.removeAttr('disabled');
-				}
-				
-				if(parseInt($select_moneda.val())==1){
-					$etiqueta_digit.val('Numero de Cuenta para pago en Pesos');
-					$no_cuenta.val($('#forma-pocpedidos-window').find('input[name=cta_mn]').val());
+			
+			//carga select de condiciones con los dias de Credito default del Cliente
+			$select_condiciones.children().remove();
+			var hmtl_condiciones;
+			$.each(array_condiciones, function(entryIndex,condicion){
+				if( parseInt(condicion['id']) == parseInt(id_termino) ){
+					hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes">' + condicion['descripcion'] + '</option>';
 				}else{
-					$etiqueta_digit.val('Numero de Cuenta en Dolares');
-					$no_cuenta.val($('#forma-pocpedidos-window').find('input[name=cta_usd]').val());
+					hmtl_condiciones += '<option value="' + condicion['id'] + '" >' + condicion['descripcion'] + '</option>';
 				}
-			}
+			});
+			$select_condiciones.append(hmtl_condiciones);
 			
-			//id_metodo_de_pago 1=Efectivo, 6=No Identificado
-			if(parseInt(id_metodo_de_pago)==1 || parseInt(id_metodo_de_pago)==6){
-				if(!$no_cuenta.is(':disabled')) {
-					$no_cuenta.attr('disabled','-1');
-				}
-				if(!$etiqueta_digit.is(':disabled')) {
-					$etiqueta_digit.attr('disabled','-1');
-				}
-			}
-			
-			//id_metodo_de_pago 7=NA(No Aplica)
-			if(parseInt(id_metodo_de_pago)==7){
-				$no_cuenta.show();
-				$no_cuenta.val('NA');
-				//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
-				if($no_cuenta.is(':disabled')) {
-					$no_cuenta.removeAttr('disabled');
-				}
-				if($etiqueta_digit.is(':disabled')) {
-					$etiqueta_digit.removeAttr('disabled');
-				}
-				if(parseInt($select_moneda.val())==1){
-					$etiqueta_digit.val('Numero de Cuenta para pago en Pesos');
+			//carga select de vendedores
+			$select_vendedor.children().remove();
+			var hmtl_vendedor;
+			$.each(array_vendedores,function(entryIndex,vendedor){
+				if( parseInt(vendedor['id']) == parseInt(id_vendedor) ){
+					hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes">' + vendedor['nombre_agente'] + '</option>';
 				}else{
-					$etiqueta_digit.val('Numero de Cuenta en Dolares');
+					hmtl_vendedor += '<option value="' + vendedor['id'] + '" >' + vendedor['nombre_agente'] + '</option>';
+				}
+			});
+			$select_vendedor.append(hmtl_vendedor);
+			
+			//alert("id_metodo_de_pago: "+id_metodo_de_pago);
+			if(parseInt(id_metodo_de_pago)==0){
+				id_metodo_de_pago=6;//si el cliente no tiene asignado un metodo de pago, se le asigna por default 6=No Identificado
+			}
+			
+			//carga select de metodos de pago
+			$select_metodo_pago.children().remove();
+			var hmtl_metodo;
+			$.each(array_metodos_pago,function(entryIndex,metodo){
+				if ( parseInt(metodo['id']) == parseInt(id_metodo_de_pago) ){
+					hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes">' + metodo['titulo'] + '</option>';
+				}else{
+					hmtl_metodo += '<option value="' + metodo['id'] + '"  >' + metodo['titulo'] + '</option>';
+				}
+			});
+			$select_metodo_pago.append(hmtl_metodo);
+			
+			
+			if(parseInt(id_metodo_de_pago)>0){
+				$no_cuenta.val('');
+				
+				//valor_metodo 2=Tarjeta Credito, 3=Tarjeta Debito
+				if(parseInt(id_metodo_de_pago)==2 || parseInt(id_metodo_de_pago)==3){
+					//si esta desahabilitado, hay que habilitarlo para permitir la captura de los digitos de la tarjeta.
+					if($no_cuenta.is(':disabled')) {
+						$no_cuenta.removeAttr('disabled');
+					}
+					
+					//quitar propiedad de solo lectura
+					$no_cuenta.removeAttr('readonly');
+					
+					if($etiqueta_digit.is(':disabled')) {
+						$etiqueta_digit.removeAttr('disabled');
+					}
+					
+					$etiqueta_digit.val('Ingrese los ultimos 4 Digitos de la Tarjeta');
+				}
+				
+				//id_metodo_de_pago 4=Cheque Nominativo, 5=Transferencia Electronica de Fondos
+				if(parseInt(id_metodo_de_pago)==4 || parseInt(id_metodo_de_pago)==5){
+					//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
+					if($no_cuenta.is(':disabled')) {
+						$no_cuenta.removeAttr('disabled');
+					}
+					
+					//fijar propiedad de solo lectura en verdadero
+					$no_cuenta.attr('readonly',true);
+					
+					if($etiqueta_digit.is(':disabled')) {
+						$etiqueta_digit.removeAttr('disabled');
+					}
+					
+					if(parseInt($select_moneda.val())==1){
+						$etiqueta_digit.val('Numero de Cuenta para pago en Pesos');
+						$no_cuenta.val($('#forma-pocpedidos-window').find('input[name=cta_mn]').val());
+					}else{
+						$etiqueta_digit.val('Numero de Cuenta en Dolares');
+						$no_cuenta.val($('#forma-pocpedidos-window').find('input[name=cta_usd]').val());
+					}
+				}
+				
+				//id_metodo_de_pago 1=Efectivo, 6=No Identificado
+				if(parseInt(id_metodo_de_pago)==1 || parseInt(id_metodo_de_pago)==6){
+					if(!$no_cuenta.is(':disabled')) {
+						$no_cuenta.attr('disabled','-1');
+					}
+					if(!$etiqueta_digit.is(':disabled')) {
+						$etiqueta_digit.attr('disabled','-1');
+					}
+				}
+				
+				//id_metodo_de_pago 7=NA(No Aplica)
+				if(parseInt(id_metodo_de_pago)==7){
+					$no_cuenta.show();
+					$no_cuenta.val('NA');
+					//si esta desahabilitado, hay que habilitarlo para permitir la captura del Numero de cuenta.
+					if($no_cuenta.is(':disabled')) {
+						$no_cuenta.removeAttr('disabled');
+					}
+					if($etiqueta_digit.is(':disabled')) {
+						$etiqueta_digit.removeAttr('disabled');
+					}
+					if(parseInt($select_moneda.val())==1){
+						$etiqueta_digit.val('Numero de Cuenta para pago en Pesos');
+					}else{
+						$etiqueta_digit.val('Numero de Cuenta en Dolares');
+					}
 				}
 			}
+		}else{
+			jAlert('El cliente '+razon_social+', tiene Cr&eacute;dito Suspendido.', 'Atencion!', function(r) { 
+				$('#forma-pocpedidos-window').find('input[name=nocliente]').val('');
+				$('#forma-pocpedidos-window').find('input[name=razoncliente]').val('');
+				$('#forma-pocpedidos-window').find('input[name=nocliente]').focus();
+			});
 		}
 	}
 	
@@ -781,6 +790,7 @@ $(function() {
 							trr += '<input type="hidden" id="lista_precios" value="'+cliente['lista_precio']+'">';
 							trr += '<input type="hidden" id="metodo_id" value="'+cliente['metodo_pago_id']+'">';
 							trr += '<input type="hidden" id="tiene_df" value="'+cliente['tiene_dir_fiscal']+'">';//variable para indicar si tiene direccion fiscal
+							trr += '<input type="hidden" id="cred_susp" value="'+cliente['credito_suspendido']+'">';//variable para indicar si el credito esta suspendido
 						trr += '</td>';
 						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
 						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
@@ -824,9 +834,10 @@ $(function() {
 					var num_lista_precio =$(this).find('#lista_precios').val();
 					var id_metodo_de_pago=$(this).find('#metodo_id').val();
 					var tiene_dir_fiscal=$(this).find('#tiene_df').val();
+					var cred_susp = $(this).find('#cred_susp').val();
 					
 					//llamada a la funcion para agregar los datos del cliente seleccionado
-					$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal);
+					$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, array_monedas, array_condiciones, array_vendedores, array_metodos_pago, $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp);
 					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -1106,7 +1117,7 @@ $(function() {
 								if($tipo_cambio.val()!='' && $tipo_cambio.val()!=' '){
 									if(exislp=='1'){
 										//llamada a la funcion que agrega el producto al grid
-										$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd);
+										$agrega_producto_grid($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda,id_moneda,$tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto);
 									}else{
 										jAlert(exislp, 'Atencion!', function(r) { 
 											$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
@@ -1158,7 +1169,7 @@ $(function() {
 		var $campo_impuesto_retenido = $('#forma-pocpedidos-window').find('input[name=impuesto_retenido]');
 		var $campo_total = $('#forma-pocpedidos-window').find('input[name=total]');
 		//var $campo_tc = $('#forma-pocpedidos-window').find('input[name=tc]');
-		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
+		//var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $grid_productos = $('#forma-pocpedidos-window').find('#grid_productos');
 		var $empresa_immex = $('#forma-pocpedidos-window').find('input[name=empresa_immex]');
 		var $tasa_ret_immex = $('#forma-pocpedidos-window').find('input[name=tasa_ret_immex]');
@@ -1168,10 +1179,12 @@ $(function() {
 		var impuestoRetenido = 0; //monto del iva retenido de acuerdo a la tasa de retencion immex
 		var sumaTotal = 0; //suma del subtotal + totalImpuesto
 		
+		/*
 		//si valor del impuesto es null o vacio, se le asigna un 0
 		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
 			$valor_impuesto.val(0);
 		}
+		*/
 		
 		$grid_productos.find('tr').each(function (index){
 			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
@@ -1225,7 +1238,7 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas, tcMonProd){
+	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayMonedas, tcMonProd, idImpto, valorImpto){
 		var $id_impuesto = $('#forma-pocpedidos-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-pocpedidos-window').find('input[name=valorimpuesto]');
 		var $incluye_produccion = $('#forma-pocpedidos-window').find('input[name=incluye_pro]');
@@ -1338,8 +1351,8 @@ $(function() {
 					trr += '</td>';
 					trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 						trr += '<input type="text" name="importe'+ tr +'" value="" id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
-						trr += '<input type="hidden" name="id_imp_prod"   value="'+  $id_impuesto.val() +'" id="idimppord">';
-						trr += '<input type="hidden" name="valor_imp"     value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
+						trr += '<input type="hidden" name="id_imp_prod"   value="'+  idImpto +'" id="idimppord">';
+						trr += '<input type="hidden" name="valor_imp"     value="'+  valorImpto +'" id="ivalorimp">';
 						trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="0">';
 					trr += '</td>';
 					
@@ -1821,8 +1834,9 @@ $(function() {
 							var num_lista_precio = entry2['Cliente'][0]['lista_precio'];
 							var id_metodo_de_pago = entry2['Cliente'][0]['metodo_pago_id'];
 							var tiene_dir_fiscal = entry2['Cliente'][0]['tiene_dir_fiscal'];
+							var cred_susp = entry2['Cliente'][0]['credito_suspendido'];
 							
-							$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, entry['Monedas'], entry['Condiciones'],entry['Vendedores'], entry['MetodosPago'], $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal);
+							$agregarDatosClienteSeleccionado($select_moneda,$select_condiciones,$select_vendedor, $select_metodo_pago, entry['Monedas'], entry['Condiciones'],entry['Vendedores'], entry['MetodosPago'], $no_cuenta, $etiqueta_digit, id_cliente, no_control, razon_social, dir_cliente, empresa_immex, tasa_ret_immex, cuenta_mn, cuenta_usd, id_moneda, id_termino, id_vendedor, num_lista_precio, id_metodo_de_pago, tiene_dir_fiscal, cred_susp);
 							
 						}else{
 							$('#forma-pocpedidos-window').find('input[name=id_cliente]').val('');

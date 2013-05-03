@@ -1067,7 +1067,7 @@ $(function() {
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
-								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat($valor_impuesto.val())+'">';
+								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['tasa_iva'])+'">';
 							trr += '</td>';
 							trr += '</tr>';
 							$grid_productos.append(trr);

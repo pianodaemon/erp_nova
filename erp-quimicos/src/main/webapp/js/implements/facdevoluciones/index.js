@@ -860,13 +860,13 @@ $(function() {
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  $(this).agregar_comas( prod['importe'] )  +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
-								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+  parseFloat(prod['importe']) * parseFloat($valor_impuesto.val()) +'">';
+								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+  parseFloat(prod['importe']) * parseFloat(prod['tasa_iva']) +'">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="105">';
 								trr += '<INPUT TYPE="text" 		name="cantidad_dev" value="'+prod['cant_dev']+'" 	readOnly="true"	id="cantdev" style="width:99px; background:#dddddd">';
 								trr += '<input type="hidden" 	name="importe_dev" id="impdev" value="0">';
 								trr += '<input type="hidden" 	name="importe_imp_dev" id="importeimpdev" value="0">';
-								trr += '<INPUT type="hidden"    name="valor_imp"     	value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
+								trr += '<INPUT type="hidden"    name="valor_imp"     	value="'+  prod['tasa_iva'] +'" id="ivalorimp">';
 							trr += '</td>';
 							trr += '</tr>';
 							$grid_productos.append(trr);
