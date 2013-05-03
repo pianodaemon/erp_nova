@@ -806,7 +806,7 @@ $(function() {
 	
 	
 	//buscador de presentaciones disponibles para un producto
-	$buscador_presentaciones_producto = function(rfc_cliente, sku_producto,$nombre_producto,$grid_productos, arrayMonedas){
+	$buscador_presentaciones_producto = function(id_cliente, rfc_cliente, sku_producto,$nombre_producto,$grid_productos, arrayMonedas){
 		var $cliente_listaprecio=  $('#forma-cotizacions-window').find('input[name=num_lista_precio]');
 		var $select_tipo_cotizacion=  $('#forma-cotizacions-window').find('select[name=select_tipo_cotizacion]');
 		
@@ -819,6 +819,7 @@ $(function() {
 					'sku':sku_producto,
 					'lista_precio':$cliente_listaprecio.val(),
 					'tipo':$select_tipo_cotizacion.val(),
+					'id_client':id_cliente,
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 				};
 				
@@ -855,6 +856,8 @@ $(function() {
 										trr += '<span class="img" style="display:none">'+pres['archivo_img']+'</span>';
 										trr += '<span class="desclarga" style="display:none">'+pres['descripcion_larga']+'</span>';
 										trr += '<span class="exislp" style="display:none">'+pres['exis_prod_lp']+'</span>';
+										trr += '<span class="idImpto" style="display:none">'+pres['id_impto']+'</span>';
+										trr += '<span class="valorImpto" style="display:none">'+pres['valor_impto']+'</span>';
 									trr += '</td>';
 								trr += '</tr>';
 								$tabla_resultados.append(trr);
@@ -895,17 +898,14 @@ $(function() {
 								
 								var cantidad = 0;
 								var importe = 0;
-								//var mon_id = $('#forma-cotizacions-window').find('select[name=moneda]').val();
-								//pasamos ceros porque es nuevo
-								var idImp=0;
-								var valorImp=0;
-								
+								var idImpto = $(this).find('span.idImpto').html();
+								var valorImpto = $(this).find('span.valorImpto').html();
 								
 								if($('#forma-cotizacions-window').find('input[name=tc]').val()!='' && $('#forma-cotizacions-window').find('input[name=tc]').val()!=' '){
 									if(exislp=='1'){
 										//aqui se pasan datos a la funcion que agrega el tr en el grid
 										//$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas, idImp, valorImp);
-										$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImp, valorImp, tcMonProd);
+										$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd);
 									}else{
 										jAlert(exislp, 'Atencion!', function(r) { 
 											$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
@@ -1032,8 +1032,6 @@ $(function() {
 		}
 		
 		
-		
-		
 		var encontrado = 0;
 		//busca el sku y la presentacion en el grid
 		$grid_productos.find('tr').each(function (index){
@@ -1101,8 +1099,8 @@ $(function() {
 				
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
 					trr += '<input type="text" 	name="importe" 	class="import'+ tr +'" value="'+importe+'" id="import" readOnly="true" style="width:66px; text-align:right;">';
-					trr += '<input type="hidden" name="id_imp_prod"   value="'+  $id_impuesto.val() +'" id="idimppord">';
-					trr += '<input type="hidden" name="valor_imp"     value="'+  $valor_impuesto.val() +'" id="ivalorimp">';
+					trr += '<input type="hidden" name="id_imp_prod"   value="'+ idImp +'" id="idimppord">';
+					trr += '<input type="hidden" name="valor_imp"     value="'+  valorImp +'" id="ivalorimp">';
 					trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+importeImpuesto+'">';
 				trr += '</td>';
 				
@@ -1467,6 +1465,8 @@ $(function() {
 		$grid_productos.find('tr').each(function (index){
 			var precio_cambiado=0;
 			var importe_cambiado=0;
+			var $tasaIva = $(this).find('#ivalorimp');
+			
 			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
 				
 				if( parseInt($moneda_original.val()) != parseInt(moneda_id) ){
@@ -1496,8 +1496,9 @@ $(function() {
 				
 				//acumula los importes en la variable subtotal
 				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
+				
 				if($(this).find('#totimp').val() != ''){
-					$(this).find('#totimp').val(parseFloat( quitar_comas($(this).find('#import').val()) ) * parseFloat($valor_impuesto.val()));
+					$(this).find('#totimp').val(parseFloat( quitar_comas($(this).find('#import').val()) ) * parseFloat($tasaIva.val()));
 					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
 				}
 			}
@@ -1911,7 +1912,7 @@ $(function() {
 			//agregar producto al grid
 			$agregar_producto.click(function(event){
 				event.preventDefault();
-				$buscador_presentaciones_producto($rfc_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos, entry['Monedas']);
+				$buscador_presentaciones_producto($id_cliente.val(), $rfc_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos, entry['Monedas']);
 			});
 			
 			
@@ -2539,7 +2540,7 @@ $(function() {
 					//agregar producto al grid
 					$agregar_producto.click(function(event){
 						event.preventDefault();
-						$buscador_presentaciones_producto($rfc_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos, entry['Monedas']);
+						$buscador_presentaciones_producto($id_cliente.val(), $rfc_cliente.val(), $sku_producto.val(),$nombre_producto,$grid_productos, entry['Monedas']);
 					});
 					
 					//$fecha.val(mostrarFecha());

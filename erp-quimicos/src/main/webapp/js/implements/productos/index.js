@@ -1242,9 +1242,13 @@ $(function() {
 			
 			//Alimentando select de ivas
 			$select_iva.children().remove();
-			var iva_hmtl = '<option value="0">[--Excento--]</option>';
+			var iva_hmtl = '';
 			$.each(entry['Impuestos'],function(entryIndex,iva){
-				iva_hmtl += '<option value="' + iva['id'] + '"  >' + iva['descripcion'] + '</option>';
+				if(parseInt(iva['id'])==1){
+					iva_hmtl += '<option value="' + iva['id'] + '" selected="yes">' + iva['descripcion'] + '</option>';
+				}else{
+					iva_hmtl += '<option value="' + iva['id'] + '"  >' + iva['descripcion'] + '</option>';
+				}
 			});
 			$select_iva.append(iva_hmtl);
 			
@@ -2266,7 +2270,7 @@ $(function() {
 					
 					//Alimentando select de ivas
 					$select_iva.children().remove();
-					var iva_hmtl = '<option value="0">[--Excento--]</option>';
+					var iva_hmtl = '';
 					$.each(entry['Impuestos'],function(entryIndex,iva){
 						if(parseInt(entry['Producto'][0]['id_impuesto'])==parseInt(iva['id'])){
 							iva_hmtl += '<option value="' + iva['id'] + '" selected="yes">' + iva['descripcion'] + '</option>';
