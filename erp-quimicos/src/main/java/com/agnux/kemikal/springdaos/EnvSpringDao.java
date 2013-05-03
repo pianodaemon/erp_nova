@@ -771,7 +771,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
                 + "inv_prod.sku, inv_prod.descripcion" 
                 + ", pres.titulo as presentacion, inv_prod_unidades.decimales " 
                 + "  from ("+sql_busqueda+") as subt JOIN "
-                + "env_env ON env_env.id=subt.id " 
+                + " env_env as env ON env.id=subt.id " 
                 + " JOIN env_estatus ON env_estatus.id=env.env_estatus_id " 
                 + "JOIN inv_prod ON inv_prod.id=env.inv_prod_id " 
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id " 
@@ -826,7 +826,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new Integer(id)}, new RowMapper(){
+            new Object[]{}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     
@@ -873,7 +873,8 @@ public class EnvSpringDao implements EnvInterfaceDao{
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new Integer(id)}, new RowMapper(){
+            new Object[]{
+            }, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     
