@@ -1276,7 +1276,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_docs_detalles.cantidad,"
             + "fac_docs_detalles.precio_unitario,"
             + "(fac_docs_detalles.cantidad * fac_docs_detalles.precio_unitario) AS importe, "
-            + "gral_mon.descripcion as moneda "
+            + "gral_mon.descripcion as moneda,"
+            + "gral_mon.simbolo AS simbolo_moneda "
         + "FROM fac_docs "
         + "JOIN fac_docs_detalles on fac_docs_detalles.fac_doc_id=fac_docs.id "
         + "LEFT JOIN gral_mon on gral_mon.id = fac_docs.moneda_id "
@@ -1305,6 +1306,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
                     row.put("moneda",rs.getString("moneda"));
+                    row.put("simbolo_moneda",rs.getString("simbolo_moneda"));
                     row.put("denominacion","");
                     
                     /*

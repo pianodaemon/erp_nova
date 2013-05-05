@@ -94,6 +94,7 @@ public final class PdfReporteInventarioExistencias {
             doc.addCreator("valentin.vale8490@gmail.com");
             PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(fileout));
             //PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(fileout));
+            
             writer.setPageEvent(event);
             
             
@@ -879,6 +880,7 @@ public final class PdfReporteInventarioExistencias {
             cb.endText();  
             cb.addTemplate(total, document.right() - adjust , textBase);  //definir la posicion del total de paginas
             //cb.restoreState();
+            
         }
         
         
@@ -889,7 +891,19 @@ public final class PdfReporteInventarioExistencias {
           total.setFontAndSize(helv, 7);  
           total.setTextMatrix(0,0);                                           
           total.showText(String.valueOf(writer.getPageNumber() -1));  
-          total.endText();  
+          total.endText();
+          
+          /*
+            int numeroPaginas = writer.getCurrentPageNumber();
+            System.out.println("getCurrentPageNumber:"+numeroPaginas);
+            System.out.println("getPageNumber:"+writer.getPageNumber());
+            System.out.println("getPageSize:"+writer.getPageSize());
+            
+            if(numeroPaginas>numeroPaginas-1){
+                System.out.println("getCurrentPageNumber2:"+numeroPaginas);
+            }
+           * 
+           */
         }    
     }
 }
