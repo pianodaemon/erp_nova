@@ -16,6 +16,7 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
+import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbradoFormato2;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -308,6 +309,7 @@ public class FacDevolucionesController {
             HashMap<String, String> succes = new HashMap<String, String>();
             HashMap<String, String> userDat = new HashMap<String, String>();
             HashMap<String,String> datos_emisor = new HashMap<String,String>();
+            HashMap<String, String> parametros = new HashMap<String, String>();
             
             //variables para xml de Nota de Credito CFD y CFDI
             HashMap<String,String> dataCliente = new HashMap<String,String>();
@@ -436,6 +438,8 @@ public class FacDevolucionesController {
                     tipo_facturacion = this.getFacdao().getTipoFacturacion();
                     
                     //System.out.println("tipo_facturacion:::"+tipo_facturacion);
+                    //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la Nota de Credito
+                    parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
                     
                     //tipo facturacion CFD
                     if(tipo_facturacion.equals("cfd")){
@@ -461,16 +465,24 @@ public class FacDevolucionesController {
                         
                         String sello_digital = this.getBfcfd().getSelloDigital();
                         //System.out.println("sello_digital:"+sello_digital);
+                        String fechaTimbre = "";
+                        String noCertSAT = "";
                         
                         //conceptos para el pdfcfd
                         listaConceptosPdf = this.getFacdao().getNotaCreditoCfd_ListaConceptosPdf(serieFolio);
                         
                         //datos para el pdf
                         datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
-                        
-                        //pdf factura
-                        pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
-                        //pdfFactura.viewPDF();
+                        datosExtrasPdf.put("fechaTimbre", fechaTimbre);
+                        datosExtrasPdf.put("noCertificadoSAT", noCertSAT);
+        
+                        //pdf Nota
+                        if (parametros.get("formato_factura").equals("2")){
+                            pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
+                            pdfFactura.ViewPDF();
+                        }else{
+                            pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
+                        }
                         
                         jsonretorno.put("folio",serieFolio);
                         
@@ -600,6 +612,8 @@ public class FacDevolucionesController {
                             
                             //este es el folio fiscal del la factura timbrada, se obtiene   del xml
                             String uuid = this.getBfcfditf().getUuid();
+                            String fechaTimbre = this.getBfcfditf().getFechaTimbrado();
+                            String noCertSAT = this.getBfcfditf().getNoCertificadoSAT();
                             
                             //conceptos para el pdfcfd
                             listaConceptosPdf = this.getFacdao().getNotaCreditoCfd_ListaConceptosPdf(serieFolio);
@@ -609,10 +623,16 @@ public class FacDevolucionesController {
                             datosExtrasPdf.put("tipo_facturacion", tipo_facturacion);
                             datosExtrasPdf.put("sello_sat", sello_digital_sat);
                             datosExtrasPdf.put("uuid", uuid);
+                            datosExtrasPdf.put("fechaTimbre", fechaTimbre);
+                            datosExtrasPdf.put("noCertificadoSAT", noCertSAT);
                             
-                            //pdf factura
-                            pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
-                            //pdfFactura.viewPDF();
+                            //pdf Nota
+                            if (parametros.get("formato_factura").equals("2")){
+                                pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
+                                pdfFactura.ViewPDF();
+                            }else{
+                                pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
+                            }
                             
                             jsonretorno.put("folio",Serie+Folio);
                             

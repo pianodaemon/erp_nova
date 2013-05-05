@@ -74,6 +74,9 @@ public class BeanFacturadorCfdiTimbre {
     private String numero_cuenta;
     private String selloDigitalSat;
     private String Uuid;
+    private String fechaTimbrado;
+    private String noCertificadoSAT;
+    private String cadenaOriginalTimbre;
     
     // datos Emisor
     private String razon_social_emisor;
@@ -329,6 +332,13 @@ public class BeanFacturadorCfdiTimbre {
                         this.setSelloDigital(pop2.getSelloCfd());
                         this.setSelloDigitalSat(pop2.getSelloSat());
                         this.setUuid(pop2.getUuid());
+                        this.setFechaTimbrado(pop2.getFecha_timbre());
+                        this.setNoCertificadoSAT(pop2.getNoCertificadoSAT());
+                        
+                        String cadena_xml = FileHelper.stringFromFile(path_file+"/"+ xml_file_name);
+                        String cadena_original_timbre = this.cadenaOriginalTimbre(cadena_xml, this.getId_empresa(), this.getId_sucursal());
+                        
+                        this.setCadenaOriginalTimbre(cadena_original_timbre);
                         
                         //System.out.println("sello sat: "+this.getSelloDigitalSat());
                         //Aqui va la rutina que guarda los datos de este comprobante fiscal a la tabla fac_cfds y fac_docs
@@ -396,7 +406,7 @@ public class BeanFacturadorCfdiTimbre {
                                     */
                             
                             retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
-
+                            
                             break;
                                     
                         }
@@ -1550,4 +1560,35 @@ public class BeanFacturadorCfdiTimbre {
         this.Uuid = Uuid;
     }
     
+    public String getFechaTimbrado() {
+        return fechaTimbrado;
+    }
+
+    public void setFechaTimbrado(String fechaTimbrado) {
+        this.fechaTimbrado = fechaTimbrado;
+    }
+
+    public String getNoCertificadoSAT() {
+        return noCertificadoSAT;
+    }
+
+    public void setNoCertificadoSAT(String noCertificadoSAT) {
+        this.noCertificadoSAT = noCertificadoSAT;
+    }
+    
+    public String getCadenaOriginalTimbre() {
+        return cadenaOriginalTimbre;
+    }
+
+    public void setCadenaOriginalTimbre(String cadenaOriginalTimbre) {
+        this.cadenaOriginalTimbre = cadenaOriginalTimbre;
+    }
+    
+    private String cadenaOriginalTimbre(String comprobante, Integer id_empresa, Integer id_sucursal) throws Exception {
+        String valor_retorno = new String();
+        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
+        valor_retorno = XmlHelper.transformar(comprobante, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
+        
+        return valor_retorno;
+    }
 }

@@ -775,6 +775,7 @@ public class FacturasController {
         HashMap<String,String> dataFacturaCliente = new HashMap<String,String>();
         ArrayList<HashMap<String, String>> listaConceptosPdfCfd = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> datosExtrasPdfCfd= new HashMap<String, String>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
         String generado ="false";
         String dirSalidas = "";
         
@@ -788,6 +789,9 @@ public class FacturasController {
         String tipo_facturacion = this.getFacdao().getTipoFacturacion();
         String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura);
         Integer id_prefactura = this.getFacdao().getIdPrefacturaByIdFactura(id_factura);
+        
+        //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
+        parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
         
         String proposito = "FACTURA";
         String fileout="";
@@ -822,11 +826,12 @@ public class FacturasController {
                 //sacar la fecha del comprobante 
                 String fecha_comprobante=pop.getFecha();
                 
-                
                 //este es el timbre fiscal, solo es para cfdi con timbre fiscal. Aqui debe ir vacio
                 String sello_digital_sat = "";
-                
                 String uuid = "";
+                String fechaTimbre = "";
+                String noCertSAT = "";
+                
                 
                 conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
                 dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
@@ -840,11 +845,17 @@ public class FacturasController {
                 datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                 datosExtrasPdfCfd.put("uuid", uuid);
                 datosExtrasPdfCfd.put("fecha_comprobante", fecha_comprobante);
+                datosExtrasPdfCfd.put("fecha_comprobante", fecha_comprobante);
+                datosExtrasPdfCfd.put("fechaTimbre", fechaTimbre);
+                datosExtrasPdfCfd.put("noCertificadoSAT", noCertSAT);
                 
                 //pdf factura
-                //pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                pdfFactura.ViewPDF();
+                if (parametros.get("formato_factura").equals("2")){
+                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                    pdfFactura.ViewPDF();
+                }else{
+                    pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                }
                 
                 generado ="true";
             } catch (Exception ex) {
@@ -870,7 +881,7 @@ public class FacturasController {
             
             try {
                 
-                String cadena_original = this.cadenaOriginal(cadena_xml, id_empresa, id_sucursal);
+                String cadena_original = this.cadenaOriginalTimbre(cadena_xml, id_empresa, id_sucursal);
                 System.out.println("cadena_original: "+cadena_original);
                 
                 String ruta_fichero_llave = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
@@ -894,6 +905,9 @@ public class FacturasController {
                 String uuid = pop2.getUuid();
                 System.out.println("uuid: "+uuid);
                 
+                String fechaTimbre = pop2.getFecha_timbre();
+                String noCertSAT = pop2.getNoCertificadoSAT();
+                
                 conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
                 dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                 
@@ -906,12 +920,16 @@ public class FacturasController {
                 datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                 datosExtrasPdfCfd.put("uuid", uuid);
                 datosExtrasPdfCfd.put("fecha_comprobante", fecha_comprobante);
+                datosExtrasPdfCfd.put("fechaTimbre", fechaTimbre);
+                datosExtrasPdfCfd.put("noCertificadoSAT", noCertSAT);
                 
                 //pdf factura
-                //pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                
-                pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                pdfFactura.ViewPDF();
+                if (parametros.get("formato_factura").equals("2")){
+                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                    pdfFactura.ViewPDF();
+                }else{
+                    pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                }
                 
                 generado ="true";
                 
@@ -949,4 +967,11 @@ public class FacturasController {
         return valor_retorno;
     }
     
+    private String cadenaOriginalTimbre(String comprobante, Integer id_empresa, Integer id_sucursal) throws Exception {
+        String valor_retorno = new String();
+        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
+        valor_retorno = XmlHelper.transformar(comprobante, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
+        
+        return valor_retorno;
+    }
 }

@@ -142,6 +142,32 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
+
+    @Override
+    public HashMap<String, String> getFac_Parametros(Integer id_emp, Integer id_suc) {
+        HashMap<String, String> mapDatos = new HashMap<String, String>();
+        String sql_query = "SELECT * FROM fac_par WHERE gral_emp_id="+id_emp+" AND gral_suc_id="+id_suc+";";
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
+        
+        mapDatos.put("gral_suc_id", String.valueOf(map.get("gral_suc_id")));
+        mapDatos.put("gral_suc_id_consecutivo", String.valueOf(map.get("gral_suc_id_consecutivo")));
+        mapDatos.put("cxc_mov_tipo_id", String.valueOf(map.get("cxc_mov_tipo_id")));
+        mapDatos.put("inv_alm_id", String.valueOf(map.get("inv_alm_id")));
+        mapDatos.put("gral_emp_id", String.valueOf(map.get("gral_emp_id")));
+        mapDatos.put("formato_pedido", String.valueOf(map.get("formato_pedido")));
+        mapDatos.put("formato_factura", String.valueOf(map.get("formato_factura")));
+        mapDatos.put("permitir_pedido", String.valueOf(map.get("permitir_pedido")));
+        mapDatos.put("permitir_remision", String.valueOf(map.get("permitir_remision")));
+        mapDatos.put("permitir_cambio_almacen", String.valueOf(map.get("permitir_cambio_almacen")));
+        mapDatos.put("permitir_servicios", String.valueOf(map.get("permitir_servicios")));
+        mapDatos.put("permitir_articulos", String.valueOf(map.get("permitir_articulos")));
+        mapDatos.put("permitir_kits", String.valueOf(map.get("permitir_kits")));
+        
+        return mapDatos;
+    }
+
+    
     @Override
     public ArrayList<HashMap<String, Object>> getFacturas_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         

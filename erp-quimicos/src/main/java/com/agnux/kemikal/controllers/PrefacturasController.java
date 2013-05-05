@@ -20,6 +20,7 @@ import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
+import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbradoFormato2;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -519,7 +520,7 @@ public class PrefacturasController {
         System.out.println("Guardar Prefactura");
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
-        
+        HashMap<String, String> parametros = new HashMap<String, String>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         HashMap<String,String> dataFacturaCliente = new HashMap<String,String>();
@@ -612,8 +613,10 @@ public class PrefacturasController {
                     
                     //obtener tipo de facturacion
                     tipo_facturacion = this.getFacdao().getTipoFacturacion();
-                    
                     System.out.println("tipo_facturacion:::"+tipo_facturacion);
+                    
+                    //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
+                    parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
                     
                     //**********************************************************
                     //tipo facturacion CFD
@@ -646,7 +649,9 @@ public class PrefacturasController {
                         String sello_digital_sat = "";
                         //este es el folio fiscal.  Solo es para cfdi con timbre fiscal. Aqui debe ir vacio
                         String uuid="";
-                        
+                        String fechaTimbre = "";
+                        String noCertSAT = "";
+
                         //conceptos para el pdfcfd
                         listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
                         
@@ -655,10 +660,16 @@ public class PrefacturasController {
                         datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
                         datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                         datosExtrasPdfCfd.put("uuid", uuid);
+                        datosExtrasPdfCfd.put("fechaTimbre", fechaTimbre);
+                        datosExtrasPdfCfd.put("noCertificadoSAT", noCertSAT);
                         
                         //pdf factura
-                        pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                        //pdfFactura.viewPDF();
+                        if (parametros.get("formato_factura").equals("2")){
+                            pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                            pdfFactura.ViewPDF();
+                        }else{
+                            pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                        }
                         
                         jsonretorno.put("folio",serieFolio);
                     }
@@ -749,7 +760,7 @@ public class PrefacturasController {
                             //obtiene serie_folio de la factura que se acaba de guardar
                             serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura);
                             
-                            String cadena_original=this.getBfCfdiTf().getCadenaOriginal();
+                            String cadena_original=this.getBfCfdiTf().getCadenaOriginalTimbre();
                             //System.out.println("cadena_original:"+cadena_original);
                             
                             String sello_digital = this.getBfCfdiTf().getSelloDigital();
@@ -760,6 +771,8 @@ public class PrefacturasController {
                             
                             //este es el folio fiscal del la factura timbrada, se obtiene   del xml
                             String uuid = this.getBfCfdiTf().getUuid();
+                            String fechaTimbre = this.getBfCfdiTf().getFechaTimbrado();
+                            String noCertSAT = this.getBfCfdiTf().getNoCertificadoSAT();
                             
                             //conceptos para el pdfcfd
                             listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
@@ -769,10 +782,17 @@ public class PrefacturasController {
                             datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
                             datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
                             datosExtrasPdfCfd.put("uuid", uuid);
+                            datosExtrasPdfCfd.put("fechaTimbre", fechaTimbre);
+                            datosExtrasPdfCfd.put("noCertificadoSAT", noCertSAT);
                             
                             //pdf factura
-                            pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                            //pdfFactura.viewPDF();
+                            if (parametros.get("formato_factura").equals("2")){
+                                pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                                pdfFactura.ViewPDF();
+                            }else{
+                                pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                            }
+                            
                             
                             jsonretorno.put("folio",serieFolio);
                         }

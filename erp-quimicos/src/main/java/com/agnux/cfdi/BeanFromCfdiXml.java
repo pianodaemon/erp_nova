@@ -29,6 +29,8 @@ public class BeanFromCfdiXml {
     private String emisor_rfc;
     private String receptor_rfc;
     private String fecha_comprobante;
+    private String fecha_timbre;
+    private String noCertificadoSAT;
     
     public BeanFromCfdiXml(String fichero) {
         String comprobante = new String();
@@ -88,6 +90,12 @@ public class BeanFromCfdiXml {
                     }
                     if (valor.equals("selloCFD")){
                         setSelloCfd(atts.getValue(i));
+                    }
+                    if (valor.equals("noCertificadoSAT")){
+                        setNoCertificadoSAT(atts.getValue(i));
+                    }
+                    if (valor.equals("FechaTimbrado")){
+                        setFecha_timbre(atts.getValue(i));
                     }
                 }
             }
@@ -174,5 +182,21 @@ public class BeanFromCfdiXml {
 
     public void setFecha_comprobante(String fecha_comprobante) {
         this.fecha_comprobante = fecha_comprobante;
+    }
+    
+    public String getFecha_timbre() {
+        return fecha_timbre;
+    }
+
+    public void setFecha_timbre(String fecha_timbre) {
+        this.fecha_timbre = fecha_timbre;
+    }
+
+    public String getNoCertificadoSAT() {
+        return noCertificadoSAT;
+    }
+
+    public void setNoCertificadoSAT(String noCertificadoSAT) {
+        this.noCertificadoSAT = noCertificadoSAT;
     }
 }
