@@ -4,6 +4,7 @@
  */
 package com.agnux.kemikal.reportes;
 import com.agnux.common.helpers.CodigoQRHelper;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.google.zxing.WriterException;
 import java.io.FileNotFoundException;
@@ -21,7 +22,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  *
@@ -107,18 +107,6 @@ public class pdfCfd_CfdiTimbradoFormato2 {
     
     
     public pdfCfd_CfdiTimbradoFormato2(GralInterfaceDao gDao,HashMap<String, String> datosCliente, ArrayList<HashMap<String, String>> listaConceptos, HashMap<String, String> extras, Integer id_empresa, Integer id_sucursal) {
-        Font negrita_pequena= new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
-        Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
-        Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
-        Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
-        Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 6, Font.BOLD, BaseColor.WHITE);
-             
-        //ImagenPDF ipdf = new ImagenPDF();
-        //CeldaPDF cepdf = new CeldaPDF();
-        //CeldaFother cepdffother = new CeldaFother();
-        //TablaTotales tablaTotales = new TablaTotales();//esta es la nueva tabla totales
-        //TablaInformacionFiscal tablaFiscal = new TablaInformacionFiscal();//tabla para la informacion fiscal
-        
         this.setRows(listaConceptos);
         this.setDatosCliente(datosCliente);
         this.setDatosExtras(extras);
@@ -127,9 +115,6 @@ public class pdfCfd_CfdiTimbradoFormato2 {
         this.setTipo_facturacion(extras.get("tipo_facturacion"));
         this.setSello_digital_sat(extras.get("sello_sat"));
         this.setUuid(extras.get("uuid"));
-        
-        //System.out.println("id_empresa::"+ id_empresa);
-        //System.out.println("Razon_soc: "+ this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa)  );
         
         this.setEmpresa_emisora( this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa) );
         this.setEmisora_rfc(this.getGralDao().getRfcEmpresaEmisora(id_empresa));
@@ -234,7 +219,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
     }
     
     
-    public void ViewPDF() throws URISyntaxException, FileNotFoundException {
+    public void ViewPDF() throws URISyntaxException, FileNotFoundException, Exception {
         Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
         Font smallFont6 = new Font(Font.FontFamily.HELVETICA,6,Font.NORMAL,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
@@ -1236,7 +1221,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
     
     //esta es la tabla para los datos del CLIENTE
     private class celdaDatosFiscales {
-        public PdfPTable addContent() {
+        public PdfPTable addContent() throws Exception {
             Font smallFontBold5 = new Font(Font.FontFamily.HELVETICA,5,Font.BOLD,BaseColor.BLACK);
             Font smallFont6 = new Font(Font.FontFamily.HELVETICA,6,Font.NORMAL,BaseColor.BLACK);
             Font smallFont7 = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
@@ -1291,6 +1276,8 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         cell.setBorderWidthBottom(0);
                         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                         table.addCell(cell);
+                        
+                        FileHelper.delete(RUTA_IMAGEN);
                         
                     } catch (WriterException ex) {
                         Logger.getLogger(pdfCfd_CfdiTimbradoFormato2.class.getName()).log(Level.SEVERE, null, ex);
