@@ -583,6 +583,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + "(CASE WHEN fac_metodos_pago.id=7 THEN 'NO APLICA' ELSE erp_prefacturas.no_cuenta END ) AS no_cuenta, "
                         + "cxc_clie_credias.descripcion AS condicion_pago,"
                         + "gral_mon.iso_4217 AS moneda, "
+                        + "gral_mon.simbolo AS simbolo_moneda, "
                         + "erp_prefacturas.tipo_cambio, "
                         + "cxc_clie.numero_control, "
                         + "cxc_clie.razon_social, "
@@ -624,6 +625,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         data.put("comprobante_attr_subtotal",this.getSubTotal());
         data.put("comprobante_attr_total",this.getTotal());
         data.put("comprobante_attr_moneda",map.get("moneda").toString().toUpperCase());
+        data.put("comprobante_attr_simbolo_moneda",map.get("simbolo_moneda").toString().toUpperCase());
         data.put("comprobante_attr_tc",StringHelper.roundDouble(map.get("tipo_cambio").toString(), 4));
         data.put("comprobante_attr_metododepago",map.get("metodo_pago").toString().toUpperCase());
         String no_cta ="";
@@ -716,7 +718,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         montoTotal = sumaImporte + sumaImpuesto - monto_retencion;
         
         this.setSubTotal(StringHelper.roundDouble(sumaImporte,2));
-        //this.setImpuestoTrasladado(StringHelper.roundDouble(sumaImpuesto,2));
+        this.setImpuestoTrasladado(StringHelper.roundDouble(sumaImpuesto,2));
         this.setImpuestoRetenido(StringHelper.roundDouble(monto_retencion,2));
         this.setTasaRetencion(StringHelper.roundDouble(tasa_retencion,2));
         this.setTotal(StringHelper.roundDouble(montoTotal,2));
@@ -2353,6 +2355,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "''::character varying AS no_cuenta, "
                     + "'No aplica'::character varying AS condicion_pago, "
                     + "fac_nota_credito.subtotal, "
+                    + "gral_mon.descripcion_abr AS moneda_abr, "
+                    + "gral_mon.simbolo AS simbolo_moneda,"
+                    + "gral_mon.iso_4217 AS moneda_iso,"
+                    + "gral_mon.descripcion AS moneda_titulo,"
                     + "cxc_clie.numero_control, "
                     + "cxc_clie.razon_social, "
                     + "cxc_clie.rfc, "
@@ -2370,6 +2376,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
                 + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
                 + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
+                + "JOIN gral_mon ON gral_mon.id=fac_nota_credito.moneda_id "
                 + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_nota_credito.cxc_clie_df_id "
                 + "WHERE fac_nota_credito.id="+id_nota_credito;
         
@@ -2389,9 +2396,13 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         data.put("comprobante_attr_formadepago","PAGO EN UNA SOLA EXIBICION");
         data.put("comprobante_attr_motivodescuento","");
         data.put("comprobante_attr_descuento","0.00");
-        data.put("comprobante_attr_subtotal",this.getSubTotal());
+        data.put("comprobante_attr_subtotal",map.get("subtotal").toString().toUpperCase());
         data.put("comprobante_attr_total",this.getTotal());
         data.put("comprobante_attr_metododepago",map.get("metodo_pago").toString().toUpperCase());
+        data.put("comprobante_attr_simbolo_moneda",map.get("simbolo_moneda").toString().toUpperCase());
+        data.put("moneda_abr",map.get("moneda_abr").toString().toUpperCase());
+        data.put("nombre_moneda",map.get("moneda_titulo").toString().toUpperCase());
+        data.put("comprobante_attr_moneda",map.get("moneda_iso").toString().toUpperCase());        
         
         String no_cta ="";
         if (!map.get("no_cuenta").toString().equals("null") && !map.get("no_cuenta").toString().equals("")){
@@ -2480,8 +2491,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "1::double precision AS cantidad, "
                     + "''::character varying AS unidad, "
                     + "gral_mon.descripcion as moneda, "
-                    + "fac_nota_credito.total AS precio_unitario, "
-                    + "fac_nota_credito.total AS importe "
+                    + "fac_nota_credito.subtotal AS precio_unitario, "
+                    + "fac_nota_credito.subtotal AS importe "
                 + "FROM fac_nota_credito "
                 + "LEFT JOIN gral_mon ON gral_mon.id = fac_nota_credito.moneda_id "
                 + "WHERE fac_nota_credito.serie_folio='"+serieFolio+"';";
@@ -2553,7 +2564,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         extras.put("moneda_abr", mapVendedorCondiciones.get("moneda_abr").toString());
         extras.put("nombre_vendedor", mapVendedorCondiciones.get("nombre_vendedor").toString());
         extras.put("observaciones", mapVendedorCondiciones.get("observaciones").toString() );
-        extras.put("fecha_comprobante", mapVendedorCondiciones.get("fecha_comprobante").toString() );
+        //extras.put("fecha_comprobante", mapVendedorCondiciones.get("fecha_comprobante").toString() );
         extras.put("terminos", "");
         extras.put("dias", "0");
         extras.put("orden_compra", "" );
@@ -2623,8 +2634,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         String sql_to_query = ""
                 + "SELECT "
                     + "fac_nota_credito.moneda_id, "
-                    + "gral_mon.descripcion_abr AS simbolo_moneda, "
+                    + "gral_mon.descripcion_abr AS moneda_abr, "
                     + "gral_mon.iso_4217 AS nombre_moneda,"
+                    + "gral_mon.simbolo AS simbolo_moneda, "
                     + "fac_nota_credito.tipo_cambio, "
                     + "(CASE WHEN fac_nota_credito.cxc_agen_id=0 THEN '' ELSE cxc_agen.nombre END ) AS clave_agente, "
                     + "fac_nota_credito.subtotal as subtotal_conceptos, "
@@ -2647,6 +2659,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         datosExtras.put("orden_compra", "");
         datosExtras.put("clave_agente", map.get("clave_agente").toString());
         datosExtras.put("nombre_moneda", map.get("nombre_moneda").toString());
+        datosExtras.put("simbolo_moneda", map.get("simbolo_moneda").toString());
+        datosExtras.put("moneda_abr", map.get("moneda_abr").toString());
         datosExtras.put("tipo_cambio", StringHelper.roundDouble(map.get("tipo_cambio").toString(),4));
         datosExtras.put("subtotal_conceptos", StringHelper.roundDouble(map.get("subtotal_conceptos").toString(),2));
         datosExtras.put("monto_total", StringHelper.roundDouble(map.get("monto_total").toString(),2));
@@ -2663,7 +2677,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         //convertir a mayuscula la primera letra de la cadena
         String numeroMay = numero.substring(0, 1).toUpperCase() + numero.substring(1, numero.length());
         
-        denom = map.get("simbolo_moneda").toString();
+        denom = map.get("moneda_abr").toString();
         
         if(centavos.equals(num.toString())){
             centavos="00";

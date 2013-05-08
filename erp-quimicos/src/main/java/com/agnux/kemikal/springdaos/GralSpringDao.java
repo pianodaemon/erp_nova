@@ -335,13 +335,6 @@ public class GralSpringDao implements GralInterfaceDao{
 
 
 
-
-
-
-
-
-
-
     @Override
     public String getFolioFactura(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf_folios.folio_actual "

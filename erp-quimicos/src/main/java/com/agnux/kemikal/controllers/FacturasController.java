@@ -784,6 +784,7 @@ public class FacturasController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        String rfcEmpresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
         //obtener tipo de facturacion
         String tipo_facturacion = this.getFacdao().getTipoFacturacion();
@@ -798,7 +799,7 @@ public class FacturasController {
         File file;
         
         if(tipo_facturacion.equals("cfd")){
-            dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+            dirSalidas = this.getGralDao().getCfdEmitidosDir() + rfcEmpresa;
             fileout = dirSalidas +"/"+ serieFolio +".pdf";
             System.out.println("Ruta: " + fileout);
             file = new File(fileout);
@@ -813,7 +814,7 @@ public class FacturasController {
                 String cadena_original = this.cadenaOriginal(cadena_xml, id_empresa, id_sucursal);
                 System.out.println("cadena_original: "+cadena_original);
                 
-                String ruta_fichero_llave = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
+                String ruta_fichero_llave = this.getGralDao().getSslDir() + rfcEmpresa + "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
                 System.out.println("ruta_fichero_llave: "+ruta_fichero_llave);
                 
                 String sello_digital_emisor = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal), cadena_original);
@@ -868,7 +869,7 @@ public class FacturasController {
         
         
         if(tipo_facturacion.equals("cfditf")){
-            dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+            dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresa;
             fileout = dirSalidas +"/"+ serieFolio +".pdf";
             file = new File(fileout);
             if (file.exists()){
@@ -884,7 +885,7 @@ public class FacturasController {
                 String cadena_original = this.cadenaOriginalTimbre(cadena_xml, id_empresa, id_sucursal);
                 System.out.println("cadena_original: "+cadena_original);
                 
-                String ruta_fichero_llave = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+ "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
+                String ruta_fichero_llave = this.getGralDao().getSslDir() + rfcEmpresa + "/" + this.getGralDao().getFicheroLlavePrivada(id_empresa, id_sucursal);
                 System.out.println("ruta_fichero_llave: "+ruta_fichero_llave);
                 
                 String sello_digital_emisor = CryptoEngine.sign(ruta_fichero_llave, this.getGralDao().getPasswordLlavePrivada(id_empresa, id_sucursal), cadena_original);
@@ -907,6 +908,7 @@ public class FacturasController {
                 
                 String fechaTimbre = pop2.getFecha_timbre();
                 String noCertSAT = pop2.getNoCertificadoSAT();
+                String rfcReceptor = pop2.getReceptor_rfc();
                 
                 conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
                 dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);

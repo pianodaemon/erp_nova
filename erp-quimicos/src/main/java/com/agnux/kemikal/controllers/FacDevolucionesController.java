@@ -452,6 +452,9 @@ public class FacDevolucionesController {
                         command_selected = "genera_nota_credito_cfd";
                         //extra_data_array = "'sin datos'";
                         datosExtras = this.getFacdao().getNotaCreditoCfd_DatosExtrasXml(id_nota_credito,tipo_cambio_nota,String.valueOf(id_usuario),select_moneda,id_empresa, id_sucursal, app_selected, command_selected, extra_data_array, fac_saldado);
+                        dataCliente.put("comprobante_attr_tc", String.valueOf(datosExtras.get("tipo_cambio")));
+                        datosExtras.put("moneda_abr", String.valueOf(dataCliente.get("moneda_abr")));
+                        datosExtras.put("nombre_moneda", String.valueOf(dataCliente.get("nombre_moneda")));
                         
                         //xml nota de credito cfd
                         this.getBfcfd().init(dataCliente, listaConceptos,impRetenidos,impTrasladados , proposito,datosExtras, id_empresa, id_sucursal);
@@ -475,7 +478,8 @@ public class FacDevolucionesController {
                         datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
                         datosExtrasPdf.put("fechaTimbre", fechaTimbre);
                         datosExtrasPdf.put("noCertificadoSAT", noCertSAT);
-        
+                        datosExtrasPdf.put("fecha_comprobante", this.getBfcfd().getFecha());
+                        
                         //pdf Nota
                         if (parametros.get("formato_factura").equals("2")){
                             pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
@@ -510,6 +514,9 @@ public class FacDevolucionesController {
                         impTrasladados = this.getFacdao().getNotaCreditoCfdi_ImpuestosTrasladados(id_nota_credito);
                         impRetenidos = this.getFacdao().getNotaCreditoCfdi_ImpuestosRetenidos(id_nota_credito);
                         //leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
+                        
+                        dataCliente.put("comprobante_attr_tc", String.valueOf(datosExtras.get("tipo_cambio")));
+                        dataCliente.put("comprobante_attr_moneda", String.valueOf(datosExtras.get("nombre_moneda")));
                         
                         //generar archivo de texto para cfdi
                         this.getBfcfdi().init(dataCliente, listaConceptos,impRetenidos,impTrasladados, leyendas, proposito,datosExtras, id_empresa, id_sucursal);
@@ -625,6 +632,7 @@ public class FacDevolucionesController {
                             datosExtrasPdf.put("uuid", uuid);
                             datosExtrasPdf.put("fechaTimbre", fechaTimbre);
                             datosExtrasPdf.put("noCertificadoSAT", noCertSAT);
+                            datosExtrasPdf.put("fecha_comprobante", this.getBfcfditf().getFecha());
                             
                             //pdf Nota
                             if (parametros.get("formato_factura").equals("2")){

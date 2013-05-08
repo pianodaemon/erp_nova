@@ -501,7 +501,9 @@ public class NotasCreditoController {
                         command_selected = "genera_nota_credito_cfd";
                         extra_data_array = "'sin datos'";
                         datosExtras = this.getFacdao().getNotaCreditoCfd_DatosExtrasXml(id_nota_credito,tipo_cambio,String.valueOf(id_usuario),select_moneda,id_empresa,id_sucursal,app_selected, command_selected, extra_data_array, fac_saldado);
-                        
+                        dataCliente.put("comprobante_attr_tc", String.valueOf(datosExtras.get("tipo_cambio")));
+                        datosExtras.put("moneda_abr", String.valueOf(dataCliente.get("moneda_abr")));
+                        datosExtras.put("nombre_moneda", String.valueOf(dataCliente.get("nombre_moneda")));
                         
                         //xml factura
                         this.getBf().init(dataCliente, listaConceptos,impRetenidos,impTrasladados , proposito, datosExtras, id_empresa, id_sucursal);
@@ -515,6 +517,7 @@ public class NotasCreditoController {
                         
                         String sello_digital = this.getBf().getSelloDigital();
                         //System.out.println("sello_digital:"+sello_digital);
+                        
                         
                         //este es el timbre fiscal, solo es para cfdi con timbre fiscal. Aqui debe ir vacio
                         String sello_digital_sat = "";
@@ -532,6 +535,7 @@ public class NotasCreditoController {
                         datosExtrasPdf.put("uuid", uuid);
                         datosExtrasPdf.put("fechaTimbre", fechaTimbre);
                         datosExtrasPdf.put("noCertificadoSAT", noCertSAT);
+                        datosExtrasPdf.put("fecha_comprobante", this.getBf().getFecha());
                         
                         //pdf Nota
                         if (parametros.get("formato_factura").equals("2")){
@@ -659,9 +663,10 @@ public class NotasCreditoController {
                             //obtiene serie_folio de la Nota de Credito que se acaba de guardar
                             serieFolio = this.getFacdao().getSerieFolioNotaCredito(id_nota_credito);
                             
-                            String cadena_original=this.getBfcfditf().getCadenaOriginal();
+                            String cadena_original=this.getBfcfditf().getCadenaOriginalTimbre();
                             //System.out.println("cadena_original:"+cadena_original);
-                        
+                            
+                            
                             String sello_digital = this.getBfcfditf().getSelloDigital();
                             //System.out.println("sello_digital:"+sello_digital);
                             
@@ -684,6 +689,7 @@ public class NotasCreditoController {
                             datosExtrasPdf.put("uuid", uuid);
                             datosExtrasPdf.put("fechaTimbre", fechaTimbre);
                             datosExtrasPdf.put("noCertificadoSAT", noCertSAT);
+                            datosExtrasPdf.put("fecha_comprobante", this.getBfcfditf().getFecha());
                             
                             //pdf factura
                             if (parametros.get("formato_factura").equals("2")){
