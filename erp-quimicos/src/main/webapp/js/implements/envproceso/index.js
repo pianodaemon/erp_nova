@@ -995,7 +995,85 @@ $(function() {
                  }
              });
         }
+        
+        
+        $activa_campos_por_estatus = function(){
+            //carga select de Estatus
+            var $select_estatus = $('#forma-envproceso-window').find('select[name=select_estatus]');
+            var $generarpdf = $('#forma-envproceso-window').find('#generarpdf');
+            //alert($select_estatus.val());
+            $generarpdf.hide();
+            
+            if(parseInt($select_estatus.val()) == 0){
+                $select_estatus.children().remove();
+                var estatus_html = '<option value="0">[-Estatus--]</option>';
+                $.each(arrayEstatus,function(entryIndex,est){
+                    if(est['id'] == 1){
+                        estatus_html += '<option value="' + est['id'] + '" selected="yes" >' + est['titulo'] + '</option>';
+                    }
+                });
+                $select_estatus.append(estatus_html);
+            }
+            
+            if(parseInt($select_estatus.val()) == 1){
+                $select_estatus.children().remove();
+                var estatus_html = '';
+                $.each(arrayEstatus,function(entryIndex,est){
+                    if(est['id'] == 1){
+                        estatus_html += '<option value="' + est['id'] + '" selected="yes" >' + est['titulo'] + '</option>';
+                    }else{
+                        if((est['id'] == 2) || (est['id'] == 4)){
+                            estatus_html += '<option value="' + est['id'] + '" >' + est['titulo'] + '</option>';
+                        }
+                    }
+                });
+                $select_estatus.append(estatus_html);
+            }
+            
+            
+            if(parseInt($select_estatus.val()) == 2){
+                $select_estatus.children().remove();
+                var estatus_html = '';
+                $.each(arrayEstatus,function(entryIndex,est){
+                    if(est['id'] == 2){
+                        estatus_html += '<option value="' + est['id'] + '" selected="yes" >' + est['titulo'] + '</option>';
+                    }else{
+                        if(est['id'] == 3){
+                            estatus_html += '<option value="' + est['id'] + '" >' + est['titulo'] + '</option>';
+                        }
+                    }
+                });
+                $select_estatus.append(estatus_html);
+            }
+            
+            if(parseInt($select_estatus.val()) == 3){
+                $select_estatus.children().remove();
+                var estatus_html = '';
+                $.each(arrayEstatus,function(entryIndex,est){
+                    if(est['id'] == 3){
+                        estatus_html += '<option value="' + est['id'] + '" selected="yes" >' + est['titulo'] + '</option>';
+                    }
+                });
+                $select_estatus.append(estatus_html);
+            }
+            
+            if(parseInt($select_estatus.val()) == 4){
+                $generarpdf.show();
+                
+                $select_estatus.children().remove();
+                var estatus_html = '';
+                $.each(arrayEstatus,function(entryIndex,est){
+                    if(est['id'] == 4){
+                        estatus_html += '<option value="' + est['id'] + '" selected="yes" >' + est['titulo'] + '</option>';
+                    }
+                });
+                $select_estatus.append(estatus_html);
+            }
+            
+            
+        }
 	
+        
 	//nuevo 
 	$new_envProceso.click(function(event){
 		event.preventDefault();
@@ -1058,7 +1136,6 @@ $(function() {
 		$unidad.css({'background' : '#F0F0F0'});
 		
 		
-		
 		//quitar enter a todos los campos input
 		$('#forma-envproceso-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
@@ -1117,10 +1194,10 @@ $(function() {
 							var presentacion_destino = $campo_input.parent().parent().find('select[name=select_pres_dest]').find('option:selected').text();
 							
 							var tr_warning = '<tr>';
-									tr_warning += '<td width="20"><div><img src="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
-									tr_warning += '<td width="150"><input type="text" value="' + almacen_destino + '" class="borde_oculto" readOnly="true" style="width:148px; color:red"></td>';
-									tr_warning += '<td width="100"><input type="text" value="' + presentacion_destino + '" class="borde_oculto" readOnly="true" style="width:100px; color:red"></td>';
-									tr_warning += '<td width="560"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:560px; color:red"></td>';
+                                                            tr_warning += '<td width="20"><div><img src="../../img/icono_advertencia.png" align="top" rel="warning_sku"></td>';
+                                                            tr_warning += '<td width="150"><input type="text" value="' + almacen_destino + '" class="borde_oculto" readOnly="true" style="width:148px; color:red"></td>';
+                                                            tr_warning += '<td width="100"><input type="text" value="' + presentacion_destino + '" class="borde_oculto" readOnly="true" style="width:100px; color:red"></td>';
+                                                            tr_warning += '<td width="560"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:560px; color:red"></td>';
 							tr_warning += '</tr>';
 							
 							$('#forma-envproceso-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
@@ -1194,6 +1271,7 @@ $(function() {
                     $select_estatus.append(estatus_html);
                     
                     arrayAlmacenes = entry['Almacenes'];
+                    $activa_campos_por_estatus();
                     
 		});//termina llamada json
 		
@@ -1215,7 +1293,7 @@ $(function() {
                 $(this).aplicarEventoKeypressEjecutaTrigger($descripcion, $buscar_orden);
                 $(this).aplicarEventoKeypressEjecutaTrigger($folio, $buscar_orden);
                 $(this).aplicarEventoKeypressEjecutaTrigger($codigo, $buscar_orden);
-		
+		$activa_campos_por_estatus();
 		
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
@@ -1297,7 +1375,8 @@ $(function() {
 
                         //href para Agregar y Buscar producto
                         var $buscar_orden = $('#forma-envproceso-window').find('#buscar_orden');
-
+                        var $generarpdf = $('#forma-envproceso-window').find('#generarpdf');
+                        
                         //grid de productos
                         var $grid_productos = $('#forma-envproceso-window').find('#grid_productos');
 
@@ -1506,6 +1585,7 @@ $(function() {
                                                 $.each(entry['DatosDet'],function(entryIndex,element){
                                                     id_presentacion = 0;
                                                     equivalente = 0;
+                                                    
                                                     $.each(arrayPresentacionEnv,function(entryIndex,pres){
                                                         if(element['env_conf_id'] == pres['id_env']){
                                                             id_presentacion = pres['id'];
@@ -1525,7 +1605,7 @@ $(function() {
                                             }else{
                                                 jAlert("No hay configurtaci&oacute;n para "+codigo_prod_buscador+"", 'Atencion!');
                                             }
-
+                                            
                                         });//termina llamada json
                                         
                                         $hora.TimepickerInputMask();
@@ -1533,9 +1613,19 @@ $(function() {
                                        /*Autocompletar para los campos Equipo y operador*/
                                         var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAutocompleteOperarios.json';
                                         $autocomplete_input($operador, input_json);
-
+                                        
                                         var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAutocompleteEquipo.json';
                                         $autocomplete_input($equipo, input_json);
+                                        
+                                        $activa_campos_por_estatus();
+                                        
+                                        
+                                        var iu =$('#lienzo_recalculable').find('input[name=iu]').val();
+                                        $generarpdf.click(function(event){
+                                            var cadena = $identificador.val();
+                                            var input_json =document.location.protocol + '//' + document.location.host + '/'+controller+'/getReportEnvasado/'+cadena+'/'+iu+'/out.json';
+                                            window.location.href=input_json;
+                                        });
                                         
 				},"json");//termina llamada json
 				
@@ -1555,7 +1645,7 @@ $(function() {
                                         $buscar.trigger('click');
                                 });
                                 
-				
+				$activa_campos_por_estatus();
 			}
 		}
 	}
