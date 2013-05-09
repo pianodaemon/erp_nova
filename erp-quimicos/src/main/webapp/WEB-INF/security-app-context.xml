@@ -115,7 +115,9 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_COT_POLITICAS_PAGO,
         ROLE_ENV_CONFIGURACION,
         ROLE_ENV_REENVASADO,
-        ROLE_FAC_CONSULTA_CANCELACION" />
+        ROLE_FAC_CONSULTA_CANCELACION,
+        ROLE_ORDEN_PRODUCCION_SUBENSAMBLE,
+        ROLE_PRODUCCION_SUBENSAMBLE" />
         
         
         
@@ -252,8 +254,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         
         
         <!--Paco, Noe-->
-        <intercept-url pattern="/controllers/invordpresuben/startup.agnux" access="ROLE_ADMIN" />
-        <intercept-url pattern="/controllers/invordsubensamble/startup.agnux" access="ROLE_ADMIN,ROLE_CONSULTAS_ALMACEN" />
+        <intercept-url pattern="/controllers/invordpresuben/startup.agnux" access="ROLE_ADMIN,ROLE_ORDEN_PRODUCCION_SUBENSAMBLE" />
+        <intercept-url pattern="/controllers/invordsubensamble/startup.agnux" access="ROLE_ADMIN,ROLE_CONSULTAS_ALMACEN,ROLE_PRODUCCION_SUBENSAMBLE" />
         
         
         <!--Luis y vale (duo dinamico)-->

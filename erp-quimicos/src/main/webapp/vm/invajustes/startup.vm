@@ -123,10 +123,11 @@
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal invajustes_div_one"  style="display:none;" title="">
                 <input type="hidden" name="identificador">
+                <input type="hidden" name="exis_pres">
 					
                     <div id="div_two" title="" class="invajustes_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:873px; padding-left:6px;"><strong>Ajuste de Inventario</strong></div>
+                            <div class="fixed column" style="width:1080px; padding-left:6px;"><strong>Ajuste de Inventario</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -150,12 +151,12 @@
 										
                                         <table border="0" style="margin:0; padding:0;">
                                                 <tr>
-                                                    <td width="520"></td>
+                                                    <td width="600"></td>
                                                     <td width="10"></td>
-                                                    <td width="350"></td>
+                                                    <td width="480"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td valign="top" width="520"  > 
+                                                    <td valign="top" width="600"  > 
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
@@ -230,7 +231,7 @@
                                                     
                                                     <td width="10"></td>
                                                     
-                                                    <td width="350" valign="top" >
+                                                    <td width="480" valign="top" >
                                                         <table border="0">
                                                             <tr>
                                                                 <td width="10"></td>
@@ -278,19 +279,32 @@
 														<table >
 															<thead>
 																<tr>
+																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60"><div class="delete">&nbsp;</div></td>
+																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;</td>
+																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="180">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180); border-bottom:1px solid #ccc;" width="160" colspan="2">&nbsp;Existencia Actual</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180); border-bottom:1px solid #ccc;" width="160" colspan="2">&nbsp;Cantidad Ajuste</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;</td>
+																</tr>
+																<tr>
 																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60"><div class="delete">&nbsp;#</div></td>
 																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;C&oacute;digo</td>
 																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="180">&nbsp;Descripci&oacute;n</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Unidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Existencia</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Costo&nbsp;Prom.</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Cant.&nbsp;Ajuste</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Costo&nbsp;Ajuste</td>
-																	
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Unidad</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Costo&nbsp;Prom.</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Unidad</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Costo&nbsp;Ajuste</td>
 																</tr>
 															</thead>
 														</table>
-														<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:850; height: 150px; border:1px solid #C1DAD7 !important;">	
+														<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:980; height: 150px; border:1px solid #C1DAD7 !important;">	
 															<table>
 																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
 																	
@@ -302,14 +316,14 @@
                                                 </tr>
 												
                                                 <tr>
-                                                    <td colspan="3" width="880"  align="left" valign="top">
+                                                    <td colspan="3" width="970"  align="left" valign="top">
 														
                                                         <div id="div_warning_grid" style="display:none;">
 															
                                                             <table border ="0">
                                                                 <tr>
                                                                     <td width="10"></td>
-                                                                    <td width="770" colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
+                                                                    <td width="900" colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
                                                                     <td width="10"></td>
                                                                 </tr>
                                                                 <tr>
@@ -323,8 +337,8 @@
                                                                 <tr>
                                                                     <td width="10"></td>
                                                                     <td colspan="5"> 
-                                                                        <div align="left" style="width:820px; height:70px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
-                                                                            <table id="grid_warning" border="0" style="width:800px;"">
+                                                                        <div align="left" style="width:950px; height:70px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+                                                                            <table id="grid_warning" border="0" style="width:1070px;"">
                                                                                 <!-- Aqui se muestran los warning
                                                                                 style="background-color:#e7e8ea;"
                                                                                 -->
@@ -349,10 +363,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:886px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
+                            <div class="fixed column" style="width:1093px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="786"></td>
+										<td width="1093"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>

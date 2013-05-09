@@ -248,13 +248,26 @@
 														<table >
 															<thead>
 																<tr>
-																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="180">&nbsp;C&oacute;digo</td>
-																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="300">&nbsp;Descripci&oacute;n</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="150">&nbsp;Unidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="110" >&nbsp;Cant.&nbsp;Traspaso</td>
+																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="120">&nbsp;</td>
+																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="200">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180); border-bottom:1px solid #ccc;" width="180" colspan="2">&nbsp;Cantidad Traspaso</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="15" >&nbsp;</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="15" >&nbsp;</td>
-                                                                                                                                        <td class="grid" style="background-color: rgb(180, 180, 180);" width="60" >&nbsp;Kilos</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="60" >&nbsp;</td>
+																</tr>
+																
+																<tr>
+																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="120">&nbsp;C&oacute;digo</td>
+																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="200">&nbsp;Descripci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Unidad</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="120">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="15" >&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="15" >&nbsp;</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="60" >&nbsp;Kilos</td>
 																</tr>
 															</thead>
 														</table>

@@ -817,11 +817,7 @@ $(function() {
 					$presIdSelecTr.val(idPres);
 					$select_pres.focus();
 				});
-			}				
-			//var 
-			
-			//$convertirUniAPres = function(idPres, cantUni, arrayPres){
-						
+			}
 		});
 	}
 	

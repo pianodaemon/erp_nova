@@ -525,42 +525,77 @@ $(function() {
 	
 	
 	
+	//convertir la Presentacion en Unidad de acuerdo a la Equivalencia
+	$convertirPresAUni = function(idPres, cantPres, arrayPres){
+		var valor=0;
+		$.each(arrayPres,function(entryIndex,pres){
+			if(parseInt(pres['id'])==parseInt(idPres)){
+				valor = parseFloat(cantPres) * parseFloat(pres['equiv']);
+			}
+		});
+		return valor;
+	};
 	
 	
 	
-	//generar tr para lote
-	$genera_tr_lote = function(noTr, tipo_tr, idPartida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly, densidad){
+	
+	//convertir la Cantidad de Unidades en cantidad de Presentaciones
+	$convertirUnidadesAPresentaciones = function($cantUni, $campoCantPres, $equivPres, noDec){
+		$cantUni.blur(function(e){
+			if ($(this).val().trim() != ''){
+				$campoCantPres.val(parseFloat($cantUni.val()) / parseFloat($equivPres.val()));
+			}else{
+				$campoCantPres.val('0.0000');
+			}
+			$campoCantPres.val(parseFloat($campoCantPres.val()).toFixed(noDec));
+		});
+	};
+	
+	
+	
+	//generar tr para lote	  (noTr, tipo_tr, idPartida, id_producto, lote_int, codigo, descripcion, cant_lote,     readOnly,           idPres,cantPresLote,cantEquiv)
+	$genera_tr_lote = function(noTr, tipo_tr, idPartida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly, densidad, idPres,cantPres, cantEquiv){
 		var trr = '';
 		trr = '<tr>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
+			trr += '<td class="grid1" style="font-size:11px; border:1px solid #C1DAD7;" width="120">';
 				trr += '<input type="hidden" 	name="tipotr" value="'+ tipo_tr +'">';
 				trr += '<input type="hidden" 	name="idPartida" value="'+ idPartida +'">';
 				trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_producto +'">';
-				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" style="width:176px; display:none;">';
+				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" style="width:116px; display:none;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="300">';
+			trr += '<td class="grid1" style="font-size:11px;  border:1px solid #C1DAD7;" width="200">';
 				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" style="width:296px; display:none;">';
-				trr += '<input type="text" 		value="Lote" class="borde_oculto" readOnly="true" style="width:296px; text-align:right;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="150">';
-				trr += '<input type="text" 		name="lote_int" class="lote_int'+ noTr +'" value="'+lote_int+'" title="Ingresar Lote" style="width:146px;">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+				trr += '<input type="text" 		value="Lote" class="borde_oculto" readOnly="true" style="width:116px; text-align:right;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
-				trr += '<input type="text" 		name="cant_traspaso" value="'+cant_traspaso+'" class="cant_traspaso'+noTr+'" '+readOnly+' style="width:106px; text-align:right;">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+				trr += '<input type="text" 		name="lote_int" class="lote_int'+ noTr +'" value="'+lote_int+'" title="Ingresar Lote" style="width:116px;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="15">';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+				trr += '<input type="text" 		name="cant_traspaso" value="'+cant_traspaso+'" class="cant_traspaso'+noTr+'" '+readOnly+' style="width:86px; text-align:right;">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+				trr += '<input type="hidden" 	name="idPres" id="idPres" value="'+ idPres +'">';
+				trr += '<input type="hidden" 	name="cantEquiv" id="cantEquiv'+noTr+'" value="'+ cantEquiv +'">';
+				trr += '<input type="text" 		name="cantPres" id="cantPres'+noTr+'" value="'+cantPres+'" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size:14px; font-weight:bold; border:1px solid #C1DAD7;" width="15">';
 				trr += '<a href="agrega_lote" class="agrega_lote'+ noTr +'" title="Agregar Lote">  +  </a>';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="15">';
+			trr += '<td class="grid1" style="font-size: 14px; font-weight:bold; border:1px solid #C1DAD7;" width="15">';
 				trr += '<input type="hidden" 	name="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
 				trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
 				trr += '<a href="elimina_lote" class="elimina_lote'+ noTr +'" title="Eliminar Lote"> - </a>';
 			trr += '</td>';
-                        //agregado por paco
-                        trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-                                trr += '<input name="densidad_litro" value="'+densidad+'" type="hidden">';
-                                //trr += '<input name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="0.00" class="borde_oculto" readonly="true" style="width:56px; text-align:right;" type="text">';
-                        trr += '</td>';
+			//agregado por paco
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
+					trr += '<input name="densidad_litro" value="'+densidad+'" type="hidden">';
+					//trr += '<input name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="0.00" class="borde_oculto" readonly="true" style="width:56px; text-align:right;" type="text">';
+			trr += '</td>';
 		trr += '</tr>';
 		
 		return trr;
@@ -568,41 +603,52 @@ $(function() {
 	
 	
 	
-	
+
 	
 	
 	//generar tr para agregar al grid
-	$genera_tr_partida = function(noTr, tipo_tr, idPartida, id_producto, codigo, descripcion, unidad, cant_traspaso, readOnly, densidad){
+	$genera_tr_partida = function(noTr, tipo_tr, idPartida, id_producto, codigo, descripcion, unidad, cant_traspaso, readOnly, densidad, idPres, presentacion, cantPres, noDec, cantEquiv){
 		var trr = '';
 		trr = '<tr>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
 				trr += '<input type="hidden" 	name="tipotr" value="'+ tipo_tr +'">';
 				trr += '<input type="hidden" 	name="idPartida" value="'+ idPartida +'">';
 				trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_producto +'">';
-				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:176px;">';
+				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:116px;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="350">';
-				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:346px;">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="200">';
+				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:196px;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="150">';
-				trr += '<input type="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:146px;">';
-				trr += '<input type="text" 		name="lote_int" class="lote_int'+ noTr +'" value="" style="width:146px; display:none;">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+				trr += '<input type="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:116px;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
-				trr += '<input type="text" 		name="cantidad" class="cantidad'+noTr+'"  value="'+$(this).agregar_comas(cant_traspaso)+'" '+readOnly+' style="width:106px; text-align:right; border-color:transparent; background:transparent;">';
-				trr += '<input type="text" 		name="cant_traspaso" value="'+cant_traspaso+'" class="cant_traspaso'+noTr+'"  style="width:106px; display:none;">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+				trr += '<input type="text" 		name="unidad" 	value="'+ presentacion +'" class="borde_oculto" readOnly="true" style="width:116px;">';
+				trr += '<input type="text" 		name="lote_int" class="lote_int'+ noTr +'" value="" style="width:116px; display:none;">';
 			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+				trr += '<input type="text" 		name="cantidad" class="cantidad'+noTr+'"  value="'+$(this).agregar_comas(cant_traspaso)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
+				trr += '<input type="text" 		name="cant_traspaso" value="'+cant_traspaso+'" class="cant_traspaso'+noTr+'"  style="width:86px; display:none;">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+				trr += '<input type="hidden" 	name="idPres" id="idPres" value="'+ idPres +'">';
+				trr += '<input type="hidden" 	name="cantEquiv" id="cantEquiv" value="'+ cantEquiv +'">';
+				trr += '<input type="text" 		name="cantPres" class="cantPres'+noTr+'"  value="'+$(this).agregar_comas(cantPres)+'" '+readOnly+' style="width:86px; text-align:right; border-color:transparent; background:transparent;">';
+			trr += '</td>';
+			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="15">';
 			trr += '</td>';
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="15">';
 				trr += '<input type="hidden" 	name="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
 				trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
 			trr += '</td>';
-                        //agregado por paco
-                        trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-                                trr += '<input name="densidad_litro" value="'+densidad+'" type="hidden">';
-                                trr += '<input name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="0.00" class="borde_oculto" readonly="true" style="width:56px; text-align:right;" type="text">';
-                        trr += '</td>';
+			//agregado por paco
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
+					trr += '<input name="densidad_litro" value="'+densidad+'" type="hidden">';
+					trr += '<input name="cantidad_kilos" id="cantidad_kilos'+ noTr +'" value="0.00" class="borde_oculto" readonly="true" style="width:56px; text-align:right;" type="text">';
+			trr += '</td>';
 		trr += '</tr>';
 		
 		return trr;
@@ -613,7 +659,7 @@ $(function() {
 	
 	
 	//funcion para agregar lote y eliminar
-	agregar_lote_y_eliminar = function($grid_productos, tipo_tr, trCount){
+	agregar_lote_y_eliminar = function($grid_productos, tipo_tr, trCount, noDec, cantEquiv, densidad){
 		//agregar nuevo lote
 		$grid_productos.find('.agrega_lote'+ trCount ).click(function(e){
 			e.preventDefault();
@@ -627,20 +673,24 @@ $(function() {
 			var idPartida = $tr_padre.find('input[name=idPartida]').val();
 			var lote_int = ' ';
 			var cant_lote='0.0000';
+			var idPres = $tr_padre.find('input[name=idPres]').val();
+			var cantPresLote='0.0000';
+			
 			var readOnly='';
 			
 			var noTr = $("tr", $grid_productos).size();
 			noTr++;
+			//alert(cantEquiv);
+			//alert(noDec);
 			
 			//aqui es para crear nuevos registros del lote
-			tr_lote = $genera_tr_lote(noTr, tipo_tr, idPartida, id_producto, lote_int, codigo, descripcion, cant_lote, readOnly);					
+			tr_lote = $genera_tr_lote(noTr, tipo_tr, idPartida, id_producto, lote_int, codigo, descripcion, cant_lote, readOnly, densidad, idPres, cantPresLote, cantEquiv);
 			//agregar tr_lote despues de tr_padre
 			$(tr_lote).insertAfter($tr_padre);
 			
-			
 			//aplicar click al nuevo registro
 			//se hace una llamada recursiva a  la funcion agregar_lote
-			agregar_lote_y_eliminar($grid_productos,tipo_tr, noTr);
+			agregar_lote_y_eliminar($grid_productos,tipo_tr, noTr, noDec, cantEquiv, densidad);
 			$aplicar_evento_keypress( $grid_productos.find('.cant_traspaso'+ noTr ) );
 			$aplicar_evento_blur( $grid_productos.find('.cant_traspaso'+ noTr ) );
 			$aplicar_evento_focus( $grid_productos.find('.cant_traspaso'+ noTr ) );
@@ -649,6 +699,8 @@ $(function() {
 			$aplicar_evento_blur_input_lote($grid_productos.find('.lote_int'+ noTr ));
 			$aplicar_evento_keypress_input_lote($grid_productos.find('.lote_int'+ noTr ));
 			$aplicar_evento_click_input_lote($grid_productos.find('.lote_int'+ noTr ));
+			
+			$convertirUnidadesAPresentaciones($grid_productos.find('.cant_traspaso'+ noTr), $grid_productos.find('#cantPres'+ noTr), $grid_productos.find('#cantEquiv'+ noTr), noDec);
 		});
 		
 		
@@ -877,11 +929,19 @@ $(function() {
 							var descripcion = prodGrid['descripcion'];
 							var unidad = prodGrid['unidad'];
 							var cant_traspaso=prodGrid['cant_traspaso'];
-                                                        var densidad=prodGrid['densidad'];
+							var densidad=prodGrid['densidad'];
+							
+							var idPres = prodGrid['idPres'];
+							var presentacion = prodGrid['presentacion'];
+							var cantPres=prodGrid['cant_pres'];
+							var noDec=prodGrid['no_dec'];
+							var cantEquiv=prodGrid['cantEquiv'];
+							
 							var readOnly='readOnly="true"';
 							var lote_int='';
+							var cantPresLote=0;
 							
-							var cadena_tr = $genera_tr_partida(noTr, tipo_tr, id_partida, id_producto, codigo, descripcion, unidad, cant_traspaso, readOnly, densidad);
+							var cadena_tr = $genera_tr_partida(noTr, tipo_tr, id_partida, id_producto, codigo, descripcion, unidad, cant_traspaso, readOnly, densidad,idPres, presentacion, cantPres, noDec, cantEquiv);
 							$grid_productos.append(cadena_tr);
 							$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+noTr), "");
                                                         
@@ -890,24 +950,27 @@ $(function() {
 								trCount2++;
 								tipo_tr='LOTE';
 								cant_traspaso='0.0000';
+								cantPresLote='0.0000';
+								
 								readOnly='';
-								tr_lote = $genera_tr_lote(trCount2, tipo_tr, id_partida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly, densidad);
+								tr_lote = $genera_tr_lote(trCount2, tipo_tr, id_partida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly, densidad, idPres, cantPresLote, cantEquiv);
 								$grid_productos.append(tr_lote);
 								
 								
 								// esta funcion es para agregar un nuevo lote
 								//en esta funcion se le aplica evento click a los href Agregar Lote y Eliminar
-								agregar_lote_y_eliminar($grid_productos,tipo_tr, trCount2);
+								agregar_lote_y_eliminar($grid_productos,tipo_tr, trCount2, noDec, cantEquiv, densidad);
 								$aplicar_evento_keypress( $grid_productos.find('.cant_traspaso'+ trCount2 ) );
 								$aplicar_evento_blur( $grid_productos.find('.cant_traspaso'+ trCount2 ) );
 								$aplicar_evento_focus( $grid_productos.find('.cant_traspaso'+ trCount2 ) );
 								
-                                                                //$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+trCount2), "blur");
+								//$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+trCount2), "blur");
 								$aplicar_evento_focus_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
 								$aplicar_evento_blur_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
 								$aplicar_evento_keypress_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
 								$aplicar_evento_click_input_lote($grid_productos.find('.lote_int'+ trCount2 ));
 								
+								$convertirUnidadesAPresentaciones($grid_productos.find('.cant_traspaso'+ trCount2), $grid_productos.find('#cantPres'+ trCount2), $grid_productos.find('#cantEquiv'+ trCount2), noDec);
 							}else{
 								
 								$.each(entry['GridLotes'],function(entryIndex,lote){
@@ -917,11 +980,15 @@ $(function() {
 										trCount2++;
 										tipo_tr='LOTE';
 										lote_int=lote['lote_int']
-										cant_traspaso=lote['cant_traspaso']
+										cant_traspaso=lote['cant_traspaso'];
+										cantPresLote=lote['cant_pres'];
+										
 										readOnly='readOnly="true"';
-										tr_lote = $genera_tr_lote(trCount2, tipo_tr, id_partida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly, densidad);
+										tr_lote = $genera_tr_lote(trCount2, tipo_tr, id_partida, id_producto, lote_int, codigo, descripcion, cant_traspaso, readOnly, densidad, idPres, cantPresLote, cantEquiv);
 										$grid_productos.append(tr_lote);
-                                                                                //$aplicar_evento_kilos_densidad($grid_productos.find('.cant_traspaso'+trCount2), "");
+										
+										//$convertirUnidadesAPresentaciones($grid_productos.find('.cant_traspaso'+ trCount2).val(), $grid_productos.find('#cantPres'+ trCount2), $grid_productos.find('#cantEquiv'+ trCount2).val());
+										
 									}
 								});
 								
