@@ -231,7 +231,7 @@ public class InvAjustesController {
             @RequestParam(value="fecha", required=true) String fecha,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getBuscadorProductosJson de {0}", InvAjustesController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
@@ -273,6 +273,7 @@ public class InvAjustesController {
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> costoProm = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         Integer id_producto=0;
                 
@@ -294,14 +295,43 @@ public class InvAjustesController {
         }
         
         costoProm = this.getInvDao().getInvAjustes_CostoPromedioActual(id_producto, fecha);
+        presentaciones = this.getInvDao().getProducto_PresentacionesON(id_producto);
         
         jsonretorno.put("Producto", datos);
         jsonretorno.put("Costo", costoProm);
+        jsonretorno.put("Presentaciones", presentaciones);
         
         return jsonretorno;
     }
     
     
+    
+    //Obtiene la existencia de un Producto en una presentacion en un almacen
+    @RequestMapping(method = RequestMethod.POST, value="/getExisPres.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getExisPresJson(
+            @RequestParam(value="id_prod", required=true) Integer id_prod,
+            @RequestParam(value="id_pres", required=true) Integer id_pres,
+            @RequestParam(value="id_alm", required=true) Integer id_alm,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getExisPresJson de {0}", InvTraspasosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> existencias = new ArrayList<HashMap<String, String>>();
+        //HashMap<String, String> userDat = new HashMap<String, String>();
+        /*
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        */
+        existencias = this.getInvDao().getInvTraspasos_ExistenciaPresentacion(id_prod, id_pres, id_alm);
+        
+        jsonretorno.put("Existencia", existencias);
+        
+        return jsonretorno;
+    }
     
     
     
@@ -319,6 +349,7 @@ public class InvAjustesController {
         ArrayList<HashMap<String, String>> datosAjuste = new ArrayList<HashMap<String, String>>(); 
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>(); 
         ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> parematros = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> TiposMovimiento = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayAno = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> mapAnoActual = new HashMap<String, String>();
@@ -328,23 +359,27 @@ public class InvAjustesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         if( identificador != 0 ){
             datosAjuste = this.getInvDao().getInvAjustes_Datos(identificador);
             datosGrid = this.getInvDao().getInvAjustes_DatosGrid(identificador, datosAjuste.get(0).get("fecha_ajuste"), Integer.parseInt(datosAjuste.get(0).get("id_almacen")) );
         }
         
-        almacenes = this.getInvDao().getAlmacenes(id_empresa);
+        almacenes = this.getInvDao().getAlmacenes2(id_empresa);
         TiposMovimiento = this.getInvDao().getInvAjustes_TiposMovimiento(id_empresa);
         mapAnoActual.put("fecha_actual", TimeHelper.getFechaActualYMD());
         arrayAno.add(mapAnoActual);
         
+        //obtener parametros de la sucursal
+        parematros = this.getInvDao().getInvParametros(id_empresa, id_sucursal);
         
         jsonretorno.put("Datos", datosAjuste);
         jsonretorno.put("DatosGrid", datosGrid);
         jsonretorno.put("Almacenes", almacenes);
         jsonretorno.put("TMov", TiposMovimiento);
         jsonretorno.put("AnoActual", arrayAno);
+        jsonretorno.put("Par", parematros);
         
         return jsonretorno;
     }

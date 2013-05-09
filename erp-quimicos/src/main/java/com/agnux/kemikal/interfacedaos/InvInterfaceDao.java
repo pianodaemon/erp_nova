@@ -20,7 +20,9 @@ public interface InvInterfaceDao {
     public HashMap<String, String> selectFunctionValidateAaplicativo(String data, Integer idApp, String extra_data_array);
     public String selectFunctionForThisApp(String campos_data, String extra_data_array);
     public int countAll(String data_string);
-
+    public ArrayList<HashMap<String, String>> getInvParametros(Integer idEmp, Integer idSuc);
+    
+    
     public String selectFunctionForApp_MovimientosInventario(String campos_data, String extra_data_array);
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion,Integer id_empresa);
     public ArrayList<HashMap<String, String>> getDataProductBySku(String codigo, Integer id_empresa);
