@@ -53,4 +53,7 @@ public interface EnvInterfaceDao {
     public ArrayList<HashMap<String, String>> getProOrdenEquipoDisponible(String cadena, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getEnv_ExistenciasConf(Integer id_prod, Integer id_pres, Integer id_alm);
     
+    
+    public HashMap<String, String> getReport_Envasado_Header(Integer empresa_id,Integer id_env);
+    public ArrayList<HashMap<String, String>> getReport_Envasado_grid(Integer empresa_id,Integer id_env);
 }

@@ -1040,6 +1040,112 @@ public class EnvSpringDao implements EnvInterfaceDao{
     /*TERMINA METODOS PARA EL PROCESO DE ENVASADO **************************/
     
     
+    @Override
+    public HashMap<String, String> getReport_Envasado_Header(Integer empresa_id,Integer id_env) {
+        String sql_query = " SELECT "
++"    env_env.folio, "
++"    env_estatus.titulo as estado, "
++"    env_env.fecha, "
++"    env_env.hora, "
++"    pro_orden_prod.folio as folio_o_produccion, "
++"    inv_prod.sku as codigo, "
++"    inv_prod.descripcion, "
++"    inv_alm.titulo as almacen, "
++"    inv_prod_presentaciones.titulo as presentacion, "
++"    inv_prod_unidades.titulo as unidad, "
++"    env_env.existencia existencia_presentacion , "
++"    env_env.existencia * inv_prod_presentaciones.cantidad as cantidad_unidad_existente, "
++"    pro_equipos.titulo as equipo, "
++"    gral_empleados.nombre_pila||'  '||          gral_empleados.apellido_paterno||'  '|| gral_empleados.apellido_materno as nombre_operador,  "
++"    env_env.merma "
++"    FROM env_env     "
++"    join inv_prod on  inv_prod.id = env_env.inv_prod_id     "
++"    join gral_empleados  on gral_empleados.id=env_env.gral_empleados_id     "
++"    join inv_prod_presentaciones on inv_prod_presentaciones.id = env_env.inv_prod_presentaciones_id     "
++"    join inv_alm on inv_alm.id=  env_env.inv_alm_id  "
++"     join pro_orden_prod on pro_orden_prod.id=env_env.pro_orden_prod_id  "
++"     join pro_equipos on pro_equipos.id=env_env.pro_equipos_id  "
++"     join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id  "
++"     join env_estatus on env_estatus.id = env_env.env_estatus_id  "
+
++"    where env_env.gral_emp_id=? and env_env.id=?";
+
+        System.out.println("Envasado_header : "+sql_query);
+
+
+        HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
+            sql_query,
+            new Object[]{new Integer(empresa_id),new Integer(id_env)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+
+                    row.put("folio",rs.getString("folio"));
+                    row.put("estado",rs.getString("estado"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("hora",String.valueOf(rs.getTime("hora")));
+                    row.put("folio_o_produccion",rs.getString("folio_o_produccion"));
+                    row.put("codigo_producto",rs.getString("codigo"));
+                    row.put("descripcion_producto",rs.getString("descripcion"));
+                    row.put("almacen",rs.getString("almacen"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("presentacion_existente",String.valueOf(rs.getDouble("existencia_presentacion")));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("unidad_existente",String.valueOf(rs.getDouble("cantidad_unidad_existente")));
+                    row.put("equipo",rs.getString("equipo"));
+                    row.put("nombre_operador",rs.getString("nombre_operador"));
+                    row.put("merma",String.valueOf(rs.getDouble("merma")));
+
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getReport_Envasado_grid(Integer empresa_id,Integer id_env) {
+        String sql_query = "SELECT   "
++"    alm_origen.titulo as almacen_origen,"
++"    inv_alm.titulo as almacen_destino, "
++"    inv_prod_presentaciones.titulo as presentacion,  "
++"    env_env_det.cantidad as cantidad_presentacion , "
+
++"    inv_prod_unidades.titulo as unidad,  "
++"    env_env_det.cantidad * inv_prod_presentaciones.cantidad as cantidad_unidad   "
++"    FROM env_env_det          "
++"    join env_conf on env_conf.id = env_env_det.env_conf_id "
++"    join inv_prod on inv_prod.id =env_conf.inv_prod_id  "
++"    join inv_prod_presentaciones on inv_prod_presentaciones.id=env_conf.inv_prod_presentacion_id  "
++"    join inv_alm  as alm_origen on  alm_origen.id=env_env_det.inv_alm_id_env                 "
++"    join inv_alm  on inv_alm.id=env_env_det.inv_alm_id  "
++"    join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+
++"    WHERE env_conf.gral_emp_id =? and env_env_det.env_env_id=?";
+
+        System.out.println("id_de_Empresa : "+empresa_id);
+        System.out.println("Grid Envasado: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(empresa_id),new Integer(id_env)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    //row.put("env_reenv_det_id",String.valueOf(rs.getInt("id")));
+                    row.put("almacen_origen",rs.getString("almacen_origen"));
+                    row.put("almacen_destino",rs.getString("almacen_destino"));
+                    row.put("presentacion_destino",rs.getString("presentacion"));
+                    row.put("unidad_destino",rs.getString("unidad"));
+                    row.put("cantidad_presentacion",String.valueOf(rs.getDouble("cantidad_presentacion")));
+                    row.put("cantidad_unidad",String.valueOf(rs.getDouble("cantidad_unidad")));
+
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
     
     
 }
