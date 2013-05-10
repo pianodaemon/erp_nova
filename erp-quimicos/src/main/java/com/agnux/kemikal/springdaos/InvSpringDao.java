@@ -95,15 +95,15 @@ public class InvSpringDao implements InvInterfaceDao{
 
     
     @Override
-    public ArrayList<HashMap<String, String>> getInvParametros(Integer idEmp, Integer idSuc) {
-	String sql_query = "SELECT exis_pres FROM inv_par WHERE gral_emp_id="+idEmp+" AND gral_suc_id="+idSuc+";";
+    public ArrayList<HashMap<String, String>> getInvParametros(Integer idEmp) {
+	String sql_query = "SELECT control_exis_pres FROM gral_emp WHERE id="+idEmp+";";
         ArrayList<HashMap<String, String>> hm_par = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("exis_pres",String.valueOf(rs.getBoolean("exis_pres")));
+                    row.put("exis_pres",String.valueOf(rs.getBoolean("control_exis_pres")));
                     return row;
                 }
             }
@@ -5513,11 +5513,14 @@ public class InvSpringDao implements InvInterfaceDao{
 	String sql_to_query = ""
                 + "SELECT DISTINCT inv_mov.id, "
                     + "inv_mov.referencia AS folio_ajuste, "
+                    + "(CASE WHEN inv_mov_tipos.grupo=0 THEN almdest.titulo WHEN inv_mov_tipos.grupo=2 THEN almorig.titulo ELSE '' END) AS almacen,"
                     + "inv_mov_tipos.titulo AS tipo_movimiento, "
                     + "to_char(inv_mov.fecha_mov,'dd/mm/yyyy') AS fecha_ajuste "
                 + "FROM inv_mov "
                 + "JOIN inv_mov_tipos ON inv_mov_tipos.id=inv_mov.inv_mov_tipo_id "
                 + "JOIN inv_mov_detalle ON inv_mov_detalle.inv_mov_id=inv_mov.id "
+                + "LEFT JOIN inv_alm AS almorig ON almorig.id=inv_mov_detalle.alm_origen_id "
+                + "LEFT JOIN inv_alm AS almdest ON almdest.id=inv_mov_detalle.alm_destino_id "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_mov.id "
                 +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
 
@@ -5531,6 +5534,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
                     row.put("folio_ajuste",rs.getString("folio_ajuste"));
+                    row.put("almacen",rs.getString("almacen"));
                     row.put("tipo_movimiento",rs.getString("tipo_movimiento"));
                     row.put("fecha_ajuste",rs.getString("fecha_ajuste"));
                     return row;
@@ -5601,8 +5605,8 @@ public class InvSpringDao implements InvInterfaceDao{
             incrementa ++;
         }
 	cadena_existencia+=") AS  existencia ";
-
-
+        
+        
         String sql_to_query = ""
                 + "SELECT inv_mov_detalle.producto_id, "
                     + "inv_exi.inv_alm_id AS  id_almacen, "
@@ -5610,16 +5614,19 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_prod.descripcion, "
                     + "inv_prod.unidad_id, "
                     + "inv_prod_unidades.titulo AS unidad, "
+                    + "inv_prod_unidades.decimales AS no_dec, "
                     + "(CASE WHEN inv_mov_detalle.inv_prod_presentacion_id IS NULL THEN 0 ELSE inv_mov_detalle.inv_prod_presentacion_id END) AS idPres,"
                     + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.cantidad END ) AS cantEqiv, "
-                    + "inv_obtiene_costo_promedio_actual(inv_mov_detalle.producto_id,'"+fecha+"'::timestamp with time zone)AS costo_promedio, "
+                    + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END ) AS presentacion, "
+                    + "inv_obtiene_costo_promedio_actual(inv_mov_detalle.producto_id,'"+fecha+"'::timestamp with time zone) AS costo_promedio, "
                     + "inv_mov_detalle.cantidad, "
+                    + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE (inv_prod_presentaciones.cantidad::double precision/inv_prod_presentaciones.cantidad::double precision) END ) AS cantPres, "
                     + "inv_mov_detalle.costo, "
                     + cadena_existencia
                 + " FROM inv_mov_detalle "
                 + "JOIN inv_prod ON inv_prod.id=inv_mov_detalle.producto_id "
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_mov_detalle.inv_prod_presentacion_id "
+                + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_mov_detalle.inv_prod_presentacion_id "
                 + "JOIN inv_exi ON inv_exi.inv_prod_id=inv_prod.id "
                 + "WHERE inv_mov_detalle.inv_mov_id=? "
                 + "AND inv_exi.ano="+ano_actual+" "
@@ -5639,12 +5646,16 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
                     row.put("unidad",rs.getString("unidad"));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
                     row.put("costo_promedio",StringHelper.roundDouble(rs.getString("costo_promedio"),2));
-                    row.put("cant_ajuste",StringHelper.roundDouble(rs.getString("cantidad"),2));
+                    row.put("cant_ajuste",StringHelper.roundDouble(rs.getString("cantidad"),rs.getInt("no_dec")));
                     row.put("costo_ajuste",StringHelper.roundDouble(rs.getString("costo"),2));
-                    row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),2));
+                    row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),rs.getInt("no_dec")));
                     row.put("idPres",String.valueOf(rs.getInt("idPres")));
                     row.put("cantEqiv",String.valueOf(rs.getInt("cantEqiv")));
+                    row.put("cantPres",StringHelper.roundDouble(rs.getString("cantPres"),rs.getInt("no_dec")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    
                     return row;
                 }
             }

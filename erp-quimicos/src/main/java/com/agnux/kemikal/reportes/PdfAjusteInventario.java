@@ -633,8 +633,9 @@ public final class PdfAjusteInventario {
             //float [] widths = {2f, 5.5f, 3f, 2f, 1.5f, 2f,2f,2f,2f};
             float [] widths = {
                 2.5f,     //codigo
-                6f,   //descripcion
-                3f,   //Unidad
+                5f,   //descripcion
+                2f,   //Unidad
+                2f,   //Presentacion
                 2f,     //cant. ajuste
                 0.5f,   //simbolo moneda
                 2f    //costo Ajuste
@@ -665,6 +666,14 @@ public final class PdfAjusteInventario {
             
             
             cell = new PdfPCell(new Paragraph("Unidad",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Presentación",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -707,6 +716,11 @@ public final class PdfAjusteInventario {
                 table.addCell(cell);
                 
                 cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(esteAtributoSeDejoNulo(map.get("unidad"))), smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(esteAtributoSeDejoNulo(map.get("presentacion"))), smallFont));
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 table.addCell(cell);

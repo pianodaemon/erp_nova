@@ -92,6 +92,7 @@ public class InvAjustesController {
         //infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("id", "Acciones:70");
         infoConstruccionTabla.put("folio_ajuste", "Folio:90");
+        infoConstruccionTabla.put("almacen","Almacen:200");
         infoConstruccionTabla.put("tipo_movimiento","Tipo de Movimiento:200");
         infoConstruccionTabla.put("fecha_ajuste", "Fecha Ajuste:100");
         
@@ -350,6 +351,7 @@ public class InvAjustesController {
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>(); 
         ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> parematros = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> TiposMovimiento = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayAno = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> mapAnoActual = new HashMap<String, String>();
@@ -364,6 +366,8 @@ public class InvAjustesController {
         if( identificador != 0 ){
             datosAjuste = this.getInvDao().getInvAjustes_Datos(identificador);
             datosGrid = this.getInvDao().getInvAjustes_DatosGrid(identificador, datosAjuste.get(0).get("fecha_ajuste"), Integer.parseInt(datosAjuste.get(0).get("id_almacen")) );
+            
+            presentaciones = this.getInvDao().getProducto_Presentaciones(0);
         }
         
         almacenes = this.getInvDao().getAlmacenes2(id_empresa);
@@ -372,7 +376,7 @@ public class InvAjustesController {
         arrayAno.add(mapAnoActual);
         
         //obtener parametros de la sucursal
-        parematros = this.getInvDao().getInvParametros(id_empresa, id_sucursal);
+        parematros = this.getInvDao().getInvParametros(id_empresa);
         
         jsonretorno.put("Datos", datosAjuste);
         jsonretorno.put("DatosGrid", datosGrid);
@@ -380,6 +384,7 @@ public class InvAjustesController {
         jsonretorno.put("TMov", TiposMovimiento);
         jsonretorno.put("AnoActual", arrayAno);
         jsonretorno.put("Par", parematros);
+        jsonretorno.put("Presentaciones", presentaciones);
         
         return jsonretorno;
     }
@@ -418,7 +423,7 @@ public class InvAjustesController {
             Integer id_usuario= user.getUserId();//variable para el id  del usuario
             
             for(int i=0; i<no_tr.length; i++) {
-                arreglo[i]= "'"+idproducto[i]+"___"+id_almacen[i]+"___"+cant_ajuste[i]+"___"+costo_ajuste[i]+"___"+no_tr[i]+"___"+select_pres+"'";
+                arreglo[i]= "'"+idproducto[i]+"___"+id_almacen[i]+"___"+cant_ajuste[i]+"___"+costo_ajuste[i]+"___"+no_tr[i]+"___"+select_pres[i]+"'";
                 System.out.println(arreglo[i]);
             }
             
