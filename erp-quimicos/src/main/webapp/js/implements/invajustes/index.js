@@ -886,7 +886,7 @@ $(function() {
 						}
 						
 						$aplicar_evento_blur_campo_cantidad( $grid_productos.find('.cant_ajuste'+noTr), noDec, entry['Presentaciones'], controlExisPres);
-							
+						
 					}else{
 						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
 						$('#forma-invajustes-window').find('input[name=titulo_producto]').val('');
