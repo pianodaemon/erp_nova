@@ -400,6 +400,7 @@ public class InvAjustesController {
             @RequestParam(value="id_almacen", required=true)    String[] id_almacen,
             @RequestParam(value="cant_ajuste", required=true)   String[] cant_ajuste,
             @RequestParam(value="costo_ajuste", required=true)  String[] costo_ajuste,
+            @RequestParam(value="select_pres", required=true)  String[] select_pres,
             @ModelAttribute("user") UserSessionData user,
             Model model
         ) {
@@ -417,7 +418,7 @@ public class InvAjustesController {
             Integer id_usuario= user.getUserId();//variable para el id  del usuario
             
             for(int i=0; i<no_tr.length; i++) {
-                arreglo[i]= "'"+idproducto[i]+"___"+id_almacen[i]+"___"+cant_ajuste[i]+"___"+costo_ajuste[i]+"___"+no_tr[i]+"'";
+                arreglo[i]= "'"+idproducto[i]+"___"+id_almacen[i]+"___"+cant_ajuste[i]+"___"+costo_ajuste[i]+"___"+no_tr[i]+"___"+select_pres+"'";
                 System.out.println(arreglo[i]);
             }
             
