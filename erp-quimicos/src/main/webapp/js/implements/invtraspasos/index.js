@@ -616,7 +616,7 @@ $(function() {
 	
         
 	//funcion para aplicar la conversion de litros a kilos, de acuerdo a la densidad
-	$aplicar_evento_campo_cantidad = function( $campo_input, tipo, noDec, arrayPres){
+	$aplicar_evento_campo_cantidad = function( $campo_input, tipo, noDec, arrayPres, controlExisPres){
 		//tipo almacene, si se envio, para realizar el evento blur, o para solo hacer el calculo
 		var $this_tr = $campo_input.parent().parent();
 		
@@ -624,21 +624,24 @@ $(function() {
 			$campo_input.blur(function(e){
 				$realiza_calculo_kilos($this_tr, $campo_input, noDec);
 				
-				var idPres = $this_tr.find('select[name=select_pres]').val();
-				var $cantUniTras = $this_tr.find('input[name=cant_traspaso]');
-				var $cantPresTras = $this_tr.find('input[name=cantTrasPres]');
-				var cantUniExis = quitar_comas($this_tr.find('input[name=cantidad]').val());
-				
-				//convertir las Unidades en Presentaciones
-				var exisPres = $convertirUniAPres(idPres, $cantUniTras.val(), arrayPres);
-				
-				if(parseFloat($cantUniTras.val()) > parseFloat(cantUniExis)){
-					jAlert('No es posible realizar un traspaso mayor a la Existencia de la Presentaci&oacute;n.', 'Atencion!', function(r) { 
-						$cantUniTras.val(parseFloat(0).toFixed(noDec));
-						$cantPresTras.val(parseFloat(0).toFixed(noDec));
-					});
-				}else{
-					$cantPresTras.val(parseFloat(exisPres).toFixed(noDec));
+				//si la configuracion indica que debe controlar existencias por presentacion hay que realizar los calculos
+				if(controlExisPres=='true'){
+					var idPres = $this_tr.find('select[name=select_pres]').val();
+					var $cantUniTras = $this_tr.find('input[name=cant_traspaso]');
+					var $cantPresTras = $this_tr.find('input[name=cantTrasPres]');
+					var cantUniExis = quitar_comas($this_tr.find('input[name=cantidad]').val());
+					
+					//convertir las Unidades en Presentaciones
+					var exisPres = $convertirUniAPres(idPres, $cantUniTras.val(), arrayPres);
+					
+					if(parseFloat($cantUniTras.val()) > parseFloat(cantUniExis)){
+						jAlert('No es posible realizar un traspaso mayor a la Existencia de la Presentaci&oacute;n.', 'Atencion!', function(r) { 
+							$cantUniTras.val(parseFloat(0).toFixed(noDec));
+							$cantPresTras.val(parseFloat(0).toFixed(noDec));
+						});
+					}else{
+						$cantPresTras.val(parseFloat(exisPres).toFixed(noDec));
+					}
 				}
 			});
 		}else{
@@ -919,6 +922,7 @@ $(function() {
 							var descripcion = entry['Producto'][0]['descripcion'];
 							var unidad = entry['Producto'][0]['unidad'];
 							var noDec = entry['Producto'][0]['no_dec'];
+							var controlExisPres = entry['Par'][0]['exis_pres'];
 							
 							var existencia = parseFloat(entry['Producto'][0]['existencia']).toFixed(noDec);
 							var densidad = entry['Producto'][0]['densidad'];
@@ -944,14 +948,15 @@ $(function() {
 							});
 							$grid_productos.find('select.pres'+noTr).append(pres_hmtl);
 							
-							$aplicar_evento_campo_cantidad($grid_productos.find('.cant_traspaso'+noTr), "blur", noDec, entry['Presentaciones']);
+							$aplicar_evento_campo_cantidad($grid_productos.find('.cant_traspaso'+noTr), "blur", noDec, entry['Presentaciones'], controlExisPres);
 							
 							//fijar las opciones actuales de los select
 							$fijar_opciones_select($grid_productos, arraySucursales, arrayAlmacenes);
 							
-							//llamada a la funcion que aplica Evento Change al select de Presentaciones
-							$aplicarEventoChangeSelectPres($grid_productos.find('select.pres'+noTr), id_alm, entry['Presentaciones']);
-							
+							if(controlExisPres=='true'){
+								//llamada a la funcion que aplica Evento Change al select de Presentaciones
+								$aplicarEventoChangeSelectPres($grid_productos.find('select.pres'+noTr), id_alm, entry['Presentaciones']);
+							}
 						}else{
 							jAlert('El producto que intenta agregar no tiene Presentaciones Asignadas, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) {
 								$('#forma-invtraspasos-window').find('input[name=sku_producto]').val('');
@@ -1574,9 +1579,12 @@ $(function() {
 						var idPres = prodGrid['presentacion_id'];
 						var exisPres = parseFloat(0).toFixed(noDec);
 						var cantTraspasoPres = parseFloat(0).toFixed(noDec);
+						var controlExisPres = entry['Par'][0]['exis_pres'];
 						
-						//convertir las Unidades en Presentaciones
-						var cantTraspasoPres = $convertirUniAPres(idPres, cant_traspaso, entry['Presentaciones']);
+						if(controlExisPres=='true'){
+							//convertir las Unidades en Presentaciones
+							var cantTraspasoPres = $convertirUniAPres(idPres, cant_traspaso, entry['Presentaciones']);
+						}
 						
 						var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, existencia, cant_traspaso, densidad, exisPres, cantTraspasoPres);
 						
@@ -1598,7 +1606,7 @@ $(function() {
 						});
 						$grid_productos.find('select.pres'+noTr).append(pres_hmtl);
 						
-						$aplicar_evento_campo_cantidad($grid_productos.find('.cant_traspaso'+noTr), "");
+						//$aplicar_evento_campo_cantidad($grid_productos.find('.cant_traspaso'+noTr), "");
 						
 					});
 					

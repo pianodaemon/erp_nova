@@ -1683,10 +1683,14 @@ $(function() {
 						var cantidad_existencia=0;
 						var  width_td=0;
 						
-						if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 5) == 'costo')){
+						if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 5) == 'costo') || (tmp.split(':')[0].substring(0, 12) == 'presentacion')){
 							
 							$('#forma-pocpedidos-window').find('#div_warning_grid').css({'display':'block'});
-							$campo_input = $grid_productos.find('.'+campo);
+							if(tmp.split(':')[0].substring(0, 12) == 'presentacion'){
+								$campo_input = $grid_productos.find('input[name='+campo+']');
+							}else{
+								$campo_input = $grid_productos.find('.'+campo);
+							}
 							$campo_input.css({'background' : '#d41000'});
 							
 							var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();

@@ -1517,10 +1517,16 @@ $(function() {
 							var idPres = prodGrid['idPres'];
 							var equivPres = prodGrid['cantEqiv'];
 							var exisPres = 0;
-							var ajustePres = prodGrid['cantPres'];
+							var ajustePres = 0;
 							
-							//var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, id_almacen, existencia, costo_prom, cant_ajuste, costo_ajuste, tipo_costo);
-							  var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, id_almacen, existencia, costo_prom, cant_ajuste, costo_ajuste, tipo_costo, idPres, equivPres, exisPres, ajustePres);
+							var controlExisPres = entry['Par'][0]['exis_pres'];
+							
+							if(controlExisPres=='true'){
+								ajustePres = prodGrid['cantPres'];
+								alert(ajustePres);
+							}
+							
+							var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, id_almacen, existencia, costo_prom, cant_ajuste, costo_ajuste, tipo_costo, idPres, equivPres, exisPres, ajustePres);
 						
 							$grid_productos.append(cadena_tr);
 							
