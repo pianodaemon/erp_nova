@@ -375,7 +375,7 @@ public class InvAjustesController {
         mapAnoActual.put("fecha_actual", TimeHelper.getFechaActualYMD());
         arrayAno.add(mapAnoActual);
         
-        //obtener parametros de la sucursal
+        //obtener parametros de la empresa
         parematros = this.getInvDao().getInvParametros(id_empresa);
         
         jsonretorno.put("Datos", datosAjuste);

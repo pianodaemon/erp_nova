@@ -5620,7 +5620,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END ) AS presentacion, "
                     + "inv_obtiene_costo_promedio_actual(inv_mov_detalle.producto_id,'"+fecha+"'::timestamp with time zone) AS costo_promedio, "
                     + "inv_mov_detalle.cantidad, "
-                    + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE (inv_prod_presentaciones.cantidad::double precision/inv_prod_presentaciones.cantidad::double precision) END ) AS cantPres, "
+                    + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE (inv_mov_detalle.cantidad::double precision/inv_prod_presentaciones.cantidad::double precision) END ) AS cantPres, "
                     + "inv_mov_detalle.costo, "
                     + cadena_existencia
                 + " FROM inv_mov_detalle "

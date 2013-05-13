@@ -274,7 +274,8 @@ public class InvTraspasosController {
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-                
+        ArrayList<HashMap<String, String>> parematros = new ArrayList<HashMap<String, String>>();
+        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
@@ -293,8 +294,12 @@ public class InvTraspasosController {
             presentaciones = this.getInvDao().getProducto_PresentacionesON(idProducto);
         }
         
+        //obtener valor de configuracion para saber si es necesario controlar existencias por Presentacion
+        parematros = this.getInvDao().getInvParametros(id_empresa);
+        
         jsonretorno.put("Producto", datos);
         jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Par", parematros);
         
         return jsonretorno;
     }
@@ -351,6 +356,7 @@ public class InvTraspasosController {
         ArrayList<HashMap<String, String>> arrayExtras = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> mapExtras = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> parematros = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -379,12 +385,16 @@ public class InvTraspasosController {
         //le pasamos el idProducto=0, esto para que nos devuelva todas las presentaciones disponibles
         presentaciones = this.getInvDao().getProducto_Presentaciones(0);
         
+        //obtener valor de configuracion para saber si es necesario controlar existencias por Presentacion
+        parematros = this.getInvDao().getInvParametros(id_empresa);
+        
         jsonretorno.put("Datos", datosTraspaso);
         jsonretorno.put("DatosGrid", datosGrid);
         jsonretorno.put("Sucursales", sucursales);
         jsonretorno.put("Almacenes", almacenes);
         jsonretorno.put("Extras", arrayExtras);
         jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Par", parematros);
         
         return jsonretorno;
     }
