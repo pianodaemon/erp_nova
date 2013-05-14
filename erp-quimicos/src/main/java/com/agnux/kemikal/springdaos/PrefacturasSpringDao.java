@@ -107,7 +107,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 +"LEFT JOIN gral_mon ON gral_mon.id=erp_prefacturas.moneda_id "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=erp_prefacturas.id "
         +") AS sbt2 "
-        +"order by refacturar, "+orderBy+" "+asc+" limit ? OFFSET ?";
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         //System.out.println("data_string: "+data_string);

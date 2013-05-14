@@ -187,6 +187,7 @@ public class PrefacturasController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //variables para el buscador
+        String folio_pedido = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio_pedido")))+"%";
         String cliente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cliente")))+"%";
         String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
         String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
@@ -194,7 +195,7 @@ public class PrefacturasController {
         String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
         String agente = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("agente")))+"";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto+"___"+agente;
+        String data_string = app_selected+"___"+id_usuario+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final+"___"+codigo+"___"+producto+"___"+agente+"___"+folio_pedido;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getPdao().countAll(data_string);
@@ -246,15 +247,15 @@ public class PrefacturasController {
             @RequestParam(value="id_prefactura", required=true) String id_prefactura,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         log.log(Level.INFO, "Ejecutando getPrefacturaJson de {0}", PrefacturasController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         ArrayList<HashMap<String, Object>> datosPrefactura = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> valorIva = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> tipoCambioActual = new ArrayList<HashMap<String, Object>>();
-        HashMap<String, Object> tc = new HashMap<String, Object>();
+        ArrayList<HashMap<String, Object>> arrayExtras = new ArrayList<HashMap<String, Object>>();
+        HashMap<String, Object> extra = new HashMap<String, Object>();
         ArrayList<HashMap<String, Object>> vendedores = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> condiciones = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> metodos_pago = new ArrayList<HashMap<String, Object>>();
@@ -273,8 +274,9 @@ public class PrefacturasController {
         }
         
         valorIva= this.getFacdao().getValoriva(id_sucursal);
-        tc.put("tipo_cambio", StringHelper.roundDouble(this.getFacdao().getTipoCambioActual(), 4)) ;
-        tipoCambioActual.add(0,tc);
+        extra.put("tipo_cambio", StringHelper.roundDouble(this.getFacdao().getTipoCambioActual(), 4)) ;
+        extra.put("controlExiPres", userDat.get("control_exi_pres"));
+        arrayExtras.add(0,extra);
         
         monedas = this.getPdao().getMonedas();
         vendedores = this.getPdao().getVendedores(id_empresa, id_sucursal);
@@ -286,7 +288,7 @@ public class PrefacturasController {
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", monedas);
-        jsonretorno.put("Tc", tipoCambioActual);
+        jsonretorno.put("Extras", arrayExtras);
         jsonretorno.put("Vendedores", vendedores);
         jsonretorno.put("Condiciones", condiciones);
         jsonretorno.put("MetodosPago", metodos_pago);
