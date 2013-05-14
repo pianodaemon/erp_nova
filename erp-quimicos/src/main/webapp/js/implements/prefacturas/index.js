@@ -55,6 +55,8 @@ $(function() {
 	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
 	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
 	var $busqueda_select_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_agente]');
+	var $busqueda_folio_pedido = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio_pedido]');
+	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
 	
@@ -77,7 +79,7 @@ $(function() {
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		//valor_retorno += "factura" + signo_separador + $busqueda_factura.val() + "|";
+		valor_retorno += "folio_pedido" + signo_separador + $busqueda_folio_pedido.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
 		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|";
@@ -116,6 +118,7 @@ $(function() {
 	
 	
 	$limpiar.click(function(event){
+		$busqueda_folio_pedido.val('');
 		$busqueda_cliente.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
@@ -131,7 +134,7 @@ $(function() {
 		$busqueda_select_agente.append(agente_hmtl);
 		
 		//asignar el enfoque al limpiar campos
-		$busqueda_cliente.focus();
+		$busqueda_folio_pedido.focus();
 	});
 	
 	
@@ -167,11 +170,12 @@ $(function() {
 			 $('#cuerpo').css({'height': pix_alto});
 		};
 		//asignar el enfoque al visualizar el buscador
-		$busqueda_cliente.focus();
+		$busqueda_folio_pedido.focus();
 	});
 	
 	
 	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio_pedido, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
@@ -1685,7 +1689,7 @@ $(function() {
 			//$campo_tc.val(entry['tc']['tipo_cambio']);
 			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
 			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
-			$tipo_cambio.val(entry['Tc']['0']['tipo_cambio']);
+			$tipo_cambio.val(entry['Extras']['0']['tipo_cambio']);
 			
 			//cargar select de tipos de movimiento
 			var elemento_seleccionado = 3;//Facturacion de Remisiones
