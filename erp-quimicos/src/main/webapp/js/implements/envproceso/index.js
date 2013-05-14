@@ -671,7 +671,6 @@ $(function() {
                         $idconf.val(pres['id_env']);
                     }
                 });
-                
             });
             /*
             $grid_presntaciones.find('#cantuni'+trCount).blur(function(){
@@ -1186,7 +1185,7 @@ $(function() {
 						if((tmp.split(':')[0].substring(0,8) == 'cantPres') || (tmp.split(':')[0].substring(0,7) == 'amlDest') || (tmp.split(':')[0].substring(0,8) == 'presDest') || (tmp.split(':')[0].substring(0,6) == 'amlEnv')){
 							
 							$('#forma-envproceso-window').find('#div_warning_grid').css({'display':'block'});
-							$('#forma-envproceso-window').find('.envreenv_div_one').css({'height':'550px'});//con errores
+							$('#forma-envproceso-window').find('.envproceso_div_one').css({'height':'550px'});//con errores
 							$campo_input = $grid_productos.find('.'+campo);
 							$campo_input.css({'background' : '#d41000'});
 							
@@ -1447,7 +1446,7 @@ $(function() {
                                                                 if((tmp.split(':')[0].substring(0,8) == 'cantPres') || (tmp.split(':')[0].substring(0,7) == 'amlDest') || (tmp.split(':')[0].substring(0,8) == 'presDest') || (tmp.split(':')[0].substring(0,6) == 'amlEnv')){
 
                                                                         $('#forma-envproceso-window').find('#div_warning_grid').css({'display':'block'});
-                                                                        $('#forma-envproceso-window').find('.envreenv_div_one').css({'height':'550px'});//con errores
+                                                                        $('#forma-envproceso-window').find('.envproceso_div_one').css({'height':'550px'});//con errores
                                                                         $campo_input = $grid_productos.find('.'+campo);
                                                                         $campo_input.css({'background' : '#d41000'});
 
