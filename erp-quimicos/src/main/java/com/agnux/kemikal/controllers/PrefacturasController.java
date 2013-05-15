@@ -180,7 +180,7 @@ public class PrefacturasController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo productos
+        //aplicativo Prefacturas(Facturacion)
         Integer app_selected = 13;
         
         //decodificar id de usuario
@@ -260,22 +260,28 @@ public class PrefacturasController {
         ArrayList<HashMap<String, Object>> condiciones = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> metodos_pago = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> almacenes = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> parametros = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> pres_x_prod = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         if( !id_prefactura.equals("0")  ){
-            datosPrefactura = this.getPdao().getPrefactura(Integer.parseInt(id_prefactura));
-            datosGrid = this.getPdao().getDatosGrid(Integer.parseInt(id_prefactura));
+            datosPrefactura = this.getPdao().getPrefactura_Datos(Integer.parseInt(id_prefactura));
+            datosGrid = this.getPdao().getPrefactura_DatosGrid(Integer.parseInt(id_prefactura));
+            pres_x_prod = this.getPdao().getPrefactura_PresPorProd(Integer.parseInt(id_prefactura));
         }
+        
+        parametros = this.getPdao().getFac_Parametros(id_sucursal);
         
         valorIva= this.getFacdao().getValoriva(id_sucursal);
         extra.put("tipo_cambio", StringHelper.roundDouble(this.getFacdao().getTipoCambioActual(), 4)) ;
         extra.put("controlExiPres", userDat.get("control_exi_pres"));
+        extra.put("validaPresPedido", parametros.get(0).get("validaPresPedido"));
         arrayExtras.add(0,extra);
         
         monedas = this.getPdao().getMonedas();
@@ -286,6 +292,7 @@ public class PrefacturasController {
         
         jsonretorno.put("datosPrefactura", datosPrefactura);
         jsonretorno.put("datosGrid", datosGrid);
+        jsonretorno.put("Pres", pres_x_prod);
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Extras", arrayExtras);
@@ -434,18 +441,36 @@ public class PrefacturasController {
     @RequestMapping(method = RequestMethod.POST, value="/getDatosRemision.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDatosRemisionJson(
             @RequestParam(value="id_remision", required=true) Integer id_remision,
+            @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         ArrayList<HashMap<String, Object>> datos_remision = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> detalles_remision = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> parametros = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> pres_x_prod = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> arrayExtras = new ArrayList<HashMap<String, Object>>();
+        HashMap<String, Object> extra = new HashMap<String, Object>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         datos_remision = this.getPdao().getDatosRemision(id_remision);
         detalles_remision = this.getPdao().getDetallesRemision(id_remision);
+        pres_x_prod = this.getPdao().getPresPorProdRemision(id_remision);
+        
+        parametros = this.getPdao().getFac_Parametros(id_sucursal);
+        
+        extra.put("validaPresPedido", parametros.get(0).get("validaPresPedido"));
+        arrayExtras.add(0,extra);
         
         jsonretorno.put("Datos", datos_remision);
         jsonretorno.put("Conceptos", detalles_remision);
+        jsonretorno.put("Pres", pres_x_prod);
         
         return jsonretorno;
     }
@@ -508,7 +533,7 @@ public class PrefacturasController {
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="idproducto", required=false) String[] idproducto,
-            @RequestParam(value="id_presentacion", required=false) String[] id_presentacion,
+            @RequestParam(value="select_pres", required=false) String[] select_pres,
             @RequestParam(value="id_imp_prod", required=false) String[] id_impuesto,
             @RequestParam(value="valor_imp", required=false) String[] valor_imp,
             @RequestParam(value="cantidad", required=false) String[] cantidad,
@@ -559,8 +584,10 @@ public class PrefacturasController {
         String arreglo[];
         arreglo = new String[eliminado.length];
         
-        for(int i=0; i<eliminado.length; i++) { 
-            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"'";
+        for(int i=0; i<eliminado.length; i++) {
+            select_pres[i]=StringHelper.verificarSelect(select_pres[i]);
+            
+            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + select_pres[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"'";
             //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
             //System.out.println(arreglo[i]);
         }

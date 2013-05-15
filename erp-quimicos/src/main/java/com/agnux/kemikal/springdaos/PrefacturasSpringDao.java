@@ -83,6 +83,29 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     }
     
     
+    
+    
+    //Obtiene los parametros de facturación
+    @Override
+    public ArrayList<HashMap<String, Object>> getFac_Parametros(Integer idSuc) {
+	String sql_query = "SELECT * FROM fac_par WHERE gral_suc_id="+idSuc+" LIMIT 1;";
+        ArrayList<HashMap<String, Object>> hm_alm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("validaPresPedido",String.valueOf(rs.getBoolean("validar_pres_pedido")));
+                    return row;
+                }
+            }
+        );
+        return hm_alm;
+    }
+    
+    
+    
+    
     @Override
     public ArrayList<HashMap<String, Object>> getPrefacturas__PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         
@@ -162,9 +185,9 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     
     
     
-    //obtiene  los datos de la cotizacion
+    //Obtiene  los datos de la Prefactura
     @Override
-    public ArrayList<HashMap<String, Object>> getPrefactura(Integer id_prefactura) {
+    public ArrayList<HashMap<String, Object>> getPrefactura_Datos(Integer id_prefactura) {
         
         String sql_query = "SELECT erp_prefacturas.id, "
                                 + "erp_prefacturas.folio_pedido, "
@@ -252,7 +275,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     
     //obtiene los datos del grid de la prefactura
     @Override
-    public ArrayList<HashMap<String, Object>> getDatosGrid(Integer id_prefactura) {
+    public ArrayList<HashMap<String, Object>> getPrefactura_DatosGrid(Integer id_prefactura) {
         
         String sql_query = "SELECT erp_prefacturas_detalles.id as id_detalle,"
                                 +"erp_prefacturas_detalles.producto_id,"
@@ -267,14 +290,14 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 +"(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
                                 +"erp_prefacturas_detalles.tipo_impuesto_id,"
                                 +"erp_prefacturas_detalles.valor_imp, "
-                                +"gral_mon.descripcion as moneda "
+                                +"gral_mon.descripcion as moneda, "
+                                +"inv_prod_unidades.decimales AS no_dec "
                         + "FROM erp_prefacturas "
                         + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
                         + "LEFT JOIN gral_mon on gral_mon.id = erp_prefacturas.moneda_id "
                         + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
                         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_prefacturas_detalles.presentacion_id "
-                        
                         + "WHERE erp_prefacturas.id="+id_prefactura;
                         
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
@@ -289,6 +312,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("unidad",rs.getString("unidad"));
+                    row.put("no_dec",rs.getInt("no_dec"));
                     row.put("id_presentacion",rs.getString("id_presentacion"));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
@@ -298,21 +322,81 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("tipo_impuesto_id",rs.getInt("tipo_impuesto_id"));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
                     row.put("costo_prom","0" );
-                    
-                    /*
-                    System.out.println(rs.getString("moneda")+"  "
-                            + ""+rs.getString("sku")+"  "
-                            + "    "+StringHelper.roundDouble(rs.getDouble("precio_unitario"),4)
-                            + "    "+StringHelper.roundDouble(rs.getDouble("importe"),2)
-                            
-                            );
-                    */
                     return row;
                 }
             }
         );
         return hm_grid;
     }
+    
+    
+    //Obtener las presentaciones de cada producto de la Prefactura
+    @Override
+    public ArrayList<HashMap<String, Object>> getPrefactura_PresPorProd(Integer id_prefactura) {
+        String sql_query = ""
+                + "SELECT DISTINCT "
+                    + "prefac_det.producto_id, "
+                    + "inv_prod_pres_x_prod.presentacion_id, "
+                    + "inv_prod_presentaciones.titulo AS presentacion "
+                + "FROM erp_prefacturas_detalles AS prefac_det "
+                + "JOIN inv_prod_pres_x_prod ON inv_prod_pres_x_prod.producto_id=prefac_det.producto_id "
+                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod_pres_x_prod.presentacion_id "
+                + "WHERE prefac_det.prefacturas_id="+id_prefactura+" "
+                + "ORDER BY prefac_det.producto_id;";
+        
+        //System.out.println("Obtiene datos grid prefactura: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("producto_id",rs.getInt("producto_id"));
+                    row.put("presentacion_id",rs.getInt("presentacion_id"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    return row;
+                }
+            }
+        );
+        return hm_grid;
+    }
+    
+    
+    
+    //Obtener la presentaciones de los Productos de la Remisión
+    @Override
+    public ArrayList<HashMap<String, Object>> getPresPorProdRemision(Integer id_remision) {
+        String sql_query = ""
+                + "SELECT DISTINCT "
+                + "rem_det.inv_prod_id AS producto_id, "
+                + "inv_prod_pres_x_prod.presentacion_id, "
+                + "inv_prod_presentaciones.titulo AS presentacion "
+                + "FROM fac_rems_detalles AS rem_det "
+                + "JOIN inv_prod_pres_x_prod ON inv_prod_pres_x_prod.producto_id=rem_det.inv_prod_id "
+                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod_pres_x_prod.presentacion_id  "
+                + "WHERE rem_det.fac_rems_id="+id_remision+" "
+                + "ORDER BY rem_det.inv_prod_id;";
+        
+        //System.out.println("Obtiene datos grid prefactura: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("producto_id",rs.getInt("producto_id"));
+                    row.put("presentacion_id",rs.getInt("presentacion_id"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    return row;
+                }
+            }
+        );
+        return hm_grid;
+    }
+    
+    
+    
+    
     
     
     //obtiene todas la monedas

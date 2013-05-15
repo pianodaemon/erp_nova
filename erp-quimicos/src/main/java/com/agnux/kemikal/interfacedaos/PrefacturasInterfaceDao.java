@@ -25,15 +25,18 @@ public interface PrefacturasInterfaceDao {
     public int countAll(String data_string);
     //public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String titulo, String descripcion,Integer id_usuario);
     public ArrayList<HashMap<String, Object>> getAlmacenes(Integer id_empresa);
+    public ArrayList<HashMap<String, Object>> getFac_Parametros(Integer idSuc);
     
     
     public ArrayList<HashMap<String, Object>> getPrefacturas__PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
-    public ArrayList<HashMap<String, Object>> getPrefactura(Integer id_prefactura);
-    public ArrayList<HashMap<String, Object>> getDatosGrid(Integer id_prefactura);
+    public ArrayList<HashMap<String, Object>> getPrefactura_Datos(Integer id_prefactura);
+    public ArrayList<HashMap<String, Object>> getPrefactura_DatosGrid(Integer id_prefactura);
+    public ArrayList<HashMap<String, Object>> getPrefactura_PresPorProd(Integer id_prefactura);
     public ArrayList<HashMap<String, Object>> getMonedas();
     public ArrayList<HashMap<String, Object>> getDatosRemision(Integer id_remision);
     public ArrayList<HashMap<String, Object>> getDetallesRemision(Integer id_remision);
     public ArrayList<HashMap<String, String>> getRemisionesCliente(Integer id_cliente);
+    public ArrayList<HashMap<String, Object>> getPresPorProdRemision(Integer id_remision);
     
     public ArrayList<HashMap<String, Object>> getVendedores(Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getCondiciones();
