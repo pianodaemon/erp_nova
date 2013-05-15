@@ -2194,17 +2194,19 @@ $(function() {
 								
 								if(parseInt($("tr", $grid_productos).size())>0){
 									for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
-										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
+										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i) || (tmp.split(':')[0]=='presentacion'+i)){
 											$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'578px'});
 											$('#forma-prefacturas-window').find('#div_warning_grid').css({'display':'block'});
 											
 											if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
 												$grid_productos.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-												//alert();
-											}else{
-												if(tmp.split(':')[0].substring(0, 5) == 'costo'){
-													$grid_productos.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-												}
+											}
+											if(tmp.split(':')[0].substring(0, 5) == 'costo'){
+												$grid_productos.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+											}
+											
+											if(tmp.split(':')[0].substring(0, 12) == 'presentacion'){
+												$grid_productos.find('select[name=select_pres]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
 											}
 											
 											var tr_warning = '<tr>';
