@@ -715,7 +715,7 @@ $(function() {
 	$agrega_productos_remision_al_grid = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_remision, id_moneda_remision,  array_monedas, array_metodos_pago, id_alm){
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosRemision.json';
-		$arreglo = {'id_remision':id_remision };
+		$arreglo = {'id_remision':id_remision, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
 			var trCount = $("tr", $grid_productos).size();
@@ -809,35 +809,64 @@ $(function() {
 						trr += '</td>';
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
 								trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['producto_id'] +'">';
-								trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['codigo'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
+								trr += '<input type="text" name="sku'+ tr +'" value="'+ prod['codigo'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
 						trr += '</td>';
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
-							trr += '<INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
+							trr += '<input type="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 						trr += '</td>';
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-							trr += '<INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+							trr += '<input type="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 						trr += '</td>';
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-								trr += '<INPUT type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
-								trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+								trr += '<input type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
+								trr += '<input type="hidden" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+								trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;"></select>';
 						trr += '</td>';
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-							trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
+							trr += '<input type="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
 						trr += '</td>';
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-							trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
-							trr += '<INPUT type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
+							trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
+							trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 						trr += '</td>';
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-							trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
+							trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
 							trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['valor_imp'])+'">';
-							trr += '<INPUT type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" id="idimppord">';
-							trr += '<INPUT type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
+							trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" id="idimppord">';
+							trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
 						trr += '</td>';
 						trr += '</tr>';
 						$grid_productos.append(trr);
 						$grid_productos.find('a').hide();//ocultar
-					   
+						
+						
+						//cargar select de presentaciones de cada producto
+						$grid_productos.find('select.selectPres'+ tr).children().remove();
+						var moneda_hmtl = '';
+						$.each(entry['Pres'],function(entryIndex,pres){
+							if(parseInt(prod['producto_id'])==parseInt(pres['producto_id'])){
+								if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
+									moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
+								}
+								/*
+								if(entry['Extras'][0]['validaPresPedido']=='true'){
+									if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
+										moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
+									}
+								}else{
+									if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
+										moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
+									}else{
+										if(parseInt(flujo_proceso)==2){
+											moneda_hmtl += '<option value="' + pres['presentacion_id'] + '"  >' + pres['presentacion'] + '</option>';
+										}
+									}
+								}
+								*/
+							}
+						});
+						$grid_productos.find('select.selectPres'+ tr).append(moneda_hmtl);
+						
 					});
 				}
 				
@@ -1250,7 +1279,7 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec){
+	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec, arrayPres){
 		var $valor_impuesto = $('#forma-prefacturas-window').find('input[name=valorimpuesto]');
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
 		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
@@ -1311,32 +1340,45 @@ $(function() {
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
 					trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ id_prod +'">';
-					trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
+					trr += '<input type="text" name="sku'+ tr +'" value="'+ sku +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
-					trr += '<INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ titulo +'" id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
+					trr += '<input type="text" 	name="nombre'+ tr +'" 	value="'+ titulo +'" id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+					trr += '<input type="text" 	name="unidad'+ tr +'" 	value="'+ unidad +'" id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-					trr += '<INPUT type="hidden"    name="id_presentacion"        	value="'+  id_pres +'" id="idpres">';
-					trr += '<INPUT type="hidden"    name="numero_decimales"        	value="'+  num_dec +'" id="numdec">';
-					trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'"         value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+					trr += '<input type="hidden"    name="id_presentacion"        	value="'+  id_pres +'" id="idpres">';
+					trr += '<input type="hidden"    name="numero_decimales"        	value="'+  num_dec +'" id="numdec">';
+					trr += '<input type="hidden" 		name="presentacion'+ tr +'"         value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+					trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;">';
+						trr += '<option value="0" selected="yes">[-Seleccionar-]</option>';
+					trr += '</select>';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<INPUT TYPE="text" 	name="cantidad" value=" " id="cant" style="width:76px;">';
+					trr += '<input type="text" 	name="cantidad" value=" " id="cant" style="width:76px;">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<INPUT TYPE="text" 	name="costo" 	value="'+ pu +'" id="cost" style="width:86px; text-align:right;">';
+					trr += '<input type="text" 	name="costo" 	value="'+ pu +'" id="cost" style="width:86px; text-align:right;">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-					trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="" id="import" readOnly="true" style="width:86px; text-align:right;">';
+					trr += '<input type="text" 	name="importe'+ tr +'" 	value="" id="import" readOnly="true" style="width:86px; text-align:right;">';
 					trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="0">';
 				trr += '</td>';
 			trr += '</tr>';
             
 			$grid_productos.append(trr);
+			
+			
+			//cargar select de presentaciones de cada producto
+			$grid_productos.find('select.selectPres'+ tr).children().remove();
+			var moneda_hmtl = '';
+			$.each(arrayPres,function(entryIndex,pres){
+				moneda_hmtl += '<option value="' + pres['id'] + '"  >' + pres['descripcion'] + '</option>';
+			});
+			$grid_productos.find('select.selectPres'+ tr).append(moneda_hmtl);
+			
 			
 			
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
@@ -1660,13 +1702,13 @@ $(function() {
 									var tr_warning = '<tr>';
 										tr_warning += '<td width="20"><div><IMG SRC="../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
 										tr_warning += '<td width="120">';
-										tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
+										tr_warning += '<input type="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
 										tr_warning += '</td>';
 										tr_warning += '<td width="200">';
-										tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
+										tr_warning += '<input type="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
 										tr_warning += '</td>';
 										tr_warning += '<td width="235">';
-										tr_warning += '<INPUT TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
+										tr_warning += '<input type="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
 										tr_warning += '</td>';
 									tr_warning += '</tr>';
 									$grid_warning.append(tr_warning);
@@ -1681,7 +1723,7 @@ $(function() {
 			}
 		}
 		
-		var options = {dataType :  'json', success : respuestaProcesada};
+		var options = {datatype :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
 		//$.getJSON(json_string,function(entry){
@@ -2168,13 +2210,13 @@ $(function() {
 											var tr_warning = '<tr>';
 												tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
 												tr_warning += '<td width="120">';
-												tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
+												tr_warning += '<input type="text" value="'+$grid_productos.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
 												tr_warning += '</td>';
 												tr_warning += '<td width="200">';
-												tr_warning += '<INPUT TYPE="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
+												tr_warning += '<input type="text" value="'+$grid_productos.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
 												tr_warning += '</td>';
 												tr_warning += '<td width="235">';
-												tr_warning += '<INPUT TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
+												tr_warning += '<input type="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:230px; color:red">';
 												tr_warning += '</td>';
 											tr_warning += '</tr>';
 											$grid_warning.append(tr_warning);
@@ -2189,7 +2231,7 @@ $(function() {
 					}
 				}
 				
-				var options = {dataType :  'json', success : respuestaProcesada};
+				var options = {datatype :  'json', success : respuestaProcesada};
 				$forma_selected.ajaxForm(options);
 				
 				//aqui se cargan los campos al editar
@@ -2373,34 +2415,58 @@ $(function() {
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
 									trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['producto_id'] +'">';
-									trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['sku'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
+									trr += '<input type="text" name="sku'+ tr +'" value="'+ prod['sku'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
-								trr += '<INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
+								trr += '<input type="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+								trr += '<input type="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-									trr += '<INPUT type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
-									trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+									trr += '<input type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
+									trr += '<input type="hidden" 	name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+									trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;"></select>';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
+								trr += '<input type="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
-								trr += '<INPUT type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
+								trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
+								trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
+								trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['valor_imp'])+'">';
-								trr += '<INPUT type="hidden"    name="id_imp_prod"  value="'+  prod['tipo_impuesto_id'] +'" id="idimppord">';
-								trr += '<INPUT type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
+								trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['tipo_impuesto_id'] +'" id="idimppord">';
+								trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
 							trr += '</td>';
 							trr += '</tr>';
 							$grid_productos.append(trr);
                             
+							//cargar select de presentaciones de cada producto
+							$grid_productos.find('select.selectPres'+ tr).children().remove();
+							var moneda_hmtl = '';
+							$.each(entry['Pres'],function(entryIndex,pres){
+								if(parseInt(prod['producto_id'])==parseInt(pres['producto_id'])){
+									if(entry['Extras'][0]['validaPresPedido']=='true'){
+										if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
+											moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
+										}
+									}else{
+										if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
+											moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
+										}else{
+											if(parseInt(flujo_proceso)==2){
+												if(parseInt(entry['datosPrefactura']['0']['tipo_documento'])!=3){
+													moneda_hmtl += '<option value="' + pres['presentacion_id'] + '"  >' + pres['presentacion'] + '</option>';
+												}
+											}
+										}
+									}
+								}
+							});
+							$grid_productos.find('select.selectPres'+ tr).append(moneda_hmtl);
 							
 						});
 					}

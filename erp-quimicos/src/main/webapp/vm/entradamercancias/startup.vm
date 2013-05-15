@@ -180,7 +180,7 @@
 																<INPUT TYPE="hidden" name="rfcproveedor" readOnly="true">
 																<input type="text" name="no_proveedor" value="" style="width:130px; border:1px solid #000;">
 															</td>
-															<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfcproveedor"></td>
+															<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noproveedor"></td>
 															<td width="40"><a  href="busca_proveedor">(Buscar)</a></td>
 															<td width="50"></td>
 															<td><INPUT TYPE="text" name="razon_proveedor" style="width:400px;"></td>

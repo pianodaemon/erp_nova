@@ -459,9 +459,9 @@ $(function() {
 	
 	
 	//buscador de presentaciones disponibles para un producto
-	$buscador_presentaciones_producto = function(rfc_proveedor, sku_producto){
+	$buscador_presentaciones_producto = function(no_proveedor, sku_producto){
 		//verifica si el campo rfc proveedor no esta vacio
-		if(rfc_proveedor != ''){
+		if(no_proveedor != ''){
 			//verifica si el campo sku no esta vacio para realizar busqueda
 			if(sku_producto != ''){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_presentaciones_producto.json';
@@ -1407,7 +1407,7 @@ $(function() {
 		$agregar_producto.click(function(event){
 			event.preventDefault();
 			//$agrega_producto_al_grid();
-			$buscador_presentaciones_producto($campo_rfc_proveedor.val(),$campo_sku.val());
+			$buscador_presentaciones_producto($no_proveedor.val(),$campo_sku.val());
 		});
 		
 		
