@@ -72,7 +72,7 @@ public class PdfReporteVentasNetasProductoFacturados {
         PdfPCell cell;
         try {
 
-            Document document = new Document(PageSize.LETTER.rotate(), -50, -50, 60, 30);
+            Document document = new Document(PageSize.LETTER.rotate(), -60, -60, 60, 30);
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileout));
             writer.setPageEvent(event);
             document.open();
@@ -90,10 +90,9 @@ public class PdfReporteVentasNetasProductoFacturados {
             tabla.setKeepTogether(true);
             tabla.setHeaderRows(1);
 
-            String[] titulos = {"N.CONTROL", "CLIENTE", "FACTURA", "FECHA", "UNIDAD", "CANT.", "", "P.UNI.", "","V. NETA.", "MONEDA","T. CAMBIO","","% COSTO","% POND","% MOP","% M_MOP"};
+            String[] titulos = {"N.CONTROL", "CLIENTE", "FACTURA", "FECHA", "UNIDAD", "CANT.", "", "P.UNI.", "","V. NETA.", "MONEDA","T. C.","","% COSTO","% POND","% MOP","% M_MOP"};
 
             for (int i = 0; i <= titulos.length - 1; i++) {
-
                 cell = new PdfPCell(new Paragraph(titulos[i], smallBoldFont));
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 cell.setUseAscender(true);
@@ -101,9 +100,7 @@ public class PdfReporteVentasNetasProductoFacturados {
                 cell.setBackgroundColor(BaseColor.BLACK);
                 cell.setBorder(0);
                 cell.setBorderWidthLeft(0);
-
                 tabla.addCell(cell);
-
             }
             //fin de for de insertar encabezado de la tabla
             String producto = "";

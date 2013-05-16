@@ -72,7 +72,7 @@ public class PdfRepVentasNetasProductoFactura {
         PdfPCell cell;
         try {
 
-            Document document = new Document(PageSize.LETTER.rotate(), -50, -50, 60, 30);
+            Document document = new Document(PageSize.LETTER.rotate(), -60, -60, 60, 30);
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileout));
             writer.setPageEvent(event);
             document.open();
@@ -89,10 +89,9 @@ public class PdfRepVentasNetasProductoFactura {
             tabla.setKeepTogether(true);
             tabla.setHeaderRows(1);
 
-            String[] titulos = {"CODIGO", "PRODUCTO", "FACTURA", "FECHA", "UNIDAD", "CANTIDAD", "", "PRECIO U.", "", "V. NETA.", "MONEDA", "T. CAMBIO","","COSTO","% POND","% MOP","% M_MOP"};
+            String[] titulos = {"CODIGO", "PRODUCTO", "FACTURA", "FECHA", "UNIDAD", "CANTIDAD", "", "PRECIO U.", "", "V. NETA.", "MONEDA", "T. C.","","COSTO","% POND","% MOP","% M_MOP"};
 
             for (int i = 0; i <= titulos.length - 1; i++) {
-
                 cell = new PdfPCell(new Paragraph(titulos[i], smallBoldFont));
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 cell.setUseAscender(true);
@@ -100,10 +99,9 @@ public class PdfRepVentasNetasProductoFactura {
                 cell.setBackgroundColor(BaseColor.BLACK);
                 cell.setBorder(0);
                 cell.setBorderWidthLeft(0);
-
                 tabla.addCell(cell);
-
             }
+            
             //fin de for de insertar encabezado de la tabla
             String cliente = "";
             String unidad = "";
@@ -502,54 +500,54 @@ public class PdfRepVentasNetasProductoFactura {
                     cell.setBorder(1);
                     tabla.addCell(cell);
                     //FIN NUEVO
-            //fila de la suma general
+                    //fila de la suma general
                     cell = new PdfPCell(new Paragraph("TOTAL GENERAL :",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setColspan(8);
-                                    cell.setBorder(0);
-                                    tabla.addCell(cell);
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setColspan(8);
+                    cell.setBorder(0);
+                    tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph("$",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(0);
-                                    tabla.addCell(cell);
+                    cell = new PdfPCell(new Paragraph("$",smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setBorder(0);
+                    tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(ventageneral,2)),smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(0);
-                                    tabla.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(ventageneral,2)),smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setBorder(0);
+                    tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph("",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setColspan(2);
-                                    cell.setBorder(0);
-                                    tabla.addCell(cell);
+                    cell = new PdfPCell(new Paragraph("",smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setColspan(2);
+                    cell.setBorder(0);
+                    tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph("$",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
+                    cell = new PdfPCell(new Paragraph("$",smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setBorder(1);
+                    tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(costogeneral,2)),smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(costogeneral,2)),smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setBorder(1);
+                    tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble((ventageneral/ventageneral)*100,2))+" %",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble((ventageneral/ventageneral)*100,2))+" %",smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setBorder(1);
+                    tabla.addCell(cell);
 
 
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(((ventageneral-costogeneral)/ventageneral) *100,2))+" %",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(((ventageneral-costogeneral)/ventageneral) *100,2))+" %",smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setBorder(1);
+                    tabla.addCell(cell);
 
-                                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(((ventageneral/ventageneral) )*(((ventageneral-costogeneral)/ventageneral) )*100,2))+" %",smallFont));
-                                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                    cell.setBorder(1);
-                                    tabla.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(((ventageneral/ventageneral) )*(((ventageneral-costogeneral)/ventageneral) )*100,2))+" %",smallFont));
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setBorder(1);
+                    tabla.addCell(cell);
 
 
 

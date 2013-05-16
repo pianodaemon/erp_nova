@@ -254,7 +254,7 @@ public class PdfEstadoCuentaProveedor {
                         cell.setBorder(0);
                         table.addCell(cell);
                         
-                        cell= new PdfPCell(new Paragraph(StringHelper.isNullString(registro.get("ultimo_pago")),smallFont));
+                        cell= new PdfPCell(new Paragraph(StringHelper.isNullString(registro.get("ultimo_pago").replace("&nbsp;", " ")),smallFont));
                         cell.setHorizontalAlignment (Element.ALIGN_CENTER);
                         cell.setBorder(0);
                         table.addCell(cell);
@@ -413,7 +413,7 @@ public class PdfEstadoCuentaProveedor {
                         cell.setBorder(0);
                         table.addCell(cell);
                         
-                        cell= new PdfPCell(new Paragraph(registro.get("ultimo_pago").toString(),smallFont));
+                        cell= new PdfPCell(new Paragraph(registro.get("ultimo_pago").toString().replace("&nbsp;", " "),smallFont));
                         cell.setHorizontalAlignment (Element.ALIGN_CENTER);
                         cell.setBorder(0);
                         table.addCell(cell);

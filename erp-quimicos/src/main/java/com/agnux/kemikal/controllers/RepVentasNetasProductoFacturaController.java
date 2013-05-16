@@ -452,11 +452,12 @@ public class RepVentasNetasProductoFacturaController {
                         registros_normales.put("total_venta", String.valueOf(0.0));
 
                         sumatoria_cantidad = sumatoria_cantidad + Double.parseDouble(registro.get("cantidad"));
-                        if (Integer.parseInt(registro.get("costo"))== 0){
+                        if (Double.parseDouble(registro.get("costo"))== 0){
                              costo=0.0;
                         }else{
                         costo=Double.parseDouble(registro.get("costo"));
                         }
+                        
                         sumatoria_costo = sumatoria_costo + costo;
                         
                         sumatoria_venta = sumatoria_venta + Double.parseDouble(registro.get("venta_pesos"));
@@ -530,7 +531,7 @@ public class RepVentasNetasProductoFacturaController {
 
                         //sumar primera cantidad del nuevo cliente
                         sumatoria_cantidad = sumatoria_cantidad + Double.parseDouble(registro.get("cantidad"));
-                        if (Integer.parseInt(registro.get("costo"))== 0){
+                        if (Double.parseDouble(registro.get("costo"))== 0){
                              costo=0.0;
                         }else{
                         costo=Double.parseDouble(registro.get("costo"));
