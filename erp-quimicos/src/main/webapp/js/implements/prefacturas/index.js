@@ -819,8 +819,8 @@ $(function() {
 						trr += '</td>';
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
 								trr += '<input type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
-								trr += '<input type="hidden" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
-								trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;"></select>';
+								trr += '<input type="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+								//trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;"></select>';
 						trr += '</td>';
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 							trr += '<input type="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
@@ -839,7 +839,7 @@ $(function() {
 						$grid_productos.append(trr);
 						$grid_productos.find('a').hide();//ocultar
 						
-						
+						/*
 						//cargar select de presentaciones de cada producto
 						$grid_productos.find('select.selectPres'+ tr).children().remove();
 						var moneda_hmtl = '';
@@ -848,25 +848,10 @@ $(function() {
 								if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
 									moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
 								}
-								/*
-								if(entry['Extras'][0]['validaPresPedido']=='true'){
-									if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
-										moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
-									}
-								}else{
-									if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
-										moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
-									}else{
-										if(parseInt(flujo_proceso)==2){
-											moneda_hmtl += '<option value="' + pres['presentacion_id'] + '"  >' + pres['presentacion'] + '</option>';
-										}
-									}
-								}
-								*/
 							}
 						});
 						$grid_productos.find('select.selectPres'+ tr).append(moneda_hmtl);
-						
+						*/
 					});
 				}
 				
@@ -2174,6 +2159,7 @@ $(function() {
 						
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
 						$grid_productos.find('#cost').css({'background' : '#ffffff'});
+						$grid_productos.find('#pres').css({'background' : '#ffffff'});
 						
 						$('#forma-prefacturas-window').find('#div_warning_grid').css({'display':'none'});
 						$('#forma-prefacturas-window').find('#div_warning_grid').find('#grid_warning').children().remove();
@@ -2206,7 +2192,7 @@ $(function() {
 											}
 											
 											if(tmp.split(':')[0].substring(0, 12) == 'presentacion'){
-												$grid_productos.find('select[name=select_pres]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+												$grid_productos.find('input[name=presentacion]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
 											}
 											
 											var tr_warning = '<tr>';
@@ -2427,8 +2413,8 @@ $(function() {
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
 									trr += '<input type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
-									trr += '<input type="hidden" 	name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
-									trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;"></select>';
+									trr += '<input type="text" 	name="presentacion" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
+									//trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;"></select>';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 								trr += '<input type="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
@@ -2446,30 +2432,40 @@ $(function() {
 							trr += '</tr>';
 							$grid_productos.append(trr);
                             
+                            /*
 							//cargar select de presentaciones de cada producto
 							$grid_productos.find('select.selectPres'+ tr).children().remove();
 							var moneda_hmtl = '';
 							$.each(entry['Pres'],function(entryIndex,pres){
 								if(parseInt(prod['producto_id'])==parseInt(pres['producto_id'])){
-									if(entry['Extras'][0]['validaPresPedido']=='true'){
-										if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
-											moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
-										}
-									}else{
-										if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
-											moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
+									
+									if(entry['Extras'][0]['controlExiPres']=='true'){
+										if(entry['Extras'][0]['validaPresPedido']=='true'){
+											if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
+												moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
+											}
 										}else{
-											if(parseInt(flujo_proceso)==2){
-												if(parseInt(entry['datosPrefactura']['0']['tipo_documento'])!=3){
-													moneda_hmtl += '<option value="' + pres['presentacion_id'] + '"  >' + pres['presentacion'] + '</option>';
+											if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
+												moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
+											}else{
+												if(parseInt(flujo_proceso)==2){
+													if(parseInt(entry['datosPrefactura']['0']['tipo_documento'])!=3){
+														moneda_hmtl += '<option value="' + pres['presentacion_id'] + '"  >' + pres['presentacion'] + '</option>';
+													}
 												}
 											}
 										}
+									}else{
+										//solo se debe cargar la presentacion asignada desde el pedido
+										if(parseInt(prod['id_presentacion'])==parseInt(pres['presentacion_id'])){
+											moneda_hmtl += '<option value="' + pres['presentacion_id'] + '" selected="yes">' + pres['presentacion'] + '</option>';
+										}
 									}
+									
 								}
 							});
 							$grid_productos.find('select.selectPres'+ tr).append(moneda_hmtl);
-							
+							*/
 						});
 					}
 					

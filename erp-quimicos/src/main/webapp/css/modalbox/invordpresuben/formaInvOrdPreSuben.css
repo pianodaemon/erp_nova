@@ -139,6 +139,9 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 }
 
 
+
+
+
 #grid_productos td{
 	height:18px;
 	text-align:center;
@@ -152,19 +155,41 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 	height:17px;
 }
 
-
 .borde_oculto{
 	border-color:transparent; 
 	background:transparent;
 }
 
 
-
-/*clases para pestañas internas*/
 .gral input{
-    height:15px;
+	height:15px;
 }
 
 .gral select{
-    height:17px;
+	height:17px;
 }
+
+table tr td.grid {
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 2px;
+	text-align: center;
+	vertical-align: top;
+}
+table tr td.grid1 {
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 2px;
+	text-align: left;
+	vertical-align: top;
+}
+
+table tr td.grid2 {
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 2px;
+	text-align: right;
+	vertical-align: top;
+}
+
+

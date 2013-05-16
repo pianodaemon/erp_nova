@@ -161,153 +161,137 @@ $(function() {
 			$(this).addClass("active");
 			return false;
 		});
-                
-                
-                
-                /*codigo para las pestañas internas*/
-               /*
-               $('#forma-invpre-window').find(".contenidoPes_internas").hide(); //Hide all content
-		$('#forma-invpre-window').find("ul.pestanas_internas li:first").addClass("active_internas").show(); //Activate first tab
-		$('#forma-invpre-window').find(".contenidoPes_internas:first").show(); //Show first tab content
-		
-		//On Click Event
-		$('#forma-invpre-window').find("ul.pestanas_internas li").click(function() {
-			$('#forma-invpre-window').find(".contenidoPes_internas").hide();
-			$('#forma-invpre-window').find("ul.pestanas_internas li").removeClass("active_internas");
-			var activeTab = $(this).find("a").attr("href");
-			$('#forma-invpre-window').find( activeTab , "ul.pestanas_internas li" ).fadeIn().show();
-			$(this).addClass("active_internas");
-			return false;
+	}
+
+
+	
+	//buscador de producto ingrediente
+	$busca_productos = function(){
+		$(this).modalPanel_Buscaproducto();
+		var $dialogoc =  $('#forma-buscaproducto-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_productos').find('table.formaBusqueda_productos').clone());
+	   
+		$('#forma-buscaproducto-window').css({"margin-left": -190,     "margin-top": -160});
+	   
+		var $tabla_resultados = $('#forma-buscaproducto-window').find('#tabla_resultado');
+	   
+		var $campo_sku = $('#forma-buscaproducto-window').find('input[name=campo_sku]');
+		//var $select_tipo_producto = $('#forma-buscaproducto-window').find('select[name=tipo_producto]');
+		var $campo_descripcion = $('#forma-buscaproducto-window').find('input[name=campo_descripcion]');
+	   
+		var $buscar_plugin_producto = $('#forma-buscaproducto-window').find('#busca_producto_modalbox');
+		var $cancelar_plugin_busca_producto = $('#forma-buscaproducto-window').find('#cencela');
+	   
+		//funcionalidad botones
+		$buscar_plugin_producto.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
 		});
-                */
+		$buscar_plugin_producto.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+	   
+		$cancelar_plugin_busca_producto.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		$cancelar_plugin_busca_producto.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+	   
+	   /*
+		//buscar todos los tipos de productos
+		var input_json_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_tipos,$arreglo,function(data){
+			//Llena el select tipos de productos en el buscador
+			$select_tipo_producto.children().remove();
+			var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
+			$.each(data['prodTipos'],function(entryIndex,pt){
+				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+			});
+			$select_tipo_producto.append(prod_tipos_html);
+		});
+	   */
+	   
+		//Aqui asigno al campo sku del buscador si el usuario ingres√≥ un sku antes de hacer clic en buscar en la ventana principal
+		//$campo_sku.val(sku_buscar);
+	   
+		//click buscar productos
+		$buscar_plugin_producto.click(function(event){
+			//event.preventDefault();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_productos.json';
+			$arreglo = {//'almacen':$select_almacen.val(),
+					'sku':$campo_sku.val(),
+					'tipo':2,
+					'descripcion':$campo_descripcion.val(),
+					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+				}
+			var trr = '';
+			
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Productos'],function(entryIndex,producto){
+					trr = '<tr>';
+						trr += '<td width="120">';
+							trr += '<span class="id_prod_buscador" style="display:none;">'+producto['id']+'</span>';
+							trr += '<span class="sku_prod_buscador">'+producto['sku']+'</span>';
+						trr +=  '</td>';
+						trr += '<td width="280"><span class="titulo_prod_buscador">'+producto['descripcion']+'</span></td>';
+						trr += '<td width="90"><span class="unidad_prod_buscador">'+producto['unidad']+'</span></td>';
+						trr += '<td width="90"><span class="tipo_prod_buscador">'+producto['tipo']+'</span></td>';
+					trr += '</tr>';
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+			   
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+					//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+			   
+				//seleccionar un producto del grid de resultados
+				$tabla_resultados.find('tr').click(function(){
+					//asignar a los campos correspondientes el sku y y descripcion
+					$('#forma-invordpresuben-window').find('input[name=producto_id]').val($(this).find('span.id_prod_buscador').html());
+					$('#forma-invordpresuben-window').find('input[name=productosku]').val($(this).find('span.sku_prod_buscador').html());
+					$('#forma-invordpresuben-window').find('input[name=producto_descripcion]').val($(this).find('span.titulo_prod_buscador').html());
+					//elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscaproducto-overlay').fadeOut(remove);
+					   
+				   
+				});
+			   
+			});//termina llamada json
+		});
+	   
+		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
+		if($campo_sku.val() != ''){
+			$buscar_plugin_producto.trigger('click');
+		}
+	   
+		$cancelar_plugin_busca_producto.click(function(event){
+			//event.preventDefault();
+			var remove = function() {$(this).remove();};
+			$('#forma-buscaproducto-overlay').fadeOut(remove);
+		});
 	}
 	
-	    //buscador de producto ingrediente
-        $busca_productos = function(){
-            $(this).modalPanel_Buscaproducto();
-            var $dialogoc =  $('#forma-buscaproducto-window');
-            //var $dialogoc.prependTo('#forma-buscaproduct-window');
-            $dialogoc.append($('div.buscador_productos').find('table.formaBusqueda_productos').clone());
-           
-            $('#forma-buscaproducto-window').css({"margin-left": -190,     "margin-top": -160});
-           
-            var $tabla_resultados = $('#forma-buscaproducto-window').find('#tabla_resultado');
-           
-            var $campo_sku = $('#forma-buscaproducto-window').find('input[name=campo_sku]');
-            //var $select_tipo_producto = $('#forma-buscaproducto-window').find('select[name=tipo_producto]');
-            var $campo_descripcion = $('#forma-buscaproducto-window').find('input[name=campo_descripcion]');
-           
-            var $buscar_plugin_producto = $('#forma-buscaproducto-window').find('#busca_producto_modalbox');
-            var $cancelar_plugin_busca_producto = $('#forma-buscaproducto-window').find('#cencela');
-           
-            //funcionalidad botones
-            $buscar_plugin_producto.mouseover(function(){
-                $(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
-            });
-            $buscar_plugin_producto.mouseout(function(){
-                $(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
-            });
-           
-            $cancelar_plugin_busca_producto.mouseover(function(){
-                $(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
-            });
-            $cancelar_plugin_busca_producto.mouseout(function(){
-                $(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
-            });
-           
-           /*
-            //buscar todos los tipos de productos
-            var input_json_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
-            $arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-            $.post(input_json_tipos,$arreglo,function(data){
-                //Llena el select tipos de productos en el buscador
-                $select_tipo_producto.children().remove();
-                var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
-                $.each(data['prodTipos'],function(entryIndex,pt){
-                    prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
-                });
-                $select_tipo_producto.append(prod_tipos_html);
-            });
-           */
-           
-            //Aqui asigno al campo sku del buscador si el usuario ingres√≥ un sku antes de hacer clic en buscar en la ventana principal
-            //$campo_sku.val(sku_buscar);
-           
-            //click buscar productos
-            $buscar_plugin_producto.click(function(event){
-                //event.preventDefault();
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_productos.json';
-                $arreglo = {//'almacen':$select_almacen.val(),
-                        'sku':$campo_sku.val(),
-                        'tipo':2,
-                        'descripcion':$campo_descripcion.val(),
-                        'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                    }
-                var trr = '';
-                
-                $tabla_resultados.children().remove();
-                $.post(input_json,$arreglo,function(entry){
-                    $.each(entry['Productos'],function(entryIndex,producto){
-                        trr = '<tr>';
-                            trr += '<td width="120">';
-                                trr += '<span class="id_prod_buscador" style="display:none;">'+producto['id']+'</span>';
-                                trr += '<span class="sku_prod_buscador">'+producto['sku']+'</span>';
-                            trr +=  '</td>';
-                            trr += '<td width="280"><span class="titulo_prod_buscador">'+producto['descripcion']+'</span></td>';
-                            trr += '<td width="90"><span class="unidad_prod_buscador">'+producto['unidad']+'</span></td>';
-                            trr += '<td width="90"><span class="tipo_prod_buscador">'+producto['tipo']+'</span></td>';
-                        trr += '</tr>';
-                        $tabla_resultados.append(trr);
-                    });
-                    
-                    $tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
-                    $tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
-                   
-                    $('tr:odd' , $tabla_resultados).hover(function () {
-                        $(this).find('td').css({background : '#FBD850'});
-                    }, function() {
-                        //$(this).find('td').css({'background-color':'#DDECFF'});
-                        $(this).find('td').css({'background-color':'#e7e8ea'});
-                    });
-                    $('tr:even' , $tabla_resultados).hover(function () {
-                        $(this).find('td').css({'background-color':'#FBD850'});
-                    }, function() {
-                        $(this).find('td').css({'background-color':'#FFFFFF'});
-                    });
-                   
-                    //seleccionar un producto del grid de resultados
-                    $tabla_resultados.find('tr').click(function(){
-                        //asignar a los campos correspondientes el sku y y descripcion
-                        $('#forma-invordpresuben-window').find('input[name=producto_id]').val($(this).find('span.id_prod_buscador').html());
-                        $('#forma-invordpresuben-window').find('input[name=productosku]').val($(this).find('span.sku_prod_buscador').html());
-                        $('#forma-invordpresuben-window').find('input[name=producto_descripcion]').val($(this).find('span.titulo_prod_buscador').html());
-                        //elimina la ventana de busqueda
-                        var remove = function() {$(this).remove();};
-                        $('#forma-buscaproducto-overlay').fadeOut(remove);
-                           
-                       
-                    });
-                   
-                });//termina llamada json
-            });
-           
-            //si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
-            if($campo_sku.val() != ''){
-                $buscar_plugin_producto.trigger('click');
-            }
-           
-            $cancelar_plugin_busca_producto.click(function(event){
-                //event.preventDefault();
-                var remove = function() {$(this).remove();};
-                $('#forma-buscaproducto-overlay').fadeOut(remove);
-            });
-           
-    }
+	
         
         //agrega producto nuevo al grid
         //$agrega_producto_al_grid(entry['Producto']['0']['id'],entry['Producto']['0']['sku'],entry['Producto']['0']['descripcion']
         //,entry['Producto']['0']['titulo'], entry['CompProducto'], cantidad);
-	$agrega_producto_al_grid = function(id_prod,sku,titulo,unidad,componentes, cantidad){
+		$agrega_producto_al_grid = function(id_prod,sku,titulo,unidad,componentes, cantidad){
             var $id_prod = $('#forma-invordpresuben-window').find('input[name=id_producto]');
             var $sku_prod = $('#forma-invordpresuben-window').find('input[name=productosku]');
             var $nombre_prod = $('#forma-invordpresuben-window').find('input[name=titulo_producto]');
@@ -319,7 +303,7 @@ $(function() {
             $grid_productos.find('tr').each(function (index){
                 if(( $(this).find('#skup').val() == sku.toUpperCase() )  && (parseInt($(this).find('#eliminado').val())!=0)){
                     encontrado=1;//el producto ya esta en el grid
-
+					
                     $grid_componentes.find('tr').each(function (index){
                         if(( $(this).find('#skup').val() == sku.toUpperCase() )  && (parseInt($(this).find('#eliminado').val())!=0)){
                             encontrado=1;//el producto ya esta en el grid
@@ -435,7 +419,11 @@ $(function() {
                         //$suma_cantidades();
                     });
                     
-                    //id_prod
+                    /***********************************************************************************
+                     * Aqui se crea el TR para el grid de productos componentes de la formula.
+                     * Si un producto ya se encuentra en éste grid, se hace una sumatoria para no mostrar varias
+                     * veces el mismo producto.
+                     ***********************************************************************************/
                     
                     for(var i in componentes){
                         var trCount = $("tr", $grid_componentes).size();
@@ -475,6 +463,9 @@ $(function() {
                             });
                         }
                         
+                    /***********************************************************************************
+                     * Aqui cargamos el grid oculto  con los componentes de la formula
+                     ***********************************************************************************/
                         var tr_ids='';
                         tr_ids = '<tr>';
                         tr_ids += '<td >';
@@ -495,7 +486,7 @@ $(function() {
                     $sku_prod.focus();
                 }
             }
-	}//termina agregar producto nuevo al grid
+		}//termina agregar producto nuevo al grid
 	
 	
 	

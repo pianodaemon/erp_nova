@@ -1660,6 +1660,7 @@ $(function() {
 				
 				$grid_productos.find('#cant').css({'background' : '#ffffff'});
 				$grid_productos.find('#cost').css({'background' : '#ffffff'});
+				$grid_productos.find('#pres').css({'background' : '#ffffff'});
 				
 				$('#forma-pocpedidos-window').find('#div_warning_grid').css({'display':'none'});
 				$('#forma-pocpedidos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
@@ -1686,6 +1687,7 @@ $(function() {
 						if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 5) == 'costo') || (tmp.split(':')[0].substring(0, 12) == 'presentacion')){
 							
 							$('#forma-pocpedidos-window').find('#div_warning_grid').css({'display':'block'});
+							
 							if(tmp.split(':')[0].substring(0, 12) == 'presentacion'){
 								$campo_input = $grid_productos.find('input[name='+campo+']');
 							}else{
@@ -2241,6 +2243,7 @@ $(function() {
 						
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
 						$grid_productos.find('#cost').css({'background' : '#ffffff'});
+						$grid_productos.find('#pres').css({'background' : '#ffffff'});
 						
 						$('#forma-pocpedidos-window').find('#div_warning_grid').css({'display':'none'});
 						$('#forma-pocpedidos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
@@ -2264,10 +2267,17 @@ $(function() {
 								var cantidad_existencia=0;
 								var  width_td=0;
 								
-								if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 5) == 'costo')){
+								if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 5) == 'costo') || (tmp.split(':')[0].substring(0, 12) == 'presentacion')){
 									
 									$('#forma-pocpedidos-window').find('#div_warning_grid').css({'display':'block'});
-									$campo_input = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
+									
+									if(tmp.split(':')[0].substring(0, 12) == 'presentacion'){
+										$campo_input = $grid_productos.find('input[name='+campo+']');
+									}else{
+										$campo_input = $grid_productos.find('.'+campo);
+									}
+									
+									$campo_input.css({'background' : '#d41000'});
 									
 									var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();
 									var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
