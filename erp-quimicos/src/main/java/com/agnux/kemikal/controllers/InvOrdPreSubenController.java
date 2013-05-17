@@ -238,7 +238,7 @@ public class InvOrdPreSubenController {
             @RequestParam(value="descripcion", required=true) String descripcion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
        
         System.out.println("Busqueda de producto");
        
@@ -264,19 +264,34 @@ public class InvOrdPreSubenController {
             @RequestParam(value="sku", required=true) String sku,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
-        System.out.println("Busqueda de producto");
+        ) {
+        System.out.println("Busqueda de producto producto formulado");
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> producto = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> componentes = new ArrayList<HashMap<String, String>>();
+        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         //System.out.println("Busqueda de producto");
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_producto = 0;
         
-        jsonretorno.put("Producto", this.getInvDao().getInvOrdPreSubenDatosProductos(sku, id_empresa));
-        jsonretorno.put("CompProducto", this.getInvDao().getInvOrdPreSubenDatosComProd(sku));
+        producto = this.getInvDao().getInvOrdPreSubenDatosProductos(sku, id_empresa);
+        componentes = this.getInvDao().getInvOrdPreSubenDatosComProd(sku);
+        
+        if(producto.size()>0){
+            id_producto = Integer.parseInt(producto.get(0).get("id"));
+        }
+        
+        presentaciones = this.getInvDao().getProducto_PresentacionesON(id_producto);
+        
+        jsonretorno.put("Producto", producto);
+        jsonretorno.put("CompProducto", componentes);
+        jsonretorno.put("Presentaciones", presentaciones);
         
         return jsonretorno;
     }
@@ -295,6 +310,7 @@ public class InvOrdPreSubenController {
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="id_prod_grid", required=false) String[] id_prod_grid,
             @RequestParam(value="cantidad", required=false) String[] cantidad,
+            @RequestParam(value="select_pres", required=false) String[] select_pres,
             Model model,@ModelAttribute("user") UserSessionData user
             ) {
         
@@ -314,7 +330,7 @@ public class InvOrdPreSubenController {
                 if(Integer.parseInt(eliminado[i]) != 0){
                     no_partida++;//si no esta eliminado incrementa el contador de partidas
                 }
-                arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+id_prod_grid[i]+"___"+eliminado[i]+"'";
+                arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+id_prod_grid[i]+"___"+eliminado[i]+"___"+select_pres[i]+"'";
             }
             //serializar el arreglo
             extra_data_array = StringUtils.join(arreglo, ",");
