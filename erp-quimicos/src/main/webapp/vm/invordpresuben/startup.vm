@@ -181,12 +181,12 @@
 												<td width="50">Producto</td>
 												<td width="150">
 													<input type="hidden" name="producto_id">
-													<input type="text" name="productosku" style="width:90px;" readOnly="true">
+													<input type="text" name="productosku" style="width:90px; border:1px solid #000;">
 													<a href="agregar_producto">(Agregar)</a>
 												</td>
 												<td width="5">&nbsp;</td>
 												<td width="85">Descripci&oacute;n</td>
-												<td width="240" colspan="2"><input type="text" name="producto_descripcion" style="width:240px;" readOnly="true"></td>
+												<td width="240" colspan="2"><input type="text" name="producto_descripcion" style="width:240px;"></td>
 												<td width="60"><a href="busca_producto">(Buscar)</a></td>
 												<td width="85"><input type="button" id="confirmar_orden" value="Confirmar" style="width:80px; font-weight: bold;"></td>
 												<td width="85" align="right"><input type="button" id="cancelar_orden" value="Cancelar" style="width:80px; font-weight: bold;"></td>
@@ -273,11 +273,11 @@
 													<table >
 														<thead>
 															<tr>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="65">#</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="50">#</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="100">&nbsp;C&oacute;digo</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="285">&nbsp;Nombre del Producto</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="100">&nbsp;Unidad</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="120">&nbsp;Presentaci&oacute;n</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="135">&nbsp;Presentaci&oacute;n&nbsp;Default</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="100">&nbsp;Cantidad</td>
 															</tr>
 														</thead>

@@ -166,7 +166,7 @@ $(function() {
 
 	
 	//buscador de producto ingrediente
-	$busca_productos = function(){
+	$busca_productos = function(sku_buscar, descripcion){
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -213,8 +213,13 @@ $(function() {
 		});
 	   */
 	   
-		//Aqui asigno al campo sku del buscador si el usuario ingres√≥ un sku antes de hacer clic en buscar en la ventana principal
-		//$campo_sku.val(sku_buscar);
+		//Aqui asigno al campo sku del buscador si el usuario ingresó un sku antes de hacer clic en buscar en la ventana principal
+		$campo_sku.val(sku_buscar);
+		
+		//asignamos la descripcion del producto, si el usuario capturo la descripcion antes de abrir el buscador
+		$campo_descripcion.val(descripcion);
+		
+		$campo_sku.focus();
 	   
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -274,8 +279,18 @@ $(function() {
 			});//termina llamada json
 		});
 	   
+	   
 		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
 		if($campo_sku.val() != ''){
+			$buscar_plugin_producto.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $buscar_plugin_producto);
+		
+		
+		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
+		if($campo_sku.val()!='' || $campo_descripcion.val()!=''){
 			$buscar_plugin_producto.trigger('click');
 		}
 	   
@@ -287,18 +302,18 @@ $(function() {
 	}
 	
 	
+	
+	
         
-        //agrega producto nuevo al grid
-        //$agrega_producto_al_grid(entry['Producto']['0']['id'],entry['Producto']['0']['sku'],entry['Producto']['0']['descripcion']
-        //,entry['Producto']['0']['titulo'], entry['CompProducto'], cantidad);
-		$agrega_producto_al_grid = function(id_prod,sku,titulo,unidad,componentes, cantidad){
+        //Agregar nuevo producto formulado al grid
+		$agrega_producto_al_grid = function(id_prod,sku,titulo,unidad, noDec, componentes, cantidad, idPresDef, arrayPres, procesoFlujo){
             var $id_prod = $('#forma-invordpresuben-window').find('input[name=id_producto]');
             var $sku_prod = $('#forma-invordpresuben-window').find('input[name=productosku]');
             var $nombre_prod = $('#forma-invordpresuben-window').find('input[name=titulo_producto]');
             var $grid_productos = $('#forma-invordpresuben-window').find('#grid_productos');
             var $grid_componentes = $('#forma-invordpresuben-window').find('#grid_productos_complementos');
             var $grid_ids = $('#forma-invordpresuben-window').find('#grid_prodid_compid');
-			
+            
             var encontrado = 0;
             $grid_productos.find('tr').each(function (index){
                 if(( $(this).find('#skup').val() == sku.toUpperCase() )  && (parseInt($(this).find('#eliminado').val())!=0)){
@@ -314,7 +329,6 @@ $(function() {
             //alert(encontrado);
 			
             if(parseInt(encontrado) == 0 ){
-				
                 $grid_productos.find('tr').each(function (index){
                     if(( $(this).find('#skup').val() == sku.toUpperCase() )  && (parseInt($(this).find('#eliminado').val()) == 0)){
 						
@@ -332,56 +346,95 @@ $(function() {
                         });
                     }
                 });
-                //$suma_cantidades();
             }
+			
+			
 			
             if(parseInt(encontrado)==0){//si el producto no esta en el grid entra aqui
                     var trCount = $("tr", $grid_productos).size();
                     trCount++;
                     var tr_prod='';
                     
-                    $('#forma-invordpresuben-window').find('input[name=titulo_producto]').val(titulo);
+                    //$('#forma-invordpresuben-window').find('input[name=titulo_producto]').val(titulo);
+					$sku_prod.val('');
+					$nombre_prod.val('');
 					
                     tr_prod += '<tr>';
-                            tr_prod += '<td width="65">';
-                                    tr_prod += '<a href="elimina_producto" id="eliminaprod'+ id_prod +'">Eliminar</a>';
-                                    tr_prod += '<input type="hidden" name="eliminado" id="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado				tr_prod += '</td>';
-                            tr_prod += '<td width="100">';
-                                    tr_prod += '<input type="hidden" name="id_prod_grid" id="id_prod_grid" value="'+ id_prod +'">';
-                                    tr_prod += '<INPUT TYPE="text" id="skup" name="sku'+ id_prod +'" value="'+ sku +'" class="borde_oculto" style="width:82px;" readOnly="true">';
-                            tr_prod += '</td>';
-                            tr_prod += '<td width="420" align="center"><INPUT TYPE="text" name="titulo'+ id_prod +'" value="'+ titulo +'" class="borde_oculto" style="width:169px;" readOnly="true"></td>';
-                            tr_prod += '<td width="100"><INPUT TYPE="text" name="unidad" class="borde_oculto" value="'+ unidad +'" readOnly="true" style="width:66px;"></td>';
-                            tr_prod += '<td width="100"><INPUT TYPE="text" name="cantidad" id="cantidad'+id_prod+'" value="'+cantidad+'" style="width:66px;"></td>';
-                        tr_prod += '</tr>';
-                       
+						tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="65">';
+							tr_prod += '<a href="elimina_producto" id="eliminaprod'+ id_prod +'">Eliminar</a>';
+							tr_prod += '<input type="hidden" name="eliminado" id="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
+						tr_prod += '</td>';
+						tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+							tr_prod += '<input type="hidden" name="id_prod_grid" id="id_prod_grid" value="'+ id_prod +'">';
+							tr_prod += '<input type="text" id="skup" name="sku'+ id_prod +'" value="'+ sku +'" class="borde_oculto" style="width:96px;" readOnly="true">';
+						tr_prod += '</td>';
+						tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="285">';
+							tr_prod += '<input type="text" name="titulo'+ id_prod +'" value="'+ titulo +'" class="borde_oculto" style="width:280px;" readOnly="true">';
+						tr_prod += '</td>';
+						
+						tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+							tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="'+ unidad +'" readOnly="true" style="width:96px;">';
+						tr_prod += '</td>';
+						
+						tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+							tr_prod += '<select name="select_pres" class="select_pres'+ trCount +'" style="width:116px;"></select>';
+						tr_prod += '</td>';
+						
+						tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="85">';
+							tr_prod += '<input type="text" name="cantidad" id="cantidad'+id_prod+'" value="'+cantidad+'" style="width:80px;">';
+						tr_prod += '</td>';
+					tr_prod += '</tr>';
+					
                     $grid_productos.append(tr_prod);
+                    
+                    
+					$grid_productos.find('select.select_pres'+ trCount).children().remove();
+					var pres_hmtl='';
+					$.each(arrayPres ,function(entryIndex,pres){
+						if( parseInt(pres['id']) == parseInt(idPresDef) ){
+							pres_hmtl += '<option value="' + pres['id'] + '" selected="yes">' + pres['titulo'] + '</option>';
+						}else{
+							if(parseInt(procesoFlujo) < 2){
+								pres_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+							}
+						}
+					});
+					$grid_productos.find('select.select_pres'+ trCount).append(pres_hmtl);
+                    
                     
                     //al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
                     $grid_productos.find('#cantidad'+id_prod).focus(function(e){
-                        if($(this).val() == ' '){
+                        if(($(this).val().trim() == '') || (parseInt($(this).val().trim())==0)){
                             $(this).val('');
                         }
-                        
-                        //$suma_cantidades();
                     });
                     
                     //validar campo cantidad, solo acepte numeros y punto
                     $grid_productos.find('#cantidad'+id_prod).keypress(function(e){
-                        //alert(e.which);
                         // Permitir  numeros, borrar, suprimir, TAB, puntos, comas
                         if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
-                            //$suma_cantidades();
                             return true;
                         }else {
                             return false;
                         }
                     });
                     
-                    $grid_productos.find('#cantidad'+id_prod).change(function(e){
-                        if($grid_productos.find('#cantidad'+id_prod).val() == "" || $grid_productos.find('#cantidad'+id_prod).val() == " " ){
+                    $grid_productos.find('#cantidad'+id_prod).blur(function(e){
+                        if($grid_productos.find('#cantidad'+id_prod).val().trim() == "" ){
                             $grid_productos.find('#cantidad'+id_prod).val(0);
                         }
+                        //Redondear de acuerdo al numero de decimales de la unidad de medida.
+                        $grid_productos.find('#cantidad'+id_prod).val(parseFloat($grid_productos.find('#cantidad'+id_prod).val()).toFixed(noDec));
+                        $suma_cantidades();
+                    });
+                    
+                    
+                    $grid_productos.find('#cantidad'+id_prod).change(function(e){
+                        if($grid_productos.find('#cantidad'+id_prod).val().trim() == "" ){
+                            $grid_productos.find('#cantidad'+id_prod).val(0);
+                        }
+                        //Redondear de acuerdo al numero de decimales de la unidad de medida.
+                        $grid_productos.find('#cantidad'+id_prod).val(parseFloat($grid_productos.find('#cantidad'+id_prod).val()).toFixed(noDec));
                         $suma_cantidades();
                     });
                     
@@ -416,7 +469,6 @@ $(function() {
                                 }
                             });
                         }
-                        //$suma_cantidades();
                     });
                     
                     /***********************************************************************************
@@ -437,22 +489,32 @@ $(function() {
 						
                         if($skuexiste == 0){
                             var tr_complemento='';
-                            tr_complemento += '<tr>';
-                                tr_complemento += '<td width="65">';
-                                        tr_complemento += '<input type="hidden" name="id_prod_comp" id="id_prod_comp" value="'+id_prod+'">';//el 1 significa que el registro no ha sido eliminado
-                                        tr_complemento += '<input type="hidden" name="eliminadocomp" id="eliminadocomp" value="1">';
-                                tr_complemento += '</td>';
-                                tr_complemento += '<td width="100">';
-                                        tr_complemento += '<input type="hidden" name="id_comp_grid" id="id_comp_grid" value="'+ componentes[i]['id'] +'">';
-                                        tr_complemento += '<INPUT TYPE="text" id="skucomp" name="skucomp'+ id_prod +'" value="'+ componentes[i]['sku'] +'" class="borde_oculto" style="width:82px;" readOnly="true">';
-                                tr_complemento += '</td>';
-                                tr_complemento += '<td width="420" align="center"><INPUT TYPE="text" id="titulocomp" name="titulocomp'+ id_prod +'" value="'+ componentes[i]['descripcion'] +'" class="borde_oculto" style="width:169px;" readOnly="true"></td>';
-                                tr_complemento += '<td width="100"><INPUT TYPE="text" name="unidadcomp" class="borde_oculto" value="'+ componentes[i]['utitulo'] +'" readOnly="true" style="width:66px;"></td>';
-                                tr_complemento += '<td width="100">';
-                                    tr_complemento += '<INPUT TYPE="text" name="cantidadcomp" id="cantidadcomp" value="'+parseFloat(componentes[i]['cantidad'])*parseFloat(cantidad)+'" style="width:66px;">';
-                                    tr_complemento += '<INPUT TYPE="hidden" name="cantidunitaria" id="cantidunitaria" value="'+componentes[i]['cantidad']+'" >';
-                                tr_complemento += '</td>';
-                            tr_complemento += '</tr>';
+							tr_complemento += '<tr>';
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
+									tr_complemento += '<input type="hidden" name="id_prod_comp" id="id_prod_comp" value="'+id_prod+'">';//el 1 significa que el registro no ha sido eliminado
+									tr_complemento += '<input type="hidden" name="eliminadocomp" id="eliminadocomp" value="1">';
+								tr_complemento += '</td>';
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+									tr_complemento += '<input type="hidden" name="id_comp_grid" id="id_comp_grid" value="'+ componentes[i]['id'] +'">';
+									tr_complemento += '<INPUT TYPE="text" id="skucomp" name="skucomp'+ id_prod +'" value="'+ componentes[i]['sku'] +'" class="borde_oculto" style="width:96px;" readOnly="true">';
+								tr_complemento += '</td>';
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="285">';
+									tr_complemento += '<INPUT TYPE="text" id="titulocomp" name="titulocomp'+ id_prod +'" value="'+ componentes[i]['descripcion'] +'" class="borde_oculto" style="width:280px;" readOnly="true">';
+								tr_complemento += '</td>';
+								
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+									tr_complemento += '<INPUT TYPE="text" name="unidadcomp" class="borde_oculto" value="'+ componentes[i]['utitulo'] +'" readOnly="true" style="width:96px;">';
+								tr_complemento += '</td>';
+								
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="135">';
+									tr_complemento += '<INPUT TYPE="text" name="prescomp" class="borde_oculto" value="'+ componentes[i]['presentacion'] +'" readOnly="true" style="width:130px;">';
+								tr_complemento += '</td>';
+								
+								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="85">';
+                                    tr_complemento += '<INPUT TYPE="text" name="cantidadcomp" id="cantidadcomp" value="'+parseFloat(parseFloat(componentes[i]['cantidad'])*parseFloat(cantidad)).toFixed(componentes[i]['no_dec'])+'" style="width:80px;">';
+                                    tr_complemento += '<INPUT TYPE="hidden" name="cantidunitaria" id="cantidunitaria" value="'+parseFloat(componentes[i]['cantidad']).toFixed(componentes[i]['no_dec'])+'" >';
+								tr_complemento += '</td>';
+							tr_complemento += '</tr>';
                             $grid_componentes.append(tr_complemento);
                         }else{
                             $grid_componentes.find('tr').each(function (index){
@@ -480,10 +542,15 @@ $(function() {
                     }
                     $grid_componentes.find('tr').find('input').attr({ 'readOnly':true });
                     //$suma_cantidades();
+                    
+                    //asignar el enfoque
+					$grid_productos.find('#cantidad'+id_prod).focus();
             }else{
                 if(parseInt(encontrado)==1){
-                    jAlert("El producto ya se encuentra en el listado, seleccione otro diferente.", 'Atencion!');
-                    $sku_prod.focus();
+					jAlert('El producto ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+						$('#forma-invordpresuben-window').find('input[name=productosku]').val('');
+						$('#forma-invordpresuben-window').find('input[name=productosku]').focus(); 
+					});
                 }
             }
 		}//termina agregar producto nuevo al grid
@@ -541,8 +608,8 @@ $(function() {
 	
 	
 	
-	//agrega producto nuevo al grid
-	$obtener_datos_de_producto = function(sku, cantidad){
+	//Obtener datos del producto formulado para agregar al grid
+	$obtener_datos_de_producto = function(sku, cantidad, idPres, procesoFlujo){
 		var $sku_prod = $('#forma-invordpresuben-window').find('input[name=productosku]');
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_datos_producto.json';
 		$arreglo = {
@@ -552,12 +619,27 @@ $(function() {
 			
 		if(sku!=""){
 			$.post(input_json,$arreglo,function(entry){
-				$agrega_producto_al_grid(entry['Producto']['0']['id'],entry['Producto']['0']['sku'],entry['Producto']['0']['descripcion'],entry['Producto']['0']['titulo'], entry['CompProducto'], cantidad);
+				if(parseInt(entry['CompProducto'].length) > 0 ){
+					if(parseInt(idPres)==0){
+						idPres = entry['Producto']['0']['id_pres_def'];
+					}
+					$agrega_producto_al_grid(entry['Producto']['0']['id'],entry['Producto']['0']['sku'],entry['Producto']['0']['descripcion'],entry['Producto']['0']['titulo'], entry['Producto']['0']['no_dec'], entry['CompProducto'], cantidad,  idPres, entry['Presentaciones'], procesoFlujo);
+				}else{
+					jAlert('El c&oacute;digo del producto ingresado no es Formulado &oacute; no existe, pruebe ingrese otro diferente.', 'Atencion!', function(r) { 
+						$('#forma-invordpresuben-window').find('input[name=productosku]').val('');
+						$('#forma-invordpresuben-window').find('input[name=productosku]').focus(); 
+					});
+				}
 			});
 		}else{
-			jAlert("Es necesario Seleccionar un Producto Subensamble.", 'Atencion!');
+			jAlert('Es necesario ingresar el c&oacute;digo de un Producto Formulado.', 'Atencion!', function(r) { 
+				$('#forma-invordpresuben-window').find('input[name=productosku]').val('');
+				$('#forma-invordpresuben-window').find('input[name=productosku]').focus(); 
+			});
 		}
 	}
+	
+	
 	
 	$permitir_solo_numeros = function($campo){
 		//validar campo costo, solo acepte numeros y punto
@@ -574,7 +656,7 @@ $(function() {
 	$add_ceros = function($campo){
 		$campo.val("0.00");
 	}
-        
+	
 	$accio_blur = function($campo){
 		//recalcula importe al perder enfoque el campo costo
 		$campo.blur(function(){
@@ -594,7 +676,7 @@ $(function() {
 	}
         
         
-	//nuevo centro de costo
+	//nuevo
 	$new_item.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
@@ -616,6 +698,7 @@ $(function() {
 		var $folio = $('#forma-invordpresuben-window').find('input[name=folio]');
 		var $observaciones = $('#forma-invordpresuben-window').find('textarea[name=observaciones]');
 		var $productosku = $('#forma-invordpresuben-window').find('input[name=productosku]');
+		var $producto_descripcion = $('#forma-invordpresuben-window').find('input[name=producto_descripcion]');
 		var $confirmar_orden = $('#forma-invordpresuben-window').find('#confirmar_orden');
 		var $cancelar_orden = $('#forma-invordpresuben-window').find('#cancelar_orden');
 		var $select_almacen = $('#forma-invordpresuben-window').find('select[name=select_almacen]');
@@ -633,6 +716,13 @@ $(function() {
 		var $submit_actualizar = $('#forma-invordpresuben-window').find('#submit');
 		
 		var $pdf_orden = $('#forma-invordpresuben-window').find('#pdf_orden');
+		
+		//quitar enter a todos los campos input
+		$('#forma-invordpresuben-window').find('input').keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
 		
 		$campo_id.attr({'value' : 0});
 		$accion_proceso.attr({'value' : "new"});
@@ -717,19 +807,6 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
-		$buscar_producto.click(function(event){
-			event.preventDefault();
-			$busca_productos();
-		});
-		
-		//agregar producto al grid
-		$agregar_producto.click(function(event){
-			event.preventDefault();
-			//$agrega_producto_al_grid();
-			$obtener_datos_de_producto($productosku.val(), "1");
-		});
-		
-		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInvOrdSub.json';
 		$arreglo = {'id':id_to_show, 'iu': $('#lienzo_recalculable').find('input[name=iu]').val() };
 		
@@ -746,6 +823,24 @@ $(function() {
 		});//termina llamada json
 		
          
+		$buscar_producto.click(function(event){
+			event.preventDefault();
+			$busca_productos($productosku.val(), $producto_descripcion.val());
+		});
+		
+		//agregar producto al grid
+		$agregar_producto.click(function(event){
+			event.preventDefault();
+			//$agrega_producto_al_grid();
+			$obtener_datos_de_producto($productosku.val(), "1", 0,0);
+		});
+		
+		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
+		$(this).aplicarEventoKeypressEjecutaTrigger($productosku, $agregar_producto);
+		
+		//desencadena clic del href Buscar Producto al pulsar enter en el campo Nombre del producto
+		$(this).aplicarEventoKeypressEjecutaTrigger($producto_descripcion, $buscar_producto);
+		
 		
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_componentes).size();
@@ -767,6 +862,9 @@ $(function() {
 			$('#forma-invordpresuben-overlay').fadeOut(remove);
 			$buscar.trigger('click');
 		});
+		
+		$productosku.focus();
+		
 	});//termina nuevo
 	
         
@@ -832,6 +930,14 @@ $(function() {
 			var $cerrar_plugin = $('#forma-invordpresuben-window').find('#close');
 			var $cancelar_plugin = $('#forma-invordpresuben-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-invordpresuben-window').find('#submit');
+			
+			
+			//quitar enter a todos los campos input
+			$('#forma-invordpresuben-window').find('input').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
 			
 			$buscar_producto.hide();
 			$agregar_producto.hide();
@@ -934,14 +1040,33 @@ $(function() {
 					$select_almacen.append(almacen_hmtl);
 					
 					for(var i in entry['Detalle']){
-						$obtener_datos_de_producto(entry['Detalle'][i]['sku'],entry['Detalle'][i]['cantidad']);
+						$obtener_datos_de_producto(entry['Detalle'][i]['sku'],entry['Detalle'][i]['cantidad'], entry['Detalle'][i]['presentacion_id'], entry['InvOrdSub']['0']['proceso_flujo_id']);
 					}
 					
 					if(parseInt(entry['InvOrdSub']['0']['proceso_flujo_id'])==1){
 						$confirmar_orden.show();
 						$agregar_producto.show();
+						$buscar_producto.show();
 						$cancelar_orden.show();
+						
+						$buscar_producto.click(function(event){
+							event.preventDefault();
+							$busca_productos($productosku.val(), $producto_descripcion.val());
+						});
+						
+						//agregar producto al grid
+						$agregar_producto.click(function(event){
+							event.preventDefault();
+							$obtener_datos_de_producto($productosku.val(), "1", 0, 0);
+						});
+						
+						//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
+						$(this).aplicarEventoKeypressEjecutaTrigger($productosku, $agregar_producto);
+						
+						//desencadena clic del href Buscar Producto al pulsar enter en el campo Nombre del producto
+						$(this).aplicarEventoKeypressEjecutaTrigger($producto_descripcion, $buscar_producto);
 					}
+					
 					
 					if(parseInt(entry['InvOrdSub']['0']['proceso_flujo_id'])==2){
 						$confirmar_orden.hide();
@@ -955,6 +1080,12 @@ $(function() {
 					//confirmado y enterado
 					if(parseInt(entry['InvOrdSub']['0']['estatus'])==0  ||  parseInt(entry['InvOrdSub']['0']['estatus'])==1){
 						$cancelar_orden.show();
+						//quitar enter a todos los campos input
+						$grid_productos.find('input').keypress(function(e){
+							if(e.which==13 ) {
+								return false;
+							}
+						});
 					}
 					
 					//en proceso, listo y cancelado
@@ -967,23 +1098,16 @@ $(function() {
 						$producto_descripcion.attr('disabled','-1');
 						
 						$submit_actualizar.hide();
+						
+						//quitar enter a todos los campos input
+						$grid_productos.find('input').keypress(function(e){
+							if(e.which==13 ) {
+								return false;
+							}
+						});
 					}
 					
 				},"json");//termina llamada json
-				
-				
-				$buscar_producto.click(function(event){
-					event.preventDefault();
-					$busca_productos();
-				});
-				
-				
-				//agregar producto al grid
-				$agregar_producto.click(function(event){
-					event.preventDefault();
-					//$agrega_producto_al_grid();
-					$obtener_datos_de_producto($productosku.val(), "1");
-				});
 				
 				
 				
@@ -1027,6 +1151,8 @@ $(function() {
 					$('#forma-invordpresuben-overlay').fadeOut(remove);
 					$buscar.trigger('click');
 				});
+				
+				$productosku.focus();
 			}
 		}
 	}
