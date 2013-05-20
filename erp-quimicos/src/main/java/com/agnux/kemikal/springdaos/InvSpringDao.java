@@ -7242,7 +7242,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "FROM inv_otras_det "
                 + "JOIN inv_prod ON inv_prod.id=inv_otras_det.inv_prod_id "
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_otras_det.inv_prod_presentacion_id "
+                + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_otras_det.inv_prod_presentacion_id "
                 + "WHERE inv_otras_det.inv_otras_id=? "
                 + "ORDER BY inv_otras_det.id;";
         System.out.println(sql_to_query);
