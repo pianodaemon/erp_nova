@@ -86,11 +86,12 @@ public class InvOrdPreSubenController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("folio", "Folio:160");
-        infoConstruccionTabla.put("estatus", "Estatus:160");
-        infoConstruccionTabla.put("momento_creacion", "Fecha:200");
+        infoConstruccionTabla.put("folio", "Folio:90");
+        infoConstruccionTabla.put("estatus", "Estatus:100");
+        infoConstruccionTabla.put("momento_creacion", "Fecha:100");
+        infoConstruccionTabla.put("almacen", "Almacen:220");
         
-        ModelAndView x = new ModelAndView("invordpresuben/startup", "title", "Orden de Producci&oacute;n Subensamble");
+        ModelAndView x = new ModelAndView("invordpresuben/startup", "title", "Pre-Orden de Producci&oacute;n de Subensamble");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());

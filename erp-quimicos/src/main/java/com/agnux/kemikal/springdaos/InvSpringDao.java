@@ -3679,8 +3679,10 @@ public class InvSpringDao implements InvInterfaceDao{
                                         + "WHEN opse.estatus=3 THEN 'Listo'  "
                                         + "WHEN opse.estatus=4 THEN 'Cancelado'  "
                                 + "ELSE '' END) AS estatus, "
-                                + "opse.momento_creacion "
-                                + "FROM inv_ord_subensamble as opse "
+                                + "to_char(opse.momento_creacion,'dd/mm/yyyy') AS momento_creacion, "
+                                + "(CASE WHEN inv_alm.titulo IS NULL THEN '' ELSE inv_alm.titulo END) AS almacen "
+                            + "FROM inv_ord_subensamble AS opse "
+                            + "LEFT JOIN inv_alm ON inv_alm.id=opse.inv_alm_id "
                             + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id=opse.id "
                             + "order by "+orderBy+" "+asc+" LIMIT ? OFFSET ? ";
         
@@ -3694,7 +3696,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("folio",rs.getString("folio"));
                     row.put("estatus",rs.getString("estatus"));
-                    row.put("momento_creacion",String.valueOf(rs.getDate("momento_creacion")));
+                    row.put("momento_creacion",String.valueOf(rs.getString("momento_creacion")));
+                    row.put("almacen",rs.getString("almacen"));
                     return row;
                 }
             }
@@ -3828,7 +3831,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "tmp.cantidad,"
                     + "inv_prod.inv_prod_presentacion_id AS id_pres_def,"
                     + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
-                    + "inv_prod_presentaciones.titulo AS presentacion "
+                    + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion "
                 + "FROM inv_prod "
                 + "JOIN ( "
                         + "SELECT inv_kit.producto_elemento_id, "
@@ -3837,7 +3840,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "JOIN inv_kit ON tmp1.id=inv_kit.producto_kit_id "
                 + ") as tmp ON tmp.producto_elemento_id=inv_prod.id "
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod.inv_prod_presentacion_id;";
+                + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod.inv_prod_presentacion_id;";
 
         //System.out.println(sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -3882,8 +3885,16 @@ public class InvSpringDao implements InvInterfaceDao{
     public ArrayList<HashMap<String, Object>> getInvOrdSubenGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
 
-	String sql_to_query = "select inv_ord_subensamble.id , inv_ord_subensamble.folio, inv_ord_subensamble.momento_creacion, inv_ord_subensamble.estatus from inv_ord_subensamble "
-                            + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = inv_ord_subensamble.id "
+	String sql_to_query = ""
+                + "select "
+                    + "inv_ord_subensamble.id, "
+                    + "inv_ord_subensamble.folio, "
+                    + "to_char(inv_ord_subensamble.momento_creacion,'dd/mm/yyyy') AS momento_creacion, "
+                    + "inv_ord_subensamble.estatus,"
+                    + "(CASE WHEN inv_alm.titulo IS NULL THEN '' ELSE inv_alm.titulo END) AS almacen "
+                + "FROM inv_ord_subensamble "
+                + "LEFT JOIN inv_alm ON inv_alm.id=inv_ord_subensamble.inv_alm_id "
+                + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id=inv_ord_subensamble.id "
                 + "order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
         
         //System.out.println("getInvOrdSubenGrid: "+sql_to_query+"    "+data_string);
@@ -3897,7 +3908,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("estatus",String.valueOf(rs.getInt("estatus")).equals("1") ? "Enterado" : (String.valueOf(rs.getInt("estatus")).equals("2") ? "En proceso" : (String.valueOf(rs.getInt("estatus")).equals("3") ? "Listo" : "Sin estatus" ))    );
                     row.put("folio",rs.getString("folio"));
-                    row.put("momento_creacion",String.valueOf(rs.getDate("momento_creacion")));
+                    row.put("momento_creacion",String.valueOf(rs.getString("momento_creacion")));
+                    row.put("almacen",rs.getString("almacen"));
                     return row;
                 }
             }
@@ -3940,14 +3952,19 @@ public class InvSpringDao implements InvInterfaceDao{
     //obtiene datos del InvCom
     @Override
     public ArrayList<HashMap<String, String>> getInvDetalleOrdSuben(String id) {
-        String sql_query = "select iop.id, "
-                + "iop.cantidad,"
-                + "inv_prod.sku,"
-                + "inv_prod.descripcion, "
-                + "inv_prod_unidades.titulo as unidad  "
-                + "FROM inv_ord_subensamble_detalle as iop "
+        String sql_query = ""
+                + "select "
+                    + "iop.id,"
+                    + "iop.cantidad,"
+                    + "inv_prod.sku,"
+                    + "inv_prod.descripcion, "
+                    + "inv_prod_unidades.titulo AS unidad,"
+                    + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
+                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec "
+                + "FROM inv_ord_subensamble_detalle AS iop "
                 + "JOIN inv_prod ON inv_prod.id=iop.inv_prod_id_subensamble "
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=iop.inv_prod_presentacion_id "
                 + "WHERE iop.inv_ord_subensamble_id="+id;
 
         //System.out.println("getInvDetalleOrdSuben: "+sql_query);
@@ -3957,14 +3974,14 @@ public class InvSpringDao implements InvInterfaceDao{
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
-                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"), 2));
-
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"), rs.getInt("no_dec")));
                     return row;
                 }
             }
@@ -3977,14 +3994,18 @@ public class InvSpringDao implements InvInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdPreSubenDatosComponentesPorProducto(String id) {
 
-        String sql_to_query = "SELECT inv_prod.id,"
+        String sql_to_query = ""
+                + "SELECT "
+                    + "inv_prod.id,"
                     + "inv_prod.sku, "
                     + "inv_prod.descripcion, "
-                    + "inv_prod_unidades.titulo as utitulo, "
-                    + "cantidad "
+                    + "inv_prod_unidades.titulo AS utitulo, "
+                    + "subt2.cantidad,"
+                    + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
+                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec "
                 + "FROM ("
                         + "SELECT inv_kit.producto_elemento_id,"
-                            + "sum(subt1.cantidad * inv_kit.cantidad) as cantidad "
+                            + "sum(subt1.cantidad * inv_kit.cantidad) AS cantidad "
                         + "FROM ("
                                 + "SELECT sum(cantidad) as cantidad, "
                                     + "inv_prod_id_subensamble "
@@ -3996,8 +4017,9 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "GROUP BY inv_kit.producto_elemento_id "
                 + ") AS subt2 "
                 + "JOIN inv_prod ON subt2.producto_elemento_id=inv_prod.id "
-                + "JOIN inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id; ";
-
+                + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod.inv_prod_presentacion_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id; ";
+                
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         //System.out.println(sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -4010,7 +4032,9 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("utitulo",rs.getString("utitulo"));
-                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),2));
+                    row.put("pres_comp",rs.getString("presentacion"));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),rs.getInt("no_dec")));
                     return row;
                 }
             }

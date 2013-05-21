@@ -686,20 +686,4 @@ public class EntradamercanciasController {
         return null;
         
     } 
-
-    
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-    
-    
-    
-    
 }
