@@ -142,9 +142,10 @@ public class InvOrdPreSubenController {
         
         //variables para el buscador
         String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
-        //String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
+        String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
+        String descripcion = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("descripcion")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+codigo+"___"+descripcion;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getInvDao().countAll(data_string);
