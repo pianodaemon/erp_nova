@@ -49,7 +49,8 @@ $(function() {
 	
 	var $cadena_busqueda = "";
 	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
-	//var $busqueda_descripcion = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_descripcion]');
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
+	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
 	//var $busqueda_select_grupo = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_grupo]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
@@ -59,8 +60,8 @@ $(function() {
 		var valor_retorno = "";
 		var signo_separador = "=";
 		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
-		//valor_retorno += "descripcion" + signo_separador + $busqueda_descripcion.val() + "|";
-		//valor_retorno += "grupo" + signo_separador + $busqueda_select_grupo.val() + "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
+		valor_retorno += "descripcion" + signo_separador + $busqueda_producto.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
@@ -79,17 +80,11 @@ $(function() {
 	
 	$limpiar.click(function(event){
 		event.preventDefault();
-		$busqueda_titulo.val('');
-		$busqueda_descripcion.val('');
+		$busqueda_folio.val('');
+		$busqueda_codigo.val('');
+		$busqueda_producto.val('');
+		$busqueda_folio.focus();
 	});
-	
-	/*
-	//visualizar  la barra del buscador
-	$visualiza_buscador.click(function(event){
-		event.preventDefault();
-         $('#barra_buscador').toggle( 'blind');
-	});	
-	*/
 	
 	
 	TriggerClickVisializaBuscador = 0;
@@ -120,8 +115,13 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_folio.focus();
 	});
 	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
 	
 	
 	$tabs_li_funxionalidad = function(){
@@ -261,9 +261,6 @@ $(function() {
                 var estatus_actual=0;
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					
-					
-					
 					//si el estatus es cero, se actualiza a 1= Enterado
 					if(parseInt(entry['InvOrdSub']['0']['estatus'])==0){
 						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getActualizarEstatus.json';
@@ -398,7 +395,7 @@ $(function() {
 					$buscar.trigger('click');
 				});
 				
-				
+				$observaciones.focus();
 			}
 		}
 	}

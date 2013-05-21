@@ -47,7 +47,8 @@ $(function() {
 	
 	var $cadena_busqueda = "";
 	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
-	//var $busqueda_descripcion = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_descripcion]');
+	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
+	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
 	//var $busqueda_select_grupo = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_grupo]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
@@ -55,13 +56,13 @@ $(function() {
 	
         
 	var to_make_one_search_string = function(){
-            var valor_retorno = "";
-            var signo_separador = "=";
-            valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
-            //valor_retorno += "descripcion" + signo_separador + $busqueda_descripcion.val() + "|";
-            //valor_retorno += "grupo" + signo_separador + $busqueda_select_grupo.val() + "|";
-            valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
-            return valor_retorno;
+		var valor_retorno = "";
+		var signo_separador = "=";
+		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
+		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
+		valor_retorno += "descripcion" + signo_separador + $busqueda_producto.val() + "|";
+		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
+		return valor_retorno;
 	};
 	
 	cadena = to_make_one_search_string();
@@ -69,58 +70,58 @@ $(function() {
 	//$cadena_busqueda = cadena;
 	
 	$buscar.click(function(event){
-            event.preventDefault();
-            cadena = to_make_one_search_string();
-            $cadena_busqueda = cadena.toCharCode();
-            $get_datos_grid();
-	});
-	
-	
-        $limpiar.click(function(event){
-            event.preventDefault();
-            $busqueda_titulo.val('');
-            $busqueda_descripcion.val('');
-	});
-	
-	/*
-	//visualizar  la barra del buscador
-	$visualiza_buscador.click(function(event){
 		event.preventDefault();
-         $('#barra_buscador').toggle( 'blind');
-	});	
-	*/
+		cadena = to_make_one_search_string();
+		$cadena_busqueda = cadena.toCharCode();
+		$get_datos_grid();
+	});
+	
+	
+	$limpiar.click(function(event){
+		event.preventDefault();
+		$busqueda_folio.val('');
+		$busqueda_codigo.val('');
+		$busqueda_producto.val('');
+		$busqueda_folio.focus();
+	});
+	
 	
 	
 	TriggerClickVisializaBuscador = 0;
 	//visualizar  la barra del buscador
 	$visualiza_buscador.click(function(event){
-            event.preventDefault();
-            var alto=0;
-            if(TriggerClickVisializaBuscador==0){
-                 TriggerClickVisializaBuscador=1;
-                 var height2 = $('#cuerpo').css('height');
-                 //alert('height2: '+height2);
+		event.preventDefault();
+		var alto=0;
+		if(TriggerClickVisializaBuscador==0){
+			 TriggerClickVisializaBuscador=1;
+			 var height2 = $('#cuerpo').css('height');
+			 //alert('height2: '+height2);
+			
+			 alto = parseInt(height2)-220;
+			 var pix_alto=alto+'px';
+			 //alert('pix_alto: '+pix_alto);
 
-                 alto = parseInt(height2)-220;
-                 var pix_alto=alto+'px';
-                 //alert('pix_alto: '+pix_alto);
+			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
+			 $('#barra_buscador').animate({height: '60px'}, 500);
+			 $('#cuerpo').css({'height': pix_alto});
 
-                 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-                 $('#barra_buscador').animate({height: '60px'}, 500);
-                 $('#cuerpo').css({'height': pix_alto});
-
-                 //alert($('#cuerpo').css('height'));
-            }else{
-                 TriggerClickVisializaBuscador=0;
-                 var height2 = $('#cuerpo').css('height');
-                 alto = parseInt(height2)+220;
-                 var pix_alto=alto+'px';
-
-                 $('#barra_buscador').animate({height:'0px'}, 500);
-                 $('#cuerpo').css({'height': pix_alto});
-            };
+			 //alert($('#cuerpo').css('height'));
+		}else{
+			 TriggerClickVisializaBuscador=0;
+			 var height2 = $('#cuerpo').css('height');
+			 alto = parseInt(height2)+220;
+			 var pix_alto=alto+'px';
+			
+			 $('#barra_buscador').animate({height:'0px'}, 500);
+			 $('#cuerpo').css({'height': pix_alto});
+		};
+		$busqueda_folio.focus();
 	});
 	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
 	
 	
 	$tabs_li_funxionalidad = function(){

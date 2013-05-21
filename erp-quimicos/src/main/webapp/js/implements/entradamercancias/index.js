@@ -707,30 +707,30 @@ $(function() {
 				tr_prod += '</td>';
 				tr_prod += '<td width="100" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 					tr_prod += '<input type="hidden" name="id_prod_grid" id="idprod" value="'+ id_prod +'">';
-					tr_prod += '<input TYPE="text" id="skup" name="sku'+ trCount +'" value="'+ sku +'" class="borde_oculto" style="width:96px;" readOnly="true">';
+					tr_prod += '<input type="text" id="skup" name="sku'+ trCount +'" value="'+ sku +'" class="borde_oculto" style="width:96px;" readOnly="true">';
 				tr_prod += '</td>';
 				tr_prod += '<td width="200" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<INPUT TYPE="text" name="titulo'+ trCount +'" value="'+ titulo +'" class="borde_oculto" style="width:196px;" readOnly="true">';
+					tr_prod += '<input type="text" name="titulo'+ trCount +'" value="'+ titulo +'" class="borde_oculto" style="width:196px;" readOnly="true">';
 				tr_prod += '</td>';
 				tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<INPUT TYPE="text" name="unidad" class="borde_oculto" value="'+ unidad +'" readOnly="true" style="width:66px;">';
+					tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="'+ unidad +'" readOnly="true" style="width:66px;">';
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 					tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="'+ id_pres +'">';
-					tr_prod += '<INPUT TYPE="text" name="presentacion" id="pres" class="borde_oculto" value="' + pres + '" readOnly="true" style="width:66px;">';
+					tr_prod += '<input type="text" name="presentacion" id="pres" class="borde_oculto" value="' + pres + '" readOnly="true" style="width:66px;">';
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<INPUT TYPE="text" name="cantidad" id="cant" class="cant'+trCount+'" value="1" style="width:66px;">';
+					tr_prod += '<input type="text" name="cantidad" id="cant" class="cant'+trCount+'" value="1" style="width:66px;">';
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="75" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<INPUT TYPE="text" name="costo" id="cost" class="cost'+trCount+'" value=" " style="width:69px;">';
+					tr_prod += '<input type="text" name="costo" id="cost" class="cost'+trCount+'" value=" " style="width:69px;">';
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="90" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<INPUT TYPE="text" name="importe'+ trCount +'" id="import" style="width:86px;" readOnly="true">';
+					tr_prod += '<input type="text" name="importe'+ trCount +'" id="import" style="width:86px;" readOnly="true">';
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
@@ -760,8 +760,8 @@ $(function() {
 					tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
 					//tr_prod += '<span id="spantotimp">0</span>';
 				tr_prod += '</td>';
-				//tr_prod += '<td width="90"><INPUT TYPE="text" name="pedimento" id="ped" value=" " class="pedimento'+ trCount +'"style="width:86px;"></td>';
-				//tr_prod += '<td width="66"><INPUT TYPE="text" name="caducidad" id="cad" value="" class="caducidad'+ trCount +'" style="width:65px;"></td>';
+				//tr_prod += '<td width="90"><input type="text" name="pedimento" id="ped" value=" " class="pedimento'+ trCount +'"style="width:86px;"></td>';
+				//tr_prod += '<td width="66"><input type="text" name="caducidad" id="cad" value="" class="caducidad'+ trCount +'" style="width:65px;"></td>';
 			tr_prod += '</tr>';
 			
 			$grid_productos.append(tr_prod);
@@ -1044,9 +1044,9 @@ $(function() {
 									
 									var tr_warning = '<tr>';
 											tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-											tr_warning += '<td width="120"><INPUT TYPE="text" value="' + $grid_productos.find('input[name=sku' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
-											tr_warning += '<td width="200"><INPUT TYPE="text" value="' + $grid_productos.find('input[name=titulo' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
-											tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:285px; color:red"></td>';
+											tr_warning += '<td width="120"><input type="text" value="' + $grid_productos.find('input[name=sku' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
+											tr_warning += '<td width="200"><input type="text" value="' + $grid_productos.find('input[name=titulo' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
+											tr_warning += '<td width="235"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:285px; color:red"></td>';
 									tr_warning += '</tr>';
 									$('#forma-entradamercancias-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
 								}
@@ -1060,7 +1060,7 @@ $(function() {
 			}
 		}
 		
-		var options = {dataType :  'json', success : respuestaProcesada};
+		var options = {datatype :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
                 
@@ -1672,9 +1672,9 @@ $(function() {
 											
 											var tr_warning = '<tr>';
 													tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-													tr_warning += '<td width="120"><INPUT TYPE="text" value="' + $grid_productos.find('input[name=sku' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
-													tr_warning += '<td width="200"><INPUT TYPE="text" value="' + $grid_productos.find('input[name=titulo' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
-													tr_warning += '<td width="235"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:285px; color:red"></td>';
+													tr_warning += '<td width="120"><input type="text" value="' + $grid_productos.find('input[name=sku' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
+													tr_warning += '<td width="200"><input type="text" value="' + $grid_productos.find('input[name=titulo' + i + ']').val() + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
+													tr_warning += '<td width="235"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:285px; color:red"></td>';
 											tr_warning += '</tr>';
 											
 											$('#forma-entradamercancias-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
@@ -1689,7 +1689,7 @@ $(function() {
 					}
 				}
 				
-				var options = {dataType :  'json', success : respuestaProcesada};
+				var options = {datatype :  'json', success : respuestaProcesada};
 				$forma_selected.ajaxForm(options);
 				
 				//aqui se cargan los campos al editar
