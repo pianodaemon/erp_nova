@@ -339,8 +339,6 @@ public class InvOrdPreSubenController {
             extra_data_array ="'sin datos'";
         }
         
-        
-        
         if( id.equals("0") ){
             command_selected = "new";
         }else{

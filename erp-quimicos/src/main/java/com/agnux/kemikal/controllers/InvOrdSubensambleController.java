@@ -271,7 +271,7 @@ public class InvOrdSubensambleController {
             @RequestParam(value="observaciones", required=false) String observaciones,
             @RequestParam(value="estatus", required=false) String estatus,
             Model model,@ModelAttribute("user") UserSessionData user
-            ) {
+        ) {
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
