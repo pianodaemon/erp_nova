@@ -718,7 +718,7 @@ $(function() {
 				
 				tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 					tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="'+ id_pres +'">';
-					tr_prod += '<INPUT TYPE="text" name="presentacion" class="borde_oculto" value="' + pres + '" readOnly="true" style="width:66px;">';
+					tr_prod += '<INPUT TYPE="text" name="presentacion" id="pres" class="borde_oculto" value="' + pres + '" readOnly="true" style="width:66px;">';
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
@@ -1005,6 +1005,7 @@ $(function() {
 				$grid_productos.find('#cost').css({'background' : '#ffffff'});
 				$grid_productos.find('#cant').css({'background' : '#ffffff'});
 				$grid_productos.find('#cad').css({'background' : '#ffffff'});
+				$grid_productos.find('#pres').css({'background' : '#ffffff'});
 
 				$('#forma-entradamercancias-window').find('#div_warning_grid').css({'display':'none'});
 				$('#forma-entradamercancias-window').find('#div_warning_grid').find('#grid_warning').children().remove();
@@ -1026,7 +1027,7 @@ $(function() {
 
 						if(parseInt($("tr", $grid_productos).size())>0){
 							for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
-								if((tmp.split(':')[0]=='costo'+i) || (tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='caducidad'+i)){
+								if((tmp.split(':')[0]=='costo'+i) || (tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='caducidad'+i)  || (tmp.split(':')[0]=='pres'+i)){
 									//alert(tmp.split(':')[0]);
 									$('#forma-entradamercancias-window').find('#div_warning_grid').css({'display':'block'});
 									
@@ -1035,6 +1036,10 @@ $(function() {
 									}
 									if(tmp.split(':')[0].substring(0, 5) == 'costo'){
 										$grid_productos.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+									}
+									
+									if(tmp.split(':')[0].substring(0, 4) == 'pres'){
+										$grid_productos.find('input[name=presentacion]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
 									}
 									
 									var tr_warning = '<tr>';
@@ -1211,7 +1216,7 @@ $(function() {
 								tr_prod += '</td>';
 								tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 									tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="'+ Grid['id_presentacion'] +'">';
-									tr_prod += '<input type="text" name="presentacion" class="borde_oculto" value="' + Grid['presentacion'] + '" readOnly="true" style="width:66px;">';
+									tr_prod += '<input type="text" name="presentacion" id="pres" class="borde_oculto" value="' + Grid['presentacion'] + '" readOnly="true" style="width:66px;">';
 								tr_prod += '</td>';
 								tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 									tr_prod += '<input type="text" name="cantidad" id="cant" value="' + Grid['cantidad'] + '" style="width:66px;">';
@@ -1626,6 +1631,7 @@ $(function() {
 						$grid_productos.find('#cost').css({'background' : '#ffffff'});
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
 						$grid_productos.find('#cad').css({'background' : '#ffffff'});
+						$grid_productos.find('#pres').css({'background' : '#ffffff'});
 						
 						$('#forma-entradamercancias-window').find('#div_warning_grid').css({'display':'none'});
 						$('#forma-entradamercancias-window').find('#div_warning_grid').find('#grid_warning').children().remove();
@@ -1660,6 +1666,9 @@ $(function() {
 												$grid_productos.find('input[name=costo]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
 											}
 											
+											if(tmp.split(':')[0].substring(0, 4) == 'pres'){
+												$grid_productos.find('input[name=presentacion]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+											}
 											
 											var tr_warning = '<tr>';
 													tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';

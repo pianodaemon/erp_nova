@@ -102,7 +102,7 @@
                 <input type="hidden" name="accion_proceso">
                     <div id="div_two" title="" class="invordsubensamble_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:810px; padding-left:6px;"><strong>Orden de Subensambles</strong></div>
+                            <div class="fixed column" id="cierra" style="width:810px; padding-left:6px;"><strong>Producci&oacute;n de Subemsamble</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -159,29 +159,27 @@
 											</tr>
 											<tr>
 												<td width="5"></td>
-												<td colspan="6" align="left"  style="border: solid 1px #313E74;">
-												<div style="width:785px; height:125px; overflow:scroll; overflow-x: auto; overflow-y: auto;">
-													<table border="0">
-														<tr style="background-color:#A8A9AB; font-weight: bold;">
-																<td width="100" style="border: solid 1px #313E74;">&nbsp;C&oacute;digo</td>
-																<td width="485" style="border: solid 1px #313E74;">&nbsp;Nombre</td>
-																<td width="100" style="border: solid 1px #313E74;">Unidad</td>
-																<td width="100" style="border: solid 1px #313E74;">Cantidad</td>
-														</tr>
-														<tr>
-															<td colspan="5">
-																<div align="left" style="width:784px; height:95px; overflow:scroll; overflow-x: auto; overflow-y: auto;">
-																	<table border="0" id="grid_productos" >
-																		<!--<tr>
-																			
-																		</tr>-->																
-																	</table>
-																</div>
-															</td>		
-														</tr>
+												<td colspan="6" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF;">
+													<table >
+														<thead>
+															<tr>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;C&oacute;digo</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="300">&nbsp;Nombre del Producto</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="105">&nbsp;Unidad</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="135">&nbsp;Presentaci&oacute;n</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;Cantidad</td>
+															</tr>
+														</thead>
 													</table>
-												</div>
-											</td>
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:785; height: 70px; border:1px solid #C1DAD7 !important;">	
+														<table>
+															<tbody id="grid_productos" style="background-color: #FFFFFF;" valign="top">
+																
+															</tbody>
+														</table>
+													</div>
+												</td>
+												
 												<td width="5">&nbsp;</td>
 											</tr>
 											<tr>
@@ -196,29 +194,29 @@
 											</tr>
 											<tr>
 												<td width="5"></td>
-												<td colspan="6" align="left"  style="border: solid 1px #313E74;">
-												<div style="width:785px; height:125px; overflow:scroll; overflow-x: auto; overflow-y: auto;">
-													<table border="0">
-														<tr style="background-color:#A8A9AB; font-weight: bold;">
-																<td width="75" style="border: solid 1px #313E74;">&nbsp;C&oacute;digo</td>
-																<td width="172" style="border: solid 1px #313E74;">&nbsp;Nombre</td>
-																<td width="70" style="border: solid 1px #313E74;">Unidad</td>
-																<td width="67" style="border: solid 1px #313E74;">Cantidad</td>
-														</tr>
-														<tr>
-															<td colspan="5">
-																<div align="left" style="width:784px; height:95px; overflow:scroll; overflow-x: auto; overflow-y: auto;">
-																	<table border="0" id="grid_productos_complementos" >
-																		<!--<tr>
-																			
-																		</tr>-->																
-																	</table>
-																</div>
-															</td>					
-														</tr>
+												
+												<td colspan="6" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF;">
+													<table >
+														<thead>
+															<tr>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;C&oacute;digo</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="300">&nbsp;Nombre del Producto</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="105">&nbsp;Unidad</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="135">&nbsp;Presentaci&oacute;n&nbsp;Default</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="110">&nbsp;Cantidad</td>
+															</tr>
+														</thead>
 													</table>
-												</div>
-											</td>
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:785; height: 90px; border:1px solid #C1DAD7 !important;">	
+														<table>
+															<tbody id="grid_productos_complementos" style="background-color: #FFFFFF;" valign="top">
+												
+															</tbody>
+														</table>
+													</div>
+												</td>
+											
+											
 												<td width="5">&nbsp;</td>
 											</tr>
 

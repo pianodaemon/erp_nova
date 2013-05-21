@@ -135,7 +135,6 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
     margin-bottom:10px;
 }
 
-/*
 #grid_productos td{
 	height:18px;
 	text-align:center;
@@ -148,7 +147,6 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 #grid_productos select{
 	height:17px;
 }
-*/
 
 .borde_oculto{
 	border-color:transparent; 
@@ -156,86 +154,33 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 }
 
 
-
-/*clases para pestañas internas*/
-/*
-ul.pestanas_internas{
-    margin: 0;
-    padding: 0;
-    float: left;
-    list-style: none;
-    height: 20px;
-    border-bottom: 1px solid white;
-    width: 100%;
-}
-
-ul.pestanas_internas li{
-    width:100px;
-    float: left;
-    margin: 0;
-    padding: 0;
-    height: 19px;
-    line-height: 19px;
-    border-bottom: 1px solid white;
-    border-left: none;
-    margin-top:2px;
-    margin-bottom: 0px;
-    background: #A8A9AB;
-    overflow: hidden;
-    position: relative;
-    border-radius: 20px 20px 0px 0px;
-}
-
-ul.pestanas_internas li a{
-    text-align:center;
-    text-decoration: none;
-    color:#4C6088;
-    display: block;
-    font-size: 1em;
-    padding: 0px;
-    border: 0px;
-    outline: none;
-}
-
-ul.pestanas_internas li a:hover{
-    background: #AFC8FB;
-    border-radius: 20px 20px 0px 0px;
-}
-html ul.pestanas_internas li.active_internas, html ul.pestanas_internas li.active_internas a:hover{
-    background: #FFFFFF;
-}
-
-.header_interno{
-    background: #808080;
-}
-
-.contenidoPes_internas{
-    background:white;
-    padding: 8px;
-    font-size: 1em; 
-}
-
-.invpre_div_three_interno{
-    /*font-family:tahoma;*/
-/*    font-size:11px;
-    width:680px;
-    height:200px;
-    background-color: #FFFFFF;
-    border: 1px solid #808080;
-    margin-top:5px;
-    margin-right:10px;
-    margin-left:10px;
-    margin-bottom:10px;
-}
-*/
-
-
-/*clases para pestañas internas*/
-
 .gral input{
-    height:15px;
+	height:15px;
 }
 
 .gral select{
-    height:17px;
+	height:17px;
+}
+
+table tr td.grid {
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 2px;
+	text-align: center;
+	vertical-align: top;
+}
+table tr td.grid1 {
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 2px;
+	text-align: left;
+	vertical-align: top;
+}
+
+table tr td.grid2 {
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 2px;
+	text-align: right;
+	vertical-align: top;
 }

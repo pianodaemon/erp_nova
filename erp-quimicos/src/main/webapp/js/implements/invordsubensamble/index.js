@@ -311,15 +311,24 @@ $(function() {
 						var tr_prod='';
 						
 						tr_prod += '<tr>';
-								tr_prod += '<td width="100">';
-										tr_prod += '<input type="hidden" name="id_prod_grid" id="id_prod_grid" value="'+entry['Detalle'][i]['id'] +'">';
-										tr_prod += '<INPUT TYPE="text" id="skup" name="sku'+ trCount +'" value="'+ entry['Detalle'][i]['sku'] +'" class="borde_oculto" style="width:82px;" readOnly="true">';
-								tr_prod += '</td>';
-								tr_prod += '<td width="485" align="center"><INPUT TYPE="text" name="titulo'+ trCount +'" value="'+ entry['Detalle'][i]['descripcion'] +'" class="borde_oculto" style="width:169px;" readOnly="true"></td>';
-								tr_prod += '<td width="100"><INPUT TYPE="text" name="unidad" class="borde_oculto" value="'+ entry['Detalle'][i]['unidad'] +'" readOnly="true" style="width:66px;"></td>';
-								tr_prod += '<td width="100"><INPUT TYPE="text" name="cantidad" id="cantidad'+trCount+'" value="'+entry['Detalle'][i]['cantidad']+'" readOnly="true" style="width:66px;"></td>';
-							tr_prod += '</tr>';
-
+							tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
+								tr_prod += '<input type="hidden" name="id_prod_grid" id="id_prod_grid" value="'+entry['Detalle'][i]['id'] +'">';
+								tr_prod += '<input type="text" id="skup" name="sku'+ trCount +'" value="'+ entry['Detalle'][i]['sku'] +'" class="borde_oculto" style="width:106px;" readOnly="true">';
+							tr_prod += '</td>';
+							tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="300">';
+								tr_prod += '<input type="text" name="titulo'+ trCount +'" value="'+ entry['Detalle'][i]['descripcion'] +'" class="borde_oculto" style="width:296px;" readOnly="true">';
+							tr_prod += '</td>';
+							tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="105">';
+								tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="'+ entry['Detalle'][i]['unidad'] +'" readOnly="true" style="width:100px;">';
+							tr_prod += '</td>';
+							tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="135">';
+								tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="'+ entry['Detalle'][i]['presentacion'] +'" readOnly="true" style="width:130px;">';
+							tr_prod += '</td>';
+							tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="95">';
+								tr_prod += '<input type="text" name="cantidad" id="cantidad'+trCount+'" value="'+entry['Detalle'][i]['cantidad']+'" readOnly="true" style="width:90px;">';
+							tr_prod += '</td>';
+						tr_prod += '</tr>';
+							
 						$grid_productos.append(tr_prod);
 					}
 					
@@ -327,22 +336,25 @@ $(function() {
 						var tr_complemento='';
 							
 						tr_complemento += '<tr>';
-							tr_complemento += '<td width="65">';//el 1 significa que el registro no ha sido eliminado
-									tr_complemento += '<input type="hidden" name="eliminadocomp" id="eliminadocomp" value="1">';
+							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
+								tr_complemento += '<input type="hidden" name="eliminadocomp" id="eliminadocomp" value="1">';
+								tr_complemento += '<INPUT TYPE="text" id="skucomp" name="skucomp'+ trCount +'" value="'+ entry['componentes'][i]['sku'] +'" class="borde_oculto" style="width:105px;" readOnly="true">';
 							tr_complemento += '</td>';
-							tr_complemento += '<td width="100">';
-									tr_complemento += '<INPUT TYPE="text" id="skucomp" name="skucomp'+ trCount +'" value="'+ entry['componentes'][i]['sku'] +'" class="borde_oculto" style="width:82px;" readOnly="true">';
+							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="300">';
+								tr_complemento += '<INPUT TYPE="text" name="titulocomp'+ trCount +'" value="'+ entry['componentes'][i]['descripcion'] +'" class="borde_oculto" style="width:296px;" readOnly="true">';
 							tr_complemento += '</td>';
-							tr_complemento += '<td width="420" align="center"><INPUT TYPE="text" name="titulocomp'+ trCount +'" value="'+ entry['componentes'][i]['descripcion'] +'" class="borde_oculto" style="width:169px;" readOnly="true"></td>';
-							tr_complemento += '<td width="100"><INPUT TYPE="text" name="unidadcomp" class="borde_oculto" value="'+ entry['componentes'][i]['utitulo'] +'" readOnly="true" style="width:66px;"></td>';
-							tr_complemento += '<td width="100">';
-								tr_complemento += '<INPUT TYPE="text" name="cantidadcomp" id="cantidadcomp" value="'+entry['componentes'][i]['cantidad']+'" readOnly="true" style="width:66px;">';
+							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="105">';
+								tr_complemento += '<INPUT TYPE="text" name="unidadcomp" class="borde_oculto" value="'+ entry['componentes'][i]['utitulo'] +'" readOnly="true" style="width:100px;">';
 							tr_complemento += '</td>';
-
+							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="135">';
+								tr_complemento += '<input type="text" name="unidad" class="borde_oculto" value="'+ entry['componentes'][i]['pres_comp'] +'" readOnly="true" style="width:130px;">';
+							tr_complemento += '</td>';
+							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="95">';
+								tr_complemento += '<INPUT TYPE="text" name="cantidadcomp" id="cantidadcomp" value="'+entry['componentes'][i]['cantidad']+'" readOnly="true" style="width:90px;">';
+							tr_complemento += '</td>';
 						tr_complemento += '</tr>';
 
 						$grid_componentes.append(tr_complemento);
-						
 					}
 				},"json");//termina llamada json
 				
