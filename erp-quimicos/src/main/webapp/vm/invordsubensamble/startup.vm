@@ -215,8 +215,39 @@
 											
 												<td width="5">&nbsp;</td>
 											</tr>
-
-
+											
+											
+											<tr>
+												<td width="5"></td>
+												<td colspan="6">
+													<div id="div_warning_grid"  style="width:800px; height:100px; display:none;">
+														<table border="0">
+															<tr>
+																<td width="20"></td>
+																<td width="310" colspan="2"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos&nbsp;del&nbsp;listado&nbsp;de&nbsp;Productos Componentes</div></td>
+																<td width="325"></td>
+															</tr>
+															<tr>
+																<td width="20" style="background-color:#A8A9AB;">#</td>
+																<td width="100" style="background-color:#A8A9AB;">C&oacute;digo</td>
+																<td width="210" style="background-color:#A8A9AB;">Nombre</td>
+																<td width="445" style="background-color:#A8A9AB;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+															</tr>
+															<tr>
+																<td colspan="4" style="border: solid 1px #313E74;"> 
+																	<div align="left" style="width:785px; height:80px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+																		<table id="grid_warning" border="0">
+																		<!--aqui va el listado de errores del grid-->
+																		</table>
+																	</div>
+																</td>
+															</tr>
+														</table>
+													</div>
+												</td>
+												<td width="5"></td>
+											</tr>
+											
                                         </table>
                                     </div>
 									

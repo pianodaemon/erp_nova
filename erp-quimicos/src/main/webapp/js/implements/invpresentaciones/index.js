@@ -276,8 +276,7 @@ $(function() {
 						if ( entry['success'] == '1' ){
 							jAlert("La Presentacion fue eliminada exitosamente", 'Atencion!');
 							$get_datos_grid();
-						}
-						else{
+						}else{
 							jAlert("La Presentacion no pudo ser eliminada", 'Atencion!');
 						}
 					},"json");

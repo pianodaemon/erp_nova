@@ -768,7 +768,7 @@ $(function() {
 				$select_clase.attr('disabled','-1');
 				$select_familia.attr('disabled','-1');
 				$select_subfamilia.attr('disabled','-1');
-				$select_unidad.attr('disabled','-1');
+				//$select_unidad.attr('disabled','-1');
 				$select_clasifstock.attr('disabled','-1');
 				$select_iva.attr('disabled','-1');
 				$select_ieps.attr('disabled','-1');
@@ -803,7 +803,7 @@ $(function() {
 				$select_clase.removeAttr('disabled');
 				$select_familia.removeAttr('disabled');
 				$select_subfamilia.removeAttr('disabled');
-				$select_unidad.removeAttr('disabled');
+				//$select_unidad.removeAttr('disabled');
 				$select_clasifstock.removeAttr('disabled');
 				$select_iva.removeAttr('disabled');
 				$select_ieps.removeAttr('disabled');

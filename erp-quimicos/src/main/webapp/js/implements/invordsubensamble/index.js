@@ -240,6 +240,9 @@ $(function() {
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-invordsubensamble-window').find('div.interrogacion').css({'display':'none'});
 						
+						$grid_componentes.find('input[name=prescomp]').css({'background' : '#ffffff'});
+						$grid_componentes.find('input[name=cantidadcomp]').css({'background' : '#ffffff'});
+						
 						var valor = data['success'].split('___');
 						//muestra las interrogaciones
 						for (var element in valor){
@@ -250,6 +253,29 @@ $(function() {
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+								
+								if(tmp.split(':')[0].split('_')[0]=='cantidadcomp' || tmp.split(':')[0].split('_')[0]=='prescomp'){
+									$('#forma-invordsubensamble-window').find('.invordsubensamble_div_one').css({'height':'570px'});
+									$('#forma-invordsubensamble-window').find('#div_warning_grid').css({'display':'block'});
+									
+									if(parseInt($("tr", $grid_componentes).size())>0){
+										
+										var $campo = $grid_componentes.find('#'+tmp.split(':')[0]);
+										
+										$campo.css({'background' : '#d41000'});
+										
+										$tr = $campo.parent().parent();
+										
+										var tr_warning = '<tr>';
+											tr_warning += '<td width="20"><div><img src="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+											tr_warning += '<td width="120"><input type="text" value="' + $tr.find('#skucomp').val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
+											tr_warning += '<td width="200"><input type="text" value="' +$tr.find('#titulocomp').val() + '" class="borde_oculto" readOnly="true" style="width:205px; color:red"></td>';
+											tr_warning += '<td width="445"><input type="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:440px; color:red"></td>';
+										tr_warning += '</tr>';
+										$('#forma-invordsubensamble-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+									}
+								}
+								
 							}
 						}
 					}
@@ -313,7 +339,7 @@ $(function() {
 								tr_prod += '<input type="text" id="skup" name="sku'+ trCount +'" value="'+ entry['Detalle'][i]['sku'] +'" class="borde_oculto" style="width:106px;" readOnly="true">';
 							tr_prod += '</td>';
 							tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="300">';
-								tr_prod += '<input type="text" name="titulo'+ trCount +'" value="'+ entry['Detalle'][i]['descripcion'] +'" class="borde_oculto" style="width:296px;" readOnly="true">';
+								tr_prod += '<input type="text"  name="titulo'+ trCount +'" value="'+ entry['Detalle'][i]['descripcion'] +'" class="borde_oculto" style="width:296px;" readOnly="true">';
 							tr_prod += '</td>';
 							tr_prod += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="105">';
 								tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="'+ entry['Detalle'][i]['unidad'] +'" readOnly="true" style="width:100px;">';
@@ -325,29 +351,30 @@ $(function() {
 								tr_prod += '<input type="text" name="cantidad" id="cantidad'+trCount+'" value="'+entry['Detalle'][i]['cantidad']+'" readOnly="true" style="width:90px;">';
 							tr_prod += '</td>';
 						tr_prod += '</tr>';
-							
+						
 						$grid_productos.append(tr_prod);
 					}
 					
 					for(var i in entry['componentes']){
 						var tr_complemento='';
-							
+						var idProdComp = entry['componentes'][i]['id'];
+						
 						tr_complemento += '<tr>';
 							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
 								tr_complemento += '<input type="hidden" name="eliminadocomp" id="eliminadocomp" value="1">';
-								tr_complemento += '<INPUT TYPE="text" id="skucomp" name="skucomp'+ trCount +'" value="'+ entry['componentes'][i]['sku'] +'" class="borde_oculto" style="width:105px;" readOnly="true">';
+								tr_complemento += '<input type="text" id="skucomp" name="skucomp'+ trCount +'" value="'+ entry['componentes'][i]['sku'] +'" class="borde_oculto" style="width:105px;" readOnly="true">';
 							tr_complemento += '</td>';
 							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="300">';
-								tr_complemento += '<INPUT TYPE="text" name="titulocomp'+ trCount +'" value="'+ entry['componentes'][i]['descripcion'] +'" class="borde_oculto" style="width:296px;" readOnly="true">';
+								tr_complemento += '<input type="text" id="titulocomp" name="titulocomp'+ trCount +'" value="'+ entry['componentes'][i]['descripcion'] +'" class="borde_oculto" style="width:296px;" readOnly="true">';
 							tr_complemento += '</td>';
 							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="105">';
-								tr_complemento += '<INPUT TYPE="text" name="unidadcomp" class="borde_oculto" value="'+ entry['componentes'][i]['utitulo'] +'" readOnly="true" style="width:100px;">';
+								tr_complemento += '<input type="text" name="unidadcomp" class="borde_oculto" value="'+ entry['componentes'][i]['utitulo'] +'" readOnly="true" style="width:100px;">';
 							tr_complemento += '</td>';
 							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="135">';
-								tr_complemento += '<input type="text" name="unidad" class="borde_oculto" value="'+ entry['componentes'][i]['pres_comp'] +'" readOnly="true" style="width:130px;">';
+								tr_complemento += '<input type="text" name="prescomp" id="prescomp_'+idProdComp+'"class="borde_oculto" value="'+ entry['componentes'][i]['pres_comp'] +'" readOnly="true" style="width:130px;">';
 							tr_complemento += '</td>';
 							tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="95">';
-								tr_complemento += '<INPUT TYPE="text" name="cantidadcomp" id="cantidadcomp" value="'+entry['componentes'][i]['cantidad']+'" readOnly="true" style="width:90px;">';
+								tr_complemento += '<input type="text" name="cantidadcomp" id="cantidadcomp_'+idProdComp+'" value="'+entry['componentes'][i]['cantidad']+'" readOnly="true" style="width:90px;">';
 							tr_complemento += '</td>';
 						tr_complemento += '</tr>';
 

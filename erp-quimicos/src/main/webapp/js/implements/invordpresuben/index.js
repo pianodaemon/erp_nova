@@ -794,7 +794,6 @@ $(function() {
 											$grid_componentes.find('input[name=prescomp]').eq(parseInt(i) - 1).css({'background' : '#d41000'});
 										}
 										
-										
 										var tr_warning = '<tr>';
 												tr_warning += '<td width="20"><div><img src="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
 												tr_warning += '<td width="120"><input type="text" value="' + $grid_componentes.find('#skucomp').eq(parseInt(i) - 1).val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
@@ -999,7 +998,7 @@ $(function() {
 									$('#forma-invordpresuben-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
 								} 
 								
-								if(tmp.split(':')[0].split('_')[0] == 'idprod'){
+								if(tmp.split(':')[0].split('_')[0] == 'idprod' || tmp.split(':')[0].split('_')[0]=='presentacion'){
 									$('#forma-invordpresuben-window').find('.invordpresuben_div_one').css({'height':'570px'});
 									$('#forma-invordpresuben-window').find('#div_warning_grid').css({'display':'block'});
 									
@@ -1007,8 +1006,16 @@ $(function() {
 										for ( var i=1; i<=parseInt($("tr", $grid_productos_componentes).size()); i++){
 											if( parseInt($grid_productos_componentes.find('#id_comp_grid').eq(parseInt(i) - 1).val()) == parseInt(tmp.split(':')[0].split('_')[1]) ){
 												//alert("id-prod_grid:"+$grid_componentes.find('#id_comp_grid').eq(parseInt(i) - 1).val() + "     id: "+parseInt(tmp.split(':')[0].split('_')[1]));
-												$grid_productos_componentes.find('#cantidadcomp').eq(parseInt(i) - 1).css({'background' : '#d41000'});
+												//$grid_productos_componentes.find('#cantidadcomp').eq(parseInt(i) - 1).css({'background' : '#d41000'});
 												
+												if(tmp.split(':')[0].split('_')[0]=='idprod'){
+													$grid_productos_componentes.find('#cantidadcomp').eq(parseInt(i) - 1).css({'background' : '#d41000'});
+												}
+												
+												if(tmp.split(':')[0].split('_')[0]=='presentacion'){
+													$grid_productos_componentes.find('input[name=prescomp]').eq(parseInt(i) - 1).css({'background' : '#d41000'});
+												}
+										
 												var tr_warning = '<tr>';
 														tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
 														tr_warning += '<td width="120"><INPUT TYPE="text" value="' + $grid_productos_componentes.find('#skucomp').eq(parseInt(i) - 1).val() + '" class="borde_oculto" readOnly="true" style="width:95px; color:red"></td>';
