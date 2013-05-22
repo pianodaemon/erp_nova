@@ -7315,7 +7315,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                 + "JOIN inv_lote_mov_det ON inv_lote_mov_det.referencia_det_id=inv_otras_det.id "
                 + "JOIN inv_lote ON inv_lote.id=inv_lote_mov_det.inv_lote_id "
-                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_otras_det.inv_prod_presentacion_id "
+                + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_otras_det.inv_prod_presentacion_id "
                 + "WHERE inv_otras_det.inv_otras_id=? "
                 + "ORDER BY inv_otras_det.id;";
 
