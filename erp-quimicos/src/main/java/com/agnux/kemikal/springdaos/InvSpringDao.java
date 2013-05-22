@@ -7349,7 +7349,7 @@ public class InvSpringDao implements InvInterfaceDao{
     @Override
     public HashMap<String, String> getInvOrdenTras_DatosPDF(Integer id) {
         HashMap<String, String> data = new HashMap<String, String>();
-
+        
         String sql_to_query = ""
                 + "SELECT  "
                     + "inv_otras.folio, "
