@@ -56,12 +56,12 @@ $(function() {
 		
 		//On Click Event
 		$('#forma-registro-window').find("ul.pestanas li").click(function() {
-                    $('#forma-registro-window').find(".contenidoPes").hide();
-                    $('#forma-registro-window').find("ul.pestanas li").removeClass("active");
-                    var activeTab = $(this).find("a").attr("href");
-                    $('#forma-registro-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
-                    $(this).addClass("active");
-                    return false;
+			$('#forma-registro-window').find(".contenidoPes").hide();
+			$('#forma-registro-window').find("ul.pestanas li").removeClass("active");
+			var activeTab = $(this).find("a").attr("href");
+			$('#forma-registro-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$(this).addClass("active");
+			return false;
 		});
 	}
 	
@@ -138,7 +138,6 @@ $(function() {
          
         //Plugin de registro de llamadas
         $registro_llamadas = function(){
-            
             var id_to_show = 1;
             $(this).modalPanelLlamadas();
             var form_to_show1 = 'formaCrmRegistroLlamadas';
@@ -181,11 +180,8 @@ $(function() {
             
             $select_tipo.val(0);
             
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
-		var parametros={
-                    
-                    iu: $('#lienzo_recalculable').find('input[name=iu]').val()
-                }
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatos.json';
+			var parametros={ iu: $('#lienzo_recalculable').find('input[name=iu]').val() }
                 $.post(input_json,parametros,function(entry){
                  
                     //Alimentando los campos select_agente
@@ -202,143 +198,140 @@ $(function() {
 			a.css({'z-index':100});
             });
 		
-		$fecha_inicial.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_inicial.val(),
-			current: $fecha_inicial.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_inicial.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
-					$fecha_inicial.DatePickerHide();
-					/*if (valida_fecha==true){
-						jAlert("Fecha no valida",'! Atencion');
-						$fecha_inicial.val(mostrarFecha());
-					}else{
-						$fecha_inicial.DatePickerHide();	
-					}*/
+			$fecha_inicial.DatePicker({
+				format:'Y-m-d',
+				date: $fecha_inicial.val(),
+				current: $fecha_inicial.val(),
+				starts: 1,
+				position: 'bottom',
+				locale: {
+					days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+					daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+					daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+					months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+					monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+					weekMin: 'se'
+				},
+				onChange: function(formated, dates){
+					var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+					$fecha_inicial.val(formated);
+					if (formated.match(patron) ){
+						var valida_fecha=mayor($fecha_inicial.val(),mostrarFecha());
+						$fecha_inicial.DatePickerHide();
+						/*if (valida_fecha==true){
+							jAlert("Fecha no valida",'! Atencion');
+							$fecha_inicial.val(mostrarFecha());
+						}else{
+							$fecha_inicial.DatePickerHide();	
+						}*/
+					}
 				}
-			}
-		});
+			});
 		
 		
-        //fecha para la proxima visita
-		$fecha_final.click(function (s){
-			var a=$('div.datepicker');
-			a.css({'z-index':100});
-		});
-		
-		$fecha_final.DatePicker({
-			format:'Y-m-d',
-			date: $fecha_final.val(),
-			current: $fecha_final.val(),
-			starts: 1,
-			position: 'bottom',
-			locale: {
-				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-				weekMin: 'se'
-			},
-			onChange: function(formated, dates){
-				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-				$fecha_final.val(formated);
-				if (formated.match(patron) ){
-					var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
-					$fecha_final.DatePickerHide();
-					/*if (valida_fecha==true){
-						$fecha_final.DatePickerHide();	
-					}else{
-						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
-						$fecha_final.val(mostrarFecha());
-					}*/
+			//fecha para la proxima visita
+			$fecha_final.click(function (s){
+				var a=$('div.datepicker');
+				a.css({'z-index':100});
+			});
+			
+			$fecha_final.DatePicker({
+				format:'Y-m-d',
+				date: $fecha_final.val(),
+				current: $fecha_final.val(),
+				starts: 1,
+				position: 'bottom',
+				locale: {
+					days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+					daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+					daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+					months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+					monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+					weekMin: 'se'
+				},
+				onChange: function(formated, dates){
+					var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+					$fecha_final.val(formated);
+					if (formated.match(patron) ){
+						var valida_fecha=mayor($fecha_final.val(),mostrarFecha());
+						$fecha_final.DatePickerHide();
+						/*if (valida_fecha==true){
+							$fecha_final.DatePickerHide();	
+						}else{
+							jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+							$fecha_final.val(mostrarFecha());
+						}*/
+					}
 				}
-			}
-		});
+			});
                 
-             
-                //click para hacer la consulta
-		$consultar.click(function(event){
-                    $metas.attr({'value':''});
-                    $totales.attr({'value':''});
-                    $porcentaje.attr({'value':''});
-                    $llam_entrantes.attr({'value':''});
-                    $llam_salientes.attr({'value':''});
-                    $llam_planeadas.attr({'value':''});
-                    $con_exito.attr({'value':''});
-                    $con_cita.attr({'value':''});
-                    $con_seguimiento.attr({'value':''});
-                    $efectividad.attr({'value':''});
-                    $gestion.attr({'value':''});
-                    $avance.attr({'value':''});
-                    $planeacion.attr({'value':''});
-                    
-                    var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
-                    $arreglo = {
-                        
-                        'agente':$select_agente.val(),
-                        'status':$select_status.val(),
-                        'etapa':$select_etapa.val(),
-                        'tipo_seleccion':$select_tipo.val(),
-                        'fecha_inicial':$fecha_inicial.val(),
-                        'fecha_final':$fecha_final.val(),
-                         'id':id_to_show,
-                        'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                    }
-                    
-
-                    $.post(input_json,$arreglo,function(entry){
-                        
-                        if(entry['Registros'] != "" && entry['Registros'] != null ){
-                            $metas.attr({'value':entry['Registros']['0']['cantidad_llamadas']});
-                            $totales.attr({'value':entry['Registros']['0']['llamadas_totales']});
-                            $porcentaje.attr({'value':entry['Registros']['0']['porcentaje_llamadas']});
-                            $llam_entrantes.attr({'value':entry['Registros']['0']['llamadas_entrantes']});
-                            $llam_salientes.attr({'value':entry['Registros']['0']['llamadas_salientes']});
-                            $llam_planeadas.attr({'value':entry['Registros']['0']['llamadas_planeadas']});
-                            $con_exito.attr({'value':entry['Registros']['0']['llamadas_con_exito']});
-                            $con_cita.attr({'value':entry['Registros']['0']['llamadas_con_cita']});
-                            $con_seguimiento.attr({'value':entry['Registros']['0']['llamadas_con_seguimiento']});
-                            $efectividad.attr({'value':entry['Registros']['0']['efectividad']});
-                            $gestion.attr({'value':entry['Registros']['0']['gestion']});
-                            $avance.attr({'value':entry['Registros']['0']['avance']});
-                            $planeacion.attr({'value':entry['Registros']['0']['planeacion']});
-                        }else{
-                            jAlert("No se encontraron resultados.",'! Atencion');
-                        }
-                    });
-		});
-            
-            $cerrar_plugin.bind('click',function(){
-                var remove = function() {$(this).remove();};
-                $('#forma-llamadas-overlay').fadeOut(remove);
-            });
-            
-            $cancelar_plugin.click(function(event){
-                var remove = function() {$(this).remove();};
-                $('#forma-llamadas-overlay').fadeOut(remove);
-            });
-
-        }
+			
+			//click para hacer la consulta
+			$consultar.click(function(event){
+				$metas.attr({'value':''});
+				$totales.attr({'value':''});
+				$porcentaje.attr({'value':''});
+				$llam_entrantes.attr({'value':''});
+				$llam_salientes.attr({'value':''});
+				$llam_planeadas.attr({'value':''});
+				$con_exito.attr({'value':''});
+				$con_cita.attr({'value':''});
+				$con_seguimiento.attr({'value':''});
+				$efectividad.attr({'value':''});
+				$gestion.attr({'value':''});
+				$avance.attr({'value':''});
+				$planeacion.attr({'value':''});
+						
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_DatosBuscador.json';
+				$arreglo = {
+					'agente':$select_agente.val(),
+					'status':$select_status.val(),
+					'etapa':$select_etapa.val(),
+					'tipo_seleccion':$select_tipo.val(),
+					'fecha_inicial':$fecha_inicial.val(),
+					'fecha_final':$fecha_final.val(),
+					 'id':id_to_show,
+					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+				}
+				
+				$.post(input_json,$arreglo,function(entry){
+					if(entry['Registros'] != "" && entry['Registros'] != null ){
+						$metas.attr({'value':entry['Registros']['0']['cantidad_llamadas']});
+						$totales.attr({'value':entry['Registros']['0']['llamadas_totales']});
+						$porcentaje.attr({'value':entry['Registros']['0']['porcentaje_llamadas']});
+						$llam_entrantes.attr({'value':entry['Registros']['0']['llamadas_entrantes']});
+						$llam_salientes.attr({'value':entry['Registros']['0']['llamadas_salientes']});
+						$llam_planeadas.attr({'value':entry['Registros']['0']['llamadas_planeadas']});
+						$con_exito.attr({'value':entry['Registros']['0']['llamadas_con_exito']});
+						$con_cita.attr({'value':entry['Registros']['0']['llamadas_con_cita']});
+						$con_seguimiento.attr({'value':entry['Registros']['0']['llamadas_con_seguimiento']});
+						$efectividad.attr({'value':entry['Registros']['0']['efectividad']});
+						$gestion.attr({'value':entry['Registros']['0']['gestion']});
+						$avance.attr({'value':entry['Registros']['0']['avance']});
+						$planeacion.attr({'value':entry['Registros']['0']['planeacion']});
+					}else{
+						jAlert("No se encontraron resultados.",'! Atencion');
+					}
+				});
+			});
+				
+			$cerrar_plugin.bind('click',function(){
+				var remove = function() {$(this).remove();};
+				$('#forma-llamadas-overlay').fadeOut(remove);
+			});
+			
+			$cancelar_plugin.click(function(event){
+				var remove = function() {$(this).remove();};
+				$('#forma-llamadas-overlay').fadeOut(remove);
+			});
+		}
+		
+		
         
         //fin de la forma Registro Llamadas
 
          //Plugin de registro de visitas
         $registro_visitas = function(){
-
             var id_to_show = 2;
             $(this).modalPanelVisitas();
             var form_to_show2 = 'formaCrmRegistroVisitas';

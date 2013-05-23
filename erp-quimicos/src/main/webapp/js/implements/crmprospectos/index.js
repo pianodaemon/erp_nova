@@ -235,104 +235,47 @@ $(function() {
 		$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		//alert("si pasa");
 		$tabs_li_funxionalidad();
-	/*	
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_prospecto.json';
-		$arreglo = {
-                    'id':id_to_show,
-                    'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-                };
-                
-                
-                $.post(input_json,parametros,function(entry){
-          */          
-                    //var $total_tr = $('#forma-prospectos-window').find('input[name=total_tr]');
-                    var $campo_prospecto = $('#forma-prospectos-window').find('input[name=prospecto]');
-                    var $campo_id_prospecto = $('#forma-prospectos-window').find('input[name=identificador_prospecto]');
-                    var $select_tipo_estado = $('#forma-prospectos-window').find('select[name=status]');
-                    var $campo_rfc = $('#forma-prospectos-window').find('input[name=rfc]');
-                    var $select_estatus_prospecto = $('#forma-prospectos-window').find('select[name=estatus]');
-                    var $select_tipo_prospecto = $('#forma-prospectos-window').find('select[name=tipoprospecto]');
-                    var $campo_calle = $('#forma-prospectos-window').find('input[name=calle]');
-                    var $campo_numero = $('#forma-prospectos-window').find('input[name=numero_int]');
-                    var $campo_numero_ext = $('#forma-prospectos-window').find('input[name=numero_ext]');
-                    var $campo_entrecalles = $('#forma-prospectos-window').find('input[name=entrecalles]');
-                    var $campo_colonia = $('#forma-prospectos-window').find('input[name=colonia]');
-                    var $campo_cp = $('#forma-prospectos-window').find('input[name=cp]');
-                    var $select_pais = $('#forma-prospectos-window').find('select[name=pais]');
-                    var $select_entidad = $('#forma-prospectos-window').find('select[name=estado]');
-                    var $select_localidad = $('#forma-prospectos-window').find('select[name=municipio]');
-                    var $campo_loc_alternativa = $('#forma-prospectos-window').find('input[name=loc_alternativa]');
-                    
-                    
-                    
-                    var $campo_email = $('#forma-prospectos-window').find('input[name=email]');
-                    var $campo_tel1 = $('#forma-prospectos-window').find('input[name=tel1]');
-                    var $campo_ext1 = $('#forma-prospectos-window').find('input[name=ext1]');
-                    var $campo_fax = $('#forma-prospectos-window').find('input[name=fax]');
-                    var $campo_tel2 = $('#forma-prospectos-window').find('input[name=tel2]');
-                    var $campo_ext2 = $('#forma-prospectos-window').find('input[name=ext2]');
-                    var $campo_contacto = $('#forma-prospectos-window').find('input[name=contacto]');
+   
+		//var $total_tr = $('#forma-prospectos-window').find('input[name=total_tr]');
+		var $campo_prospecto = $('#forma-prospectos-window').find('input[name=prospecto]');
+		var $campo_id_prospecto = $('#forma-prospectos-window').find('input[name=identificador_prospecto]');
+		var $select_tipo_estado = $('#forma-prospectos-window').find('select[name=status]');
+		var $campo_rfc = $('#forma-prospectos-window').find('input[name=rfc]');
+		var $select_estatus_prospecto = $('#forma-prospectos-window').find('select[name=estatus]');
+		var $select_tipo_prospecto = $('#forma-prospectos-window').find('select[name=tipoprospecto]');
+		var $campo_calle = $('#forma-prospectos-window').find('input[name=calle]');
+		var $campo_numero = $('#forma-prospectos-window').find('input[name=numero_int]');
+		var $campo_numero_ext = $('#forma-prospectos-window').find('input[name=numero_ext]');
+		var $campo_entrecalles = $('#forma-prospectos-window').find('input[name=entrecalles]');
+		var $campo_colonia = $('#forma-prospectos-window').find('input[name=colonia]');
+		var $campo_cp = $('#forma-prospectos-window').find('input[name=cp]');
+		var $select_pais = $('#forma-prospectos-window').find('select[name=pais]');
+		var $select_entidad = $('#forma-prospectos-window').find('select[name=estado]');
+		var $select_localidad = $('#forma-prospectos-window').find('select[name=municipio]');
+		var $campo_loc_alternativa = $('#forma-prospectos-window').find('input[name=loc_alternativa]');
+		
+		
+		
+		var $campo_email = $('#forma-prospectos-window').find('input[name=email]');
+		var $campo_tel1 = $('#forma-prospectos-window').find('input[name=tel1]');
+		var $campo_ext1 = $('#forma-prospectos-window').find('input[name=ext1]');
+		var $campo_fax = $('#forma-prospectos-window').find('input[name=fax]');
+		var $campo_tel2 = $('#forma-prospectos-window').find('input[name=tel2]');
+		var $campo_ext2 = $('#forma-prospectos-window').find('input[name=ext2]');
+		var $campo_contacto = $('#forma-prospectos-window').find('input[name=contacto]');
 
-                    //Extras
-                    var $select_clasificacion = $('#forma-prospectos-window').find('select[name=clasificacion]');
-                    var $select_tipo_industria = $('#forma-prospectos-window').find('select[name=tipoindustria]');
-                    var $txtarea_observaciones =$('#forma-prospectos-window').find('textarea[name=observaciones]');
-                   
-                    //variables para cerrar el plugin
-                    var $cerrar_plugin = $('#forma-prospectos-window').find('#close');
-                    var $cancelar_plugin = $('#forma-prospectos-window').find('#boton_cancelar');
-                    var $submit_actualizar = $('#forma-prospectos-window').find('#submit');
-                    
-                    $campo_id_prospecto.attr({ 'value' : 0 });
-                    
-                    
-                    var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar entidad--]</option>';
-                    $select_entidad.children().remove();
-                    $select_entidad.append(entidad_hmtl);
+		//Extras
+		var $select_clasificacion = $('#forma-prospectos-window').find('select[name=clasificacion]');
+		var $select_tipo_industria = $('#forma-prospectos-window').find('select[name=tipoindustria]');
+		var $txtarea_observaciones =$('#forma-prospectos-window').find('textarea[name=observaciones]');
+	   
+		//variables para cerrar el plugin
+		var $cerrar_plugin = $('#forma-prospectos-window').find('#close');
+		var $cancelar_plugin = $('#forma-prospectos-window').find('#boton_cancelar');
+		var $submit_actualizar = $('#forma-prospectos-window').find('#submit');
+		
+		$campo_id_prospecto.attr({ 'value' : 0 });      
 
-                    var localidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar municipio-]</option>';
-                    $select_localidad.children().remove();
-                    $select_localidad.append(localidad_hmtl);
-
-                    //carga select estados al cambiar el pais
-                    $select_pais.change(function(){
-                            var valor_pais = $(this).val();
-                            var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
-                            $arreglo = {'id_pais':valor_pais};
-                            $.post(input_json,$arreglo,function(entry){
-                                    $select_entidad.children().remove();
-                                    var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
-                                    $.each(entry['Entidades'],function(entryIndex,entidad){
-                                            entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-                                    });
-                                    $select_entidad.append(entidad_hmtl);
-                                    var trama_hmtl_localidades = '<option value="' + '000' + '" >' + 'Localidad alternativa' + '</option>';
-                                    $select_localidad.children().remove();
-                                    $select_localidad.append(trama_hmtl_localidades);
-                            },"json");//termina llamada json
-                    });
-			
-                    //carga select municipios al cambiar el estado
-                    $select_entidad.change(function(){
-                            var valor_entidad = $(this).val();
-                            var valor_pais = $select_pais.val();
-                            //alert("Pais: "+valor_pais+"    Entidad:"+valor_entidad);
-                            var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getLocalidades.json';
-                            $arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
-                            $.post(input_json,$arreglo,function(entry){
-                                    $select_localidad.children().remove();
-                                    var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar municipio-]</option>'
-                                    $.each(entry['Localidades'],function(entryIndex,mun){
-                                            trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-                                    });
-                                    $select_localidad.append(trama_hmtl_localidades);
-                            },"json");//termina llamada json
-                    });
-
-			
-                   
-
-      
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("Prospecto dado de alta", 'Atencion!');
@@ -361,67 +304,105 @@ $(function() {
 		}
 		var options = { dataType :  'json', success : respuestaProcesada };
 		$forma_selected.ajaxForm(options);
-                
-                
-                
-                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_Prospectos.json';
+        
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_Prospectos.json';
 		parametros = {'id':id_to_show,
 		            'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-			   };
+					};
 		
 		$.post(input_json,parametros,function(entry){
                     
-                 //Alimentando los campos select de las pais
-                    $select_pais.children().remove();
-                    var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
-                    $.each(entry['Paises'],function(entryIndex,pais){
-                            pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
-                    });
-                    $select_pais.append(pais_hmtl);
-                    
-                    $select_tipo_estado.children().remove();
-                    var estado="";
-                        //estado+="<option value='0' selected='yes'> Selecciones un Tipo prospecto</option> ";
-                        estado+="<option value='1'   selected='yes'>Activo</option> ";
-                        estado+="<option value='2'        >Inactivo</option> ";
-
-                    $select_tipo_estado.append(estado);
-                    
-                    
-                    //alimentando los tipos de prospectos
-                     $select_tipo_prospecto.children().remove();
-                    var tipo_prospecto = '<option value="0" selected="yes">[-Seleccionar Tipo prospecto-]</option>';
-                    $.each(entry['Tipo_prospectos'],function(entryIndex,tipoprospecto){
-                            tipo_prospecto += '<option value="' + tipoprospecto['id'] + '"  >' + tipoprospecto['tipo_prospecto'] + '</option>';
-                    });
-                    $select_tipo_prospecto.append(tipo_prospecto);
-                    
-                    //alimentando $select_estatus_prospecto
-                     $select_estatus_prospecto.children().remove();
-                    var estatusprospecto = '<option value="0" selected="yes">[-Seleccionar etapa-]</option>';
-                    $.each(entry['Etapa_prospecto'],function(entryIndex,etapa){
-                            estatusprospecto += '<option value="' + etapa['id'] + '"  >' + etapa['etapa'] + '</option>';
-                    });
-                    $select_estatus_prospecto.append(estatusprospecto);
-                    
-                   //Clasificacion del prospecto
-                     $select_clasificacion.children().remove();
-                    var clasificacion_html = '<option value="0" selected="yes">[--Seleccione Clasificaci&oacute;n--]</option>';
-                    $.each(entry['Clasificacion'],function(entryIndex,clasificacion){
-                            clasificacion_html += '<option value="' + clasificacion['id'] + '"  >' + clasificacion['clasificacion_abr'] + '</option>';
-                    });
-                    $select_clasificacion.append(clasificacion_html);
-                  
-                  //  Cargandoo $select_tipo_industria 
-                     $select_tipo_industria.children().remove();
-                    var tipoindustria = '<option value="0" selected="yes">[--Seleccione Tipo Industria--]</option>';
-                    $.each(entry['Tipo_industria'],function(entryIndex,clasificacion){
-                            tipoindustria += '<option value="' + clasificacion['id'] + '"  >' + clasificacion['tipo_industria'] + '</option>';
-                    });
-                    $select_tipo_industria.append(tipoindustria);
-                
-                
+		 //Alimentando los campos select de las pais
+			$select_pais.children().remove();
+			var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
+			$.each(entry['Paises'],function(entryIndex,pais){
+					pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
+			});
+			$select_pais.append(pais_hmtl);
+			
+			$select_tipo_estado.children().remove();
+			var estado="";
+				//estado+="<option value='0' selected='yes'> Selecciones un Tipo prospecto</option> ";
+				estado+="<option value='1' selected='yes'>Activo</option> ";
+				estado+="<option value='2'>Inactivo</option> ";
+			$select_tipo_estado.append(estado);
+			
+			//alimentando los tipos de prospectos
+			 $select_tipo_prospecto.children().remove();
+			var tipo_prospecto = '<option value="0" selected="yes">[-Seleccionar Tipo-]</option>';
+			$.each(entry['Tipo_prospectos'],function(entryIndex,tipoprospecto){
+					tipo_prospecto += '<option value="' + tipoprospecto['id'] + '"  >' + tipoprospecto['tipo_prospecto'] + '</option>';
+			});
+			$select_tipo_prospecto.append(tipo_prospecto);
+			
+			//alimentando $select_estatus_prospecto
+			 $select_estatus_prospecto.children().remove();
+			var estatusprospecto = '<option value="0" selected="yes">[-Seleccionar etapa-]</option>';
+			$.each(entry['Etapa_prospecto'],function(entryIndex,etapa){
+				estatusprospecto += '<option value="' + etapa['id'] + '"  >' + etapa['etapa'] + '</option>';
+			});
+			$select_estatus_prospecto.append(estatusprospecto);
+			
+			//Clasificacion del prospecto
+			$select_clasificacion.children().remove();
+			var clasificacion_html = '<option value="0" selected="yes">[--Seleccione Clasificaci&oacute;n--]</option>';
+			$.each(entry['Clasificacion'],function(entryIndex,clasificacion){
+					clasificacion_html += '<option value="' + clasificacion['id'] + '"  >' + clasificacion['clasificacion_abr'] + '</option>';
+			});
+			$select_clasificacion.append(clasificacion_html);
+		  
+			//Cargandoo $select_tipo_industria 
+			$select_tipo_industria.children().remove();
+			var tipoindustria = '<option value="0" selected="yes">[--Seleccione Tipo Industria--]</option>';
+			$.each(entry['Tipo_industria'],function(entryIndex,clasificacion){
+					tipoindustria += '<option value="' + clasificacion['id'] + '"  >' + clasificacion['tipo_industria'] + '</option>';
+			});
+			$select_tipo_industria.append(tipoindustria);
 		},"json");//termina llamada json
+		
+		
+		var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar entidad--]</option>';
+		$select_entidad.children().remove();
+		$select_entidad.append(entidad_hmtl);
+
+		var localidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar municipio-]</option>';
+		$select_localidad.children().remove();
+		$select_localidad.append(localidad_hmtl);
+		
+		//carga select estados al cambiar el pais
+		$select_pais.change(function(){
+			var valor_pais = $(this).val();
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
+			$arreglo = {'id_pais':valor_pais};
+			$.post(input_json,$arreglo,function(entry){
+				$select_entidad.children().remove();
+				var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
+				$.each(entry['Entidades'],function(entryIndex,entidad){
+						entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
+				});
+				$select_entidad.append(entidad_hmtl);
+				var trama_hmtl_localidades = '<option value="' + '000' + '" >' + 'Localidad alternativa' + '</option>';
+				$select_localidad.children().remove();
+				$select_localidad.append(trama_hmtl_localidades);
+			},"json");//termina llamada json
+		});
+
+		//carga select municipios al cambiar el estado
+		$select_entidad.change(function(){
+			var valor_entidad = $(this).val();
+			var valor_pais = $select_pais.val();
+			//alert("Pais: "+valor_pais+"    Entidad:"+valor_entidad);
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getLocalidades.json';
+			$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
+			$.post(input_json,$arreglo,function(entry){
+				$select_localidad.children().remove();
+				var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar municipio-]</option>'
+				$.each(entry['Localidades'],function(entryIndex,mun){
+					trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
+				});
+				$select_localidad.append(trama_hmtl_localidades);
+			},"json");//termina llamada json
+		});
 		
                 
 		$cerrar_plugin.bind('click',function(){
@@ -429,9 +410,6 @@ $(function() {
 			$('#forma-prospectos-overlay').fadeOut(remove);
 		});
 		
-                
-                
-                
 		$cancelar_plugin.click(function(event){
 			var remove = function() { $(this).remove(); };
 			$('#forma-prospectos-overlay').fadeOut(remove);
@@ -482,93 +460,89 @@ $(function() {
 			
 			if(accion_mode == 'edit'){
                                 
-                            var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_Prospectos.json';
-                            $arreglo = {
-                                'id':id_to_show,
-                                'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-                            };
-                            
-                            //Variables para los datos Basicos del Prospecto
-                            var $campo_prospecto = $('#forma-prospectos-window').find('input[name=prospecto]');
-                            var $campo_id_prospecto = $('#forma-prospectos-window').find('input[name=identificador_prospecto]');
-                            var $select_tipo_estado = $('#forma-prospectos-window').find('select[name=status]');
-                            var $campo_rfc = $('#forma-prospectos-window').find('input[name=rfc]');
-                            var $select_estatus_prospecto = $('#forma-prospectos-window').find('select[name=estatus]');
-                            var $select_tipo_prospecto = $('#forma-prospectos-window').find('select[name=tipoprospecto]');
-                            var $campo_calle = $('#forma-prospectos-window').find('input[name=calle]');
-                            var $campo_numero = $('#forma-prospectos-window').find('input[name=numero_int]');
-                            var $campo_numero_ext = $('#forma-prospectos-window').find('input[name=numero_ext]');
-                            var $campo_entrecalles = $('#forma-prospectos-window').find('input[name=entrecalles]');
-                            var $campo_colonia = $('#forma-prospectos-window').find('input[name=colonia]');
-                            var $campo_cp = $('#forma-prospectos-window').find('input[name=cp]');
-                            var $select_pais = $('#forma-prospectos-window').find('select[name=pais]');
-                            var $select_entidad = $('#forma-prospectos-window').find('select[name=estado]');
-                            var $select_localidad = $('#forma-prospectos-window').find('select[name=municipio]');
-                            var $campo_loc_alternativa = $('#forma-prospectos-window').find('input[name=loc_alternativa]');
-                    
-                    
-                    
-                            var $campo_email = $('#forma-prospectos-window').find('input[name=email]');
-                            var $campo_tel1 = $('#forma-prospectos-window').find('input[name=tel1]');
-                            var $campo_ext1 = $('#forma-prospectos-window').find('input[name=ext1]');
-                            var $campo_fax = $('#forma-prospectos-window').find('input[name=fax]');
-                            var $campo_tel2 = $('#forma-prospectos-window').find('input[name=tel2]');
-                            var $campo_ext2 = $('#forma-prospectos-window').find('input[name=ext2]');
-                            var $campo_contacto = $('#forma-prospectos-window').find('input[name=contacto]');
-
-                            //Extras
-                            var $select_clasificacion = $('#forma-prospectos-window').find('select[name=clasificacion]');
-                            var $select_tipo_industria = $('#forma-prospectos-window').find('select[name=tipoindustria]');
-                            var $txtarea_observaciones =$('#forma-prospectos-window').find('textarea[name=observaciones]');
-
-                            //variables para cerrar el plugin
-                            var $cerrar_plugin = $('#forma-prospectos-window').find('#close');
-                            var $cancelar_plugin = $('#forma-prospectos-window').find('#boton_cancelar');
-                            var $submit_actualizar = $('#forma-prospectos-window').find('#submit');
-
-                            //$campo_id_prospecto.attr({ 'value' : 0 });
-                            
-                            
-                            
-                            
-                            
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_Prospectos.json';
+				$arreglo = {
+					'id':id_to_show,
+					'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+				};
 				
-                            var respuestaProcesada = function(data){
-                                if ( data['success'] == 'true' ){
-                                    jAlert("Los datos del prospecto se han actualizado.", 'Atencion!');
-                                    var remove = function() { $(this).remove(); };
-                                    $('#forma-prospectos-overlay').fadeOut(remove);
-                                    
-                                    $get_datos_grid();
-                                    
-                                }else{
-                                    // Desaparece todas las interrogaciones si es que existen
-                                    $('#forma-prospectos-window').find('div.interrogacion').css({'display':'none'});
+				//Variables para los datos Basicos del Prospecto
+				var $campo_prospecto = $('#forma-prospectos-window').find('input[name=prospecto]');
+				var $campo_id_prospecto = $('#forma-prospectos-window').find('input[name=identificador_prospecto]');
+				var $select_tipo_estado = $('#forma-prospectos-window').find('select[name=status]');
+				var $campo_rfc = $('#forma-prospectos-window').find('input[name=rfc]');
+				var $select_estatus_prospecto = $('#forma-prospectos-window').find('select[name=estatus]');
+				var $select_tipo_prospecto = $('#forma-prospectos-window').find('select[name=tipoprospecto]');
+				var $campo_calle = $('#forma-prospectos-window').find('input[name=calle]');
+				var $campo_numero = $('#forma-prospectos-window').find('input[name=numero_int]');
+				var $campo_numero_ext = $('#forma-prospectos-window').find('input[name=numero_ext]');
+				var $campo_entrecalles = $('#forma-prospectos-window').find('input[name=entrecalles]');
+				var $campo_colonia = $('#forma-prospectos-window').find('input[name=colonia]');
+				var $campo_cp = $('#forma-prospectos-window').find('input[name=cp]');
+				var $select_pais = $('#forma-prospectos-window').find('select[name=pais]');
+				var $select_entidad = $('#forma-prospectos-window').find('select[name=estado]');
+				var $select_localidad = $('#forma-prospectos-window').find('select[name=municipio]');
+				var $campo_loc_alternativa = $('#forma-prospectos-window').find('input[name=loc_alternativa]');
+		
+		
+		
+				var $campo_email = $('#forma-prospectos-window').find('input[name=email]');
+				var $campo_tel1 = $('#forma-prospectos-window').find('input[name=tel1]');
+				var $campo_ext1 = $('#forma-prospectos-window').find('input[name=ext1]');
+				var $campo_fax = $('#forma-prospectos-window').find('input[name=fax]');
+				var $campo_tel2 = $('#forma-prospectos-window').find('input[name=tel2]');
+				var $campo_ext2 = $('#forma-prospectos-window').find('input[name=ext2]');
+				var $campo_contacto = $('#forma-prospectos-window').find('input[name=contacto]');
 
-                                    //alert(data['success']);
-                                    var valor = data['success'].split('___');
-                                    //muestra las interrogaciones
-                                    for (var element in valor){
-                                        tmp = data['success'].split('___')[element];
-                                        longitud = tmp.split(':');
-                                        if( longitud.length > 1 ){
-                                            $('#forma-prospectos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-                                            .parent()
-                                            .css({'display':'block'})
-                                            .easyTooltip({	
-                                                tooltipId: "easyTooltip2",content: tmp.split(':')[1] 
-                                            });
-                                        }
-                                    }
-                                }
-                            }
+				//Extras
+				var $select_clasificacion = $('#forma-prospectos-window').find('select[name=clasificacion]');
+				var $select_tipo_industria = $('#forma-prospectos-window').find('select[name=tipoindustria]');
+				var $txtarea_observaciones =$('#forma-prospectos-window').find('textarea[name=observaciones]');
+
+				//variables para cerrar el plugin
+				var $cerrar_plugin = $('#forma-prospectos-window').find('#close');
+				var $cancelar_plugin = $('#forma-prospectos-window').find('#boton_cancelar');
+				var $submit_actualizar = $('#forma-prospectos-window').find('#submit');
+
+				//$campo_id_prospecto.attr({ 'value' : 0 });
 				
-                            var options = {dataType :  'json', success : respuestaProcesada};
-                            $forma_selected.ajaxForm(options);
+				
+				var respuestaProcesada = function(data){
+					if ( data['success'] == 'true' ){
+						jAlert("Los datos del prospecto se han actualizado.", 'Atencion!');
+						var remove = function() { $(this).remove(); };
+						$('#forma-prospectos-overlay').fadeOut(remove);
+						
+						$get_datos_grid();
+						
+					}else{
+						// Desaparece todas las interrogaciones si es que existen
+						$('#forma-prospectos-window').find('div.interrogacion').css({'display':'none'});
 
-                            //aqui se cargan los campos al editar
-                            $.post(input_json,$arreglo,function(entry){
-                                    $select_tipo_estado.children().remove();
+						//alert(data['success']);
+						var valor = data['success'].split('___');
+						//muestra las interrogaciones
+						for (var element in valor){
+							tmp = data['success'].split('___')[element];
+							longitud = tmp.split(':');
+							if( longitud.length > 1 ){
+								$('#forma-prospectos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+								.parent()
+								.css({'display':'block'})
+								.easyTooltip({	
+									tooltipId: "easyTooltip2",content: tmp.split(':')[1] 
+								});
+							}
+						}
+					}
+				}
+	
+				var options = {dataType :  'json', success : respuestaProcesada};
+				$forma_selected.ajaxForm(options);
+
+				//aqui se cargan los campos al editar
+				$.post(input_json,$arreglo,function(entry){
+						$select_tipo_estado.children().remove();
 				    var estatus ='';
 					if(parseInt(entry['Prospecto'][0]['estatus']) == 1){
 						estatus= '<option value="1" selected="yes">Activo</option>';
@@ -577,205 +551,185 @@ $(function() {
 						estatus= '<option value="1">Activo</option>';
 						estatus += '<option value="2" selected="yes">Inactivo</option>';
 					}
-			            $select_tipo_estado.append(estatus);
+					$select_tipo_estado.append(estatus);
                                     
                                    
-                                
-                                    $campo_id_prospecto.attr({ 'value' : entry['Prospecto']['0']['id_prospecto'] });
-                                    $campo_prospecto.attr({ 'value' : entry['Prospecto']['0']['razon_social'] });
-                                   // $campo_nocontrol.attr({ 'value' : entry['Prospecto']['0']['numero_control'] });
-                                    $campo_rfc.attr({ 'value' : entry['Prospecto']['0']['rfc'] });
-                                   // $campo_curp.attr({ 'value' : entry['Prospecto']['0']['curp'] });
-                                    
-                                    
-                                    $campo_calle.attr({ 'value' : entry['Prospecto']['0']['calle'] });
-                                    $campo_numero.attr({ 'value' : entry['Prospecto']['0']['numero'] });
-                                    $campo_entrecalles.attr({ 'value' : entry['Prospecto']['0']['entre_calles'] });
-                                    $campo_numero_ext.attr({ 'value' : entry['Prospecto']['0']['numero_exterior'] });
-                                    $campo_colonia.attr({ 'value' : entry['Prospecto']['0']['colonia'] });
-                                    $campo_cp.attr({ 'value' : entry['Prospecto']['0']['cp'] });
-                                    $campo_loc_alternativa.attr({ 'value' : entry['Prospecto']['0'][''] });
-                                    $campo_email.attr({ 'value' : entry['Prospecto']['0']['email'] });
-                                    $campo_tel1.attr({ 'value' : entry['Prospecto']['0']['telefono1'] });
-                                    $campo_ext1.attr({ 'value' : entry['Prospecto']['0']['extension1'] });
-                                    $campo_fax.attr({ 'value' : entry['Prospecto']['0']['fax'] });
-                                    $campo_tel2.attr({ 'value' : entry['Prospecto']['0']['telefono2'] });
-                                    $campo_ext2.attr({ 'value' : entry['Prospecto']['0']['extension2'] });
-                                    $campo_contacto.attr({ 'value' : entry['Prospecto']['0']['contacto'] });
-                                    $txtarea_observaciones.text(entry['Prospecto']['0']['observaciones']);
-                                    
-                                    //Alimentando los campos select de las pais
-                                    $select_pais.children().remove();
-                                    var pais_hmtl = "";
-                                    $.each(entry['Paises'],function(entryIndex,pais){
-                                            if(pais['cve_pais'] == entry['Prospecto']['0']['pais_id']){
-                                                    pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
-                                            }else{
-                                                    pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
-                                            }
-                                    });
-                                    $select_pais.append(pais_hmtl);
-
-                                    //Alimentando los campos select del estado
-                                    $select_entidad.children().remove();
-                                    var entidad_hmtl = "";
-                                    $.each(entry['Entidades'],function(entryIndex,entidad){
-                                            if(entidad['cve_ent'] == entry['Prospecto']['0']['estado_id']){
-                                                    entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
-                                            }else{
-                                                    entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-                                            }
-                                    });
-                                    $select_entidad.append(entidad_hmtl);
 					
-                                    //Alimentando los campos select de los municipios
-                                    $select_localidad.children().remove();
-                                    var localidad_hmtl = "";
-                                    $.each(entry['Localidades'],function(entryIndex,mun){
-                                            if(mun['cve_mun'] == entry['Prospecto']['0']['municipio_id']){
-                                                    localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
-                                            }else{
-                                                    localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-                                            }
-                                    });
-                                    $select_localidad.append(localidad_hmtl);
+					$campo_id_prospecto.attr({ 'value' : entry['Prospecto']['0']['id_prospecto'] });
+					$campo_prospecto.attr({ 'value' : entry['Prospecto']['0']['razon_social'] });
+				   // $campo_nocontrol.attr({ 'value' : entry['Prospecto']['0']['numero_control'] });
+					$campo_rfc.attr({ 'value' : entry['Prospecto']['0']['rfc'] });
+				   // $campo_curp.attr({ 'value' : entry['Prospecto']['0']['curp'] });
 					
-                                    //carga select de clasificacion
-                                    $select_clasificacion.children().remove();
-                                    var hmtl_class = '<option value="0">[-- Clasificacion --]</option>';
-                                    $.each(entry['Prospecto'],function(entryIndex,classificacion){
-                                        if(entry['Prospecto']['0']['clasificacion_id'] == classificacion['id']){
-                                            hmtl_class += '<option value="' + classificacion['id'] + '" selected="yes" >' + classificacion['nombre_vendedor'] + '</option>';
-                                        }else{
-                                            hmtl_class += '<option value="' + classificacion['id'] + '">' + classificacion['nombre_vendedor'] + '</option>';
-                                        }
-                                    });
-                                    $select_clasificacion.append(hmtl_class);
 					
-                                     
-                                    //carga  $select_tipo_industria
-                                    $select_tipo_industria.children().remove();
-                                    var hmtl_T_i = '<option value="0">[-- Tipo Industria --]</option>';
-                                    $.each(entry['Tipo_industria'],function(entryIndex,tipoindustria){
-                                        if(tipoindustria['id'] == entry['Prospecto']['0']['tipo_industria_id']){
-                                                    hmtl_T_i += '<option value="' + tipoindustria['id'] + '"  selected="yes">' + tipoindustria['tipo_industria'] + '</option>';
-                                            }else{
-                                                    hmtl_T_i += '<option value="' + tipoindustria['id'] + '"  >' + tipoindustria['tipo_industria'] + '</option>';
-                                            }
-                                    });
-                                    $select_tipo_industria.append(hmtl_T_i);
-                                    
-                                    
-                                  //carga el select del tipo  prospecto                  
-                                   $select_tipo_prospecto.children().remove();
-                                    var tipo_prospecto = '<option value="0">[-Tipo Prospecto-]</option>';
-                                    $.each(entry['Tipo_prospectos'],function(entryIndex,tipoprospecto){
-                                            if(tipoprospecto['id'] == entry['Prospecto']['0']['tipo_prospecto_id']){
-                                                    tipo_prospecto += '<option value="' + tipoprospecto['id'] + '"  selected="yes">' + tipoprospecto['tipo_prospecto'] + '</option>';
-                                            }else{
-                                                    tipo_prospecto += '<option value="' + tipoprospecto['id'] + '"  >' + tipoprospecto['tipo_prospecto'] + '</option>';
-                                            }
-                                    });
-                                    $select_tipo_prospecto.append(tipo_prospecto);  
-                                    
-                                    
-                                    
-                                    //carga el select_estatus_prospecto                  
-                                   $select_estatus_prospecto.children().remove();
-                                    var etapa = '<option value="0">[- Selecciiona una etapa de venta-]</option>';
-                                    $.each(entry['Etapa_prospecto'],function(entryIndex,etapaprosp){
-                                            if(etapaprosp['id'] == entry['Prospecto']['0']['etapas_prospecto_id']){
-                                                    etapa += '<option value="' + etapaprosp['id'] + '"  selected="yes">' + etapaprosp['etapa'] + '</option>';
-                                            }else{
-                                                    etapa += '<option value="' + etapaprosp['id'] + '"  >' + etapaprosp['etapa'] + '</option>';
-                                            }
-                                    });
-                                    $select_estatus_prospecto.append(etapa); 
-                                    
-                                    
-                                        //carga el $select_clasificacion                  
-                                   $select_clasificacion.children().remove();
-                                    var etapa = '<option value="0">[- Seleccion una etapa de venta-]</option>';
-                                    $.each(entry['Clasificacion'],function(entryIndex,clasif){
-                                            if(clasif['id'] == entry['Prospecto']['0']['clasificacion_id']){
-                                                    etapa += '<option value="' + clasif['id'] + '"  selected="yes">' + clasif['clasificacion_abr'] + '</option>';
-                                            }else{
-                                                    etapa += '<option value="' + clasif['id'] + '"  >' + clasif['clasificacion_abr'] + '</option>';
-                                            }
-                                    });
-                                    $select_clasificacion.append(etapa); 
-                          /*          //carga el select del giro del prospecto
-                                    $select_giro.children().remove();
-                                    var hmtl_giro = '<option value="0">[-Giro-]</option>';
-                                    $.each(entry['Giro'],function(entryIndex,giro){
-                                        if(parseInt(giro['id']) == parseInt(entry['Prospecto']['0']['zona_id'])){
-                                            hmtl_giro += '<option value="' + giro['id'] + '" selected="yes">' + giro['nombre_zona'] + '</option>';
-                                        }else{
-                                            hmtl_giro += '<option value="' + giro['id'] + '"  >' + giro['nombre_zona'] + '</option>';
-                                        }
-                                    });
-                                    $select_giro.append(hmtl_giro);
-			*/
-                                    //carga select estados al cambiar el pais
-                                    $select_pais.change(function(){
-                                        var valor_pais = $(this).val();
-                                        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
-                                        $arreglo = {'id_pais':valor_pais};
-                                        $.post(input_json,$arreglo,function(entry){
-                                            $select_entidad.children().remove();
-                                            var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
-                                            $.each(entry['Entidades'],function(entryIndex,entidad){
-                                                    entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-                                            });
-                                            $select_entidad.append(entidad_hmtl);
-                                            var trama_hmtl_localidades = '<option value="' + '000' + '" >' + 'Localidad alternativa' + '</option>';
-                                            $select_localidad.children().remove();
-                                            $select_localidad.append(trama_hmtl_localidades);
-                                        },"json");//termina llamada json
-                                    });
-                                    
-                                    //carga select municipios al cambiar el estado
-                                    $select_entidad.change(function(){
-                                            var valor_entidad = $(this).val();
-                                            var valor_pais = $select_pais.val();
-                                            var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getLocalidades.json';
-                                            $arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
-                                            $.post(input_json,$arreglo,function(entry){
-                                                    $select_localidad.children().remove();
-                                                    var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar municipio-]</option>'
-                                                    $.each(entry['Localidades'],function(entryIndex,mun){
-                                                            trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-                                                    });
-                                                    $select_localidad.append(trama_hmtl_localidades);
-                                            },"json");//termina llamada json
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                           
-                                    });
-                                    
-                                
-                            },"json");//termina llamada json
+					$campo_calle.attr({ 'value' : entry['Prospecto']['0']['calle'] });
+					$campo_numero.attr({ 'value' : entry['Prospecto']['0']['numero'] });
+					$campo_entrecalles.attr({ 'value' : entry['Prospecto']['0']['entre_calles'] });
+					$campo_numero_ext.attr({ 'value' : entry['Prospecto']['0']['numero_exterior'] });
+					$campo_colonia.attr({ 'value' : entry['Prospecto']['0']['colonia'] });
+					$campo_cp.attr({ 'value' : entry['Prospecto']['0']['cp'] });
+					$campo_loc_alternativa.attr({ 'value' : entry['Prospecto']['0'][''] });
+					$campo_email.attr({ 'value' : entry['Prospecto']['0']['email'] });
+					$campo_tel1.attr({ 'value' : entry['Prospecto']['0']['telefono1'] });
+					$campo_ext1.attr({ 'value' : entry['Prospecto']['0']['extension1'] });
+					$campo_fax.attr({ 'value' : entry['Prospecto']['0']['fax'] });
+					$campo_tel2.attr({ 'value' : entry['Prospecto']['0']['telefono2'] });
+					$campo_ext2.attr({ 'value' : entry['Prospecto']['0']['extension2'] });
+					$campo_contacto.attr({ 'value' : entry['Prospecto']['0']['contacto'] });
+					$txtarea_observaciones.text(entry['Prospecto']['0']['observaciones']);
+		
+					//Alimentando los campos select de las pais
+					$select_pais.children().remove();
+					var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
+					$.each(entry['Paises'],function(entryIndex,pais){
+						if(pais['cve_pais'] == entry['Prospecto']['0']['pais_id']){
+							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
+						}else{
+							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
+						}
+					});
+					$select_pais.append(pais_hmtl);
+		
+					//Alimentando los campos select del estado
+					$select_entidad.children().remove();
+					var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar entidad--]</option>';
+					$.each(entry['Entidades'],function(entryIndex,entidad){
+						if(entidad['cve_ent'] == entry['Prospecto']['0']['estado_id']){
+							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
+						}else{
+							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
+						}
+					});
+					$select_entidad.append(entidad_hmtl);
+					
+					//Alimentando los campos select de los municipios
+					$select_localidad.children().remove();
+					var localidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar municipio-]</option>';
+					$.each(entry['Localidades'],function(entryIndex,mun){
+						if(mun['cve_mun'] == entry['Prospecto']['0']['municipio_id']){
+							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
+						}else{
+							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
+						}
+					});
+					$select_localidad.append(localidad_hmtl);
+	
+					//carga select de clasificacion
+					$select_clasificacion.children().remove();
+					var hmtl_class = '<option value="0">[-- Clasificacion --]</option>';
+					$.each(entry['Prospecto'],function(entryIndex,classificacion){
+						if(entry['Prospecto']['0']['clasificacion_id'] == classificacion['id']){
+							hmtl_class += '<option value="' + classificacion['id'] + '" selected="yes" >' + classificacion['nombre_vendedor'] + '</option>';
+						}else{
+							hmtl_class += '<option value="' + classificacion['id'] + '">' + classificacion['nombre_vendedor'] + '</option>';
+						}
+					});
+					$select_clasificacion.append(hmtl_class);
+	
+					 
+					//carga  $select_tipo_industria
+					$select_tipo_industria.children().remove();
+					var hmtl_T_i = '<option value="0">[-- Tipo Industria --]</option>';
+					$.each(entry['Tipo_industria'],function(entryIndex,tipoindustria){
+						if(tipoindustria['id'] == entry['Prospecto']['0']['tipo_industria_id']){
+							hmtl_T_i += '<option value="' + tipoindustria['id'] + '"  selected="yes">' + tipoindustria['tipo_industria'] + '</option>';
+						}else{
+							hmtl_T_i += '<option value="' + tipoindustria['id'] + '"  >' + tipoindustria['tipo_industria'] + '</option>';
+						}
+					});
+					$select_tipo_industria.append(hmtl_T_i);
+					
+					
+				  //carga el select del tipo  prospecto                  
+				   $select_tipo_prospecto.children().remove();
+					var tipo_prospecto = '<option value="0">[-Tipo Prospecto-]</option>';
+					$.each(entry['Tipo_prospectos'],function(entryIndex,tipoprospecto){
+						if(tipoprospecto['id'] == entry['Prospecto']['0']['tipo_prospecto_id']){
+							tipo_prospecto += '<option value="' + tipoprospecto['id'] + '"  selected="yes">' + tipoprospecto['tipo_prospecto'] + '</option>';
+						}else{
+							tipo_prospecto += '<option value="' + tipoprospecto['id'] + '"  >' + tipoprospecto['tipo_prospecto'] + '</option>';
+						}
+					});
+					$select_tipo_prospecto.append(tipo_prospecto);  
+					
+					
+					//carga el select_estatus_prospecto                  
+				   $select_estatus_prospecto.children().remove();
+					var etapa = '<option value="0">[- Selecciiona una etapa-]</option>';
+					$.each(entry['Etapa_prospecto'],function(entryIndex,etapaprosp){
+						if(etapaprosp['id'] == entry['Prospecto'][0]['etapas_deventa_id']){
+							etapa += '<option value="' + etapaprosp['id'] + '"  selected="yes">' + etapaprosp['etapa'] + '</option>';
+						}else{
+							etapa += '<option value="' + etapaprosp['id'] + '"  >' + etapaprosp['etapa'] + '</option>';
+						}
+					});
+					$select_estatus_prospecto.append(etapa); 
+					
+					
+					//carga el $select_clasificacion                  
+				   $select_clasificacion.children().remove();
+					var etapa = '<option value="0">[- Seleccion una etapa de venta-]</option>';
+					$.each(entry['Clasificacion'],function(entryIndex,clasif){
+						if(clasif['id'] == entry['Prospecto']['0']['clasificacion_id']){
+							etapa += '<option value="' + clasif['id'] + '"  selected="yes">' + clasif['clasificacion_abr'] + '</option>';
+						}else{
+							etapa += '<option value="' + clasif['id'] + '"  >' + clasif['clasificacion_abr'] + '</option>';
+						}
+					});
+					$select_clasificacion.append(etapa); 
+					
+					//carga select estados al cambiar el pais
+					$select_pais.change(function(){
+						var valor_pais = $(this).val();
+						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
+						$arreglo = {'id_pais':valor_pais};
+						$.post(input_json,$arreglo,function(entry){
+							$select_entidad.children().remove();
+							var entidad_hmtl = '<option value="0"  selected="yes">[-Seleccionar entidad-]</option>'
+							$.each(entry['Entidades'],function(entryIndex,entidad){
+									entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
+							});
+							$select_entidad.append(entidad_hmtl);
+							var trama_hmtl_localidades = '<option value="' + '000' + '" >' + 'Localidad alternativa' + '</option>';
+							$select_localidad.children().remove();
+							$select_localidad.append(trama_hmtl_localidades);
+						},"json");//termina llamada json
+					});
+					
+					//carga select municipios al cambiar el estado
+					$select_entidad.change(function(){
+						var valor_entidad = $(this).val();
+						var valor_pais = $select_pais.val();
+						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getLocalidades.json';
+						$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
+						$.post(input_json,$arreglo,function(entry){
+							$select_localidad.children().remove();
+							var trama_hmtl_localidades = '<option value="0"  selected="yes">[-Seleccionar municipio-]</option>'
+							$.each(entry['Localidades'],function(entryIndex,mun){
+									trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
+							});
+							$select_localidad.append(trama_hmtl_localidades);
+						},"json");//termina llamada json
+					});
+						
+				},"json");//termina llamada json
 
-                            $submit_actualizar.bind('click',function(){
-                                    
-                            });
-				
-				
-                            //Ligamos el boton cancelar al evento click para eliminar la forma
-                            $cancelar_plugin.bind('click',function(){
-                                    var remove = function() { $(this).remove(); };
-                                    $('#forma-prospectos-overlay').fadeOut(remove);
-                            });
+				$submit_actualizar.bind('click',function(){
+						
+				});
+	
+	
+				//Ligamos el boton cancelar al evento click para eliminar la forma
+				$cancelar_plugin.bind('click',function(){
+						var remove = function() { $(this).remove(); };
+						$('#forma-prospectos-overlay').fadeOut(remove);
+				});
 
-                            $cerrar_plugin.bind('click',function(){
-                                    var remove = function() { $(this).remove(); };
-                                    $('#forma-prospectos-overlay').fadeOut(remove);
-                                    $buscar.trigger('click');
-                            });	
+				$cerrar_plugin.bind('click',function(){
+						var remove = function() { $(this).remove(); };
+						$('#forma-prospectos-overlay').fadeOut(remove);
+						$buscar.trigger('click');
+				});	
 			}
 		}
 	}

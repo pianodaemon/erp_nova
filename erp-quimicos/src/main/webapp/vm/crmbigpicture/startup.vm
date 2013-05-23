@@ -36,18 +36,14 @@
         <input type="hidden" name="iu" value="$iu">
         <input type="hidden" name="emp" value="$empresa">
         <input type="hidden" name="suc" value="$sucursal">
-       
-        
-        
-        
-        
+		
         <!--  otra parte -->
         <table class="acciones">
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td >
                     <div class="consultas" style="width:750px; display:block; margin:10px; background:#fff; border-radius:4px;">
-                        <table border="0" width=70%" id="consultas">
+                        <table border="0" width="70%" id="consultas">
                             <tr>
                                 <td colspan="19">&nbsp;</td>
                             </tr>
@@ -109,18 +105,20 @@
                             <tr>
                                 <td>&nbsp;&nbsp;</td>
                                 <td>
-                                    <div id="tablaresultadosvisitas">
-                                            <!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
-                                    </div>
-                                    <div id="tablaresultadosllamadas">
-                                            <!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
-                                    </div>
-                                    <div id="tablaresultadoscasos">
-                                            <!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
-                                    </div>
-                                    <div id="tablaresultadosoportunidades">
-                                            <!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
-                                    </div>
+									<div id="div_contenedor">
+										<div id="tablaresultadosvisitas">
+												<!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
+										</div>
+										<div id="tablaresultadosllamadas">
+												<!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
+										</div>
+										<div id="tablaresultadoscasos">
+												<!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
+										</div>
+										<div id="tablaresultadosoportunidades">
+												<!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
+										</div>
+									</div>
                                 </td>
                             </tr>
                         </table>
@@ -361,7 +359,7 @@
                                                                     <td>% Visitas&nbsp;</td>
                                                                     <td><input type="checkbox" name="visitas_oportunidades"></td>
                                                                     <td>&nbsp;</td>
-                                                                    <td>% Cotización&nbsp;</td>
+                                                                    <td>% Cotizaci&oacute;n&nbsp;</td>
                                                                     <td><input type="checkbox" name="cotizacion_oportunidades"></td>
                                                                 </tr>
                                                                 <tr>

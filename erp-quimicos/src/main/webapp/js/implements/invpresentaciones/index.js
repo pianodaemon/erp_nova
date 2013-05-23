@@ -273,12 +273,19 @@ $(function() {
 			jConfirm('Realmente desea eliminar la Presentaci&oacute;n seleccionada', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
+						
+						jAlert(entry['success'], 'Atencion!');
+						$get_datos_grid();
+						
+						/*
 						if ( entry['success'] == '1' ){
 							jAlert("La Presentacion fue eliminada exitosamente", 'Atencion!');
 							$get_datos_grid();
 						}else{
 							jAlert("La Presentacion no pudo ser eliminada", 'Atencion!');
 						}
+						*/
+						
 					},"json");
 				}
 			});

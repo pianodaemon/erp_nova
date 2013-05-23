@@ -47,22 +47,20 @@
                                 <td width="10">&nbsp;&nbsp;</td>
 				<td>Tipo contacto</td>
 				<td width="10">&nbsp;&nbsp;</td>
-                                <td>
-                                    <select name="busquedatipo_contacto" style="width:145px;" >
-                                        <option value="1">Cliente</option>
-                                        <option value="2">Prospecto</option>
-                                    </select>
-                                </td>
-                                <td width="10">&nbsp;&nbsp;</td>
-                                <td>Agente</td>
+				<td>
+					<select name="busquedatipo_contacto" style="width:145px;" >
+						<option value="0">[-Seleccionar-]</option>
+						<option value="1">Cliente</option>
+						<option value="2">Prospecto</option>
+					</select>
+				</td>
 				<td width="10">&nbsp;&nbsp;</td>
-                                <td>
-                                    <select name="busqueda_agente" style="width:145px;" >
-                                        <option value="1">Cliente</option>
-                                        <option value="2">Prospecto</option>
-                                    </select>
-                                </td>
-                                <td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td>Agente</td>
+				<td width="10">&nbsp;&nbsp;</td>
+				<td>
+					<select name="busqueda_agente" style="width:200px;"><option value="0">[-Seleccionar-]</option></select>
+				</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td ><INPUT TYPE="button" value="Limpiar"></td>
@@ -130,7 +128,7 @@
                                                 <td width="150">
                                                     <select name="select_agente" style="width:145px;" />
                                                 </td>
-                                                <td width="25"></td>
+                                                <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_agente"></div></td>
                                                 <td width="5"></td>
                                             </tr>
                                             <tr>
@@ -142,13 +140,14 @@
                                                     <table>
                                                         <tr>
                                                             <td>
-                                                                <td width="90">RFC</td>
+                                                                <td width="90">RFC&nbsp;Empresa</td>
                                                                 <td width="110">
                                                                     <INPUT TYPE="text" name="rfc" style="width:100px;">
                                                                     <INPUT TYPE="hidden" name="id_cliente" value="0" >
                                                                 </td>
+                                                                <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cliente"></div></td>
                                                                 <td width="60"><a  href="busca_cliente">(Buscar)</a></td>
-                                                                <td width="83">Razon Social</td>
+                                                                <td width="83">Razon&nbsp;Social</td>
                                                                 <td width="400"><INPUT TYPE="text" name="razon_social" style="width:395px;"></td>
                                                             </td>
                                                         </tr>
@@ -161,10 +160,10 @@
                                                 <td width="100">Nombre</td>
                                                 <td width="150"><INPUT TYPE="text" name="nombre" style="width:145px;"></td>
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombre"></div></td>
-                                                <td width="100">Apellido Paterno</td>
+                                                <td width="100">Apellido&nbsp;Paterno</td>
                                                 <td width="150"><INPUT TYPE="text" name="apellido_paterno" style="width:145px;"></td>
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_apellido_materno"></div></td>
-                                                <td width="100">Apellido Materno</td>
+                                                <td width="100">Apellido&nbsp;Materno</td>
                                                 <td width="150"><INPUT TYPE="text" name="apellido_materno" style="width:145px;"></td>
                                                 <td width="25"></td>
                                                 <td width="5"></td>
@@ -174,10 +173,10 @@
                                             </tr>
                                             <tr>
                                                 <td width="5"></td>
-                                                <td width="100">Telefono 1</td>
+                                                <td width="100">Telefono&nbsp;1</td>
                                                 <td width="150"><INPUT TYPE="text" name="telefono_1" style="width:145px;"></td>
                                                 <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_telefono_1"></div></td>
-                                                <td width="100">Telefono 2</td>
+                                                <td width="100">Telefono&nbsp;2</td>
                                                 <td width="150"><INPUT TYPE="text" name="telefono_2" style="width:145px;"></td>
                                                 <td width="25"></td>
                                                 <td width="100">Fax</td>
@@ -190,7 +189,7 @@
                                             </tr>
                                             <tr>
                                                 <td width="5"></td>
-                                                <td width="100">Telefono Directo</td>
+                                                <td width="100">Telefono&nbsp;Directo</td>
                                                 <td width="150"><INPUT TYPE="text" name="telefono_directo" style="width:145px;"></td>
                                                 <td width="25"></td>
                                                 <td width="100">Correo 1</td>

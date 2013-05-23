@@ -51,9 +51,8 @@ $(function() {
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
 	
-        var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
+	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
-	
 	
 	var html = '';
 	$busqueda_tipo_visita.children().remove();
@@ -157,9 +156,9 @@ $(function() {
 	
 	
 	
-	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
+	var input_json_agente = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
 	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-	$.post(input_json_lineas,$arreglo,function(data){
+	$.post(input_json_agente,$arreglo,function(data){
 		//Alimentando los campos select_agente
 		$busqueda_agente.children().remove();
 		var agente_hmtl = '';
