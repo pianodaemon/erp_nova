@@ -63,11 +63,12 @@ public class CrmContactosController {
         
         log.log(Level.INFO, "Ejecutando starUp de {0}", CrmContactosController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
-        infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("contacto", "Contacto:250");
+        infoConstruccionTabla.put("id", "Acciones:90");
+        infoConstruccionTabla.put("contacto", "Contacto:270");
         infoConstruccionTabla.put("tipo_contacto", "Tipo:100");
+        infoConstruccionTabla.put("agente", "Agente:270");
         
-        ModelAndView x = new ModelAndView("crmcontactos/startup", "title", "Contacto");
+        ModelAndView x = new ModelAndView("crmcontactos/startup", "title", "Cat&aacute;logo de Contactos");
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -108,7 +109,7 @@ public class CrmContactosController {
         
         // Integer id = Integer.parseInt(userDat.get("id"));
         
-        System.out.println("Esto es trae la ID ----->"+id);
+        //System.out.println("Esto es trae la ID ----->"+id);
         if( id != 0 ){
             datosContacto = this.getCrmDao().getContacto_Datos(id);
         }
@@ -147,6 +148,7 @@ public class CrmContactosController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
         //variables para el buscador
         String nombre = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("nombre")))+"%";
         String busquedatipo_contacto = String.valueOf(has_busqueda.get("busquedatipo_contacto"));
@@ -154,7 +156,7 @@ public class CrmContactosController {
         
         String data_string = app_selected+"___"+id_usuario+"___"+nombre+"___"+busquedatipo_contacto+"___"+busqueda_agente;
         
-        System.out.println("Esto es lo que busca "+"---->"+data_string);
+        //System.out.println("Esto es lo que busca "+"---->"+data_string);
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCrmDao().countAll(data_string);              
@@ -169,7 +171,7 @@ public class CrmContactosController {
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getCrmDao().getContactos_PaginaGrid(data_string, offset, items_por_pag, orderby, desc,id_empresa));
-        System.out.println("Me imprime ---->"+jsonretorno);   
+        //System.out.println("Me imprime ---->"+jsonretorno);   
         
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));

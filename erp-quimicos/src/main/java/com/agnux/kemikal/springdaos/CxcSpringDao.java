@@ -1329,7 +1329,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                         + "FROM (SELECT sum(anticipo_actual) as suma "
                         + "FROM cxc_ant "
                         + "WHERE cliente_id="+id_cliente+" AND moneda_id=1 AND borrado_logico=false) AS stbla;";
-
+        
         //System.out.println("Buscando cuentas: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm_mn = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1344,8 +1344,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
         );
         return hm_mn;
     }
-
-
+    
+    
     //obtiene la suma de los anticipos en dolares
     @Override
     public ArrayList<HashMap<String, Object>> getCartera_SumaAnticiposUSD(Integer id_cliente) {

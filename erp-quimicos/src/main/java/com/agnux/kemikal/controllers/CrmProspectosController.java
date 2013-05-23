@@ -164,11 +164,12 @@ public class CrmProspectosController {
             Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
             if( id != 0  ){
-            datosprospecto = this.getCrmDao().getProspecto_Datos(id);
-            entidades = this.getCrmDao().getEntidadesForThisPais(datosprospecto.get(0).get("pais_id").toString());
-            localidades = this.getCrmDao().getLocalidadesForThisEntidad(datosprospecto.get(0).get("pais_id").toString(), datosprospecto.get(0).get("estado_id").toString());
-            
-            //Tipo_prospecto = this.getCrmDao().gettipo_prospecto(datosprospecto.get(0).get("tipo_prospecto_id").toString());
+                datosprospecto = this.getCrmDao().getProspecto_Datos(id);
+                if(datosprospecto.size()>0){
+                    entidades = this.getCrmDao().getEntidadesForThisPais(datosprospecto.get(0).get("pais_id").toString());
+                    localidades = this.getCrmDao().getLocalidadesForThisEntidad(datosprospecto.get(0).get("pais_id").toString(), datosprospecto.get(0).get("estado_id").toString());
+                }
+                //Tipo_prospecto = this.getCrmDao().gettipo_prospecto(datosprospecto.get(0).get("tipo_prospecto_id").toString());
             }
 
             paises = this.getCrmDao().getPaises();

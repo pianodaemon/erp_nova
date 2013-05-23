@@ -13,39 +13,39 @@ import java.util.logging.Logger;
 public class Pdf_CRM_registroVisitas {
     public Pdf_CRM_registroVisitas(HashMap<String, String> datosEncabezadoPie, String fileout, ArrayList<HashMap<String, String>> pedidos, HashMap<String, String> datos) throws DocumentException {
     try {
-                    Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
-                    Font smallBoldFont = new Font(Font.getFamily("ARIAL"),8,Font.BOLD,BaseColor.WHITE);
+            Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
+            Font smallBoldFont = new Font(Font.getFamily("ARIAL"),8,Font.BOLD,BaseColor.WHITE);
 
-                    String[] fi = datos.get("fecha_inicial").split("-");
-                    String[] ff = datos.get("fecha_final").split("-");
-                    String fecha_reporte = "Periodo  del  "+fi[2]+"/"+fi[1]+"/"+fi[0]+"  al  "+ff[2]+"/"+ff[1]+"/"+ff[0];
+            String[] fi = datos.get("fecha_inicial").split("-");
+            String[] ff = datos.get("fecha_final").split("-");
+            String fecha_reporte = "Periodo  del  "+fi[2]+"/"+fi[1]+"/"+fi[0]+"  al  "+ff[2]+"/"+ff[1]+"/"+ff[0];
 
-                    //datos para el encabezado
-                    datos.put("empresa", datosEncabezadoPie.get("nombre_empresa_emisora"));
-                    datos.put("titulo_reporte", datosEncabezadoPie.get("titulo_reporte"));
-                    datos.put("periodo", fecha_reporte);
+            //datos para el encabezado
+            datos.put("empresa", datosEncabezadoPie.get("nombre_empresa_emisora"));
+            datos.put("titulo_reporte", datosEncabezadoPie.get("titulo_reporte"));
+            datos.put("periodo", fecha_reporte);
 
-                    //datos para el pie de pagina
-                    datos.put("codigo1", datosEncabezadoPie.get("codigo1"));
-                    datos.put("codigo2", datosEncabezadoPie.get("codigo2"));
+            //datos para el pie de pagina
+            datos.put("codigo1", datosEncabezadoPie.get("codigo1"));
+            datos.put("codigo2", datosEncabezadoPie.get("codigo2"));
 
-                    Pdf_CRM_registroVisitas.HeaderFooter event = new Pdf_CRM_registroVisitas.HeaderFooter(datos);
+            Pdf_CRM_registroVisitas.HeaderFooter event = new Pdf_CRM_registroVisitas.HeaderFooter(datos);
 
-                    Document doc = new Document(PageSize.LETTER.rotate(),-50,-50,60,30);
-                    doc.addCreator("vale8490@hotmail.com");
-                    PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(fileout));
-                    writer.setPageEvent(event);
+            Document doc = new Document(PageSize.LETTER.rotate(),-50,-50,60,30);
+            doc.addCreator("vale8490@hotmail.com");
+            PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(fileout));
+            writer.setPageEvent(event);
 
-                    doc.open();
-                    float [] widths = {4,2,4,1.5f,2,2,2,2};//Tamaño de las Columnas.
-                    PdfPTable tabla = new PdfPTable(widths);
-                    PdfPCell cell;
-                    tabla.setKeepTogether(false);
-                    tabla.setHeaderRows(1);
-                        String titulos[ ] ={"Empleado","Fecha Visita","Nombre contacto","Motivo Visita","Tipo Seguimiento","Calificacion visita","Existe Oportunidad","Resultado"};
-                    java.util.List<String>  lista_columnas = (java.util.List<String>) Arrays.asList(titulos);
-                    //añadiendo e arreglo a la lista
-
+            doc.open();
+            float [] widths = {3.5f,3,1.5f,3.5f,1.5f,2,2,1.7f,3};//Tamaño de las Columnas.
+            PdfPTable tabla = new PdfPTable(widths);
+            PdfPCell cell;
+            tabla.setKeepTogether(false);
+            tabla.setHeaderRows(1);
+            String titulos[ ] ={"Empleado","Empresa","Fecha","Nombre contacto","Motivo","Seguimiento","Calificacion","Oportunidad","Resultado"};
+            java.util.List<String>  lista_columnas = (java.util.List<String>) Arrays.asList(titulos);
+            //añadiendo e arreglo a la lista
+            
             for ( String columna_titulo : lista_columnas){
                 PdfPCell celda = null;
                celda = new PdfPCell(new Paragraph(columna_titulo,smallBoldFont));
@@ -58,37 +58,35 @@ public class Pdf_CRM_registroVisitas {
                 if (columna_titulo.equals("Empleado")){
                    celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                 }
-                if (columna_titulo.equals("Fecha Visita")){
+                if (columna_titulo.equals("Empresa")){
+                   celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                }
+                if (columna_titulo.equals("Fecha")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
                 if (columna_titulo.equals("Nombre del contacto")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
-                 if (columna_titulo.equals("Motivo Visita")){
+                 if (columna_titulo.equals("Motivo")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
-                if (columna_titulo.equals("Tipo Seguimiento")){
+                if (columna_titulo.equals("Seguimiento")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
-                if (columna_titulo.equals("Calificacion visita")){
+                if (columna_titulo.equals("Calificacion")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
-                if (columna_titulo.equals("Existe Oportunidad")){
+                if (columna_titulo.equals("Oportunidad")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
                 if (columna_titulo.equals("Resultado")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
-
                tabla.addCell(celda);
             }
-
-
+            
             for (int x=0; x<=(pedidos.size())-1; x++){
-                 HashMap<String, String> registro= pedidos.get(x);
-
-
-
+                HashMap<String, String> registro= pedidos.get(x);
                 //1
                 cell = new PdfPCell(new Paragraph(registro.get("nombre_empleado").toString(),smallFont));
                 cell.setUseAscender(true);
@@ -97,7 +95,17 @@ public class Pdf_CRM_registroVisitas {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
+                
                 //2
+                cell = new PdfPCell(new Paragraph(registro.get("cliente_prospecto").toString(),smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorder(0);
+                tabla.addCell(cell);
+                
+                //3
                 cell = new PdfPCell(new Paragraph(registro.get("fecha_visita").toString(),smallFont));
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -105,7 +113,8 @@ public class Pdf_CRM_registroVisitas {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
-                //3
+                
+                //4
                 cell = new PdfPCell(new Paragraph(registro.get("nombre_contacto").toString(),smallFont));
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -113,7 +122,8 @@ public class Pdf_CRM_registroVisitas {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
-                //4
+                
+                //5
                 cell = new PdfPCell(new Paragraph(registro.get("motivo_visita").toString(),smallFont));
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -121,7 +131,8 @@ public class Pdf_CRM_registroVisitas {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
-                //5
+                
+                //6
                 cell = new PdfPCell(new Paragraph(registro.get("tipo_seguimiento_visita"),smallFont));
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -129,23 +140,26 @@ public class Pdf_CRM_registroVisitas {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
-                //6
+                
+                //7
                 cell = new PdfPCell(new Paragraph(registro.get("calificacion_visita"),smallFont));
                 cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell.setUseDescender(true);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
-                //7
+                
+                //8
                 cell = new PdfPCell(new Paragraph(registro.get("existe_oportunidad").toString(),smallFont));
                 cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 cell.setUseDescender(true);
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
-                //8
+                
+                //9
                 cell = new PdfPCell(new Paragraph(registro.get("resultado").toString(),smallFont));
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -154,7 +168,7 @@ public class Pdf_CRM_registroVisitas {
                 cell.setBorder(0);
                 tabla.addCell(cell);
             }
-
+            
             doc.add(tabla);
             doc.close();
 	} catch (FileNotFoundException ex) {

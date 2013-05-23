@@ -87,13 +87,17 @@ public class CrmSpringDao implements CrmInterfaceDao{
 /*Buscador de contactos*/
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorContactos(String nombre, String apellidop, String apellidom, String tipo_contacto, Integer id_empresa) {
-
+        
         String sql_tmp1 = "select id, nombre||' '||apellido_paterno||' '||apellido_materno as contacto, "
                 + "(CASE WHEN tipo_contacto=1 THEN 'Cliente' ELSE 'Prospecto' END) as tipo, tipo_contacto "
-                + "from crm_contactos where borrado_logico=false AND "
-                + "tipo_contacto="+tipo_contacto+" AND nombre ilike '%"+nombre+"%' AND apellido_paterno ilike '%"+apellidop+"%' AND apellido_materno ilike '%"+apellidom+"%' "
+                + "from crm_contactos "
+                + "where borrado_logico=false "
+                + "AND tipo_contacto="+tipo_contacto+" "
+                + "AND nombre ilike '%"+nombre+"%' "
+                + "AND apellido_paterno ilike '%"+apellidop+"%' "
+                + "AND apellido_materno ilike '%"+apellidom+"%' "
                 + "AND gral_emp_id="+id_empresa+" ";
-
+        
         //1->cliente
         //2->prospecto
         String sql_to_query = "";
@@ -724,7 +728,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     +"crm_prospectos.estatus, "
                     +"crm_prospectos.crm_etapas_prospecto_id, "
                     +"crm_prospectos.tipo_prospecto_id, "
-                    +"crm_tipo_prospecto.tipo_prospecto, "
+                    +"(CASE WHEN crm_tipo_prospecto.tipo_prospecto IS NULL THEN '' ELSE crm_tipo_prospecto.tipo_prospecto END) AS tipo_prospecto, "
                     +"crm_prospectos.rfc, "
                     //+"crm_prospectos.curp, "
                     +"crm_prospectos.razon_social, "
@@ -746,16 +750,13 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     +"crm_prospectos.extension2, "
                     +"crm_prospectos.email, "
                     +"crm_prospectos.contacto ,"
-
                 +"crm_prospectos.clasificacion_id, "
                 +"crm_prospectos.tipo_industria_id, "
                 +"crm_prospectos.observaciones "
-
-
-
             +"FROM crm_prospectos "
-            +" JOIN crm_tipo_prospecto on crm_tipo_prospecto.id=  crm_prospectos.tipo_prospecto_id    "
-            +"WHERE  crm_prospectos.borrado_logico=false AND crm_prospectos.id = ?";
+            +"LEFT JOIN crm_tipo_prospecto ON crm_tipo_prospecto.id=crm_prospectos.tipo_prospecto_id "
+            +"WHERE crm_prospectos.borrado_logico=false "
+            +"AND crm_prospectos.id = ?";
 
         System.out.println("Ejecutando getProspecto_Datos:"+ sql_query);
         System.out.println("IdProspecto "+id);
@@ -1631,8 +1632,10 @@ public class CrmSpringDao implements CrmInterfaceDao{
 
         String sql_to_query = "SELECT crm_contactos.id, crm_contactos.nombre||' '||crm_contactos.apellido_paterno||' '||"
                 + "crm_contactos.apellido_materno as contacto "
-                + ",(CASE WHEN tipo_contacto=1 THEN 'Cliente' ELSE 'Prospecto' END) as tipo_contacto "
+                + ",(CASE WHEN tipo_contacto=1 THEN 'Cliente' ELSE 'Prospecto' END) as tipo_contacto,"
+                + "(((gral_empleados.nombre_pila::text || ' '::text) || gral_empleados.apellido_paterno::text) || ' '::text) || gral_empleados.apellido_materno::text AS agente "
                 +"FROM crm_contactos "
+                + "LEFT JOIN gral_empleados ON gral_empleados.id=crm_contactos.gral_empleado_id "
                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = crm_contactos.id "
                 +"WHERE crm_contactos.borrado_logico=false "
                 +"and crm_contactos.gral_emp_id= " +id_empresa
@@ -1648,7 +1651,7 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("tipo_contacto",rs.getString("tipo_contacto"));
                     row.put("contacto",rs.getString("contacto"));
-
+                    row.put("agente",rs.getString("agente"));
                     return row;
                 }
             }
@@ -1668,7 +1671,9 @@ public class CrmSpringDao implements CrmInterfaceDao{
                 + "(select tmp_crmcli.crm_prospectos_id||'___'||crm_prospectos.rfc||'___'||crm_prospectos.razon_social as cliente "
                 + "from (select * from crm_contacto_pro where crm_contactos_id=crm_contactos.id) as tmp_crmcli join "
                 + "crm_prospectos on crm_prospectos.id=tmp_crmcli.crm_prospectos_id limit 1 ) "
-                + "END) cliente FROM crm_contactos WHERE id="+id;
+                + "END) "
+                + "cliente "
+                + "FROM crm_contactos WHERE id="+id;
 
         ArrayList<HashMap<String, String>> dato_datos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1702,30 +1707,46 @@ public class CrmSpringDao implements CrmInterfaceDao{
         );
         return dato_datos;
     }
-
+    
     //CRM  Reportes
     @Override
-    public ArrayList<HashMap<String, String>> getVisitas(String fecha_inicial, String fecha_final,Integer id_empresa) {
-        String sql_to_query = "select gral_empleados.clave,"
-+" crm_registro_visitas.gral_empleado_id ,  "
-+" gral_empleados.nombre_pila||'  '||gral_empleados.apellido_paterno||'  '||gral_empleados.apellido_materno as nombre_empleado,  "
-+" crm_registro_visitas.fecha as fecha_visita,  "
-+" crm_motivos_visita.folio_mv,  "
-+" crm_motivos_visita.descripcion as motivo_visita,  "
-+" crm_contactos.nombre||'  '||crm_contactos.apellido_paterno||'  '||crm_contactos.apellido_materno as nombre_contacto,  "
-+" crm_calificaciones_visita.titulo as calificacion_visita,  "
-+" crm_tipos_seguimiento_visita.titulo as tipo_seguimiento_visita,  "
-+" (case when crm_registro_visitas.deteccion_oportunidad=1 then 'SI' else 'NO' end ) as existe_oportunidad,  "
-+" crm_registro_visitas.resultado  "
-+" from crm_registro_visitas  "
-+" join gral_empleados on gral_empleados.id=crm_registro_visitas.gral_empleado_id  "
-+" join crm_motivos_visita on crm_motivos_visita.id=crm_registro_visitas.crm_motivos_visita_id  "
-+" join crm_contactos on crm_contactos.id=crm_registro_visitas.crm_contacto_id  "
-+" join crm_calificaciones_visita on crm_calificaciones_visita.id=crm_registro_visitas.crm_calificacion_visita_id  "
-+" join crm_tipos_seguimiento_visita on crm_tipos_seguimiento_visita.id=crm_registro_visitas.crm_tipos_seguimiento_visita_id  "
-+" WHERE to_char(crm_registro_visitas.momento_creacion,'yyyymmdd')::integer between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer "
-+" AND crm_registro_visitas.gral_emp_id="+id_empresa+" ORDER BY gral_empleados.nombre_pila desc;";
-System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
+    public ArrayList<HashMap<String, String>> getVisitas(String fecha_inicial, String fecha_final,Integer id_empresa, Integer idAgente) {
+        String cadena_where = "";
+        
+        if(idAgente!=0){
+            cadena_where = "AND crm_registro_visitas.gral_empleado_id="+idAgente+" ";
+        }
+        
+        String sql_to_query = ""
+                + "select "
+                    + "gral_empleados.clave,"
+                    + "crm_registro_visitas.gral_empleado_id, "
+                    + "gral_empleados.nombre_pila||'  '||gral_empleados.apellido_paterno||'  '||gral_empleados.apellido_materno as nombre_empleado, "
+                    + "to_char(crm_registro_visitas.fecha::timestamp with time zone, 'dd/mm/yyy') AS fecha_visita, "
+                    + "crm_motivos_visita.folio_mv,  "
+                    + "crm_motivos_visita.descripcion AS motivo_visita, "
+                    + "crm_contactos.nombre||'  '||crm_contactos.apellido_paterno||'  '||crm_contactos.apellido_materno AS nombre_contacto, "
+                    + "crm_calificaciones_visita.titulo AS calificacion_visita,  "
+                    + "crm_tipos_seguimiento_visita.titulo AS tipo_seguimiento_visita, "
+                    + "(case when crm_registro_visitas.deteccion_oportunidad=1 then 'SI' else 'NO' end ) AS existe_oportunidad,  "
+                    + "crm_registro_visitas.resultado,"
+                    + "(CASE WHEN crm_contactos.tipo_contacto=1 THEN cxc_clie.razon_social WHEN crm_contactos.tipo_contacto=2 THEN crm_prospectos.razon_social ELSE '' END) AS cliente_prospecto "
+                +" from crm_registro_visitas  "
+                +" join gral_empleados ON gral_empleados.id=crm_registro_visitas.gral_empleado_id  "
+                +" join crm_motivos_visita ON crm_motivos_visita.id=crm_registro_visitas.crm_motivos_visita_id  "
+                +" join crm_contactos ON crm_contactos.id=crm_registro_visitas.crm_contacto_id  "
+                + "left join crm_contacto_cli ON crm_contacto_cli.crm_contactos_id=crm_contactos.id "
+                + "left join crm_contacto_pro ON crm_contacto_pro.crm_contactos_id=crm_contactos.id "
+                + "left join cxc_clie ON cxc_clie.id=crm_contacto_cli.cxc_clie_id "
+                + "left join crm_prospectos ON crm_prospectos.id=crm_contacto_pro.crm_prospectos_id "
+                +" join crm_calificaciones_visita ON crm_calificaciones_visita.id=crm_registro_visitas.crm_calificacion_visita_id  "
+                +" join crm_tipos_seguimiento_visita ON crm_tipos_seguimiento_visita.id=crm_registro_visitas.crm_tipos_seguimiento_visita_id  "
+                +" WHERE to_char(crm_registro_visitas.momento_creacion,'yyyymmdd')::integer between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer "
+                +" "+cadena_where+" "
+                + "ORDER BY gral_empleados.nombre_pila desc;";
+        
+        System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
+        
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1733,18 +1754,18 @@ System.out.println("DATOS del registro de Visitas:  "+sql_to_query);
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("clave",rs.getString("clave")  );
-                    row.put("gral_empleado_id",rs.getString("gral_empleado_id")  );
-                    row.put("nombre_empleado",rs.getString("nombre_empleado")  );
-                    row.put("fecha_visita",rs.getString("fecha_visita")  );
-                    row.put("folio_mv",rs.getString("folio_mv")  );
-                    row.put("motivo_visita",rs.getString("motivo_visita")  );
-                    row.put("nombre_contacto",rs.getString("nombre_contacto")  );
-                    row.put("calificacion_visita",rs.getString("calificacion_visita")  );
-                    row.put("tipo_seguimiento_visita",rs.getString("tipo_seguimiento_visita")  );
-                    row.put("existe_oportunidad",rs.getString("existe_oportunidad")  );
-                    row.put("resultado",rs.getString("resultado")  );
-
+                    row.put("clave",rs.getString("clave"));
+                    row.put("gral_empleado_id",rs.getString("gral_empleado_id"));
+                    row.put("nombre_empleado",rs.getString("nombre_empleado"));
+                    row.put("fecha_visita",rs.getString("fecha_visita"));
+                    row.put("folio_mv",rs.getString("folio_mv"));
+                    row.put("motivo_visita",rs.getString("motivo_visita"));
+                    row.put("nombre_contacto",rs.getString("nombre_contacto"));
+                    row.put("calificacion_visita",rs.getString("calificacion_visita"));
+                    row.put("tipo_seguimiento_visita",rs.getString("tipo_seguimiento_visita"));
+                    row.put("existe_oportunidad",rs.getString("existe_oportunidad"));
+                    row.put("resultado",rs.getString("resultado"));
+                    row.put("cliente_prospecto",rs.getString("cliente_prospecto"));
                     return row;
                 }
             }

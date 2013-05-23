@@ -101,7 +101,7 @@ public interface CrmInterfaceDao {
     
     //CRM  Reporte
     //CRM  Reporte de visitas
-    public ArrayList<HashMap<String, String>> getVisitas(String fecha_inicial, String fecha_final,Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getVisitas(String fecha_inicial, String fecha_final,Integer id_empresa, Integer idAgente);
     //fin de reportes de CRM
     
     //CRM  Configuracion de consultas
