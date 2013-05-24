@@ -492,8 +492,8 @@ $(function() {
 					tr_cot_cliente += '<td align="right">'+entry['bigPicture'][0]['por_cant_cot_cli']+'</td>';
 					tr_cot_cliente += '<td align="right">'+entry['bigPicture'][0]['por_mont_cot_cli']+'</td>';
 					
-					var html_trs = 'Cotizaciones<table id="resultadoscotizaciones"><thead><tr>'+trh_cotizacion+'</tr></thead><tbody><tr>'+tr_cot_prospecto+'</tr><tr>'+tr_cot_cliente+'</tr></tbody></table></br>';
-					$tablaresultadoscotizaciones.append(html_trs);
+					var html_tr = 'Cotizaciones<table id="resultadoscotizaciones"><thead><tr>'+trh_cotizacion+'</tr></thead><tbody><tr>'+tr_cot_prospecto+'</tr><tr>'+tr_cot_cliente+'</tr></tbody></table></br>';
+					$tablaresultadoscotizaciones.append(html_tr);
                     //listo
                     
                     
