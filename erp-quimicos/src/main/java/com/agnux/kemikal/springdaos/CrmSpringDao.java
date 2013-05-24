@@ -1896,7 +1896,20 @@ public class CrmSpringDao implements CrmInterfaceDao{
 			"oport_negociacion double precision," +
 			"oport_cierre double precision," +
 			"oport_ganados double precision," +
-			"oport_perdidos double precision );";//14
+			"oport_perdidos double precision, "
+                        + "cant_cot_pros double precision, "
+                        + "mont_cot_pros double precision, "
+                        + "cant_cot_cli double precision, "
+                        + "mont_cot_cli double precision, "
+                        + "cant_met_cot_pros double precision, "
+                        + "mont_met_cot_pros double precision, "
+                        + "cant_met_cot_cli double precision, "
+                        + "mont_met_cot_cli double precision, "
+                        + "por_cant_cot_pros double precision, "
+                        + "por_mont_cot_pros double precision, "
+                        + "por_cant_cot_cli double precision, "
+                        + "por_mont_cot_cli double precision "
+                + ");";//14
         
         System.out.println("sql_to_query:"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -1955,7 +1968,20 @@ public class CrmSpringDao implements CrmInterfaceDao{
                     row.put("oport_cierre",StringHelper.roundDouble(rs.getDouble("oport_cierre"),2));
                     row.put("oport_ganados",StringHelper.roundDouble(rs.getDouble("oport_ganados"),2));
                     row.put("oport_perdidos",StringHelper.roundDouble(rs.getDouble("oport_perdidos"),2));//14
-                               
+                    
+                    row.put("cant_cot_pros",StringHelper.roundDouble(rs.getDouble("cant_cot_pros"),2));
+                    row.put("mont_cot_pros",StringHelper.roundDouble(rs.getDouble("mont_cot_pros"),2));
+                    row.put("cant_cot_cli",StringHelper.roundDouble(rs.getDouble("cant_cot_cli"),2));
+                    row.put("mont_cot_cli",StringHelper.roundDouble(rs.getDouble("mont_cot_cli"),2));
+                    row.put("cant_met_cot_pros",StringHelper.roundDouble(rs.getDouble("cant_met_cot_pros"),2));
+                    row.put("mont_met_cot_pros",StringHelper.roundDouble(rs.getDouble("mont_met_cot_pros"),2));
+                    row.put("cant_met_cot_cli",StringHelper.roundDouble(rs.getDouble("cant_met_cot_cli"),2));
+                    row.put("mont_met_cot_cli",StringHelper.roundDouble(rs.getDouble("mont_met_cot_cli"),2));
+                    row.put("por_cant_cot_pros",StringHelper.roundDouble(rs.getDouble("por_cant_cot_pros"),2));
+                    row.put("por_mont_cot_pros",StringHelper.roundDouble(rs.getDouble("por_mont_cot_pros"),2));
+                    row.put("por_cant_cot_cli",StringHelper.roundDouble(rs.getDouble("por_cant_cot_cli"),2));
+                    row.put("por_mont_cot_cli",StringHelper.roundDouble(rs.getDouble("por_mont_cot_cli"),2));//14
+                    
                     return row;
                 }
             }
