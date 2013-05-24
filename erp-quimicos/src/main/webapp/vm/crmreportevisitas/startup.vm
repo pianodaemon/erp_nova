@@ -34,8 +34,8 @@
                             <tr>
                                 <td >&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                 <td width="60">Agente</td>
-                                <td width="220">					
-									<select name="select_agente" style="width:220px;">
+                                <td width="270">					
+									<select name="select_agente" style="width:270px;">
 										<option value="0" >[-- Selecionar Agente --]</option>
 									</select>
 								</td>

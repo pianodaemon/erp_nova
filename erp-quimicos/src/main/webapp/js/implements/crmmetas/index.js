@@ -671,7 +671,7 @@ $(function() {
                         }
                 });
                 
-                alert($cantidad_oportunidades.val());
+                //alert($cantidad_oportunidades.val());
                //----------------------------------fin evento blur-------------------------------------------
                 
                 

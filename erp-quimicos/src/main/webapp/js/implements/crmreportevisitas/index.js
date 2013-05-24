@@ -271,12 +271,12 @@ $(function() {
 					html_trs+='<td width="180">Empeado</td>'
 					html_trs+='<td width="180">Empresa</td>'
 					html_trs+='<td width="70">Fecha</td>'
-					html_trs+='<td width="180">Nombre&nbsp;del&nbsp;contacto</td>'
+					html_trs+='<td width="150">Nombre&nbsp;del&nbsp;contacto</td>'
 					html_trs+='<td width="100">Motivo&nbsp;Visita</td>'
 					html_trs+='<td width="100">Tipo&nbsp;Seguimiento</td>'
 					html_trs+='<td width="100">Calificaci&oacute;n&nbsp;</td>'
 					html_trs+='<td width="50">Oportunidad</td>'
-					html_trs+='<td width="180">Resultado</td>'
+					html_trs+='<td width="220">Resultado</td>'
 					html_trs+='</tr></thead>'
 					
 					for(var i=0; i<entry['Datos'].length; i++){

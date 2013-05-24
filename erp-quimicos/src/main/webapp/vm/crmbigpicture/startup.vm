@@ -90,9 +90,6 @@
                             <tr>
                                 <td colspan="19">&nbsp;</td>
                             </tr>
-                            <tr>
-                                <td colspan="19">&nbsp;</td>
-                            </tr>
                         </table>
                     </div>
                 </td>
@@ -100,12 +97,12 @@
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td>
-                    <div class="content_results" style="display:none; margin:10px; background:#fff; border-radius:4px;">
+                    <div class="content_results" style="display:none;margin:10px; background:#fff; border-radius:4px;">
                         <table>
                             <tr>
                                 <td>&nbsp;&nbsp;</td>
                                 <td>
-									<div id="div_contenedor">
+									<div id="div_contenedor" style="width:750px; overflow:scroll; overflow-x:hidden; overflow-y:auto;">
 										<div id="tablaresultadosvisitas">
 												<!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
 										</div>
@@ -116,6 +113,9 @@
 												<!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
 										</div>
 										<div id="tablaresultadosoportunidades">
+												<!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
+										</div>
+										<div id="tablaresultadoscotizaciones">
 												<!--Aqui se agrega desde el js los trs de el reultado de  la consulta-->
 										</div>
 									</div>
@@ -286,7 +286,7 @@
                                                                     <td>% Producto&nbsp;</td>
                                                                     <td><input type="checkbox" name="producto_casos" ></td>
                                                                     <td>&nbsp;</td>
-                                                                    <td>% % Garant&iacute;a&nbsp;</td>
+                                                                    <td>% Garant&iacute;a&nbsp;</td>
                                                                     <td><input type="checkbox" name="garantia_casos"></td>
                                                                     <td>&nbsp;</td>
                                                                     <td>% Distribuci&oacute;n&nbsp;</td>
@@ -305,7 +305,7 @@
                                                                     <td>% Cobranza&nbsp;</td>
                                                                     <td><input type="checkbox" name="cobranza_casos" ></td>
                                                                     <td>&nbsp;</td>
-                                                                    <td>% Varios&oacute;n&nbsp;</td>
+                                                                    <td>% Varios&nbsp;</td>
                                                                     <td><input type="checkbox" name="varios_casos"></td>
                                                                     <td>&nbsp;</td>
                                                                     <td>&nbsp;</td>

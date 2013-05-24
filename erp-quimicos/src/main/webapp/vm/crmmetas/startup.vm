@@ -129,7 +129,7 @@
                                                 <td colspan="13">&nbsp;</td>
                                             </tr>
                                             <tr>
-                                               <td align="center">Cantidad Visitas</td>
+                                               <td>Cantidad Visitas</td>
                                                <td colspan="2"><input type="text" name="cant_visitas" style="width:90px;"></td>
                                                <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cantvisitas"></div></td>
                                                <td>&nbsp;</td>
@@ -160,37 +160,43 @@
                                                         <ol>
                                                             <table border="0">
                                                                 <tr>
-                                                                    <td colspan="2">Cantidad de Cotizaciones&nbsp;</td>
+                                                                    <td width="210">Cantidad&nbsp;de&nbsp;Cotizaciones&nbsp;</td>
                                                                     <td><input type="text" name="cant_cotizaciones" style="width:90px;"></td>
                                                                     <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cantcotizaciones"></div></td>
-                                                                    <td colspan="2">Cantidad de Oportunidades&nbsp;</td>
+                                                                    <td width="40"></td>
+                                                                    <td width="180">Cantidad&nbsp;de&nbsp;Oportunidades&nbsp;</td>
                                                                     <td><input type="text" name="cant_oportunidades" style="width:90px;"></td>
                                                                     <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cantoportunidades"></div></td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td coslpan="2">&nbsp;</td>
+                                                                    <td colspan="7">&nbsp;</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td colspan="2">Monto de Cotizaciones&nbsp;</td>
+                                                                    <td width="210">Monto&nbsp;de&nbsp;Cotizaciones&nbsp;</td>
                                                                     <td><input type="text" name="monto_cotizaciones" style="width:90px;"></td>
                                                                     <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_montocotizaciones"></div></td>
-                                                                    <td colspan="2">Monto de Oportunidades&nbsp;</td>
+                                                                    <td width="40"></td>
+                                                                    <td width="180">Monto&nbsp;de&nbsp;Oportunidades&nbsp;</td>
                                                                     <td><input type="text" name="monto_oportunidades" style="width:90px;"></td>
                                                                     <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_montooportunidades"></div></td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td coslpan="4">&nbsp;</td>
+                                                                    <td colspan="7">&nbsp;</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td coslpan="4">&nbsp;</td>
+                                                                    <td colspan="7">&nbsp;</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td colspan="2" rowspan="2" valign="top">Ventas de Oportunidades por Prospectos&nbsp;&nbsp;</td>
+                                                                    <td width="210">Ventas&nbsp;de&nbsp;Oportunidades&nbsp;por&nbsp;Prospectos&nbsp;&nbsp;</td>
                                                                     <td><input type="text" name="ventas_prospecto" style="width:90px;"></td>
                                                                     <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ventprospectos"></div></td>
+                                                                    <td width="40"></td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                    <td></td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td coslpan="4">&nbsp;</td>
+                                                                    <td colspan="7">&nbsp;</td>
                                                                 </tr>
                                                             </table>
                                                         </ol>
@@ -201,42 +207,44 @@
                                                             <ol>
                                                                 <table border="0">
                                                                     <tr>
-                                                                        <td colspan="2">Cantidad de Cotizaciones&nbsp;</td>
+                                                                        <td width="180">Cantidad&nbsp;de&nbsp;Cotizaciones&nbsp;</td>
                                                                         <td><input type="text" name="cant_cotizaciones2" style="width:90px;"></td>
                                                                         <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cantcotizaciones2"></div></td>
-                                                                        <td colspan="2">Cantidad de Oportunidades&nbsp;</td>
+                                                                        <td width="40"></td>
+                                                                        <td width="190">Cantidad&nbsp;de&nbsp;Oportunidades&nbsp;</td>
                                                                         <td><input type="text" name="cant_oportunidades2" style="width:90px;"></td>
                                                                         <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cantoportunidades2"></div></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td coslpan="9">&nbsp;</td>
+                                                                        <td colspan="6">&nbsp;</td>
                                                                     </tr>
 
                                                                     <tr>
-                                                                        <td colspan="2">Monto de Cotizaciones&nbsp;</td>
+                                                                        <td width="180">Monto&nbsp;de&nbsp;Cotizaciones&nbsp;</td>
                                                                         <td><input type="text" name="monto_cotizaciones2" style="width:90px;"></td>
                                                                         <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_montocotizaciones2"></div></td>
-                                                                        <td colspan="2">Monto de Oportunidades&nbsp;</td>
+                                                                        <td width="40"></td>
+                                                                        <td width="190">Monto&nbsp;de&nbsp;Oportunidades&nbsp;</td>
                                                                         <td><input type="text" name="monto_oportunidades2" style="width:90px;"></td>
                                                                         <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_montooportunidades2"></div></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td coslpan="9">&nbsp;</td>
+                                                                        <td colspan="6">&nbsp;</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td coslpan="9">&nbsp;</td>
+                                                                        <td colspan="6">&nbsp;</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td colspan="2" align="left">Ventas con Clientes Establecidos&nbsp;</td>
+                                                                        <td width="180">Ventas&nbsp;con&nbsp;Clientes&nbsp;Establecidos&nbsp;</td>
                                                                         <td><input type="text" name="ventas_clientes" style="width:90px;"></td>
                                                                         <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ventclientesestablecidos"></div></td>
-
-                                                                        <td colspan="2" align="left">Ventas de Oportunidades por Clientes&nbsp;</td>
+                                                                        <td width="40"></td>
+                                                                        <td width="190">Ventas&nbsp;de&nbsp;Oportunidades&nbsp;por&nbsp;Clientes&nbsp;</td>
                                                                         <td><input type="text" name="ventas_opor_clientes" style="width:90px;"></td>
                                                                         <td><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ventoporclientes"></div></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td coslpan="9">&nbsp;</td>
+                                                                        <td colspan="6">&nbsp;</td>
                                                                     </tr>
                                                                 </table>
                                                             </ol>

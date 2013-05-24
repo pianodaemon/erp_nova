@@ -17,19 +17,17 @@ $(function() {
 	var controller = $contextpath.val()+"/controllers/crmbigpicture";
         
 	//Barra para las acciones
-	$('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
-	
-	var $new_consulta = $('#consultas').find('input[name=buscar]');
-        var $configurar_consultas = $('#consultas').find('input[name=configurar_consultas]');
-        var $busqueda_agente =$('#consultas').find('select[name=busqueda_agente]');
-        var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
-        var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
-	//alert($new_consulta);
-        var $buscar_consulta =$('#consultas').find('input[name=buscar]');
-        
+	$('#barra_acciones').hide();
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Consultas');
+	$('#barra_titulo').find('#td_titulo').append('Resumen de Consultas');
+	
+	var $new_consulta = $('#consultas').find('input[name=buscar]');
+	var $configurar_consultas = $('#consultas').find('input[name=configurar_consultas]');
+	var $busqueda_agente =$('#consultas').find('select[name=busqueda_agente]');
+	var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
+	var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
+	var $buscar_consulta =$('#consultas').find('input[name=buscar]');
 	
 	
         //esto se hace para reinicar los valores del select de agentes
@@ -170,16 +168,13 @@ $(function() {
                 }
             }
 	});
-        $fecha_final.click(function (s){
-            var a=$('div.datepicker');
-            a.css({'z-index':100});
+	
+	$fecha_final.click(function (s){
+		var a=$('div.datepicker');
+		a.css({'z-index':100});
 	});
-        mostrarFecha($fecha_final.val());
-        
-        
-        
-        
-        
+	mostrarFecha($fecha_final.val());
+	
 	$tabs_li_funcionalidad = function(){
 		$('#forma-registro-window').find('#submit').mouseover(function(){
 			$('#forma-registro-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
@@ -209,43 +204,47 @@ $(function() {
 		
 		//On Click Event
 		$('#forma-registro-window').find("ul.pestanas li").click(function() {
-                    $('#forma-registro-window').find(".contenidoPes").hide();
-                    $('#forma-registro-window').find("ul.pestanas li").removeClass("active");
-                    var activeTab = $(this).find("a").attr("href");
-                    $('#forma-registro-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
-                    $(this).addClass("active");
-                    return false;
+			$('#forma-registro-window').find(".contenidoPes").hide();
+			$('#forma-registro-window').find("ul.pestanas li").removeClass("active");
+			var activeTab = $(this).find("a").attr("href");
+			$('#forma-registro-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$(this).addClass("active");
+			return false;
 		});
 	}
         
-        var $content_results = $('.content_results');//Oportunidades
-        
-        var $tablaresultadosvisitas= $('#tablaresultadosvisitas');//visitas
-        var $tablaresultadosllamadas= $('#tablaresultadosllamadas');//Llamadas
-        var $tablaresultadoscasos= $('#tablaresultadoscasos');//Casos
-        var $tablaresultadosoportunidades= $('#tablaresultadosoportunidades');//Oportunidades
-        
-        var html_trs="";
+
         
         $buscar_consulta.click(function(event){
-            
+			var $content_results = $('.content_results');//Oportunidades
+			
+			var $tablaresultadosvisitas= $('#tablaresultadosvisitas');//visitas
+			var $tablaresultadosllamadas= $('#tablaresultadosllamadas');//Llamadas
+			var $tablaresultadoscasos= $('#tablaresultadoscasos');//Casos
+			var $tablaresultadosoportunidades= $('#tablaresultadosoportunidades');//Oportunidades
+			var $tablaresultadoscotizaciones= $('#tablaresultadoscotizaciones');//Cotizaciones
+			
+			var html_trs="";
+			
             $tablaresultadosvisitas.children().remove();//visitas
+            $tablaresultadosvisitas.text('');
             $tablaresultadosllamadas.children().remove();//Llamadas
+            $tablaresultadosllamadas.text('');
             $tablaresultadoscasos.children().remove();//Casos
+            $tablaresultadoscasos.text('');
             $tablaresultadosoportunidades.children().remove();//Oportunidades
+            $tablaresultadosoportunidades.text('');
+            $tablaresultadoscotizaciones.children().remove();//Cotizaciones
+            $tablaresultadoscotizaciones.text('');
+            
             $content_results.css({display : 'block'});
             
             var arreglo_parametros = { iu:$('#lienzo_recalculable').find('input[name=iu]').val(), agente:$busqueda_agente.val(),
             fecha_inicio:$fecha_inicial.val(), fecha_fin:$fecha_final.val()};
-            
-            //var $fecha_inicial = $('#lienzo_recalculable').find('input[name=fecha_inicial]');
-            //var $fecha_final = $('#lienzo_recalculable').find('input[name=fecha_final]');
             var restful_json_service = controller + '/getResultadosConsulta.json';
             
             $.post(restful_json_service,arreglo_parametros,function(entry){
-                
                 if(entry['bigPicture'].length > 0){
-                    
                     trh_visitas = '';
                     tr_visitas = '';
                     if(entry['ConfigData'][0]['metas_visita'] == 'true'){
@@ -460,6 +459,41 @@ $(function() {
                         var html_trs = 'Llamadas<table id="resultadosllamadas"><thead><tr>'+trh_llamadas+'</tr></thead><tbody><tr>'+tr_llamadas+'</tr></tbody></table></br>';
                         $tablaresultadosllamadas.append(html_trs);
                     }
+                    
+                    
+                    
+                    
+                    //COTIZACIONES
+                    var trh_cotizacion = '';
+                    var tr_cot_prospecto = '';
+                    var tr_cot_cliente = '';
+                    
+					trh_cotizacion += '<th width="100">Tipo</th>';
+					trh_cotizacion += '<th width="100">Cantidad&nbsp;Meta</th>';
+					trh_cotizacion += '<th width="100">Monto&nbsp;Meta</th>';
+					trh_cotizacion += '<th width="110">Cantidad&nbsp;Cumplida</th>';
+					trh_cotizacion += '<th width="100">Monto&nbsp;Cumplido</th>';
+					trh_cotizacion += '<th width="100">%&nbsp;Cantidad</th>';
+					trh_cotizacion += '<th width="100">%&nbsp;Monto</th>';
+					
+					tr_cot_prospecto += '<td>Prospecto</td>';
+					tr_cot_prospecto += '<td align="right">'+entry['bigPicture'][0]['cant_met_cot_pros']+'</td>';
+					tr_cot_prospecto += '<td align="right">'+entry['bigPicture'][0]['mont_met_cot_pros']+'</td>';
+					tr_cot_prospecto += '<td align="right">'+entry['bigPicture'][0]['cant_cot_pros']+'</td>';
+					tr_cot_prospecto += '<td align="right">'+entry['bigPicture'][0]['mont_cot_pros']+'</td>';
+					tr_cot_prospecto += '<td align="right">'+entry['bigPicture'][0]['por_cant_cot_pros']+'</td>';
+					tr_cot_prospecto += '<td align="right">'+entry['bigPicture'][0]['por_mont_cot_pros']+'</td>';
+					
+					tr_cot_cliente += '<td>Cliente</td>';
+					tr_cot_cliente += '<td align="right">'+entry['bigPicture'][0]['cant_met_cot_cli']+'</td>';
+					tr_cot_cliente += '<td align="right">'+entry['bigPicture'][0]['mont_met_cot_cli']+'</td>';
+					tr_cot_cliente += '<td align="right">'+entry['bigPicture'][0]['cant_cot_cli']+'</td>';
+					tr_cot_cliente += '<td align="right">'+entry['bigPicture'][0]['mont_cot_cli']+'</td>';
+					tr_cot_cliente += '<td align="right">'+entry['bigPicture'][0]['por_cant_cot_cli']+'</td>';
+					tr_cot_cliente += '<td align="right">'+entry['bigPicture'][0]['por_mont_cot_cli']+'</td>';
+					
+					var html_trs = 'Cotizaciones<table id="resultadoscotizaciones"><thead><tr>'+trh_cotizacion+'</tr></thead><tbody><tr>'+tr_cot_prospecto+'</tr><tr>'+tr_cot_cliente+'</tr></tbody></table></br>';
+					$tablaresultadoscotizaciones.append(html_trs);
                     //listo
                     
                     
@@ -486,6 +520,17 @@ $(function() {
                 var alto = parseInt(height2)-275;
                 var pix_alto=alto+'px';
                 $('#resultadosllamadas').tableScroll({height:parseInt(pix_alto)});
+                
+                $('#resultadoscotizaciones').tableScroll({height:100});
+                
+                
+				 var height = $('#cuerpo').css('height');
+				 //alert('height2: '+height2);
+				 alto = parseInt(height)-220;
+				 var pix_alto=alto+'px';
+				 //alert('pix_alto: '+pix_alto);
+				 $('#div_contenedor').css({'height': pix_alto});
+				 //$('#content_results').tableScroll({height:parseInt(pix_alto)});
                 
             });
             
