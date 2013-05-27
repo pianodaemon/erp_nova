@@ -767,9 +767,9 @@ public final class BeanFacturador {
         public boolean isValidFecha_Aduana(String valor) {
             return Pattern.compile("^([0-9]{2}/[0-9]{2}/[0-9]{4})$").matcher(valor).find();
         }
-
+        
         public boolean isRFCCorrecto(String cadena_a_validar) {
-            return Pattern.compile("^[A-Za-z0-9]{3,4}[0-9]{6}[A-Za-z0-9]{3}$").matcher(cadena_a_validar).find();
+            return Pattern.compile("^[A-Za-z&0-9]{3,4}[0-9]{6}[A-Za-z0-9]{3}$").matcher(cadena_a_validar).find();
         }
 
         public boolean isSerieCorrecto(String cadena_a_validar) {

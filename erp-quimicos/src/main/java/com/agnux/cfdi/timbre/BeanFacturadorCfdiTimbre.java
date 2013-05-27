@@ -894,7 +894,7 @@ public class BeanFacturadorCfdiTimbre {
         }
 
         public boolean isRFCCorrecto(String cadena_a_validar) {
-            return Pattern.compile("^[A-Za-z0-9]{3,4}[0-9]{6}[A-Za-z0-9]{3}$").matcher(cadena_a_validar).find();
+            return Pattern.compile("^[A-Za-z&0-9]{3,4}[0-9]{6}[A-Za-z0-9]{3}$").matcher(cadena_a_validar).find();
         }
 
         public boolean isSerieCorrecto(String cadena_a_validar) {
