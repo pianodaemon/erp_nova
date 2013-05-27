@@ -159,7 +159,7 @@
 														</tr>
                                                                                                                 <tr><td colspan="12" height="8"></td></tr>
 														<tr>
-                                                                                                                        <td width="70">Folio</td>
+                                                                                                                        <td width="70">Folio O.P.</td>
                                                                                                                         <td width="60">
                                                                                                                             <input type="hidden" name="produccion_id">
                                                                                                                             <input type="text" name="folio_produccion" style="width:60px; border:1px solid #000;">
@@ -292,14 +292,14 @@
 															<tr>
 																<td width="10"></td>
 																<td colspan="5"> 
-																	<div align="left" class="div_cont_grid_warning" style="width:700px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
-																		<table id="grid_warning" border="0" style="width:780px;">
+																	<div align="left" class="div_cont_grid_warning" style="width:900px; height:68px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+																		<table id="grid_warning" border="0" style="width:880px;">
 																			<!-- Aqui se muestran los warning
 																			<tr>
 																				<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>
 																				<td width="90"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:88px; color:red"></td>
 																				<td width="160"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:160px; color:red"></td>
-																				<td width="380"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:380px; color:red"></td>
+																				<td width="580"><INPUT TYPE="text" value="" class="borde_oculto" readOnly="true" style="width:580px; color:red"></td>
 																			</tr>
 																			-->
 																		</table>
