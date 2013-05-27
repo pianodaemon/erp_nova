@@ -37,7 +37,7 @@ public class ProSpringDao implements ProInterfaceDao{
     @Override
     public HashMap<String, String> selectFunctionValidateAaplicativo(String data, Integer idApp, String extra_data_array){
         String sql_to_query = "select erp_fn_validaciones_por_aplicativo from erp_fn_validaciones_por_aplicativo('"+data+"',"+idApp+",array["+extra_data_array+"]);";
-        //System.out.println("Validacion:"+sql_to_query);
+        System.out.println("Validacion:"+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
 
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
@@ -61,7 +61,7 @@ public class ProSpringDao implements ProInterfaceDao{
         String sql_to_query = "select * from pro_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         System.out.println("Ejacutando pro_adm_procesos:"+sql_to_query);
-
+        
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         String valor_retorno="";
 
@@ -5208,4 +5208,67 @@ System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
         return hm_alm;
     }
    //Fin de los metos para reportes de produccion
+    
+    
+    
+    
+    
+    //Inicio de los metodos por el catalogo de equipos adicionales
+    @Override
+    public ArrayList<HashMap<String, Object>> getEquipoAdicional_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
+
+	String sql_to_query = "SELECT pro_equipos_adic.id, "
+                                +"pro_equipos_adic.titulo, "
+                                +"pro_equipos_adic.titulo_corto "
+                        +"FROM pro_equipos_adic "
+                        +"JOIN ("+sql_busqueda+") as subt on subt.id=pro_equipos_adic.id "
+                        +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
+
+        System.out.println("Busqueda GetPage: "+sql_to_query+"  data_string"+data_string );
+
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("titulo_corto",rs.getString("titulo_corto"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+     //obtiene los datos de un equipo adicional
+    @Override
+    public ArrayList<HashMap<String, String>> getProEquipoAdicional_Datos(Integer id) {
+
+        String sql_to_query =    " select pro_equipos_adic.id, pro_equipos_adic.titulo,pro_equipos_adic.titulo_corto from pro_equipos_adic "
+                + "where pro_equipos_adic.id=" + id;
+                
+
+        //System.out.println("segundo query"+sql_to_query);
+        ArrayList<HashMap<String, String>> datos_formulas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",String.valueOf(rs.getString("titulo")));
+                    row.put("titulo_corto",String.valueOf(rs.getString("titulo_corto")));
+                  
+                    return row;
+                }
+            }
+        );
+        return datos_formulas;
+    }
+    
 }
