@@ -3972,7 +3972,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "cantidad_usada double precision, guardado boolean) order by elemento;";
 
         //and tmp_salida.cantidad_tmp=tmp_det.cantidad // se quito, por que no mostraba los lotes
-        System.out.println("Ejecutando query de: "+ sql_to_query);
+        //System.out.println("Ejecutando query de: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4675,36 +4675,36 @@ public class ProSpringDao implements ProInterfaceDao{
        }
 
 
-String sql_to_query = " SELECT  "
-+"   pro_orden_prod.folio as folio_orden,   "
-+"   pro_orden_prod.fecha_elavorar as fecha_elaboracion,   "
-+"   pro_orden_prod.lote as numero_lote,   "
-+"   (CASE WHEN inv_prod_unidades.titulo like 'LITR%' then pro_orden_prod_det.cantidad * inv_prod.densidad ELSE pro_orden_prod_det.cantidad end)AS cantidad_kg, "
-+"   pro_orden_prod_det.pro_subprocesos_id,  "
-+"   pro_subprocesos.titulo as subproceso,   "
-+"   pro_orden_prod_det.gral_empleados_id,   "
-+"   gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as nombre_empleado,  "
-+"   pro_orden_prod_det.pro_equipos_id,   "
-+"   pro_equipos.titulo as nombre_equipo,  "
-+"   pro_orden_prod_det.inv_prod_id,   "
-+"   inv_prod.sku as codigo,   "
-+"   inv_prod.descripcion ,   "
-+"   inv_prod.densidad,  "
-+"   inv_prod_unidades.titulo as  unidad"
+        String sql_to_query = " SELECT  "
+        +"   pro_orden_prod.folio as folio_orden,   "
+        +"   pro_orden_prod.fecha_elavorar as fecha_elaboracion,   "
+        +"   pro_orden_prod.lote as numero_lote,   "
+        +"   (CASE WHEN inv_prod_unidades.titulo like 'LITR%' then pro_orden_prod_det.cantidad * inv_prod.densidad ELSE pro_orden_prod_det.cantidad end)AS cantidad_kg, "
+        +"   pro_orden_prod_det.pro_subprocesos_id,  "
+        +"   pro_subprocesos.titulo as subproceso,   "
+        +"   pro_orden_prod_det.gral_empleados_id,   "
+        +"   gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as nombre_empleado,  "
+        +"   pro_orden_prod_det.pro_equipos_id,   "
+        +"   pro_equipos.titulo as nombre_equipo,  "
+        +"   pro_orden_prod_det.inv_prod_id,   "
+        +"   inv_prod.sku as codigo,   "
+        +"   inv_prod.descripcion ,   "
+        +"   inv_prod.densidad,  "
+        +"   inv_prod_unidades.titulo as  unidad"
 
-+" FROM pro_orden_prod  "
-+" join pro_orden_tipos on pro_orden_tipos.id = pro_orden_prod.pro_orden_tipos_id  "
-+" join pro_orden_prod_det on pro_orden_prod_det.pro_orden_prod_id = pro_orden_prod.id  "
-+" join inv_prod on inv_prod.id=pro_orden_prod_det.inv_prod_id  "
-+" join pro_subprocesos on pro_subprocesos.id=pro_orden_prod_det.pro_subprocesos_id  "
-+" join gral_empleados on gral_empleados.id=pro_orden_prod_det.gral_empleados_id    "
-+" join pro_equipos on pro_equipos.id=pro_orden_prod_det.pro_equipos_id   "
-+" join  inv_prod_unidades on inv_prod_unidades.id= pro_orden_prod_det.unidad_id "
-+" WHERE pro_orden_prod.gral_emp_id="+id_empresa+" "
-+" "+cadena_AND
-+" AND pro_orden_prod.fecha_elavorar between '"+fecha_inicial+"' AND '"+fecha_final+"' ORDER BY numero_lote asc";
+        +" FROM pro_orden_prod  "
+        +" join pro_orden_tipos on pro_orden_tipos.id = pro_orden_prod.pro_orden_tipos_id  "
+        +" join pro_orden_prod_det on pro_orden_prod_det.pro_orden_prod_id = pro_orden_prod.id  "
+        +" join inv_prod on inv_prod.id=pro_orden_prod_det.inv_prod_id  "
+        +" join pro_subprocesos on pro_subprocesos.id=pro_orden_prod_det.pro_subprocesos_id  "
+        +" join gral_empleados on gral_empleados.id=pro_orden_prod_det.gral_empleados_id    "
+        +" join pro_equipos on pro_equipos.id=pro_orden_prod_det.pro_equipos_id   "
+        +" join  inv_prod_unidades on inv_prod_unidades.id= pro_orden_prod_det.unidad_id "
+        +" WHERE pro_orden_prod.gral_emp_id="+id_empresa+" "
+        +" "+cadena_AND
+        +" AND pro_orden_prod.fecha_elavorar between '"+fecha_inicial+"' AND '"+fecha_final+"' ORDER BY numero_lote asc";
 
-System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
+        //System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4751,36 +4751,36 @@ System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
        }
 
 
-String sql_to_query = " SELECT  "
-+"   pro_orden_prod.folio as folio_orden,   "
-+"   pro_orden_prod.fecha_elavorar as fecha_elaboracion,   "
-+"   pro_orden_prod.lote as numero_lote,   "
-+"   (CASE WHEN inv_prod_unidades.titulo like 'LITR%' then pro_orden_prod_det.cantidad * inv_prod.densidad ELSE pro_orden_prod_det.cantidad end)AS cantidad_kg, "
-+"   pro_orden_prod_det.pro_subprocesos_id,  "
-+"   pro_subprocesos.titulo as subproceso,   "
-//+"   pro_orden_prod_det.gral_empleados_id,   "
-//+"   gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as nombre_empleado,  "
-//+"   pro_orden_prod_det.pro_equipos_id,   "
-//+"   pro_equipos.titulo as nombre_equipo,  "
-+"   pro_orden_prod_det.inv_prod_id,   "
-+"   inv_prod.sku as codigo,   "
-+"   inv_prod.descripcion ,   "
-+"   inv_prod.densidad,  "
-+"   inv_prod_unidades.titulo as  unidad"
+        String sql_to_query = " SELECT  "
+        +"   pro_orden_prod.folio as folio_orden,   "
+        +"   pro_orden_prod.fecha_elavorar as fecha_elaboracion,   "
+        +"   pro_orden_prod.lote as numero_lote,   "
+        +"   (CASE WHEN inv_prod_unidades.titulo like 'LITR%' then pro_orden_prod_det.cantidad * inv_prod.densidad ELSE pro_orden_prod_det.cantidad end)AS cantidad_kg, "
+        +"   pro_orden_prod_det.pro_subprocesos_id,  "
+        +"   pro_subprocesos.titulo as subproceso,   "
+        //+"   pro_orden_prod_det.gral_empleados_id,   "
+        //+"   gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as nombre_empleado,  "
+        //+"   pro_orden_prod_det.pro_equipos_id,   "
+        //+"   pro_equipos.titulo as nombre_equipo,  "
+        +"   pro_orden_prod_det.inv_prod_id,   "
+        +"   inv_prod.sku as codigo,   "
+        +"   inv_prod.descripcion ,   "
+        +"   inv_prod.densidad,  "
+        +"   inv_prod_unidades.titulo as  unidad"
 
-+" FROM pro_orden_prod  "
-+" join pro_orden_tipos on pro_orden_tipos.id = pro_orden_prod.pro_orden_tipos_id  "
-+" join pro_orden_prod_det on pro_orden_prod_det.pro_orden_prod_id = pro_orden_prod.id  "
-+" join inv_prod on inv_prod.id=pro_orden_prod_det.inv_prod_id  "
-+" join pro_subprocesos on pro_subprocesos.id=pro_orden_prod_det.pro_subprocesos_id  "
-//+" join gral_empleados on gral_empleados.id=pro_orden_prod_det.gral_empleados_id    "
-//+" join pro_equipos on pro_equipos.id=pro_orden_prod_det.pro_equipos_id   "
-+" join  inv_prod_unidades on inv_prod_unidades.id= pro_orden_prod_det.unidad_id "
-+" WHERE pro_orden_prod.gral_emp_id="+id_empresa+" "
-+" "+cadena_AND+" "
-+" AND pro_orden_prod.fecha_elavorar between '"+fecha_inicial+"' AND '"+fecha_final+"' ORDER BY codigo asc";
+        +" FROM pro_orden_prod  "
+        +" join pro_orden_tipos on pro_orden_tipos.id = pro_orden_prod.pro_orden_tipos_id  "
+        +" join pro_orden_prod_det on pro_orden_prod_det.pro_orden_prod_id = pro_orden_prod.id  "
+        +" join inv_prod on inv_prod.id=pro_orden_prod_det.inv_prod_id  "
+        +" join pro_subprocesos on pro_subprocesos.id=pro_orden_prod_det.pro_subprocesos_id  "
+        //+" join gral_empleados on gral_empleados.id=pro_orden_prod_det.gral_empleados_id    "
+        //+" join pro_equipos on pro_equipos.id=pro_orden_prod_det.pro_equipos_id   "
+        +" join  inv_prod_unidades on inv_prod_unidades.id= pro_orden_prod_det.unidad_id "
+        +" WHERE pro_orden_prod.gral_emp_id="+id_empresa+" "
+        +" "+cadena_AND+" "
+        +" AND pro_orden_prod.fecha_elavorar between '"+fecha_inicial+"' AND '"+fecha_final+"' ORDER BY codigo asc";
 
-System.out.println("DATOS   Produccio por productos :  "+sql_to_query);
+        //System.out.println("DATOS   Produccio por productos :  "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4832,36 +4832,36 @@ System.out.println("DATOS   Produccio por productos :  "+sql_to_query);
        }
 
 
-String sql_to_query = " SELECT  "
-+"   pro_orden_prod.folio as folio_orden,   "
-+"   pro_orden_prod.fecha_elavorar as fecha_elaboracion,   "
-+"   pro_orden_prod.lote as numero_lote,   "
-+"   (CASE WHEN inv_prod_unidades.titulo like 'LITR%' then pro_orden_prod_det.cantidad * inv_prod.densidad ELSE pro_orden_prod_det.cantidad end)AS cantidad_kg, "
-+"   pro_orden_prod_det.pro_subprocesos_id,  "
-+"   pro_subprocesos.titulo as subproceso,   "
-//+"   pro_orden_prod_det.gral_empleados_id,   "
-//+"   gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as nombre_empleado,  "
-+"   pro_orden_prod_det.pro_equipos_id,   "
-+"   pro_equipos.titulo as nombre_equipo,  "
-+"   pro_orden_prod_det.inv_prod_id,   "
-+"   inv_prod.sku as codigo,   "
-+"   inv_prod.descripcion ,   "
-+"   inv_prod.densidad,  "
-+"   inv_prod_unidades.titulo as  unidad"
+        String sql_to_query = " SELECT  "
+        +"   pro_orden_prod.folio as folio_orden,   "
+        +"   pro_orden_prod.fecha_elavorar as fecha_elaboracion,   "
+        +"   pro_orden_prod.lote as numero_lote,   "
+        +"   (CASE WHEN inv_prod_unidades.titulo like 'LITR%' then pro_orden_prod_det.cantidad * inv_prod.densidad ELSE pro_orden_prod_det.cantidad end)AS cantidad_kg, "
+        +"   pro_orden_prod_det.pro_subprocesos_id,  "
+        +"   pro_subprocesos.titulo as subproceso,   "
+        //+"   pro_orden_prod_det.gral_empleados_id,   "
+        //+"   gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as nombre_empleado,  "
+        +"   pro_orden_prod_det.pro_equipos_id,   "
+        +"   pro_equipos.titulo as nombre_equipo,  "
+        +"   pro_orden_prod_det.inv_prod_id,   "
+        +"   inv_prod.sku as codigo,   "
+        +"   inv_prod.descripcion ,   "
+        +"   inv_prod.densidad,  "
+        +"   inv_prod_unidades.titulo as  unidad"
 
-+" FROM pro_orden_prod  "
-+" join pro_orden_tipos on pro_orden_tipos.id = pro_orden_prod.pro_orden_tipos_id  "
-+" join pro_orden_prod_det on pro_orden_prod_det.pro_orden_prod_id = pro_orden_prod.id  "
-+" join inv_prod on inv_prod.id=pro_orden_prod_det.inv_prod_id  "
-+" join pro_subprocesos on pro_subprocesos.id=pro_orden_prod_det.pro_subprocesos_id  "
-+" join gral_empleados on gral_empleados.id=pro_orden_prod_det.gral_empleados_id    "
-+" join pro_equipos on pro_equipos.id=pro_orden_prod_det.pro_equipos_id   "
-+" join  inv_prod_unidades on inv_prod_unidades.id= pro_orden_prod_det.unidad_id "
-+" WHERE pro_orden_prod.gral_emp_id="+id_empresa+" "
-+" "+cadena_AND+" "
-+" AND pro_orden_prod.fecha_elavorar between '"+fecha_inicial+"' AND '"+fecha_final+"' ORDER BY nombre_equipo asc";
+        +" FROM pro_orden_prod  "
+        +" join pro_orden_tipos on pro_orden_tipos.id = pro_orden_prod.pro_orden_tipos_id  "
+        +" join pro_orden_prod_det on pro_orden_prod_det.pro_orden_prod_id = pro_orden_prod.id  "
+        +" join inv_prod on inv_prod.id=pro_orden_prod_det.inv_prod_id  "
+        +" join pro_subprocesos on pro_subprocesos.id=pro_orden_prod_det.pro_subprocesos_id  "
+        +" join gral_empleados on gral_empleados.id=pro_orden_prod_det.gral_empleados_id    "
+        +" join pro_equipos on pro_equipos.id=pro_orden_prod_det.pro_equipos_id   "
+        +" join  inv_prod_unidades on inv_prod_unidades.id= pro_orden_prod_det.unidad_id "
+        +" WHERE pro_orden_prod.gral_emp_id="+id_empresa+" "
+        +" "+cadena_AND+" "
+        +" AND pro_orden_prod.fecha_elavorar between '"+fecha_inicial+"' AND '"+fecha_final+"' ORDER BY nombre_equipo asc";
 
-System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
+        //System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4911,36 +4911,36 @@ System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
        }
 
 
-String sql_to_query = " SELECT  "
-+"   pro_orden_prod.folio as folio_orden,   "
-+"   pro_orden_prod.fecha_elavorar as fecha_elaboracion,   "
-+"   pro_orden_prod.lote as numero_lote,   "
-+"   (CASE WHEN inv_prod_unidades.titulo like 'LITR%' then pro_orden_prod_det.cantidad * inv_prod.densidad ELSE pro_orden_prod_det.cantidad end)AS cantidad_kg, "
-+"   pro_orden_prod_det.pro_subprocesos_id,  "
-+"   pro_subprocesos.titulo as subproceso,   "
-+"   pro_orden_prod_det.gral_empleados_id,   "
-+"   gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as nombre_empleado,  "
-//+"   pro_orden_prod_det.pro_equipos_id,   "
-//+"   pro_equipos.titulo as nombre_equipo,  "
-+"   pro_orden_prod_det.inv_prod_id,   "
-+"   inv_prod.sku as codigo,   "
-+"   inv_prod.descripcion ,   "
-+"   inv_prod.densidad,  "
-+"   inv_prod_unidades.titulo as  unidad"
+        String sql_to_query = " SELECT  "
+        +"   pro_orden_prod.folio as folio_orden,   "
+        +"   pro_orden_prod.fecha_elavorar as fecha_elaboracion,   "
+        +"   pro_orden_prod.lote as numero_lote,   "
+        +"   (CASE WHEN inv_prod_unidades.titulo like 'LITR%' then pro_orden_prod_det.cantidad * inv_prod.densidad ELSE pro_orden_prod_det.cantidad end)AS cantidad_kg, "
+        +"   pro_orden_prod_det.pro_subprocesos_id,  "
+        +"   pro_subprocesos.titulo as subproceso,   "
+        +"   pro_orden_prod_det.gral_empleados_id,   "
+        +"   gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as nombre_empleado,  "
+        //+"   pro_orden_prod_det.pro_equipos_id,   "
+        //+"   pro_equipos.titulo as nombre_equipo,  "
+        +"   pro_orden_prod_det.inv_prod_id,   "
+        +"   inv_prod.sku as codigo,   "
+        +"   inv_prod.descripcion ,   "
+        +"   inv_prod.densidad,  "
+        +"   inv_prod_unidades.titulo as  unidad"
 
-+" FROM pro_orden_prod  "
-+" join pro_orden_tipos on pro_orden_tipos.id = pro_orden_prod.pro_orden_tipos_id  "
-+" join pro_orden_prod_det on pro_orden_prod_det.pro_orden_prod_id = pro_orden_prod.id  "
-+" join inv_prod on inv_prod.id=pro_orden_prod_det.inv_prod_id  "
-+" join pro_subprocesos on pro_subprocesos.id=pro_orden_prod_det.pro_subprocesos_id  "
-+" join gral_empleados on gral_empleados.id=pro_orden_prod_det.gral_empleados_id    "
-//+" join pro_equipos on pro_equipos.id=pro_orden_prod_det.pro_equipos_id   "
-+" join  inv_prod_unidades on inv_prod_unidades.id= pro_orden_prod_det.unidad_id "
-+" WHERE pro_orden_prod.gral_emp_id="+id_empresa+" "
-+" "+cadena_AND+" "
-+" AND pro_orden_prod.fecha_elavorar between '"+fecha_inicial+"' AND '"+fecha_final+"' ORDER BY nombre_empleado asc";
+        +" FROM pro_orden_prod  "
+        +" join pro_orden_tipos on pro_orden_tipos.id = pro_orden_prod.pro_orden_tipos_id  "
+        +" join pro_orden_prod_det on pro_orden_prod_det.pro_orden_prod_id = pro_orden_prod.id  "
+        +" join inv_prod on inv_prod.id=pro_orden_prod_det.inv_prod_id  "
+        +" join pro_subprocesos on pro_subprocesos.id=pro_orden_prod_det.pro_subprocesos_id  "
+        +" join gral_empleados on gral_empleados.id=pro_orden_prod_det.gral_empleados_id    "
+        //+" join pro_equipos on pro_equipos.id=pro_orden_prod_det.pro_equipos_id   "
+        +" join  inv_prod_unidades on inv_prod_unidades.id= pro_orden_prod_det.unidad_id "
+        +" WHERE pro_orden_prod.gral_emp_id="+id_empresa+" "
+        +" "+cadena_AND+" "
+        +" AND pro_orden_prod.fecha_elavorar between '"+fecha_inicial+"' AND '"+fecha_final+"' ORDER BY nombre_empleado asc";
 
-System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
+        //System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -5225,7 +5225,7 @@ System.out.println("DATOS del registro de Produccion :  "+sql_to_query);
                         +"JOIN ("+sql_busqueda+") as subt on subt.id=pro_equipos_adic.id "
                         +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
 
-        System.out.println("Busqueda GetPage: "+sql_to_query+"  data_string"+data_string );
+        //System.out.println("Busqueda GetPage: "+sql_to_query+"  data_string"+data_string );
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
