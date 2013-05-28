@@ -23,6 +23,7 @@ $(function() {
     var arrayAlmacenes;
     var arrayPresentacionEnv;
     var decimales = 0;
+    var equivalencia = 0;
     
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -498,6 +499,7 @@ $(function() {
             
             var $grid_presntaciones = $('#forma-envproceso-window').find('#grid_productos');
             var $exis_pres = $('#forma-envproceso-window').find('input[name=exis_pres]').val();
+            var $exis_uni = $('#forma-envproceso-window').find('input[name=exis_uni]').val();
             var $unidad = $('#forma-envproceso-window').find('input[name=unidad]').val();
             
             calculo_total = 0;
@@ -511,7 +513,7 @@ $(function() {
                     var cantidad_tr = $(this).find('input[name=cantpres]').val();
                     var presentacion_id_tr = $(this).find('select[name=select_pres_dest]').val();
                     var factor = 0;
-
+                    
                     $.each(arrayPresentacionEnv,function(entryIndex,pres){
                         if(pres['id'] == presentacion_id_tr){
                             factor = pres['equivalencia'];
@@ -520,7 +522,7 @@ $(function() {
 
                     calculo_tr = parseFloat(factor) * parseFloat(cantidad_tr);
 
-                    calculo_tr = parseFloat(parseFloat(calculo_tr).toFixed(4));
+                    calculo_tr = parseFloat(parseFloat(calculo_tr).toFixed(decimales));
 
                     $(this).find('input[name=cantuni]').val(calculo_tr);
                     $(this).find('input[name=uni]').val($unidad);
@@ -530,14 +532,20 @@ $(function() {
                         //Aqui mne quede, asdiuasiudiasd asid asudiasi dsd
                         //alert("asdsd");
                         //alert('   campo:'+campo.val() + '    control:' + control);
-
+                        
                         if(control == 'input'){
                             campo.val(0);
                             campo.parent().parent().find('input[name=cantuni]').val(0);
                         }
                     }
+                    
+                    
                 }
             });
+            
+            
+            $('#forma-envproceso-window').find('input[name=disp_pres]').val(parseFloat(parseFloat($exis_pres) - parseFloat(calculo_total / equivalencia)).toFixed(decimales));
+            $('#forma-envproceso-window').find('input[name=disp_uni]').val(parseFloat(parseFloat($exis_uni) - parseFloat(calculo_total)).toFixed(decimales));
         }
         
         $add_trr_presentacion_enbasar = function(iddetalle, aml_origen, idconf,pres_dest_id, cantpres,uni,cantuni,aml_dest_id , estatus){
@@ -874,6 +882,7 @@ $(function() {
                                                         trr += '<input type="hidden" id="cantidad_buscador" value="'+orden['cantidad']+'">';
 							trr += '<input type="hidden" id="id_orden_buscador" value="'+orden['id_op']+'">';
 							trr += '<span class="folio_orden_buscador">'+orden['folio']+'</span>';
+                                                        trr += '<span class="decimales_orden_buscador">'+orden['decimales']+'</span>';
 						trr += '</td>';
 						trr += '<td width="120">';
 							trr += '<input type="hidden" id="id_prod_buscador" value="'+orden['producto_id']+'">';
@@ -923,10 +932,18 @@ $(function() {
 					var codigo_prod_buscador = $(this).find('span.codigo_prod_buscador').html();
 					var descripcion_prod_buscador = $(this).find('span.descripcion_prod_buscador').html();
                                         var descripcion_prod_buscador = $(this).find('span.descripcion_prod_buscador').html();
+                                        decimales = $(this).find('span.decimales_orden_buscador').html();
                                         
                                         var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';
                                         $arreglo = {'id_prod':id_prod_buscador,'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
                                         $.post(input_json,$arreglo,function(entry){
+                                            
+                                            $.each( entry['Presentaciones'],function(entryIndex,pres){
+                                                if(parseInt(id_presentacion_buscador) == parseInt(pres['id'])){
+                                                    equivalencia = pres['equivalencia'];
+                                                }
+                                            });
+                                            
                                             $agregarDatosProductoSeleccionado(id_orden_buscador, id_prod_buscador, id_unidad_buscador, unidad_buscador
                                                 , folio_orden_buscador, codigo_prod_buscador, descripcion_prod_buscador,id_almacen_buscador,cantidad_buscador,id_presentacion_buscador, entry['Presentaciones']);
                                                 //llamada a la funcion para agregar los datos del Producto seleccionado
@@ -1239,8 +1256,8 @@ $(function() {
 				$fecha.val(formated);
 				if (formated.match(patron) ){
 					//var valida_fecha=mayor($fecha.val(),mostrarFecha());
-					var valida_fecha=fecha_mayor($fecha.val(),mostrarFecha());
-					if (valida_fecha==true){
+					var valida_fecha=fecha_mayor_igual($fecha.val(),mostrarFecha());
+					if (valida_fecha==false){
 						jAlert("Fecha no valida",'! Atencion');
 						$fecha.val(mostrarFecha());
 					}else{
