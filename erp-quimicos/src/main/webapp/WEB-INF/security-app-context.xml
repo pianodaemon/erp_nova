@@ -115,7 +115,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_COT_POLITICAS_PAGO,
         ROLE_ENV_CONFIGURACION,
         ROLE_ENV_REENVASADO,
-        ROLE_FAC_CONSULTA_CANCELACION,
+        ROLE_FAC_CANCELACION,
+        ROLE_FAC_CONSULTAS,
         ROLE_ORDEN_PRODUCCION_SUBENSAMBLE,
         ROLE_PRODUCCION_SUBENSAMBLE" />
         
@@ -127,7 +128,11 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/cotizaciones/startup.agnux" access="ROLE_ADMIN,ROLE_COTIZACION" />
         <intercept-url pattern="/controllers/entradamercancias/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURAS_COMPRAS" />
         <intercept-url pattern="/controllers/prefacturas/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURACION" />
-        <intercept-url pattern="/controllers/facturas/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_CONSULTA_CANCELACION" />
+        <intercept-url pattern="/controllers/faccancelacion/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_CANCELACION" />
+        <intercept-url pattern="/controllers/facconsultas/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_CONSULTAS" />
+        <intercept-url pattern="/controllers/facdevoluciones/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_DEVOLUCIONES" />
+        
+        
         <intercept-url pattern="/controllers/carteras/startup.agnux" access="ROLE_ADMIN,ROLE_COBRANZA" />
         <intercept-url pattern="/controllers/agentes/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_AGENTE" />
         <intercept-url pattern="/controllers/clientsclasif1/startup.agnux" access="ROLE_ADMIN" />
@@ -145,7 +150,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/remisiones/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURACION" />
         <intercept-url pattern="/controllers/notascredito/startup.agnux" access="ROLE_ADMIN,ROLE_NOTA_CREDITO" />
         <intercept-url pattern="/controllers/programacionrutas/startup.agnux" access="ROLE_ADMIN,ROLE_PROGRAMA_RUTA" />
-        <intercept-url pattern="/controllers/facdevoluciones/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_DEVOLUCIONES" />
+        
         <intercept-url pattern="/controllers/invordenentrada/startup.agnux" access="ROLE_ADMIN,ROLE_ORDEN_DE_ENTRADA" />
         <intercept-url pattern="/controllers/invordensalida/startup.agnux" access="ROLE_ADMIN,ROLE_ORDEN_DE_SALIDA" />
         <intercept-url pattern="/controllers/invajustes/startup.agnux" access="ROLE_ADMIN,ROLE_AJUSTE_INVENTARIO" />
