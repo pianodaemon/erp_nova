@@ -73,7 +73,7 @@
 
 										</ul>
 									</li>
-
+									
 									<li class="accessible">
 										<a href="#" class="accessible">Facturaci&oacute;n &raquo;</a>
 										<ul>
@@ -82,7 +82,11 @@
 
 												<ul>
 													<li class="topline"><a href="../prefacturas/startup.agnux">Facturaci&oacute;n</a></li>
-													<li class="topline"><a href="../facturas/startup.agnux">Consulta Cancelaci&oacute;n</a></li>
+													<li class="topline"><a href="../facconsultas/startup.agnux">Consulta</a></li>
+													<li class="topline"><a href="../faccancelacion/startup.agnux">Cancelaci&oacute;n</a></li>
+													
+													<!--<li class="topline"><a href="../facturas/startup.agnux">Consulta Cancelaci&oacute;n</a></li>-->
+													
 													<li class="topline"><a href="../facdevoluciones/startup.agnux">Devoluci&oacute;n</a></li>
 													<li class="topline"><a href="../remisiones/startup.agnux">Remisiones</a></li>
 													<!--
