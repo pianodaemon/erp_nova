@@ -609,7 +609,7 @@ $(function() {
                     html_tr += '</select>';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="85">';
-                    html_tr += '<input type="text" 	name="cantpres" id="cantpres'+trCount+'" value="'+cantpres+'" style="width:80px;" maxlength="10">';
+                    html_tr += '<input type="text" name="cantpres" id="cantpres'+trCount+'" value="'+cantpres+'" style="width:80px;" maxlength="10">';
                 html_tr += '</td>';
                 html_tr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
                     html_tr += '<input type="text" name="uni" value="" id="uni" class="borde_oculto" value="'+uni+'" readOnly="true" style="width:86px;">';
@@ -651,6 +651,8 @@ $(function() {
                 
                 $(this).parent().parent().hide();
                 $(this).parent().parent().find('#eliminado').val(0);
+                
+                $calcula_cantidad($(this).parent().parent().find('input[name=cantpres]'), 'input');
             });
             
             $grid_presntaciones.find('#select_aml_origen'+trCount).change(function(event){
