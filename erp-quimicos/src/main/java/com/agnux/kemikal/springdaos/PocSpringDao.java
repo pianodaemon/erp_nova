@@ -863,12 +863,12 @@ public class PocSpringDao implements PocInterfaceDao{
 	if(filtro == 3){
             where=" AND crm_prospectos.razon_social ilike '%"+cadena.toUpperCase()+"%'";
 	}
-
+        
 	String sql_query = ""
                 + "SELECT "
                     + "crm_prospectos.id, "
                     + "crm_prospectos.numero_control, "
-                    + "crm_prospectos.rfc, "
+                    + "(CASE WHEN crm_prospectos.rfc='' OR crm_prospectos.rfc IS NULL THEN 'XXX000000000' ELSE crm_prospectos.rfc END) AS rfc, "
                     + "crm_prospectos.razon_social,"
                     + "crm_prospectos.calle||' '||crm_prospectos.numero||', '||crm_prospectos.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||crm_prospectos.cp as direccion, "
                     + "0::integer AS moneda_id, "
@@ -884,9 +884,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "false AS tiene_dir_fiscal,"
                     + "crm_prospectos.contacto "
                 + "FROM crm_prospectos "
-                + "JOIN gral_pais ON gral_pais.id=crm_prospectos.pais_id "
-                + "JOIN gral_edo ON gral_edo.id=crm_prospectos.estado_id "
-                + "JOIN gral_mun ON gral_mun.id=crm_prospectos.municipio_id  "
+                + "LEFT JOIN gral_pais ON gral_pais.id=crm_prospectos.pais_id "
+                + "LEFT JOIN gral_edo ON gral_edo.id=crm_prospectos.estado_id "
+                + "LEFT JOIN gral_mun ON gral_mun.id=crm_prospectos.municipio_id  "
                 + "WHERE crm_prospectos.gral_emp_id="+id_empresa+" "
                 + "AND crm_prospectos.borrado_logico=false  "+where+";";
 
