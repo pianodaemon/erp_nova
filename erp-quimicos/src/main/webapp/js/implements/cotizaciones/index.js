@@ -898,6 +898,7 @@ $(function() {
 								
 								var cantidad = 0;
 								var importe = 0;
+								var idmonpartida=0;
 								var idImpto = $(this).find('span.idImpto').html();
 								var valorImpto = $(this).find('span.valorImpto').html();
 								
@@ -905,7 +906,7 @@ $(function() {
 									if(exislp=='1'){
 										//aqui se pasan datos a la funcion que agrega el tr en el grid
 										//$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, arrayMonedas, idImp, valorImp);
-										$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd);
+										$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImpto, valorImpto, tcMonProd, idmonpartida);
 									}else{
 										jAlert(exislp, 'Atencion!', function(r) { 
 											$('#forma-cotizacions-window').find('input[name=sku_producto]').focus();
@@ -958,7 +959,7 @@ $(function() {
 	
 	
 	//agregar producto al grid
-	$agrega_producto_grid = function($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImp, valorImp, tcMonProd){
+	$agrega_producto_grid = function($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, idmonpre, arrayMonedas, idImp, valorImp, tcMonProd, idmonpartida){
 		var $id_impuesto = $('#forma-cotizacions-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 		var $check_descripcion_larga =$('#forma-cotizacions-window').find('input[name=check_descripcion_larga]');
@@ -974,6 +975,8 @@ $(function() {
 		var precioCambiado = 0.00;
 		var importeImpuesto=0.00;
 		var agregarTr=false;
+		
+
 		
 		//verificamos si la Lista de Precio trae moneda
 		if(parseInt($num_lista_precio.val())>0){
@@ -993,18 +996,23 @@ $(function() {
 				$moneda_original.append(moneda_prod);
 			}
 			
-			//si la moneda de la Cotizacion es diferente a la moneda del Precio del Producto
-			//entonces convertimos el precio a la moneda del Cotizacion de acuerdo al tipo de cambio actual
-			if( parseInt(idMonedaCotizacion) != parseInt(idmonpre) ){
-				if(parseInt(idMonedaCotizacion)==1 && parseInt(idmonpre)!=1){
-					//si la moneda de la Cotizacion es pesos y la moneda del precio es diferente de Pesos,
-					//entonces calculamos su equivalente a pesos
-					precioCambiado = parseFloat( parseFloat(precioOriginal) * parseFloat(tcMonProd)).toFixed(4);
-				}
-				
-				if(parseInt(idMonedaCotizacion)!=1 && parseInt(idmonpre)==1){
-					//si la moneda de la Cotizacion es dolar y la moneda del precio es Pesos, calculamos su equivalente a dolar
-					precioCambiado = parseFloat( parseFloat(precioOriginal) / parseFloat($tc.val()) ).toFixed(4);
+			//aqui solo debe entrar cuando el tr es Nuevo, en editar ya no
+			if(parseInt(idmonpartida)==0){
+				//si la moneda de la Cotizacion es diferente a la moneda del Precio del Producto
+				//entonces convertimos el precio a la moneda del Cotizacion de acuerdo al tipo de cambio actual
+				if( parseInt(idMonedaCotizacion) != parseInt(idmonpre) ){
+					if(parseInt(idMonedaCotizacion)==1 && parseInt(idmonpre)!=1){
+						//si la moneda de la Cotizacion es pesos y la moneda del precio es diferente de Pesos,
+						//entonces calculamos su equivalente a pesos
+						precioCambiado = parseFloat( parseFloat(precioOriginal) * parseFloat(tcMonProd)).toFixed(4);
+					}
+					
+					if(parseInt(idMonedaCotizacion)!=1 && parseInt(idmonpre)==1){
+						//si la moneda de la Cotizacion es dolar y la moneda del precio es Pesos, calculamos su equivalente a dolar
+						precioCambiado = parseFloat( parseFloat(precioOriginal) / parseFloat($tc.val()) ).toFixed(4);
+					}
+				}else{
+					precioCambiado = precio;
 				}
 			}else{
 				precioCambiado = precio;
@@ -1014,8 +1022,22 @@ $(function() {
 		}
 		
 		
+		
+		
 		//agregar comas
 		precioCambiado = $(this).agregar_comas(precioCambiado);
+		
+		alert("precioCambiado: "+precioCambiado);
+		
+		
+		/*
+		Si la partida que se está agregando tiene idmonpartida=0, entonces  significa que es nuevo, 
+		por lo tanto se le asigna la moneda global definida para la cotizacion
+		*/
+		if(parseInt(idmonpartida)==0){
+			idmonpartida=idMonedaCotizacion;
+		}
+		
 		
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
 		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
@@ -1024,13 +1046,34 @@ $(function() {
 		
 		importe = parseFloat(importe).toFixed(4);
 		
+		var importeMonCotizacion=0;
+		
+		/*
+		Calcula el Importe de la partida en la Moneda Global de la Cotizacion, esto porque el total de la cotizacion
+		se saca tomando la moneda global y no la moneda de cada partida.
+		*/
+		if(parseInt($select_moneda.val()) == parseInt(idmonpartida)){
+			importeMonCotizacion = importe;
+		}else{
+			if(parseInt($select_moneda.val())==1 && parseInt(idmonpartida)!=1){
+				importeMonCotizacion = parseFloat(importe) * parseFloat($tc.val());
+			}else{
+				if(parseInt($select_moneda.val())!=1 && parseInt(idmonpartida)==1){
+					importeMonCotizacion = parseFloat(importe) / parseFloat($tc.val());
+				}
+			}
+		}
+		
+		importeMonCotizacion = parseFloat(importeMonCotizacion).toFixed(4);
+		
 		if (parseFloat(idImp)!=0 && parseFloat(valorImp)!=0){
 			$id_impuesto.val(idImp);
 			$valor_impuesto.val(valorImp);
-			importeImpuesto = parseFloat(importe) * parseFloat(valorImp);
+			importeImpuesto = parseFloat(importeMonCotizacion) * parseFloat(valorImp);
 			importeImpuesto = parseFloat(importeImpuesto).toFixed(4);
 		}
-		
+			
+					
 		
 		var encontrado = 0;
 		//busca el sku y la presentacion en el grid
@@ -1095,13 +1138,16 @@ $(function() {
 				
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
 					trr += '<select name="monedagrid" class="moneda'+ tr +'" style="width:46px;"></select>';
+					trr += '<input type="hidden" name="idMonGridAnt"  class="idMonGridAnt'+ tr +'" value="0" id="idMonGridAnt">';
 				trr += '</td>';
 				
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
 					trr += '<input type="text" 	name="importe" 	class="import'+ tr +'" value="'+importe+'" id="import" readOnly="true" style="width:66px; text-align:right;">';
+					trr += '<input type="hidden" name="importeMonCot" class="impMonCot'+ tr +'" value="'+  importeMonCotizacion +'" id="impMonCot">';
+					
 					trr += '<input type="hidden" name="id_imp_prod"   value="'+ idImp +'" id="idimppord">';
-					trr += '<input type="hidden" name="valor_imp"     value="'+  valorImp +'" id="ivalorimp">';
-					trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+importeImpuesto+'">';
+					trr += '<input type="hidden" name="valor_imp"     class="ivalorimp'+ tr +'" value="'+  valorImp +'" id="ivalorimp">';
+					trr += '<input type="hidden" name="totimpuesto'+ tr +'" class="totimp'+ tr +'" id="totimp" value="'+importeImpuesto+'">';
 				trr += '</td>';
 				
 			trr += '</tr>';
@@ -1135,18 +1181,75 @@ $(function() {
 			$grid_productos.find('.moneda'+ tr).children().remove();
 			var moneda_hmtl = '';
 			$.each(arrayMonedas ,function(entryIndex,moneda){
-				if( parseInt(moneda['id']) == parseInt(idMonedaCotizacion) ){
+				if( parseInt(moneda['id']) == parseInt(idmonpartida) ){
 					moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion_abr'] + '</option>';
 				}else{
-					//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion_abr'] + '</option>';
+					moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion_abr'] + '</option>';
 				}
 			});
 			$grid_productos.find('.moneda'+ tr).append(moneda_hmtl);
 			
+			$grid_productos.find('.idMonGridAnt'+ tr).val(idmonpartida);
+			
+			
+			$grid_productos.find('.moneda'+ tr).click(function(event){
+				$grid_productos.find('.idMonGridAnt'+ tr).val($(this).val());
+			});
+			
+			
+			$grid_productos.find('.moneda'+ tr).change(function(){
+				var idMonSeleccionado = $(this).val();
+				var idMonAnterior = $grid_productos.find('.idMonGridAnt'+ tr).val();
+				var $precioPartida = $grid_productos.find('.precio'+ tr);
+				var $catidadPartida = $grid_productos.find('.cant'+ tr);
+				
+				var $importePartida = $grid_productos.find('.import'+ tr);
+				var $importePartidaMonCot = $grid_productos.find('.impMonCot'+ tr);
+				var $tasaIva = $grid_productos.find('.ivalorimp'+ tr);
+				var $totalImpuestoPartida = $grid_productos.find('.totimp'+ tr);
+				
+				if($catidadPartida.val().trim()!='' && $precioPartida.val().trim()!=''){
+					if(parseInt(idMonAnterior)==1 && parseInt(idMonSeleccionado)!=1){
+						$precioPartida.val(parseFloat(parseFloat($precioPartida.val()) / parseFloat($tc.val())).toFixed(4));
+					}else{
+						if(parseInt(idMonAnterior)!=1 && parseInt(idMonSeleccionado)==1){
+							$precioPartida.val(parseFloat(parseFloat($precioPartida.val()) * parseFloat($tc.val())).toFixed(4));
+						}
+					}
+					
+					$importePartida.val(parseFloat(parseFloat($precioPartida.val()) * parseFloat($catidadPartida.val())).toFixed(4));
+					
+					
+					/*
+					Calcula el Importe de la partida en la Moneda Global de la Cotizacion, esto porque el total de la cotizacion
+					se saca tomando la moneda global y no la moneda de cada partida.
+					*/
+					if(parseInt($select_moneda.val()) == parseInt(idMonSeleccionado)){
+						$importePartidaMonCot.val(parseFloat($importePartida.val()).toFixed(4));
+					}else{
+						if(parseInt($select_moneda.val())==1 && parseInt(idMonSeleccionado)!=1){
+							$importePartidaMonCot.val( parseFloat($importePartida.val()) * parseFloat($tc.val()) );
+						}else{
+							if(parseInt($select_moneda.val())!=1 && parseInt(idMonSeleccionado)==1){
+								$importePartidaMonCot.val( parseFloat($importePartida.val()) / parseFloat($tc.val()) );
+							}
+						}
+					}
+					
+					$importePartidaMonCot.val(parseFloat($importePartidaMonCot.val()).toFixed(4));
+					
+					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
+					$totalImpuestoPartida.val( parseFloat(parseFloat( $importePartidaMonCot.val() ) * parseFloat(  $tasaIva.val()  ) ).toFixed(4));
+					
+					//Recalcular los totales
+					$recalcula_totales();
+				}
+			});
+			
 			
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 			$grid_productos.find('.cant'+ tr).focus(function(e){
-				if($(this).val() == ' '){
+				if($(this).val().trim() == ''){
 					$(this).val('');
 				}else{
 					if(parseFloat($(this).val()) <=0 ){
@@ -1163,12 +1266,15 @@ $(function() {
 				$totalImpuestoPartida = $(this).parent().parent().find('#totimp');
 				var $idMonedaPartida = $(this).parent().parent().find('.moneda'+ tr);
 				
-				if ($(this).val()=='' || $(this).val()==' '){
+				//importe de la partida en la Moneda de la cotizacion
+				var $importePartidaMonCot = $(this).parent().parent().find('.impMonCot'+ tr);
+				
+				if ($(this).val().trim()==''){
 					$(this).val(0);
 				}
 				//$(this).val(parseFloat($(this).val()).toFixed(2));
 				
-				if( $(this).val()!=' ' && $(this).val()!='' && $precioPartida.val()!=' ' && $precioPartida.val()!='' )
+				if($(this).val().trim()!='' && $precioPartida.val().trim()!='')
 				{   //calcula el importe
 					$importePartida.val(parseFloat($(this).val()) * parseFloat(quitar_comas($precioPartida.val())));
 					
@@ -1181,10 +1287,31 @@ $(function() {
 						$importePartida.val(parseFloat($importePartida.val()).toFixed(4));
 					}
 					
+					
+					/*
+					Calcula el Importe de la partida en la Moneda Global de la Cotizacion, esto porque el total de la cotizacion
+					se saca tomando la moneda global y no la moneda de cada partida.
+					*/
+					if(parseInt($select_moneda.val()) == parseInt($idMonedaPartida.val())){
+						$importePartidaMonCot.val(parseFloat($importePartida.val()).toFixed(4));
+					}else{
+						if(parseInt($select_moneda.val())==1 && parseInt($idMonedaPartida.val())!=1){
+							$importePartidaMonCot.val( parseFloat($importePartida.val()) * parseFloat($tc.val()) );
+						}else{
+							if(parseInt($select_moneda.val())!=1 && parseInt($idMonedaPartida.val())==1){
+								$importePartidaMonCot.val( parseFloat($importePartida.val()) / parseFloat($tc.val()) );
+							}
+						}
+					}
+					
+					$importePartidaMonCot.val(parseFloat($importePartidaMonCot.val()).toFixed(4));
+					
 					//calcula el impuesto para este producto multiplicando el importe por el valor del iva
-					$totalImpuestoPartida.val( parseFloat(parseFloat( $importePartida.val() ) * parseFloat(  $tasaIva.val()  ) ).toFixed(4));
+					//$totalImpuestoPartida.val( parseFloat(parseFloat( $importePartida.val() ) * parseFloat(  $tasaIva.val()  ) ).toFixed(4));
+					$totalImpuestoPartida.val( parseFloat(parseFloat( $importePartidaMonCot.val() ) * parseFloat(  $tasaIva.val()  ) ).toFixed(4));
 				}else{
 					$importePartida.val('');
+					$importePartidaMonCot.val('');
 				}
 				
 				$recalcula_totales();
@@ -1192,7 +1319,7 @@ $(function() {
 			
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 			$grid_productos.find('.precio'+ tr).focus(function(e){
-				if($(this).val()==' '){
+				if($(this).val().trim()==''){
 					$(this).val('');
 				}else{
 					if(parseFloat($(this).val()) <= 0 ){
@@ -1211,7 +1338,10 @@ $(function() {
 				var $precioOriginalPartida = $(this).parent().parent().find('.precor'+ tr);
 				var precioCambiado=0.0;
 				
-				if ($(this).val()=='' || $(this).val()==' '){
+				//importe de la partida en la Moneda de la cotizacion
+				var $importePartidaMonCot = $(this).parent().parent().find('.impMonCot'+ tr);
+				
+				if ($(this).val().trim()==''){
 					$(this).val(0);
 				}
 				
@@ -1245,7 +1375,7 @@ $(function() {
 				
 				//$(this).val(parseFloat($(this).val()).toFixed(2));
 				
-				if( $(this).val()!=' ' && $(this).val()!='' && $catidadPartida.val()!=' ' && $catidadPartida.val() != '' ){
+				if( $(this).val().trim()!='' && $catidadPartida.val().trim()!=''){
 					//calcula el importe
 					$importePartida.val( parseFloat($(this).val()) * parseFloat(quitar_comas($catidadPartida.val())) );
 					
@@ -1260,10 +1390,30 @@ $(function() {
 						$importePartida.val(parseFloat($importePartida.val()).toFixed(4));
 					}
 					
+					/*
+					Calcula el Importe de la partida en la Moneda Global de la Cotizacion, esto porque el total de la cotizacion
+					se saca tomando la moneda global y no la moneda de cada partida.
+					*/
+					if(parseInt($select_moneda.val()) == parseInt($idMonedaPartida.val())){
+						$importePartidaMonCot.val(parseFloat($importePartida.val()).toFixed(4));
+					}else{
+						if(parseInt($select_moneda.val())==1 && parseInt($idMonedaPartida.val())!=1){
+							$importePartidaMonCot.val( parseFloat($importePartida.val()) * parseFloat($tc.val()) );
+						}else{
+							if(parseInt($select_moneda.val())!=1 && parseInt($idMonedaPartida.val())==1){
+								$importePartidaMonCot.val( parseFloat($importePartida.val()) / parseFloat($tc.val()) );
+							}
+						}
+					}
+					
+					$importePartidaMonCot.val(parseFloat($importePartidaMonCot.val()).toFixed(4));
+					
 					//calcula el impuesto para este producto multiplicando el importe por la tasa del iva
-					$totalImpuestoPartida.val( parseFloat( parseFloat( quitar_comas( $importePartida.val() ) ) * parseFloat(  $tasaIva.val()  )).toFixed(4));
+					//$totalImpuestoPartida.val( parseFloat( parseFloat( quitar_comas( $importePartida.val() ) ) * parseFloat(  $tasaIva.val()  )).toFixed(4));
+					$totalImpuestoPartida.val( parseFloat(parseFloat( $importePartidaMonCot.val() ) * parseFloat(  $tasaIva.val()  ) ).toFixed(4));
 				}else{
 					$importePartida.val('');
+					$importePartidaMonCot.val('');
 				}
 				
 				$recalcula_totales();
@@ -1286,7 +1436,7 @@ $(function() {
 					return true;
 				}else {
 					return false;
-				}		
+				}
 			});
 			
 			
@@ -1418,9 +1568,12 @@ $(function() {
 		}
 		
 		$grid_productos.find('tr').each(function (index){
-			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
+			if(( $(this).find('#cost').val().trim() != '') && ( $(this).find('#cant').val().trim() != '' )){
 				//acumula los importes en la variable subtotal
-				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat( quitar_comas( $(this).find('#import').val() ) );
+				//sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat( quitar_comas( $(this).find('#import').val() ) );
+				
+				//aqui se suma el importe en la moneda global de la cotizacion
+				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat( quitar_comas( $(this).find('#impMonCot').val() ) );
 				if($(this).find('#totimp').val() != ''){
 					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
 				}
@@ -1452,6 +1605,7 @@ $(function() {
 		var $valor_impuesto = $('#forma-cotizacions-window').find('input[name=valorimpuesto]');
 		var $grid_productos = $('#forma-cotizacions-window').find('#grid_productos');
 		var $moneda_original = $('#forma-cotizacions-window').find('select[name=moneda2]');
+		var $select_moneda = $('#forma-cotizacions-window').find('select[name=moneda]');
 		
 		var sumaSubTotal = 0; //es la suma de todos los importes
 		var sumaImpuesto = 0; //valor del iva
@@ -1466,8 +1620,13 @@ $(function() {
 			var precio_cambiado=0;
 			var importe_cambiado=0;
 			var $tasaIva = $(this).find('#ivalorimp');
+			var $totalImpuestoPartida = $(this).find('#totimp');
+			var $idMonedaPartida = $(this).find('#monedagrid');
 			
-			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
+			//importe de la partida en la Moneda de la cotizacion
+			var $importePartidaMonCot = $(this).find('#impMonCot');
+			
+			if(( $(this).find('#cost').val().trim() != '') && ( $(this).find('#cant').val().trim() != '' )){
 				
 				if( parseInt($moneda_original.val()) != parseInt(moneda_id) ){
 					if(parseInt($moneda_original.val())==1 && parseInt(moneda_id)!=1){
@@ -1494,11 +1653,38 @@ $(function() {
 					$(this).find('#import').val($(this).agregar_comas(parseFloat(importe_cambiado).toFixed(4) ) );
 				}
 				
+				
+				/*
+				Calcula el Importe de la partida en la Moneda Global de la Cotizacion, esto porque el total de la cotizacion
+				se saca tomando la moneda global y no la moneda de cada partida.
+				*/
+				if(parseInt($select_moneda.val()) == parseInt($idMonedaPartida.val())){
+					$importePartidaMonCot.val(parseFloat($importePartida.val()).toFixed(4));
+				}else{
+					if(parseInt($select_moneda.val())==1 && parseInt($idMonedaPartida.val())!=1){
+						$importePartidaMonCot.val( parseFloat($importePartida.val()) * parseFloat($tipo_cambio.val()) );
+					}else{
+						if(parseInt($select_moneda.val())!=1 && parseInt($idMonedaPartida.val())==1){
+							$importePartidaMonCot.val( parseFloat($importePartida.val()) / parseFloat($tipo_cambio.val()) );
+						}
+					}
+				}
+				
+				$importePartidaMonCot.val(parseFloat($importePartidaMonCot.val()).toFixed(4));
+				
+				//calcula el impuesto para este producto multiplicando el importe por el valor del iva
+				//$totalImpuestoPartida.val( parseFloat(parseFloat( $importePartida.val() ) * parseFloat(  $tasaIva.val()  ) ).toFixed(4));
+				$totalImpuestoPartida.val( parseFloat(parseFloat( $importePartidaMonCot.val() ) * parseFloat(  $tasaIva.val()  ) ).toFixed(4));
+				
+				
+				
 				//acumula los importes en la variable subtotal
-				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
+				//sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
+				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#impMonCot').val()));
 				
 				if($(this).find('#totimp').val() != ''){
-					$(this).find('#totimp').val(parseFloat( quitar_comas($(this).find('#import').val()) ) * parseFloat($tasaIva.val()));
+					//$(this).find('#totimp').val(parseFloat( quitar_comas($(this).find('#import').val()) ) * parseFloat($tasaIva.val()));
+					$(this).find('#totimp').val(parseFloat( quitar_comas($(this).find('#impMonCot').val()) ) * parseFloat($tasaIva.val()));
 					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
 				}
 			}
@@ -1975,6 +2161,18 @@ $(function() {
 				var idMonSeleccionado = $(this).val();
 				var cambiarTcOriginal='false';
 				
+				//alert("select_moneda: "+$select_moneda.find('option:selected').val()+"   seleccionado:"+seleccionado);
+				//cambiar la moneda de las partidas del grid al cambiar la moneda
+				$grid_productos.find('select[name=monedagrid]').children().remove();
+				var moneda_grid_hmtl = '';
+				$.each(entry['Monedas'],function(entryIndex,moneda){
+					if(parseInt(idMonSeleccionado) == parseInt(moneda['id'])){
+						moneda_grid_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion_abr'] + '</option>';
+					}
+				});
+				$grid_productos.find('select[name=monedagrid]').append(moneda_grid_hmtl);
+				
+				
 				//si la moneda actual seleccionada es igual a la moneda original entonces permitir cambiar el tipo de cambio original
 				if( parseInt($select_moneda_original.val()) == parseInt($select_moneda.val()) ){
 					cambiarTcOriginal='true';
@@ -1983,17 +2181,6 @@ $(function() {
 				//ejecutar funcion al cambiar la moneda
 				getTcIdMoneda(idMonSeleccionado, cambiarTcOriginal);
 				
-				
-				//alert("select_moneda: "+$select_moneda.find('option:selected').val()+"   seleccionado:"+seleccionado);
-				//cambiar la moneda de las partidas del grid al cambiar la moneda
-				$grid_productos.find('select[name=monedagrid]').children().remove();
-				var moneda_grid_hmtl = '';
-				$.each(entry['Monedas'],function(entryIndex,moneda){
-					if(parseInt(idMonSeleccionado) == parseInt(moneda['id'])){
-						moneda_grid_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion_abr'] + '</option>';
-					}
-				});
-				$grid_productos.find('select[name=monedagrid]').append(moneda_grid_hmtl);
 			});
 			
 			//aplicar multiselect
@@ -2528,9 +2715,9 @@ $(function() {
 							var idImp = prod['id_imp'];
 							var valorImp = prod['valor_imp'];
 							var tcMonProd = entry['datosCotizacion'][0]['tipo_cambio'];
-							
+							var idmonpartida = prod['moneda_id'];
 							//aqui se pasan datos a la funcion que agrega el tr en el grid
-							$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, entry['Monedas'], idImp, valorImp, tcMonProd);
+							$agrega_producto_grid($grid_productos, id_detalle, id_prod, sku, titulo, imagen, descripcion, unidad, id_pres, pres, precio, cantidad, importe, mon_id, entry['Monedas'], idImp, valorImp, tcMonProd, idmonpartida);
 							
 						});
 					}
