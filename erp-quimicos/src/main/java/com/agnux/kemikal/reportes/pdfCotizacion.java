@@ -66,6 +66,7 @@ public class pdfCotizacion {
     private String subtotal;
     private String incluyeIva;
     private String monedaAbr;
+    private String idMonGlobal;
     
     private String emisorRazonSocial;
     private String emisorRfc;
@@ -120,6 +121,7 @@ public class pdfCotizacion {
         this.setSubtotal(datos.get("subtotal"));
         this.setIncluyeIva(datos.get("incluiyeIvaPdf"));
         this.setMonedaAbr(datos.get("monedaAbr"));
+        this.setIdMonGlobal(datos.get("moneda_id"));
         
         this.setEmisorCalle(datosEmisor.get("emp_calle"));
         this.setEmisorColonia(datosEmisor.get("emp_colonia"));
@@ -205,7 +207,7 @@ public class pdfCotizacion {
             tablaHeader.addCell(cell);
             
             ////////////////////////////////////////////////////////////////////////////////            
-            cadena = this.getTipoDoc() + "&" + this.getFolio() + "&" +  this.getFecha();
+            cadena = this.getTipoDoc() + "&" + this.getFolio() + "&" +  this.getFecha()+ "&" +  this.getTipoCambio();
             
             cell = new PdfPCell(cepdf.addContent(cadena));
             cell.setBorder(0);
@@ -525,6 +527,30 @@ public class pdfCotizacion {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                 tablaPartidas.addCell(cell);
+                
+                /*
+                Integer.parseInt(getIdMonGlobal());
+                
+                
+                if(parseInt($select_moneda.val()) == parseInt(idMonSeleccionado)){
+                        $importePartidaMonCot.val(parseFloat($importePartida.val()).toFixed(4));
+                }else{
+                        if(parseInt($select_moneda.val())==1 && parseInt(idMonSeleccionado)!=1){
+                                $importePartidaMonCot.val( parseFloat($importePartida.val()) * parseFloat($tc.val()) );
+                        }else{
+                                if(parseInt($select_moneda.val())!=1 && parseInt(idMonSeleccionado)==1){
+                                        $importePartidaMonCot.val( parseFloat($importePartida.val()) / parseFloat($tc.val()) );
+                                }
+                        }
+                }
+
+                $importePartidaMonCot.val(parseFloat($importePartidaMonCot.val()).toFixed(4));
+
+                //calcula el impuesto para este producto multiplicando el importe por el valor del iva
+                $totalImpuestoPartida.val( parseFloat(parseFloat( $importePartidaMonCot.val() ) * parseFloat(  $tasaIva.val()  ) ).toFixed(4));
+                 */
+                
+                
             }
             
             
@@ -536,7 +562,7 @@ public class pdfCotizacion {
                 cell.setColspan(2);
                 cell.setBorder(0);
                 tablaPartidas.addCell(cell);
-
+                
                 if(this.getIncluyeImgDesc().equals("true")){
                     cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(""), smallFont));
                     cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -592,18 +618,18 @@ public class pdfCotizacion {
                 cell.setColspan(3);
                 cell.setBorder(0);
                 tablaPartidas.addCell(cell);
-
+                
                 cell = new PdfPCell(new Paragraph("I.V.A.", smallFontBold));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 cell.setBorder(0);
                 tablaPartidas.addCell(cell);
-
+                
                 cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getImpuesto()), smallFontBold));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 tablaPartidas.addCell(cell);
-
+                
                 cell = new PdfPCell(new Paragraph(esteAtributoSeDejoNulo(this.getMonedaAbr()), smallFontBold));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -967,6 +993,7 @@ public class pdfCotizacion {
             //[0]   getTipoDoc
             //[1]   getFolio
             //[2]   getFecha
+            //[3]   Tipo de cambio
 
             cell = new PdfPCell(new Paragraph(temp[0],largeBoldFont));
             cell.setBorder(0);
@@ -993,12 +1020,12 @@ public class pdfCotizacion {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             table.addCell(cell);
             
-            
+            /*
             //celda vacia
             cell = new PdfPCell(new Paragraph(" ", smallFont));
             cell.setBorder(1);
             table.addCell(cell);
-            
+            */
             cell = new PdfPCell(new Paragraph("FECHA EXPEDICION",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1009,6 +1036,24 @@ public class pdfCotizacion {
             
             
             cell = new PdfPCell(new Paragraph(temp[2].split("-")[2]+"/"+temp[2].split("-")[1]+"/"+temp[2].split("-")[0],smallFont));
+            //cell = new PdfPCell(new Paragraph("2012-12-12",smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph("TIPO DE CAMBIO",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph(temp[3],smallFont));
             //cell = new PdfPCell(new Paragraph("2012-12-12",smallFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1542,5 +1587,13 @@ public class pdfCotizacion {
 
     public void setMonedaAbr(String monedaAbr) {
         this.monedaAbr = monedaAbr;
+    }
+    
+    public String getIdMonGlobal() {
+        return idMonGlobal;
+    }
+
+    public void setIdMonGlobal(String idMonGlobal) {
+        this.idMonGlobal = idMonGlobal;
     }
 }
