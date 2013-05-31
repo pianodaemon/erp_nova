@@ -118,7 +118,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_FAC_CANCELACION,
         ROLE_FAC_CONSULTAS,
         ROLE_ORDEN_PRODUCCION_SUBENSAMBLE,
-        ROLE_PRODUCCION_SUBENSAMBLE" />
+        ROLE_PRODUCCION_SUBENSAMBLE,
+        ROLE_PRO_EQUIPOS_ADICIONALES" />
         
         
         
@@ -256,6 +257,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/proinstrumentosmedicion/startup.agnux" access="ROLE_ADMIN,ROLE_PRO_INSTRUMENTOS_MEDICION" />
         <intercept-url pattern="/controllers/protipoequipo/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_TIPO_EQUIPO" /><!--Ezequiel-->
         <intercept-url pattern="/controllers/proreporteproduccion/startup.agnux" access="ROLE_ADMIN,ROLE_PRO_REPORTE_PRODUCCION" /><!--Vale-->
+        
+        <intercept-url pattern="/controllers/proequiposadic/startup.agnux" access="ROLE_ADMIN,ROLE_PRO_EQUIPOS_ADICIONALES" /><!--Aron-->
         
         
         <!--Paco, Noe-->
