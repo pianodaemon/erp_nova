@@ -267,7 +267,7 @@
 																<td width="180"><select name="select_chequera_cheque" style="width:180px;" title="Seleccione el Numero de Cuenta"></select></td>
 																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_nocuenta"></td>
 																<td width="70">No.&nbsp;Cheque</td>
-																<td width="130"><input type="text" name="num_cheque" style="width:130px;" title="Ingrese el numero de cheque" maxlength="50" readOnly="true"></td>
+																<td width="130"><input type="text" name="num_cheque" style="width:130px;" title="Ingrese el numero de cheque" maxlength="50"></td>
 																<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_nocheque"></td>
 																<td width="80"></td>
 															</tr>

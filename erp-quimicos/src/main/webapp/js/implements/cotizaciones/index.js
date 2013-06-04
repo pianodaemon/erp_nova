@@ -1027,7 +1027,7 @@ $(function() {
 		//agregar comas
 		precioCambiado = $(this).agregar_comas(precioCambiado);
 		
-		alert("precioCambiado: "+precioCambiado);
+		//alert("precioCambiado: "+precioCambiado);
 		
 		
 		/*

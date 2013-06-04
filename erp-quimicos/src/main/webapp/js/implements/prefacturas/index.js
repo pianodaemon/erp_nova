@@ -822,15 +822,27 @@ $(function() {
 								trr += '<input type="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 								//trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;"></select>';
 						trr += '</td>';
+						
+						
+						
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-							trr += '<input type="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
+							trr += '<input type="text" 	name="cantPedido" value="'+  prod['cantidad'] +'" 	id="cantped" class="borde_oculto" style="width:76px;" readOnly="true">';
 						trr += '</td>';
-						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-							trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
+						
+						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+							trr += '<input type="text" 	name="cantFacturado" value="0" 	id="cantfac" class="borde_oculto" style="width:76px;" readOnly="true">';
+						trr += '</td>';
+						
+						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+							trr += '<input type="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 	id="cant" class="cant'+ tr +'" style="width:76px;" readOnly="true">';
+						trr += '</td>';
+						
+						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+							trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
 							trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 						trr += '</td>';
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-							trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
+							trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
 							trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['valor_imp'])+'">';
 							trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" id="idimppord">';
 							trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
@@ -1526,7 +1538,7 @@ $(function() {
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		//var accion = "getCotizacion";
 		
-		$('#forma-prefacturas-window').css({"margin-left": -340, 	"margin-top": -220});
+		$('#forma-prefacturas-window').css({"margin-left": -400, 	"margin-top": -235});
 		
 		$forma_selected.prependTo('#forma-prefacturas-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1941,7 +1953,7 @@ $(function() {
 			
 			$(this).modalPanel_prefacturas();
 			
-			$('#forma-prefacturas-window').css({"margin-left": -340, 	"margin-top": -220});
+			$('#forma-prefacturas-window').css({"margin-left": -400, 	"margin-top": -235});
 			
 			$forma_selected.prependTo('#forma-prefacturas-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -2416,11 +2428,22 @@ $(function() {
 									trr += '<input type="text" 	name="presentacion" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 									//trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;"></select>';
 							trr += '</td>';
+							
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<input type="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
+								trr += '<input type="text" 	name="cantPedido" value="'+  prod['cant_pedido'] +'" 	id="cantped" class="borde_oculto" style="width:76px;" readOnly="true">';
 							trr += '</td>';
-							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
+							
+							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+								trr += '<input type="text" 	name="cantFacturado" value="'+  prod['cant_facturado'] +'" 	id="cantfac" class="borde_oculto" style="width:76px;" readOnly="true">';
+							trr += '</td>';
+							
+							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+								trr += '<input type="text" 	name="cantidad" value="'+  prod['cant_pendiente'] +'" 	id="cant" class="cant'+ tr +'" style="width:76px;">';
+								trr += '<input type="hidden" name="cantPendiente" value="'+  prod['cant_pendiente'] +'" class="cantPendiente'+ tr +'" >';
+							trr += '</td>';
+							
+							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+								trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" class="borde_oculto" style="width:76px; text-align:right;">';
 								trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
@@ -2431,6 +2454,89 @@ $(function() {
 							trr += '</td>';
 							trr += '</tr>';
 							$grid_productos.append(trr);
+                            
+                            
+                            
+							//validar campo cantidad, solo acepte numeros y punto
+							$grid_productos.find('input.cant'+tr).keypress(function(e){
+								// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+								if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+									return true;
+								}else {
+									return false;
+								}
+							});
+                            
+                            
+							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+							$grid_productos.find('input.cant'+tr).focus(function(e){
+								if($(this).val().trim() == ''){
+									$(this).val('');
+								}else{
+									if(parseFloat($(this).val()) <=0 ){
+										$(this).val('');
+									}
+								}
+							});
+                            
+                            
+							//Al perder el enfoque, si el campo quedo vacio se le asigna un cero
+							$grid_productos.find('input.cant'+tr).blur(function(e){
+								if($(this).val().trim() == ''){
+									$(this).val(0);
+								}
+								
+								//Redondear de acuerdo al numero de decimales de la Unidad de Medida del Producto
+								$(this).val(parseFloat($(this).val()).toFixed(parseInt(prod['no_dec'])));
+								
+								if(parseFloat($(this).val()) > parseFloat($grid_productos.find('input.cantPendiente'+tr))){
+									/*
+									jAlert('La cantidad a Facturar', 'Atencion!', function(r) { 
+										$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+									});
+									*/
+								}else{
+									
+									if(parseFloat($(this).val()) < parseFloat($grid_productos.find('input.cantPendiente'+tr))){
+										/*
+										jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+											$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
+										});
+										*/
+									}
+								}
+							});
+                            
+                            
+                            
+							/*
+							2=FACTURACION
+							*/
+							//Verificar si esta en proceso de 2=Facturacion
+							if(parseInt(flujo_proceso)==2){
+								/*
+								1=Factura
+								2=Remision
+								3=Factura de Remision
+								*/
+								if(parseInt(entry['datosPrefactura'][0]['tipo_documento'])==3){
+									//Si es facturacion de Remision, establecemos el campo en solo lectura
+									$grid_productos.find('input.cant'+tr).attr("readonly", true);
+								}else{
+									if(prod['facturado']=='true'){
+										//Si la partida ya esta facturada en su totalidad, establecemos el campo en solo lectura
+										$grid_productos.find('input.cant'+tr).attr("readonly", true);
+									}
+								}
+							}else{
+								//Si el flujo es diferente de Facturacion, establecemos el campo en solo lectura
+								$grid_productos.find('input.cant'+tr).attr("readonly", true);
+							}
+                            
+                            
+                            
+                            
+                            
                             
                             /*
 							//cargar select de presentaciones de cada producto
@@ -2501,10 +2607,7 @@ $(function() {
 					//$agregar_producto.hide();
 					
 					$grid_productos.find('a[href*=elimina_producto]').hide();
-					$grid_productos.find('#cant').attr("readonly", true);//establece solo lectura campos cantidad del grid
 					$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid
-					
-					
 				});//termina llamada json
                 
 				

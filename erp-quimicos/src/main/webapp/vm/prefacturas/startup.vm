@@ -146,7 +146,7 @@
 					
                     <div id="div_two" title="" class="prefacturas_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:873px; padding-left:6px;"><strong>Facturaci&oacute;n</strong></div>
+                            <div class="fixed column" style="width:1033px; padding-left:6px;"><strong>Facturaci&oacute;n</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -170,13 +170,13 @@
 										
                                         <table border="0" style="margin:0; padding:0;">
 											<tr>
-												<td width="520"></td>
+												<td width="600"></td>
 												<td width="10"></td>
-												<td width="90"></td>
-												<td width="260"></td>
+												<td width="130"></td>
+												<td width="300"></td>
 											</tr>
 											<tr>
-												<td valign="top" width="520"  > 
+												<td valign="top" width="600"  > 
 													<table border="0" class="gral">
 														
 														<tr>
@@ -232,7 +232,7 @@
 												<!--<td width="60"></td>-->
 												
 												<!--<td width="350" colspan="2" valign="top" style="border: solid 1px #454442;">-->
-												<td width="350" colspan="2" valign="top">
+												<td width="510" colspan="2" valign="top">
 													<table border="0">
 														<tr>
 															<td width="10"></td>
@@ -241,8 +241,8 @@
 														</tr>
 														<tr>
 															<td width="10"></td>
-															<td width="330">
-																<textarea name="observaciones" rows="4" cols="60" style="width:330px; resize: none;"></textarea>
+															<td width="430">
+																<textarea name="observaciones" rows="4" cols="60" style="width:430px; resize: none;"></textarea>
 																<textarea name="observaciones_original" rows="2" cols="60" style="display:none;"></textarea>
 															</td>
 															<td width="10"></td>
@@ -387,13 +387,15 @@
 																<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="202">&nbsp;Descripci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Presentaci&oacute;n</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cantidad</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Precio&nbsp;unitario</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cant. Pedido</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cant. Facturado</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cant. Pendiente</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Precio&nbsp;unitario</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Importe</td>
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1030; height: 115px; border:1px solid #C1DAD7 !important;">	
 														<table class="tabla_facturas">
 															<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
 																
@@ -405,7 +407,7 @@
 											</tr>
 											
 											<tr>
-												<td colspan="3" width="620"  align="left" valign="top">
+												<td colspan="3" width="660"  align="left" valign="top">
 
 													<div id="div_warning_grid" style="display:none;">
 														
@@ -439,8 +441,8 @@
 													</div>
 													
 												</td>
-												<td  width="260" align="right" valign="top" style="font-weight: bold;">
-													<table border ="0" width="260">
+												<td  width="300" align="right" valign="top" style="font-weight: bold;">
+													<table border ="0" width="300">
 														<tr>
 															<td width="80"></td>
 															<td width="60">Subtotal</td>
@@ -471,10 +473,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:886px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
+                            <div class="fixed column" style="width:1046px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="786"></td>
+										<td width="946"></td>
 										<td>
 											<!--<input  id="submit" style="width:77px; height:24px; background-image:url('../../img/modalbox/btn1.png'); background-repeat:no-repeat;">-->
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
