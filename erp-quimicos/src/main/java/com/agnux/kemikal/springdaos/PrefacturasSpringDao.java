@@ -285,13 +285,15 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
                                 +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
                                 +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
-                                +"erp_prefacturas_detalles.cantidad,"
+                                +"erp_prefacturas_detalles.cantidad AS cant_pedido,"
+                                +"erp_prefacturas_detalles.cant_facturado AS cant_facturado,"
+                                +"(erp_prefacturas_detalles.cantidad::double precision - erp_prefacturas_detalles.cant_facturado::double precision) AS cant_pendiente,"
+                                +"erp_prefacturas_detalles.facturado,"
                                 +"erp_prefacturas_detalles.precio_unitario,"
                                 +"(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
                                 +"erp_prefacturas_detalles.tipo_impuesto_id,"
                                 +"erp_prefacturas_detalles.valor_imp, "
-                                +"gral_mon.descripcion as moneda, "
-                                +"inv_prod_unidades.decimales AS no_dec "
+                                +"gral_mon.descripcion as moneda "
                         + "FROM erp_prefacturas "
                         + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
                         + "LEFT JOIN gral_mon on gral_mon.id = erp_prefacturas.moneda_id "
@@ -312,10 +314,13 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("unidad",rs.getString("unidad"));
-                    row.put("no_dec",rs.getInt("no_dec"));
+                    row.put("no_dec",rs.getInt("decimales"));
                     row.put("id_presentacion",rs.getString("id_presentacion"));
                     row.put("presentacion",rs.getString("presentacion"));
-                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
+                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cant_pedido"), rs.getInt("decimales") ));
+                    row.put("cant_facturado",StringHelper.roundDouble( rs.getString("cant_facturado"), rs.getInt("decimales") ));
+                    row.put("cant_pendiente",StringHelper.roundDouble( rs.getString("cant_pendiente"), rs.getInt("decimales") ));
+                    row.put("facturado",String.valueOf(rs.getBoolean("facturado")));
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
                     row.put("moneda",rs.getString("moneda"));

@@ -107,7 +107,7 @@ public class pdfCotizacion {
         this.setTipo(datos.get("tipo"));
         this.setFolio(datos.get("folio"));
         this.setFecha(datos.get("fecha"));
-        this.setTipoCambio(datos.get("tipo_cambio"));
+        this.setTipoCambio(datos.get("tipoCambio"));
         this.setObservaciones(datos.get("observaciones"));
         this.setIncluyeImgDesc(datos.get("img_desc"));
         this.setPuestoUsuario(datos.get("puesto_usuario"));
@@ -157,6 +157,9 @@ public class pdfCotizacion {
             Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
             Font smallBoldFontBlack = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.BLACK);
             Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
+            
+            
+            
             
             Document document;
             PdfPTable tablaHeader;
@@ -529,28 +532,35 @@ public class pdfCotizacion {
                 tablaPartidas.addCell(cell);
                 
                 /*
-                Integer.parseInt(getIdMonGlobal());
+                //idMonGlobal=0;
+                //tipoCambioGlobal
+                Integer idMonPartida=0;
+                //Importe en la moneda de la Partida
+                Double importePartida=0.0;
+                //El importe de la partida en la moneda global de la cotizacion
+                Double importePartidaMonCot=0.0;
+                Double impuestoPartida = 0.0;
+                Double tasaImpuestoPartida = 0.0;
                 
                 
-                if(parseInt($select_moneda.val()) == parseInt(idMonSeleccionado)){
-                        $importePartidaMonCot.val(parseFloat($importePartida.val()).toFixed(4));
+                if(idMonGlobal == idMonPartida){
+                        importePartidaMonCot = parseFloat($importePartida.val()).toFixed(4));
                 }else{
-                        if(parseInt($select_moneda.val())==1 && parseInt(idMonSeleccionado)!=1){
-                                $importePartidaMonCot.val( parseFloat($importePartida.val()) * parseFloat($tc.val()) );
+                        if(idMonGlobal==1 && idMonPartida!=1){
+                                importePartidaMonCot =  parseFloat($importePartida.val()) * parseFloat($tc.val()) );
                         }else{
-                                if(parseInt($select_moneda.val())!=1 && parseInt(idMonSeleccionado)==1){
-                                        $importePartidaMonCot.val( parseFloat($importePartida.val()) / parseFloat($tc.val()) );
+                                if(idMonGlobal!=1 && idMonPartida==1){
+                                        importePartidaMonCot =  parseFloat($importePartida.val()) / parseFloat($tc.val()) );
                                 }
                         }
                 }
-
-                $importePartidaMonCot.val(parseFloat($importePartidaMonCot.val()).toFixed(4));
-
+                
                 //calcula el impuesto para este producto multiplicando el importe por el valor del iva
-                $totalImpuestoPartida.val( parseFloat(parseFloat( $importePartidaMonCot.val() ) * parseFloat(  $tasaIva.val()  ) ).toFixed(4));
-                 */
+                impuestoPartida = importePartidaMonCot * tasaImpuestoPartida;
                 
-                
+                sumaImportes = sumaImportes + importePartidaMonCot;
+                sumaImpuesto = sumaImpuesto + impuestoPartida;
+                */
             }
             
             

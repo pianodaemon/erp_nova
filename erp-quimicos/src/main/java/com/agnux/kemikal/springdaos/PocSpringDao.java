@@ -2060,7 +2060,9 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "LEFT JOIN gral_mon on gral_mon.id = poc_cot_detalle.gral_mon_id  "
                 + "WHERE poc_cot_detalle.poc_cot_id= ? "
                 + "ORDER BY poc_cot_detalle.id";
-
+        
+        System.out.println("sql_query: "+sql_query);
+        
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
