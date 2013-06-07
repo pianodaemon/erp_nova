@@ -2468,7 +2468,7 @@ $(function() {
 							});
                             
                             
-                            if(parseInt(flujo_proceso)==2 && parseInt(entry['datosPrefactura'][0]['tipo_documento'])!=3 && prod['facturado']!='true'){
+                            if((parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8) && parseInt(entry['datosPrefactura'][0]['tipo_documento'])!=3 && prod['facturado']!='true'){
 								//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 								$grid_productos.find('input.cant'+tr).focus(function(e){
 									if($(this).val().trim() == ''){
@@ -2534,9 +2534,11 @@ $(function() {
                             
 							/*
 							2=FACTURACION
+							7=FAC PARCIAL
+							8=REM PARCIAL
 							*/
 							//Verificar si esta en proceso de 2=Facturacion
-							if(parseInt(flujo_proceso)==2){
+							if(parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8){
 								/*
 								1=Factura
 								2=Remision
@@ -2605,8 +2607,13 @@ $(function() {
 						$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid
 					}
 					
-					//flujo_proceso 2=Prefactura
-					if(parseInt(flujo_proceso)==2){
+					/*
+					2=FACTURACION
+					7=FAC PARCIAL
+					8=REM PARCIAL
+					*/
+					//Verificar flujo del proceso
+					if(parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8){
 						$boton_facturar.show();
 					}
 					
