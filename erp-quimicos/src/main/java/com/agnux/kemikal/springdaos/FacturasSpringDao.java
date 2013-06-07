@@ -127,12 +127,12 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //ejecuta procesos relacionados a facturacion
+    //Ejecuta procesos relacionados a facturacion
     @Override
     public String selectFunctionForFacAdmProcesos(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from fac_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         
-        //System.out.println("sql_to_query fac_adm_procesos: "+sql_to_query);
+        System.out.println("selectFunctionForFacAdmProcesos: "+sql_to_query);
         
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -755,9 +755,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                                 + "SELECT inv_prod.sku,"
                                         + "inv_prod.descripcion AS titulo_producto,"
                                         + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
-                                        + "erp_prefacturas_detalles.cantidad,"
+                                        + "erp_prefacturas_detalles.cant_facturar AS cantidad,"
                                         + "erp_prefacturas_detalles.precio_unitario,"
-                                        + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
+                                        + "(erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) AS importe, "
                                         + "erp_prefacturas_detalles.tipo_impuesto_id AS id_impto,"
                                         + "erp_prefacturas_detalles.valor_imp,"
                                         + "(erp_prefacturas_detalles.valor_imp * 100::double precision) AS tasa_impuesto,"
@@ -1203,10 +1203,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + "inv_prod.sku,"
                         + "inv_prod.descripcion,"
                         + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
-                        + "erp_prefacturas_detalles.cantidad,"
+                        + "erp_prefacturas_detalles.cant_facturar AS cantidad,"
                         + "erp_prefacturas_detalles.precio_unitario,"
-                        + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
-                        + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) * erp_prefacturas_detalles.valor_imp AS importe_impuesto, "
+                        + "(erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) AS importe, "
+                        + "(erp_prefacturas_detalles.cant_facturar * erp_prefacturas_detalles.precio_unitario) * erp_prefacturas_detalles.valor_imp AS importe_impuesto, "
                         + "erp_prefacturas_detalles.tipo_impuesto_id AS id_impto,"
                         + "(erp_prefacturas_detalles.valor_imp * 100::double precision) AS tasa_impuesto,"
                         + "erp_prefacturas_detalles.valor_imp,"

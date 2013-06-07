@@ -486,7 +486,7 @@ public class PrefacturasController {
             @RequestParam(value="id_pres", required=true) Integer id_pres,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         HashMap<String,HashMap<String, Object>> jsonretorno = new HashMap<String,HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -587,7 +587,7 @@ public class PrefacturasController {
         for(int i=0; i<eliminado.length; i++) {
             arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"'";
             //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
-            //System.out.println(arreglo[i]);
+            System.out.println(arreglo[i]);
         }
         
         //serializar el arreglo

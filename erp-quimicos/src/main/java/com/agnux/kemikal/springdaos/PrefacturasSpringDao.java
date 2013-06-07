@@ -317,7 +317,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("no_dec",rs.getInt("decimales"));
                     row.put("id_presentacion",rs.getString("id_presentacion"));
                     row.put("presentacion",rs.getString("presentacion"));
-                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cant_pedido"), rs.getInt("decimales") ));
+                    row.put("cant_pedido",StringHelper.roundDouble( rs.getString("cant_pedido"), rs.getInt("decimales") ));
                     row.put("cant_facturado",StringHelper.roundDouble( rs.getString("cant_facturado"), rs.getInt("decimales") ));
                     row.put("cant_pendiente",StringHelper.roundDouble( rs.getString("cant_pendiente"), rs.getInt("decimales") ));
                     row.put("facturado",String.valueOf(rs.getBoolean("facturado")));
@@ -914,7 +914,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("id_presentacion",rs.getString("id_presentacion"));
                     row.put("presentacion",rs.getString("presentacion"));
-                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
+                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),2) );
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
                     row.put("gral_imp_id",rs.getInt("gral_imp_id"));
