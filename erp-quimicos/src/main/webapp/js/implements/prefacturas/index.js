@@ -2468,45 +2468,68 @@ $(function() {
 							});
                             
                             
-							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-							$grid_productos.find('input.cant'+tr).focus(function(e){
-								if($(this).val().trim() == ''){
-									$(this).val('');
-								}else{
-									if(parseFloat($(this).val()) <=0 ){
+                            if(parseInt(flujo_proceso)==2 && parseInt(entry['datosPrefactura'][0]['tipo_documento'])!=3 && prod['facturado']!='true'){
+								//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+								$grid_productos.find('input.cant'+tr).focus(function(e){
+									if($(this).val().trim() == ''){
 										$(this).val('');
+									}else{
+										if(parseFloat($(this).val()) <=0 ){
+											$(this).val('');
+										}
 									}
-								}
-							});
-                            
-                            
-							//Al perder el enfoque, si el campo quedo vacio se le asigna un cero
-							$grid_productos.find('input.cant'+tr).blur(function(e){
-								if($(this).val().trim() == ''){
-									$(this).val(0);
-								}
+								});
 								
-								//Redondear de acuerdo al numero de decimales de la Unidad de Medida del Producto
-								$(this).val(parseFloat($(this).val()).toFixed(parseInt(prod['no_dec'])));
 								
-								if(parseFloat($(this).val()) > parseFloat($grid_productos.find('input.cantPendiente'+tr))){
-									/*
-									jAlert('La cantidad a Facturar', 'Atencion!', function(r) { 
-										$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
-									});
-									*/
-								}else{
+								//Al perder el enfoque, si el campo quedo vacio se le asigna un cero
+								$grid_productos.find('input.cant'+tr).blur(function(e){
+									var $facturar = $(this);
+									var $disponible = $grid_productos.find('input.cantPendiente'+tr);
+									var $costo_unitario = $(this).parent().parent().find('input[name=costo]');
+									var $importe = $grid_productos.find('input[name=importe'+ tr +']');
+									var $importe_impuesto = $grid_productos.find('input[name=totimpuesto'+ tr +']');
+									var $tasa_impuesto = $(this).parent().parent().find('input[name=valor_imp]');
 									
-									if(parseFloat($(this).val()) < parseFloat($grid_productos.find('input.cantPendiente'+tr))){
-										/*
-										jAlert('El producto: '+sku+' con presentacion: '+pres+' ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
-											$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
-										});
-										*/
+									if($facturar.val().trim() == ''){
+										$facturar.val(0);
 									}
-								}
-							});
-                            
+									
+									//Redondear de acuerdo al numero de decimales de la Unidad de Medida del Producto
+									$facturar.val(parseFloat($facturar.val()).toFixed(parseInt(prod['no_dec'])));
+									
+									if(parseFloat($facturar.val()) > parseFloat($disponible.val())){
+										jAlert('La cantidad a '+$boton_facturar.val()+' para &eacute;sta partida no debe ser mayor a la cantidad pendiente.\nPendiente='+$disponible.val()+'\n'+$boton_facturar.val()+'='+$facturar.val(), 'Atencion!', function(r) { 
+											$facturar.val($disponible.val());
+											$importe.val(parseFloat($facturar.val()) * parseFloat($costo_unitario.val()));
+											$importe.val(parseFloat($importe.val()).toFixed(4));
+											$importe_impuesto.val(parseFloat($importe.val()) * parseFloat($tasa_impuesto.val()));
+											$importe_impuesto.val(parseFloat($importe_impuesto.val()).toFixed(4));
+											$calcula_totales();//llamada a la funcion que calcula totales
+											$facturar.focus();
+										});
+									}else{
+										
+										if(parseFloat($facturar.val()) <= 0){
+											jAlert('La cantidad a '+$boton_facturar.val()+' para &eacute;sta partida no debe ser igual a cero.\nPendiente='+$disponible.val()+'\n'+$boton_facturar.val()+'='+$facturar.val(), 'Atencion!', function(r) { 
+												$facturar.val($disponible.val());
+												$importe.val(parseFloat($facturar.val()) * parseFloat($costo_unitario.val()));
+												$importe.val(parseFloat($importe.val()).toFixed(4));
+												$importe_impuesto.val(parseFloat($importe.val()) * parseFloat($tasa_impuesto.val()));
+												$importe_impuesto.val(parseFloat($importe_impuesto.val()).toFixed(4));
+												$calcula_totales();//llamada a la funcion que calcula totales
+												
+												$facturar.focus();
+											});
+										}else{
+											$importe.val(parseFloat($facturar.val()) * parseFloat($costo_unitario.val()));
+											$importe.val(parseFloat($importe.val()).toFixed(4));
+											$importe_impuesto.val(parseFloat($importe.val()) * parseFloat($tasa_impuesto.val()));
+											$importe_impuesto.val(parseFloat($importe_impuesto.val()).toFixed(4));
+											$calcula_totales();//llamada a la funcion que calcula totales
+										}
+									}
+								});
+                            }
                             
                             
 							/*
@@ -2522,20 +2545,19 @@ $(function() {
 								if(parseInt(entry['datosPrefactura'][0]['tipo_documento'])==3){
 									//Si es facturacion de Remision, establecemos el campo en solo lectura
 									$grid_productos.find('input.cant'+tr).attr("readonly", true);
+									$grid_productos.find('input.cant'+tr).css({'background' : '#F0F0F0'});
 								}else{
 									if(prod['facturado']=='true'){
 										//Si la partida ya esta facturada en su totalidad, establecemos el campo en solo lectura
 										$grid_productos.find('input.cant'+tr).attr("readonly", true);
+										$grid_productos.find('input.cant'+tr).css({'background' : '#F0F0F0'});
 									}
 								}
 							}else{
 								//Si el flujo es diferente de Facturacion, establecemos el campo en solo lectura
 								$grid_productos.find('input.cant'+tr).attr("readonly", true);
+								$grid_productos.find('input.cant'+tr).css({'background' : '#F0F0F0'});
 							}
-                            
-                            
-                            
-                            
                             
                             
                             /*
