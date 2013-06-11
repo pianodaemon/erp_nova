@@ -228,7 +228,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "inv_prod.sku AS codigo,"
                     + "inv_prod.descripcion AS titulo,"
                     + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
-                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
+                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
                     + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
                     + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
                     + "poc_pedidos_detalle.cantidad,"
@@ -244,7 +244,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_pedidos_detalle.presentacion_id "
                 + "WHERE poc_pedidos_detalle.poc_pedido_id="+id_pedido;
-
+        
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -257,19 +257,17 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("codigo",rs.getString("codigo"));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("unidad",rs.getString("unidad"));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
                     row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
                     row.put("presentacion",rs.getString("presentacion"));
-                    //row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
-                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
+                    row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("no_dec") ));
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
-                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
-
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
                     row.put("gral_imp_id",String.valueOf(rs.getInt("gral_imp_id")));
-                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
-
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2));
                     row.put("valor_check",rs.getString("valor_check"));
                     row.put("valor_selecionado",String.valueOf(rs.getInt("valor_selecionado")));
-                    row.put("cant_produccion",StringHelper.roundDouble(rs.getDouble("cant_produccion"),2) );
+                    row.put("cant_produccion",StringHelper.roundDouble(rs.getDouble("cant_produccion"), rs.getInt("no_dec") ) );
                     return row;
                 }
             }
