@@ -254,7 +254,7 @@ public class ProOrdenSimulacionController {
     
     
     
-    //localhost:8080/com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/logasignarutas/getPdfSimulaProduccion/1/NQ==/out.json
+    //http://localhost:8080//com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/proordensimulacion/getPdfSimulaProduccion/2/576/100/MQ==/out.json
     //Genera pdf de formulacion de
     @RequestMapping(value = "/getPdfSimulaProduccion/{tipo}/{id_formula}/{cantidad}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getPdfSimulaProduccionJson(
