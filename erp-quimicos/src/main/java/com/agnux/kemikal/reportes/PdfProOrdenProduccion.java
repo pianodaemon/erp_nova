@@ -1585,7 +1585,7 @@ public class PdfProOrdenProduccion {
             
             
             //texto centro pie de pagina
-            String text_center ="P√°gina " + writer.getPageNumber() + " de ";
+            String text_center ="Página " + writer.getPageNumber() + " de ";
             float text_center_Size = helv.getWidthPoint(text_center, 7);
             float pos_text_center = (document.getPageSize().getWidth()/2)-(text_center_Size/2);
             float adjust = text_center_Size + 3; 
