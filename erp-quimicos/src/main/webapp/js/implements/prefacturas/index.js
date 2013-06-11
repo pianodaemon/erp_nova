@@ -353,16 +353,18 @@ $(function() {
 	
 	
 	//carga los campos select con los datos que recibe como parametro
-	$carga_select_con_arreglo_fijo = function($campo_select, arreglo_elementos, elemento_seleccionado){
+	$carga_select_con_arreglo_fijo = function($campo_select, arreglo_elementos, elemento_seleccionado, mostrar_opciones){
 		$campo_select.children().remove();
 		var select_html = '';
 		for(var i in arreglo_elementos){
 			if( parseInt(i) == parseInt(elemento_seleccionado) ){
 				select_html += '<option value="' + i + '" selected="yes">' + arreglo_elementos[i] + '</option>';
 			}else{
-				//3=Facturacion de Remisiones, solo debe mostrarse cuando se abra la ventana desde el Icono de Nuevo
-				if(parseInt(elemento_seleccionado)==0  && parseInt(i)!=3 ){
-					select_html += '<option value="' + i + '"  >' + arreglo_elementos[i] + '</option>';
+				if (mostrar_opciones=='true'){
+					//3=Facturacion de Remisiones, solo debe mostrarse cuando se abra la ventana desde el Icono de Nuevo
+					if(parseInt(i)!=3 ){
+						select_html += '<option value="' + i + '"  >' + arreglo_elementos[i] + '</option>';
+					}
 				}
 			}
 		}
@@ -1732,7 +1734,8 @@ $(function() {
 			
 			//cargar select de tipos de movimiento
 			var elemento_seleccionado = 3;//Facturacion de Remisiones
-			$carga_select_con_arreglo_fijo($select_tipo_documento, array_select_documento, elemento_seleccionado);
+			var mostrar_opciones = 'false';
+			$carga_select_con_arreglo_fijo($select_tipo_documento, array_select_documento, elemento_seleccionado, mostrar_opciones);
 			
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
@@ -2260,7 +2263,14 @@ $(function() {
                     
 					//cargar select de tipos de movimiento
 					var elemento_seleccionado = entry['datosPrefactura']['0']['tipo_documento'];
-					$carga_select_con_arreglo_fijo($select_tipo_documento, array_select_documento, elemento_seleccionado);
+					var mostrar_opciones = 'false';
+					if(parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8){
+						if(parseInt(elemento_seleccionado)!=3){
+							mostrar_opciones = 'true';
+						}
+					}
+					
+					$carga_select_con_arreglo_fijo($select_tipo_documento, array_select_documento, elemento_seleccionado, mostrar_opciones);
 					
                     
 					//carga select denominacion con todas las monedas
@@ -2398,6 +2408,20 @@ $(function() {
 					
 					if(entry['datosGrid'] != null){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
+							var importePartida = 0;
+							var importeImpuesto = 0;
+							
+							//Verificar si esta en proceso de 2=Facturacion
+							if(parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8){
+								importePartida = parseFloat(prod['cant_pendiente']) * parseFloat(prod['precio_unitario']);
+							}else{
+								importePartida = prod['importe'];
+							}
+							importeImpuesto = parseFloat(importePartida) * parseFloat(prod['valor_imp']);
+							
+							importePartida = parseFloat(importePartida).toFixed(4);
+							importeImpuesto = parseFloat(importeImpuesto).toFixed(4);
+							
 							
 							//obtiene numero de trs
 							var tr = $("tr", $grid_productos).size();
@@ -2447,14 +2471,21 @@ $(function() {
 								trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
-								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['valor_imp'])+'">';
+								trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+ importePartida +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
+								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+ importeImpuesto +'">';
 								trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['tipo_impuesto_id'] +'" id="idimppord">';
 								trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
 							trr += '</td>';
 							trr += '</tr>';
 							$grid_productos.append(trr);
                             
+                            
+							//quitar enter a todos los campos input del grid
+							$grid_productos.find('input').keypress(function(e){
+								if(e.which==13 ) {
+									return false;
+								}
+							});
                             
                             
 							//validar campo cantidad, solo acepte numeros y punto

@@ -2625,15 +2625,18 @@ $(function() {
 							
 							//recalcula importe al perder enfoque el campo cantidad
 							$grid_productos.find('#cant').blur(function(){
-								if ($(this).val() == ''){
+								if ($(this).val().trim() == ''){
 									$(this).val(' ');
+								}else{
+									$(this).val(parseFloat($(this).val()).toFixed(parseInt(prod['no_dec'])));
 								}
+								
 								if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
 								{   //calcula el importe
 									$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
 									//redondea el importe en dos decimales
 									//$(this).parent().parent().find('#import').val( Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100 );
-									$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2) );
+									$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(4) );
 
 									//calcula el impuesto para este producto multiplicando el importe por el valor del iva
 									$(this).parent().parent().find('#totimp').val(parseFloat($(this).parent().parent().find('#import').val()) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
@@ -2654,15 +2657,18 @@ $(function() {
 							
 							//recalcula importe al perder enfoque el campo costo
 							$grid_productos.find('#cost').blur(function(){
-								if ($(this).val() == ''){
+								if ($(this).val().trim() == ''){
 									$(this).val(' ');
+								}else{
+									$(this).val(parseFloat($(this).val()).toFixed(4));
 								}
-								if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
+								
+								if( ($(this).val().trim() != '') && ($(this).parent().parent().find('#cant').val().trim() != '') )
 								{	//calcula el importe
 									$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val()));
 									//redondea el importe en dos decimales
 									//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
-									$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
+									$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(4));
 									
 									//calcula el impuesto para este producto multiplicando el importe por el valor del iva
 									$(this).parent().parent().find('#totimp').val(parseFloat($(this).parent().parent().find('#import').val()) * parseFloat( $(this).parent().parent().find('#ivalorimp').val()  ));
