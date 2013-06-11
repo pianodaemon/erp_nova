@@ -100,7 +100,7 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getProOrdenTipos(Integer emp_id);
     public ArrayList<HashMap<String, String>> getProPreorden_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getProPreorden_Detalle(Integer id);
-
+    
 
     //Orden produccion
     public ArrayList<HashMap<String, Object>> getProOrden_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
@@ -261,7 +261,15 @@ public interface ProInterfaceDao {
 
     //Para siimulacion de produccioon
     public ArrayList<HashMap<String, String>> getProductosFormula(String id_formula);
-
+    //Obtiene los datos de un producto formulado
+    public ArrayList<HashMap<String, String>> getProductoFormulaPdfSimulacion(Integer id_formula);
+    
+    //obtiene el titulo del tipo de simulacion
+    public ArrayList<HashMap<String, String>> getProOrdenTipoById(Integer id_tipo);
+    
+    //Obtiene el nombre de un empleaod de acuerdo a  su id
+    public HashMap<String, String> getNombreEmpleadoById(Integer id_empleado);
+    
     //Reportes de produccion
     public ArrayList<HashMap<String, String>> getProduccion(String fecha_inicial, String fecha_final,String sku,String sku_descripcion,Integer equipo,Integer operario,Integer tipo_reporte,Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProduccion_por_producto(String fecha_inicial, String fecha_final,String sku,String sku_descripcion,Integer equipo,Integer operario,Integer tipo_reporte,Integer id_empresa);

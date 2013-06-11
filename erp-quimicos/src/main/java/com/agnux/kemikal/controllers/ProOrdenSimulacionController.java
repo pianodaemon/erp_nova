@@ -16,13 +16,16 @@ import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.ProInterfaceDao;
 import com.agnux.kemikal.reportes.PdfProOrdenProduccion;
 import com.agnux.kemikal.reportes.PdfProOrdenRequisicion;
+import com.agnux.kemikal.reportes.PdfProSimulacionProduccion;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
@@ -134,7 +137,7 @@ public class ProOrdenSimulacionController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo preorden de produccion
+        //aplicativo Simulacion de produccion
         Integer app_selected = 116;
         
         //decodificar id de usuario
@@ -167,30 +170,6 @@ public class ProOrdenSimulacionController {
         return jsonretorno;
     }
     
-    //obtiene los productos para el buscador
-    @RequestMapping(method = RequestMethod.POST, value="/get_productos_formula_prod.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProductosFormulaJson(
-            @RequestParam(value="id_formula", required=true) String id_formula,
-            @RequestParam(value="iu", required=true) String id_user,
-            Model model
-            ) {
-        
-        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", ProOrdenProduccionController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> equivalentes = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        
-        equivalentes = this.getProDao().getProductosFormula(id_formula);
-        
-        jsonretorno.put("productos", equivalentes);
-        
-        return jsonretorno;
-    }
     
     
     //obtiene datos para el autopletar
@@ -215,7 +194,8 @@ public class ProOrdenSimulacionController {
     }
     
     
-    //obtiene los productos para el buscador
+    
+    //Obtiene versiones de la formula
     @RequestMapping(method = RequestMethod.POST, value="/get_versiones_formulas_por_sku.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> get_versiones_formulas_por_skuJson(
             @RequestParam(value="sku", required=true) String sku,
@@ -243,6 +223,170 @@ public class ProOrdenSimulacionController {
     
     
     
+    //Obtiene datos para la simulacion
+    @RequestMapping(method = RequestMethod.POST, value="/get_productos_formula_prod.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProductosFormulaJson(
+            @RequestParam(value="id_formula", required=true) String id_formula,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getProductosJson de {0}", ProOrdenProduccionController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> equivalentes = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        equivalentes = this.getProDao().getProductosFormula(id_formula);
+        
+        jsonretorno.put("productos", equivalentes);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    
+    
+    
+    //localhost:8080/com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/logasignarutas/getPdfSimulaProduccion/1/NQ==/out.json
+    //Genera pdf de formulacion de
+    @RequestMapping(value = "/getPdfSimulaProduccion/{tipo}/{id_formula}/{cantidad}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getPdfSimulaProduccionJson(
+                @PathVariable("tipo") String tipo,
+                @PathVariable("id_formula") String id_formula,
+                @PathVariable("cantidad") String cantidad,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request, 
+                HttpServletResponse response, 
+                Model model)
+            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> empleado = new HashMap<String, String>();
+        HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> componentes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> tipos = new ArrayList<HashMap<String, String>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        Integer app_selected = 116;//Simulacion de produccion
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_empleado = Integer.parseInt(userDat.get("empleado_id"));
+        
+        empleado = this.getProDao().getNombreEmpleadoById(id_empleado);
+        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+        
+        SimpleDateFormat formato = new SimpleDateFormat("'Generado el' d 'de' MMMMM 'del' yyyy 'a las' HH:mm:ss 'hrs.'");
+        String periodo = formato.format(new Date());
+        
+        if(!empleado.isEmpty()){
+            datosEncabezadoPie.put("usuario_elaboracion", empleado.get("nombre_usuario"));
+            System.out.println("usuario_elaboracion: "+empleado.get("nombre_usuario"));
+        }else{
+            datosEncabezadoPie.put("usuario_elaboracion", "");
+            System.out.println("usuario_elaboracion: vacio");
+        }
+        
+        datosEncabezadoPie.put("nombre_empresa_emisora", razon_social_empresa);
+        //datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
+        datosEncabezadoPie.put("titulo_reporte", "Simulación de Producción");
+        datosEncabezadoPie.put("periodo", periodo);
+        datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
+        datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+        
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+        
+        File file_dir_tmp = new File(dir_tmp);
+        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        
+        //Obtiene los datos de la Formula para el PDF de la Simulacion
+        datos = this.getProDao().getProductoFormulaPdfSimulacion(Integer.parseInt(id_formula));
+        tipos = this.getProDao().getProOrdenTipoById(Integer.parseInt(tipo));
+        
+        if(tipos.size()>0){
+            datosEncabezadoPie.put("tipo", tipos.get(0).get("titulo"));
+        }else{
+            datosEncabezadoPie.put("tipo", "");
+        }
+        
+        if(datos.size()>0){
+            datosEncabezadoPie.put("codigo", datos.get(0).get("sku"));
+            datosEncabezadoPie.put("descripcion", datos.get(0).get("descripcion"));
+            datosEncabezadoPie.put("version", datos.get(0).get("version"));
+        }else{
+            datosEncabezadoPie.put("codigo", "");
+            datosEncabezadoPie.put("descripcion", "");
+            datosEncabezadoPie.put("version", "");
+        }
+        
+        
+        if(cantidad.equals("")){
+            datosEncabezadoPie.put("cantidad", "0");
+        }else{
+            datosEncabezadoPie.put("cantidad", cantidad);
+        }
+        
+        
+        
+        
+        //Obtiene los componentes de la Formula
+        componentes = this.getProDao().getProductosFormula(id_formula);
+        
+        String file_name = "simulacion_"+datosEncabezadoPie.get("codigo") +".pdf";
+        
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+        
+        datosEncabezadoPie.put("fileout", fileout);
+        
+        
+        //instancia a la clase que construye el pdf del reporte de facturas
+        PdfProSimulacionProduccion pdf = new PdfProSimulacionProduccion(datosEncabezadoPie, componentes);
+        pdf.ViewPDF();
+        
+        
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        if (file.exists()){
+            int size = (int) file.length(); // Tama√±o del archivo
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            response.setBufferSize(size);
+            response.setContentLength(size);
+            response.setContentType("text/plain");
+            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+            FileCopyUtils.copy(bis, response.getOutputStream());
+            response.flushBuffer();
+            
+            //Eliminar el archivo despues de visualizar en el navegador
+            FileHelper.delete(fileout);
+        }
+        
+        return null;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /*
     @RequestMapping(method = RequestMethod.POST, value="/get_datos_orden.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProOrdenJson(
             @RequestParam(value="id_orden", required=true) Integer id,
@@ -405,6 +549,7 @@ public class ProOrdenSimulacionController {
     }
     
     
+
     //genera la requisicion
     //send_requisicion_op
     //crear y editar una  formula
@@ -471,7 +616,7 @@ public class ProOrdenSimulacionController {
         
     }
     
-    
+
     
     //crear y editar una  formula
     @RequestMapping(method = RequestMethod.POST, value="/guarda_lotes.json")
@@ -540,6 +685,7 @@ public class ProOrdenSimulacionController {
         
     }
     
+
     
     //obtiene los productos para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/get_productos_pedido.json")
@@ -566,6 +712,7 @@ public class ProOrdenSimulacionController {
         return jsonretorno;
     }
     
+
     //crear y editar una  formula
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editFormulasJson(
@@ -652,16 +799,7 @@ public class ProOrdenSimulacionController {
                     extra_data_array = StringUtils.join(arreglo, ",");
                     
                     //esto estaba antes de que se actualizara la cantidad al finalizar ala orden de produccion
-                    /*
-                    if(!especificaicones_lista.equals("") && especificaicones_lista.length() > 2){
-                        
-                        especificaicones_lista = "'"+especificaicones_lista+"'";
-                        arreglo = especificaicones_lista.split("\\$\\$\\$\\$");
-                        extra_data_array = StringUtils.join(arreglo, "','");
-                    }else{
-                        extra_data_array = "'Sin Datos'";
-                    }
-                    */
+
                 }else{
                     extra_data_array = "'Sin Datos'";
                 }
@@ -692,6 +830,8 @@ public class ProOrdenSimulacionController {
         return jsonretorno;
     }
     
+     * 
+     */
     
     
     //obtiene lineas de producto y datos para el buscador
@@ -749,6 +889,9 @@ public class ProOrdenSimulacionController {
         return jsonretorno;
     }
     
+    
+    
+    /*
     //obtiene los productos equivalentes para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/get_buscador_equivalentes.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getEquivalentesJson(
@@ -773,6 +916,7 @@ public class ProOrdenSimulacionController {
         
         return jsonretorno;
     }
+
     
     //obtiene los productos para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/get_requisicion_orden_prod.json")
@@ -798,7 +942,8 @@ public class ProOrdenSimulacionController {
         
         return jsonretorno;
     }
-    
+     * 
+     */
     
     //Busca un sku en especifico
     @RequestMapping(method = RequestMethod.POST, value="/get_busca_sku_prod.json")
@@ -824,6 +969,7 @@ public class ProOrdenSimulacionController {
     }
     
     
+    /*
     //Busca un sku en especifico
     @RequestMapping(method = RequestMethod.POST, value="/detalle_elementos_prod_formula.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> detalleElementosProdFormulaJson(
@@ -847,7 +993,7 @@ public class ProOrdenSimulacionController {
         
         return jsonretorno;
     }
-    
+     */
     
     //obtiene datos para el autopletar
     @RequestMapping(value="/get_autocomplete_operarios.json", method = RequestMethod.POST)
@@ -928,108 +1074,10 @@ public class ProOrdenSimulacionController {
     
     
     
-     //cambia el estatus del borrado logico
-    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
-    public @ResponseBody HashMap<String, String> logicDeleteJson(
-            @RequestParam(value="id", required=true) Integer id,
-            @RequestParam(value="iu", required=true) String id_user,
-            Model model
-            ) {
-        
-        HashMap<String, String> jsonretorno = new HashMap<String, String>();
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        
-        Integer app_selected = 93;//catalogo de preorden produccion
-        String command_selected = "delete";
-        String extra_data_array = "'sin datos'";
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
-        
-        System.out.println("Ejecutando borrado logico formulas");
-        jsonretorno.put("success",String.valueOf( this.getProDao().selectFunctionForApp_Produccion(data_string,extra_data_array)) );
-        
-        return jsonretorno;
-    }
+
+
     
-    
-    //localhost:8080/com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/logasignarutas/getPdfProduccion/1/NQ==/out.json
-    //Genera pdf de formulacion de
-    @RequestMapping(value = "/getPdfProduccion/{id}/{iu}/out.json", method = RequestMethod.GET ) 
-    public ModelAndView getGeneraPdfProduccionJson(
-                @PathVariable("id") String id_orden,
-                @PathVariable("iu") String id_user,
-                HttpServletRequest request, 
-                HttpServletResponse response, 
-                Model model)
-            throws ServletException, IOException, URISyntaxException, DocumentException {
-        
-        HashMap<String, String> userDat = new HashMap<String, String>();
-        HashMap<String, String> datos = new HashMap<String, String>();
-        ArrayList<HashMap<String, Object>> productos= new ArrayList<HashMap<String, Object>>();
-        
-        ArrayList<HashMap<String, String>> datos_orden = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
-        ArrayList<HashMap<String, Object>> lista_productos = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, String>> lista_procedimiento = new ArrayList<HashMap<String, String>>();
-        
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        Integer app_selected = 93;//catalogo de preorden produccion
-        
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
-        
-        datosEncabezadoPie.put("nombre_empresa_emisora", razon_social_empresa);
-        datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
-        datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
-        datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
-        
-        //obtener el directorio temporal
-        String dir_tmp = this.getGralDao().getTmpDir();
-        
-        File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
-        
-        //Obtiene los datos de la orden de produccion
-        datos_orden = this.getProDao().getProOrden_Datos(Integer.parseInt(id_orden));
-        datos.put("fecha", TimeHelper.getFechaActualYMDH());
-        
-        datos.put("folio", datos_orden.get(0).get("folio"));
-        datos.put("fecha_elavorar", datos_orden.get(0).get("fecha_elavorar"));
-        datos.put("flujo", datos_orden.get(0).get("flujo"));
-        datos.put("observaciones", datos_orden.get(0).get("observaciones"));
-        
-        //obtiene las facturas del periodo indicado
-        productos = this.getProDao().getPro_DatosOrdenProduccionPdf(id_orden, String.valueOf(datos_orden.get(0).get("pro_proceso_id")));
-        
-        
-        String file_name = "PRODUCCION_"+rfc_empresa+"_"+datos.get("folio") +".pdf";
-        //ruta de archivo de salida
-        String fileout = file_dir_tmp +"/"+  file_name;
-        
-        //instancia a la clase que construye el pdf del reporte de facturas
-        PdfProOrdenProduccion pdf = new PdfProOrdenProduccion(datosEncabezadoPie, fileout,productos,datos);
-        
-        System.out.println("Recuperando archivo: " + fileout);
-        File file = new File(fileout);
-        if (file.exists()){
-            int size = (int) file.length(); // Tama√±o del archivo
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-            response.setBufferSize(size);
-            response.setContentLength(size);
-            response.setContentType("text/plain");
-            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
-            FileCopyUtils.copy(bis, response.getOutputStream());
-            response.flushBuffer();
-        }
-        
-        return null;
-    }
-    
-    
-    
+    /*
     //localhost:8080/com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/logasignarutas/getPdfRequisicion/id/ui/out.json
     //Genera pdf de formulacion de
     @RequestMapping(value = "/getPdfRequisicion/{id}/{iu}/out.json", method = RequestMethod.GET ) 
@@ -1182,7 +1230,7 @@ public class ProOrdenSimulacionController {
         
         return null;
     }
-    
+    */
     
     
     

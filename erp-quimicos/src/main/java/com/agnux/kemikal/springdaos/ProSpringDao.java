@@ -3525,6 +3525,12 @@ public class ProSpringDao implements ProInterfaceDao{
         return datos_unidades;
     }
 
+    
+    
+    
+
+    
+    
     @Override
     public ArrayList<HashMap<String, String>> getProPreorden_Datos(Integer id) {
         String sql_to_query = "select * from pro_preorden_prod where id="+ id + ";";
@@ -4600,7 +4606,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "JOIN pro_estruc on prod_tmp.id=pro_estruc.inv_prod_id"
                 + " where pro_estruc.borrado_logico=false AND gral_emp_id="+id_empresa+" ";
 
-        //System.out.println("Ejecutando query de: "+ sql_to_query);
+        System.out.println("getVersionesFormulas: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4614,18 +4620,18 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("version",String.valueOf(rs.getInt("version")));
                     row.put("densidad",String.valueOf(StringHelper.roundDouble(rs.getInt("densidad"),4)));
-
+                    
                     return row;
                 }
             }
         );
         return hm_datos_productos;
     }
-
-
+     
+     
      @Override
     public ArrayList<HashMap<String, String>> getProductosFormula(String id_formula) {
-
+         
         String sql_to_query = "select det_form.*,inv_prod.sku, inv_prod.descripcion, inv_prod.densidad, inv_prod.unidad_id,"
                 + "inv_prod_unidades.titulo, "
                 + "(SELECT inv_calculo_existencia_producto AS existencia FROM inv_calculo_existencia_producto(2,false, det_form.inv_prod_id, 1, 1)) as existencia from ("
@@ -4635,7 +4641,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
                 + "order by elemento";
 
-        //System.out.println("Ejecutando query de: "+ sql_to_query);
+        System.out.println("Ejecutando query de: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4659,7 +4665,104 @@ public class ProSpringDao implements ProInterfaceDao{
         );
         return hm_datos_productos;
     }
+     
+     
+     
+     
+     
+     
+    //Datos del Producto
+     @Override
+    public ArrayList<HashMap<String, String>> getProductoFormulaPdfSimulacion(Integer id_formula) {
 
+        String sql_to_query = ""
+                + "SELECT "
+                    + "pro_estruc.id AS id_formula, "
+                    + "pro_estruc.inv_prod_id,  "
+                    + "pro_estruc.version,  "
+                    + "inv_prod.sku,  "
+                    + "inv_prod.descripcion,  "
+                    + "inv_prod.densidad  "
+                + "FROM pro_estruc  "
+                + "JOIN inv_prod ON inv_prod.id=pro_estruc.inv_prod_id "
+                + "WHERE pro_estruc.borrado_logico=false "
+                + "AND pro_estruc.id="+id_formula+"";
+
+        System.out.println("getVersionesFormulas: "+ sql_to_query);
+
+        ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_formula",String.valueOf(rs.getInt("id_formula")));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("version",String.valueOf(rs.getInt("version")));
+                    row.put("densidad",String.valueOf(StringHelper.roundDouble(rs.getInt("densidad"),4)));
+
+                    return row;
+                }
+            }
+        );
+        return hm_datos_productos;
+    }
+     
+     
+     
+     
+    //Obtiene el titulo del tipo de simulacion
+    @Override
+    public ArrayList<HashMap<String, String>> getProOrdenTipoById(Integer id_tipo){
+        String sql_to_query = "select id, titulo from pro_orden_tipos where id="+id_tipo;
+        
+        ArrayList<HashMap<String, String>> datos_unidades = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return datos_unidades;
+    }
+     
+     
+    //Obtener el Nombre del Empleado a partir de su ID
+    @Override
+    public HashMap<String, String> getNombreEmpleadoById(Integer id_empleado){
+        String sql_to_query = "SELECT id, (CASE WHEN nombre_pila IS NULL THEN '' ELSE nombre_pila END)||' '||(CASE WHEN apellido_paterno IS NULL THEN '' ELSE apellido_paterno END)||' '||(CASE WHEN apellido_materno IS NULL THEN '' ELSE apellido_materno END) AS nombre_usuario FROM gral_empleados WHERE id="+id_empleado+";";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
+            sql_to_query, 
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("nombre_usuario",rs.getString("nombre_usuario"));
+                    return row;
+                }
+            }
+        );
+        
+        return hm;
+    }
+     
+     
+     
+     
+     
+     
+     
+     
    //REportes  de produccion
      @Override
     public ArrayList<HashMap<String, String>> getProduccion(String fecha_inicial, String fecha_final,String sku,String descripcion_sku,Integer id_equipo,Integer id_operario,Integer tipo_reporte, Integer id_empresa) {
