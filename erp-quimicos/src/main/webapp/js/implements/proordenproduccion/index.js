@@ -1949,7 +1949,7 @@ $(function() {
                                     //alert(prod['cantidad_adicional']);
                                     prod['cantidad'] = $calcula_cantidad_por_porducto(prod['cantidad'] , $cantidad.val());
                                     //                        function(id_reg, $id_prod, $id_prod_detalle,            $sku,         $descripcion,       $cantidad,          $con_lote,                  clase_tmp,  grid,       cantidad_adicional,             posicion,       subproceso_id, id_reg_parent)
-                                    $add_producto_eleemnto_detalle(prod['id'],$id_producto.val(), prod['inv_prod_id'], prod['sku'], prod['descripcion'], prod['cantidad'], prod['requiere_numero_lote'], $id_tabla, $grid_parent, prod['cantidad_adicional'], $posicion.val(), $subproceso_id.val(), $id_reg_parent.val(),prod['num_lote'], prod['id_reg_det'], prod['inv_osal_id'] , "", prod['inv_alm_id'], prod['gral_suc_id'], 0);
+                                    $add_producto_eleemnto_detalle(prod['id'],$id_producto.val(), prod['inv_prod_id'], prod['sku'], prod['descripcion'], prod['cantidad'], prod['requiere_numero_lote'], $id_tabla, $grid_parent, prod['cantidad_adicional'], $posicion.val(), $subproceso_id.val(), $id_reg_parent.val(),prod['num_lote'], prod['id_reg_det'], prod['inv_osal_id'] , "", prod['inv_alm_id'], prod['gral_suc_id'], 0, prod['cantidad_usada']);
                                 });
                                 
                                 
@@ -2372,7 +2372,11 @@ $(function() {
                                                  //prod['id'],
                                                  //$id_producto.val(), 
                                                  //prod['inv_prod_id'], prod['sku'], prod['descripcion'], prod['cantidad'], prod $id_tabla, $grid_parent, prod['cant $posicion$subproceso_id.$id_reg_parent.val(),prod['num_lote'], prod['id_reg_det'] 
-        $add_producto_eleemnto_detalle = function(id_reg, $id_prod, $id_prod_detalle, $sku, $descripcion, $cantidad, $con_lote, clase_tmp, grid, cantidad_adicional, posicion, subproceso_id, id_reg_parent, num_lote, id_reg_det, inv_osal_id, tipo_agregado, id_almacen, id_sucursal, agregado){
+        $add_producto_eleemnto_detalle = function(id_reg, $id_prod, $id_prod_detalle, $sku, $descripcion, $cantidad, $con_lote, clase_tmp, grid, cantidad_adicional, posicion, subproceso_id, id_reg_parent, num_lote, id_reg_det, inv_osal_id, tipo_agregado, id_almacen, id_sucursal, agregado, cantidad_usada){
+            
+            if(parseFloat(cantidad_usada) <= 0){
+                cantidad_usada = parseFloat(parseFloat($cantidad) + parseFloat(cantidad_adicional)).toFixed(4);
+            }
             
             $tmp_tr = grid.find(clase_tmp);
             var trCount = $("tr", $tmp_tr).size();
@@ -2422,7 +2426,7 @@ $(function() {
                     tmp_html += '<input type="text" id="cantidad_adicional'+trCount+'" name="cantidad_adicional" value="'+cantidad_adicional+'"  style="width:70px;" readOnly="true">';
                 tmp_html += '</td>';
                 tmp_html += '<td width="90px" class="grid1">';
-                    tmp_html += '<input type="text" id="cantidad_real'+trCount+'" name="cantidad_real" value="'+$cantidad+'"  style="width:70px;" >';
+                    tmp_html += '<input type="text" id="cantidad_real'+trCount+'" name="cantidad_real" value="'+cantidad_usada+'"  style="width:70px;" >';
                 tmp_html += '</td>';
                 
                 tmp_html += '<td width="130px" class="grid1" >';
@@ -2958,7 +2962,7 @@ $(function() {
                                         
                                         $add_producto_eleemnto_detalle(0,inv_prod_id_elemento.val(), id_prod, codigo, descripcion, 
                                         0, "", $id_tabla, $grid_parent, 0, trCount, subproceso_id.val(), id_reg_parent.val(),"", 
-                                        id_reg_det, inv_osal_id, "recuperado", 0, 0, 1);
+                                        id_reg_det, inv_osal_id, "recuperado", 0, 0, 1, 0);
                                         
                                     }
                                     
@@ -3083,6 +3087,13 @@ $(function() {
             $cancelar_orden.hide();
             $pdf_orden.hide();
             $pdf_requisicion.hide();
+            
+            //Si la orden es de tipo laboratorio, muestra los campos vendedor y cliente, que son para una orden de tipo laboratorio, de lo contrario los oculta.
+            if($tipo == 3){
+                $('#forma-proordenproduccion-window').find('.tipo_laboratorio').show();
+            }else{
+                $('#forma-proordenproduccion-window').find('.tipo_laboratorio').hide();
+            }
             
             $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'475px'});
             if(estatus == "1"){
@@ -3343,6 +3354,9 @@ $(function() {
             var $pdf_orden = $('#forma-proordenproduccion-window').find('#pdf_orden');
             var $pdf_requisicion = $('#forma-proordenproduccion-window').find('#pdf_requisicion');
             
+            //oculta los campos y textos para una orden de produccion que no sea de tipo laboratorio
+            $('#forma-proordenproduccion-window').find('.tipo_laboratorio').hide();
+            
             $command_selected.val("new");
             $id_orden.val(0);
                 
@@ -3466,24 +3480,28 @@ $(function() {
                         if(tipo_preorden == 0){
                             $preorden_tipo_pedido.hide();
                             tipo_stock_laboratorio.hide();
+                            $('#forma-proordenproduccion-window').find('.tipo_laboratorio').hide();
                             $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'450px'});
                         }
                         
                         if(tipo_preorden == 1){
                             $preorden_tipo_pedido.hide();
                             tipo_stock_laboratorio.hide();
+                            $('#forma-proordenproduccion-window').find('.tipo_laboratorio').hide();
                             $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'565px'});
                         }
                         
                         if(tipo_preorden == 2){
                             $preorden_tipo_pedido.hide();
                             tipo_stock_laboratorio.show();
+                            $('#forma-proordenproduccion-window').find('.tipo_laboratorio').hide();
                             $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'480px'});
                         }
                         
                         if(tipo_preorden == 3){
                             $preorden_tipo_pedido.hide();
                             tipo_stock_laboratorio.show();
+                            $('#forma-proordenproduccion-window').find('.tipo_laboratorio').show();
                             $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'480px'});
                         }
                         
@@ -3632,6 +3650,8 @@ $(function() {
                                 var $especificaicones_lista = $('#forma-proordenproduccion-window').find('input[name=especificaicones_lista]');
                                 var $version_formula = $('#forma-proordenproduccion-window').find('input[name=version_formula]');
                                 var $id_formula = $('#forma-proordenproduccion-window').find('input[name=id_formula]');
+                                var $solicitante = $('#forma-proordenproduccion-window').find('input[name=solicitante]');
+                                var $vendedor = $('#forma-proordenproduccion-window').find('input[name=vendedor]');
                                 
                                 //grids detalle pedido
                                 var $tabla_productos_header = $('#forma-proordenproduccion-window').find('#subprocesos_seleccionados');
@@ -3661,6 +3681,7 @@ $(function() {
                                 
                                 var $pdf_orden = $('#forma-proordenproduccion-window').find('#pdf_orden');
                                 var $pdf_requisicion = $('#forma-proordenproduccion-window').find('#pdf_requisicion');
+                                var $pdf_version_formula = $('#forma-proordenproduccion-window').find('#pdf_version_formula');
                                 
                                 $command_selected.val("new");
                                 $id_orden.val(0);
@@ -3778,6 +3799,8 @@ $(function() {
                                     $folio_op.attr({'value': entry['Orden']['0']['folio']});
                                     $lote_pop.attr({'value': entry['Orden']['0']['lote']});
                                     $id_formula.attr({'value': entry['Orden']['0']['pro_estruc_id']});
+                                    $solicitante.attr({'value': entry['Orden']['0']['solicitante']});
+                                    $vendedor.attr({'value': entry['Orden']['0']['vendedor']});
                                     
                                     $costo_ultimo.attr({'value': entry['Orden']['0']['costo_ultimo']});
                                     
@@ -4042,6 +4065,28 @@ $(function() {
                                     // Always return false here since we don't know what jConfirm is going to do
                                     return false;
                                 });
+                                
+                                /*Codigo para descargar el pdf de productos formulados*/
+                                $pdf_version_formula.bind('click',function(event){
+                                    event.preventDefault();
+                                    
+                                    $id_prod = $tabla_productos_preorden.find('input[name=inv_prod_id]').val();
+                                    
+                                    jConfirm('Descargar PDF?', 'Dialogo de Confirmacion', function(r) {
+                                        // If they confirmed, manually trigger a form submission
+                                        if (r) {
+                                            var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+                                            
+                                            var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfProdLaboratorio/'+id_to_show+'/'+iu+'/out.json';
+                                            window.location.href=input_json;
+                                        }
+                                    });
+                                    
+                                    // Always return false here since we don't know what jConfirm is going to do
+                                    return false;
+                                    
+                                });
+                                
                                 
                                 //cerrar plugin
                                 $cerrar_plugin.bind('click',function(){
