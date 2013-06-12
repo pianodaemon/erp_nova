@@ -561,20 +561,33 @@ $(function() {
                             'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
                         };
            
-            //
+            //Variables
             var $sku_tmp = $('#forma-proordensimulacion-window').find('input[name=sku_tmp]');
             var $descripcion_tmp = $('#forma-proordensimulacion-window').find('input[name=descripcion_tmp]');
             var $cantidad_tmp = $('#forma-proordensimulacion-window').find('input[name=cantidad_tmp]');
             var $densidad_tmp = $('#forma-proordensimulacion-window').find('input[name=densidad_tmp]');
+            var $cantidad_litro_tmp = $('#forma-proordensimulacion-window').find('input[name=cantidad_litro_tmp]');
             var $generapdf = $('#forma-proordensimulacion-window').find('input#generapdf');
-            
-            
-            
             
             $sku_tmp.val(codigo);
             $descripcion_tmp.val(descripcion);
             $cantidad_tmp.val(cantidad_inicial);
             $densidad_tmp.val(densidad);
+            
+            //Convertir los Kilos a Litros de acuerdo a la densidad
+			if($densidad_tmp.val().trim()!=''){
+				if(parseFloat($densidad_tmp.val())>0){
+					$cantidad_litro_tmp.val(parseFloat($cantidad_tmp.val()) / parseFloat($densidad_tmp.val()));
+				}else{
+					$cantidad_litro_tmp.val(0);
+				}
+			}else{
+				$cantidad_litro_tmp.val(0);
+			}
+            
+            $cantidad_litro_tmp.val(parseFloat($cantidad_litro_tmp.val()).toFixed(4));
+            $cantidad_tmp.val(parseFloat($cantidad_tmp.val()).toFixed(4));
+            
             
             //grids detalle pedido
             var $tabla_productos_preorden = $('#forma-proordensimulacion-window').find('#grid_productos_seleccionados');
@@ -591,26 +604,153 @@ $(function() {
             },"json");//termina llamada json
             
             
-            $cantidad_tmp.blur(function() {
-                var $tabla_productos_orden = $('#forma-proordensimulacion-window').find('#grid_productos_seleccionados');
-                cantidad = $(this).val();
-                cantidad_header = parseFloat(cantidad);
+			//Generar PDF de la simulacion
+			$generapdf.click(function(event){
+				event.preventDefault();
+				var cantidad_kg=0;
+				var cantidad_lt=0;
+				var densidad=0;
+				
+				if($cantidad_tmp.val().trim()!=''){
+					if(parseFloat($cantidad_tmp.val())>0){
+						cantidad_kg = $cantidad_tmp.val();
+					}
+				}
+				
+				if($cantidad_litro_tmp.val().trim()!=''){
+					if(parseFloat($cantidad_litro_tmp.val())>0){
+						cantidad_lt = $cantidad_litro_tmp.val();
+					}
+				}
+				
+				if($densidad_tmp.val().trim()!=''){
+					if(parseFloat($densidad_tmp.val())>0){
+						densidad = $densidad_tmp.val();
+					}
+				}
+				
+				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+				var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfSimulaProduccion/'+$buscador_tipoorden_busqueda.val()+'/'+id_formula+'/'+cantidad_kg+'/'+cantidad_lt+'/'+densidad+'/'+iu+'/out.json';
+				//alert(input_json);
+				window.location.href=input_json;
+			});
+            
+            
+			//Calcular nuevas cantidades
+			$recalcular_cantidades = function(){
+				var $tabla_productos_orden = $('#forma-proordensimulacion-window').find('#grid_productos_seleccionados');
+				var cantidad = $cantidad_tmp.val();
+				var cantidad_header = parseFloat(cantidad);
+				
                 $tabla_productos_orden.find('tr').each(function(){
-                    cantidad100 = $(this).find('input[name=cantidad100]').val();
-                    cantidadtmp = parseFloat(cantidad100);
+                    var cantidad100 = $(this).find('input[name=cantidad100]').val();
+                    var cantidadtmp = parseFloat(cantidad100);
                     
                     if(!isNaN(cantidadtmp) && !isNaN(cantidad_header)){
-                        result = parseFloat(cantidadtmp)/100;
+                        var result = parseFloat(cantidadtmp)/100;
                         $(this).find('input[name=cantidad]').val((parseFloat(result) * parseFloat(cantidad_header)));
                     }else{
                         $(this).find('input[name=cantidad]').val(0);
                     }
                     
                     $(this).find('input[name=cantidad]').val(parseFloat($(this).find('input[name=cantidad]').val()).toFixed(4));
-                    
                 });
+			}
+            
+            
+            
+            $cantidad_tmp.blur(function() {
+				if($(this).val().trim()==''){
+					$(this).val(0);
+				}
+				
+				$(this).val(parseFloat($(this).val()).toFixed(4));
+				
+				var litros=0;
+				if($densidad_tmp.val().trim()!=''){
+					if(parseFloat($densidad_tmp.val())>0){
+						//Convertir la cantidad a Litros
+						litros = parseFloat($(this).val()) / parseFloat($densidad_tmp.val());
+					}
+				}
+				$cantidad_litro_tmp.val(parseFloat(litros).toFixed(4));
+				//Llamada a la funcion que recalcula cantidades
+				$recalcular_cantidades();
             });
 			
+			
+			
+            $cantidad_litro_tmp.blur(function() {
+				if($(this).val().trim()!=''){
+					if(parseFloat($(this).val())>0){
+						$(this).val(parseFloat($(this).val()).toFixed(4));
+						
+						var kilos=0;
+						
+						if($densidad_tmp.val().trim()!=''){
+							if(parseFloat($densidad_tmp.val())>0){
+								//Convertir la cantidad en Litros a Kilos
+								kilos = parseFloat($(this).val()) * parseFloat($densidad_tmp.val());
+							}
+						}
+						
+						$cantidad_tmp.val(parseFloat(kilos).toFixed(4));
+						//Llamada a la funcion que recalcula cantidades
+						$recalcular_cantidades();
+					}
+				}else{
+					$(this).val(0);
+					$(this).val(parseFloat($(this).val()).toFixed(4));
+				}
+            });
+			
+			
+            $densidad_tmp.blur(function() {
+				if($(this).val().trim()==''){
+					$(this).val(0);
+				}
+				
+				$(this).val(parseFloat($(this).val()).toFixed(4));
+				
+				var litros=0;
+				if($densidad_tmp.val().trim()!=''){
+					if(parseFloat($densidad_tmp.val())>0){
+						litros = parseFloat($cantidad_tmp.val()) / parseFloat($densidad_tmp.val());
+					}
+				}
+				$cantidad_litro_tmp.val(parseFloat(litros).toFixed(4));
+				//Llamada a la funcion que recalcula cantidades
+				$recalcular_cantidades();
+            });
+        
+			
+			$cantidad_tmp.focus(function() {
+				if(parseFloat($(this).val().trim())==0){
+					$(this).val('');
+				}
+			});
+			
+			$cantidad_litro_tmp.focus(function() {
+				if(parseFloat($(this).val().trim())==0){
+					$(this).val('');
+				}
+			});
+			
+			$densidad_tmp.focus(function() {
+				if(parseFloat($(this).val().trim())==0){
+					$(this).val('');
+				}
+			});
+			
+			
+			$densidad_tmp.keypress(function(e){
+				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+					return true;
+				}else {
+					return false;
+				}		
+			});
 			
 			$cantidad_tmp.keypress(function(e){
 				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
@@ -621,20 +761,14 @@ $(function() {
 				}		
 			});
 			
-			
-			
-			
-			//Generar PDF de la simulacion
-			$generapdf.click(function(event){
-				event.preventDefault();
-				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-				var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfSimulaProduccion/'+$buscador_tipoorden_busqueda.val()+'/'+id_formula+'/'+$cantidad_tmp.val()+'/'+iu+'/out.json';
-				//alert(input_json);
-				window.location.href=input_json;
+			$cantidad_litro_tmp.keypress(function(e){
+				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+					return true;
+				}else {
+					return false;
+				}		
 			});
-        
-        
-			
 			
 			
 			
@@ -650,6 +784,10 @@ $(function() {
                 $('#forma-proordensimulacion-overlay').fadeOut(remove);
             });
         }
+        
+        
+        
+        
         
         
         $valida_campos_simular = function(){
