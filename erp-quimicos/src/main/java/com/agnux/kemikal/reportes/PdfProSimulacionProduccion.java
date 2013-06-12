@@ -40,6 +40,8 @@ public class PdfProSimulacionProduccion {
     private String codigo;
     private String descripcion;
     private String cantidad;
+    private String cantidad_lt;
+    private String densidad;    
     private String version;
     private String usuario_elaboracion;
 
@@ -51,9 +53,12 @@ public class PdfProSimulacionProduccion {
         this.setEmp_razon_social(datos.get("emp_razon_social"));
         this.setTipo_simulacion(datos.get("tipo"));
         this.setCantidad(datos.get("cantidad"));
+        this.setCantidad_lt(datos.get("cantidad_lt"));
+        this.setDensidad(datos.get("densidad"));
         this.setCodigo(datos.get("codigo"));
         this.setDescripcion(datos.get("descripcion"));
         this.setVersion(datos.get("version"));
+        
         this.setUsuario_elaboracion(datos.get("usuario_elaboracion"));
         this.setLista_componentes(componentes);
         
@@ -127,15 +132,15 @@ public class PdfProSimulacionProduccion {
             cell.setBorderWidthLeft(0);
             tableHelper.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("",smallFontBold));
+            cell = new PdfPCell(new Paragraph("Cantidad en Kilo:",smallFontBold));
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthTop(0);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             tableHelper.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("",smallFont));
-            cell.setBorderWidthBottom(0);
+            cell = new PdfPCell(new Paragraph(this.getCantidad(),smallFont));
+            cell.setBorderWidthBottom(1);
             cell.setBorderWidthTop(0);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
@@ -163,29 +168,29 @@ public class PdfProSimulacionProduccion {
             cell.setBorderWidthLeft(0);
             tableHelper.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("",smallFontBold));
+            cell = new PdfPCell(new Paragraph("Cantidad en Litro:",smallFontBold));
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthTop(0);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             tableHelper.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("",smallFont));
-            cell.setBorderWidthBottom(0);
+            cell = new PdfPCell(new Paragraph(this.getCantidad_lt(),smallFont));
+            cell.setBorderWidthBottom(1);
             cell.setBorderWidthTop(0);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             tableHelper.addCell(cell);
             
             //Fila 3
-            cell = new PdfPCell(new Paragraph("Cantidad en Kg.:",smallFontBold));
+            cell = new PdfPCell(new Paragraph("Densidad:",smallFontBold));
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthTop(0);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             tableHelper.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(this.getCantidad(),smallFont));
+            cell = new PdfPCell(new Paragraph(this.getDensidad(),smallFont));
             cell.setBorderWidthBottom(1);
             cell.setBorderWidthTop(0);
             cell.setBorderWidthRight(0);
@@ -480,6 +485,23 @@ public class PdfProSimulacionProduccion {
         this.usuario_elaboracion = usuario_elaboracion;
     }
 
+    public String getCantidad_lt() {
+        return cantidad_lt;
+    }
+
+    public void setCantidad_lt(String cantidad_lt) {
+        this.cantidad_lt = cantidad_lt;
+    }
+
+    public String getDensidad() {
+        return densidad;
+    }
+
+    public void setDensidad(String densidad) {
+        this.densidad = densidad;
+    }
+    
+    
     
     
      static class HeaderFooter extends PdfPageEventHelper {

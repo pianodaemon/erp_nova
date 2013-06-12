@@ -256,11 +256,13 @@ public class ProOrdenSimulacionController {
     
     //http://localhost:8080//com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/proordensimulacion/getPdfSimulaProduccion/2/576/100/MQ==/out.json
     //Genera pdf de formulacion de
-    @RequestMapping(value = "/getPdfSimulaProduccion/{tipo}/{id_formula}/{cantidad}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/getPdfSimulaProduccion/{tipo}/{id_formula}/{cantidad_kg}/{cantidad_lt}/{densidad}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getPdfSimulaProduccionJson(
                 @PathVariable("tipo") String tipo,
                 @PathVariable("id_formula") String id_formula,
-                @PathVariable("cantidad") String cantidad,
+                @PathVariable("cantidad_kg") String cantidad_kg,
+                @PathVariable("cantidad_lt") String cantidad_lt,
+                @PathVariable("densidad") String densidad,
                 @PathVariable("iu") String id_user,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
@@ -329,13 +331,23 @@ public class ProOrdenSimulacionController {
             datosEncabezadoPie.put("version", "");
         }
         
-        
-        if(cantidad.equals("")){
+        if(cantidad_kg.equals("")){
             datosEncabezadoPie.put("cantidad", "0");
         }else{
-            datosEncabezadoPie.put("cantidad", cantidad);
+            datosEncabezadoPie.put("cantidad", cantidad_kg);
         }
         
+        if(cantidad_lt.equals("")){
+            datosEncabezadoPie.put("cantidad_lt", "0");
+        }else{
+            datosEncabezadoPie.put("cantidad_lt", cantidad_lt);
+        }
+        
+        if(densidad.equals("")){
+            datosEncabezadoPie.put("densidad", "0");
+        }else{
+            datosEncabezadoPie.put("densidad", densidad);
+        }
         
         
         
