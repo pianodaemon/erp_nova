@@ -147,43 +147,53 @@
                                                                                         <td valign="top" colspan="3" > 
                                                                                             <table border="0" class="gral">
                                                                                                 <tr>
-                                                                                                    <td width="420">
+                                                                                                    <td width="580">
                                                                                                         <table>
                                                                                                             <tr>
-                                                                                                                <td width="70">Tipo Orden</td>
-                                                                                                                <td width="20"></td>
+                                                                                                                <td width="70px">Tipo Orden</td>
+                                                                                                                <td width="20px"></td>
                                                                                                                 <td>
-                                                                                                                    <SELECT NAME="tipoorden" style="width:100px;" />
+                                                                                                                    <SELECT NAME="tipoorden" style="width:90px;" />
                                                                                                                 </td>
-                                                                                                                <td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipoorden"></div></td>
-                                                                                                                <td width="40">Fecha</td>
-                                                                                                                <td width="20">&nbsp;</td>
-                                                                                                                <td width="100"><INPUT TYPE="text" name="fecha_elavorar" style="width:100px;" ></td>
-                                                                                                                <td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha_elavorar"></div></td>
+                                                                                                                <td width="20px"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipoorden"></div></td>
+                                                                                                                <td width="40px">Fecha</td>
+                                                                                                                <td width="20px">&nbsp;</td>
+                                                                                                                <td width="90px"><INPUT TYPE="text" name="fecha_elavorar" style="width:100px;" ></td>
+                                                                                                                <td width="20px"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fecha_elavorar"></div></td>
+                                                                                                                
+                                                                                                                <td width="40px"  class="tipo_laboratorio">Solicita</td>
+                                                                                                                <td width="20px">&nbsp;</td>
+                                                                                                                <td width="150px"><INPUT TYPE="text" name="solicitante" style="width:148px;"  class="tipo_laboratorio" ></td>
+                                                                                                                <td width="20px"></td>
                                                                                                             </tr>
                                                                                                             <tr>
-                                                                                                                <td colspna="8">
+                                                                                                                <td colspna="12">
                                                                                                                     &nbsp;
                                                                                                                 </td>
                                                                                                             </tr>
                                                                                                             <tr>
-                                                                                                                <td width="70">Folio</td>
-                                                                                                                <td width="20">&nbsp;</td>
+                                                                                                                <td width="70px">Folio</td>
+                                                                                                                <td width="20px">&nbsp;</td>
                                                                                                                 <td>
-                                                                                                                    <INPUT TYPE="text" name="folio_op" style="width:100px;" >
+                                                                                                                    <INPUT TYPE="text" name="folio_op" style="width:90px;" >
                                                                                                                 </td>
-                                                                                                                <td width="20">&nbsp;</td>
-                                                                                                                <td width="40">Lote</td>
-                                                                                                                <td width="20">&nbsp;</td>
-                                                                                                                <td width="100"><INPUT TYPE="text" name="lote_pop" style="width:100px;" ></td>
-                                                                                                                <td width="20">&nbsp;</td>
+                                                                                                                <td width="20px">&nbsp;</td>
+                                                                                                                <td width="40px">Lote</td>
+                                                                                                                <td width="20px">&nbsp;</td>
+                                                                                                                <td width="90px"><INPUT TYPE="text" name="lote_pop" style="width:100px;" ></td>
+                                                                                                                <td width="20px">&nbsp;</td>
+                                                                                                                
+                                                                                                                <td width="40px"><span class="tipo_laboratorio">Vendio<span></td>
+                                                                                                                <td width="20px">&nbsp;</td>
+                                                                                                                <td width="150px"><INPUT TYPE="text" name="vendedor" style="width:148px;"  class="tipo_laboratorio" ></td>
+                                                                                                                <td width="20px"></td>
                                                                                                             </tr>
                                                                                                             
                                                                                                         </table>
                                                                                                     </td>
                                                                                                     
-                                                                                                    <td width="100">Observaciones</td>
-                                                                                                    <td width="550">
+                                                                                                    <td width="90">Observaciones</td>
+                                                                                                    <td width="400">
                                                                                                         <textarea name="observaciones" style="width:345px;resize: none;" rows="2"></textarea>
                                                                                                     </td>
                                                                                                 </tr>
@@ -278,9 +288,11 @@
                                                                                                             <INPUT TYPE="button" id="confirmar_programacion" name="confirmar_programacion" value="Programar" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;
                                                                                                             <INPUT TYPE="button" id="confirmar_enviar_produccion" name="confirmar_programacion" value="Envia Producci&oacute;n" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;
                                                                                                             <INPUT TYPE="button" id="pdf_orden" name="pdf_orden" value="PDF Orden" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                                                            <INPUT TYPE="button" id="pdf_version_formula" name="pdf_version_formula" value="PDF Version" style="height:20px;" class="confirmar tipo_laboratorio">&nbsp;&nbsp;&nbsp;&nbsp;
                                                                                                             <INPUT TYPE="button" id="pdf_requisicion" name="pdf_requisicion" value="PDF Requisicion" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;
                                                                                                             <INPUT TYPE="button" id="confirmar_terminada" name="confirmar_terminada" value="Terminar" style="height:20px;" class="confirmar">&nbsp;&nbsp;&nbsp;&nbsp;
                                                                                                             <INPUT TYPE="button" id="cancelar_orden" name="confirmar_terminada" value="Cancelar" style="height:20px;" class="confirmar">
+                                                                                                            
                                                                                                         </td>
                                                                                                         <td width="10"></td>
                                                                                                     </tr>
