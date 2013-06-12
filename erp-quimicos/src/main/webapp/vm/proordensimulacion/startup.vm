@@ -137,24 +137,37 @@
 																	<table border="0">
 																		<tr>
 																			<td width="10"></td>
-																			<td width="40">C&oacute;digo&nbsp;</td>
-																			<td width="100">
-																				<INPUT TYPE="text" name="sku_tmp" style="width:120px;">
-																				<INPUT TYPE="hidden" name="densidad_tmp" >
-																			</td>
+																			<td width="120">C&oacute;digo&nbsp;</td>
 																			<td width="20">&nbsp;</td>
-																			<td width="70">&nbsp;Descripci&oacute;n</td>
-																			<td width="300" ><INPUT TYPE="text" name="descripcion_tmp" style="width:300px;" readOnly="true"></td>
+																			<td width="320">&nbsp;Descripci&oacute;n</td>
 																			<td width="20"></td>
-																			<td width="50">Cantidad</td>
+																			<td width="80">Densidad</td>
+																			<td width="20"></td>
+																			<td width="80">Cantidad&nbsp;Kilo</td>
+																			<td width="20"></td>
+																			<td width="80">Cantidad&nbsp;Litro</td>
+																			<td width="20"></td>
+																			<td width="100" align="right"></td>
+																		</tr>
+																		
+																		<tr>
+																			<td width="10"></td>
+																			<td width="120"><INPUT TYPE="text" name="sku_tmp" style="width:120px;"></td>
+																			<td width="20">&nbsp;</td>
+																			<td width="320" ><INPUT TYPE="text" name="descripcion_tmp" style="width:320px;" readOnly="true"></td>
+																			<td width="20"></td>
+																			<td width="80"><INPUT TYPE="text" name="densidad_tmp" style="width:80px;"></td>
+																			<td width="20"></td>
 																			<td width="80"><INPUT TYPE="text" name="cantidad_tmp" style="width:80px;"></td>
 																			<td width="20"></td>
-																			<td width="175" align="right"><input type="button" id="generapdf" value="PDF" style="width:80px; font-weight:bold;"></td>
+																			<td width="80"><INPUT TYPE="text" name="cantidad_litro_tmp" style="width:80px;"></td>
+																			<td width="20"></td>
+																			<td width="100" align="right"><input type="button" id="generapdf" value="PDF" style="width:80px; font-weight:bold;"></td>
 																		</tr>
 																	</table>
 																</div>
 															</td>
-
+															
 														</tr>
 														<tr>
 															<!--<td style="border: solid 1px #313E74;">-->
