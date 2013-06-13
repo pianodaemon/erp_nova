@@ -15,6 +15,7 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.ProInterfaceDao;
 import com.agnux.kemikal.reportes.PdfProOrdenProduccion;
+import com.agnux.kemikal.reportes.PdfProOrdenProduccionLaboratorio;
 import com.agnux.kemikal.reportes.PdfProOrdenRequisicion;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
@@ -229,7 +230,7 @@ public class ProOrdenProduccionController {
                 datosOrdenDet = this.getProDao().getProOrden_EspecificacionesDetalle(id);
                 
                 almacenes = this.getProDao().getAlmacenes(id_empresa);
-                    
+                
             }else{
                 
                 datosOrdenDet = this.getProDao().getProOrden_Detalle(id);
@@ -541,6 +542,9 @@ public class ProOrdenProduccionController {
         @RequestParam(value="command_selected", required=true) String command_selected,
         @RequestParam(value="especificaicones_lista", required=true) String especificaicones_lista,
         @RequestParam(value="id_formula", required=true) String id_formula,
+        @RequestParam(value="solicitante", required=false) String solicitante,
+        @RequestParam(value="vendedor", required=false) String vendedor,
+        
         
         @RequestParam(value="eliminar", required=true) String[] eliminar,
         @RequestParam(value="id_reg", required=true) String[] id_reg,
@@ -641,10 +645,11 @@ public class ProOrdenProduccionController {
             command_selected1 = "edit";
         }
         
-        
+        solicitante = StringHelper.isNullString(solicitante);
+        vendedor = StringHelper.isNullString(vendedor);
         
         String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+fecha_elavorar+"___"+observaciones+"___"+
-                command_selected+"___"+accion+"___"+id_formula;
+                command_selected+"___"+accion+"___"+id_formula+"___"+solicitante+"___"+vendedor;
         
         succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
@@ -1201,7 +1206,85 @@ public class ProOrdenProduccionController {
     }
     
     
-    
+    //localhost:8080/com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/logasignarutas/getPdfProduccion/1/NQ==/out.json
+    //Genera pdf de formulacion de
+    @RequestMapping(value = "/getPdfProdLaboratorio/{id}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getGeneraPdfProdLaboratorioJson(
+                @PathVariable("id") String id_orden,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request, 
+                HttpServletResponse response, 
+                Model model)
+            throws ServletException, IOException, URISyntaxException, DocumentException {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> datos = new HashMap<String, String>();
+        ArrayList<HashMap<String, Object>> productos = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> productos_version = new ArrayList<HashMap<String, Object>>();
+        
+        ArrayList<HashMap<String, String>> datos_orden = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        Integer app_selected = 301;//catalogo del reporte de orden de produccion de laboratorio
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+        
+        datosEncabezadoPie.put("nombre_empresa_emisora", razon_social_empresa);
+        datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
+        datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
+        datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+        
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+        
+        File file_dir_tmp = new File(dir_tmp);
+        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        
+        //Obtiene los datos de la orden de produccion
+        datos_orden = this.getProDao().getProOrden_Datos(Integer.parseInt(id_orden));
+        datos.put("fecha", TimeHelper.getFechaActualYMDH());
+        
+        datos.put("folio", datos_orden.get(0).get("folio"));
+        datos.put("fecha_elavorar", datos_orden.get(0).get("fecha_elavorar"));
+        datos.put("flujo", datos_orden.get(0).get("flujo"));
+        datos.put("observaciones", datos_orden.get(0).get("observaciones"));
+        datos.put("lote", datos_orden.get(0).get("lote"));
+        datos.put("costo_ultimo", datos_orden.get(0).get("costo_ultimo"));
+        datos.put("solicitante", datos_orden.get(0).get("solicitante"));
+        datos.put("vendedor", datos_orden.get(0).get("vendedor"));
+        
+        //obtiene las facturas del periodo indicado
+        productos = this.getProDao().getPro_DatosOrdenProduccionLabPdf(id_orden);
+        
+        productos_version = this.getProDao().getPro_DatosOrdenProduccionLabVersionPdf(id_orden);
+        
+        String file_name = "PRODUCCION_"+rfc_empresa+"_"+datos.get("folio") +".pdf";
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+        
+        //instancia a la clase que construye el pdf del reporte de facturas
+        PdfProOrdenProduccionLaboratorio pdf = new PdfProOrdenProduccionLaboratorio(datosEncabezadoPie, fileout,productos,datos, productos_version);
+        
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        if (file.exists()){
+            int size = (int) file.length(); // Tama√±o del archivo
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            response.setBufferSize(size);
+            response.setContentLength(size);
+            response.setContentType("text/plain");
+            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+            FileCopyUtils.copy(bis, response.getOutputStream());
+            response.flushBuffer();
+        }
+        
+        return null;
+    }
     
     
 }
