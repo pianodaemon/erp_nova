@@ -1161,13 +1161,15 @@ $(function() {
 		var sumaTotal = 0; //suma del subtotal + totalImpuesto
 		var $moneda_original = $('#forma-prefacturas-window').find('input[name=moneda_original]');
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
-		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
-			$valor_impuesto.val(0);
-		}
+		//if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
+		//	$valor_impuesto.val(0);
+		//}
 		
 		$grid_productos.find('tr').each(function (index){
 			var precio_cambiado=0;
 			var importe_cambiado=0;
+			var $valor_impuesto = $(this).find('input[name=valor_imp]');
+			
 			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
 				if( parseInt($moneda_original.val()) != parseInt(moneda_id) ){
 					if(parseInt($moneda_original.val())==1){
@@ -2282,7 +2284,7 @@ $(function() {
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 							$moneda_original.val(moneda['id']);
 						}else{
-							if(parseInt(flujo_proceso)==2){
+							if(parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8){
 								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 							}
 						}

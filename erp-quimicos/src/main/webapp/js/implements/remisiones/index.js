@@ -517,7 +517,7 @@ $(function() {
 				var $submit_actualizar = $('#forma-remisiones-window').find('#submit');
 				
 				//ocultar boton actualizar porque ya esta facturado, ya no se puede guardar cambios
-				$submit_actualizar.hide();
+				//$submit_actualizar.hide();
 				//$digitos.hide();
 				//$no_cuenta.hide();
 				//$digitos.attr('disabled','-1');
@@ -528,13 +528,11 @@ $(function() {
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 						$('#forma-remisiones-window').find('div.interrogacion').css({'display':'none'});
-						jAlert("La prefactura se guard&oacute; con &eacute;xito", 'Atencion!');
+						jAlert("La Remisi&oacute;n se guard&oacute; con &eacute;xito", 'Atencion!');
 						
 						var remove = function() {$(this).remove();};
 						$('#forma-remisiones-overlay').fadeOut(remove);
 						
-						//ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
-						$submit_actualizar.hide();
 						$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
@@ -622,6 +620,8 @@ $(function() {
                     
                     if( entry['datosRemision']['0']['cancelado'] == 'true' ){
 						$cancelar_remision.hide();
+						$submit_actualizar.hide();
+						$orden_compra.attr("readonly", true);
 					}
                     if( parseInt(entry['datosRemision']['0']['estatus']) != 0 ){
 						$pagar_remision.hide();
@@ -818,7 +818,7 @@ $(function() {
 					
 					$observaciones.attr("readonly", true);
 					$tipo_cambio.attr("readonly", true);
-					$orden_compra.attr("readonly", true);
+					//$orden_compra.attr("readonly", true);
 					//$digitos.attr("readonly", true);
 					
 					$grid_productos.find('a[href*=elimina_producto]').hide();

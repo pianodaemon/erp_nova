@@ -1741,10 +1741,10 @@ $(function() {
 			}
 			
 			if(parseInt(idMoneda)==1){
-				$tipo_cambio.attr("readonly", true);
+				//$tipo_cambio.attr("readonly", true);
 				$tipo_cambio.css({'background' : '#F0F0F0'});
 			}else{
-				$tipo_cambio.attr("readonly", false);
+				//$tipo_cambio.attr("readonly", false);
 				$tipo_cambio.css({'background' : '#ffffff'});
 			}
 			
