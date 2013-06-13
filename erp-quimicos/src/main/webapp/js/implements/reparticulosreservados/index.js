@@ -140,7 +140,7 @@ $(function() {
 				  html_articulosreservados +='</tr> </thead>';
 
 				  for(var i=0; i<body_tabla.length; i++){
-					   if(Producto != body_tabla[i]["sku"] ){
+					   if(Producto != body_tabla[i]["descripcion"] ){
 							 if (tmp == 0){
 								 html_articulosreservados +='<tr>';
 								 html_articulosreservados +='<td align="left" >Producto:</td>'; 
@@ -189,10 +189,10 @@ $(function() {
 								 
 							}
 							tmp=1;
-							Producto=body_tabla[i]["sku"];
-							cantidad=cantidad+  parseInt(body_tabla[i]["cantidad"]);
-							importe =importe +  parseInt(body_tabla[i]["importe"]);
-							gral_importe=gral_importe+  parseInt(body_tabla[i]["importe"]);
+							Producto=body_tabla[i]["descripcion"];
+							cantidad=cantidad+  parseFloat(body_tabla[i]["cantidad"]);
+							importe =importe +  parseFloat(body_tabla[i]["importe"]);
+							gral_importe=gral_importe+  parseFloat(body_tabla[i]["importe"]);
 							
 					   }else{
 							html_articulosreservados +='<tr>';
@@ -206,9 +206,9 @@ $(function() {
 							html_articulosreservados +='<td align="right"  >'+$(this).agregar_comas(parseFloat(body_tabla[i]["importe"]).toFixed(2))+'</td>'; 
 							html_articulosreservados +='</tr>'; 
 							
-							cantidad=cantidad+  parseInt(body_tabla[i]["cantidad"]);
-							importe =importe +  parseInt(body_tabla[i]["importe"]);
-							gral_importe=gral_importe+  parseInt(body_tabla[i]["importe"]);
+							cantidad=cantidad+  parseFloat(body_tabla[i]["cantidad"]);
+							importe =importe +  parseFloat(body_tabla[i]["importe"]);
+							gral_importe=gral_importe+  parseFloat(body_tabla[i]["importe"]);
 					   }
 				  }
 				  html_articulosreservados +='<tr>';

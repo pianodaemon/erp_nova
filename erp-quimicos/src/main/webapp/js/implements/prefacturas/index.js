@@ -2540,7 +2540,7 @@ $(function() {
 										});
 									}else{
 										
-										if(parseFloat($facturar.val()) <= 0){
+										if(parseFloat($facturar.val()) < 0){
 											jAlert('La cantidad a '+$boton_facturar.val()+' para &eacute;sta partida no debe ser igual a cero.\nPendiente='+$disponible.val()+'\n'+$boton_facturar.val()+'='+$facturar.val(), 'Atencion!', function(r) { 
 												$facturar.val($disponible.val());
 												$importe.val(parseFloat($facturar.val()) * parseFloat($costo_unitario.val()));
