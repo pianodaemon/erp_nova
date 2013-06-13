@@ -42,7 +42,7 @@
 		<table class="table_acciones" style="display:none" border="0">
 			<tr>
 				<td width="15" height="30"></td>
-				<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Crear Nueva orden de compra</span></a></td>
+				<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Crear Nueva Requisicion</span></a></td>
 				<td width="15" height="30"></td>
 				<td height="30"><a href="visualiza_buscador" class="tooltip"><div class="onmouseOutVisualizaBuscador" id="vbuscador"></div><span>Busqueda</span></a> </td>
 			</tr>
@@ -166,21 +166,21 @@
                                                     <td >&nbsp;</td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="4">
+                                                    <td colspan="4">  
                                                         <table border="0" bordercolor="blue" >
                                                             <tr>
                                                                 <td >F&oacute;lio&nbsp;</td>
                                                                 <td width="125"><INPUT TYPE="text" name="folio_requisicion" style="width:120px;"></td>
                                                                 <td >&nbsp;</td>
                                                                 <td >&nbsp;</td>
-                                                                <td >&nbsp;</td>
-                                                            </tr>
+                                                                <td ><input type="button" id="descargarpdf" value="Generar PDF" style="width:110px; font-weight: bold;"></td>
+                                                            </tr>                                                           
                                                             <tr>
                                                                 <td >&nbsp;</td>
                                                                 <td width="125"></td>
                                                                 <td >&nbsp;</td>
                                                                 <td >Observaciones:</td>
-                                                                <td >&nbsp;</td>
+                                                                <td >&nbsp;</td>                                                                                                                          															
                                                             </tr>
                                                             <tr>
                                                                 <td >Fecha&nbsp;compromiso</td>
@@ -210,7 +210,7 @@
                                                     <td colspan="5">
                                                         <table border="0" bordercolor="blue" class="gral">
                                                             <tr><td colspan="8" height="2"></td></tr>
-                                                            <tr>
+                                                            <tr>																
                                                                 <td width="10"></td>
                                                                 <td width="70">C&oacute;digo&nbsp;producto</td>
                                                                 <td width="125"><INPUT TYPE="text" name="sku_producto" style="width:120px;"></td>
@@ -237,14 +237,14 @@
                                                                                     <td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
                                                                                     <td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Presentaci&oacute;n</td>
                                                                                     <td class="grid" style="background-color: rgb(180, 180, 180);" width="110">&nbsp;Cantidad</td>
-                                                                            </tr>
+                                                                            </tr>                                                                            
                                                                     </thead>
                                                             </table>
                                                             <div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">
                                                                     <table >
                                                                             <tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
-
-                                                                            </tbody>
+																			</tbody>
+																																					
                                                                     </table>
                                                             </div>
 
