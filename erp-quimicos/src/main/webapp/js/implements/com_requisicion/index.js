@@ -18,7 +18,7 @@ $(function() {
         //Barra para las acciones
         $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
         $('#barra_acciones').find('.table_acciones').css({'display':'block'});
-        var $new_requisicion = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
+	var $new_requisicion = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
 	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
@@ -773,7 +773,8 @@ $(function() {
 		//href para agregar producto al grid
 		var $agregar_producto = $('#forma-com_requisicion-window').find('a[href*=agregar_producto]');
 		
-                
+        var $descargarpdf = $('#forma-com_requisicion-window').find('#descargarpdf');
+      
 		
 		//grid de productos
 		var $grid_productos = $('#forma-com_requisicion-window').find('#grid_productos');
@@ -790,7 +791,7 @@ $(function() {
                 $id_requisicion.val(0);  //para nueva requisicion   el  id es 0
 		$folio_requisicion.attr('disabled','-1'); //deshabilitar
 		
-                
+                $descargarpdf.hide();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -1042,7 +1043,10 @@ $(function() {
 			//href para agregar producto al grid
 			var $agregar_producto = $('#forma-com_requisicion-window').find('a[href*=agregar_producto]');
 			
+			var $descargarpdf = $('#forma-com_requisicion-window').find('#descargarpdf');
+			//var $identificador = $('#forma-com_requisicion-window').find('input[name=identificador]');
 			
+
 			
 			var $cancelar_requisicion = $('#forma-com_requisicion-window').find('#cancelar_requisicion');
 			var $cancelado = $('#forma-com_requisicion-window').find('input[name=cancelado]');
@@ -1065,8 +1069,7 @@ $(function() {
 			
 			//$etiqueta_digit.attr('disabled','-1');
                         
-                        
-                        
+               //$identificador.val(0);//para nueva pedido el id es 0                       
 			
 			if(accion_mode == 'edit'){
 				$accion_proceso.attr({'value' : "edit"});
@@ -1324,7 +1327,17 @@ $(function() {
                                         }
 				//	$calcula_totales();//llamada a la funcion que calcula totales 
 				});//termina llamada json
-                                
+               
+               
+            //aqui                 
+                $descargarpdf.click(function(event){
+				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+				var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfRequisicion/'+$id_requisicion.val()+'/'+iu+'/out.json';
+				//alert(input_json);
+				window.location.href=input_json;
+				});
+			//end
+				
 				
                                 //----------------------------------------------------------------
                                   $fecha_compromiso.click(function (s){
@@ -1458,9 +1471,8 @@ $(function() {
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
         },"json");
-    }
-    
-    $get_datos_grid();
-    
-    
+    }  
+      
+    $get_datos_grid();   
+   
 });
