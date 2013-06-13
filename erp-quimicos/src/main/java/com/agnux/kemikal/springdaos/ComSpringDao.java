@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+//public class ComSpringDao  implements ComInterfaceDao {
 public class ComSpringDao  implements ComInterfaceDao {
     private JdbcTemplate jdbcTemplate;
     
@@ -1227,9 +1228,15 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + " com_oc_req.folio,  "
                     + " com_oc_req.cancelado,  "
                     + " com_oc_req.observaciones, "
+                    + " to_char(com_oc_req.momento_creacion,'yyyy-mm-dd') AS fecha_creacion , "
                     + " to_char(com_oc_req.fecha_compromiso,'yyyy-mm-dd') AS fecha_compromiso , "
-                    + " com_oc_req.status              "
-                    + " from com_oc_req                  "
+                    + " com_oc_req.status, "
+                    +"(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE gral_empleados.nombre_pila END)||' '||  "
+                    +"(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE gral_empleados.apellido_paterno END)||' '||   "
+                    +"(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE gral_empleados.apellido_materno END) AS nombre_usuario    "
+                    + " from com_oc_req "
+                    +"JOIN gral_usr ON gral_usr.id=com_oc_req.gral_usr_id_creacion "
+                    +"LEFT JOIN gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
                     + " WHERE com_oc_req.id= "+id_requisicion;
        System.out.println("ESto es del header de Requisicion de orden de compra::::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1240,10 +1247,12 @@ public class ComSpringDao  implements ComInterfaceDao {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("folio",rs.getString("folio"));
+                    row.put("fecha_creacion",rs.getString("fecha_creacion"));
                     row.put("fecha_compromiso",rs.getString("fecha_compromiso"));
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("cancelado",rs.getString("cancelado"));
                     row.put("status",String.valueOf(rs.getInt("status")));
+                    row.put("nombre_usuario",rs.getString("nombre_usuario"));
                     return row;
                 }
             }
@@ -1557,6 +1566,11 @@ public class ComSpringDao  implements ComInterfaceDao {
     }
      // TERMINA EL REPORTE DE ESTADISTICO DE COMPRAS
     //************************************************************************************************************+++++
+
+    @Override
+    public HashMap<String, String> getCom_Requisicion_DatosPDF(Integer id_requisicion) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     
     
