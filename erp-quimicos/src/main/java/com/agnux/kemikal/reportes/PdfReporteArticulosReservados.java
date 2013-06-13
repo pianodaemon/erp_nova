@@ -123,7 +123,7 @@ public class PdfReporteArticulosReservados {
                  HashMap<String, String> registro= lista_articulos_reservados.get(x);
 
 
-                 if(!Producto.equals(registro.get("sku").toString()) ){
+                 if(!Producto.equals(registro.get("descripcion").toString()) ){
                          if (tmp == 0){
 
                               cell = new PdfPCell(new Paragraph(registro.get("descripcion").toString(),smallFont));
@@ -354,7 +354,7 @@ public class PdfReporteArticulosReservados {
 
 
                          tmp=1;
-                         Producto=registro.get("sku").toString();
+                         Producto=registro.get("descripcion").toString();
                          cantidad=cantidad+  Double.parseDouble(registro.get("cantidad").toString());
                          importe =importe +  Double.parseDouble(registro.get("importe").toString());
                          gral_importe=gral_importe +  Double.parseDouble(registro.get("importe").toString());

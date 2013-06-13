@@ -1698,13 +1698,13 @@ public class PocSpringDao implements PocInterfaceDao{
                + "SELECT  "
                    + "poc_pedidos.id as id_pedido, "
                    + "poc_pedidos.folio as pedido, "
-                   + "to_char(poc_pedidos.momento_creacion,'yyyy-mm-dd') as fecha, "
+                   + "to_char(poc_pedidos.momento_creacion,'dd/mm/yyyy') as fecha, "
                    + "cxc_clie.razon_social as cliente,  "
-                   + "poc_pedidos_detalle.cantidad,  "
+                   + "poc_pedidos_detalle.reservado AS cantidad,  "
                    + "(case when poc_pedidos.moneda_id=1 then  poc_pedidos_detalle.precio_unitario  else (poc_pedidos_detalle.precio_unitario * tipo_cambio  )end ) as precio_unitario,  "
                    + "poc_pedidos.moneda_id, "
-                   + "poc_pedidos_detalle.cantidad * poc_pedidos_detalle.precio_unitario as importe_sin_checar_tipo_cambio, "
-                   + "(case when poc_pedidos.moneda_id=1 then  poc_pedidos_detalle.cantidad * poc_pedidos_detalle.precio_unitario else ((poc_pedidos_detalle.precio_unitario * tipo_cambio )*  poc_pedidos_detalle.cantidad )  end) as importe, "
+                   + "poc_pedidos_detalle.reservado * poc_pedidos_detalle.precio_unitario as importe_sin_checar_tipo_cambio, "
+                   + "(case when poc_pedidos.moneda_id=1 then  poc_pedidos_detalle.reservado * poc_pedidos_detalle.precio_unitario else ((poc_pedidos_detalle.precio_unitario * tipo_cambio )*  poc_pedidos_detalle.reservado )  end) as importe, "
                    + "inv_prod.sku, "
                    + "inv_prod.descripcion "
                + "FROM poc_pedidos_detalle "
@@ -1712,12 +1712,12 @@ public class PocSpringDao implements PocInterfaceDao{
                + "join poc_pedidos on poc_pedidos.id =  poc_pedidos_detalle.poc_pedido_id  "
                + "join cxc_clie on cxc_clie.id = poc_pedidos.cxc_clie_id "
                + "join erp_proceso on erp_proceso.id = poc_pedidos.proceso_id  "
-               + "WHERE poc_pedidos.cancelado=false AND erp_proceso.proceso_flujo_id IN (2,4) "
-               + "AND erp_proceso.empresa_id= "+id_empresa +" "+cadena_where
-               + "  order by sku asc ";
-
+               + "WHERE poc_pedidos.cancelado=false AND erp_proceso.proceso_flujo_id IN (2,4,7,8) "
+               + "AND erp_proceso.empresa_id= "+id_empresa +" "+cadena_where+" "
+               + "order by inv_prod.descripcion asc, poc_pedidos.id desc ";
+       
        System.out.println("Articulos Reservados:"+ sql_to_query);
-
+       
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,
             new Object[]{}, new RowMapper() {
@@ -1728,9 +1728,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("pedido",rs.getString("pedido"));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("cliente",rs.getString("cliente"));
-                    row.put("cantidad",String.valueOf(rs.getDouble("cantidad")));
-                    row.put("precio_unitario",String.valueOf(rs.getDouble("precio_unitario")));
-                    row.put("importe",String.valueOf(rs.getDouble("importe")));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),2));
+                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),2));
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2));
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
 
