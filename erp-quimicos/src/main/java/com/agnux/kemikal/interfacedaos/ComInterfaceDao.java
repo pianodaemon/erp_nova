@@ -68,5 +68,7 @@ public interface ComInterfaceDao {
     
     //Metodos para el reporte de estadistico de compras
     public ArrayList<HashMap<String, String>> getEstadisticoCompras(Integer tipo_reporte, String proveedor, String producto, String fecha_inicial, String fecha_final, Integer id_empresa);
+
+    public HashMap<String, String> getCom_Requisicion_DatosPDF(Integer id_requisicion);
     
 }
