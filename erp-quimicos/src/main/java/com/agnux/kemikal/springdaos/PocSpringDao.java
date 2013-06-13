@@ -52,11 +52,11 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-
+    
     @Override
     public String selectFunctionForThisApp(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from poc_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
-
+        
         System.out.println("Ejacutando Guardar:"+sql_to_query);
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         //return update;
@@ -1857,7 +1857,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_cot.observaciones, "
                     + "proceso_id, "
                     + "poc_cot.incluye_img_desc, "
-                    + "(CASE WHEN poc_cot.gral_mon_id=1 THEN 1 ELSE poc_cot.tipo_cambio END) AS tipo_cambio,"
+                    //+ "(CASE WHEN poc_cot.gral_mon_id=1 THEN 1 ELSE poc_cot.tipo_cambio END) AS tipo_cambio,"
+                    + "poc_cot.tipo_cambio,"
                     + "poc_cot.gral_mon_id, "
                     + "gral_mon.descripcion_abr AS moneda_abr,"
                     + "poc_cot.cxc_agen_id, "

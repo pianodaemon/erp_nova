@@ -262,7 +262,53 @@ public class RemisionesController {
     }
     
     
-
+    
+    
+    //edicion y nuevo
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="id_remision", required=true) Integer identificador,
+            @RequestParam(value="orden_compra", required=true) String orden_compra,
+            @ModelAttribute("user") UserSessionData user,
+            Model model
+        ) {
+            
+            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            HashMap<String, String> succes = new HashMap<String, String>();
+            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            Integer app_selected = 66;//Remisiones de Clientes
+            String command_selected = "new";
+            String actualizo = "0";
+            
+            
+            if( identificador!=0 ){
+                command_selected = "edit";
+            }
+            
+            //serializar el arreglo
+            String extra_data_array = "'sin datos'";
+            
+            String data_string = app_selected + "___"+ command_selected + "___"+ id_usuario + "___"+ identificador + "___"+ orden_compra.toUpperCase();
+            
+            succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
+            
+            log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+            
+            if( String.valueOf(succes.get("success")).equals("true")  ){
+                actualizo = this.getPocDao().selectFunctionForThisApp(data_string, extra_data_array);
+            }
+            
+            jsonretorno.put("success",String.valueOf(succes.get("success")));
+            
+            log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
+            
+    
+    
+    
+    
+    
     
     //cancelar remision
     @RequestMapping(method = RequestMethod.POST, value="/getCancelaRemision.json")

@@ -525,22 +525,6 @@ public class CotizacionesController {
     }
     
     
-    /*
-    id_cotizacion
-    id_cliente
-    select_tipo_cotizacion
-    check_descripcion_larga
-    observaciones
-    total_tr
-    
-    iddetalle
-    eliminado
-    idproducto
-    id_presentacion
-    monedagrid
-    cantidad
-    precio
-     */
     //edicion y nuevo
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
