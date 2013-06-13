@@ -100,7 +100,7 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getProOrdenTipos(Integer emp_id);
     public ArrayList<HashMap<String, String>> getProPreorden_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getProPreorden_Detalle(Integer id);
-    
+
 
     //Orden produccion
     public ArrayList<HashMap<String, Object>> getProOrden_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
@@ -269,7 +269,7 @@ public interface ProInterfaceDao {
     
     //Obtiene el nombre de un empleaod de acuerdo a  su id
     public HashMap<String, String> getNombreEmpleadoById(Integer id_empleado);
-    
+
     //Reportes de produccion
     public ArrayList<HashMap<String, String>> getProduccion(String fecha_inicial, String fecha_final,String sku,String sku_descripcion,Integer equipo,Integer operario,Integer tipo_reporte,Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProduccion_por_producto(String fecha_inicial, String fecha_final,String sku,String sku_descripcion,Integer equipo,Integer operario,Integer tipo_reporte,Integer id_empresa);
@@ -292,5 +292,10 @@ public interface ProInterfaceDao {
     //Inicia Catalogo de Equipos Adicionales
     public ArrayList<HashMap<String, Object>> getEquipoAdicional_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getProEquipoAdicional_Datos(Integer id);
+    
+    
+    //Inicia Pdf de Estructura final de diseño o adecuacion
+    public ArrayList<HashMap<String, Object>> getPro_DatosOrdenProduccionLabVersionPdf( String produccion_id );
+    public ArrayList<HashMap<String, Object>> getPro_DatosOrdenProduccionLabPdf( String produccion_id );
     
 }

@@ -1271,7 +1271,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "FROM inv_prod JOIN inv_prod_unidades as inv_pu ON inv_pu.id=inv_prod.unidad_id "
                 + "WHERE inv_prod.borrado_logico=false AND inv_prod.empresa_id="+id_empresa+" AND inv_prod.sku ilike '"+sku+"';";
 
-        //System.out.println("Obteniendo datos sku:"+sql_query);
+        System.out.println("Obteniendo datos sku:"+sql_query);
 
         ArrayList<HashMap<String, String>> hm_sku = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -1320,7 +1320,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     + "join pro_subprocesos on pro_subprocesos.id=sumbprod.pro_subprocesos_id";
         }
 
-        //System.out.println("Obteniendo datos sku:"+sql_query);
+        System.out.println("Obteniendo datos sku:"+sql_query);
 
         ArrayList<HashMap<String, String>> hm_sku = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -3525,12 +3525,6 @@ public class ProSpringDao implements ProInterfaceDao{
         return datos_unidades;
     }
 
-    
-    
-    
-
-    
-    
     @Override
     public ArrayList<HashMap<String, String>> getProPreorden_Datos(Integer id) {
         String sql_to_query = "select * from pro_preorden_prod where id="+ id + ";";
@@ -3781,6 +3775,8 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("pro_proceso_flujo_id",String.valueOf(rs.getInt("pro_proceso_flujo_id")));
                     row.put("pro_estruc_id",String.valueOf(rs.getInt("pro_estruc_id")));
                     row.put("costo_ultimo",StringHelper.roundDouble(String.valueOf(rs.getDouble("costo_ultimo")),4));
+                    row.put("solicitante",rs.getString("solicitante"));
+                    row.put("vendedor",rs.getString("vendedor"));
 
                     return row;
                 }
@@ -4407,13 +4403,7 @@ public class ProSpringDao implements ProInterfaceDao{
     //obtiene datos de un lota para agregar al grid
     @Override
     public ArrayList<HashMap<String, Object>> getPro_DatosOrdenProduccionPdf(String produccion_id, String proceso_id) {
-        /*String sql_query = "select distinct op.id,op.folio,op.gral_emp_id, op.fecha_elavorar,opd.cantidad,opd.inv_prod_id, "
-                + "inv_prod.sku, inv_prod.descripcion, inv_prod.unidad_id, inv_prod_unidades.titulo as unidad, op.fecha_elavorar, op.hora_elavorar  "
-                + "from pro_orden_prod as op join pro_orden_prod_det as opd "
-                + "join inv_prod on inv_prod.id=opd.inv_prod_id "
-                + "left join inv_prod_unidades on inv_prod_unidades.id=inv_prod.id "
-                + "on opd.pro_orden_prod_id=op.id where op.id="+produccion_id+";";
-        */
+        
         final String proceso = this.selectEstatusProcesoOP(proceso_id);
 
         String sql_query = "select distinct op.id,op.folio,op.gral_emp_id, op.fecha_elavorar,opd.cantidad,opd.inv_prod_id, "
@@ -4755,7 +4745,6 @@ public class ProSpringDao implements ProInterfaceDao{
         
         return hm;
     }
-     
      
      
      
@@ -5372,6 +5361,115 @@ public class ProSpringDao implements ProInterfaceDao{
             }
         );
         return datos_formulas;
+    }
+    
+    
+    
+    //Inicia Pdf de Estructura final de diseño o adecuacion
+    //obtiene datos de materia prima que se utilizo en una orden de produccion de un producto tipo laboratorio con su version correspondiente
+    @Override
+    public ArrayList<HashMap<String, Object>> getPro_DatosOrdenProduccionLabVersionPdf( String produccion_id ) {
+        
+        
+        String sql_query = "selecT * from pro_get_detalle_orden_laboratorio(0,"+produccion_id+",0) " +
+            "as foo(inv_prod_id integer,sku character varying,descripcion character varying, " +
+            "cantidad_usada double precision, " +
+            "cantidad_mp double precision, cantidad_porciento double precision, cantidad_total double precision, " +
+            "version integer, "+ 
+            "fineza_inicial character varying, " +
+            "viscosidads_inicial character varying, " +
+            "viscosidadku_inicial character varying, " +
+            "viscosidadcps_inicial character varying, " +
+            "densidad_inicial character varying, " +
+            "volatiles_inicial character varying, " +
+            "hidrogeno_inicial character varying, " +
+            "cubriente_inicial character varying, " +
+            "tono_inicial character varying, " +
+            "brillo_inicial character varying, " +
+            "dureza_inicial character varying, " +
+            "adherencia_inicial character varying) order by version, sku;";
+        
+        System.out.println("esto es el query ¬†: ¬†"+sql_query);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    
+                    row.put("cantidad_usada",StringHelper.roundDouble(rs.getDouble("cantidad_usada"),4));
+                    row.put("cantidad_mp",StringHelper.roundDouble(rs.getDouble("cantidad_mp"),4));
+                    row.put("cantidad_porciento",StringHelper.roundDouble(rs.getDouble("cantidad_porciento"),4));
+                    row.put("cantidad_total",StringHelper.roundDouble(rs.getDouble("cantidad_total"),4));
+                    row.put("version",StringHelper.roundDouble(rs.getDouble("version"),4));
+                    
+                    row.put("fineza_inicial",rs.getString("fineza_inicial"));
+                    row.put("viscosidads_inicial",rs.getString("viscosidads_inicial"));
+                    row.put("viscosidadku_inicial",rs.getString("viscosidadku_inicial"));
+                    row.put("viscosidadcps_inicial",rs.getString("viscosidadcps_inicial"));
+                    row.put("densidad_inicial",rs.getString("densidad_inicial"));
+                    row.put("volatiles_inicial",rs.getString("volatiles_inicial"));
+                    row.put("hidrogeno_inicial",rs.getString("hidrogeno_inicial"));
+                    row.put("cubriente_inicial",rs.getString("cubriente_inicial"));
+                    row.put("tono_inicial",rs.getString("tono_inicial"));
+                    row.put("brillo_inicial",rs.getString("brillo_inicial"));
+                    row.put("dureza_inicial",rs.getString("dureza_inicial"));
+                    row.put("adherencia_inicial",rs.getString("adherencia_inicial"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    //obtiene datos de materia prima que se utilizo en una orden de produccion de un producto tipo laboratorio
+    @Override
+    public ArrayList<HashMap<String, Object>> getPro_DatosOrdenProduccionLabPdf( String produccion_id ) {
+        
+        String sql_query = "selecT sku, inv_prod_id, descripcion from pro_get_detalle_orden_laboratorio(0,"+produccion_id+",0) " +
+            "as foo(inv_prod_id integer,sku character varying,descripcion character varying,cantidad_usada double precision," +
+            "cantidad_mp double precision, cantidad_porciento double precision, cantidad_total double precision, " +
+            "version integer, "+ 
+            "fineza_inicial character varying, " +
+            "viscosidads_inicial character varying, " +
+            "viscosidadku_inicial character varying, " +
+            "viscosidadcps_inicial character varying, " +
+            "densidad_inicial character varying, " +
+            "volatiles_inicial character varying, " +
+            "hidrogeno_inicial character varying, " +
+            "cubriente_inicial character varying, " +
+            "tono_inicial character varying, " +
+            "brillo_inicial character varying, " +
+            "dureza_inicial character varying, " +
+            "adherencia_inicial character varying ) " +
+            "group by sku, inv_prod_id, descripcion " +
+            "order by sku;";
+        System.out.println("esto es el query ¬†: ¬†"+sql_query);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
+                    row.put("sku",rs.getString("sku"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm;
     }
     
 }
