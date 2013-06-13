@@ -1676,11 +1676,11 @@ public class PocSpringDao implements PocInterfaceDao{
         return hmtl_agente;
 
     }
-
-
-
-
-
+    
+    
+    
+    
+    
     //metodo para reporte de articulos reservados
     @Override
     public ArrayList<HashMap<String, String>> getReporteArticulosReservados(Integer id_empresa,Integer id_usuario,String codigo, String descripcion) {
@@ -1689,11 +1689,11 @@ public class PocSpringDao implements PocInterfaceDao{
         if(!codigo.equals("")){
             cadena_where=" and inv_prod.sku ILIKE '%"+codigo +"%'";
         }
-
+        
         if(!descripcion.equals("")){
             cadena_where=" and inv_prod.descripcion ILIKE '%"+descripcion +"%'";
         }
-
+        
        String sql_to_query =""
                + "SELECT  "
                    + "poc_pedidos.id as id_pedido, "
@@ -1716,7 +1716,7 @@ public class PocSpringDao implements PocInterfaceDao{
                + "AND erp_proceso.empresa_id= "+id_empresa +" "+cadena_where+" "
                + "order by inv_prod.descripcion asc, poc_pedidos.id desc ";
        
-       System.out.println("Articulos Reservados:"+ sql_to_query);
+       //System.out.println("Articulos Reservados:"+ sql_to_query);
        
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,
