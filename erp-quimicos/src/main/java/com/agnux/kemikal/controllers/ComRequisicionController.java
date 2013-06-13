@@ -6,13 +6,20 @@ package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.StringHelper;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.ComInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
+import com.agnux.kemikal.reportes.PdfRequisicion;
+import com.itextpdf.text.DocumentException;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,8 +37,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
@@ -94,7 +103,7 @@ public class ComRequisicionController {
         infoConstruccionTabla.put("momento_creacion", "fecha de alta:150");
         
         
-        ModelAndView x = new ModelAndView("com_requisicion/startup", "title", "Requisici&ocute;n");
+        ModelAndView x = new ModelAndView("com_requisicion/startup", "title", "Requisici&oacute;n");
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -133,7 +142,7 @@ public class ComRequisicionController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo Orden de Compra
+        //aplicativo "Requisiciones de Compra"
         Integer app_selected = 104;
         
         //decodificar id de usuario
@@ -379,4 +388,114 @@ public class ComRequisicionController {
             log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
         return jsonretorno;
     }
+    
+    //crear PDF
+    
+    @RequestMapping(value = "/getPdfRequisicion/{id_requisicion}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getPdfAjusteJson(
+                @PathVariable("id_requisicion") Integer id_requisicion,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request, 
+                HttpServletResponse response, 
+                Model model)
+            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> datosRequisicion = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> lista_productos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosReq = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> datos_empresa = new HashMap<String, String>();
+        Integer app_selected = 104; //Requisiscion
+        
+        System.out.println("Generando PDF Requisicion");
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+        String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+        String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
+        File file_dir_tmp = new File(dir_tmp);
+        String file_name = "requisicion_"+rfc_empresa+".pdf";
+        
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+        
+        datos_empresa.put("emp_razon_social", razon_social_empresa);
+        datos_empresa.put("emp_rfc", this.getGralDao().getRfcEmpresaEmisora(id_empresa));;
+        datos_empresa.put("emp_calle", this.getGralDao().getCalleDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_no_exterior", this.getGralDao().getNoExteriorDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_colonia", this.getGralDao().getColoniaDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_pais", this.getGralDao().getPaisDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_estado", this.getGralDao().getEstadoDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_municipio", this.getGralDao().getMunicipioDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_cp", this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa));
+        
+        
+        datosReq = this.getComDao().getCom_requisicion_Datos(id_requisicion);
+        
+        datosRequisicion.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
+        datosRequisicion.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+        
+        datosRequisicion.put("folio", datosReq.get(0).get("folio"));
+        datosRequisicion.put("fecha_requisicion", datosReq.get(0).get("fecha_creacion"));
+        datosRequisicion.put("fecha_compromiso", datosReq.get(0).get("fecha_compromiso"));
+        datosRequisicion.put("observaciones", datosReq.get(0).get("observaciones"));
+        datosRequisicion.put("cancelado", datosReq.get(0).get("cancelado"));
+        datosRequisicion.put("nombre_usuario", datosReq.get(0).get("nombre_usuario"));
+        datosRequisicion.put("status", datosReq.get(0).get("status"));
+       
+
+        
+        lista_productos = this.getComDao().getCom_requisicion_DatosGrid(id_requisicion);
+        
+        //instancia a la clase, aqui se le pasa los parametros al constructor
+        PdfRequisicion requisicion = new PdfRequisicion(datos_empresa, datosRequisicion, lista_productos, fileout, ruta_imagen);
+        
+        //metodo que construye el pdf
+        requisicion.ViewPDF();
+        
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        int size = (int) file.length(); // Tamaño del archivo
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        response.setBufferSize(size);
+        response.setContentLength(size);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        FileCopyUtils.copy(bis, response.getOutputStream());  	
+        response.flushBuffer();
+        
+        FileHelper.delete(fileout);
+        
+        return null;        
+    }
+    
+    
+    //termina PDF
+
+  
+    
+    
+    
+    
+    
+    //aqui
+      /**
+     *
+     * @param identificador
+     * @param id_user_cod
+     * @param model
+     * @return
+     */
+    
+     
+   
 }
+        
+
