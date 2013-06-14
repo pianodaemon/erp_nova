@@ -558,6 +558,7 @@
 											<li>
 												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
 												<ul>
+													<li><a href="../proequipos/startup.agnux">Equipos</a></li>
 													<li><a href="../proequiposadic/startup.agnux">Equipos Adicionales</a></li>
 													<li><a href="../protipoequipo/startup.agnux">Tipos de Equipo</a></li>
 													<li><a href="../proinstrumentosmedicion/startup.agnux">Instrumentos de Medici&oacute;n</a></li>
