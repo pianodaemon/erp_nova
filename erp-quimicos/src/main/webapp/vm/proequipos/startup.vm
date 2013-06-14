@@ -40,9 +40,9 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td>Equipo </td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>Nombre Corto</td>
+				<td>Nombre&nbsp;Corto</td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td>&nbsp;</td>
+				<td>Tipo&nbsp;de&nbsp;Equipo</td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -57,9 +57,9 @@
 				<td><INPUT TYPE="text" name="busqueda_nombrecorto" style="width:230px;"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td>
-				<!--	<SELECT NAME="busqueda_select_grupo" style="width:150px;">
-						<option value="0">[--Seleccionar grupo --]</option>
-					</SELECT>-->
+					<SELECT NAME="busqueda_select_tipo_equipo" style="width:200px;">
+							<option value="0">[--Seleccionar tipo --]</option>
+					</SELECT>
 				</td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><INPUT TYPE="button" value="Buscar"></td>
@@ -85,11 +85,6 @@
 		
         
         
-		
-        
-        
-		
-        
         
         <!--form for centros de costo -->
         <form id="formaProEquipos00" action="edit.json" method="POST" >
@@ -100,7 +95,7 @@
 					
                     <div id="div_two" title="" class="proequipos_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:730px; padding-left:6px;"><strong>Cat&aacute;logo de Equipos </strong></div>
+                            <div class="fixed column" id="cierra" style="width:660px; padding-left:6px;"><strong>Cat&aacute;logo de Equipos </strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -125,33 +120,45 @@
 											<tr>
 												<td width="5"></td>
 												<td width="115">Equipo </td>
-												<td width="150" colspan="3"><INPUT TYPE="text" name="titulo" value="" style="width:370px;"></td>
-												<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
+												<td width="400" colspan="2"><INPUT TYPE="text" name="titulo" value="" style="width:400px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
 												<td width="25"></td>
-												<td></td>
 											</tr>
 											<tr>
-												<td width="8">&nbsp;</td>
+												<td width="6">&nbsp;</td>
 											</tr>
 											<tr>
 												<td width="5"></td>
 												<td width="115">Nombre corto</td>
-												<td colspan="4"><INPUT TYPE="text" name="nombre_corto" value="" style="width:150px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombre_corto"></div></td>
-												<td>
-												<SELECT NAME="tipo_equipo" style="width:180px;">
-													<OPTION value="0" selected="yes">[--Seleccionar Tipo de Equipo--]</OPTION>
-												</SELECT>
-												</td>
+												<td width="200"><INPUT TYPE="text" name="nombre_corto" value="" style="width:200px;"></td>
+												<td width="200"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nombrecorto"></div></td>
+												<td width="25"></td>
+												<td width="25"></td>
 											</tr>
-					</table>
+											
+											<tr>
+												<td width="6">&nbsp;</td>
+											</tr>
+											<tr>
+												<td width="5"></td>
+												<td width="115">Tipo de equipo</td>
+												<td width="200">
+													<SELECT NAME="select_tipo_equipo" style="width:200px;">
+														<OPTION value="0" selected="yes">[--Seleccionar Tipo de Equipo--]</OPTION>
+													</SELECT>
+												</td>
+												<td width="200"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tipo"></div></td>
+												<td width="25"></td>
+												<td width="25"></td>
+											</tr>
+										</table>
                                     </div>
 									
                                 </div>
                             </div>
                             
                             
-                            <div class="fixed column" id="botones" style="width:750px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" id="botones" style="width:680px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr><td colspan="4" height="7"></td></tr>
 									<tr>

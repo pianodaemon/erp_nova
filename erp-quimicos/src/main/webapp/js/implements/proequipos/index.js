@@ -6,6 +6,7 @@ $(function() {
 	    }
 	    return work.join(',');
 	};
+	var arrayTipos;
 	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
@@ -46,9 +47,9 @@ $(function() {
     
 	
 	var $cadena_busqueda = "";
-	var $busqueda_equipoadic = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_equipoadicional]');
+	var $busqueda_equipo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_equipo]');
 	var $busqueda_nombrecorto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_nombrecorto]');
-	//var $busqueda_select_grupo = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_grupo]');
+	var $busqueda_select_tipo_equipo = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_tipo_equipo]');
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
@@ -58,9 +59,9 @@ $(function() {
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "equipoadic" + signo_separador + $busqueda_equipoadic.val() + "|";
+		valor_retorno += "equipoadic" + signo_separador + $busqueda_equipo.val() + "|";
 		valor_retorno += "nombrecorto" + signo_separador + $busqueda_nombrecorto.val() + "|";
-		//valor_retorno += "grupo" + signo_separador + $busqueda_select_grupo.val() + "|";
+		valor_retorno += "tipo" + signo_separador + $busqueda_select_tipo_equipo.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
 	};
@@ -78,10 +79,37 @@ $(function() {
 	
 	
 	
+	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTiposEquipo.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+		//Llena el select tipos de productos en el buscador
+		$busqueda_select_tipo_equipo.children().remove();
+		var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar tipo --]</option>';
+		$.each(data['Tipos'],function(entryIndex,pt){
+			prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+		});
+		$busqueda_select_tipo_equipo.append(prod_tipos_html);
+		
+		arrayTipos=data['Tipos'];
+	});
+	
+	
+	
+	
 	$limpiar.click(function(event){
 		event.preventDefault();
-		$busqueda_equipoadic.val('');
+		$busqueda_equipo.val('');
 		$busqueda_nombrecorto.val('');
+		
+		//Llena el select tipos de Equipos
+		$busqueda_select_tipo_equipo.children().remove();
+		var tipos_html = '<option value="0" selected="yes">[--Seleccionar tipo --]</option>';
+		$.each(arrayTipos,function(entryIndex,pt){
+			tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+		});
+		$busqueda_select_tipo_equipo.append(tipos_html);
+		
+		$busqueda_equipo.focus();
 	});
 	
 	/*
@@ -121,8 +149,13 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		
+		$busqueda_equipo.focus();
 	});
 	
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_equipo, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_nombrecorto, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_tipo_equipo, $buscar);
 	
 	
 	$tabs_li_funxionalidad = function(){
@@ -187,9 +220,11 @@ $(function() {
 		$tabs_li_funxionalidad();
 		
 		var $campo_id = $('#forma-proequipos-window').find('input[name=identificador]');
-                var $titulo = $('#forma-proequipos-window').find('input[name=titulo]');
-                var $nombre_corto = $('#forma-proequipos-window').find('input[name=nombre_corto]');
-
+		var $titulo = $('#forma-proequipos-window').find('input[name=titulo]');
+		var $nombre_corto = $('#forma-proequipos-window').find('input[name=nombre_corto]');
+		var $select_tipo_equipo = $('#forma-proequipos-window').find('select[name=select_tipo_equipo]');
+		
+		
 		var $cerrar_plugin = $('#forma-proequipos-window').find('#close');
 		var $cancelar_plugin = $('#forma-proequipos-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-proequipos-window').find('#submit');
@@ -213,10 +248,10 @@ $(function() {
                             tmp = data['success'].split('___')[element];
                             longitud = tmp.split(':');
                             if( longitud.length > 1 ){
-                                    $('#forma-proequipos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-                                    .parent()
-                                    .css({'display':'block'})
-                                    .easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
+								$('#forma-proequipos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+								.parent()
+								.css({'display':'block'})
+								.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
                             }
                         }
                     }
@@ -226,10 +261,16 @@ $(function() {
                 $forma_selected.ajaxForm(options);
 		
                 var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProEquipos.json';
-                $arreglo = {'id':id_to_show};
+                $arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
                 //aqui se cargan los campos al editar
                 $.post(input_json,$arreglo,function(entry){
-                        
+					//Llena el select tipos de Equipos
+					$select_tipo_equipo.children().remove();
+					var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo de Equipo--]</option>';
+					$.each(entry['Tipos'],function(entryIndex,pt){
+						prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+					});
+					$select_tipo_equipo.append(prod_tipos_html);
                 },"json");//termina llamada json
 
 		$cerrar_plugin.bind('click',function(){
@@ -253,7 +294,6 @@ $(function() {
 	var carga_formaProEquipos00_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar 
 		if(accion_mode == 'cancel'){
-                     
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
 			$arreglo = {'id':id_to_show,
 						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
@@ -288,19 +328,17 @@ $(function() {
 			
 			$tabs_li_funxionalidad();
 			
-                        var $campo_id = $('#forma-proequipos-window').find('input[name=identificador]');
-                        var $titulo = $('#forma-proequipos-window').find('input[name=titulo]');
-                        var $nombre_corto = $('#forma-proequipos-window').find('input[name=nombre_corto]');
-                        
-                        
+			var $campo_id = $('#forma-proequipos-window').find('input[name=identificador]');
+			var $titulo = $('#forma-proequipos-window').find('input[name=titulo]');
+			var $nombre_corto = $('#forma-proequipos-window').find('input[name=nombre_corto]');
+			var $select_tipo_equipo = $('#forma-proequipos-window').find('select[name=select_tipo_equipo]');
+			
 			var $cerrar_plugin = $('#forma-proequipos-window').find('#close');
 			var $cancelar_plugin = $('#forma-proequipos-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-proequipos-window').find('#submit');
 			
                         
 			if(accion_mode == 'edit'){
-                                
-				                                
 				var respuestaProcesada = function(data){
 					if ( data['success'] == 'true' ){
 						var remove = function() { $(this).remove(); };
@@ -330,14 +368,27 @@ $(function() {
 				var options = {dataType :  'json', success : respuestaProcesada};
 				$forma_selected.ajaxForm(options);
 				
-                                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProEquipos.json';
-				$arreglo = {'id':id_to_show};
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProEquipos.json';
+				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
+				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					$campo_id.attr({ 'value' : entry['ProEquipos']['0']['id'] });
-                                        $titulo.attr({ 'value' : entry['ProEquipos']['0']['titulo'] });
-                                        $nombre_corto.attr({ 'value' : entry['ProEquipos']['0']['titulo_corto'] });
-                                },"json");//termina llamada json
+					$titulo.attr({ 'value' : entry['ProEquipos']['0']['titulo'] });
+					$nombre_corto.attr({ 'value' : entry['ProEquipos']['0']['titulo_corto'] });
+					
+					//Llena el select tipos de Equipos
+					$select_tipo_equipo.children().remove();
+					var prod_tipos_html = '<option value="0">[--Seleccionar Tipo de Equipo--]</option>';
+					$.each(entry['Tipos'],function(entryIndex,pt){
+						if(parseInt(entry['ProEquipos'][0]['pro_tipo_equipo_id'])==parseInt(pt['id'])){
+							prod_tipos_html += '<option value="' + pt['id'] + '" selected="yes">' + pt['titulo'] + '</option>';
+						}else{
+							prod_tipos_html += '<option value="' + pt['id'] + '">' + pt['titulo'] + '</option>';
+						}
+					});
+					$select_tipo_equipo.append(prod_tipos_html);
+				},"json");//termina llamada json
 				
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
