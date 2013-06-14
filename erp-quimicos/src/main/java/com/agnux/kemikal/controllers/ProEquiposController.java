@@ -10,6 +10,7 @@ import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
+import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,10 +48,17 @@ public class ProEquiposController {
     @Qualifier("daoPro")
     private ProInterfaceDao proDao;
     
+    @Autowired
+    @Qualifier("daoHome")
+    private HomeInterfaceDao HomeDao;
+    
     public ProInterfaceDao getProDao() {
         return proDao;
     }
     
+    public HomeInterfaceDao getHomeDao() {
+        return HomeDao;
+    }
     
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
@@ -61,7 +69,7 @@ public class ProEquiposController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("titulo", "Equipo:160");
+        infoConstruccionTabla.put("titulo", "Equipo:250");
         infoConstruccionTabla.put("titulo_corto", "Nombre Corto:200");
         
         ModelAndView x = new ModelAndView("proequipos/startup", "title", "Cat&aacute;logo de Equipos");
@@ -107,7 +115,7 @@ public class ProEquiposController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo catalogo de bancos
+        //Ccatalogo de Equipos
         Integer app_selected = 141;
         
         //decodificar id de usuario
@@ -116,8 +124,9 @@ public class ProEquiposController {
         //variables para el buscador
         String equipo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("equipo")))+"%";
         String nombrecorto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("nombrecorto")))+"%";
+        String tipo = StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo")));
         
-        String data_string = app_selected+"___"+id_usuario+"___"+equipo+"___"+nombrecorto;
+        String data_string = app_selected+"___"+id_usuario+"___"+equipo+"___"+nombrecorto+"___"+tipo;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getProDao().countAll(data_string);
@@ -139,24 +148,59 @@ public class ProEquiposController {
     }
     
     
-    //este es solo para probar
     
+    
+    //Obtiene Tipos de Equipo para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/getTiposEquipo.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getTiposEquipoJson(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> arrayTipos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        arrayTipos=this.getProDao().getProEquipo_Tipos(id_empresa);
+        
+        jsonretorno.put("Tipos", arrayTipos);
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    //este es solo para probar
     @RequestMapping(method = RequestMethod.POST, value="/getProEquipos.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProEquiposJson(
             @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
             ) {
         
         log.log(Level.INFO, "Ejecutando getProEquipos de {0}", ProEquiposController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosProEquipos= new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayTipos = new ArrayList<HashMap<String, String>>();
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         if( id != 0  ){
             datosProEquipos = this.getProDao().getProEquipo_Datos(id);      
         }
         
-        jsonretorno.put("ProEquipos", datosProEquipos);
+        arrayTipos=this.getProDao().getProEquipo_Tipos(id_empresa);
         
+        jsonretorno.put("ProEquipos", datosProEquipos);
+        jsonretorno.put("Tipos", arrayTipos);
         return jsonretorno;
     }
     
@@ -167,6 +211,7 @@ public class ProEquiposController {
             @RequestParam(value="identificador", required=true) String id,
             @RequestParam(value="titulo", required=false) String titulo,
             @RequestParam(value="nombre_corto", required=false) String nombre_corto,
+            @RequestParam(value="select_tipo_equipo", required=false) String select_tipo_equipo,
             Model model,@ModelAttribute("user") UserSessionData user
             ) {
 
@@ -184,8 +229,11 @@ public class ProEquiposController {
         }else{
             command_selected = "edit";
         }
-        //                      1                   2                       3            4               5                      6                       
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo.toUpperCase()+"___"+nombre_corto.toUpperCase();
+        
+        select_tipo_equipo = StringHelper.verificarSelect(select_tipo_equipo);
+        
+        //                      1                   2                       3            4               5                      6                                    7
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo.toUpperCase()+"___"+nombre_corto.toUpperCase()+"___"+select_tipo_equipo;
         
         succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

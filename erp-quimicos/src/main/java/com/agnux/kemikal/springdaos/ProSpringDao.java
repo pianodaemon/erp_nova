@@ -5405,7 +5405,7 @@ public class ProSpringDao implements ProInterfaceDao{
     public ArrayList<HashMap<String, String>> getProEquipo_Datos(Integer id) {
 
         String sql_to_query =    " select pro_equipos.id, pro_equipos.titulo,pro_equipos.titulo_corto, pro_equipos.pro_tipo_equipo_id from pro_equipos "
-                + "where pro_equipos.id=" + id;
+                + "where pro_equipos.id="+ id;
                 
         //System.out.println("segundo query"+sql_to_query);
         ArrayList<HashMap<String, String>> datos_formulas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -5424,6 +5424,33 @@ public class ProSpringDao implements ProInterfaceDao{
         );
         return datos_formulas;
     }
+    
+    
+    
+     //Metodo para obtener todos los Tipos de Equipos
+    @Override
+    public ArrayList<HashMap<String, String>> getProEquipo_Tipos(Integer idEmp) {
+        String sql_to_query="SELECT id,titulo FROM pro_tipo_equipo WHERE borrado_logico=FALSE AND gral_emp_id=?;";
+        
+        System.out.println("segundo query"+sql_to_query);
+        ArrayList<HashMap<String, String>> hmTipos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(idEmp)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",String.valueOf(rs.getString("titulo")));
+                    return row;
+                }
+            }
+        );
+        return hmTipos;
+    }
+    
+    
+    
+    
     
     
     
