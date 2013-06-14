@@ -293,6 +293,9 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, Object>> getEquipoAdicional_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getProEquipoAdicional_Datos(Integer id);
     
+    //Inicia Catalogo de Equipos 
+    public ArrayList<HashMap<String, Object>> getProEquipo_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, String>> getProEquipo_Datos(Integer id);
     
     //Inicia Pdf de Estructura final de diseño o adecuacion
     public ArrayList<HashMap<String, Object>> getPro_DatosOrdenProduccionLabVersionPdf( String produccion_id );

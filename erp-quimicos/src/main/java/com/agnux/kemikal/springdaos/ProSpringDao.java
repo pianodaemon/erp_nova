@@ -5365,6 +5365,68 @@ public class ProSpringDao implements ProInterfaceDao{
     
     
     
+    
+//Inicio de los metodos por el catalogo de equipos 
+    @Override
+    public ArrayList<HashMap<String, Object>> getProEquipo_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
+
+	String sql_to_query = "SELECT pro_equipos.id, "
+                                +"pro_equipos.titulo, "
+                                +"pro_equipos.titulo_corto, "
+                                +"pro_equipos.pro_tipo_equipo_id "
+                        +"FROM pro_equipos "
+                        +"JOIN ("+sql_busqueda+") as subt on subt.id=pro_equipos.id "
+                        +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
+
+        System.out.println("Busqueda GetPage: "+sql_to_query+"  data_string"+data_string );
+
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("titulo_corto",rs.getString("titulo_corto"));
+                    row.put("pro_tipo_equipo_id",rs.getString("pro_tipo_equipo_id"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+     //obtiene los datos de un equipos 
+    @Override
+    public ArrayList<HashMap<String, String>> getProEquipo_Datos(Integer id) {
+
+        String sql_to_query =    " select pro_equipos.id, pro_equipos.titulo,pro_equipos.titulo_corto, pro_equipos.pro_tipo_equipo_id from pro_equipos "
+                + "where pro_equipos.id=" + id;
+                
+        //System.out.println("segundo query"+sql_to_query);
+        ArrayList<HashMap<String, String>> datos_formulas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",String.valueOf(rs.getString("titulo")));
+                    row.put("titulo_corto",String.valueOf(rs.getString("titulo_corto")));
+                    row.put("pro_tipo_equipo_id",String.valueOf(rs.getString("pro_tipo_equipo_id")));
+                    return row;
+                }
+            }
+        );
+        return datos_formulas;
+    }
+    
+    
+    
     //Inicia Pdf de Estructura final de diseño o adecuacion
     //obtiene datos de materia prima que se utilizo en una orden de produccion de un producto tipo laboratorio con su version correspondiente
     @Override
