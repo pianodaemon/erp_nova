@@ -4609,7 +4609,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("version",String.valueOf(rs.getInt("version")));
-                    row.put("densidad",String.valueOf(StringHelper.roundDouble(rs.getInt("densidad"),4)));
+                    row.put("densidad",String.valueOf(StringHelper.roundDouble(rs.getDouble("densidad"),4)));
                     
                     return row;
                 }
