@@ -706,7 +706,7 @@ public class GralSpringDao implements GralInterfaceDao{
                 + "AND gral_docs_conf.campo='CODIGO1'";
         //esto es para revisar que exista el registro
         int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
-
+        
         //si rowCount es mayor que cero si se encontro registro y extraemos el valor
         if (rowCount>0){
             String sql_to_query = "SELECT gral_docs_conf.valor "
@@ -718,17 +718,17 @@ public class GralSpringDao implements GralInterfaceDao{
             Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
             valor_retorno = map.get("valor").toString();
         }
-
+        
         return valor_retorno;
     }
-
-
+    
+    
     @Override
     public String getCodigo2Iso(Integer id_empresa, Integer id_app) {
         String valor_retorno="";
         String sql_busqueda = "";
         String sql_to_query="";
-
+        
         sql_busqueda = "SELECT count(gral_docs_conf.valor)  "
                 + "FROM gral_docs "
                 + "JOIN gral_docs_conf ON gral_docs_conf.gral_doc_id=gral_docs.id "
@@ -756,10 +756,22 @@ public class GralSpringDao implements GralInterfaceDao{
 
     @Override
     public String getTituloReporte(Integer id_empresa, Integer id_app) {
-        String sql_to_query = "SELECT gral_docs.titulo FROM gral_docs WHERE gral_docs.gral_emp_id="+id_empresa +" AND gral_docs.gral_app_id="+id_app+";";
-        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
-        String valor_retorno = map.get("titulo").toString();
-
+        String valor_retorno="";
+        String sql_busqueda = "";
+        String sql_to_query="";
+        
+        sql_busqueda = "SELECT count(gral_docs.titulo) FROM gral_docs WHERE gral_docs.gral_emp_id="+id_empresa +" AND gral_docs.gral_app_id="+id_app+";";
+        
+        //esto es para revisar que exista el registro
+        int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
+        
+        //si rowCount es mayor que cero si se encontro registro y extraemos el valor
+        if (rowCount>0){
+            sql_to_query = "SELECT gral_docs.titulo FROM gral_docs WHERE gral_docs.gral_emp_id="+id_empresa +" AND gral_docs.gral_app_id="+id_app+";";
+            Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+            valor_retorno = map.get("titulo").toString();
+        }
+        
         return valor_retorno;
     }
 

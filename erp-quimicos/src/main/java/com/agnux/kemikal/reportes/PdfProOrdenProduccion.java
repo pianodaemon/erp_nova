@@ -51,7 +51,7 @@ public class PdfProOrdenProduccion {
         try {
             reporte.open();
              
-            float [] tam_tablax = {2.5f,0.6f,5.5f,0.5f,2f,3};
+            float [] tam_tablax = {2.5f,0.6f,5f,2f,2f,3};
             PdfPTable tablaX = new PdfPTable(tam_tablax);
             PdfPCell celdaX;
             tablaX.setKeepTogether(false);
@@ -87,7 +87,8 @@ public class PdfProOrdenProduccion {
             tablaX.addCell(celdaX);
             
             //columna 5 y 6 fil1
-            celdaX = new PdfPCell(new Paragraph("FECHA:"+datos.get("fecha_elavorar") +"   HORA:"+datos.get("fecha_elavorar") +"   No. de Lote : "+datos.get("folio")+"      Costo : $"+datos.get("costo_ultimo"),fuentenegrita));
+            celdaX = new PdfPCell(new Paragraph("FECHA: "+datos.get("fecha_elavorar") +"     HORA: "+datos.get("fecha_elavorar") +"     No. de Lote: "+datos.get("folio")+"\nCosto: $"+datos.get("costo_ultimo"),fuentenegrita));
+            celdaX.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdaX.setBorderWidthBottom(1);
             celdaX.setBorderWidthTop(0);
             celdaX.setBorderWidthRight(0);
@@ -97,18 +98,21 @@ public class PdfProOrdenProduccion {
             
             reporte.add(tablaX);
             
+            
+            
+            
             for (int j=0;j<lista.size();j++){
                 
                 HashMap<String,Object> registro = lista.get(j);
                 
-                float [] tam_tablax1 = {2f,1.6f,3.5f,2f,2f,3};
+                float [] tam_tablax1 = {2f,2.5f,3.2f,2f,1.5f,3};
                 PdfPTable tablaX1 = new PdfPTable(tam_tablax1);
                 PdfPCell celdaX1;
                 tablaX1.setKeepTogether(false);
                 
                 //columna 1 y 2 fil2
                 //columna 1 y 2 fil2
-                celdaX1 = new PdfPCell(new Paragraph("Codigo de Producto : ",fuenteCont2));
+                celdaX1 = new PdfPCell(new Paragraph("Código de Producto:",fuenteCont2));
                 celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
                 celdaX1.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 celdaX1.setBorderWidthBottom(0);
@@ -123,10 +127,39 @@ public class PdfProOrdenProduccion {
                 celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
                 celdaX1.setBorderWidthBottom(0);
                 celdaX1.setBorderWidthTop(0);
-                celdaX1.setColspan(3);
+                //celdaX1.setColspan(3);
                 celdaX1.setBorderWidthRight(0);
                 celdaX1.setBorderWidthLeft(0);
                 tablaX1.addCell(celdaX1);
+                
+                String version="";
+                boolean mostrar_observacion = false;
+                
+                if(Integer.parseInt(String.valueOf(registro.get("tipo_prod_id")))==8){
+                    //Solo para producto en desarrollo
+                    version = "Versión: "+String.valueOf(registro.get("version"));
+                    mostrar_observacion=true;
+                }
+                
+                //columna 3 a 5 vacio fil2
+                celdaX1 = new PdfPCell(new Paragraph(version,fuenteCont2));
+                celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
+                celdaX1.setBorderWidthBottom(0);
+                celdaX1.setBorderWidthTop(0);
+                celdaX1.setBorderWidthRight(0);
+                celdaX1.setBorderWidthLeft(0);
+                tablaX1.addCell(celdaX1);
+                
+                //columna 3 a 5 vacio fil2
+                celdaX1 = new PdfPCell(new Paragraph("",fuenteCont2));
+                celdaX1.setHorizontalAlignment(Element.ALIGN_LEFT);
+                celdaX1.setBorderWidthBottom(0);
+                celdaX1.setBorderWidthTop(0);
+                celdaX1.setBorderWidthRight(0);
+                celdaX1.setBorderWidthLeft(0);
+                tablaX1.addCell(celdaX1);
+                
+                
                 
                 //columna 6 vacio fil2
                 celdaX1 = new PdfPCell(new Paragraph(String.valueOf("CANTIDAD EN "+registro.get("unidad").toString().toUpperCase()+": "+registro.get("cantidad")),fuenteCont2));
@@ -401,6 +434,49 @@ public class PdfProOrdenProduccion {
                 celdaF.setBorderWidthRight(0);
                 celdaF.setBorderWidthLeft(0);
                 tablaFormX.addCell(celdaF);
+                
+                
+                if(mostrar_observacion){
+                    if(!registro.get("observaciones").equals("")){
+                        //Vacio
+                        celdaF = new PdfPCell(new Paragraph("",fuentenegrita));
+                        celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        celdaF.setBorder(0);
+                        celdaF.setColspan(6);
+                        tablaFormX.addCell(celdaF);
+
+                        celdaF = new PdfPCell(new Paragraph("OBSERVACIONES",fuentenegrita));
+                        celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        celdaF.setBorderWidthBottom(0);
+                        celdaF.setBorderWidthTop(0);
+                        celdaF.setColspan(6);
+                        celdaF.setBorderWidthRight(0);
+                        celdaF.setBorderWidthLeft(0);
+                        tablaFormX.addCell(celdaF);
+
+                        celdaF = new PdfPCell(new Paragraph(String.valueOf(registro.get("observaciones")),smallFont));
+                        celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        celdaF.setBorderWidthBottom(0);
+                        celdaF.setBorderWidthTop(0);
+                        celdaF.setColspan(6);
+                        celdaF.setBorderWidthRight(0);
+                        celdaF.setBorderWidthLeft(0);
+                        tablaFormX.addCell(celdaF);
+
+                        //Vacio
+                        celdaF = new PdfPCell(new Paragraph("",fuentenegrita));
+                        celdaF.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celdaF.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        celdaF.setBorder(0);
+                        celdaF.setColspan(6);
+                        tablaFormX.addCell(celdaF);
+                    }
+                }
+                
+                
                 
                 reporte.add(tablaFormX);
                 

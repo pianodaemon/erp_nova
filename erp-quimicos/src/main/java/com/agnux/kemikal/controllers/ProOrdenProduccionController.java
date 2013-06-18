@@ -992,17 +992,16 @@ public class ProOrdenProduccionController {
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        Integer app_selected = 93;//catalogo de preorden produccion
+        
+        //Aplicativo Orden de Produccion
+        Integer app_selected = 93;
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         String rfc_empresa=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
         
-        datosEncabezadoPie.put("nombre_empresa_emisora", razon_social_empresa);
-        datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
-        datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
-        datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+
         
         //obtener el directorio temporal
         String dir_tmp = this.getGralDao().getTmpDir();
@@ -1023,6 +1022,25 @@ public class ProOrdenProduccionController {
         
         //obtiene las facturas del periodo indicado
         productos = this.getProDao().getPro_DatosOrdenProduccionPdf(id_orden, String.valueOf(datos_orden.get(0).get("pro_proceso_id")));
+        
+        Integer idTipoProd=0;
+        
+        if(productos.size()>0){
+            idTipoProd = Integer.parseInt(String.valueOf(productos.get(0).get("tipo_prod_id")));
+        }
+        
+        
+        if(idTipoProd==8){
+            //Si es Prod. en Desarrollo debe tomar el aplicativo 302(Este es un numero falso de aplicativo, esto es  solo para poder asignar un titulo diferente y codigos de iso diferentes al formato del pdf)
+            //Al tomar el aplicativo 302 cambiara el Titulo y Codigos del ISO del reporte
+            app_selected = 302;
+        }
+        
+        datosEncabezadoPie.put("nombre_empresa_emisora", razon_social_empresa);
+        datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
+        datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
+        datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+        
         
         
         String file_name = "PRODUCCION_"+rfc_empresa+"_"+datos.get("folio") +".pdf";
