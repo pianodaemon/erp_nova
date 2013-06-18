@@ -3626,85 +3626,85 @@ $(function() {
 			
 			if(accion_mode == 'edit'){
                                 
-                                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_datos_orden.json';
-                                $arreglo = {'id_orden':id_to_show,
-                                                'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                                            };
-                                            
-                                var $command_selected = $('#forma-proordenproduccion-window').find('input[name=command_selected]');
-                                var $id_orden = $('#forma-proordenproduccion-window').find('input[name=id_orden]');
-                                var $proceso_flujo_id = $('#forma-proordenproduccion-window').find('input[name=proceso_flujo_id]');
-                                var $select_tipoorden = $('#forma-proordenproduccion-window').find('select[name=tipoorden]');
-                                var $fecha_elavorar = $('#forma-proordenproduccion-window').find('input[name=fecha_elavorar]');
-                                var $observaciones = $('#forma-proordenproduccion-window').find('textarea[name=observaciones]');
-                                var $folio_op = $('#forma-proordenproduccion-window').find('input[name=folio_op]');
-                                var $lote_pop = $('#forma-proordenproduccion-window').find('input[name=lote_pop]');
-                                var $costo_ultimo = $('#forma-proordenproduccion-window').find('input[name=costo_ultimo]');
-                                var $costo_ultimo_text = $('#forma-proordenproduccion-window').find('.costo_ultimo');
-                                
-                                //
-                                var $titprod_tmp = $('#forma-proordenproduccion-window').find('input[name=titprod_tmp]');
-                                var $sku_tmp = $('#forma-proordenproduccion-window').find('input[name=sku_tmp]');
-                                var $id_producto_tmp = $('#forma-proordenproduccion-window').find('input[name=id_producto_tmp]');
-                                var $descripcion_tmp = $('#forma-proordenproduccion-window').find('input[name=descripcion_tmp]');
-                                var $especificaicones_lista = $('#forma-proordenproduccion-window').find('input[name=especificaicones_lista]');
-                                var $version_formula = $('#forma-proordenproduccion-window').find('input[name=version_formula]');
-                                var $id_formula = $('#forma-proordenproduccion-window').find('input[name=id_formula]');
-                                var $solicitante = $('#forma-proordenproduccion-window').find('input[name=solicitante]');
-                                var $vendedor = $('#forma-proordenproduccion-window').find('input[name=vendedor]');
-                                
-                                //grids detalle pedido
-                                var $tabla_productos_header = $('#forma-proordenproduccion-window').find('#subprocesos_seleccionados');
-                                var $tabla_productos_preorden = $('#forma-proordenproduccion-window').find('#grid_productos_seleccionados');
-                                
-                                //tipos de preorden
-                                var $preorden_tipo_pedido = $('#forma-proordenproduccion-window').find('.tipo_pedido');
-                                var tipo_stock_laboratorio = $('#forma-proordenproduccion-window').find('.tipo_stock_laboratorio'); 
-                                
-                                //href para buscar producto
-                                var $buscar_producto = $('#forma-proordenproduccion-window').find('a[href*=busca_producto]');
-                                var $agregar_producto = $('#forma-proordenproduccion-window').find('a[href*=agregar_producto]');
-                                //href para agregar producto al grid
-                                
-                                var $cancelar_proceso = $('#forma-proordenproduccion-window').find('#cancela_entrada');
-                                
-                                var $cerrar_plugin = $('#forma-proordenproduccion-window').find('#close');
-                                var $cancelar_plugin = $('#forma-proordenproduccion-window').find('#boton_cancelar');
-                                var $submit_actualizar = $('#forma-proordenproduccion-window').find('#submit');
-                                
-                                
-                                var $botones_confirmacion = $('#forma-proordenproduccion-window').find('.botones_confirmacion');
-                                var $confirmar_programacion = $('#forma-proordenproduccion-window').find('#confirmar_programacion');
-                                var $confirmar_enviar_produccion = $('#forma-proordenproduccion-window').find('#confirmar_enviar_produccion');
-                                var $confirmar_terminada = $('#forma-proordenproduccion-window').find('#confirmar_terminada');
-                                var $cancelar_orden = $('#forma-proordenproduccion-window').find('#cancelar_orden');
-                                
-                                var $pdf_orden = $('#forma-proordenproduccion-window').find('#pdf_orden');
-                                var $pdf_requisicion = $('#forma-proordenproduccion-window').find('#pdf_requisicion');
-                                var $pdf_version_formula = $('#forma-proordenproduccion-window').find('#pdf_version_formula');
-                                
-                                $command_selected.val("new");
-                                $id_orden.val(0);
-                                
-                                $submit_actualizar.show();
-                                $botones_confirmacion.show();
-                                $confirmar_programacion.show();
-                                $confirmar_enviar_produccion.show();
-                                $confirmar_terminada.show();
-                                $cancelar_orden.show();
-                                $pdf_orden.show();
-                                
-                                //$costo_ultimo.hide();
-                                //$costo_ultimo_text.hide();
-                                
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_datos_orden.json';
+				$arreglo = {'id_orden':id_to_show,
+								'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+							};
+							
+				var $command_selected = $('#forma-proordenproduccion-window').find('input[name=command_selected]');
+				var $id_orden = $('#forma-proordenproduccion-window').find('input[name=id_orden]');
+				var $proceso_flujo_id = $('#forma-proordenproduccion-window').find('input[name=proceso_flujo_id]');
+				var $select_tipoorden = $('#forma-proordenproduccion-window').find('select[name=tipoorden]');
+				var $fecha_elavorar = $('#forma-proordenproduccion-window').find('input[name=fecha_elavorar]');
+				var $observaciones = $('#forma-proordenproduccion-window').find('textarea[name=observaciones]');
+				var $folio_op = $('#forma-proordenproduccion-window').find('input[name=folio_op]');
+				var $lote_pop = $('#forma-proordenproduccion-window').find('input[name=lote_pop]');
+				var $costo_ultimo = $('#forma-proordenproduccion-window').find('input[name=costo_ultimo]');
+				var $costo_ultimo_text = $('#forma-proordenproduccion-window').find('.costo_ultimo');
+				
+				//
+				var $titprod_tmp = $('#forma-proordenproduccion-window').find('input[name=titprod_tmp]');
+				var $sku_tmp = $('#forma-proordenproduccion-window').find('input[name=sku_tmp]');
+				var $id_producto_tmp = $('#forma-proordenproduccion-window').find('input[name=id_producto_tmp]');
+				var $descripcion_tmp = $('#forma-proordenproduccion-window').find('input[name=descripcion_tmp]');
+				var $especificaicones_lista = $('#forma-proordenproduccion-window').find('input[name=especificaicones_lista]');
+				var $version_formula = $('#forma-proordenproduccion-window').find('input[name=version_formula]');
+				var $id_formula = $('#forma-proordenproduccion-window').find('input[name=id_formula]');
+				var $solicitante = $('#forma-proordenproduccion-window').find('input[name=solicitante]');
+				var $vendedor = $('#forma-proordenproduccion-window').find('input[name=vendedor]');
+				
+				//grids detalle pedido
+				var $tabla_productos_header = $('#forma-proordenproduccion-window').find('#subprocesos_seleccionados');
+				var $tabla_productos_preorden = $('#forma-proordenproduccion-window').find('#grid_productos_seleccionados');
+				
+				//tipos de preorden
+				var $preorden_tipo_pedido = $('#forma-proordenproduccion-window').find('.tipo_pedido');
+				var tipo_stock_laboratorio = $('#forma-proordenproduccion-window').find('.tipo_stock_laboratorio'); 
+				
+				//href para buscar producto
+				var $buscar_producto = $('#forma-proordenproduccion-window').find('a[href*=busca_producto]');
+				var $agregar_producto = $('#forma-proordenproduccion-window').find('a[href*=agregar_producto]');
+				//href para agregar producto al grid
+				
+				var $cancelar_proceso = $('#forma-proordenproduccion-window').find('#cancela_entrada');
+				
+				var $cerrar_plugin = $('#forma-proordenproduccion-window').find('#close');
+				var $cancelar_plugin = $('#forma-proordenproduccion-window').find('#boton_cancelar');
+				var $submit_actualizar = $('#forma-proordenproduccion-window').find('#submit');
+				
+				
+				var $botones_confirmacion = $('#forma-proordenproduccion-window').find('.botones_confirmacion');
+				var $confirmar_programacion = $('#forma-proordenproduccion-window').find('#confirmar_programacion');
+				var $confirmar_enviar_produccion = $('#forma-proordenproduccion-window').find('#confirmar_enviar_produccion');
+				var $confirmar_terminada = $('#forma-proordenproduccion-window').find('#confirmar_terminada');
+				var $cancelar_orden = $('#forma-proordenproduccion-window').find('#cancelar_orden');
+				
+				var $pdf_orden = $('#forma-proordenproduccion-window').find('#pdf_orden');
+				var $pdf_requisicion = $('#forma-proordenproduccion-window').find('#pdf_requisicion');
+				var $pdf_version_formula = $('#forma-proordenproduccion-window').find('#pdf_version_formula');
+				
+				$command_selected.val("new");
+				$id_orden.val(0);
+				
+				$submit_actualizar.show();
+				$botones_confirmacion.show();
+				$confirmar_programacion.show();
+				$confirmar_enviar_produccion.show();
+				$confirmar_terminada.show();
+				$cancelar_orden.show();
+				$pdf_orden.show();
+				
+				//$costo_ultimo.hide();
+				//$costo_ultimo_text.hide();
+				
 				//$sku.attr("readonly", true);
 				//$titulo.attr("readonly", true);
 				//$descripcion.attr("readonly", true);
-                                
-                                $buscar_producto.hide();
-                                $id_orden.val(id_to_show);
-                                
-                                $add_calendar($fecha_elavorar, " ", ">=");
+								
+				$buscar_producto.hide();
+				$id_orden.val(id_to_show);
+				
+				$add_calendar($fecha_elavorar, " ", ">=");
                                 
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -3790,316 +3790,321 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
                                     
-                                    cantidad_salida = 0;
-                                    
-                                    $id_orden.attr({'value': entry['Orden']['0']['id']});
-                                    $observaciones.val( entry['Orden']['0']['observaciones']);
-                                    $fecha_elavorar.attr({'value': entry['Orden']['0']['fecha_elavorar']});
-                                    $proceso_flujo_id.attr({'value': entry['Orden']['0']['pro_proceso_flujo_id']});
-                                    $folio_op.attr({'value': entry['Orden']['0']['folio']});
-                                    $lote_pop.attr({'value': entry['Orden']['0']['lote']});
-                                    $id_formula.attr({'value': entry['Orden']['0']['pro_estruc_id']});
-                                    $solicitante.attr({'value': entry['Orden']['0']['solicitante']});
-                                    $vendedor.attr({'value': entry['Orden']['0']['vendedor']});
-                                    
-                                    $costo_ultimo.attr({'value': entry['Orden']['0']['costo_ultimo']});
-                                    
-                                    array_almacenes = entry['Almacenes'];
-                                    array_sucursales = entry['Sucursales'];
-                                    array_extradata = entry['Extras'];
-                                    
-                                    array_instrumentos = entry['Instrumentos'];
-                                    
-                                    $select_tipoorden.children().remove();
-                                    var orden_tipos_html = '';
-                                    $.each(entry['ordenTipos'],function(entryIndex,pt){
-                                        pt['titulo']=pt['titulo'].toUpperCase();
-                                        
-                                        if(entry['Orden']['0']['pro_orden_tipos_id'] == pt['id']){
-                                            orden_tipos_html += '<option value="' + pt['id'] + '" selected="yes" >' + pt['titulo'] + '</option>';
-                                        }
-                                    });
-                                    $select_tipoorden.append(orden_tipos_html);
-                                    
-                                    if(entry['OrdenDet'] != null){
-                                        $.each(entry['OrdenDet'],function(entryIndex,prod){
-                                            //$add_grid_componente_orden(0,prod['Sku'][0]['id'],prod['Sku'][0]['sku'],prod['Sku'][0]['descripcion'],""       ,""    ,""          , 0);
-                                            if(prod['eq_adicional'] == ""){
-                                                prod['eq_adicional'] = " ";
-                                            }
-                                            if(prod['empleado'] == ""){
-                                                prod['empleado'] = " ";
-                                            }
-                                            
-                                            if(prod['equipo'] == ""){
-                                                prod['equipo'] = " ";
-                                            }
-                                            
-                                            
-                                            if(entry['Orden']['0']['pro_proceso_flujo_id'] == "3"){
-                                                
-                                                $cadena_especificaciones = prod['fineza_inicial']+"&&&"+prod['viscosidads_inicial']+"&&&"+prod['viscosidadku_inicial']+"&&&";
-                                                $cadena_especificaciones += prod['viscosidadcps_inicial']+"&&&"+prod['densidad_inicial']+"&&&"+prod['volatiles_inicial']+"&&&"+prod['cubriente_inicial']+"&&&"+prod['tono_inicial']+"&&&";
-                                                $cadena_especificaciones += prod['brillo_inicial']+"&&&"+prod['dureza_inicial']+"&&&"+prod['adherencia_inicial']+"&&&"+prod['hidrogeno_inicial']+"&&&";
-                                                
-                                                /*
-                                                $cadena_especificaciones += prod['fineza_final']+"&&&"+prod['viscosidads_final']+"&&&"+prod['viscosidadku_final']+"&&&";
-                                                $cadena_especificaciones += prod['viscosidadcps_final']+"&&&"+prod['densidad_final']+"&&&"+prod['volatiles_final']+"&&&"+prod['cubriente_final']+"&&&"+prod['tono_final']+"&&&";
-                                                $cadena_especificaciones += prod['brillo_final']+"&&&"+prod['dureza_final']+"&&&"+prod['adherencia_final']+"&&&"+prod['hidrogeno_final']+"&&&";
-                                                */
-                                               
-                                               $cadena_especificaciones += prod['pro_instrumentos_fineza']+"&&&"+prod['pro_instrumentos_viscosidad1']+"&&&"+prod['pro_instrumentos_viscosidad2']+"&&&";
-                                               $cadena_especificaciones += prod['pro_instrumentos_viscosidad3']+"&&&"+prod['pro_instrumentos_densidad']+"&&&"+prod['pro_instrumentos_volatil']+"&&&";
-                                               $cadena_especificaciones += prod['pro_instrumentos_cubriente']+"&&&"+prod['pro_instrumentos_tono']+"&&&"+prod['pro_instrumentos_brillo']+"&&&";
-                                               $cadena_especificaciones += prod['pro_instrumentos_dureza']+"&&&"+prod['pro_instrumentos_adherencia']+"&&&"+prod['pro_instrumentos_hidrogeno']+"&&&";
-                                               
-                                                if(prod['id_esp'] == "" || prod['id_esp'] == null){
-                                                    prod['id_esp'] = "0";
-                                                }
-                                                
-                                                if(prod['num_lote'] == "" || prod['num_lote'] == null){
-                                                    prod['num_lote'] = " ";
-                                                }
-                                                
-                                                cantidad_salida = prod['cantidad_salida'];
-                                                //cantidad_salida
-                                                //                                                                                                                                                                                                                      lote, especificaciones
-                                                $add_grid_componente_orden_en_produccion(prod['id'],prod['inv_prod_id'],prod['sku'],prod['descripcion'],prod['cantidad'], entry['Orden']['0']['pro_proceso_flujo_id'] , prod['subproceso'],prod['pro_subprocesos_id'], prod['num_lote'], $cadena_especificaciones,prod['id_esp'],prod['unidad'], prod['unidad_id'], prod['densidad']);
-                                                
-                                            }else{
-                                                if(entry['Orden']['0']['pro_proceso_flujo_id'] == "1" || entry['Orden']['0']['pro_proceso_flujo_id'] == "2"){
-                                                    
-                                                    pro_proceso_flujo_id = entry['Orden']['0']['pro_proceso_flujo_id'];
-                                                    if(entry['Orden']['0']['pro_proceso_flujo_id'] == "1"){
-                                                        pro_proceso_flujo_id = "2";
-                                                    }
-                                                    $add_grid_componente_orden(prod['id'],prod['inv_prod_id'],prod['sku'],prod['descripcion'],prod['empleado'],prod['equipo'],prod['eq_adicional'],prod['cantidad'], prod, pro_proceso_flujo_id,prod['unidad'], prod['unidad_id'], prod['densidad']);
-                                                    
-                                                }else{
-                                                    if(entry['Orden']['0']['pro_proceso_flujo_id'] == "4" || entry['Orden']['0']['pro_proceso_flujo_id'] == "5"){
-                                                        $add_grid_componente_orden_finalizada_o_cancelada(prod['id'],prod['inv_prod_id'],prod['sku'],prod['descripcion'],prod['empleado'],prod['equipo'],prod['eq_adicional'],prod['cantidad'], prod, entry['Orden']['0']['pro_proceso_flujo_id'],prod['unidad'], prod['unidad_id'], prod['densidad']);
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    };
-                                    
-                                    //cantidad_salida
-                                    $ocullta_de_acuerdo_a_el_tipo_y_estatus($select_tipoorden.val(), entry['Orden']['0']['pro_proceso_flujo_id'], cantidad_salida);
-                                    
+					cantidad_salida = 0;
+					
+					$id_orden.attr({'value': entry['Orden']['0']['id']});
+					$observaciones.val( entry['Orden']['0']['observaciones']);
+					$fecha_elavorar.attr({'value': entry['Orden']['0']['fecha_elavorar']});
+					$proceso_flujo_id.attr({'value': entry['Orden']['0']['pro_proceso_flujo_id']});
+					$folio_op.attr({'value': entry['Orden']['0']['folio']});
+					$lote_pop.attr({'value': entry['Orden']['0']['lote']});
+					$id_formula.attr({'value': entry['Orden']['0']['pro_estruc_id']});
+					$solicitante.attr({'value': entry['Orden']['0']['solicitante']});
+					$vendedor.attr({'value': entry['Orden']['0']['vendedor']});
+					
+					$costo_ultimo.attr({'value': entry['Orden']['0']['costo_ultimo']});
+					
+					array_almacenes = entry['Almacenes'];
+					array_sucursales = entry['Sucursales'];
+					array_extradata = entry['Extras'];
+					
+					array_instrumentos = entry['Instrumentos'];
+					
+					$select_tipoorden.children().remove();
+					var orden_tipos_html = '';
+					$.each(entry['ordenTipos'],function(entryIndex,pt){
+						pt['titulo']=pt['titulo'].toUpperCase();
+						
+						if(entry['Orden']['0']['pro_orden_tipos_id'] == pt['id']){
+							orden_tipos_html += '<option value="' + pt['id'] + '" selected="yes" >' + pt['titulo'] + '</option>';
+						}
+					});
+					$select_tipoorden.append(orden_tipos_html);
+					
+					if(entry['OrdenDet'] != null){
+						$.each(entry['OrdenDet'],function(entryIndex,prod){
+							//$add_grid_componente_orden(0,prod['Sku'][0]['id'],prod['Sku'][0]['sku'],prod['Sku'][0]['descripcion'],""       ,""    ,""          , 0);
+							if(prod['eq_adicional'] == ""){
+								prod['eq_adicional'] = " ";
+							}
+							if(prod['empleado'] == ""){
+								prod['empleado'] = " ";
+							}
+							
+							if(prod['equipo'] == ""){
+								prod['equipo'] = " ";
+							}
+							
+							
+							if(entry['Orden']['0']['pro_proceso_flujo_id'] == "3"){
+								
+								$cadena_especificaciones = prod['fineza_inicial']+"&&&"+prod['viscosidads_inicial']+"&&&"+prod['viscosidadku_inicial']+"&&&";
+								$cadena_especificaciones += prod['viscosidadcps_inicial']+"&&&"+prod['densidad_inicial']+"&&&"+prod['volatiles_inicial']+"&&&"+prod['cubriente_inicial']+"&&&"+prod['tono_inicial']+"&&&";
+								$cadena_especificaciones += prod['brillo_inicial']+"&&&"+prod['dureza_inicial']+"&&&"+prod['adherencia_inicial']+"&&&"+prod['hidrogeno_inicial']+"&&&";
+								
+								/*
+								$cadena_especificaciones += prod['fineza_final']+"&&&"+prod['viscosidads_final']+"&&&"+prod['viscosidadku_final']+"&&&";
+								$cadena_especificaciones += prod['viscosidadcps_final']+"&&&"+prod['densidad_final']+"&&&"+prod['volatiles_final']+"&&&"+prod['cubriente_final']+"&&&"+prod['tono_final']+"&&&";
+								$cadena_especificaciones += prod['brillo_final']+"&&&"+prod['dureza_final']+"&&&"+prod['adherencia_final']+"&&&"+prod['hidrogeno_final']+"&&&";
+								*/
+							   
+							   $cadena_especificaciones += prod['pro_instrumentos_fineza']+"&&&"+prod['pro_instrumentos_viscosidad1']+"&&&"+prod['pro_instrumentos_viscosidad2']+"&&&";
+							   $cadena_especificaciones += prod['pro_instrumentos_viscosidad3']+"&&&"+prod['pro_instrumentos_densidad']+"&&&"+prod['pro_instrumentos_volatil']+"&&&";
+							   $cadena_especificaciones += prod['pro_instrumentos_cubriente']+"&&&"+prod['pro_instrumentos_tono']+"&&&"+prod['pro_instrumentos_brillo']+"&&&";
+							   $cadena_especificaciones += prod['pro_instrumentos_dureza']+"&&&"+prod['pro_instrumentos_adherencia']+"&&&"+prod['pro_instrumentos_hidrogeno']+"&&&";
+							   
+								if(prod['id_esp'] == "" || prod['id_esp'] == null){
+									prod['id_esp'] = "0";
+								}
+								
+								if(prod['num_lote'] == "" || prod['num_lote'] == null){
+									prod['num_lote'] = " ";
+								}
+								
+								cantidad_salida = prod['cantidad_salida'];
+								//cantidad_salida
+								//                                                                                                                                                                                                                      lote, especificaciones
+								$add_grid_componente_orden_en_produccion(prod['id'],prod['inv_prod_id'],prod['sku'],prod['descripcion'],prod['cantidad'], entry['Orden']['0']['pro_proceso_flujo_id'] , prod['subproceso'],prod['pro_subprocesos_id'], prod['num_lote'], $cadena_especificaciones,prod['id_esp'],prod['unidad'], prod['unidad_id'], prod['densidad']);
+								
+							}else{
+								if(entry['Orden']['0']['pro_proceso_flujo_id'] == "1" || entry['Orden']['0']['pro_proceso_flujo_id'] == "2"){
+									
+									pro_proceso_flujo_id = entry['Orden']['0']['pro_proceso_flujo_id'];
+									if(entry['Orden']['0']['pro_proceso_flujo_id'] == "1"){
+										pro_proceso_flujo_id = "2";
+									}
+									$add_grid_componente_orden(prod['id'],prod['inv_prod_id'],prod['sku'],prod['descripcion'],prod['empleado'],prod['equipo'],prod['eq_adicional'],prod['cantidad'], prod, pro_proceso_flujo_id,prod['unidad'], prod['unidad_id'], prod['densidad']);
+									
+								}else{
+									if(entry['Orden']['0']['pro_proceso_flujo_id'] == "4" || entry['Orden']['0']['pro_proceso_flujo_id'] == "5"){
+										$add_grid_componente_orden_finalizada_o_cancelada(prod['id'],prod['inv_prod_id'],prod['sku'],prod['descripcion'],prod['empleado'],prod['equipo'],prod['eq_adicional'],prod['cantidad'], prod, entry['Orden']['0']['pro_proceso_flujo_id'],prod['unidad'], prod['unidad_id'], prod['densidad']);
+									}
+								}
+							}
+						});
+					};
+					
+					//cantidad_salida
+					$ocullta_de_acuerdo_a_el_tipo_y_estatus($select_tipoorden.val(), entry['Orden']['0']['pro_proceso_flujo_id'], cantidad_salida);
+					
                                     
 				},"json");//termina llamada json
 				
                                 
 				$buscar_producto.click(function(event){
-                                    event.preventDefault();
-                                    tipo_preorden = $select_tipoorden.val();
+					event.preventDefault();
+					tipo_preorden = $select_tipoorden.val();
 
-                                    //para  Stock
-                                    if(tipo_preorden == 2){
-                                        $busca_productos(2, "");
-                                    }
+					//para  Stock
+					if(tipo_preorden == 2){
+						$busca_productos(2, "");
+					}
 
-                                    //para tipo labnoratorio
-                                    if(tipo_preorden == 3){
-                                        $busca_productos(3, "");
-                                    }
-                                    
-                                });
+					//para tipo labnoratorio
+					if(tipo_preorden == 3){
+						$busca_productos(3, "");
+					}
+					
+				});
                                 
-                                $agregar_producto.click(function(event){
-                                    event.preventDefault();
-                                    if(/^[A-Za-z0-9]*$/.test($sku_tmp.val())){
-                                        $opbtiene_datos_producto_por_sku($sku_tmp.val(), 0, 0);
-                                    }else{
-                                        jAlert("Agregue un c&oacute;digo", 'Atencion!');
-                                    }
-                                });
-                                
-                                //desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
-                                $sku_tmp.keypress(function(e){
-                                    if(e.which == 13){
-                                        $agregar_producto.trigger('click');
-                                        return false;
-                                    }
-                                });
+				$agregar_producto.click(function(event){
+					event.preventDefault();
+					if(/^[A-Za-z0-9]*$/.test($sku_tmp.val())){
+						$opbtiene_datos_producto_por_sku($sku_tmp.val(), 0, 0);
+					}else{
+						jAlert("Agregue un c&oacute;digo", 'Atencion!');
+					}
+				});
+				
+				//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
+				$sku_tmp.keypress(function(e){
+					if(e.which == 13){
+						$agregar_producto.trigger('click');
+						return false;
+					}
+				});
                                 
                                 
 				$submit_actualizar.bind('click',function(){
-                                    $command_selected.val("1");
-                                    $agrega_esp_en_blanco_grid();
-                                    var trCount = $("tr", $tabla_productos_preorden).size();
-                                    if(trCount > 0){
-                                        jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
-                                            // If they confirmed, manually trigger a form submission
-                                            if (r) $submit_actualizar.parents("FORM").submit();
-                                        });
-                                    }else{
-                                        jAlert("Es necesario agregar productos.", 'Atencion!');
-                                    }
-                                    // Always return false here since we don't know what jConfirm is going to do
-                                    return false;
-                                });
+					$command_selected.val("1");
+					$agrega_esp_en_blanco_grid();
+					var trCount = $("tr", $tabla_productos_preorden).size();
+					if(trCount > 0){
+						jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
+							// If they confirmed, manually trigger a form submission
+							if (r) $submit_actualizar.parents("FORM").submit();
+						});
+					}else{
+						jAlert("Es necesario agregar productos.", 'Atencion!');
+					}
+					// Always return false here since we don't know what jConfirm is going to do
+					return false;
+				});
+                                
+				
+				$confirmar_programacion.bind('click',function(){
+					$command_selected.val("2");
+					$agrega_esp_en_blanco_grid();
+					var trCount = $("tr", $tabla_productos_preorden).size();
+					if(trCount > 0){
+						jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
+							// If they confirmed, manually trigger a form submission
+							if (r) $submit_actualizar.parents("FORM").submit();
+						});
+					}else{
+						jAlert("Es necesario agregar productos.", 'Atencion!');
+					}
+					// Always return false here since we don't know what jConfirm is going to do
+					return false;
+				});
                                 
                                 
-                                $confirmar_programacion.bind('click',function(){
-                                    $command_selected.val("2");
-                                    $agrega_esp_en_blanco_grid();
-                                    var trCount = $("tr", $tabla_productos_preorden).size();
-                                    if(trCount > 0){
-                                        jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
-                                            // If they confirmed, manually trigger a form submission
-                                            if (r) $submit_actualizar.parents("FORM").submit();
-                                        });
-                                    }else{
-                                        jAlert("Es necesario agregar productos.", 'Atencion!');
-                                    }
-                                    // Always return false here since we don't know what jConfirm is going to do
-                                    return false;
-                                });
-                                
-                                
-                                $confirmar_enviar_produccion.bind('click',function(){
-                                    
-                                    $muestra_requisicionop("");
-                                    /*
-                                    $command_selected.val("3");
-                                    $agrega_esp_en_blanco_grid();
-                                    var trCount = $("tr", $tabla_productos_preorden).size();
-                                    if(trCount > 0){
-                                        
-                                        jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
-                                            
-                                            cadena_pos = "";
-                                            $tabla_productos_preorden.find('tr').each(function(){
-                                                
-                                                eliminar_tmp = $(this).find('input[name=eliminar]').val();
-                                                id_reg_tmp = $(this).find('input[name=id_reg]').val();
-                                                inv_prod_id = $(this).find('input[name=inv_prod_id]').val();
-                                                subproceso_id = $(this).find('input[name=subproceso_id]').val();
-                                                especificaciones = $(this).find('input[name=especificaciones]').val();
-                                                id_reg_esp = $(this).find('input[name=id_reg_esp]').val();
-                                                
-                                                if(eliminar_tmp != null && id_reg_tmp != null && subproceso_id != null && especificaciones != null){
-                                                    //                  1               2                   3           
-                                                    cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+inv_prod_id+"___"+
-                                                        //      4                   5 
-                                                        subproceso_id+"___"+especificaciones+"___"+id_reg_esp+"$$$$";
-                                                }
-                                            });
-                                            
-                                            $especificaicones_lista.val(cadena_pos);
-                                            
-                                            if (r) $submit_actualizar.parents("FORM").submit();
-                                        });
-                                    }else{
-                                        jAlert("Es necesario agregar productos.", 'Atencion!');
-                                    }
-                                    */
-                                    // Always return false here since we don't know what jConfirm is going to do
-                                    return false;
-                                });
-                                
-                                
-                                
-                                $cancelar_orden.bind('click',function(){
-                                    $command_selected.val("5");
-                                    $agrega_esp_en_blanco_grid();
-                                    var trCount = $("tr", $tabla_productos_preorden).size();
-                                    if(trCount > 0){
-                                        jConfirm('Desea cancelar la orden de prudcci&oacute;n?', 'Dialogo de Confirmacion', function(r) {
-                                            // If they confirmed, manually trigger a form submission
-                                            if (r) $submit_actualizar.parents("FORM").submit();
-                                        });
-                                    }else{
-                                        jAlert("No se puede cancelar la orden.", 'Atencion!');
-                                    }
-                                    // Always return false here since we don't know what jConfirm is going to do
-                                    return false;
-                                });
-                                
-                                $confirmar_terminada.bind('click',function(){
-                                    $command_selected.val("4");
-                                    $agrega_esp_en_blanco_grid();
-                                    var trCount = $("tr", $tabla_productos_preorden).size();
-                                    jConfirm('Desea Terminar la orden?', 'Dialogo de Confirmacion', function(r) {
-                                        // If they confirmed, manually trigger a form submission
-                                        if(trCount > 0){
-                                            if (r) $submit_actualizar.parents("FORM").submit();
-                                        }
-                                    });
-                                    // Always return false here since we don't know what jConfirm is going to do
-                                    return false;
-                                });
-                                
-                                $pdf_orden.bind('click',function(event){
-                                    event.preventDefault();
-                                    jConfirm('Descargar PDF?', 'Dialogo de Confirmacion', function(r) {
-                                        // If they confirmed, manually trigger a form submission
-                                        if (r) {
-                                            
-                                            var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-                                            
-                                            var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfProduccion/'+id_to_show+'/'+iu+'/out.json';
-                                            window.location.href=input_json;
-                                        }
-                                    });
-                                    
-                                    // Always return false here since we don't know what jConfirm is going to do
-                                    return false;
-                                });
-                                
-                                $pdf_requisicion.bind('click',function(event){
-                                    event.preventDefault();
-                                    jConfirm('Descargar PDF?', 'Dialogo de Confirmacion', function(r) {
-                                        // If they confirmed, manually trigger a form submission
-                                        if (r) {
-                                            
-                                            var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-                                            
-                                            var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfRequisicion/'+id_to_show+'/'+iu+'/out.json';
-                                            window.location.href=input_json;
-                                        }
-                                    });
-                                    
-                                    // Always return false here since we don't know what jConfirm is going to do
-                                    return false;
-                                });
-                                
-                                /*Codigo para descargar el pdf de productos formulados*/
-                                $pdf_version_formula.bind('click',function(event){
-                                    event.preventDefault();
-                                    
-                                    $id_prod = $tabla_productos_preorden.find('input[name=inv_prod_id]').val();
-                                    
-                                    jConfirm('Descargar PDF?', 'Dialogo de Confirmacion', function(r) {
-                                        // If they confirmed, manually trigger a form submission
-                                        if (r) {
-                                            var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-                                            
-                                            var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfProdLaboratorio/'+id_to_show+'/'+iu+'/out.json';
-                                            window.location.href=input_json;
-                                        }
-                                    });
-                                    
-                                    // Always return false here since we don't know what jConfirm is going to do
-                                    return false;
-                                    
-                                });
-                                
-                                
-                                //cerrar plugin
-                                $cerrar_plugin.bind('click',function(){
-                                    var remove = function() {$(this).remove();};
-                                    $('#forma-proordenproduccion-overlay').fadeOut(remove);
-                                });
-                                
-                                //boton cancelar y cerrar plugin
-                                $cancelar_plugin.click(function(event){
-                                    var remove = function() {$(this).remove();};
-                                    $('#forma-proordenproduccion-overlay').fadeOut(remove);
-                                });
-                                
+				$confirmar_enviar_produccion.bind('click',function(){
+					$muestra_requisicionop("");
+					/*
+					$command_selected.val("3");
+					$agrega_esp_en_blanco_grid();
+					var trCount = $("tr", $tabla_productos_preorden).size();
+					if(trCount > 0){
+						
+						jConfirm('Desea guardar los cambios ?', 'Dialogo de Confirmacion', function(r) {
+							
+							cadena_pos = "";
+							$tabla_productos_preorden.find('tr').each(function(){
+								
+								eliminar_tmp = $(this).find('input[name=eliminar]').val();
+								id_reg_tmp = $(this).find('input[name=id_reg]').val();
+								inv_prod_id = $(this).find('input[name=inv_prod_id]').val();
+								subproceso_id = $(this).find('input[name=subproceso_id]').val();
+								especificaciones = $(this).find('input[name=especificaciones]').val();
+								id_reg_esp = $(this).find('input[name=id_reg_esp]').val();
+								
+								if(eliminar_tmp != null && id_reg_tmp != null && subproceso_id != null && especificaciones != null){
+									//                  1               2                   3           
+									cadena_pos += eliminar_tmp+"___"+id_reg_tmp+"___"+inv_prod_id+"___"+
+										//      4                   5 
+										subproceso_id+"___"+especificaciones+"___"+id_reg_esp+"$$$$";
+								}
+							});
+							
+							$especificaicones_lista.val(cadena_pos);
+							
+							if (r) $submit_actualizar.parents("FORM").submit();
+						});
+					}else{
+						jAlert("Es necesario agregar productos.", 'Atencion!');
+					}
+					*/
+					// Always return false here since we don't know what jConfirm is going to do
+					return false;
+				});
+				
+				
+				$cancelar_orden.bind('click',function(){
+					$command_selected.val("5");
+					$agrega_esp_en_blanco_grid();
+					var trCount = $("tr", $tabla_productos_preorden).size();
+					if(trCount > 0){
+						jConfirm('Desea cancelar la orden de prudcci&oacute;n?', 'Dialogo de Confirmacion', function(r) {
+							// If they confirmed, manually trigger a form submission
+							if (r) $submit_actualizar.parents("FORM").submit();
+						});
+					}else{
+						jAlert("No se puede cancelar la orden.", 'Atencion!');
+					}
+					// Always return false here since we don't know what jConfirm is going to do
+					return false;
+				});
+				
+				
+				$confirmar_terminada.bind('click',function(){
+					$command_selected.val("4");
+					$agrega_esp_en_blanco_grid();
+					var trCount = $("tr", $tabla_productos_preorden).size();
+					jConfirm('Desea Terminar la orden?', 'Dialogo de Confirmacion', function(r) {
+						// If they confirmed, manually trigger a form submission
+						if(trCount > 0){
+							if (r) $submit_actualizar.parents("FORM").submit();
+						}
+					});
+					// Always return false here since we don't know what jConfirm is going to do
+					return false;
+				});
+				
+				
+				
+				$pdf_orden.bind('click',function(event){
+					event.preventDefault();
+					jConfirm('Descargar PDF?', 'Dialogo de Confirmacion', function(r) {
+						// If they confirmed, manually trigger a form submission
+						if (r) {
+							
+							var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+							
+							var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfProduccion/'+id_to_show+'/'+iu+'/out.json';
+							window.location.href=input_json;
+							
+							
+						}
+					});
+					
+					// Always return false here since we don't know what jConfirm is going to do
+					return false;
+				});
+				
+				$pdf_requisicion.bind('click',function(event){
+					event.preventDefault();
+					jConfirm('Descargar PDF?', 'Dialogo de Confirmacion', function(r) {
+						// If they confirmed, manually trigger a form submission
+						if (r) {
+							
+							var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+							
+							var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfRequisicion/'+id_to_show+'/'+iu+'/out.json';
+							window.location.href=input_json;
+						}
+					});
+					
+					// Always return false here since we don't know what jConfirm is going to do
+					return false;
+				});
+				
+				
+				
+				/*Codigo para descargar el pdf de productos formulados*/
+				$pdf_version_formula.bind('click',function(event){
+					event.preventDefault();
+					
+					$id_prod = $tabla_productos_preorden.find('input[name=inv_prod_id]').val();
+					
+					jConfirm('Descargar PDF?', 'Dialogo de Confirmacion', function(r) {
+						// If they confirmed, manually trigger a form submission
+						if (r) {
+							var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+							
+							var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfProdLaboratorio/'+id_to_show+'/'+iu+'/out.json';
+							window.location.href=input_json;
+						}
+					});
+					
+					// Always return false here since we don't know what jConfirm is going to do
+					return false;
+					
+				});
+				
+				
+				//cerrar plugin
+				$cerrar_plugin.bind('click',function(){
+					var remove = function() {$(this).remove();};
+					$('#forma-proordenproduccion-overlay').fadeOut(remove);
+				});
+				
+				//boton cancelar y cerrar plugin
+				$cancelar_plugin.click(function(event){
+					var remove = function() {$(this).remove();};
+					$('#forma-proordenproduccion-overlay').fadeOut(remove);
+				});
+				
 			}
 		}
 	}
