@@ -29,9 +29,9 @@ $(function() {
 		getTituloApp: function(){
 			return this.tituloApp;
 		},
-                getController: function(){
-                    return this.contextpath + "/controllers/proconfigproduccion";
-                    //  return this.controller;
+		getController: function(){
+			return this.contextpath + "/controllers/proconfigproduccion";
+			//  return this.controller;
 		}
 	};
         
@@ -50,15 +50,15 @@ $(function() {
         
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
-        var $username = $('#header').find('#header1').find('span.username');
+	var $username = $('#header').find('#header1').find('span.username');
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
 	var controller = $contextpath.val()+"/controllers/proconfigproduccion";
 	
-        //Barra para las acciones
-        $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
-        $('#barra_acciones').find('.table_acciones').css({'display':'block'});
+	//Barra para las acciones
+	$('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
+	$('#barra_acciones').find('.table_acciones').css({'display':'block'});
 	var $new_entrada = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
@@ -86,34 +86,34 @@ $(function() {
 	
 	
 	var to_make_one_search_string = function(){
-            var valor_retorno = "";
-            
-            var signo_separador = "=";
-            valor_retorno += "folio_proceso" + signo_separador + $campo_busqueda_folio.val() + "|";
-            valor_retorno += "descripcion_proceso" + signo_separador + $campo_busqueda_descripcionproceso.val() + "|";
-            valor_retorno += "sku_producto" + signo_separador + $campo_busqueda_sku.val() + "|";
-            valor_retorno += "descripcion_producto" + signo_separador + $campo_busqueda_descripcionproducto.val() + "|";
-            
-            return valor_retorno;
+		var valor_retorno = "";
+		
+		var signo_separador = "=";
+		valor_retorno += "folio_proceso" + signo_separador + $campo_busqueda_folio.val() + "|";
+		valor_retorno += "descripcion_proceso" + signo_separador + $campo_busqueda_descripcionproceso.val() + "|";
+		valor_retorno += "sku_producto" + signo_separador + $campo_busqueda_sku.val() + "|";
+		valor_retorno += "descripcion_producto" + signo_separador + $campo_busqueda_descripcionproducto.val() + "|";
+		
+		return valor_retorno;
 	};
 	
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
 	
 	$buscar.click(function(event){
-            event.preventDefault();
-            cadena = to_make_one_search_string();
-            $cadena_busqueda = cadena.toCharCode();
-            $get_datos_grid();
+		event.preventDefault();
+		cadena = to_make_one_search_string();
+		$cadena_busqueda = cadena.toCharCode();
+		$get_datos_grid();
 	});
 	
 	$limpiar.click(function(event){
-            event.preventDefault();
-            $campo_busqueda_folio.val('');
-            $campo_busqueda_descripcionproceso.val('');
-            $campo_busqueda_sku.val('');
-            $campo_busqueda_descripcionproducto.val('');
-        });
+		event.preventDefault();
+		$campo_busqueda_folio.val('');
+		$campo_busqueda_descripcionproceso.val('');
+		$campo_busqueda_sku.val('');
+		$campo_busqueda_descripcionproducto.val('');
+	});
         
 	//visualizar  la barra del buscador
 	TriggerClickVisializaBuscador = 0;
@@ -333,57 +333,58 @@ $(function() {
                                 
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
-                                    var id_prod=$(this).find('#id_prod_buscador').val();
-                                    var codigo=$(this).find('span.sku_prod_buscador').html();
-                                    var descripcion=$(this).find('span.titulo_prod_buscador').html();
-                                    var producto=$(this).find('span.tipo_prod_buscador').html();
-                                    var unidad=$(this).find('span.unidad_prod_buscador').html();
-                                    
-                                    //buscador principal de el proceso
-                                    if(tipo_busqueda == 1){
-                                        //asignar a los campos correspondientes el sku y y descripcion
-                                        $('#forma-proconfigproduccion-window').find('input[name=id_producto]').val(id_prod);
-                                        $('#forma-proconfigproduccion-window').find('input[name=sku]').val(codigo);
-                                        $('#forma-proconfigproduccion-window').find('input[name=descripcion]').val(descripcion);
-                                        $('#forma-proconfigproduccion-window').find('input[name=sku_producto]').focus();
-                                    }
+					var id_prod=$(this).find('#id_prod_buscador').val();
+					var codigo=$(this).find('span.sku_prod_buscador').html();
+					var descripcion=$(this).find('span.titulo_prod_buscador').html();
+					var producto=$(this).find('span.tipo_prod_buscador').html();
+					var unidad=$(this).find('span.unidad_prod_buscador').html();
+					
+					//buscador principal de el proceso
+					if(tipo_busqueda == 1){
+						//asignar a los campos correspondientes el sku y y descripcion
+						$('#forma-proconfigproduccion-window').find('input[name=id_producto]').val(id_prod);
+						$('#forma-proconfigproduccion-window').find('input[name=sku]').val(codigo);
+						$('#forma-proconfigproduccion-window').find('input[name=descripcion]').val(descripcion);
+						$('#forma-proconfigproduccion-window').find('input[name=sku_producto]').focus();
+						
+					}
                            
-                                    //para buscar un producto master
-                                    if(tipo_busqueda ==2){
-                                        //colocando los datos elegidos en el pluguin
-                                        $('#forma-formulas-window').find('input[name=id_prod_master]').val(id_prod);
-                                        $('#forma-formulas-window').find('input[name=codigo_master]').val(codigo);
-                                        $('#forma-formulas-window').find('input[name=descripcion_master]').val(descripcion);
-                                        $('#forma-formulas-window').find('input[name=select_prodtipo]').val(producto);
-                                        $('#forma-formulas-window').find('input[name=select_unidad]').val(unidad);
-                                        //fin del primer plugin
-                                    }
-                                    
-                                    //para buscar elementos de el proceso
-                                    if(tipo_busqueda ==3){
-                                       //guardando los datos del pluguin si es que ligio buscar elementos para el grid
-                                        $('#forma-formulas-window').find('input[name=id_prod_entrante]').val(id_prod);
-                                        $('#forma-formulas-window').find('input[name=codigo_producto_minigrid]').val(codigo);
-                                        $('#forma-formulas-window').find('input[name=descr_producto_minigrid]').val(descripcion);
+					//para buscar un producto master
+					if(tipo_busqueda ==2){
+						//colocando los datos elegidos en el pluguin
+						$('#forma-formulas-window').find('input[name=id_prod_master]').val(id_prod);
+						$('#forma-formulas-window').find('input[name=codigo_master]').val(codigo);
+						$('#forma-formulas-window').find('input[name=descripcion_master]').val(descripcion);
+						$('#forma-formulas-window').find('input[name=select_prodtipo]').val(producto);
+						$('#forma-formulas-window').find('input[name=select_unidad]').val(unidad);
+						//fin del primer plugin
+					}
+					
+					//para buscar elementos de el proceso
+					if(tipo_busqueda ==3){
+					   //guardando los datos del pluguin si es que ligio buscar elementos para el grid
+						$('#forma-formulas-window').find('input[name=id_prod_entrante]').val(id_prod);
+						$('#forma-formulas-window').find('input[name=codigo_producto_minigrid]').val(codigo);
+						$('#forma-formulas-window').find('input[name=descr_producto_minigrid]').val(descripcion);
 
-                                    }
-                                    
-                                    //para buscar el producto de salida
-                                    if(tipo_busqueda ==4){
-                                        //guardando los datos del pluguin si es que ligio buscar elementos para el grid
-                                        $('#forma-formulas-window').find('input[name=id_prod_saliente]').val(id_prod);
-                                        $('#forma-formulas-window').find('input[name=codigo_producto_saliente]').val(codigo);
-                                        $('#forma-formulas-window').find('input[name=descr_producto_saliente]').val(descripcion);
-                                    }
-                                    
-                                    //elimina la ventana de busqueda
-                                    var remove = function() {$(this).remove();};
-                                    $('#forma-buscaproducto-overlay').fadeOut(remove);
-                                    //asignar el enfoque al campo sku del producto
-                                });
-                            });
+					}
+					
+					//para buscar el producto de salida
+					if(tipo_busqueda ==4){
+						//guardando los datos del pluguin si es que ligio buscar elementos para el grid
+						$('#forma-formulas-window').find('input[name=id_prod_saliente]').val(id_prod);
+						$('#forma-formulas-window').find('input[name=codigo_producto_saliente]').val(codigo);
+						$('#forma-formulas-window').find('input[name=descr_producto_saliente]').val(descripcion);
+					}
+					
+					//elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscaproducto-overlay').fadeOut(remove);
+					//asignar el enfoque al campo sku del producto
+				});
 			});
-                });
+			});
+		});
 		
 		//si hay algo en el campo sku al cargar el buscador, ejecuta la busqueda
 		if($campo_sku.val() != ''){
@@ -855,8 +856,9 @@ $(function() {
            return retorno;
        }
        
+       
+       
        $plugin_cargar_formulacion = function(id_to_show_form){
-            
             $(this).modalPanel_formulas();
             
             var form_to_show = 'formaFormulas';
@@ -864,9 +866,9 @@ $(function() {
             var $forma_selected = $('#' + form_to_show).clone();
             $forma_selected.attr({id : form_to_show + id_to_show_form});
             
-		$('#forma-formulas-window').css({"margin-left": -390, 	"margin-top": -280});
-		$forma_selected.prependTo('#forma-formulas-window');
-		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show_form , style:'display:table'});
+			$('#forma-formulas-window').css({"margin-left": -390, 	"margin-top": -280});
+			$forma_selected.prependTo('#forma-formulas-window');
+			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show_form , style:'display:table'});
                 
             /*
             var $dialogoc =  $('#forma-formulas-window');
@@ -2346,6 +2348,9 @@ $(function() {
             });
         }
 	
+	
+	
+	
 	//nueva entrada
 	$new_entrada.click(function(event){
 		event.preventDefault();
@@ -2375,6 +2380,7 @@ $(function() {
 		var $id_producto = $('#forma-proconfigproduccion-window').find('input[name=id_producto]');
 		var $sku = $('#forma-proconfigproduccion-window').find('input[name=sku]');
 		var $descripcion = $('#forma-proconfigproduccion-window').find('input[name=descripcion]');
+		var $dias_caducidad = $('#forma-proconfigproduccion-window').find('input[name=dias_caducidad]');
 		
 		//grids
 		var $sub_procesos = $('#forma-proconfigproduccion-window').find('#sub_procesos');
@@ -2384,13 +2390,13 @@ $(function() {
 		var $buscar_producto = $('#forma-proconfigproduccion-window').find('a[href*=busca_producto]');
 		//href para agregar producto al grid
 		
-                var $cancelar_proceso = $('#forma-proconfigproduccion-window').find('#cancela_entrada');
+		var $cancelar_proceso = $('#forma-proconfigproduccion-window').find('#cancela_entrada');
 		
 		var $cerrar_plugin = $('#forma-proconfigproduccion-window').find('#close');
 		var $cancelar_plugin = $('#forma-proconfigproduccion-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-proconfigproduccion-window').find('#submit');
 		
-                $id_proceso.val(0);
+		$id_proceso.val(0);
 		//$campo_factura.css({'background' : '#ffffff'});
 		//$cancelar_entrada.hide();
 		//$pdf_entrada.hide();
@@ -2470,21 +2476,42 @@ $(function() {
                 
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
-                    
-                    array_subprocesos_disponibles = entry['SubProcesos'];
-                    array_maquinas = entry['Maquinas'];
-                    array_instrumentos = entry['Instrumentos'];
-                    array_subprocesos_seleccionados = null;
-                    
-                    $alimenta_grid_subprocesos();
-                    
-                    
+			array_subprocesos_disponibles = entry['SubProcesos'];
+			array_maquinas = entry['Maquinas'];
+			array_instrumentos = entry['Instrumentos'];
+			array_subprocesos_seleccionados = null;
+			
+			$alimenta_grid_subprocesos();
 		},"json");//termina llamada json
+		
+		
+		//validar campo dias de caducidad, solo acepte numeros y punto
+		$dias_caducidad.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB
+			if (e.which == 8 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
+		
+		
+		$dias_caducidad.focus(function(){
+			if ($(this).val().trim()=='' || parseFloat($(this).val())==0){
+				$(this).val('');
+			}
+		});
+		
+		$dias_caducidad.blur(function(){
+			if ($(this).val().trim() == ''){
+				$(this).val(1);
+			}
+		});
 		
 		//buscar producto
 		$buscar_producto.click(function(event){
-                    event.preventDefault();
-                    $busca_productos(1);
+			event.preventDefault();
+			$busca_productos(1);
 		});
                 
 		/*
@@ -2506,8 +2533,8 @@ $(function() {
 		*/
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
-                    var remove = function() {$(this).remove();};
-                    $('#forma-proconfigproduccion-overlay').fadeOut(remove);
+			var remove = function() {$(this).remove();};
+			$('#forma-proconfigproduccion-overlay').fadeOut(remove);
 		});
 		
 		//boton cancelar y cerrar plugin
@@ -2566,37 +2593,37 @@ $(function() {
                                 
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_datos_configuracion_produccion.json';
 				$arreglo = {'id_proceso':id_to_show,
-                                                'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-                                                };
+							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+							};
 				
 				var $id_proceso = $('#forma-proconfigproduccion-window').find('input[name=id_proceso]');
-                                var $titulo = $('#forma-proconfigproduccion-window').find('input[name=titulo]');
-                                var $id_producto = $('#forma-proconfigproduccion-window').find('input[name=id_producto]');
-                                var $sku = $('#forma-proconfigproduccion-window').find('input[name=sku]');
-                                var $descripcion = $('#forma-proconfigproduccion-window').find('input[name=descripcion]');
-                                
-                                
-                                //grids
-                                var $sub_procesos = $('#forma-proconfigproduccion-window').find('#sub_procesos');
-                                var $tabla_subprocesos_seleccionados = $('#forma-proconfigproduccion-window').find('#tabla_subprocesos_seleccionados');
-                                
-                                //href para buscar producto
-                                var $buscar_producto = $('#forma-proconfigproduccion-window').find('a[href*=busca_producto]');
-                                //href para agregar producto al grid
-                                
-                                var $cancelar_proceso = $('#forma-proconfigproduccion-window').find('#cancela_entrada');
-                                
-                                var $cerrar_plugin = $('#forma-proconfigproduccion-window').find('#close');
-                                var $cancelar_plugin = $('#forma-proconfigproduccion-window').find('#boton_cancelar');
-                                var $submit_actualizar = $('#forma-proconfigproduccion-window').find('#submit');
+				var $titulo = $('#forma-proconfigproduccion-window').find('input[name=titulo]');
+				var $id_producto = $('#forma-proconfigproduccion-window').find('input[name=id_producto]');
+				var $sku = $('#forma-proconfigproduccion-window').find('input[name=sku]');
+				var $descripcion = $('#forma-proconfigproduccion-window').find('input[name=descripcion]');
+				var $dias_caducidad = $('#forma-proconfigproduccion-window').find('input[name=dias_caducidad]');
+				
+				//grids
+				var $sub_procesos = $('#forma-proconfigproduccion-window').find('#sub_procesos');
+				var $tabla_subprocesos_seleccionados = $('#forma-proconfigproduccion-window').find('#tabla_subprocesos_seleccionados');
+				
+				//href para buscar producto
+				var $buscar_producto = $('#forma-proconfigproduccion-window').find('a[href*=busca_producto]');
+				//href para agregar producto al grid
+				
+				var $cancelar_proceso = $('#forma-proconfigproduccion-window').find('#cancela_entrada');
+				
+				var $cerrar_plugin = $('#forma-proconfigproduccion-window').find('#close');
+				var $cancelar_plugin = $('#forma-proconfigproduccion-window').find('#boton_cancelar');
+				var $submit_actualizar = $('#forma-proconfigproduccion-window').find('#submit');
                                 
 				
 				$sku.attr("readonly", true);
 				//$titulo.attr("readonly", true);
 				$descripcion.attr("readonly", true);
 				
-                                $buscar_producto.hide();
-                                $id_proceso.val(id_to_show);
+				$buscar_producto.hide();
+				$id_proceso.val(id_to_show);
                                 
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -2688,93 +2715,117 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-                                    $id_proceso.attr({'value' : entry['Proceso']['0']['id']});
-                                    $titulo.attr({'value' : entry['Proceso']['0']['titulo']});
-                                    $id_producto.attr({'value' : entry['Proceso']['0']['inv_prod_id']});
-                                    $sku.attr({'value' : entry['Proceso']['0']['sku']});
-                                    $descripcion.attr({'value' : entry['Proceso']['0']['descripcion']});
-                                    
-                                    
-                                    array_subprocesos_disponibles = entry['SubProcesos'];
-                                    array_maquinas = entry['Maquinas'];
-                                    array_instrumentos = entry['Instrumentos'];
-                                    array_subprocesos_seleccionados = null;
-                                    
-                                    $alimenta_grid_subprocesos();
-                                    
-                                    //llena el grid de las formulas
-                                    if(entry['getAllFormulas'] != null){
-                                        $.each(entry['getAllFormulas'],function(entryIndex,formula){
-                                            $alimenta_grid_formulaciones(0, formula['id'], formula['codigo'], formula['descripcion'], formula['version']);
-                                        });
-                                    }else{
-                                        //aqui ira el buscador de formulas
-                                    }
-                                    
-                                    if(entry['datosSubProProd'] != null){
-                                        
-                                        $.each(entry['datosSubProProd'],function(entryIndex,prodSubProceso){
-                                            
-                                            //$agregar_subprocesos_al_proceso = function(id_subp, titulo, nivel, 
-                                            //maquina, doc_calidad, empleados, metadata, especificaciones, procedimiento,id_master, id_reg);
-                                            //$cadena_procedimientos
-                                            //$cadena_especificaciones
-                                            
-                                            $cadena_especificaciones = "";
-                                            $.each(entry['datosSubProEspecificaciones'],function(entryIndex,proEsp){
-                                               //prodSubProceso['id']
-                                               
-                                               if(prodSubProceso['id'] == proEsp['pro_subproceso_prod_id']){
-                                                   $cadena_especificaciones = proEsp['fineza_inicial']+"&&&"+proEsp['viscosidads_inicial']+"&&&"+proEsp['viscosidadku_inicial']+"&&&";
-                                                   $cadena_especificaciones += proEsp['viscosidadcps_inicial']+"&&&"+proEsp['densidad_inicial']+"&&&"+proEsp['volatiles_inicial']+"&&&"+proEsp['cubriente_inicial']+"&&&"+proEsp['tono_inicial']+"&&&";
-                                                   $cadena_especificaciones += proEsp['brillo_inicial']+"&&&"+proEsp['dureza_inicial']+"&&&"+proEsp['adherencia_inicial']+"&&&"+proEsp['hidrogeno_inicial']+"&&&";
-                                                   
-                                                   $cadena_especificaciones += proEsp['fineza_final']+"&&&"+proEsp['viscosidads_final']+"&&&"+proEsp['viscosidadku_final']+"&&&";
-                                                   $cadena_especificaciones += proEsp['viscosidadcps_final']+"&&&"+proEsp['densidad_final']+"&&&"+proEsp['volatiles_final']+"&&&"+proEsp['cubriente_final']+"&&&"+proEsp['tono_final']+"&&&";
-                                                   $cadena_especificaciones += proEsp['brillo_final']+"&&&"+proEsp['dureza_final']+"&&&"+proEsp['adherencia_final']+"&&&"+proEsp['hidrogeno_final']+"&&&";
-                                                   
-                                                   
-                                                   //$cadena_especificaciones += proEsp['fineza_final']+"&&&"+proEsp['viscosidads_final']+"&&&"+proEsp['viscosidadku_final']+"&&&";
-                                                   //$cadena_especificaciones += proEsp['viscosidadcps_final']+"&&&"+proEsp['densidad_final']+"&&&"+proEsp['volatiles_final']+"&&&"+proEsp['cubriente_final']+"&&&"+proEsp['tono_final']+"&&&";
-                                                   //$cadena_especificaciones += proEsp['brillo_final']+"&&&"+proEsp['dureza_final']+"&&&"+proEsp['adherencia_final']+"&&&"+proEsp['hidrogeno_final']+"&&&";
-                                                   
-                                                   //for instruments (add instruments at the string)
-                                                   $cadena_especificaciones += proEsp['pro_instrumentos_fineza']+"&&&"+proEsp['pro_instrumentos_viscosidad1']+"&&&"+proEsp['pro_instrumentos_viscosidad2']+"&&&";
-                                                   $cadena_especificaciones += proEsp['pro_instrumentos_viscosidad3']+"&&&"+proEsp['pro_instrumentos_densidad']+"&&&"+proEsp['pro_instrumentos_volatil']+"&&&";
-                                                   $cadena_especificaciones += proEsp['pro_instrumentos_cubriente']+"&&&"+proEsp['pro_instrumentos_tono']+"&&&"+proEsp['pro_instrumentos_brillo']+"&&&";
-                                                   $cadena_especificaciones += proEsp['pro_instrumentos_dureza']+"&&&"+proEsp['pro_instrumentos_adherencia']+"&&&"+proEsp['pro_instrumentos_hidrogeno']+"&&&";
-                                                   
-                                               }
-                                               //pro_subproceso_prod_id
-                                            });
-                                            
-                                            $cadena_procedimientos = "";
-                                            $.each(entry['datosSubProProcedimientos'],function(entryIndex,proProc){
-                                               /*prodSubProceso['id'] 
-                                               posicion
-                                               descripcion
-                                               inv_prod_id
-                                               pro_subproceso_prod_id
-                                               */
-                                              if(prodSubProceso['id'] == proProc['pro_subproceso_prod_id']){
-                                                  $cadena_procedimientos += proProc['posicion']+"&&&"+proProc['descripcion']+"$$$";
-                                              }
-                                            });
-                                            
-                                            titulo_subp = "";
-                                            $.each(entry['SubProcesos'], function(entryIndex, subproceso){
-                                                if(prodSubProceso['pro_subprocesos_id'] == subproceso['id']){
-                                                  titulo_subp = subproceso['titulo'];
-                                                }
-                                            });
-                                            
-                                            $agregar_subprocesos_al_proceso(prodSubProceso['pro_subprocesos_id'], titulo_subp, prodSubProceso['nivel'],prodSubProceso['pro_tipo_equipo_id'],prodSubProceso['documento_calidad'],"", "", $cadena_especificaciones, $cadena_procedimientos, prodSubProceso['inv_prod_id'],prodSubProceso['id'], prodSubProceso['pro_estruc_id']);
-                                        });
-                                        
-                                    };
+					$id_proceso.attr({'value' : entry['Proceso']['0']['id']});
+					$titulo.attr({'value' : entry['Proceso']['0']['titulo']});
+					$id_producto.attr({'value' : entry['Proceso']['0']['inv_prod_id']});
+					$sku.attr({'value' : entry['Proceso']['0']['sku']});
+					$descripcion.attr({'value' : entry['Proceso']['0']['descripcion']});
+					$dias_caducidad.attr({'value' : entry['Proceso']['0']['dias_caducidad']});
+					
+					array_subprocesos_disponibles = entry['SubProcesos'];
+					array_maquinas = entry['Maquinas'];
+					array_instrumentos = entry['Instrumentos'];
+					array_subprocesos_seleccionados = null;
+					
+					$alimenta_grid_subprocesos();
+					
+					//llena el grid de las formulas
+					if(entry['getAllFormulas'] != null){
+						$.each(entry['getAllFormulas'],function(entryIndex,formula){
+							$alimenta_grid_formulaciones(0, formula['id'], formula['codigo'], formula['descripcion'], formula['version']);
+						});
+					}else{
+						//aqui ira el buscador de formulas
+					}
+					
+					if(entry['datosSubProProd'] != null){
+						
+						$.each(entry['datosSubProProd'],function(entryIndex,prodSubProceso){
+							
+							//$agregar_subprocesos_al_proceso = function(id_subp, titulo, nivel, 
+							//maquina, doc_calidad, empleados, metadata, especificaciones, procedimiento,id_master, id_reg);
+							//$cadena_procedimientos
+							//$cadena_especificaciones
+							
+							$cadena_especificaciones = "";
+							$.each(entry['datosSubProEspecificaciones'],function(entryIndex,proEsp){
+							   //prodSubProceso['id']
+							   
+							   if(prodSubProceso['id'] == proEsp['pro_subproceso_prod_id']){
+								   $cadena_especificaciones = proEsp['fineza_inicial']+"&&&"+proEsp['viscosidads_inicial']+"&&&"+proEsp['viscosidadku_inicial']+"&&&";
+								   $cadena_especificaciones += proEsp['viscosidadcps_inicial']+"&&&"+proEsp['densidad_inicial']+"&&&"+proEsp['volatiles_inicial']+"&&&"+proEsp['cubriente_inicial']+"&&&"+proEsp['tono_inicial']+"&&&";
+								   $cadena_especificaciones += proEsp['brillo_inicial']+"&&&"+proEsp['dureza_inicial']+"&&&"+proEsp['adherencia_inicial']+"&&&"+proEsp['hidrogeno_inicial']+"&&&";
+								   
+								   $cadena_especificaciones += proEsp['fineza_final']+"&&&"+proEsp['viscosidads_final']+"&&&"+proEsp['viscosidadku_final']+"&&&";
+								   $cadena_especificaciones += proEsp['viscosidadcps_final']+"&&&"+proEsp['densidad_final']+"&&&"+proEsp['volatiles_final']+"&&&"+proEsp['cubriente_final']+"&&&"+proEsp['tono_final']+"&&&";
+								   $cadena_especificaciones += proEsp['brillo_final']+"&&&"+proEsp['dureza_final']+"&&&"+proEsp['adherencia_final']+"&&&"+proEsp['hidrogeno_final']+"&&&";
+								   
+								   
+								   //$cadena_especificaciones += proEsp['fineza_final']+"&&&"+proEsp['viscosidads_final']+"&&&"+proEsp['viscosidadku_final']+"&&&";
+								   //$cadena_especificaciones += proEsp['viscosidadcps_final']+"&&&"+proEsp['densidad_final']+"&&&"+proEsp['volatiles_final']+"&&&"+proEsp['cubriente_final']+"&&&"+proEsp['tono_final']+"&&&";
+								   //$cadena_especificaciones += proEsp['brillo_final']+"&&&"+proEsp['dureza_final']+"&&&"+proEsp['adherencia_final']+"&&&"+proEsp['hidrogeno_final']+"&&&";
+								   
+								   //for instruments (add instruments at the string)
+								   $cadena_especificaciones += proEsp['pro_instrumentos_fineza']+"&&&"+proEsp['pro_instrumentos_viscosidad1']+"&&&"+proEsp['pro_instrumentos_viscosidad2']+"&&&";
+								   $cadena_especificaciones += proEsp['pro_instrumentos_viscosidad3']+"&&&"+proEsp['pro_instrumentos_densidad']+"&&&"+proEsp['pro_instrumentos_volatil']+"&&&";
+								   $cadena_especificaciones += proEsp['pro_instrumentos_cubriente']+"&&&"+proEsp['pro_instrumentos_tono']+"&&&"+proEsp['pro_instrumentos_brillo']+"&&&";
+								   $cadena_especificaciones += proEsp['pro_instrumentos_dureza']+"&&&"+proEsp['pro_instrumentos_adherencia']+"&&&"+proEsp['pro_instrumentos_hidrogeno']+"&&&";
+								   
+							   }
+							   //pro_subproceso_prod_id
+							});
+							
+							$cadena_procedimientos = "";
+							$.each(entry['datosSubProProcedimientos'],function(entryIndex,proProc){
+							   /*prodSubProceso['id'] 
+							   posicion
+							   descripcion
+							   inv_prod_id
+							   pro_subproceso_prod_id
+							   */
+							  if(prodSubProceso['id'] == proProc['pro_subproceso_prod_id']){
+								  $cadena_procedimientos += proProc['posicion']+"&&&"+proProc['descripcion']+"$$$";
+							  }
+							});
+							
+							titulo_subp = "";
+							$.each(entry['SubProcesos'], function(entryIndex, subproceso){
+								if(prodSubProceso['pro_subprocesos_id'] == subproceso['id']){
+								  titulo_subp = subproceso['titulo'];
+								}
+							});
+							
+							$agregar_subprocesos_al_proceso(prodSubProceso['pro_subprocesos_id'], titulo_subp, prodSubProceso['nivel'],prodSubProceso['pro_tipo_equipo_id'],prodSubProceso['documento_calidad'],"", "", $cadena_especificaciones, $cadena_procedimientos, prodSubProceso['inv_prod_id'],prodSubProceso['id'], prodSubProceso['pro_estruc_id']);
+						});
+						
+					};
                                     	
 				},"json");//termina llamada json
 				
+				
+				//validar campo costo, solo acepte numeros y punto
+				$dias_caducidad.keypress(function(e){
+					// Permitir  numeros, borrar, suprimir, TAB
+					if (e.which == 8 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+						return true;
+					}else {
+						return false;
+					}
+				});
+				
+				
+				$dias_caducidad.focus(function(){
+					if ($(this).val().trim()=='' || parseFloat($(this).val())==0){
+						$(this).val('');
+					}
+				});
+				
+				
+				$dias_caducidad.blur(function(){
+					if ($(this).val().trim() == ''){
+						$(this).val(1);
+					}
+				});
 				
 				
 				/*

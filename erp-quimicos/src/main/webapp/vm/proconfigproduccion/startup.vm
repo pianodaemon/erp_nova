@@ -61,49 +61,49 @@
         <!--Esta tabla va  en la barra de buscador -->
 		<table border="0" class="tabla_buscador" style="display:none">
 				<tr>
-                                    <td colspan="13">&nbsp;&nbsp;</td>
-				</tr>
-                                <tr>
-                                    <td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    <td>Folio Proceso</td>
-                                    <td width="10">&nbsp;</td>
-                                    <td>Descripci&oacute;n del Proceso</td>
-                                    <td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    
-                                    <td >Clave Producto</td>
-                                    <td width="10">&nbsp;</td>
-                                    <td>Descripci&oacute;n del Producto</td>
-                                    <td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    <td ></td>
-                                    <td width="5">&nbsp;</td>
-                                    <td></td>
-                                    
-                                    <td width="25">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    <td></td>
-                                    <td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    <td ></td>
-                                    <td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td colspan="13">&nbsp;&nbsp;</td>
 				</tr>
 				<tr>
-                                    <td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    <td><INPUT TYPE="text" name="busqueda_folio" style="width:100px;"></td>
-                                    <td width="10">&nbsp;</td>
-                                    <td><INPUT TYPE="text" name="busqueda_descripcionproceso" style="width:200px;"></td>
-                                    <td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    
-                                    <td ><INPUT TYPE="text" name="busqueda_sku" style="width:100px;"></td>
-                                    <td width="10">&nbsp;</td>
-                                    <td><INPUT TYPE="text" name="busqueda_descripcionproducto" style="width:200px;"></td>
-                                    <td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    <td ></td>
-                                    <td width="5">&nbsp;</td>
-                                    <td></td>
-                                    
-                                    <td width="25">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    <td><INPUT TYPE="button" value="Buscar"></td>
-                                    <td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                    <td ><INPUT TYPE="button" value="Limpiar"></td>
-                                    <td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>Folio Proceso</td>
+					<td width="10">&nbsp;</td>
+					<td>Descripci&oacute;n del Proceso</td>
+					<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					
+					<td >Clave Producto</td>
+					<td width="10">&nbsp;</td>
+					<td>Descripci&oacute;n del Producto</td>
+					<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td ></td>
+					<td width="5">&nbsp;</td>
+					<td></td>
+					
+					<td width="25">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td></td>
+					<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td ></td>
+					<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				</tr>
+				<tr>
+					<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><INPUT TYPE="text" name="busqueda_folio" style="width:100px;"></td>
+					<td width="10">&nbsp;</td>
+					<td><INPUT TYPE="text" name="busqueda_descripcionproceso" style="width:200px;"></td>
+					<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					
+					<td ><INPUT TYPE="text" name="busqueda_sku" style="width:100px;"></td>
+					<td width="10">&nbsp;</td>
+					<td><INPUT TYPE="text" name="busqueda_descripcionproducto" style="width:200px;"></td>
+					<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td ></td>
+					<td width="5">&nbsp;</td>
+					<td></td>
+					
+					<td width="25">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td><INPUT TYPE="button" value="Buscar"></td>
+					<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td ><INPUT TYPE="button" value="Limpiar"></td>
+					<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				</tr>
                                 
 		</table>
@@ -159,32 +159,38 @@
 													
 													<table border="0" class="gral">
 														<tr>
-                                                                                                                    <td width="10"></td>
-                                                                                                                    <td>Titulo del Proceso</td>
-                                                                                                                    <td></td>
-                                                                                                                    <td>C&oacute;digo&nbsp;Producto</td>
-                                                                                                                    <td></td>
-                                                                                                                    <td></td>
-                                                                                                                    <td></td>
-                                                                                                                    <td>Descripci&oacute;n</td>
-                                                                                                                    <td></td>
-                                                                                                                    <!--<td>Direccion Producto</td>-->
+															<td width="10"></td>
+															<td>Titulo del Proceso</td>
+															<td></td>
+															<td>D&iacute;as&nbsp;Caducidad</td>
+															<td></td>
+															<td>C&oacute;digo&nbsp;Producto</td>
+															<td></td>
+															<td></td>
+															<td></td>
+															<td>Descripci&oacute;n</td>
+															<td></td>
+															<!--<td>Direccion Producto</td>-->
 														</tr>
 														<tr>
-                                                                                                                    <td width="10"></td>
-                                                                                                                    <td>
-                                                                                                                        <INPUT TYPE="text" name="titulo" style="width:260px;">
-                                                                                                                    </td>
-                                                                                                                    <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
-                                                                                                                    <td>
-                                                                                                                        <input type="hidden" name="id_producto">
-                                                                                                                        <INPUT TYPE="text" name="sku" style="width:160px;" readOnly="true">
-                                                                                                                    </td>
-                                                                                                                    <td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sku"></td>
-                                                                                                                    <td width="100"><a href="busca_producto">(Buscar Producto)</a></td>
-                                                                                                                    <td width="20"></td>
-                                                                                                                    <td><INPUT TYPE="text" name="descripcion" style="width:300px;" readOnly="true"></td>
-                                                                                                                    <td width="15"></td>
+															<td width="10"></td>
+															<td>
+																<INPUT TYPE="text" name="titulo" style="width:260px;">
+															</td>
+															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
+															<td>
+																<INPUT TYPE="text" name="dias_caducidad" value="180" style="width:90px;">
+															</td>
+															<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_dias"></div></td>
+															<td>
+																<input type="hidden" name="id_producto">
+																<INPUT TYPE="text" name="sku" style="width:120px;" readOnly="true">
+															</td>
+															<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sku"></td>
+															<td width="50"><a href="busca_producto">(Buscar)</a></td>
+															<td width="20"></td>
+															<td><INPUT TYPE="text" name="descripcion" style="width:280px;" readOnly="true"></td>
+															<td width="15"></td>
 														</tr>
 													</table>
 
@@ -196,69 +202,67 @@
 											<tr>
 												<!--<td style="border: solid 1px #313E74;">-->
 												<td colspan="3">
-													<table  >
-                                                                                                            <tr>
-                                                                                                                <td >
-                                                                                                                    
-                                                                                                                    <table  >
-                                                                                                                        <tr>
-                                                                                                                            <td width="10"></td>
-                                                                                                                            <!-- listado de subprocesos -->
-                                                                                                                            <td style="border: solid 1px #313E74;">
-                                                                                                                                
-                                                                                                                                <table >
-                                                                                                                                    <thead>
-                                                                                                                                        <tr class="subprocesos_disponibles">
-                                                                                                                                            <td class="grid" width="370"><div class="seleccionar">&nbsp;SubProcesos Disponibles</div></td>
-                                                                                                                                        </tr>
-                                                                                                                                    </thead>
-                                                                                                                                </table>
-                                                                                                                                <div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:370; height: 108px; border:1px solid #C1DAD7 !important;">	
-                                                                                                                                    <table class="sub_procesos">
-                                                                                                                                        <tbody style="background-color: #FFFFFF;" valign="top" id="sub_procesos">
-                                                                                                                                            
-                                                                                                                                        </tbody>
-                                                                                                                                    </table>
-                                                                                                                                </div>
-                                                                                                                            </td>
-                                                                                                                            <td width="20"></td>
-                                                                                                                            <!-- listado de formulas -->
-                                                                                                                            <td style="border: solid 1px #313E74;">
-                                                                                                                                <table border="0">
-                                                                                                                                    <thead>
-                                                                                                                                        <!--
-                                                                                                                                        <tr class="formulas_proceso">
-                                                                                                                                            <td class="grid" colspan="3">Lista de formulas por configuraci&oacute;n</td>
-                                                                                                                                        </tr>-->
-                                                                                                                                        <th class="formulas_proceso">
-                                                                                                                                            <td class="grid" width="100">Acciones</td>
-                                                                                                                                            <td class="grid" width="100">Codigo</td>
-                                                                                                                                            <td class="grid" width="250">&nbsp;Descripci&oacute;n</td>
-                                                                                                                                        </th>
-                                                                                                                                    </thead>
-                                                                                                                                </table>
-                                                                                                                                <div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:477px; height: 108px; border:1px solid #C1DAD7 !important;">	
-                                                                                                                                    <table class="formulas_porproceso" border="0">
-                                                                                                                                        <tbody style="background-color: #FFFFFF;" valign="top" id="formulas_porproceso">
-                                                                                                                                            
-                                                                                                                                        </tbody>
-                                                                                                                                    </table>
-                                                                                                                                </div>
-                                                                                                                            </td>
-                                                                                                                            <td width="10"></td>
-                                                                                                                        </tr>
-                                                                                                                    </table>
-                                                                                                                    
-                                                                                                                    
-                                                                                                                </td>
-                                                                                                            </tr>
+													<table>
+														<tr>
+															<td >
+																
+																<table  >
+																	<tr>
+																		<td width="10"></td>
+																		<!-- listado de subprocesos -->
+																		<td style="border: solid 1px #313E74;">
+																			
+																			<table >
+																				<thead>
+																					<tr class="subprocesos_disponibles">
+																						<td class="grid" width="370"><div class="seleccionar">&nbsp;SubProcesos Disponibles</div></td>
+																					</tr>
+																				</thead>
+																			</table>
+																			<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:370; height: 108px; border:1px solid #C1DAD7 !important;">	
+																				<table class="sub_procesos">
+																					<tbody style="background-color: #FFFFFF;" valign="top" id="sub_procesos">
+																						
+																					</tbody>
+																				</table>
+																			</div>
+																		</td>
+																		<td width="20"></td>
+																		<!-- listado de formulas -->
+																		<td style="border: solid 1px #313E74;">
+																			<table border="0">
+																				<thead>
+																					<!--
+																					<tr class="formulas_proceso">
+																						<td class="grid" colspan="3">Lista de formulas por configuraci&oacute;n</td>
+																					</tr>-->
+																					<th class="formulas_proceso">
+																						<td class="grid" width="100">Acciones</td>
+																						<td class="grid" width="100">Codigo</td>
+																						<td class="grid" width="250">&nbsp;Descripci&oacute;n</td>
+																					</th>
+																				</thead>
+																			</table>
+																			<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:477px; height: 108px; border:1px solid #C1DAD7 !important;">	
+																				<table class="formulas_porproceso" border="0">
+																					<tbody style="background-color: #FFFFFF;" valign="top" id="formulas_porproceso">
+																						
+																					</tbody>
+																				</table>
+																			</div>
+																		</td>
+																		<td width="10"></td>
+																	</tr>
+																</table>
+															</td>
+														</tr>
 													</table>
 												</td>
 												
 											</tr>
 											<tr>
-                                                                                            <td colspan="3" height="10"></td>
-                                                                                        </tr>
+												<td colspan="3" height="10"></td>
+											</tr>
 											<tr>
 												<!--<td style="border: solid 1px #313E74;">-->
 												<td style="border: solid 1px #313E74;" colspan="3">
@@ -267,29 +271,29 @@
 															<td width="10"></td>
 															<td>
                                                                                                                             
-                                                                                                                            <table >
-                                                                                                                                <thead>
-                                                                                                                                    <tr class="subprocesos_seleccionados">
-                                                                                                                                        <td class="grid" id="td_eliminar" width="61"><div class="delete">&nbsp;#</div></td>
-                                                                                                                                        <td class="grid" id="td_nivel" width="100">&nbsp;Nivel</td>
-                                                                                                                                        <td class="grid" id="td_subproceso" width="150">&nbsp;SubProceso</td>
-                                                                                                                                        <td class="grid" width="102">&nbsp;Tipo Maquina</td>
-                                                                                                                                        <td class="grid" width="126">&nbsp;Documento Calidad</td>
-                                                                                                                                        <td class="grid" width="150">&nbsp;Operadores</td>
-                                                                                                                                        <td class="grid" width="150">&nbsp;MetaData</td>
-                                                                                                                                    </tr>
-                                                                                                                                </thead>
-                                                                                                                            </table>
-                                                                                                                            <div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">	
-                                                                                                                                <table class="tabla_subprocesos_seleccionados">
-                                                                                                                                    <tbody style="background-color: #FFFFFF;" valign="top" id="tabla_subprocesos_seleccionados">
-                                                                                                                                        
-                                                                                                                                    </tbody>
-                                                                                                                                </table>
-                                                                                                                            </div>
-                                                                                                                            
-                                                                                                                            
-                                                                                                                        </td>
+																<table >
+																	<thead>
+																		<tr class="subprocesos_seleccionados">
+																			<td class="grid" id="td_eliminar" width="61"><div class="delete">&nbsp;#</div></td>
+																			<td class="grid" id="td_nivel" width="100">&nbsp;Nivel</td>
+																			<td class="grid" id="td_subproceso" width="150">&nbsp;SubProceso</td>
+																			<td class="grid" width="102">&nbsp;Tipo Maquina</td>
+																			<td class="grid" width="126">&nbsp;Documento Calidad</td>
+																			<td class="grid" width="150">&nbsp;Operadores</td>
+																			<td class="grid" width="150">&nbsp;MetaData</td>
+																		</tr>
+																	</thead>
+																</table>
+																<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">	
+																	<table class="tabla_subprocesos_seleccionados">
+																		<tbody style="background-color: #FFFFFF;" valign="top" id="tabla_subprocesos_seleccionados">
+																			
+																		</tbody>
+																	</table>
+																</div>
+																
+																
+															</td>
 															<td width="25"></td>
 														</tr>
 													</table>
