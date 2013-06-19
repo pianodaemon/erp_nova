@@ -648,7 +648,7 @@ public class ProConfigProduccionController {
             @RequestParam(value="id_proceso", required=true) Integer id_proceso,
             @RequestParam(value="titulo", required=true) String titulo,
             @RequestParam(value="id_producto", required=true) String id_producto,
-            
+            @RequestParam(value="dias_caducidad", required=true) String dias_caducidad,
             
             @RequestParam(value="especificaciones", required=true) String[] especificaciones,
             @RequestParam(value="procediemientos", required=true) String[] procediemientos,
@@ -719,7 +719,7 @@ public class ProConfigProduccionController {
             
             
             
-            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_proceso+"___"+titulo.toUpperCase()+"___"+id_producto;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_proceso+"___"+titulo.toUpperCase()+"___"+id_producto+"___"+dias_caducidad;
             System.out.println("data_string: "+data_string);
             
             //succes = this.getEdao().selectFunctionValidateAaplicativo(data_string,9,string_array);

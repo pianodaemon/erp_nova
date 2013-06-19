@@ -581,8 +581,16 @@ public class ProSpringDao implements ProInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getProProceso_Datos(Integer id) {
-        String sql_to_query = "select pro_procesos.id, pro_procesos.titulo, pro_procesos.inv_prod_id, inv_prod.sku, inv_prod.descripcion "
-                + "from pro_procesos join inv_prod on inv_prod.id=pro_procesos.inv_prod_id  where pro_procesos.id="+ id + ";";
+        String sql_to_query = ""
+                + "select pro_procesos.id, "
+                    + "pro_procesos.titulo, "
+                    + "pro_procesos.inv_prod_id,"
+                    + "pro_procesos.dias_caducidad, "
+                    + "inv_prod.sku, "
+                    + "inv_prod.descripcion "
+                + "from pro_procesos "
+                + "join inv_prod on inv_prod.id=pro_procesos.inv_prod_id  "
+                + "where pro_procesos.id="+ id + ";";
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -596,7 +604,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("inv_prod_id",rs.getString("inv_prod_id"));
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
-
+                    row.put("dias_caducidad",String.valueOf(rs.getInt("dias_caducidad")));
                     return row;
                 }
             }
