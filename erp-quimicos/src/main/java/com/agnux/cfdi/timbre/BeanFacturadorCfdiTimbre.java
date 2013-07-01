@@ -321,7 +321,7 @@ public class BeanFacturadorCfdiTimbre {
                     }
                     myInputStream.close();
                     
-                    //System.out.println("Resultado: "+sb.toString());
+                    System.out.println("Resultado: "+sb.toString());
                     
                     if(sb.toString().equals("true")){
                         //:::Si llegó aquí es que el request al webservice nos devolvio correctamente el timbre fiscal::::::::
