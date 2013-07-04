@@ -399,10 +399,9 @@ $(function() {
             
         }
         //termina buscador pedidos
-	
-                                        //prod['id'],prod['inv_prod_presentaciones_id'],prod['inv_prod_id'],"0",prod['sku'],prod['presentacion'],prod['descripcion'],prod['cantidad'], prod['poc_pedidos_id'], "false"
+		
+		//prod['id'],prod['inv_prod_presentaciones_id'],prod['inv_prod_id'],"0",prod['sku'],prod['presentacion'],prod['descripcion'],prod['cantidad'], prod['poc_pedidos_id'], "false"
         $agrega_producto_preorden = function(id_reg,presentacion_id,inv_prod_id,gral_imp_id,codigo,presentacion,descripcion,cantidad, id_pedido, confirmado, umedida, umedida_id){
-               
                 $tabla_productos_preorden = $('#forma-propreordenproduccion-window').find('#grid_productos_seleccionados');
                 
                 trr = '<tr>';
@@ -520,46 +519,54 @@ $(function() {
                 $descargar_pdf.hide();
                 
 		var respuestaProcesada = function(data){
-                    if ( data['success'] == "1"  || data['success'] == "2" ){
-                        if ( data['success'] == "2" ){
-                            jAlert("Salio sin guardar cambios", 'Atencion!');
-                        }else{
-                            jAlert("La preorden se ha dado de alta", 'Atencion!');
-                        }
-                        var remove = function() {$(this).remove();};
-                        $('#forma-propreordenproduccion-overlay').fadeOut(remove);
-                        $get_datos_grid();
-                        
-                    }else{
-                        
-                            // Desaparece todas las interrogaciones si es que existen
-                            $('#forma-propreordenproduccion-window').find('div.interrogacion').css({'display':'none'});
-                            //$grid_productos.find('#cost').css({'background' : '#ffffff'});
-                            //$grid_productos.find('#cant').css({'background' : '#ffffff'});
-                            //$grid_productos.find('#cad').css({'background' : '#ffffff'});
-                            
-                            $('#forma-propreordenproduccion-window').find('#div_warning_grid').css({'display':'none'});
-                            $('#forma-propreordenproduccion-window').find('#div_warning_grid').find('#grid_warning').children().remove();
-                            
-                            
-                            var valor = data['success'].split('___');
-                            //muestra las interrogaciones
-                            for (var element in valor){
-                                    tmp = data['success'].split('___')[element];
-                                    longitud = tmp.split(':');
-                                    
-                                    if( longitud.length > 1 ){
-                                            $('#forma-propreordenproduccion-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-                                            .parent()
-                                            .css({'display':'block'})
-                                            .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-                                    }
-                            }
-                            
-                            $('#forma-propreordenproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
-                            $('#forma-propreordenproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({'background-color' : '#e7e8ea'});			
-                            
-                    }
+			if ( data['success'] == "1"  || data['success'] == "2" ){
+				
+				if ( data['success'] == "2" ){
+					jAlert("Salio sin guardar cambios", 'Atencion!');
+				}else{
+					jAlert("La preorden se ha dado de alta", 'Atencion!');
+				}
+				
+				var remove = function() {$(this).remove();};
+				$('#forma-propreordenproduccion-overlay').fadeOut(remove);
+				$get_datos_grid();
+				
+			}else{
+				
+				// Desaparece todas las interrogaciones si es que existen
+				$('#forma-propreordenproduccion-window').find('div.interrogacion').css({'display':'none'});
+				//$grid_productos.find('#cost').css({'background' : '#ffffff'});
+				//$grid_productos.find('#cant').css({'background' : '#ffffff'});
+				//$grid_productos.find('#cad').css({'background' : '#ffffff'});
+				
+				$('#forma-propreordenproduccion-window').find('#div_warning_grid').css({'display':'none'});
+				$('#forma-propreordenproduccion-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+				
+				
+				var valor = data['success'].split('___');
+				//muestra las interrogaciones
+				for (var element in valor){
+					tmp = data['success'].split('___')[element];
+					longitud = tmp.split(':');
+					
+					if( longitud.length > 1 ){
+						$('#forma-propreordenproduccion-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						.parent()
+						.css({'display':'block'})
+						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+						
+						
+						if( tmp.split(':')[0]=='error_grid'){
+							jAlert("Es necesario agregar por lo menos un registro en la segunda tabla para cerrar correctamente el proceso.\nHaga clic en cualquier registro de la tabla de arriba y despues haga clic en Cerrar.", 'Atencion!');
+						}
+						
+					}
+				}
+				
+				$('#forma-propreordenproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
+				$('#forma-propreordenproduccion-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({'background-color' : '#e7e8ea'});			
+					
+			}
 		}
 		
 		var options = {dataType :  'json', success : respuestaProcesada};

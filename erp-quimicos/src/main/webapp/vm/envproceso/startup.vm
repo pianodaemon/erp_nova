@@ -67,9 +67,9 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td width="150">
                                     
-                                    <select name="busqueda_select_estatus" style="width:150px;">
-                                            <option value="0" selected="yes">[--Presentaci&oacute;n--]</option>
-                                    </select>
+					<select name="busqueda_select_estatus" style="width:150px;">
+							<option value="0" selected="yes">[--Presentaci&oacute;n--]</option>
+					</select>
                                         
 				</td>
 				
@@ -134,7 +134,7 @@
                                     <div id="tabx-1" class="contenidoPes">
                                         
                                         
-                                                                                <table border="0" style="margin:0; padding:0;">
+										<table border="0" style="margin:0; padding:0;">
 											
 											
 											<tr class="gral">
@@ -157,14 +157,14 @@
 															<td width="60"><input type="text" name="hora" style="width:60px;"></td>
 															<td width="5"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_hora"></div></td>
 														</tr>
-                                                                                                                <tr><td colspan="12" height="8"></td></tr>
+														<tr><td colspan="12" height="8"></td></tr>
 														<tr>
-                                                                                                                        <td width="70">Folio O.P.</td>
-                                                                                                                        <td width="60">
-                                                                                                                            <input type="hidden" name="produccion_id">
-                                                                                                                            <input type="text" name="folio_produccion" style="width:60px; border:1px solid #000;">
-                                                                                                                        </td>
-                                                                                                                        <td width="20"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_orden_produccion"></div></td>
+															<td width="70">Folio O.P.</td>
+															<td width="60">
+																<input type="hidden" name="produccion_id">
+																<input type="text" name="folio_produccion" style="width:60px; border:1px solid #000;">
+															</td>
+															<td width="20"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_orden_produccion"></div></td>
 															<td width="70">C&oacute;digo</td>
 															<td width="80">
 																<input type="hidden" name="producto_id">
@@ -178,7 +178,7 @@
 														</tr>
 														<tr><td colspan="12" height="8"></td></tr>
 														<tr>
-                                                                                                                        <td width="70">Almacen</td>
+															<td width="70">Almacen</td>
 															<td width="150" colspan="3">
 																<select name="select_alm_orden_orig" style="width:150px;">
 																	<option value="0" selected="yes">[-- Seleccionar Almacen --]</option>
@@ -186,11 +186,9 @@
 															</td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_almacen_op"></div></td>
 															<td width="65"></td>
-															<td width="45" ></td>
-															<td width="60">
-                                                                                                                            
-                                                                                                                        </td>
-                                                                                                                        <td width="155" colspan="2" align="right"><input type="button" id="generarpdf" value="Generar PDF" style="width:90px; font-weight: bold;"></td>
+															<td width="45"></td>
+															<td width="60"></td>
+															<td width="155" colspan="2" align="right"><input type="button" id="generarpdf" value="Generar PDF" style="width:90px; font-weight: bold;"></td>
 															<td width="25"></td>
 															<td width="5"></td>
 														</tr>
@@ -215,7 +213,7 @@
 														<tr><td colspan="12" height="8"></td></tr>
 														<tr>
 															<td width="70">Unidad</td>
-															<td width="80"><input type="text" name="unidad" style="width:80px; border:1px solid #000;"></td>
+															<td width="80"><input type="text" name="unidad" style="width:80px; border:1px solid #000;" readOnly="true"></td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_presentacion"></div></td>
 															<td width="65">Existencia</td>
 															<td width="90"><input type="text" name="exis_uni" style="width:80px; border:1px solid #000;"></td>
@@ -224,8 +222,8 @@
 															<td width="60"><input type="text" name="disp_uni" style="width:60px; border:1px solid #000;"></td>
 															<td width="5"></td>
 														</tr>
-                                                                                                                <tr><td colspan="12" height="8"></td></tr>
-                                                                                                                <tr>
+															<tr><td colspan="12" height="8"></td></tr>
+															<tr>
 															<td width="70">Equipo</td>
 															<td width="80"><input type="text" name="equipo" style="width:80px; border:1px solid #000;"></td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_equipo"></div></td>
