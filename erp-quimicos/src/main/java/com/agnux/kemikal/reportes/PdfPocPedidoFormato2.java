@@ -587,7 +587,8 @@ public class PdfPocPedidoFormato2 {
             cell.setBorderWidthRight(0);
             tablaDatosExtras.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("Solicitado por:", smallFont));
+            //cell = new PdfPCell(new Paragraph("Solicitado por:", smallFont));
+            cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorderWidthTop(0);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(0);
@@ -596,7 +597,7 @@ public class PdfPocPedidoFormato2 {
             
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(1);
+            cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(0);
             tablaDatosExtras.addCell(cell);

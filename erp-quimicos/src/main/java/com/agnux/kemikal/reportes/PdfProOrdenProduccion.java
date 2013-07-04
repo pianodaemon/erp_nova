@@ -87,7 +87,7 @@ public class PdfProOrdenProduccion {
             tablaX.addCell(celdaX);
             
             //columna 5 y 6 fil1
-            celdaX = new PdfPCell(new Paragraph("FECHA: "+datos.get("fecha_elavorar") +"     HORA: "+datos.get("fecha_elavorar") +"     No. de Lote: "+datos.get("folio")+"\nCosto: $"+datos.get("costo_ultimo"),fuentenegrita));
+            celdaX = new PdfPCell(new Paragraph("FECHA: "+datos.get("fecha_elavorar") +"     HORA: "+datos.get("fecha_elavorar") +"     Folio: "+datos.get("folio")+"\nCosto: $"+datos.get("costo_ultimo"),fuentenegrita));
             celdaX.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdaX.setBorderWidthBottom(1);
             celdaX.setBorderWidthTop(0);
@@ -99,7 +99,7 @@ public class PdfProOrdenProduccion {
             reporte.add(tablaX);
             
             
-            
+            boolean mostrar_autorizacion = true;
             
             for (int j=0;j<lista.size();j++){
                 
@@ -139,6 +139,7 @@ public class PdfProOrdenProduccion {
                     //Solo para producto en desarrollo
                     version = "Versión: "+String.valueOf(registro.get("version"));
                     mostrar_observacion=true;
+                    mostrar_autorizacion=false;
                 }
                 
                 //columna 3 a 5 vacio fil2
@@ -1457,7 +1458,11 @@ public class PdfProOrdenProduccion {
             celdaAut.setBorderWidthLeft(0);
             tablaAut.addCell(celdaAut);
             
-            reporte.add(tablaAut);
+            
+            if(mostrar_autorizacion){
+                reporte.add(tablaAut);
+            }
+            
             
         }
         

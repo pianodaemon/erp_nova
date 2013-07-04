@@ -290,10 +290,11 @@ public class ProPreOrdenProduccionController {
         @RequestParam(value="tipoorden", required=true) String tipoorden,
         @RequestParam(value="command_selected", required=true) String command_selected,
         @RequestParam(value="observaciones", required=true) String observaciones,
-        @RequestParam(value="eliminar", required=true) String[] eliminado,
-        @RequestParam(value="id_reg", required=true) String[] id_reg,
-        @RequestParam(value="presentacion_id", required=true) String[] presentacion_id,
-        @RequestParam(value="inv_prod_id", required=true) String[] inv_prod_id,
+        
+        @RequestParam(value="eliminar", required=false) String[] eliminado,
+        @RequestParam(value="id_reg", required=false) String[] id_reg,
+        @RequestParam(value="presentacion_id", required=false) String[] presentacion_id,
+        @RequestParam(value="inv_prod_id", required=false) String[] inv_prod_id,
         @RequestParam(value="id_pedido", required=false) String[] id_pedido,
         @RequestParam(value="cantidad", required=false) String[] cantidad,
         @RequestParam(value="umedida", required=false) String[] umedida,
@@ -309,8 +310,11 @@ public class ProPreOrdenProduccionController {
         //String extra_data_array = "'sin datos'";
         String actualizo = "0";
         int no_partida = 0;
+        String extra_data_array = "'sin datos'";
         
         String arreglo[];
+        
+        if(eliminado!=null){
             arreglo = new String[eliminado.length];
             
             for(int i=0; i<eliminado.length; i++) {
@@ -318,13 +322,13 @@ public class ProPreOrdenProduccionController {
                     no_partida++;//si no esta eliminado incrementa el contador de partidas
                 }
                 
-                arreglo[i]= "'"+id_reg[i] +"___" + presentacion_id[i]+"___" + inv_prod_id[i]+"___" + id_pedido[i]+"___" + 
-                        no_partida+"___" + cantidad[i]+"___" + eliminado[i]+"___" + umedida[i]+"___" + umedida_id[i]+"'";
+                arreglo[i]= "'"+id_reg[i] +"___" + presentacion_id[i]+"___" + inv_prod_id[i]+"___" + id_pedido[i]+"___" + no_partida+"___" + cantidad[i]+"___" + eliminado[i]+"___" + umedida[i]+"___" + umedida_id[i]+"'";
                 //System.out.println(arreglo[i]);
             }
             
             //serializar el arreglo
-            String extra_data_array = StringUtils.join(arreglo, ",");
+            extra_data_array = StringUtils.join(arreglo, ",");
+        }
         /*
         if( id ==0 ){
             command_selected = "new";
@@ -340,9 +344,12 @@ public class ProPreOrdenProduccionController {
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
         if( String.valueOf(succes.get("success")).equals("true") ){
             actualizo = this.getProDao().selectFunctionForApp_Produccion(data_string, extra_data_array);
+            jsonretorno.put("success",String.valueOf(actualizo));
+        }else{
+            jsonretorno.put("success",String.valueOf(succes.get("success")));
         }
         
-        jsonretorno.put("success",String.valueOf(actualizo));
+        
         
         log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
         return jsonretorno;

@@ -491,6 +491,8 @@ public class ProOrdenProduccionController {
         String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+
                 fecha_elavorar+"___"+observaciones+"___"+command_selected+"___"+accion+"___"+id_formula;
         
+        System.err.println("data_string: "+data_string);
+        
         succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));

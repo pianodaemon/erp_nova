@@ -4006,15 +4006,29 @@ public class ProSpringDao implements ProInterfaceDao{
                 + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
                 + "lote character varying, inv_osal_id integer) order by elemento;";
         */
-
+        
         String sql_to_query = "selecT * from pro_get_detalle_orden_produccionv2("+id_producto+","+id_orden+","+id_subproceso+", 0)  as "
-                + "foo(id integer, inv_prod_id integer, sku character varying,descripcion character varying, requiere_numero_lote boolean "
-                + ",cantidad_adicional double precision,id_reg_det integer, cantidad double precision,elemento integer, "
-                + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer, agregado boolean,"
-                + "cantidad_usada double precision, guardado boolean) order by elemento;";
+                + "foo("
+                    + "id integer, "
+                    + "inv_prod_id integer, "
+                    + "sku character varying,"
+                    + "descripcion character varying, "
+                    + "requiere_numero_lote boolean "
+                    + ",cantidad_adicional double precision,"
+                    + "id_reg_det integer, "
+                    + "cantidad double precision,"
+                    + "elemento integer, "
+                    + "lote character varying, "
+                    + "inv_osal_id integer, "
+                    + "inv_alm_id integer, "
+                    + "gral_suc_id integer, "
+                    + "agregado boolean,"
+                    + "cantidad_usada double precision, "
+                    + "guardado boolean"
+                + ") order by elemento;";
 
         //and tmp_salida.cantidad_tmp=tmp_det.cantidad // se quito, por que no mostraba los lotes
-        //System.out.println("Ejecutando query de: "+ sql_to_query);
+        System.out.println("Ejecutando query de: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

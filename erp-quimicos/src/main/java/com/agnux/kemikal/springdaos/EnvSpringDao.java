@@ -925,7 +925,7 @@ public class EnvSpringDao implements EnvInterfaceDao{
             "AND empresa_id="+id_empresa+" AND tipo_de_producto_id in (1, 2)) as productos JOIN inv_prod_unidades as inv_unidad on " +
             "inv_unidad.id=productos.unidad_id) as producto on producto.producto_id=det_op.inv_prod_id " +
             "order by folio, producto.sku";
-                //System.out.println("sql_to_query: "+sql_to_query);
+         //System.out.println("sql_to_query: "+sql_to_query);
                 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         //distinct id_op, folio, det_op.cantidad,producto.sku, producto.descripcion,producto.producto_id, producto.unidad_id , producto.unidad
