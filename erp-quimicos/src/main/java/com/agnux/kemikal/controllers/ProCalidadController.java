@@ -101,7 +101,7 @@ public class ProCalidadController {
         infoConstruccionTabla.put("lote", "Lote:110");
         infoConstruccionTabla.put("proceso", "Estatus:100");
         
-        ModelAndView x = new ModelAndView("procalidad/startup", "title", "Aseguramiento de Calidad de Produccion");
+        ModelAndView x = new ModelAndView("procalidad/startup", "title", "Aseguramiento de Calidad");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -135,7 +135,8 @@ public class ProCalidadController {
            @RequestParam(value="input_json", required=true) String input_json,
            @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
            @RequestParam(value="iu", required=true) String id_user_cod,
-           Model modcel) {
+           Model modcel
+       ) {
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
@@ -198,6 +199,88 @@ public class ProCalidadController {
     
     
     
+    
+
+    @RequestMapping(method = RequestMethod.POST, value="/get_datos_orden.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProOrdenJson(
+            @RequestParam(value="id_orden", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando get_datos_orden de {0}", ProCalidadController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        
+        
+        ArrayList<HashMap<String, String>> datosOrden = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosOrdenDet = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        if( id != 0 ){
+            datosOrden = this.getProDao().getProOrden_Datos(id);
+            if(datosOrden.get(0).get("pro_proceso_flujo_id").equals("3")){
+                datosOrdenDet = this.getProDao().getProOrden_EspecificacionesDetalle(id);
+            }else{
+                datosOrdenDet = this.getProDao().getProOrden_Detalle(id);
+            }
+        }
+        jsonretorno.put("Orden", datosOrden);
+        jsonretorno.put("OrdenDet", datosOrdenDet);
+        
+        return jsonretorno;
+    }
+    
+    
+
+    //edicion
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="id_orden", required=true) Integer id_orden,
+            @RequestParam(value="select_status_calidad", required=true) String select_status_calidad,
+            @RequestParam(value="comentarios", required=true) String comentarios,
+            @ModelAttribute("user") UserSessionData user
+        ) {
+            
+            System.out.println("Guardar estado de Aseguramiento de Calidad");
+            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            HashMap<String, String> succes = new HashMap<String, String>();
+            
+            //aplicativo Aseguramiento de Calidad de Produccion
+            Integer app_selected = 143;
+            String command_selected = "new";
+            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            String extra_data_array = "'sin datos'";
+            
+            
+            if(id_orden>0){
+                command_selected = "edit";
+            }
+            
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_orden+"___"+select_status_calidad+"___"+comentarios;
+            //System.out.println("data_string: "+data_string);
+            
+            succes = this.getProDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+            
+            log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+            String actualizo = "0";
+            
+            if( String.valueOf(succes.get("success")).equals("true") ){
+                actualizo = this.getProDao().selectFunctionForThisApp(data_string, extra_data_array);
+                jsonretorno.put("actualizo",String.valueOf(actualizo));
+            }
+            
+            jsonretorno.put("success",String.valueOf(succes.get("success")));
+            
+            log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
     
     
     
