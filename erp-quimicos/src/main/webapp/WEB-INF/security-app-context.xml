@@ -263,7 +263,6 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         
         <intercept-url pattern="/controllers/proequiposadic/startup.agnux" access="ROLE_ADMIN,ROLE_PRO_EQUIPOS_ADICIONALES" /><!--Aron-->
         <intercept-url pattern="/controllers/proequipos/startup.agnux" access="ROLE_ADMIN,ROLE_PRO_EQUIPOS" /><!--Aron-->
-        
         <intercept-url pattern="/controllers/procalidad/startup.agnux" access="ROLE_ADMIN,ROLE_PRO_ASEG_CALIDAD" /><!--Noe-->
         
         

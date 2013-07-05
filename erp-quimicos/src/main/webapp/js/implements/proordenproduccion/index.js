@@ -3713,15 +3713,15 @@ $(function() {
 						$('#forma-proordenproduccion-overlay').fadeOut(remove);
 						$get_datos_grid();
 					}else{
-                                            
+						
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-proordenproduccion-window').find('div.interrogacion').css({'display':'none'});
 						$tabla_productos_preorden.find('input[name=persona]').css({'background' : '#ffffff'});
 						$tabla_productos_preorden.find('input[name=equipo]').css({'background' : '#ffffff'});
 						$tabla_productos_preorden.find('input[name=eq_adicional]').css({'background' : '#ffffff'});
-                                                $tabla_productos_preorden.find('input[name=cantidad]').css({'background' : '#ffffff'});
-                                                
-                                                $('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'578px'});//con errores
+						$tabla_productos_preorden.find('input[name=cantidad]').css({'background' : '#ffffff'});
+						
+						//$('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'578px'});//con errores
 						$('#forma-proordenproduccion-window').find('#div_warning_grid').css({'display':'none'});
 						$('#forma-proordenproduccion-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 						
@@ -3738,12 +3738,17 @@ $(function() {
 								.css({'display':'block'})
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 								
+								if(tmp.split(':')[0]=='statuscalidad'){
+									jAlert(tmp.split(':')[1], 'Atencion!');
+								}
+								
 								//alert(tmp.split(':')[0]);
 								
 								if(parseInt($("tr", $tabla_productos_preorden).size())>0){
 									for (var i=1;i<=parseInt($("tr", $tabla_productos_preorden).size());i++){
 										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='apoerario'+i) || (tmp.split(':')[0]=='equipo'+i) || (tmp.split(':')[0]=='equipo_adicional'+i)){
-
+											$('#forma-proordenproduccion-window').find('.proordenproduccion_div_one').css({'height':'578px'});//con errores
+											
 											$('#forma-proordenproduccion-window').find('#div_warning_grid').css({'display':'block'});
 											//$grid_productos.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
 											
@@ -3759,7 +3764,7 @@ $(function() {
 												$tabla_productos_preorden.find('input[name=caducidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
 											}
                                                                                         
-                                                                                        if(tmp.split(':')[0].substring(0, 9) == 'equipo_adicional'){
+											if(tmp.split(':')[0].substring(0, 9) == 'equipo_adicional'){
 												$tabla_productos_preorden.find('input[name=caducidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
 											}
 											
