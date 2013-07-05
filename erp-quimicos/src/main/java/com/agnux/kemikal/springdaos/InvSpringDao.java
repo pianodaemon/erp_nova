@@ -1269,9 +1269,9 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("id_presentacion",rs.getString("id_presentacion"));
                     row.put("presentacion",rs.getString("presentacion"));
-                    row.put("costo",StringHelper.roundDouble(rs.getString("costo"),Integer.parseInt(rs.getString("decimales"))));
                     row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),Integer.parseInt(rs.getString("decimales"))));
-                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),Integer.parseInt(rs.getString("decimales"))));
+                    row.put("costo",StringHelper.roundDouble(rs.getString("costo"),2));
+                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
                     row.put("tipo_impuesto",rs.getString("tipo_impuesto"));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getString("valor_imp"),2));
                     row.put("decimales",rs.getString("decimales"));
