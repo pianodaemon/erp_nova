@@ -3732,7 +3732,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join pro_proceso_flujo on pro_proceso_flujo.id=pro_proceso.pro_proceso_flujo_id "
                         +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
 
-        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        System.out.println("Busqueda GetPage: "+sql_to_query);
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -3813,8 +3813,13 @@ public class ProSpringDao implements ProInterfaceDao{
                     + "inv_prod.tipo_de_producto_id AS tipo_prod_id, "
                     + "tmp_det_orden.gral_empleados_id, "
                     + "gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as empleado, "
-                    + "tmp_det_orden.pro_equipos_id, pro_equipos.titulo as equipo, tmp_det_orden.pro_equipos_adic_id, "
-                    + "pro_equipos_adic.titulo as eq_adicional, inv_unid.titulo as unidad, inv_prod.unidad_id, inv_prod.densidad "
+                    + "tmp_det_orden.pro_equipos_id, "
+                    + "pro_equipos.titulo as equipo, "
+                    + "tmp_det_orden.pro_equipos_adic_id, "
+                    + "pro_equipos_adic.titulo as eq_adicional, "
+                    + "inv_unid.titulo as unidad, "
+                    + "inv_prod.unidad_id, "
+                    + "inv_prod.densidad "
                 + "from "
                 + "(select id, pro_orden_prod_id,num_lote, cantidad,pro_subprocesos_id, inv_prod_id,gral_empleados_id, pro_equipos_id, "
                 + "pro_equipos_adic_id  from pro_orden_prod_det where pro_orden_prod_id="+id+" "
@@ -5240,52 +5245,7 @@ public class ProSpringDao implements ProInterfaceDao{
         return hm_alm;
     }
 
-
-     @Override
-    public ArrayList<HashMap<String, String>> getReporteCalidad_Datos(Integer id_empresa) {
-	String sql_query = "select  "
-+"    1 ::integer  as id,  "
-+"    'columna 1'::character varying  as columna_1,  "
-+"    'columna 2'::character varying  as columna_2,  "
-+"    'columna 3'::character varying  as columna_3,  "
-+"    'columna 4'::character varying  as columna_4,  "
-+"    'columna 5'::character varying  as columna_5,  "
-+"    'columna 6'::character varying  as columna_6,  "
-+"    'columna 7'::character varying  as columna_7,  "
-+"    'columna 8'::character varying  as columna_8,  "
-+"    'columna 9'::character varying  as columna_9,  "
-+"    'columna 10'::character varying  as columna_10,  "
-+"    'columna 11'::character varying  as columna_11,  "
-+"    'columna 12'::character varying  as columna_12  "
-
-+"    from inv_prod limit 50  ";
-                //select id ,titulo from pro_tipo_equipo where gral_emp_id="+id_empresa+" and borrado_logico=FALSE;";
-        ArrayList<HashMap<String, String>> hm_alm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
-            sql_query,
-            new Object[]{}, new RowMapper() {
-                @Override
-                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("id",rs.getString("id"));
-                    row.put("columna_1",rs.getString("columna_1"));
-                    row.put("columna_2",rs.getString("columna_2"));
-                    row.put("columna_3",rs.getString("columna_3"));
-                    row.put("columna_4",rs.getString("columna_4"));
-                    row.put("columna_5",rs.getString("columna_5"));
-                    row.put("columna_6",rs.getString("columna_6"));
-                    row.put("columna_7",rs.getString("columna_7"));
-                    row.put("columna_8",rs.getString("columna_8"));
-                    row.put("columna_9",rs.getString("columna_9"));
-                    row.put("columna_10",rs.getString("columna_10"));
-                    row.put("columna_11",rs.getString("columna_11"));
-                    row.put("columna_12",rs.getString("columna_12"));
-                    return row;
-                }
-            }
-        );
-        return hm_alm;
-    }
-
+    
 
 
     @Override
@@ -5637,6 +5597,74 @@ public class ProSpringDao implements ProInterfaceDao{
             }
         );
         return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getPro_ReporteCalidad(String campos_data) {
+        String sql_to_query = new String();
+        
+        sql_to_query = "select * from pro_reporte_calidad('"+campos_data+"')as foo("
+                                    +"id integer,"
+                                    +"lote character varying,"
+                                    +"fecha character varying, "
+                                    +"fineza character varying, "
+                                    +"viscosidad character varying, "
+                                    +"densidad double precision, "
+                                    +"pc character varying, "
+                                    +"de character varying, "
+                                    +"brillo character varying, "
+                                    +"dureza character varying, "
+                                    +"nv character varying, "
+                                    +"ph character varying, "
+                                    +"adhesion character varying, "
+                                    +"mp_deshabasto character varying, "
+                                    +"mp_contratipo character varying, "
+                                    +"mp_agregados character varying, "
+                                    +"observ character varying, "
+                                    +"comentarios character varying, "
+                                    +"codigo character varying, "
+                                    +"descripcion character varying, "
+                                    +"cantk double precision, "
+                                    +"cantl double precision "
+                                +") ORDER BY descripcion ASC;";
+        System.out.println("ReporteCalidad: "+sql_to_query);
+
+        ArrayList<HashMap<String, String>> data = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("lote",rs.getString("lote"));
+                    row.put("fecha",rs.getString("fecha"));
+                    row.put("fineza",rs.getString("fineza"));
+                    row.put("viscosidad",rs.getString("viscosidad"));
+                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),2));
+                    row.put("pc",rs.getString("pc"));
+                    row.put("de",rs.getString("de"));
+                    row.put("brillo",rs.getString("brillo"));
+                    row.put("dureza",rs.getString("dureza"));
+                    row.put("nv",rs.getString("nv"));
+                    row.put("ph",rs.getString("ph"));
+                    row.put("adhesion",rs.getString("adhesion"));
+                    row.put("mp_deshabasto",rs.getString("mp_deshabasto"));
+                    row.put("mp_contratipo",rs.getString("mp_contratipo"));
+                    row.put("mp_agregados",rs.getString("mp_agregados"));
+                    row.put("observ",rs.getString("observ"));
+                    row.put("comentarios",rs.getString("comentarios"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("cantk",StringHelper.roundDouble(rs.getDouble("cantk"),2));
+                    row.put("cantl",StringHelper.roundDouble(rs.getDouble("cantl"),2));
+                    return row;
+                }
+            }
+        );
+        
+        
+        return data;
     }
     
 }

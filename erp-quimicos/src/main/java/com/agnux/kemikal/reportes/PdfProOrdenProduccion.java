@@ -99,7 +99,7 @@ public class PdfProOrdenProduccion {
             reporte.add(tablaX);
             
             
-            boolean mostrar_autorizacion = true;
+            String mostrar_autorizacion = "true";
             
             for (int j=0;j<lista.size();j++){
                 
@@ -134,12 +134,16 @@ public class PdfProOrdenProduccion {
                 
                 String version="";
                 boolean mostrar_observacion = false;
+                System.out.println("tipo_prod_id: "+registro.get("tipo_prod_id"));
                 
                 if(Integer.parseInt(String.valueOf(registro.get("tipo_prod_id")))==8){
                     //Solo para producto en desarrollo
                     version = "Versión: "+String.valueOf(registro.get("version"));
                     mostrar_observacion=true;
-                    mostrar_autorizacion=false;
+                    mostrar_autorizacion="false";
+                    
+                    System.out.println("mostrar_autorizacion: "+mostrar_autorizacion);
+                    
                 }
                 
                 //columna 3 a 5 vacio fil2
@@ -1459,10 +1463,9 @@ public class PdfProOrdenProduccion {
             tablaAut.addCell(celdaAut);
             
             
-            if(mostrar_autorizacion){
+            if(mostrar_autorizacion.equals("true")){
                 reporte.add(tablaAut);
             }
-            
             
         }
         

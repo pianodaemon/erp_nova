@@ -37,67 +37,60 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 /**
  *
- * @author vale vale
- * valentin.vale@gmail.com
- * 08/abril/2013
+ * @author Noe Martinez
+ * gpmarsan@gmail.com
+ * 08/julio/2013
  *
  */
 @Controller
 @SessionAttributes({"user"})
 @RequestMapping("/proreportecalidad/")
 public class ProReportecalidadController {
-    private static final Logger log  = Logger.getLogger(RepInvExisController.class.getName());
+    private static final Logger log  = Logger.getLogger(ProReportecalidadController.class.getName());
     ResourceProject resource = new ResourceProject();
-
+    
     @Autowired
     @Qualifier("daoPro")
     private ProInterfaceDao daoPro;
-
-
+    
     public ProInterfaceDao getProDao() {
         return daoPro;
     }
-
+    
     @Autowired
     @Qualifier("daoInv")
     private InvInterfaceDao invDao;
-
-
+    
     @Autowired
     @Qualifier("daoHome")
     private HomeInterfaceDao HomeDao;
-
+    
     @Autowired
     @Qualifier("daoGral")
     private GralInterfaceDao gralDao;
-
+    
     public InvInterfaceDao getInvDao() {
         return invDao;
     }
-
-
+    
     public HomeInterfaceDao getHomeDao() {
         return HomeDao;
     }
-
-
+    
     public GralInterfaceDao getGralDao() {
         return gralDao;
     }
-
-
-
+    
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response,
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
-
+        
         log.log(Level.INFO, "Ejecutando starUp de {0}", ProReportecalidadController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
-
-
+        
         ModelAndView x = new ModelAndView("proreportecalidad/startup", "title", "Reporte de Calidad");
-
+        
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -118,104 +111,84 @@ public class ProReportecalidadController {
     }
 
 
-
-
+    //obtiene datos para el autopletar
+    @RequestMapping(value="/get_proordentipos.json", method = RequestMethod.POST)
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProOrdenTiposJson(
+           @RequestParam(value="iu", required=true) String id_user_cod,
+           Model modcel) {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> tc = new ArrayList<HashMap<String, String>>();
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("ordenTipos", this.getProDao().getProOrdenTipos(id_empresa));
+        
+        return jsonretorno;
+    }
+    
+    
     //obtiene datos para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/getDatosBusqueda.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosBusquedaJson(
-            @RequestParam(value="iu", required=true) String id_user,
+            @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
         ) {
-
+        
         log.log(Level.INFO, "Ejecutando getDatosBusquedaJson de {0}", ProReportecalidadController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        //ArrayList<HashMap<String, String>> Almacenes = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> Datos_reporte_calidad = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> tc = new ArrayList<HashMap<String, String>>();
+        
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
-
+        
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-
-        //Almacenes = this.getInvDao().getAlmacenes2(id_empresa);
-        Datos_reporte_calidad = this.getProDao().getReporteCalidad_Datos(id_empresa);
-
-        //jsonretorno.put("Agentes", Almacenes);
-        jsonretorno.put("R_Calidad", Datos_reporte_calidad);
-
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("ordenTipos", this.getProDao().getProOrdenTipos(id_empresa));
+        
         return jsonretorno;
     }
-
-
-    //obtiene los tipos de productos para el buscador de productos
-//    @RequestMapping(method = RequestMethod.POST, value = "/getProductoTipos.json")
-//    public @ResponseBody
-//    HashMap<String, ArrayList<HashMap<String, String>>> getProductoTiposJson(
-//            @RequestParam(value = "iu", required = true) String id_user_cod,
-//            Model model) {
-//
-//        HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
-//
-//        ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
-//        arrayTiposProducto = this.getInvDao().getProducto_Tipos();
-//        jsonretorno.put("prodTipos", arrayTiposProducto);
-//
-//        return jsonretorno;
-//    }
-
-    //obtiene los productos para el buscador
-//    @RequestMapping(method = RequestMethod.POST, value = "/getBuscadorProductos.json")
-//    public @ResponseBody
-//    HashMap<String, ArrayList<HashMap<String, String>>> getBuscadorProductosJson(
-//            @RequestParam(value = "sku", required = true) String sku,
-//            @RequestParam(value = "tipo", required = true) String tipo,
-//            @RequestParam(value = "descripcion", required = true) String descripcion,
-//            @RequestParam(value = "iu", required = true) String id_user,
-//            Model model) {
-//
-//        log.log(Level.INFO, "Ejecutando getBuscadorProductosJson de {0}", InvRepComprasNetasPorProductoController.class.getName());
-//        HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
-//        ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
-//        HashMap<String, String> userDat = new HashMap<String, String>();
-//        //decodificar id de usuario
-//        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-//        userDat = this.getHomeDao().getUserById(id_usuario);
-//
-//        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-//
-//        productos = this.getInvDao().getBuscadorProductos(sku,tipo ,descripcion, id_empresa);
-//
-//        jsonretorno.put("Productos", productos);
-//
-//        return jsonretorno;
-//    }
-//
-//
-//
-//
+    
+    
+    
+    
     @RequestMapping(method = RequestMethod.POST, value = "/getProReporteCalidad.json")
     public @ResponseBody
-    HashMap<String, ArrayList<HashMap<String, String>>> getMovimientosJson(
-            @RequestParam(value = "id_agente", required = true) String id_agente,
+    HashMap<String, ArrayList<HashMap<String, String>>> getProReporteCalidadJson(
+            @RequestParam(value = "folio", required = true) String folio,
+            @RequestParam(value = "codigo", required = true) String codigo,
+            @RequestParam(value = "tipo", required = true) String tipo,
+            @RequestParam(value = "f_inicial", required = true) String f_inicial,
+            @RequestParam(value = "f_final", required = true) String f_final,
             @RequestParam(value = "iu", required = true) String id_user,
-            Model model) {
-
-        log.log(Level.INFO, "Ejecutando getMovimientosJson de {0}", ProReportecalidadController.class.getName());
+        Model model) {
+        
+        log.log(Level.INFO, "Ejecutando getProReporteCalidadJson de {0}", ProReportecalidadController.class.getName());
         HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> Datos_Reporte_Calidad = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> datosReporte = new ArrayList<HashMap<String, String>>();
+        String data_string = new String();
+        
+        //HashMap<String, String> userDat = new HashMap<String, String>();
+        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        userDat = this.getHomeDao().getUserById(id_usuario);
-
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-
-        Datos_Reporte_Calidad = this.getProDao().getReporteCalidad_Datos(id_empresa);
-
-        jsonretorno.put("Datos_R_Calidad", Datos_Reporte_Calidad);
-
+        
+        //userDat = this.getHomeDao().getUserById(id_usuario);
+        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        data_string = id_usuario+"___"+folio+"___"+codigo+"___"+tipo+"___"+f_inicial+"___"+f_final;
+        
+        datosReporte = this.getProDao().getPro_ReporteCalidad(data_string);
+        
+        jsonretorno.put("Datos_R_Calidad", datosReporte);
+        
         return jsonretorno;
     }
 
@@ -229,55 +202,52 @@ public class ProReportecalidadController {
                 HttpServletResponse response,
                 Model model)
         throws ServletException, IOException, URISyntaxException, DocumentException {
-
+        
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> Datos_Reporte_Calidad = new ArrayList<HashMap<String, String>>();
-
+        
         System.out.println("Generando reporte de Calidad");
-        Integer select=0;
-
-
-
+        
         String arrayCad [] = cadena.split("___");
-
-        //ASIGNACION DE VALORES DEL AREGLO A VARIABLES
-        //String parametro_1 = Integer.parseInt(arrayCad [0]);
-        String fecha_inicial="2012-01-01";
-        String fecha_final="2013-12-01";
-
-
+        
+        System.out.println("cadena: "+cadena);
+        
+        if(arrayCad[0].equals("0")){ arrayCad[0]=""; }
+        if(arrayCad[1].equals("0")){ arrayCad[1]=""; }
+        
+        if(arrayCad[3].equals("0")){ arrayCad[3]=""; }
+        if(arrayCad[4].equals("0")){ arrayCad[4]=""; }
+        
+        String fecha_inicial=arrayCad[3];
+        String fecha_final=arrayCad[4];
+        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         String rfc=this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-
         String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
-
+        
         //obtener el directorio temporal
         String dir_tmp = this.getGralDao().getTmpDir();
-
-
-        String[] array_company = razon_social_empresa.split(" ");
-        String company_name= array_company[0].toLowerCase();
-        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
-
-
+        
         File file_dir_tmp = new File(dir_tmp);
         System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
-
-        String file_name = "REPCALIDAD_"+rfc+".pdf";
-
+        
+        String file_name = "REP_CALIDAD_"+rfc+".pdf";
+        
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
-
-
+        
+        String data_string = new String();
+        data_string = id_usuario+"___"+arrayCad[0]+"___"+arrayCad[1]+"___"+arrayCad[2]+"___"+arrayCad[3]+"___"+arrayCad[4];
+        
         //obtiene los datos Para el reporte de Calidad (Modulo de Produccion)
-        Datos_Reporte_Calidad = this.getProDao().getReporteCalidad_Datos(id_empresa);
-
+        Datos_Reporte_Calidad = this.getProDao().getPro_ReporteCalidad(data_string);
+        
         //instancia a la clase que construye el pdf del reporte de calidad
-        PdfProReporteCalidad x = new PdfProReporteCalidad( fileout,ruta_imagen,razon_social_empresa,fecha_inicial,fecha_final,Datos_Reporte_Calidad);
-
+        PdfProReporteCalidad x = new PdfProReporteCalidad( fileout,razon_social_empresa,fecha_inicial,fecha_final,Datos_Reporte_Calidad);
+        
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         int size = (int) file.length(); // Tamaño del archivo
@@ -288,7 +258,7 @@ public class ProReportecalidadController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());
         response.flushBuffer();
-
+        
         return null;
     }
 

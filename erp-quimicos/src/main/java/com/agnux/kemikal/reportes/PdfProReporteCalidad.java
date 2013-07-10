@@ -31,11 +31,13 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author mi_compu
+ * @author Noe Martinez 
+ * gpmarsan@gmail.com
+ * 10/julio/2013
  */
 public class PdfProReporteCalidad {
 
-    public PdfProReporteCalidad(String fileout, String ruta_imagen, String razon_social_empresa, String fecha_inicial, String fecha_final, ArrayList<HashMap<String, String>> Datos_Reporte_Calidad) throws DocumentException {
+    public PdfProReporteCalidad(String fileout, String razon_social_empresa, String fecha_inicial, String fecha_final, ArrayList<HashMap<String, String>> Datos_Reporte_Calidad) throws DocumentException {
         String[] fi = fecha_inicial.split("-");
         String[] ff = fecha_final.split("-");
         String periodo_reporte = "Periodo  del  "+fi[2]+"/"+fi[1]+"/"+fi[0]+"  al  "+ff[2]+"/"+ff[1]+"/"+ff[0];
@@ -51,14 +53,35 @@ public class PdfProReporteCalidad {
             Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
 
             PdfProReporteCalidad.HeaderFooter event = new PdfProReporteCalidad.HeaderFooter(razon_social_empresa,periodo_reporte);
-            Document doc = new Document(PageSize.LETTER.rotate(),-50,-50,60,30);
-            doc.addCreator("valentin.vale8490@gmail.com");
+            Document doc = new Document(PageSize.LEGAL.rotate(),-50,-50,60,30);
+            doc.addCreator("gpmarsan@gmail.com");
             PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(fileout));
             writer.setPageEvent(event);
 
             doc.open();
-            //float [] widths = {3f, 3f, 3f, 3f, 3f, 3f, 4f};
-            float [] widths = {2f, 4f, 2f, 5f, 5f, 3f, 3f, 3f};
+            
+            float [] widths = {
+                0.5f, //cantK
+                0.5f, //cantL
+                0.6f, //Lote
+                0.5f, //Fecha
+                0.3f, //Fineza
+                0.5f, //Viscosidad
+                0.4f, //Densidad
+                0.3f, //PC %
+                0.2f, //DE
+                0.3f, //Brillo
+                0.3f, //Dureza
+                0.3f, //% NV
+                0.3f, //PH
+                0.5f, //Adhesion
+                0.7f, //MP_Deshabasto
+                0.7f, //MP_Contratipo
+                0.7f, //MP_Agregados
+                0.6f, //Observ
+                1.6f  //Comentarios
+            };
+            
             PdfPTable table = new PdfPTable(widths);
             PdfPCell cell;
 
@@ -66,130 +89,265 @@ public class PdfProReporteCalidad {
             table.setHeaderRows(1);
 
             // Encabezado de Celda
-            cell = new PdfPCell(new Paragraph("COLUMNA_1",headerFont));
+            cell = new PdfPCell(new Paragraph("Cant. K.",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("COLUMNA_2",headerFont));
+            cell = new PdfPCell(new Paragraph("Cant. L.",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("COLUMNA_3",headerFont));
+            cell = new PdfPCell(new Paragraph("Lote",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("COLUMNA_4",headerFont));
+            cell = new PdfPCell(new Paragraph("Fecha",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("COLUMNA_5",headerFont));
+            cell = new PdfPCell(new Paragraph("Fineza",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("COLUMNA_6",headerFont));
+            cell = new PdfPCell(new Paragraph("Viscosidad",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
-
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("COLUMNA_7",headerFont));
+            cell = new PdfPCell(new Paragraph("Densidad",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
-
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("COLUMNA_8",headerFont));
+            cell = new PdfPCell(new Paragraph("PC %",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBackgroundColor(BaseColor.BLACK);
-            cell.setFixedHeight(13);
-
             table.addCell(cell);
 
+            cell = new PdfPCell(new Paragraph("DE",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Brillo",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Dureza",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("% N.V.",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("PH",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Adhesion",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("MP Deshabasto",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("MP Contratipo",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("MP Agregados",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("MP Observ",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Comentarios",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+
+                    //row.put("codigo",rs.getString("codigo"));
+                    //row.put("descripcion",rs.getString("descripcion"));
+            
             if(Datos_Reporte_Calidad.size() > 0){
-
-
                 for (int x=0; x<=Datos_Reporte_Calidad.size()-1;x++){
                     HashMap<String,String> registro = Datos_Reporte_Calidad.get(x);
-
-
-                    //Referencia
-                    cell= new PdfPCell(new Paragraph(registro.get("columna_1"),smallFont));
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("cantk"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("cantl"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("lote"),smallFont));
                     cell.setHorizontalAlignment (Element.ALIGN_CENTER);
                     cell.setBorder(0);
                     table.addCell(cell);
-                    //Tipo de Movimiento
-                    cell= new PdfPCell(new Paragraph(registro.get("columna_2"),smallFont));
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("fecha"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("fineza"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("viscosidad"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("densidad"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("pc"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+
+                    cell= new PdfPCell(new Paragraph(registro.get("de"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("brillo"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("dureza"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("nv"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("ph"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("adhesion"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("mp_deshabasto"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("mp_contratipo"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("mp_agregados"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("observ"),smallFont));
                     cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                    cell.setVerticalAlignment(Element.ALIGN_CENTER);
                     cell.setBorder(0);
                     table.addCell(cell);
-                    //Fecha del Movimiento
-                    cell= new PdfPCell(new Paragraph(registro.get("columna_3"),smallFont));
-                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+                    
+                    cell= new PdfPCell(new Paragraph(registro.get("comentarios"),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                    cell.setVerticalAlignment(Element.ALIGN_CENTER);
                     cell.setBorder(0);
                     table.addCell(cell);
-                    //sucursal
-                    cell= new PdfPCell(new Paragraph(registro.get("columna_4"),smallFont));
-                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
-                    cell.setBorder(0);
-                    table.addCell(cell);
-                    //Almacen
-                    cell= new PdfPCell(new Paragraph(registro.get("columna_5"),smallFont));
-                    cell.setHorizontalAlignment (Element.ALIGN_CENTER);
-                    cell.setBorder(0);
-                    table.addCell(cell);
-                    //Cantidad
-                    cell= new PdfPCell(new Paragraph(registro.get("columna_6"),smallFont));
-                    cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    table.addCell(cell);
-                    //Valor unitario
-                    cell= new PdfPCell(new Paragraph(registro.get("columna_7"),smallFont));
-                    cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    table.addCell(cell);
-                    //Valor Entrada
-                    cell= new PdfPCell(new Paragraph(registro.get("columna_8"),smallFont));
-                    cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
-                    cell.setBorder(0);
-                    table.addCell(cell);
-
-
 
                 }
             }else{
