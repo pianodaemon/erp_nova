@@ -4,15 +4,10 @@
         <title>${title}</title>
 
         #include("${layoutheader}")
-
-
-
+        
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
         <script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
-
-
-
         <script type="text/javascript" src="../../js/implements/proreportecalidad/index.js" ></script>
 
         #include("${layoutmenu}")
@@ -36,27 +31,44 @@
                 <td style="background-color:#ffffff;" >
 					<table id="busqueda" border="0" >
 						<tr>
-							<td colspan="7" height="8"></td>
+							<td colspan="11" height="8"></td>
 						</tr>
 						<tr>
-							<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-							<td width="180">Opciones:</td>
-							<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td width="10"></td>
+							<td width="80">Folio</td>
+							<td width="30"></td>
+							<td width="120">Codigo Producto</td>
+							<td width="30"></td>
+							<td width="120">Tipo de orden</td>
+							<td width="30"></td>
+							<td width="25"></td>
+							<td width="90">Fecha</td>
+							<td width="15"></td>
+							<td width="25"></td>
+							<td width="90"></td>
+
 							<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="50"></td>
 							<td width="15"></td>
 							<td width="50"></td>
 						</tr>
-
 						<tr>
-							<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-							<td width="180">
-								<select name="select_agentes" style="width:180px;" title="Filtro por Agente">
+							<td width="10"></td>
+							<td width="80"><INPUT TYPE="text" name="folio" style="width:80px;" title="Folio de la Orden de Produccion"></td>
+							<td width="30"></td>
+							<td width="120"><INPUT TYPE="text" name="codigo" style="width:120px;"title="Codigo del Producto"></td>
+							<td width="30"></td>
+							<td width="120">
+								<select name="select_tipo" style="width:120px;" title="Tipo de Orden de Produccion">
 										<option value="0" selected="yes">[--Todos--]</option>
 								</select>
 							</td>
-							<td width="15">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-
+							<td width="30"></td>
+							<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
+							<td width="90"><input type="text" name="fecha_inicial" style="width:80px;" readOnly="true"></td>
+							<td width="15"></td>
+							<td width="25"><IMG SRC="../../img/catalogo/calendario.png" ALIGN="top"></td>
+							<td width="90"><input type="text" name="fecha_final" style="width:80px;" readOnly="true"></td>
 							<td width="30">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="50"><INPUT TYPE="button" id="boton_busqueda" value="Buscar"></td>
 							<td width="15"></td>
@@ -72,9 +84,8 @@
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td>
-					<div id="lista_clientes" width="100%">
-						<table  cellspacing="0" >
-
+					<div id="div_reporte" width="100%">
+						<table id="table" cellspacing="0" >
 							<tbody>
 
 
