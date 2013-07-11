@@ -5607,11 +5607,12 @@ public class ProSpringDao implements ProInterfaceDao{
         
         sql_to_query = "select * from pro_reporte_calidad('"+campos_data+"')as foo("
                                     +"id integer,"
+                                    +"subproceso character varying,"
                                     +"lote character varying,"
                                     +"fecha character varying, "
                                     +"fineza character varying, "
                                     +"viscosidad character varying, "
-                                    +"densidad double precision, "
+                                    +"densidad character varying, "
                                     +"pc character varying, "
                                     +"de character varying, "
                                     +"brillo character varying, "
@@ -5628,27 +5629,30 @@ public class ProSpringDao implements ProInterfaceDao{
                                     +"descripcion character varying, "
                                     +"cantk double precision, "
                                     +"cantl double precision "
-                                +") ORDER BY descripcion ASC;";
+                                +") ORDER BY id;";
         System.out.println("ReporteCalidad: "+sql_to_query);
-
+        
         ArrayList<HashMap<String, String>> data = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",rs.getString("id"));
+                    row.put("subproceso",rs.getString("subproceso"));
                     row.put("lote",rs.getString("lote"));
                     row.put("fecha",rs.getString("fecha"));
-                    row.put("fineza",rs.getString("fineza"));
-                    row.put("viscosidad",rs.getString("viscosidad"));
-                    row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),2));
-                    row.put("pc",rs.getString("pc"));
-                    row.put("de",rs.getString("de"));
-                    row.put("brillo",rs.getString("brillo"));
+                    if(rs.getString("fineza").equals("")){ row.put("fineza",rs.getString("fineza")); }else{ row.put("fineza",StringHelper.roundDouble(rs.getDouble("fineza"),2)); }
+                    if(rs.getString("viscosidad").equals("")){ row.put("viscosidad",rs.getString("viscosidad")); }else{ row.put("viscosidad",StringHelper.roundDouble(rs.getDouble("viscosidad"),2)); }
+                    if(rs.getString("densidad").equals("")){ row.put("densidad",rs.getString("densidad")); }else{ row.put("densidad",StringHelper.roundDouble(rs.getDouble("densidad"),2)); }
+                    if(rs.getString("pc").equals("")){ row.put("pc",rs.getString("pc")); }else{ row.put("pc",StringHelper.roundDouble(rs.getDouble("pc"),2)); }
+                    if(rs.getString("de").equals("")){ row.put("de",rs.getString("de")); }else{ row.put("de",StringHelper.roundDouble(rs.getDouble("de"),2)); }
+                    if(rs.getString("brillo").equals("")){ row.put("brillo",rs.getString("brillo")); }else{ row.put("brillo",StringHelper.roundDouble(rs.getDouble("brillo"),2)); }
                     row.put("dureza",rs.getString("dureza"));
-                    row.put("nv",rs.getString("nv"));
-                    row.put("ph",rs.getString("ph"));
-                    row.put("adhesion",rs.getString("adhesion"));
+                    if(rs.getString("nv").equals("")){ row.put("nv",rs.getString("nv")); }else{ row.put("nv",StringHelper.roundDouble(rs.getDouble("nv"),2)); }
+                    if(rs.getString("ph").equals("")){ row.put("ph",rs.getString("ph")); }else{ row.put("ph",StringHelper.roundDouble(rs.getDouble("ph"),2)); }
+                    if(rs.getString("adhesion").equals("")){ row.put("adhesion",rs.getString("adhesion")); }else{ row.put("adhesion",StringHelper.roundDouble(rs.getDouble("adhesion"),2)); }
+                    
                     row.put("mp_deshabasto",rs.getString("mp_deshabasto"));
                     row.put("mp_contratipo",rs.getString("mp_contratipo"));
                     row.put("mp_agregados",rs.getString("mp_agregados"));
@@ -5656,8 +5660,8 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("comentarios",rs.getString("comentarios"));
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    row.put("cantk",StringHelper.roundDouble(rs.getDouble("cantk"),2));
-                    row.put("cantl",StringHelper.roundDouble(rs.getDouble("cantl"),2));
+                    row.put("cantk",StringHelper.roundDouble(rs.getDouble("cantk"),4));
+                    row.put("cantl",StringHelper.roundDouble(rs.getDouble("cantl"),4));
                     return row;
                 }
             }

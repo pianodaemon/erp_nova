@@ -1,5 +1,5 @@
 /*
- * Este aplicativo es para que el empleado de CALIDAD le de ACEPTAR la Produccion,
+ * Este aplicativo es para que el empleado de CALIDAD le dé ACEPTAR la Produccion,
  * esto permitirá finalizar la Produccion
  * 
  */

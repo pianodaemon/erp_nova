@@ -69,7 +69,7 @@ public class PdfProReporteCalidad {
                 0.5f, //Viscosidad
                 0.4f, //Densidad
                 0.3f, //PC %
-                0.2f, //DE
+                0.3f, //DE
                 0.3f, //Brillo
                 0.3f, //Dureza
                 0.3f, //% NV
@@ -79,7 +79,7 @@ public class PdfProReporteCalidad {
                 0.7f, //MP_Contratipo
                 0.7f, //MP_Agregados
                 0.6f, //Observ
-                1.6f  //Comentarios
+                1.3f  //Comentarios
             };
             
             PdfPTable table = new PdfPTable(widths);
@@ -225,7 +225,7 @@ public class PdfProReporteCalidad {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("MP Observ",headerFont));
+            cell = new PdfPCell(new Paragraph("Observ",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -241,13 +241,31 @@ public class PdfProReporteCalidad {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-
-                    //row.put("codigo",rs.getString("codigo"));
-                    //row.put("descripcion",rs.getString("descripcion"));
+            Integer id_pro=0;
             
             if(Datos_Reporte_Calidad.size() > 0){
                 for (int x=0; x<=Datos_Reporte_Calidad.size()-1;x++){
                     HashMap<String,String> registro = Datos_Reporte_Calidad.get(x);
+                    
+                    if(id_pro != Integer.parseInt(registro.get("id"))){
+                        cell= new PdfPCell(new Paragraph(registro.get("codigo"),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                        cell.setBorder(0);
+                        cell.setColspan(2);
+                        table.addCell(cell);
+
+                        cell= new PdfPCell(new Paragraph(registro.get("descripcion"),smallFont));
+                        cell.setHorizontalAlignment (Element.ALIGN_LEFT);
+                        cell.setColspan(17);
+                        cell.setBorder(0);
+                        table.addCell(cell);
+                        
+                        id_pro = Integer.parseInt(registro.get("id"));
+                    
+                    }
+                    
+
+                    
                     
                     cell= new PdfPCell(new Paragraph(registro.get("cantk"),smallFont));
                     cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
@@ -360,6 +378,8 @@ public class PdfProReporteCalidad {
             }
 
             doc.add(table);
+            
+            
             doc.close();
 
         } catch (FileNotFoundException ex) {
