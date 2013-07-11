@@ -926,20 +926,20 @@
 											<td colspan="7"  height="10"></td>
 										</tr>
 										<tr>
-                                                                                    <!--  class="onmouseOutBuscar" -->
-                                                                                    <td width="20" ></td>
-                                                                                    <td  width="100">
-                                                                                            <INPUT TYPE="button" id="add_especificaciones" value="Par&aacute;metros" >
-                                                                                    </td>
-                                                                                    <td width="20"></td>
-                                                                                    <td  width="100">
-                                                                                            <INPUT TYPE="button" id="add_procedimiento" value="Procedimiento">
-                                                                                    </td>
-                                                                                    <td width="20"></td>
-                                                                                    <td  align="right" width="100">
-                                                                                            <INPUT TYPE="button" id="add_formulacion" value="Formulacion">
-                                                                                    </td>
-                                                                                    <td width="20" colapan="2"></td>
+											<!--  class="onmouseOutBuscar" -->
+											<td width="20" ></td>
+											<td  width="100">
+													<INPUT TYPE="button" id="add_especificaciones" value="Par&aacute;metros" >
+											</td>
+											<td width="20"></td>
+											<td  width="100">
+													<INPUT TYPE="button" id="add_procedimiento" value="Procedimiento">
+											</td>
+											<td width="20"></td>
+											<td  align="right" width="100">
+													<INPUT TYPE="button" id="add_formulacion" value="Formulacion">
+											</td>
+											<td width="20" colspan="2"></td>
 										</tr>
 										
 									</table>
@@ -954,10 +954,10 @@
 								<td width="120"  style="background:#ffffff"></td>
 								<td width="100" style="background:#ffffff"></td>
 								<td width="70" style="background:#ffffff" align="right">
-                                                                    <!-- class="onmouseOutCancelar" -->
-                                                                   <!-- <input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:20px;"/>-->
-                                                                    <INPUT TYPE="button" id="acepta_opciones_adicionales" class="buttonAceptaradicionalemergente">
-                                                                </td>
+									<!-- class="onmouseOutCancelar" -->
+								   <!-- <input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:20px;"/>-->
+									<INPUT TYPE="button" id="acepta_opciones_adicionales" class="buttonAceptaradicionalemergente">
+								</td>
 								<td width="10" style="background:#ffffff" align="right">
 									<INPUT TYPE="button" id="cencela_opciones_adicionales" class="onmouseOutCancelar">
 								</td>
@@ -1064,48 +1064,48 @@
 							</tr>
 							
 							<tr>
-                                                            <td width="10"></td>
-                                                            <td width="10" style="background:#ffffff"></td>
-                                                            <td style="background:#ffffff; border: solid 1px #313E74;" colspan="4" width="600">
-                                                                <div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
-                                                                    <table  border="0" id="tabla_resultado" width="580" style="font-size:12px;">
-                                                                        <!--aqui van los resultados de la busqueda-->
-                                                                        <!--
-                                                                            <tr>
-                                                                                <td width="70">Lote</td>
-                                                                                <td width="140">Sku</td>
-                                                                                <td width="300">Nombre</td>
-                                                                                <td width="70">Disponible</td>
-                                                                            </tr>
-                                                                        -->
-                                                                    </table>
-                                                                </div>
-                                                            </td>
-                                                            <td width="10" style="background:#ffffff"></td>
-                                                            <td width="10"></td>
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff"></td>
+								<td style="background:#ffffff; border: solid 1px #313E74;" colspan="4" width="600">
+									<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+										<table  border="0" id="tabla_resultado" width="580" style="font-size:12px;">
+											<!--aqui van los resultados de la busqueda-->
+											<!--
+												<tr>
+													<td width="70">Lote</td>
+													<td width="140">Sku</td>
+													<td width="300">Nombre</td>
+													<td width="70">Disponible</td>
+												</tr>
+											-->
+										</table>
+									</div>
+								</td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
 							</tr>
 							<tr>
-                                                            <td width="10"></td>
-                                                            <td width="10" colspan="6" height="4" style="background:#ffffff"></td>
-                                                            <td width="10"></td>
+								<td width="10"></td>
+								<td width="10" colspan="6" height="4" style="background:#ffffff"></td>
+								<td width="10"></td>
 							</tr>
 							<tr>
-                                                            <td width="10"></td>
-                                                            <td width="10" style="background:#ffffff"></td>
-                                                            <td width="120"  style="background:#ffffff"></td>
-                                                            <td width="280" style="background:#ffffff"></td>
-                                                            <td width="90" style="background:#ffffff"></td>
-                                                            <td width="110" style="background:#ffffff" align="right">
-                                                                    <INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
-                                                            </td>
+								<td width="10"></td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="120"  style="background:#ffffff"></td>
+								<td width="280" style="background:#ffffff"></td>
+								<td width="90" style="background:#ffffff"></td>
+								<td width="110" style="background:#ffffff" align="right">
+										<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+								</td>
 
-                                                            <td width="10" style="background:#ffffff"></td>
-                                                            <td width="10"></td>
+								<td width="10" style="background:#ffffff"></td>
+								<td width="10"></td>
 							</tr>
 							<tr>
-                                                            <td width="10"></td>
-                                                            <td width="10" colspan="6" height="6" style="background:#ffffff"></td>
-                                                            <td width="10"></td>
+								<td width="10"></td>
+								<td width="10" colspan="6" height="6" style="background:#ffffff"></td>
+								<td width="10"></td>
 							</tr>
 						</tbody>
 						
@@ -1163,7 +1163,7 @@
                                 <div class="fixed column" class="content_x" >
                                     
                                     <div id="tabx-1" class="contenidoPes" >
-                                        <table border="0" class="gral">
+                                        <table border="1" class="gral">
                                             <tr>
                                                 <td colspan="14">
                                                     <table border="0">
@@ -1218,7 +1218,7 @@
                                             <tr>
                                                 <td width="5" colspan="14">&nbsp;</td>
                                             </tr>
-                                            
+                                            <!--
                                             <tr>
                                                 <td width="5"></td> 
                                                 <td width="70">Paso&nbsp;Actual:</td>
@@ -1231,18 +1231,42 @@
                                                 <td width="5">&nbsp;</td>
                                                 <td width="70">
                                                     <INPUT TYPE="text" name="cantidad_calculo" value="0" style="width:50px;">
-                                                    &nbsp;&nbsp;&nbsp;<span class="gen_pdf">
-                                                    <INPUT TYPE="button" id="genera_pdf_formulas"  value="Generar_PDF" >
-                                                    &nbsp;&nbsp;STOCK
-                                                    </span>
+                                                    &nbsp;&nbsp;&nbsp;
+                                                    <span class="gen_pdf"><INPUT TYPE="button" id="genera_pdf_formulas"  value="Generar_PDF" >&nbsp;&nbsp;
+                                                    STOCK</span>
                                                 </td>
                                                 <td width="15" colspan="2">
                                                     <input type="checkbox" name="stock" id="stock" class="gen_pdf" >
                                                 </td>
                                             </tr>
-                                            
+                                            -->
                                             <tr>
-                                                    <td width="5" colspan="14">&nbsp;</td>
+												<td width="5" colspan="14">
+                                                    <table border="1">
+                                                        <tr>
+															<td width="5"></td> 
+															<td width="102">Paso&nbsp;Actual:</td>
+															<td width="50"><INPUT TYPE="text" name="paso_actual" style="width:50px;"></td>
+															<td width="27"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_paso_actual"></div></td>
+															<td width="60">Tipo cambio</td>
+															<td width="50"><INPUT TYPE="text" name="tc_costear" value="0" style="width:50px;"></td>
+															<td width="5">&nbsp;</td>
+															<td width="69" colspan="2" align="right">Cantidad&nbsp;</td>
+															<td width="5">&nbsp;</td>
+															<td width="50"><INPUT TYPE="text" name="cantidad_calculo" value="0" style="width:50px;"></td>
+															<td width="30">&nbsp;</td>
+															<td width="50"><span class="gen_pdf"><INPUT TYPE="button" id="genera_pdf_formulas"  value="Generar_PDF" ></span></td>
+															<td width="20">&nbsp;</td>
+															<td width="40" align="right"><span class="gen_pdf">Stock&nbsp;</span></td>
+															<td width="15"><input type="checkbox" name="stock" id="stock" class="gen_pdf" ></td>
+															<td width="15">&nbsp;</td>
+															<td width="40" align="right"><span class="gen_pdf">Costo&nbsp;</span></td>
+															<td width="15"><input type="checkbox" name="chkcostear" id="stock" class="gen_pdf" ></td>
+                                                        </tr>
+                                                    </table>
+												
+												
+												</td>
                                             </tr>
                                             
                                             
@@ -1282,26 +1306,24 @@
                                                                                                                                         
 																	<tr>
 																		<td colspan="11" height="100px"  style="border: solid 1px #313E74;">
-                                                                                                                                                    
-                                                                                                                                                        <table >
-                                                                                                                                                            <thead>
-                                                                                                                                                                <tr class="subprocesos_disponibles">
-                                                                                                                                                                    <td class="grid" width="90px"># &nbsp;&nbsp;</td>
-                                                                                                                                                                    <td class="grid" width="90px">Posicion</td>
-                                                                                                                                                                    <td class="grid" width="90px">C&oacute;digo&nbsp;&nbsp;</td>
-                                                                                                                                                                    <td class="grid" width="370px">Descripci&oacute;n</td>
-                                                                                                                                                                    <td class="grid" width="90px">Cantidad&nbsp;&nbsp;</td>
-                                                                                                                                                                </tr>
-                                                                                                                                                            </thead>
-                                                                                                                                                        </table>
-                                                                                                                                                        <div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 87px; border:1px solid #C1DAD7 !important;" class="div_formulaciones" >	
-                                                                                                                                                                <table class="table_formulaciones gral">
-                                                                                                                                                                        <tbody style="background-color: #FFFFFF;" valign="top" id="sub_procesos">
-                                                                                                                                                                        
-                                                                                                                                                                        </tbody>
-                                                                                                                                                                </table>
-                                                                                                                                                        </div>
-                                                                                                                                                        
+																			<table >
+																				<thead>
+																					<tr class="subprocesos_disponibles">
+																						<td class="grid" width="90px"># &nbsp;&nbsp;</td>
+																						<td class="grid" width="90px">Posicion</td>
+																						<td class="grid" width="90px">C&oacute;digo&nbsp;&nbsp;</td>
+																						<td class="grid" width="370px">Descripci&oacute;n</td>
+																						<td class="grid" width="90px">Cantidad&nbsp;&nbsp;</td>
+																					</tr>
+																				</thead>
+																			</table>
+																			<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 87px; border:1px solid #C1DAD7 !important;" class="div_formulaciones" >	
+																				<table class="table_formulaciones gral">
+																					<tbody style="background-color: #FFFFFF;" valign="top" id="sub_procesos">
+																					
+																					</tbody>
+																				</table>
+																			</div>
 																		</td>
 																	</tr>
 
@@ -1309,51 +1331,51 @@
 															</div>
 																		
 														</div>
-                                                                                                                </td>
+														</td>
 														<td width="5"  colspan="14"></td>
 													</tr>
 													<tr>
 														<td width="5"  colspan="14">&nbsp;</td>
 													</tr>
-                                                                                                        <tr>
+													<tr>
 														<td width="5"  colspan="14">&nbsp;</td>
 													</tr>
 													<tr>
 														<td  colspan="14">
-                                                                                                                    <!-- para mostrar los warnings de el grid -->
-                                                                                                                    
-                                                                                                                    <div id="div_warning_grid" style="display:none;">
+															<!-- para mostrar los warnings de el grid -->
+															
+															<div id="div_warning_grid" style="display:none;">
 															<table border ="0">
-                                                                                                                            <tr>
-                                                                                                                                <td width="10"></td>
-                                                                                                                                <td width="600" colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
-                                                                                                                                <td width="10"></td>
-                                                                                                                            </tr>
-                                                                                                                            <tr>
-                                                                                                                                <td width="5"></td>
-                                                                                                                                <td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
-                                                                                                                                <td width="120" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo&nbsp;producto</td>
-                                                                                                                                <td width="200" style="background-color:#A8A9AB; font-weight: bold;">Nombre</td>
-                                                                                                                                <td width="375" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
-                                                                                                                                <td width="10"></td>
-                                                                                                                            </tr>
-                                                                                                                            <tr>
-                                                                                                                                <td width="10"></td>
-                                                                                                                                <td colspan="4">
-                                                                                                                                    <div align="left" style="width:721px; height:58px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
-                                                                                                                                        <table id="grid_warning" border="0" style="width:715px;"">
-                                                                                                                                            <!-- Aqui se muestran los warning
-                                                                                                                                            style="background-color:#e7e8ea;"
-                                                                                                                                            -->
-                                                                                                                                        </table>
-                                                                                                                                    </div>
-                                                                                                                                </td>
-                                                                                                                                <td width="10"></td>
-                                                                                                                            </tr>
-                                                                                                                        </table>
-                                                                                                                    </div>
-                                                                                                                    
-                                                                                                                </td>
+																	<tr>
+																		<td width="10"></td>
+																		<td width="600" colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
+																		<td width="10"></td>
+																	</tr>
+																	<tr>
+																		<td width="5"></td>
+																		<td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
+																		<td width="120" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo&nbsp;producto</td>
+																		<td width="200" style="background-color:#A8A9AB; font-weight: bold;">Nombre</td>
+																		<td width="375" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+																		<td width="10"></td>
+																	</tr>
+																	<tr>
+																		<td width="10"></td>
+																		<td colspan="4">
+																			<div align="left" style="width:721px; height:58px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+																				<table id="grid_warning" border="0" style="width:715px;"">
+																					<!-- Aqui se muestran los warning
+																					style="background-color:#e7e8ea;"
+																					-->
+																				</table>
+																			</div>
+																		</td>
+																		<td width="10"></td>
+																	</tr>
+																</table>
+															</div>
+															
+														</td>
 													</tr>
 													<!--
 													<tr>

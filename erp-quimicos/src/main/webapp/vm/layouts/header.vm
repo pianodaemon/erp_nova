@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="../../css/components/jquery-alerts/jquery-alerts.css" type="text/css">
 	<link rel="stylesheet" href="../../css/components/Datepicker/datepicker.css" type="text/css">
 	<link rel="stylesheet" href="../../css/components/tablescroll/jquery.tablescroll.css" type="text/css">
+	<link rel="stylesheet" href="../../css/components/tablescroll/tablescrollv2.css" type="text/css">
 	
 	<!--Multiselect-->
 	<link rel="stylesheet" href="../../css/components/jquery-ui/jquery-ui.css" type="text/css">

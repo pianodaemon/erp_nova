@@ -3,13 +3,13 @@
 .tablescrollv2 td, 
 .tablescrollv2_wrapper,
 .tablescrollv2_head{ 
-	border:1px solid #ccc; 
+	border:1px solid #ccc;
 }
-
+/*
 .tablescrollv2v2 td{ 
 	padding:3px 3px; 
 }
-
+*/
 .tablescrollv2_wrapper{ 
 	border-left:0; 
 }
@@ -34,6 +34,11 @@
 .tablescrollv2 tbody td{ 
 	border-right:0; 
 	border-bottom:0; 
+	margin-top:2px;
+}
+
+.tablescrollv2 tbody td.bordertopolid{ 
+	border-top:2px solid #ccc;
 }
 
 .tablescrollv2 tfoot{ 

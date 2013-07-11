@@ -211,7 +211,7 @@ $(function() {
 
 
     $boton_genera_pdf.click(function(event){
-		var folio=$codigo.val();
+		var folio=$folio.val();
 		var codigo=$codigo.val();
 		
 		var fecha_inicial = $fecha_inicial.val();
@@ -278,37 +278,49 @@ $(function() {
             trr +='</tr> </thead>';
             trr +='<tbody>';
 			
+			var sku='';
+			var id_op=0;
+			
             if(entry['Datos_R_Calidad'].length > 0 ){
                 $.each(entry['Datos_R_Calidad'],function(entryIndex,R_Calidad){
 					
-					trr += '<tr>';
-                    trr += '<td width="140" colspan="2">'+R_Calidad['codigo']+'</td>';
-                    trr += '<td width="1165" colspan="17">'+R_Calidad['descripcion']+'</td>';
-					trr += '</tr>';
+					if(parseInt(id_op)!=parseInt(R_Calidad['id'])){
+						trr += '<tr>';
+						trr += '<td width="140" colspan="2" class="bordertopolid">'+R_Calidad['codigo']+'</td>';
+						trr += '<td width="1165" colspan="17" class="bordertopolid">'+R_Calidad['descripcion']+'</td>';
+						trr += '</tr>';
+						
+						sku=R_Calidad['codigo'];
+						id_op=R_Calidad['id'];
+					}
 					
                     trr += '<tr>';
-                    trr += '<td width="70">'+R_Calidad['cantk']+'</td>';
-                    trr += '<td width="70">'+R_Calidad['cantl']+'</td>';
-                    trr += '<td width="80">'+R_Calidad['lote']+'</td>';
-                    trr += '<td width="70">'+R_Calidad['fecha']+'</td>';
-                    trr += '<td width="45">'+R_Calidad['fineza']+'</td>';//Fineza
-                    trr += '<td width="65">'+R_Calidad['viscosidad']+'</td>';//Viscosidad
-                    trr += '<td width="55">'+R_Calidad['densidad']+'</td>';//Densidad
-                    trr += '<td width="35">'+R_Calidad['pc']+'</td>';
-                    trr += '<td width="30">'+R_Calidad['de']+'</td>';
-                    trr += '<td width="35">'+R_Calidad['brillo']+'</td>';//Brillo
-                    trr += '<td width="45">'+R_Calidad['dureza']+'</td>';//Dureza
-                    trr += '<td width="40">'+R_Calidad['nv']+'</td>';//% N.V.
-                    trr += '<td width="35">'+R_Calidad['ph']+'</td>';
-                    trr += '<td width="60">'+R_Calidad['adhesion']+'</td>';
-                    trr += '<td width="95">'+R_Calidad['mp_deshabasto']+'</td>';
-                    trr += '<td width="95">'+R_Calidad['mp_contratipo']+'</td>';
-                    trr += '<td width="95">'+R_Calidad['mp_agregados']+'</td>';
-                    trr += '<td width="75">'+R_Calidad['observ']+'</td>';
-                    trr += '<td width="210">'+R_Calidad['comentarios']+'</td>';
+                    trr += '<td width="70" align="right" >'+R_Calidad['cantk']+'</td>';
+                    trr += '<td width="70" align="right" >'+R_Calidad['cantl']+'</td>';
+                    trr += '<td width="80" >'+R_Calidad['lote']+'</td>';
+                    trr += '<td width="70" >'+R_Calidad['fecha']+'</td>';
+                    trr += '<td width="45" >'+R_Calidad['fineza']+'</td>';//Fineza
+                    trr += '<td width="65" >'+R_Calidad['viscosidad']+'</td>';//Viscosidad
+                    trr += '<td width="55" >'+R_Calidad['densidad']+'</td>';//Densidad
+                    trr += '<td width="35" >'+R_Calidad['pc']+'</td>';
+                    trr += '<td width="30" >'+R_Calidad['de']+'</td>';
+                    trr += '<td width="35" >'+R_Calidad['brillo']+'</td>';//Brillo
+                    trr += '<td width="45" >'+R_Calidad['dureza']+'</td>';//Dureza
+                    trr += '<td width="40" >'+R_Calidad['nv']+'</td>';//% N.V.
+                    trr += '<td width="35" >'+R_Calidad['ph']+'</td>';
+                    trr += '<td width="60" >'+R_Calidad['adhesion']+'</td>';
+                    trr += '<td width="95" >'+R_Calidad['mp_deshabasto']+'</td>';
+                    trr += '<td width="95" >'+R_Calidad['mp_contratipo']+'</td>';
+                    trr += '<td width="95" >'+R_Calidad['mp_agregados']+'</td>';
+                    trr += '<td width="75" >'+R_Calidad['observ']+'</td>';
+                    trr += '<td width="210" >'+R_Calidad['comentarios']+'</td>';
                     trr += '</tr>';
                 });
                 
+				trr += '<tr>';
+				trr += '<td width="140" colspan="19" class="bordertopolid"></td>';
+				trr += '</tr>';
+						
                 trr +='</tbody>';
                 trr +='</table>';
                 
