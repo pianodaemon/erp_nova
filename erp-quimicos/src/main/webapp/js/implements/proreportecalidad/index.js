@@ -73,13 +73,12 @@ $(function() {
 	
     $.post(input_json,$arreglo,function(entry){
         //aqui van los campos que se cargan desde un principio.
-//        $select_agentes.children().remove();
-//        var almacen_hmtl = '';
-//        var almacen_hmtl = '<option value="0" selected="yes">[--Todos--]</option>';
-//        $.each(entry['Agentes'],function(entryIndex,alm){
-//            almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['nombre_agente'] + '</option>';
-//        });
-//        $select_agentes.append(almacen_hmtl);
+        $select_tipo.children().remove();
+        var tipo_hmtl = '<option value="0" selected="yes">[--Todos--]</option>';
+        $.each(entry['ordenTipos'],function(entryIndex,tipo){
+            tipo_hmtl += '<option value="' + tipo['id'] + '"  >' + tipo['titulo'] + '</option>';
+        });
+        $select_tipo.append(tipo_hmtl);
     });//termina llamada json
 
 

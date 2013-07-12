@@ -894,6 +894,7 @@ $(function() {
             var $descripcion_producto_minigrid  = $('#forma-formulas-window').find('input[name=descr_producto_minigrid]');
             var $buscar_producto_para_minigrid  = $('#forma-formulas-window').find('a[href*=busca_producto_ingrediente]');
             var $agregar_producto_minigrid      = $('#forma-formulas-window').find('a[href*=agregar_producto_minigrid]');
+            var $tc_costear              		= $('#forma-formulas-window').find('input[name=tc_costear]');
             
             var $prod_tipo = $('#forma-formulas-window').find('input[name=select_prodtipo]');
             var $unidad = $('#forma-formulas-window').find('input[name=select_unidad]');
@@ -926,6 +927,35 @@ $(function() {
             $codigo_Productosaliente.attr({'readOnly':true});
             $descripcion_Productosaliente.attr({'readOnly':true});
             
+			$tc_costear.keypress(function(e){
+				// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+				if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+					return true;
+				}else {
+					return false;
+				}		
+			});
+			
+			// perder enfoque
+			$tc_costear.blur(function(){
+				if ($(this).val().trim() == ''){
+					$(this).val("1");
+				}else{
+					if (parseFloat($(this).val().trim()) == 0){
+						$(this).val("1");
+					}
+				}
+				$(this).val(parseFloat($(this).val()).toFixed(4));
+			});
+			
+			// Al obtener el enfoque
+			$tc_costear.focus(function(){
+				if (parseFloat($(this).val().trim()) <= 0){
+					$(this).val("");
+				}
+			});
+			
+			
             if(parseInt(id_to_show_form) == 0){
                 id_to_show_form = 0;
                 $campo_id.attr({'value' : id_to_show_form});
@@ -935,136 +965,136 @@ $(function() {
                 
                 var respuestaProcesadaFormulacion = function(data){
                     $('#forma-formulas-window').find('.formulas_div_one').css({'height':'470px'});//sin errores
-			if ( data['success'] == "true" ){
-				jAlert("La formula fue dada de alta con exito", 'Atencion!');
-				var $grid_productos_componentes     = $('#forma-formulas-window').find('div.div_formulaciones');
-				var $href_buscar_Productomaster     = $('#forma-formulas-window').find('a[href*=buscar_productomaster]');
-				var $href_buscar_Productosaliente   = $('#forma-formulas-window').find('a[href*=busca_producto_saliente]');
-				var $paso_actual                    = $('#forma-formulas-window').find('input[name=paso_actual]');
-				var $numero_pasos                   = $('#forma-formulas-window').find('input[name=numero_pasos]');                                                            
-				var $codigo_Productosaliente        = $('#forma-formulas-window').find('input[name=codigo_producto_saliente]');
-				var $descripcion_Productosaliente   = $('#forma-formulas-window').find('input[name=descr_producto_saliente]');
-				
-				var $total_porcentaje = $('#forma-formulas-window').find('input[name=total_porcentaje]');
-				
-				$paso_actual.attr({'readOnly':true});
-				
-				
-				$grid_productos_componentes.find('#minigrid').find('tbody').children().remove();
-				$descripcion_producto=$('#forma-formulas-window').find('#my-select option:selected').html();
-				$href_buscar_Productomaster.hide();
-				
-				$descripcion_Productosaliente.val('');
-				$codigo_Productosaliente.val('');
-				
-				$id_producto_saliente.val('');
-				$total_porcentaje.val(0);
-				
-				$paso_actual.val(parseInt($paso_actual.val())-1);
-				
-				$get_datos_grid();//actualiza datos del grid
-				
-				if($paso_actual.val()==0){
-					var remove = function() {$(this).remove();};
-					$('#forma-formulas-overlay').fadeOut(remove);
+					if ( data['success'] == "true" ){
+						jAlert("La formula fue dada de alta con exito", 'Atencion!');
+						var $grid_productos_componentes     = $('#forma-formulas-window').find('div.div_formulaciones');
+						var $href_buscar_Productomaster     = $('#forma-formulas-window').find('a[href*=buscar_productomaster]');
+						var $href_buscar_Productosaliente   = $('#forma-formulas-window').find('a[href*=busca_producto_saliente]');
+						var $paso_actual                    = $('#forma-formulas-window').find('input[name=paso_actual]');
+						var $numero_pasos                   = $('#forma-formulas-window').find('input[name=numero_pasos]');                                                            
+						var $codigo_Productosaliente        = $('#forma-formulas-window').find('input[name=codigo_producto_saliente]');
+						var $descripcion_Productosaliente   = $('#forma-formulas-window').find('input[name=descr_producto_saliente]');
+						
+						var $total_porcentaje = $('#forma-formulas-window').find('input[name=total_porcentaje]');
+						
+						$paso_actual.attr({'readOnly':true});
+						
+						
+						$grid_productos_componentes.find('#minigrid').find('tbody').children().remove();
+						$descripcion_producto=$('#forma-formulas-window').find('#my-select option:selected').html();
+						$href_buscar_Productomaster.hide();
+						
+						$descripcion_Productosaliente.val('');
+						$codigo_Productosaliente.val('');
+						
+						$id_producto_saliente.val('');
+						$total_porcentaje.val(0);
+						
+						$paso_actual.val(parseInt($paso_actual.val())-1);
+						
+						$get_datos_grid();//actualiza datos del grid
+						
+						if($paso_actual.val()==0){
+							var remove = function() {$(this).remove();};
+							$('#forma-formulas-overlay').fadeOut(remove);
+						}
+					}else{
+						var $grid_productos_componentes     = $('#forma-formulas-window').find('div.div_formulaciones');
+						// Desaparece todas las interrogaciones si es que existen
+						//$('#forma-pocpedidos-window').find('.div_one').css({'height':'545px'});//sin errores
+						$('#forma-formulas-window').find('.pocpedidos_div_one').css({'height':'568px'});//con errores
+						$('#forma-formulas-window').find('div.interrogacion').css({'display':'none'});
+
+						$grid_productos_componentes.find('#cant').css({'background' : '#ffffff'});
+						$grid_productos_componentes.find('#cost').css({'background' : '#ffffff'});
+
+						$('#forma-formulas-window').find('#div_warning_grid').css({'display':'none'});
+						$('#forma-formulas-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+						
+						var valor = data['success'].split('___');
+						//muestra las interrogaciones
+						for (var element in valor){
+							tmp = data['success'].split('___')[element];
+							longitud = tmp.split(':');
+							
+							if( longitud.length > 1 ){
+								$('#forma-formulas-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+								.parent()
+								.css({'display':'block'})
+								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+								
+								//alert(tmp.split(':')[0]);
+								
+								if(parseInt($("tr", $grid_productos_componentes).size())>0){
+									for (var i=1;i<=parseInt($("tr", $grid_productos_componentes).size());i++){
+										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='posicion'+i)){
+											//alert(tmp.split(':')[0]);
+											$('#forma-formulas-window').find('.formulas_div_one').css({'height':'568px'});
+											//$('#forma-pocpedidos-window').find('.div_three').css({'height':'910px'});
+
+											$('#forma-formulas-window').find('#div_warning_grid').css({'display':'block'});
+											if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
+													$grid_productos_componentes.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+													//alert();
+											}else{
+													if(tmp.split(':')[0].substring(0, 8) == 'posicion'){
+															$grid_productos_componentes.find('input[name=posicion]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
+													}
+											}
+
+											//$grid_productos_componentes.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
+											//$grid_productos_componentes.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
+
+											var tr_warning = '<tr>';
+													tr_warning += '<td style="width:25px;"><div><IMG SRC="../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
+													tr_warning += '<td style="width:122px;" >';
+													tr_warning += '<INPUT TYPE="text" value="'+$grid_productos_componentes.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
+													tr_warning += '</td>';
+													tr_warning += '<td style="width:202px;">';
+													tr_warning += '<INPUT TYPE="text" value="'+$grid_productos_componentes.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
+													tr_warning += '</td>';
+													tr_warning += '<td style="width:375px;">';
+													tr_warning += '<INPUT TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:370px; color:red">';
+													tr_warning += '</td>';
+											tr_warning += '</tr>';
+											$grid_warning.append(tr_warning);
+										}
+									}
+								}
+							}
+						}
+						
+						$grid_warning.find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
+						$grid_warning.find('tr:even').find('td').css({'background-color' : '#e7e8ea'});
+					}
 				}
-			}else{
-                            var $grid_productos_componentes     = $('#forma-formulas-window').find('div.div_formulaciones');
-                            // Desaparece todas las interrogaciones si es que existen
-                            //$('#forma-pocpedidos-window').find('.div_one').css({'height':'545px'});//sin errores
-                            $('#forma-formulas-window').find('.pocpedidos_div_one').css({'height':'568px'});//con errores
-                            $('#forma-formulas-window').find('div.interrogacion').css({'display':'none'});
-
-                            $grid_productos_componentes.find('#cant').css({'background' : '#ffffff'});
-                            $grid_productos_componentes.find('#cost').css({'background' : '#ffffff'});
-
-                            $('#forma-formulas-window').find('#div_warning_grid').css({'display':'none'});
-                            $('#forma-formulas-window').find('#div_warning_grid').find('#grid_warning').children().remove();
-                            
-                            var valor = data['success'].split('___');
-                            //muestra las interrogaciones
-                            for (var element in valor){
-                                tmp = data['success'].split('___')[element];
-                                longitud = tmp.split(':');
-                                
-                                if( longitud.length > 1 ){
-                                    $('#forma-formulas-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-                                    .parent()
-                                    .css({'display':'block'})
-                                    .easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
-                                    
-                                    //alert(tmp.split(':')[0]);
-                                    
-                                    if(parseInt($("tr", $grid_productos_componentes).size())>0){
-                                        for (var i=1;i<=parseInt($("tr", $grid_productos_componentes).size());i++){
-                                            if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='posicion'+i)){
-                                                //alert(tmp.split(':')[0]);
-                                                $('#forma-formulas-window').find('.formulas_div_one').css({'height':'568px'});
-                                                //$('#forma-pocpedidos-window').find('.div_three').css({'height':'910px'});
-
-                                                $('#forma-formulas-window').find('#div_warning_grid').css({'display':'block'});
-                                                if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
-                                                        $grid_productos_componentes.find('input[name=cantidad]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-                                                        //alert();
-                                                }else{
-                                                        if(tmp.split(':')[0].substring(0, 8) == 'posicion'){
-                                                                $grid_productos_componentes.find('input[name=posicion]').eq(parseInt(i) - 1) .css({'background' : '#d41000'});
-                                                        }
-                                                }
-
-                                                //$grid_productos_componentes.find('input[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-                                                //$grid_productos_componentes.find('select[name=' + tmp.split(':')[0] + ']').css({'background' : '#d41000'});
-
-                                                var tr_warning = '<tr>';
-                                                        tr_warning += '<td style="width:25px;"><div><IMG SRC="../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-                                                        tr_warning += '<td style="width:122px;" >';
-                                                        tr_warning += '<INPUT TYPE="text" value="'+$grid_productos_componentes.find('input[name=sku' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:116px; color:red">';
-                                                        tr_warning += '</td>';
-                                                        tr_warning += '<td style="width:202px;">';
-                                                        tr_warning += '<INPUT TYPE="text" value="'+$grid_productos_componentes.find('input[name=nombre' + i + ']').val()+'" class="borde_oculto" readOnly="true" style="width:196px; color:red">';
-                                                        tr_warning += '</td>';
-                                                        tr_warning += '<td style="width:375px;">';
-                                                        tr_warning += '<INPUT TYPE="text" value="'+ tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:370px; color:red">';
-                                                        tr_warning += '</td>';
-                                                tr_warning += '</tr>';
-                                                $grid_warning.append(tr_warning);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            
-                            $grid_warning.find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
-                            $grid_warning.find('tr:even').find('td').css({'background-color' : '#e7e8ea'});
-			}
-		}
-		var options = {dataType :  'json', success : respuestaProcesadaFormulacion};
-		$forma_selected.ajaxForm(options);
+				var options = {dataType :  'json', success : respuestaProcesadaFormulacion};
+				$forma_selected.ajaxForm(options);
                 
                 
                 var buscador_producto= 0;
                 
                 var $id_tipo_producto=0;
-		var $descripcion_producto="";
-		var $id_unidad=0;
-		var $descripcion_unidad="";
-                
-                $numero_pasos.change(function() {
-                    $numero_pasos.attr({'readOnly':true});
-                    $paso_actual.val($numero_pasos.val());
+				var $descripcion_producto="";
+				var $id_unidad=0;
+				var $descripcion_unidad="";
+						
+				$numero_pasos.change(function() {
+					$numero_pasos.attr({'readOnly':true});
+					$paso_actual.val($numero_pasos.val());
 
-                    $paso_actual.attr({'readOnly':true});
-                    //$paso_actual.attr("disabled", "disabled");
-                    //para habilitarlo   .removeAttr("disabled");
-		});
-                
-                
-                
-                $href_buscar_Productomaster.click(function(event){
-                    event.preventDefault();
-                    buscador_producto=2;
-                    $busca_productos(buscador_producto);
-		});
+					$paso_actual.attr({'readOnly':true});
+					//$paso_actual.attr("disabled", "disabled");
+					//para habilitarlo   .removeAttr("disabled");
+				});
+						
+						
+						
+				$href_buscar_Productomaster.click(function(event){
+					event.preventDefault();
+					buscador_producto=2;
+					$busca_productos(buscador_producto);
+				});
                 
                 
             }else{
@@ -1185,6 +1215,8 @@ $(function() {
                     //$numero_pasos.val(entry['Formulas']['0']['numero_pasos']);
                     //$paso_actual.val(entry['Formulas']['0']['nivel_paso_actual']);
                     
+                    $tc_costear.val(parseFloat(entry['Extra'][0]['valor_tc']).toFixed(4));
+                    
                     $cantidad=$cantidad_calculo.val();
                     $codigo_producto_minigrid.val();
                     
@@ -1214,11 +1246,12 @@ $(function() {
                 
                 $genera_pdf_formulas.click(function(event){
                     event.preventDefault();
-                    iu=$('#lienzo_recalculable').find('input[name=iu]').val();
+                    //iu=$('#lienzo_recalculable').find('input[name=iu]').val();
                     var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
                     var stock = $('#forma-formulas-window').find('input[name=stock]').is(':checked');
-                    
-                    var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfFormula/'+id_to_show_form+'/'+stock+'/'+iu+'/out.json';
+                    var costear = $('#forma-formulas-window').find('input[name=chkcostear]').is(':checked');
+                    var tc = $('#forma-formulas-window').find('input[name=tc_costear]').val();
+                    var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfFormula/'+id_to_show_form+'/'+stock+'/'+costear+'/'+tc+'/'+iu+'/out.json';
                     window.location.href=input_json;
                 });
                 

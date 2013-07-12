@@ -1163,7 +1163,7 @@
                                 <div class="fixed column" class="content_x" >
                                     
                                     <div id="tabx-1" class="contenidoPes" >
-                                        <table border="1" class="gral">
+                                        <table border="0" class="gral">
                                             <tr>
                                                 <td colspan="14">
                                                     <table border="0">
@@ -1242,18 +1242,18 @@
                                             -->
                                             <tr>
 												<td width="5" colspan="14">
-                                                    <table border="1">
+                                                    <table border="0">
                                                         <tr>
 															<td width="5"></td> 
 															<td width="102">Paso&nbsp;Actual:</td>
 															<td width="50"><INPUT TYPE="text" name="paso_actual" style="width:50px;"></td>
 															<td width="27"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_paso_actual"></div></td>
-															<td width="60">Tipo cambio</td>
-															<td width="50"><INPUT TYPE="text" name="tc_costear" value="0" style="width:50px;"></td>
+															<td width="60"><span class="tc">Tipo&nbsp;cambio</span></td>
+															<td width="50"><INPUT TYPE="text" name="tc_costear" value="0" class="tc" style="width:50px;"></td>
 															<td width="5">&nbsp;</td>
 															<td width="69" colspan="2" align="right">Cantidad&nbsp;</td>
 															<td width="5">&nbsp;</td>
-															<td width="50"><INPUT TYPE="text" name="cantidad_calculo" value="0" style="width:50px;"></td>
+															<td width="50"><INPUT TYPE="text" name="cantidad_calculo" value="0.0000" style="width:50px;"></td>
 															<td width="30">&nbsp;</td>
 															<td width="50"><span class="gen_pdf"><INPUT TYPE="button" id="genera_pdf_formulas"  value="Generar_PDF" ></span></td>
 															<td width="20">&nbsp;</td>
@@ -1261,7 +1261,7 @@
 															<td width="15"><input type="checkbox" name="stock" id="stock" class="gen_pdf" ></td>
 															<td width="15">&nbsp;</td>
 															<td width="40" align="right"><span class="gen_pdf">Costo&nbsp;</span></td>
-															<td width="15"><input type="checkbox" name="chkcostear" id="stock" class="gen_pdf" ></td>
+															<td width="15"><input type="checkbox" name="chkcostear" id="chkcostear" class="gen_pdf" ></td>
                                                         </tr>
                                                     </table>
 												
