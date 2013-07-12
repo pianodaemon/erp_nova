@@ -64,7 +64,7 @@ public interface ProInterfaceDao {
     public ArrayList<HashMap<String, String>> getBuscadorVersionesFormulas(String sku, String descripcion,Integer id_empresa);
 
     /*pdf de formulas*/
-    public ArrayList<HashMap<String, Object>> getPro_ListaProductosFormulaPdf(Integer formula_id);
+    public ArrayList<HashMap<String, Object>> getPro_ListaProductosFormulaPdf(Integer formula_id, String tc, String anoActual, String mesActual);
     public HashMap<String, String> getPro_DatosFormulaPdf(Integer formula_id);
     public ArrayList<HashMap<String, String>> getPro_DatosFormulaEspecificacionesPdf(Integer formula_id);
     public ArrayList<HashMap<String, String>> getPro_DatosFormulaProcedidmientoPdf(Integer formula_id);
@@ -304,5 +304,8 @@ public interface ProInterfaceDao {
     
     //Reporte de Calidad
     public ArrayList<HashMap<String, String>> getPro_ReporteCalidad(String campos_data);
+    
+    //Obtiene el tipo de cambio actual
+    public HashMap<String, String> getTipoCambioActualPorIdMoneda(Integer idMoneda);
     
 }

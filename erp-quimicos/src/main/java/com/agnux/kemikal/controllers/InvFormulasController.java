@@ -458,8 +458,11 @@ public class InvFormulasController {
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
+        String costear="false";
+        String tipo_cambio="0";
+        
         //instancia a la clase que construye el pdf del reporte de facturas
-        PdfReporteFormulas pdf = new PdfReporteFormulas(datosEncabezadoPie, fileout,lista_productos,datos, especificaciones, stock, lista_procedimiento);
+        PdfReporteFormulas pdf = new PdfReporteFormulas(datosEncabezadoPie, fileout,lista_productos,datos, especificaciones, stock,costear, tipo_cambio, lista_procedimiento);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);

@@ -275,8 +275,6 @@ public class ProConfigProduccionController {
         
         log.log(Level.INFO, "Ejecutando get_datos_configuracion_produccionJson de {0}", ProConfigProduccionController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        
-        
         ArrayList<HashMap<String, String>> datosProceso = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosSubProProd = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosSubProProcedimientos = new ArrayList<HashMap<String, String>>();
@@ -512,7 +510,8 @@ public class ProConfigProduccionController {
         ArrayList<HashMap<String, String>> datosFormulas = new ArrayList<HashMap<String, String>>(); 
         ArrayList<HashMap<String, String>> datosFormulasMinigrid = new ArrayList<HashMap<String, String>>(); 
         ArrayList<HashMap<String, String>> datosFormulasProductoSaliente = new ArrayList<HashMap<String, String>>(); 
-        
+        ArrayList<HashMap<String, String>> extra = new ArrayList<HashMap<String, String>>(); 
+        HashMap<String, String> tipoCambio = new HashMap<String, String>();
         //ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
         //ArrayList<HashMap<String, String>> unidades = new ArrayList<HashMap<String, String>>();
         
@@ -528,6 +527,11 @@ public class ProConfigProduccionController {
             datosFormulasProductoSaliente = this.getProDao().getFormula_DatosProductoSaliente(id, "1");
         }
         
+        //Moneda para obtener el tipo de cambio por deault es USD
+        Integer idMoneda=2;
+        tipoCambio = this.getProDao().getTipoCambioActualPorIdMoneda(idMoneda);
+        extra.add(tipoCambio);
+        
         //estos aray list seretornan a la vista al momento de click en nuevo   y los retorna en un HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno
         //tiposProducto = this.getInvDao().getProducto_Tipos_para_formulas(numero_buscador);
         //unidades = this.getInvDao().getProducto_Unidades_para_formulas();
@@ -536,6 +540,7 @@ public class ProConfigProduccionController {
        jsonretorno.put("Formulas", datosFormulas);
        jsonretorno.put("Formulas_DatosMinigrid", datosFormulasMinigrid);
        jsonretorno.put("Formulas_DatosProductoSaliente", datosFormulasProductoSaliente);
+       jsonretorno.put("Extra", extra);
         // jsonretorno.put("ProdTipos", tiposProducto);
         //jsonretorno.put("Unidades",unidades);
         //        jsonretorno.put("Regiones", regiones);
@@ -923,10 +928,12 @@ public class ProConfigProduccionController {
     
     //localhost:8080/com.mycompany_Kemikal_war_1.0-SNAPSHOT/controllers/logasignarutas/getPdfRuta/1/NQ==/out.json
     //Genera pdf de formulacion de
-    @RequestMapping(value = "/getPdfFormula/{id}/{stock}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/getPdfFormula/{id}/{stock}/{costear}/{tc}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getGeneraPdfFacturacionJson(
                 @PathVariable("id") Integer id_formula,
                 @PathVariable("stock") String stock,
+                @PathVariable("costear") String costear,
+                @PathVariable("tc") String tc,
                 @PathVariable("iu") String id_user,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
@@ -961,8 +968,12 @@ public class ProConfigProduccionController {
         File file_dir_tmp = new File(dir_tmp);
         System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
+        String[] arregloFecha = TimeHelper.getFechaActualYMDH().split("-");
+        String anoActual = arregloFecha[0];
+        String mesActual = arregloFecha[1];
+        
         //obtiene las facturas del periodo indicado
-        lista_productos = this.getProDao().getPro_ListaProductosFormulaPdf(id_formula);
+        lista_productos = this.getProDao().getPro_ListaProductosFormulaPdf(id_formula, tc, anoActual, mesActual);
         datos = this.getProDao().getPro_DatosFormulaPdf(id_formula);
         especificaciones = this.getProDao().getPro_DatosFormulaEspecificacionesPdf(id_formula);
         lista_procedimiento = this.getProDao().getPro_DatosFormulaProcedidmientoPdf(id_formula);
@@ -975,7 +986,7 @@ public class ProConfigProduccionController {
         String fileout = file_dir_tmp +"/"+  file_name;
         
         //instancia a la clase que construye el pdf del reporte de facturas
-        PdfReporteFormulas pdf = new PdfReporteFormulas(datosEncabezadoPie, fileout,lista_productos,datos, especificaciones, stock, lista_procedimiento);
+        PdfReporteFormulas pdf = new PdfReporteFormulas(datosEncabezadoPie, fileout,lista_productos,datos, especificaciones, stock, costear, tc, lista_procedimiento);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);

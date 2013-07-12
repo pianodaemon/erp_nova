@@ -778,8 +778,11 @@ public class ProSpringDao implements ProInterfaceDao{
 
     //:::::::::::::::para pdf de formulas hecho por Paco Mora::::::::::::::::::
     @Override
-    public ArrayList<HashMap<String, Object>> getPro_ListaProductosFormulaPdf(Integer formula_id) {
-
+    public ArrayList<HashMap<String, Object>> getPro_ListaProductosFormulaPdf(Integer formula_id, String tc, String anoActual, String mesActual) {
+        final String tipo_cambio = tc;
+        final String ano = anoActual;
+        //Convertimos  a Integer para elimiar un cero si viene con el mes por ejemplo(01=Enero)
+        final String mes = String.valueOf(Integer.parseInt(mesActual));
         /*
         String sql_query = "select pro_estruc_det.inv_prod_id,(CASE WHEN inv_prod_tipos.id=1 THEN 'PT' WHEN  inv_prod_tipos.id=2 THEN 'PI' "
                 + "WHEN  inv_prod_tipos.id=7  THEN 'MP' ELSE inv_prod.descripcion END) as tipo, inv_prod.sku, inv_prod.descripcion, "
@@ -787,8 +790,8 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "from pro_estruc_det join inv_prod on inv_prod.id=pro_estruc_det.inv_prod_id join inv_prod_tipos on "
                 + "inv_prod_tipos.id=inv_prod.tipo_de_producto_id join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id where "
                 + "pro_estruc_det.pro_estruc_id="+formula_id+" order by pro_estruc_det.elemento";
-        */
-
+         
+         * 
         String sql_query = "select pro_estruc_det.inv_prod_id,"
                 + "(CASE WHEN inv_prod_tipos.id=1 THEN 'PT' WHEN  inv_prod_tipos.id=2 THEN 'PI' WHEN  inv_prod_tipos.id=7  THEN 'MP' ELSE inv_prod.descripcion END) as tipo, "
                 + "inv_prod.sku, inv_prod.descripcion, pro_estruc_det.cantidad, pro_estruc_det.elemento, "
@@ -800,8 +803,47 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "inv_prod_unidades.id=inv_prod.unidad_id "
                 + "left join pro_estruc on pro_estruc.inv_prod_id=pro_estruc_det.inv_prod_id "
                 + "where pro_estruc_det.pro_estruc_id="+formula_id+" order by pro_estruc_det.elemento";
-
-        //System.out.println("Obtiene datos pdf ruta: "+sql_query);
+        */
+        
+        String sql_query = ""
+                + "SELECT "
+                        + "inv_prod_id,"
+                        + "tipo, "
+                        + "sku, "
+                        + "descripcion, "
+                        + "cantidad, "
+                        + "elemento, "
+                        + "id_tipo, "
+                        + "unidad, "
+                        + "pro_estruc_id, "
+                        + "estruct_id,"
+                        + "cant_unidad,"
+                        + "costo_unitario,"
+                        + "(cant_unidad::double precision * costo_unitario::double precision) AS costo_importe "
+                + "FROM( "
+                    + "select "
+                        + "pro_estruc_det.inv_prod_id,"
+                        + "(CASE WHEN inv_prod_tipos.id=1 THEN 'PT' WHEN  inv_prod_tipos.id=2 THEN 'PI' WHEN  inv_prod_tipos.id=7  THEN 'MP' ELSE inv_prod.descripcion END) as tipo, "
+                        + "inv_prod.sku, "
+                        + "inv_prod.descripcion, "
+                        + "pro_estruc_det.cantidad, "
+                        + "pro_estruc_det.elemento, "
+                        + "inv_prod_tipos.id as id_tipo, "
+                        + "inv_prod_unidades.titulo as unidad, "
+                        + "pro_estruc_det.pro_estruc_id, "
+                        + "pro_estruc.id as estruct_id,"
+                        + "(CASE  WHEN upper(inv_prod_unidades.titulo) ILIKE '%KILO%' THEN pro_estruc_det.cantidad ELSE (CASE WHEN inv_prod.densidad=0 THEN pro_estruc_det.cantidad ELSE (pro_estruc_det.cantidad::double precision / inv_prod.densidad::double precision) END) END) AS cant_unidad,"
+                        + "(CASE WHEN inv_costo.gral_mon_id_"+mes+" IS NULL THEN (CASE WHEN inv_costo.costo_ultimo_"+mes+" IS NULL THEN 0 ELSE inv_costo.costo_ultimo_"+mes+" END) ELSE (CASE WHEN inv_costo.gral_mon_id_"+mes+"<>1 THEN (CASE WHEN inv_costo.costo_ultimo_"+mes+" IS NULL THEN 0 ELSE (inv_costo.costo_ultimo_"+mes+"::double precision * "+ tipo_cambio +"::double precision) END) ELSE (CASE WHEN inv_costo.costo_ultimo_"+mes+" IS NULL THEN 0 ELSE inv_costo.costo_ultimo_"+mes+" END) END) END) AS costo_unitario "
+                    + "from pro_estruc_det "
+                    + "join inv_prod on inv_prod.id=pro_estruc_det.inv_prod_id "
+                    + "join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id  "
+                    + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
+                    + "left join pro_estruc on pro_estruc.inv_prod_id=pro_estruc_det.inv_prod_id "
+                    + "LEFT JOIN inv_prod_cost_prom AS inv_costo ON (inv_costo.inv_prod_id=inv_prod.id AND inv_costo.ano="+ano+") "
+                    + "where pro_estruc_det.pro_estruc_id="+formula_id+" "
+                + ") AS sbt order by elemento;";
+        
+        System.out.println("DatosFormula: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -816,11 +858,15 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("id_tipo",rs.getInt("id_tipo"));
                     row.put("unidad","  "+rs.getString("unidad"));
                     if(String.valueOf(rs.getInt("id_tipo")).equals("2") || String.valueOf(rs.getInt("id_tipo")).equals("1")){
-                        row.put("adicionales",getInv_ListaProductosFormulaIntermedioPdf(String.valueOf(rs.getInt("estruct_id"))));
+                        row.put("adicionales",getInv_ListaProductosFormulaIntermedioPdf(String.valueOf(rs.getInt("estruct_id")), tipo_cambio, ano, mes));
                     }else{
                         row.put("adicionales",rs.getInt("id_tipo"));
                     }
-
+                    
+                    row.put("cant_unidad",StringHelper.roundDouble(rs.getString("cant_unidad"),2));
+                    row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo_unitario"),2));
+                    row.put("costo_importe",StringHelper.roundDouble(rs.getString("costo_importe"),2));
+                    
                     return row;
                 }
             }
@@ -829,7 +875,7 @@ public class ProSpringDao implements ProInterfaceDao{
     }
 
     //metodo para obtener los componentes de la formula de tipo intermedio
-    private ArrayList<HashMap<String, String>> getInv_ListaProductosFormulaIntermedioPdf(String formula_id) {
+    private ArrayList<HashMap<String, String>> getInv_ListaProductosFormulaIntermedioPdf(String formula_id, String tipo_cambio, String ano, String mes) {
 
         /*
         String sql_query = ""
@@ -848,8 +894,8 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
                 + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
                 + "where inv_prod_id_master="+formula_id+" order by inv_formulas.id desc";
-        */
-
+         * 
+         * 
         String sql_query = "select pro_estruc_det.inv_prod_id,(CASE WHEN inv_prod_tipos.id=1 THEN 'PT' WHEN  inv_prod_tipos.id=2 THEN 'PI' "
                 + "WHEN  inv_prod_tipos.id=7  THEN 'MP' ELSE inv_prod.descripcion END) as tipo, inv_prod.sku, inv_prod.descripcion, "
                 + "pro_estruc_det.cantidad, pro_estruc_det.elemento, inv_prod_tipos.id as id_tipo, inv_prod_unidades.titulo as unidad, pro_estruc_det.pro_estruc_id "
@@ -857,7 +903,46 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "inv_prod_tipos.id=inv_prod.tipo_de_producto_id join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id where "
                 + "pro_estruc_det.pro_estruc_id="+formula_id+" order by pro_estruc_det.elemento";
 
-        //System.out.println("Obtiene datos pdf ruta: "+sql_query);
+        */
+        
+
+        String sql_query=""
+                + "SELECT "
+                    + "inv_prod_id, "
+                    + "tipo,"
+                    + "sku,"
+                    + "descripcion,"
+                    + "cantidad,"
+                    + "elemento,"
+                    + "id_tipo,"
+                    + "unidad,"
+                    + "pro_estruc_id,"
+                    + "cant_unidad,"
+                    + "costo_unitario,"
+                    + "(cant_unidad::double precision * costo_unitario::double precision) AS costo_importe "
+                    + "FROM( "
+                        + "select  "
+                            + "pro_estruc_det.inv_prod_id,"
+                            + "(CASE WHEN inv_prod_tipos.id=1 THEN 'PT' WHEN  inv_prod_tipos.id=2 THEN 'PI' WHEN  inv_prod_tipos.id=7  THEN 'MP' ELSE inv_prod.descripcion END) as tipo, "
+                            + "inv_prod.sku, "
+                            + "inv_prod.descripcion, "
+                            + "pro_estruc_det.cantidad, "
+                            + "pro_estruc_det.elemento, "
+                            + "inv_prod_tipos.id as id_tipo, "
+                            + "inv_prod_unidades.titulo AS unidad, "
+                            + "pro_estruc_det.pro_estruc_id,"
+                            + "(CASE  WHEN upper(inv_prod_unidades.titulo) ILIKE '%KILO%' THEN pro_estruc_det.cantidad ELSE (CASE WHEN inv_prod.densidad=0 THEN  pro_estruc_det.cantidad ELSE (pro_estruc_det.cantidad::double precision / inv_prod.densidad::double precision) END) END) AS cant_unidad, "
+                            + "(CASE WHEN inv_costo.gral_mon_id_"+mes+" IS NULL THEN (CASE WHEN inv_costo.costo_ultimo_"+mes+" IS NULL THEN 0 ELSE inv_costo.costo_ultimo_"+mes+" END) ELSE (CASE WHEN inv_costo.gral_mon_id_"+mes+"<>1 THEN (CASE WHEN inv_costo.costo_ultimo_"+mes+" IS NULL THEN 0 ELSE (inv_costo.costo_ultimo_"+mes+"::double precision * "+ tipo_cambio +"::double precision) END) ELSE (CASE WHEN inv_costo.costo_ultimo_"+mes+" IS NULL THEN 0 ELSE inv_costo.costo_ultimo_"+mes+" END) END) END) AS costo_unitario "
+                        + "from pro_estruc_det "
+                        + "join inv_prod on inv_prod.id=pro_estruc_det.inv_prod_id "
+                        + "join inv_prod_tipos on inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
+                        + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id  "
+                        + "LEFT JOIN inv_prod_cost_prom AS inv_costo ON (inv_costo.inv_prod_id=inv_prod.id AND inv_costo.ano="+ano+") "
+                        + "where pro_estruc_det.pro_estruc_id="+formula_id+" "
+                + ") AS sbt order by elemento;";
+        
+        
+        System.out.println("DatosIntermedio: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -886,7 +971,10 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("tipo","  "+rs.getString("tipo"));
                     row.put("id_tipo",rs.getString(rs.getInt("id_tipo")));
                     row.put("adicionales",rs.getString(rs.getInt("id_tipo")));
-
+                    
+                    row.put("cant_unidad",StringHelper.roundDouble(rs.getString("cant_unidad"),2));
+                    row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo_unitario"),2));
+                    row.put("costo_importe",StringHelper.roundDouble(rs.getString("costo_importe"),2));
                     return row;
                 }
             }
@@ -5669,6 +5757,28 @@ public class ProSpringDao implements ProInterfaceDao{
         
         
         return data;
+    }
+    
+    
+    //obtiene el tipo de cambio actual por Id de la Moneda Seleccionada
+    @Override
+    public HashMap<String, String> getTipoCambioActualPorIdMoneda(Integer idMoneda) {
+        HashMap<String, String> valorRetorno = new HashMap<String, String>();
+        String valor="0.0000";
+        
+        String sql_busqueda = "select count(valor) FROM (SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id="+idMoneda+" ORDER BY momento_creacion DESC LIMIT 1) AS sbt;";
+        int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
+        //System.out.println(sql_busqueda);
+        
+        if(rowCount > 0){
+            String sql_to_query = "SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id="+idMoneda+" ORDER BY momento_creacion DESC LIMIT 1;";
+            Map<String, Object> tipo_cambio = this.getJdbcTemplate().queryForMap(sql_to_query);
+            valor = StringHelper.roundDouble(tipo_cambio.get("valor").toString(),4);
+        }
+        
+        valorRetorno.put("valor_tc", valor);
+        
+        return valorRetorno;
     }
     
 }

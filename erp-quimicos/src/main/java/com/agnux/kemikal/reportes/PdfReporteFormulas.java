@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 public class PdfReporteFormulas {
     
-    public PdfReporteFormulas(HashMap<String, String> datosEncabezadoPie,String fileout,ArrayList<HashMap<String, Object>> lista,HashMap<String, String> datos, ArrayList<HashMap<String, String>> especificaciones, String stock, ArrayList<HashMap<String, String>> lista_procedimiento) throws FileNotFoundException, DocumentException {
+    public PdfReporteFormulas(HashMap<String, String> datosEncabezadoPie,String fileout,ArrayList<HashMap<String, Object>> lista,HashMap<String, String> datos, ArrayList<HashMap<String, String>> especificaciones, String stock, String costear, String tipo_cambio, ArrayList<HashMap<String, String>> lista_procedimiento) throws FileNotFoundException, DocumentException {
         
         Font smallBoldFont = new Font(Font.getFamily("ARIAL"),7,Font.NORMAL,BaseColor.WHITE);
         Font fuenteCont = new Font(Font.getFamily("ARIAL"),10,Font.NORMAL,BaseColor.BLACK);
@@ -192,9 +192,16 @@ public class PdfReporteFormulas {
             celdaX.setBorderWidthLeft(0);
             tablaX.addCell(celdaX);
             
+            String etiqueta_tc="";
+            String valor_tc="";
+            if(costear.equals("true")){
+                etiqueta_tc="Tipo de Cambio";
+                valor_tc = StringHelper.roundDouble(tipo_cambio,4);
+            }
+            
             //columna 5 fil2
-            celdaX = new PdfPCell(new Paragraph("",fuenteCont2));
-            celdaX.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celdaX = new PdfPCell(new Paragraph(etiqueta_tc,fuenteCont2));
+            celdaX.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celdaX.setBorderWidthBottom(0);
             celdaX.setBorderWidthTop(0);
             celdaX.setBorderWidthRight(0);
@@ -202,14 +209,18 @@ public class PdfReporteFormulas {
             tablaX.addCell(celdaX);
             
             //columna 6 vacio fil2
-            celdaX = new PdfPCell(new Paragraph("",fuenteCont2));
-            celdaX.setBorderWidthBottom(0);
+            celdaX = new PdfPCell(new Paragraph(valor_tc, fuenteCont2));
+            if(costear.equals("true")){
+                celdaX.setBorderWidthBottom(1);
+            }else{
+                celdaX.setBorderWidthBottom(0);
+            }
             celdaX.setBorderWidthTop(0);
             celdaX.setBorderWidthRight(0);
             celdaX.setBorderWidthLeft(0);
             tablaX.addCell(celdaX);
             
-            
+            System.out.println("Costear:"+ costear);
             reporte.add(tablaX);
              
              
@@ -279,23 +290,47 @@ public class PdfReporteFormulas {
              celda.setBackgroundColor(BaseColor.BLACK);            
              tabla.addCell(celda);
              
-             //12
-             celda = new PdfPCell(new Paragraph("AGREGADO",smallBoldFont));
-             celda.setUseAscender(true);
-             celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-             celda.setUseDescender(true);
-             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-             celda.setBackgroundColor(BaseColor.BLACK);            
-             tabla.addCell(celda);
              
-             //13
-             celda = new PdfPCell(new Paragraph("LOTE",smallBoldFont));
-             celda.setUseAscender(true);
-             celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-             celda.setUseDescender(true);
-             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-             celda.setBackgroundColor(BaseColor.BLACK);            
-             tabla.addCell(celda);
+            if(costear.equals("true")){
+                 //12
+                 celda = new PdfPCell(new Paragraph("COSTO UNITARIO",smallBoldFont));
+                 celda.setUseAscender(true);
+                 celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                 celda.setUseDescender(true);
+                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                 celda.setBackgroundColor(BaseColor.BLACK);            
+                 tabla.addCell(celda);
+
+                 //13
+                 celda = new PdfPCell(new Paragraph("IMPORTE",smallBoldFont));
+                 celda.setUseAscender(true);
+                 celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                 celda.setUseDescender(true);
+                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                 celda.setBackgroundColor(BaseColor.BLACK);            
+                 tabla.addCell(celda);
+            }else{
+                 //12
+                 celda = new PdfPCell(new Paragraph("AGREGADO",smallBoldFont));
+                 celda.setUseAscender(true);
+                 celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                 celda.setUseDescender(true);
+                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                 celda.setBackgroundColor(BaseColor.BLACK);            
+                 tabla.addCell(celda);
+
+                 //13
+                 celda = new PdfPCell(new Paragraph("LOTE",smallBoldFont));
+                 celda.setUseAscender(true);
+                 celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                 celda.setUseDescender(true);
+                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                 celda.setBackgroundColor(BaseColor.BLACK);            
+                 tabla.addCell(celda);
+            }
+             
+            
+             Double suma_importe_costo = 0.0;
              
              int contador = 1;
              Double sumatoria = 0.0;
@@ -333,6 +368,7 @@ public class PdfReporteFormulas {
                  celda.setUseDescender(true);
                  celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                  tabla.addCell(celda);
+                 
                  //3
                  celda = new PdfPCell(new Paragraph(String.valueOf(registro.get("cantidad")),fuenteCont));
                  celda.setUseAscender(true);
@@ -341,27 +377,87 @@ public class PdfReporteFormulas {
                  celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                  tabla.addCell(celda);
                  
-                 //4
-                 celda = new PdfPCell(new Paragraph("",fuenteCont));
-                 celda.setUseAscender(true);
-                 celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                 celda.setUseDescender(true);
-                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                 tabla.addCell(celda);
+                 if(costear.equals("true")){
+                     if(stock.equals("true")){
+                         //4
+                         celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("costo_unitario").toString()),fuenteCont));
+                         celda.setUseAscender(true);
+                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                         celda.setUseDescender(true);
+                         celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                         tabla.addCell(celda);
+                         
+                         //13
+                         celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("costo_importe").toString()),fuenteCont));
+                         celda.setUseAscender(true);
+                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                         celda.setUseDescender(true);
+                         celda.setVerticalAlignment(Element.ALIGN_MIDDLE);     
+                         tabla.addCell(celda);
+                         
+                         suma_importe_costo = suma_importe_costo + Double.parseDouble(registro.get("costo_importe").toString());
+                     }else{
+                         if(registro.get("tipo").equals("MP")){
+                             //4
+                             celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("costo_unitario").toString()),fuenteCont));
+                             celda.setUseAscender(true);
+                             celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                             celda.setUseDescender(true);
+                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                             tabla.addCell(celda);
+                             
+                             //13
+                             celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("costo_importe").toString()),fuenteCont));
+                             celda.setUseAscender(true);
+                             celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                             celda.setUseDescender(true);
+                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);     
+                             tabla.addCell(celda);
+                             
+                             suma_importe_costo = suma_importe_costo + Double.parseDouble(registro.get("costo_importe").toString());
+                             
+                         }else{
+                             //4
+                             celda = new PdfPCell(new Paragraph("",fuenteCont));
+                             celda.setUseAscender(true);
+                             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                             celda.setUseDescender(true);
+                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                             tabla.addCell(celda);
+
+                             //13
+                             celda = new PdfPCell(new Paragraph( "",fuenteCont));
+                             celda.setUseAscender(true);
+                             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                             celda.setUseDescender(true);
+                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);     
+                             tabla.addCell(celda);   
+                         }
+                     }
+
+                 }else{
+                     //4
+                     celda = new PdfPCell(new Paragraph("",fuenteCont));
+                     celda.setUseAscender(true);
+                     celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                     celda.setUseDescender(true);
+                     celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                     tabla.addCell(celda);
+
+                     //13
+                     celda = new PdfPCell(new Paragraph( "",fuenteCont));
+                     celda.setUseAscender(true);
+                     celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                     celda.setUseDescender(true);
+                     celda.setVerticalAlignment(Element.ALIGN_MIDDLE);     
+                     tabla.addCell(celda);
+                 }
                  
-                 //13
-                 //celda = new PdfPCell(new Paragraph(registro.get("observaciones"),fuenteCont));
-                 celda = new PdfPCell(new Paragraph( "",fuenteCont));
-                 celda.setUseAscender(true);
-                 celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                 celda.setUseDescender(true);
-                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);     
-                 tabla.addCell(celda);
                  
                  if(stock.equals("false")){
                     if(String.valueOf(registro.get("id_tipo")).equals("2") || String.valueOf(registro.get("id_tipo")).equals("1")){
                          ArrayList<HashMap<String, String>> lista1 = (ArrayList<HashMap<String, String>>) registro.get("adicionales");
-
+                         
                          for (int k=0;k<lista1.size();k++){
                              HashMap<String,String> registro1 = lista1.get(k);
 
@@ -403,22 +499,42 @@ public class PdfReporteFormulas {
                              celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                              tabla.addCell(celda);
                              
-                             //4
-                             celda = new PdfPCell(new Paragraph("",fuenteCont));
-                             celda.setUseAscender(true);
-                             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                             celda.setUseDescender(true);
-                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                             tabla.addCell(celda);
+                             if(costear.equals("true")){
+                                 //4
+                                 celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro1.get("costo_unitario")),fuenteCont));
+                                 celda.setUseAscender(true);
+                                 celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                                 celda.setUseDescender(true);
+                                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                                 tabla.addCell(celda);
+                                 
+                                 //13
+                                 celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro1.get("costo_importe")),fuenteCont));
+                                 celda.setUseAscender(true);
+                                 celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                                 celda.setUseDescender(true);
+                                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                                 tabla.addCell(celda);
+                                 
+                                 suma_importe_costo = suma_importe_costo + Double.parseDouble(registro1.get("costo_importe").toString());
+                             }else{
+                                 //4
+                                 celda = new PdfPCell(new Paragraph("",fuenteCont));
+                                 celda.setUseAscender(true);
+                                 celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                                 celda.setUseDescender(true);
+                                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                                 tabla.addCell(celda);
+                                 
+                                 //13
+                                 celda = new PdfPCell(new Paragraph( "",fuenteCont));
+                                 celda.setUseAscender(true);
+                                 celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                                 celda.setUseDescender(true);
+                                 celda.setVerticalAlignment(Element.ALIGN_MIDDLE);     
+                                 tabla.addCell(celda);
+                             }
                              
-                             //13
-                             //celda = new PdfPCell(new Paragraph(registro.get("observaciones"),fuenteCont));
-                             celda = new PdfPCell(new Paragraph( "",fuenteCont));
-                             celda.setUseAscender(true);
-                             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                             celda.setUseDescender(true);
-                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);     
-                             tabla.addCell(celda);
                          }
 
                      }
@@ -442,25 +558,42 @@ public class PdfReporteFormulas {
             celda.setBorderWidthLeft(0);
             tabla.addCell(celda);
             
-            celda = new PdfPCell(new Paragraph(String.valueOf(""+StringHelper.roundDouble(sumatoria, 2)),fuenteCont));
+            celda = new PdfPCell(new Paragraph(String.valueOf(""+StringHelper.AgregaComas(StringHelper.roundDouble(sumatoria, 2))),fuenteCont));
             celda.setUseAscender(true);
             celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celda.setUseDescender(true);
             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
             tabla.addCell(celda);
             
-            celda = new PdfPCell(new Paragraph("",fuentenegrita));
-            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-            celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            celda.setBorderWidthBottom(0);
-            celda.setBorderWidthTop(0);
-            celda.setColspan(2);
-            celda.setBorderWidthRight(0);
-            celda.setBorderWidthLeft(0);
-            tabla.addCell(celda);
-             
-             reporte.add(tabla);
-             
+            if(costear.equals("true")){
+                celda = new PdfPCell(new Paragraph("",fuentenegrita));
+                celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                celda.setBorderWidthBottom(0);
+                celda.setBorderWidthTop(0);
+                celda.setBorderWidthRight(0);
+                celda.setBorderWidthLeft(0);
+                tabla.addCell(celda);
+
+                celda = new PdfPCell(new Paragraph(String.valueOf(""+StringHelper.AgregaComas(StringHelper.roundDouble(suma_importe_costo, 2))),fuenteCont));
+                celda.setUseAscender(true);
+                celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                celda.setUseDescender(true);
+                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                tabla.addCell(celda);
+            }else{
+                celda = new PdfPCell(new Paragraph("",fuentenegrita));
+                celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                celda.setBorderWidthBottom(0);
+                celda.setBorderWidthTop(0);
+                celda.setBorderWidthRight(0);
+                celda.setBorderWidthLeft(0);
+                celda.setColspan(2);
+                tabla.addCell(celda);
+            }
+            
+            reporte.add(tabla);
              
              
             /*Codigo para los procedidmientos*/
