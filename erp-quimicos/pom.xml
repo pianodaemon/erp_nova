@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>com.mycompany</groupId>
-    <artifactId>Kemikal</artifactId>
+    <artifactId>Agnux</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
     
-    <name>kemikal Web App</name>
+    <name>Agnux Web App</name>
     
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -192,7 +192,7 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>kemikal</finalName>
+        <finalName>agnux</finalName>
     </build>
     
 </project>
