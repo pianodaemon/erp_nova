@@ -7,7 +7,6 @@ import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import com.agnux.kemikal.interfacedaos.ProInterfaceDao;
 import com.agnux.kemikal.reportes.PdfProReporteCalidad;
-import com.agnux.kemikal.reportes.PdfReporteMovimientos;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;

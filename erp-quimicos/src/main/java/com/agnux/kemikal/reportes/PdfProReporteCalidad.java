@@ -105,7 +105,7 @@ public class PdfProReporteCalidad {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph("Lote",headerFont));
+            cell = new PdfPCell(new Paragraph("Folio",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
