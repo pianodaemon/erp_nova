@@ -17,6 +17,7 @@
 								</div>
 							</div>
 						</div>
+						
 						<div id="menu">
 							<div id="menu1">
 							<div class="unit on-6 columns full-width , encabezado_menu_popup" style="height:24px;">
@@ -24,7 +25,7 @@
 							<div class="fixed column, div-table-col">
 								<!-- style="width:800px;"--><div class="conteiner vertical-center">
 								<ul class="jd_menu">
-									<li class="body">
+									<li class="accessible">
 										<a href="#" class="accessible">Cotizaciones &raquo;</a>
 										<ul>
 											<li>
@@ -588,7 +589,7 @@
 												<ul>
 													<!--<li class="topline"><a href="#">F&oacute;rmulas</a></li>-->
 													<li class="topline"><a href="../proreporteproduccion/startup.agnux">Producci&oacute;n</a></li>
-													<!--<li class="topline"><a href="../proreportecalidad/startup.agnux">Reporte de Calidad</a></li>-->
+													<li class="topline"><a href="../proreportecalidad/startup.agnux">Reporte de Calidad</a></li>
 												</ul>
 											</li>
 										</ul>

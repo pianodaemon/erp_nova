@@ -257,7 +257,7 @@ $(function() {
             */
             trr +='<td width="70">Cant. K.</td>';
             trr +='<td width="70">Cant. L.</td>';
-            trr +='<td width="80">Lote</td>';
+            trr +='<td width="80">Folio</td>';
             trr +='<td width="70">Fecha</td>';
             trr +='<td width="45">Fineza</td>';
             trr +='<td width="65">Viscosidad</td>';
