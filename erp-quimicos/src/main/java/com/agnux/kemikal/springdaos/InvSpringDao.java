@@ -7593,6 +7593,53 @@ public class InvSpringDao implements InvInterfaceDao{
 
 
 
+    //**************************************************************************************************************************
+    //INICIA METODOS DE APLICATIVO DE CAPTURA DE COSTOS
+    //**************************************************************************************************************************
+    @Override
+    public ArrayList<HashMap<String, Object>> getInvCapturaCosto_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
+        String cad[] = data_string.split("___");
+        String mesActual=cad[6];
+        
+        
+	String sql_to_query = ""
+                + "SELECT "
+                    + "inv_prod_cost_prom.id, "
+                    + "inv_prod.sku AS codigo,"
+                    + "inv_prod.descripcion,"
+                    + "(CASE WHEN gral_mon.descripcion_abr IS NULL THEN '' ELSE gral_mon.descripcion_abr END) AS moneda,"
+                    + "inv_prod_cost_prom.tipo_cambio_"+mesActual+" AS tc,"
+                    + "inv_prod_cost_prom.costo_ultimo_"+mesActual+" AS costo,"
+                    + "(CASE WHEN inv_prod_cost_prom.actualizacion_"+mesActual+" IS NULL THEN '' ELSE to_char(inv_prod_cost_prom.actualizacion_"+mesActual+",'dd/mm/yyyy') END) AS fecha "
+                + "FROM inv_prod_cost_prom "
+                + "JOIN inv_prod ON inv_prod.id=inv_prod_cost_prom.inv_prod_id "
+                + "LEFT JOIN gral_mon ON gral_mon.id=inv_prod_cost_prom.gral_mon_id_"+mesActual+" "
+                +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_prod_cost_prom.id "
+                +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
+
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+        //System.out.println("data_string: "+data_string);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
+                    row.put("costo",StringHelper.roundDouble(rs.getString("costo"),2));
+                    row.put("fecha",rs.getString("fecha"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
 
 
 }
