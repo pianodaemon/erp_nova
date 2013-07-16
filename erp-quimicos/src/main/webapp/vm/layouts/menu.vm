@@ -355,17 +355,12 @@
 													
 													<li class="topline"><a href="../invordendev/startup.agnux">Orden de Devoluci&oacute;n</a></li>
 													-->
-													<!--
-													esto solo es para kemika y kathion
-
-													-->
+													
+													<li class="topline"><a href="../invcapturacostos/startup.agnux">Captura de Costos</a></li>
 													<li class="topline"><a href="../invcontrolcostos/startup.agnux">Control de Costos</a></li>
 													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar de Precios</a></li>
-
+													
 													<!--
-
-
-
 													<li class="topline"><a href="#">Actualizar Precios</a></li>
 													<li class="topline"><a href="#">Existencias F&iacute;sicas</a></li>
 													<li class="topline"><a href="#">Orden Devoluci&oacute;n</a></li>

@@ -19,12 +19,12 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/invajustes";
+	var controller = $contextpath.val()+"/controllers/invcapturacostos";
     
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
     $('#barra_acciones').find('.table_acciones').css({'display':'block'});
-    var $new_ajuste = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
+    var $nuevo = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
 	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
@@ -43,7 +43,7 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Ajustes de Inventario');
+	$('#barra_titulo').find('#td_titulo').append('Captura de Costos');
 	
 	//barra para el buscador 
 	//$('#barra_buscador').css({'height':'0px'});
@@ -53,96 +53,63 @@ $(function() {
 	
 	
 	var $cadena_busqueda = "";
-	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
-	var $busqueda_tipo_mov = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_tipo_mov]');
-	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
-	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
-	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
-	var $busqueda_descripcion = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_descripcion]');
+	var $sku_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=sku_busqueda]');
+	var $campo_descripcion_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=descripcion]');
+	var $select_tipo_productos_busqueda = $('#barra_buscador').find('.tabla_buscador').find('select[name=tipo_productos]');
 	
-	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
-	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
-	
-	
-	$buscar.mouseover(function(){
-		$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
-	});
-	$buscar.mouseout(function(){
-		$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
-	});
-	
-	
-
-	$limpiar.mouseover(function(){
-		$(this).removeClass("onmouseOutLimpiar").addClass("onmouseOverLimpiar");
-	});
-	$limpiar.mouseout(function(){
-		$(this).removeClass("onmouseOverLimpiar").addClass("onmouseOutLimpiar");
-	});
-	
+	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
+	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
 	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
+		
 		var signo_separador = "=";
-		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
-		valor_retorno += "tipo_mov" + signo_separador + $busqueda_tipo_mov.val() + "|";
-		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
-		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|";
-		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
-		valor_retorno += "descripcion" + signo_separador + $busqueda_descripcion.val();
+		valor_retorno += "codigo" + signo_separador + $sku_busqueda.val() + "|";
+		valor_retorno += "descripcion" + signo_separador + $campo_descripcion_busqueda.val() + "|";
+		valor_retorno += "tipo" + signo_separador + $select_tipo_productos_busqueda.val() + "|";
 		return valor_retorno;
 	};
-    
+	
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
 	
-	
-	
-	//cargar select tipos de Movimiento del Buscador
-	var input_json_mov_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMovTipos.json';
-	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-	$.post(input_json_mov_tipos,$arreglo,function(data){
-		//Llena el select tipos de movimientos en el buscador
-		$busqueda_tipo_mov.children().remove();
-		var mov_tipos_html = '<option value="0" selected="yes">[-- --]</option>';
-		$.each(data['MovTipos'],function(entryIndex,tm){
-			mov_tipos_html += '<option value="' + tm['id'] + '"  >' + tm['titulo'] + '</option>';
-		});
-		$busqueda_tipo_mov.append(mov_tipos_html);
-	});
-	
-	
-	
 	$buscar.click(function(event){
-		//event.preventDefault();
+		event.preventDefault();
 		cadena = to_make_one_search_string();
 		$cadena_busqueda = cadena.toCharCode();
 		$get_datos_grid();
 	});
 	
-	$limpiar.click(function(event){
-		$busqueda_folio.val('');
-		$busqueda_fecha_inicial.val('');
-		$busqueda_fecha_final.val('');
-		$busqueda_codigo.val('');
-		$busqueda_descripcion.val('');
-		
-		//cargar select tipos de Movimiento del Buscador
-		var input_json_mov_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMovTipos.json';
-		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-		$.post(input_json_mov_tipos,$arreglo,function(data){
-			//Llena el select tipos de movimientos en el buscador
-			$busqueda_tipo_mov.children().remove();
-			var mov_tipos_html = '<option value="0" selected="yes">[-- --]</option>';
-			$.each(data['MovTipos'],function(entryIndex,tm){
-				mov_tipos_html += '<option value="' + tm['id'] + '"  >' + tm['titulo'] + '</option>';
-			});
-			$busqueda_tipo_mov.append(mov_tipos_html);
+	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
+	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_lineas,$arreglo,function(data){
+		//Llena el select tipos de productos en el buscador
+		$select_tipo_productos_busqueda.children().remove();
+		var prod_tipos_html = '<option value="0" selected="yes">[-- --]</option>';
+		$.each(data['prodTipos'],function(entryIndex,pt){
+			prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
 		});
+		$select_tipo_productos_busqueda.append(prod_tipos_html);
+		
+		arrayTProd=data['prodTipos'];
 	});
 	
 	
-	
+	$limpiar.click(function(event){
+		event.preventDefault();
+		$sku_busqueda.val('');
+		$campo_descripcion_busqueda.val('');
+		
+		//Llena el select tipos de productos en el buscador
+		$select_tipo_productos_busqueda.children().remove();
+		var tipos_html = '<option value="0" selected="yes">[-- --]</option>';
+		$.each(arrayTProd,function(entryIndex,pt){
+			tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+		});
+		$select_tipo_productos_busqueda.append(tipos_html);
+		
+		$sku_busqueda.focus();
+	});
 	
 	TriggerClickVisializaBuscador = 0;
 	//visualizar  la barra del buscador
@@ -159,9 +126,8 @@ $(function() {
 			 //alert('pix_alto: '+pix_alto);
 			 
 			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-			 $('#barra_buscador').animate({height: '80px'}, 500);
+			 $('#barra_buscador').animate({height: '60px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
-			 
 			 //alert($('#cuerpo').css('height'));
 		}else{
 			 TriggerClickVisializaBuscador=0;
@@ -172,17 +138,13 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
-		$busqueda_folio.focus();
+		
+		$sku_busqueda.focus();
 	});
 	
-	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_descripcion, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_tipo_mov, $buscar);
-	
+	$(this).aplicarEventoKeypressEjecutaTrigger($sku_busqueda, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion_busqueda, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_productos_busqueda, $buscar);
 	
 	
 	//----------------------------------------------------------------
@@ -230,112 +192,43 @@ $(function() {
 	}
 	
 	
-	$busqueda_fecha_inicial.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100});
-	});
-        
-	$busqueda_fecha_inicial.DatePicker({
-		format:'Y-m-d',
-		date: $(this).val(),
-		current: $(this).val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$busqueda_fecha_inicial.val(formated);
-			if (formated.match(patron) ){
-				var valida_fecha=mayor($busqueda_fecha_inicial.val(),mostrarFecha());
-				
-				if (valida_fecha==true){
-					jAlert("Fecha no valida",'! Atencion');
-					$busqueda_fecha_inicial.val(mostrarFecha());
-				}else{
-					$busqueda_fecha_inicial.DatePickerHide();	
-				}
-			}
-		}
-	});
-        
-	$busqueda_fecha_final.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100});
-	});
-        
-	$busqueda_fecha_final.DatePicker({
-		format:'Y-m-d',
-		date: $(this).val(),
-		current: $(this).val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$busqueda_fecha_final.val(formated);
-			if (formated.match(patron) ){
-				var valida_fecha=mayor($busqueda_fecha_final.val(),mostrarFecha());
-				
-				if (valida_fecha==true){
-					jAlert("Fecha no valida",'! Atencion');
-					$busqueda_fecha_final.val(mostrarFecha());
-				}else{
-					$busqueda_fecha_final.DatePickerHide();	
-				}
-			}
-		}
-	});
 	
     
 	
 	$tabs_li_funxionalidad = function(){
-            var $select_prod_tipo = $('#forma-invajustes-window').find('select[name=prodtipo]');
-            $('#forma-invajustes-window').find('#submit').mouseover(function(){
-                $('#forma-invajustes-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
-                //$('#forma-invajustes-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
+            var $select_prod_tipo = $('#forma-invcapturacostos-window').find('select[name=prodtipo]');
+            $('#forma-invcapturacostos-window').find('#submit').mouseover(function(){
+                $('#forma-invcapturacostos-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+                //$('#forma-invcapturacostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
             })
-            $('#forma-invajustes-window').find('#submit').mouseout(function(){
-                $('#forma-invajustes-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
-                //$('#forma-invajustes-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/btn1.png)"});
+            $('#forma-invcapturacostos-window').find('#submit').mouseout(function(){
+                $('#forma-invcapturacostos-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+                //$('#forma-invcapturacostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/btn1.png)"});
             })
-            $('#forma-invajustes-window').find('#boton_cancelar').mouseover(function(){
-                $('#forma-invajustes-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+            $('#forma-invcapturacostos-window').find('#boton_cancelar').mouseover(function(){
+                $('#forma-invcapturacostos-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
             })
-            $('#forma-invajustes-window').find('#boton_cancelar').mouseout(function(){
-                $('#forma-invajustes-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
-            })
-            
-            $('#forma-invajustes-window').find('#close').mouseover(function(){
-                $('#forma-invajustes-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
-            })
-            $('#forma-invajustes-window').find('#close').mouseout(function(){
-                $('#forma-invajustes-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+            $('#forma-invcapturacostos-window').find('#boton_cancelar').mouseout(function(){
+                $('#forma-invcapturacostos-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
             })
             
-            $('#forma-invajustes-window').find(".contenidoPes").hide(); //Hide all content
-            $('#forma-invajustes-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-            $('#forma-invajustes-window').find(".contenidoPes:first").show(); //Show first tab content
+            $('#forma-invcapturacostos-window').find('#close').mouseover(function(){
+                $('#forma-invcapturacostos-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+            })
+            $('#forma-invcapturacostos-window').find('#close').mouseout(function(){
+                $('#forma-invcapturacostos-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+            })
+            
+            $('#forma-invcapturacostos-window').find(".contenidoPes").hide(); //Hide all content
+            $('#forma-invcapturacostos-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+            $('#forma-invcapturacostos-window').find(".contenidoPes:first").show(); //Show first tab content
             
             //On Click Event
-            $('#forma-invajustes-window').find("ul.pestanas li").click(function() {
-                $('#forma-invajustes-window').find(".contenidoPes").hide();
-                $('#forma-invajustes-window').find("ul.pestanas li").removeClass("active");
+            $('#forma-invcapturacostos-window').find("ul.pestanas li").click(function() {
+                $('#forma-invcapturacostos-window').find(".contenidoPes").hide();
+                $('#forma-invcapturacostos-window').find("ul.pestanas li").removeClass("active");
                 var activeTab = $(this).find("a").attr("href");
-                $('#forma-invajustes-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+                $('#forma-invcapturacostos-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
                 $(this).addClass("active");
                 return false;
             });
@@ -462,13 +355,13 @@ $(function() {
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
 					//asignar a los campos correspondientes el sku y y descripcion
-					$('#forma-invajustes-window').find('input[name=sku_producto]').val($(this).find('span.sku_prod_buscador').html());
-					$('#forma-invajustes-window').find('input[name=nombre_producto]').val($(this).find('span.titulo_prod_buscador').html());
+					$('#forma-invcapturacostos-window').find('input[name=sku_producto]').val($(this).find('span.sku_prod_buscador').html());
+					$('#forma-invcapturacostos-window').find('input[name=nombre_producto]').val($(this).find('span.titulo_prod_buscador').html());
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
 					$('#forma-buscaproducto-overlay').fadeOut(remove);
 					//asignar el enfoque al campo sku del producto
-					$('#forma-invajustes-window').find('input[name=sku_producto]').focus();
+					$('#forma-invcapturacostos-window').find('input[name=sku_producto]').focus();
 				});
 				
 			});//termina llamada json
@@ -896,7 +789,7 @@ $(function() {
 						
 					}else{
 						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
-						$('#forma-invajustes-window').find('input[name=titulo_producto]').val('');
+						$('#forma-invcapturacostos-window').find('input[name=titulo_producto]').val('');
 					}
 				});
 			}else{
@@ -919,21 +812,21 @@ $(function() {
 	
 	
 	//nuevo ajuste
-	$new_ajuste.click(function(event){
+	$nuevo.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
 		
-		$(this).modalPanel_invajustes();
+		$(this).modalPanel_invcapturacostos();
 		
-		var form_to_show = 'formainvajustes00';
+		var form_to_show = 'formainvcapturacostos00';
 		$('#' + form_to_show).each (function(){this.reset();});
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		//var accion = "getCotizacion";
 		
-		$('#forma-invajustes-window').css({"margin-left": -410, 	"margin-top": -220});
+		$('#forma-invcapturacostos-window').css({"margin-left": -300, 	"margin-top": -220});
 		
-		$forma_selected.prependTo('#forma-invajustes-window');
+		$forma_selected.prependTo('#forma-invcapturacostos-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		
 		$tabs_li_funxionalidad();
@@ -943,41 +836,41 @@ $(function() {
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 					};
         
-		var $identificador = $('#forma-invajustes-window').find('input[name=identificador]');
-		var $folio = $('#forma-invajustes-window').find('input[name=folio]');
-		var $exis_pres = $('#forma-invajustes-window').find('input[name=exis_pres]');
+		var $identificador = $('#forma-invcapturacostos-window').find('input[name=identificador]');
+		var $folio = $('#forma-invcapturacostos-window').find('input[name=folio]');
+		var $exis_pres = $('#forma-invcapturacostos-window').find('input[name=exis_pres]');
 		
-		var $select_tipo_ajuste = $('#forma-invajustes-window').find('select[name=select_tipo_ajuste]');
-		var $tipo_ajuste = $('#forma-invajustes-window').find('input[name=tipo_ajuste]');
+		var $select_tipo_ajuste = $('#forma-invcapturacostos-window').find('select[name=select_tipo_ajuste]');
+		var $tipo_ajuste = $('#forma-invcapturacostos-window').find('input[name=tipo_ajuste]');
 		
-		var $fecha_ajuste = $('#forma-invajustes-window').find('input[name=fecha_ajuste]');
-		var $select_tipo_mov = $('#forma-invajustes-window').find('select[name=select_tipo_mov]');
-		var $id_tipo_mov = $('#forma-invajustes-window').find('input[name=id_tipo_mov]');
+		var $fecha_ajuste = $('#forma-invcapturacostos-window').find('input[name=fecha_ajuste]');
+		var $select_tipo_mov = $('#forma-invcapturacostos-window').find('select[name=select_tipo_mov]');
+		var $id_tipo_mov = $('#forma-invcapturacostos-window').find('input[name=id_tipo_mov]');
 		
-		var $tipo_costo = $('#forma-invajustes-window').find('input[name=tipo_costo]');
-		var $select_almacen = $('#forma-invajustes-window').find('select[name=select_almacen]');
-		var $id_almacen = $('#forma-invajustes-window').find('input[name=id_almacen]');
+		var $tipo_costo = $('#forma-invcapturacostos-window').find('input[name=tipo_costo]');
+		var $select_almacen = $('#forma-invcapturacostos-window').find('select[name=select_almacen]');
+		var $id_almacen = $('#forma-invcapturacostos-window').find('input[name=id_almacen]');
 		
-		var $observaciones = $('#forma-invajustes-window').find('textarea[name=observaciones]');
+		var $observaciones = $('#forma-invcapturacostos-window').find('textarea[name=observaciones]');
 		
-		var $sku_producto = $('#forma-invajustes-window').find('input[name=sku_producto]');
-		var $nombre_producto = $('#forma-invajustes-window').find('input[name=nombre_producto]');
+		var $sku_producto = $('#forma-invcapturacostos-window').find('input[name=sku_producto]');
+		var $nombre_producto = $('#forma-invcapturacostos-window').find('input[name=nombre_producto]');
 		
 		//buscar producto
-		var $busca_sku = $('#forma-invajustes-window').find('a[href*=busca_sku]');
+		var $busca_sku = $('#forma-invcapturacostos-window').find('a[href*=busca_sku]');
 		//href para agregar producto al grid
-		var $agregar_producto = $('#forma-invajustes-window').find('a[href*=agregar_producto]');
-		var $descargarpdf = $('#forma-invajustes-window').find('#descargarpdf');
+		var $agregar_producto = $('#forma-invcapturacostos-window').find('a[href*=agregar_producto]');
+		var $descargarpdf = $('#forma-invcapturacostos-window').find('#descargarpdf');
 		
 		//grid de productos
-		var $grid_productos = $('#forma-invajustes-window').find('#grid_productos');
+		var $grid_productos = $('#forma-invcapturacostos-window').find('#grid_productos');
 		//grid de errores
-		var $grid_warning = $('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning');
+		var $grid_warning = $('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning');
 		
 		
-		var $cerrar_plugin = $('#forma-invajustes-window').find('#close');
-		var $cancelar_plugin = $('#forma-invajustes-window').find('#boton_cancelar');
-		var $submit_actualizar = $('#forma-invajustes-window').find('#submit');
+		var $cerrar_plugin = $('#forma-invcapturacostos-window').find('#close');
+		var $cancelar_plugin = $('#forma-invcapturacostos-window').find('#boton_cancelar');
+		var $submit_actualizar = $('#forma-invcapturacostos-window').find('#submit');
 		
 		//$campo_factura.css({'background' : '#ffffff'});
 		
@@ -992,19 +885,19 @@ $(function() {
 			if ( data['success'] == "true" ){
 				jAlert("El Ajuste se guard&oacute; con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
-				$('#forma-invajustes-overlay').fadeOut(remove);
+				$('#forma-invcapturacostos-overlay').fadeOut(remove);
 				$get_datos_grid();
 			}else{
 				//habilitar boton actualizar
 				$submit_actualizar.removeAttr('disabled');
 				// Desaparece todas las interrogaciones si es que existen
-				$('#forma-invajustes-window').find('.invajustes_div_one').css({'height':'550px'});//con errores
-				$('#forma-invajustes-window').find('div.interrogacion').css({'display':'none'});
+				$('#forma-invcapturacostos-window').find('.invcapturacostos_div_one').css({'height':'550px'});//con errores
+				$('#forma-invcapturacostos-window').find('div.interrogacion').css({'display':'none'});
 				$grid_productos.find('input[name=cant_ajuste]').css({'background' : '#ffffff'});
 				$grid_productos.find('input[name=costo_ajuste]').css({'background' : '#ffffff'});
 				
-				$('#forma-invajustes-window').find('#div_warning_grid').css({'display':'none'});
-				$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+				$('#forma-invcapturacostos-window').find('#div_warning_grid').css({'display':'none'});
+				$('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 				
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
@@ -1012,14 +905,14 @@ $(function() {
 					tmp = data['success'].split('___')[element];
 					longitud = tmp.split(':');
 					if( longitud.length > 1 ){
-						$('#forma-invajustes-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						$('#forma-invcapturacostos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 						
 						var campo = tmp.split(':')[0];
 						
-						$('#forma-invajustes-window').find('#div_warning_grid').css({'display':'block'});
+						$('#forma-invcapturacostos-window').find('#div_warning_grid').css({'display':'block'});
 						var $campo = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
 						
 						var codigo_producto = $campo.parent().parent().find('input[name=codigo]').val();
@@ -1032,12 +925,12 @@ $(function() {
 								tr_warning += '<td width="380"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:350px; color:red"></td>';
 						tr_warning += '</tr>';
 						
-						$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+						$('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
 						
 					}
 				}
-				$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
-				$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
+				$('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
+				$('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
 			}
 		}
 		
@@ -1259,7 +1152,7 @@ $(function() {
 		
 		
 		//deshabilitar tecla enter  en todo el plugin
-		$('#forma-invajustes-window').find('input').keypress(function(e){
+		$('#forma-invcapturacostos-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
 				return false;
 			}
@@ -1281,20 +1174,20 @@ $(function() {
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
-			$('#forma-invajustes-overlay').fadeOut(remove);
+			$('#forma-invcapturacostos-overlay').fadeOut(remove);
 		});
 		
 		//boton cancelar y cerrar plugin
 		$cancelar_plugin.click(function(event){
 			var remove = function() {$(this).remove();};
-			$('#forma-invajustes-overlay').fadeOut(remove);
+			$('#forma-invcapturacostos-overlay').fadeOut(remove);
 		});
 		
 	});
 	
 	
 	
-	var carga_formainvajustes00_for_datagrid00 = function(id_to_show, accion_mode){
+	var carga_formainvcapturacostos00_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar una prefactura
 		if(accion_mode == 'cancel'){
 			
@@ -1316,64 +1209,64 @@ $(function() {
 			
 		}else{
 			//aqui  entra para editar un registro
-			$('#forma-invajustes-window').remove();
-			$('#forma-invajustes-overlay').remove();
+			$('#forma-invcapturacostos-window').remove();
+			$('#forma-invcapturacostos-overlay').remove();
             
-			var form_to_show = 'formainvajustes00';
+			var form_to_show = 'formainvcapturacostos00';
 			$('#' + form_to_show).each (function(){this.reset();});
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
-			$(this).modalPanel_invajustes();
+			$(this).modalPanel_invcapturacostos();
 			
-			$('#forma-invajustes-window').css({"margin-left": -410, 	"margin-top": -220});
+			$('#forma-invcapturacostos-window').css({"margin-left": -300, 	"margin-top": -220});
 			
-			$forma_selected.prependTo('#forma-invajustes-window');
+			$forma_selected.prependTo('#forma-invcapturacostos-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
 			
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAjuste.json';
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCosto.json';
 			$arreglo = {'identificador':id_to_show,
 						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 						};
         
 			
-			var $identificador = $('#forma-invajustes-window').find('input[name=identificador]');
-			var $folio = $('#forma-invajustes-window').find('input[name=folio]');
-			var $exis_pres = $('#forma-invajustes-window').find('input[name=exis_pres]');
+			var $identificador = $('#forma-invcapturacostos-window').find('input[name=identificador]');
+			var $folio = $('#forma-invcapturacostos-window').find('input[name=folio]');
+			var $exis_pres = $('#forma-invcapturacostos-window').find('input[name=exis_pres]');
 			
-			var $select_tipo_ajuste = $('#forma-invajustes-window').find('select[name=select_tipo_ajuste]');
-			var $tipo_ajuste = $('#forma-invajustes-window').find('input[name=tipo_ajuste]');
+			var $select_tipo_ajuste = $('#forma-invcapturacostos-window').find('select[name=select_tipo_ajuste]');
+			var $tipo_ajuste = $('#forma-invcapturacostos-window').find('input[name=tipo_ajuste]');
 			
-			var $fecha_ajuste = $('#forma-invajustes-window').find('input[name=fecha_ajuste]');
-			var $select_tipo_mov = $('#forma-invajustes-window').find('select[name=select_tipo_mov]');
-			var $id_tipo_mov = $('#forma-invajustes-window').find('input[name=id_tipo_mov]');
+			var $fecha_ajuste = $('#forma-invcapturacostos-window').find('input[name=fecha_ajuste]');
+			var $select_tipo_mov = $('#forma-invcapturacostos-window').find('select[name=select_tipo_mov]');
+			var $id_tipo_mov = $('#forma-invcapturacostos-window').find('input[name=id_tipo_mov]');
 			
-			var $tipo_costo = $('#forma-invajustes-window').find('input[name=tipo_costo]');
-			var $select_almacen = $('#forma-invajustes-window').find('select[name=select_almacen]');
-			var $id_almacen = $('#forma-invajustes-window').find('input[name=id_almacen]');
+			var $tipo_costo = $('#forma-invcapturacostos-window').find('input[name=tipo_costo]');
+			var $select_almacen = $('#forma-invcapturacostos-window').find('select[name=select_almacen]');
+			var $id_almacen = $('#forma-invcapturacostos-window').find('input[name=id_almacen]');
 			
-			var $observaciones = $('#forma-invajustes-window').find('textarea[name=observaciones]');
+			var $observaciones = $('#forma-invcapturacostos-window').find('textarea[name=observaciones]');
 			
-			var $sku_producto = $('#forma-invajustes-window').find('input[name=sku_producto]');
-			var $nombre_producto = $('#forma-invajustes-window').find('input[name=nombre_producto]');
+			var $sku_producto = $('#forma-invcapturacostos-window').find('input[name=sku_producto]');
+			var $nombre_producto = $('#forma-invcapturacostos-window').find('input[name=nombre_producto]');
 			
 			//buscar producto
-			var $busca_sku = $('#forma-invajustes-window').find('a[href*=busca_sku]');
+			var $busca_sku = $('#forma-invcapturacostos-window').find('a[href*=busca_sku]');
 			//href para agregar producto al grid
-			var $agregar_producto = $('#forma-invajustes-window').find('a[href*=agregar_producto]');
-			var $descargarpdf = $('#forma-invajustes-window').find('#descargarpdf');
+			var $agregar_producto = $('#forma-invcapturacostos-window').find('a[href*=agregar_producto]');
+			var $descargarpdf = $('#forma-invcapturacostos-window').find('#descargarpdf');
 			
 			//grid de productos
-			var $grid_productos = $('#forma-invajustes-window').find('#grid_productos');
+			var $grid_productos = $('#forma-invcapturacostos-window').find('#grid_productos');
 			//grid de errores
-			var $grid_warning = $('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning');
+			var $grid_warning = $('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning');
 			
 			
-			var $cerrar_plugin = $('#forma-invajustes-window').find('#close');
-			var $cancelar_plugin = $('#forma-invajustes-window').find('#boton_cancelar');
-			var $submit_actualizar = $('#forma-invajustes-window').find('#submit');
+			var $cerrar_plugin = $('#forma-invcapturacostos-window').find('#close');
+			var $cancelar_plugin = $('#forma-invcapturacostos-window').find('#boton_cancelar');
+			var $submit_actualizar = $('#forma-invcapturacostos-window').find('#submit');
 			
 			//$campo_factura.css({'background' : '#ffffff'});
 			
@@ -1397,19 +1290,19 @@ $(function() {
 				if ( data['success'] == "true" ){
 					jAlert("El Ajuste se guard&oacute; con &eacute;xito", 'Atencion!');
 					var remove = function() {$(this).remove();};
-					$('#forma-invajustes-overlay').fadeOut(remove);
+					$('#forma-invcapturacostos-overlay').fadeOut(remove);
 					$get_datos_grid();
 				}else{
 					//habilitar boton actualizar
 					$submit_actualizar.removeAttr('disabled');
 					// Desaparece todas las interrogaciones si es que existen
-					$('#forma-invajustes-window').find('.invajustes_div_one').css({'height':'550px'});//con errores
-					$('#forma-invajustes-window').find('div.interrogacion').css({'display':'none'});
+					$('#forma-invcapturacostos-window').find('.invcapturacostos_div_one').css({'height':'550px'});//con errores
+					$('#forma-invcapturacostos-window').find('div.interrogacion').css({'display':'none'});
 					$grid_productos.find('input[name=cant_ajuste]').css({'background' : '#ffffff'});
 					$grid_productos.find('input[name=costo_ajuste]').css({'background' : '#ffffff'});
 					
-					$('#forma-invajustes-window').find('#div_warning_grid').css({'display':'none'});
-					$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').children().remove();
+					$('#forma-invcapturacostos-window').find('#div_warning_grid').css({'display':'none'});
+					$('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 					
 					var valor = data['success'].split('___');
 					//muestra las interrogaciones
@@ -1417,14 +1310,14 @@ $(function() {
 						tmp = data['success'].split('___')[element];
 						longitud = tmp.split(':');
 						if( longitud.length > 1 ){
-							$('#forma-invajustes-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+							$('#forma-invcapturacostos-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 							.parent()
 							.css({'display':'block'})
 							.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 							
 							var campo = tmp.split(':')[0];
 							
-							$('#forma-invajustes-window').find('#div_warning_grid').css({'display':'block'});
+							$('#forma-invcapturacostos-window').find('#div_warning_grid').css({'display':'block'});
 							var $campo = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
 							
 							var codigo_producto = $campo.parent().parent().find('input[name=codigo]').val();
@@ -1437,12 +1330,12 @@ $(function() {
 									tr_warning += '<td width="380"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:350px; color:red"></td>';
 							tr_warning += '</tr>';
 							
-							$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
+							$('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
 							
 						}
 					}
-					$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
-					$('#forma-invajustes-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
+					$('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning').find('tr:odd').find('td').css({ 'background-color' : '#FFFFFF'});
+					$('#forma-invcapturacostos-window').find('#div_warning_grid').find('#grid_warning').find('tr:even').find('td').css({ 'background-color' : '#e7e8ea'});
 				}
 			
 			}		
@@ -1575,7 +1468,7 @@ $(function() {
 				
                 
 				//deshabilitar tecla enter  en todo el plugin
-				$('#forma-invajustes-window').find('input').keypress(function(e){
+				$('#forma-invcapturacostos-window').find('input').keypress(function(e){
 					if(e.which==13 ) {
 						return false;
 					}
@@ -1585,12 +1478,12 @@ $(function() {
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-invajustes-overlay').fadeOut(remove);
+					$('#forma-invcapturacostos-overlay').fadeOut(remove);
 				});
 				
 				$cerrar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-invajustes-overlay').fadeOut(remove);
+					$('#forma-invcapturacostos-overlay').fadeOut(remove);
 				});
 				
 			}
@@ -1599,16 +1492,16 @@ $(function() {
 	
 	
     $get_datos_grid = function(){
-        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllAjustes.json';
+        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllCostos.json';
         
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
         
-        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':15,'pag_start':1,'display_pag':20,'input_json':'/'+controller+'/getAllAjustes.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':15,'pag_start':1,'display_pag':20,'input_json':'/'+controller+'/getAllCostos.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
 		
         $.post(input_json,$arreglo,function(data){
 			
             //pinta_grid
-            $.fn.tablaOrdenablePrefacturas(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formainvajustes00_for_datagrid00);
+            $.fn.tablaOrdenablePrefacturas(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formainvcapturacostos00_for_datagrid00);
 
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
