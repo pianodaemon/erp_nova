@@ -27,14 +27,16 @@ public interface FacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getMetodosPago();
     public ArrayList<HashMap<String, Integer>> getFactura_AnioInforme();
     
-    public String getSerieFolioFactura(Integer id_factura);
-    public String getSerieFolioFacturaByIdPrefactura(Integer id_prefactura);
+    public String getSerieFolioFactura(Integer id_factura, Integer idEmp);
+    public String getSerieFolioFacturaByIdPrefactura(Integer id_prefactura, Integer idEmp);
     public Integer getIdPrefacturaByIdFactura(Integer id_factura);
     
     public Double getTipoCambioActual();
     public ArrayList<HashMap<String, Object>> getValoriva(Integer id_sucursal);
     
-    public String getTipoFacturacion();
+    public String getTipoFacturacion(Integer idEmp);
+    public String getNoPacFacturacion(Integer idEmp);
+    public String getAmbienteFacturacion(Integer idEmp);
     
     //para bean facturador
     public HashMap<String,String> getDataFacturaXml(Integer id_prefactura);

@@ -566,6 +566,8 @@ public class PrefacturasController {
         ArrayList<HashMap<String, String>> listaConceptosPdfCfd = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> datosExtrasPdfCfd= new HashMap<String, String>();
         
+        String valorRespuesta="false";
+        String msjRespuesta="";
         Integer app_selected = 13;
         String command_selected = "";
         String actualizo = "0";
@@ -639,8 +641,16 @@ public class PrefacturasController {
                     String proposito = "FACTURA";
                     
                     //obtener tipo de facturacion
-                    tipo_facturacion = this.getFacdao().getTipoFacturacion();
+                    tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
                     System.out.println("tipo_facturacion:::"+tipo_facturacion);
+                    
+                    //Obtener el numero del PAC para el Timbrado de la Factura
+                    String noPac = this.getFacdao().getNoPacFacturacion(id_empresa);
+                    System.out.println("noPac:::"+noPac);
+                    
+                    //Obtener el Ambiente de Facturacion PRUEBAS ó PRODUCCION, solo aplica para Facturacion por Timbre FIscal(cfditf)
+                    String ambienteFac = this.getFacdao().getAmbienteFacturacion(id_empresa);
+                    System.out.println("ambienteFac:::"+ambienteFac);
                     
                     //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
                     parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
@@ -664,7 +674,7 @@ public class PrefacturasController {
                         this.getBfCfd().start();
                         
                         //obtiene serie_folio de la factura que se acaba de guardar
-                        serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura);
+                        serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura, id_empresa);
                         
                         String cadena_original=this.getBfCfd().getCadenaOriginal();
                         //System.out.println("cadena_original:"+cadena_original);
@@ -699,57 +709,60 @@ public class PrefacturasController {
                         }
                         
                         jsonretorno.put("folio",serieFolio);
+                        valorRespuesta="true";
                     }
                     
+                    
+                    
                     //**********************************************************
-                    //tipo facturacion CFDI(CFDI CON CONECTOR FISCAL)
+                    //Tipo facturacion CFDI(CFDI CON CONECTOR FISCAL)
                     //**********************************************************
                     if(tipo_facturacion.equals("cfdi")){
+                        //Pac 0=Sin PAC, 1=Diverza, 2=ServiSim
+                        if(!noPac.equals("0") && !noPac.equals("2")){
+                            //Solo se permite generar Factura por Conector Fiscal con Diverza
+                            extra_data_array = "'sin datos'";
+                            command_selected="facturar_cfdi";
+
+                            String Serie=this.getGralDao().getSerieFactura(id_empresa, id_sucursal);
+                            String Folio=this.getGralDao().getFolioFactura(id_empresa, id_sucursal);
+                            rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+
+                            id_factura=0;
+                            data_string=app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+tipo_facturacion+"___"+Serie+"___"+Folio+"___"+refacturar+"___"+select_tipo_documento;
+
+                            retorno = this.getPdao().selectFunctionForThisApp(data_string, extra_data_array);
+
+                            //obtiene el id de fac docs
+                            id_factura=Integer.parseInt(retorno.split(":")[1]);
+
+
+                            //lista de conceptos para el cfdi
+                            listaConceptosCfdi = this.getFacdao().getListaConceptosCfdi(id_factura,rfcEmisor);
+                            dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
+
+                            //obtiene datos extras para el cfdi
+                            datosExtrasCfdi = this.getFacdao().getDatosExtrasCfdi(id_factura);
+                            impTrasladadosCfdi = this.getFacdao().getImpuestosTrasladadosCfdi(id_factura, id_sucursal);
+                            impRetenidosCfdi = this.getFacdao().getImpuestosRetenidosCfdi(id_factura);
+                            leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
+
+                            //generar archivo de texto para cfdi
+                            this.getBfCfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
+                            this.getBfCfdi().start();
+
+                            //La siguiente línea se comento porque la actualizacion del folio se hace en el procedimiento.
+                            //this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
+
+                            jsonretorno.put("folio",Serie+Folio);
+                            valorRespuesta="true";
+                        }else{
+                            valorRespuesta="false";
+                            msjRespuesta="No se puede facturar por Conector Fiscal con el PAC actual.\nVerifique la configuracion del PAC.";
+                        }
                         
-                        extra_data_array = "'sin datos'";
-                        command_selected="facturar_cfdi";
-                        
-                        String Serie=this.getGralDao().getSerieFactura(id_empresa, id_sucursal);
-                        String Folio=this.getGralDao().getFolioFactura(id_empresa, id_sucursal);
-                        rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-                        
-                        id_factura=0;
-                        data_string=
-                                app_selected+"___"+
-                                command_selected+"___"+
-                                id_usuario+"___"+
-                                id_prefactura+"___"+
-                                tipo_facturacion+"___"+
-                                Serie+"___"+
-                                Folio+"___"+
-                                refacturar+"___"+
-                                select_tipo_documento;
-                        
-                        retorno = this.getPdao().selectFunctionForThisApp(data_string, extra_data_array);
-                        
-                        //obtiene el id de fac docs
-                        id_factura=Integer.parseInt(retorno.split(":")[1]);
-                        
-                        
-                        //lista de conceptos para el cfdi
-                        listaConceptosCfdi = this.getFacdao().getListaConceptosCfdi(id_factura,rfcEmisor);
-                        dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
-                        
-                        //obtiene datos extras para el cfdi
-                        datosExtrasCfdi = this.getFacdao().getDatosExtrasCfdi(id_factura);
-                        impTrasladadosCfdi = this.getFacdao().getImpuestosTrasladadosCfdi(id_factura, id_sucursal);
-                        impRetenidosCfdi = this.getFacdao().getImpuestosRetenidosCfdi(id_factura);
-                        leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
-                        
-                        //generar archivo de texto para cfdi
-                        this.getBfCfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
-                        this.getBfCfdi().start();
-                        
-                        //La siguiente línea se comento porque la actualizacion del folio se hace en el procedimiento.
-                        //this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
-                        
-                        jsonretorno.put("folio",Serie+Folio);
                     }
+                    
                     
                     
                     //**********************************************************
@@ -757,71 +770,88 @@ public class PrefacturasController {
                     //**********************************************************
                     if(tipo_facturacion.equals("cfditf")){
                         
-                        command_selected = "facturar_cfditf";
-                        extra_data_array = "'sin datos'";
+                        //Pac 0=Sin PAC, 1=Diverza, 2=ServiSim
+                        if(!noPac.equals("0")){
+                            //Solo se permite generar Factura para Timbrado con Diverza y ServiSim
                         
-                        conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura);
-                        impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
-                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos);
-                        dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
-                        
-                        //estos son requeridos para cfditf
-                        datosExtrasXmlFactura.put("prefactura_id", String.valueOf(id_prefactura));
-                        datosExtrasXmlFactura.put("tipo_documento", String.valueOf(select_tipo_documento));
-                        datosExtrasXmlFactura.put("moneda_id", id_moneda);
-                        datosExtrasXmlFactura.put("usuario_id", String.valueOf(id_usuario));
-                        datosExtrasXmlFactura.put("empresa_id", String.valueOf(id_empresa));
-                        datosExtrasXmlFactura.put("sucursal_id", String.valueOf(id_sucursal));
-                        datosExtrasXmlFactura.put("refacturar", refacturar);
-                        datosExtrasXmlFactura.put("app_selected", String.valueOf(app_selected));
-                        datosExtrasXmlFactura.put("command_selected", command_selected);
-                        datosExtrasXmlFactura.put("extra_data_array", extra_data_array);
-                        System.out.println("tipo_facturacion:::"+tipo_facturacion);
-                        //genera xml factura
-                        this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
-                        String timbrado_correcto = this.getBfCfdiTf().start();
-                        
-                        //aqui se checa si el xml fue validado correctamente
-                        //si fue correcto debe traer un valor "true", de otra manera trae un error y ppor lo tanto no se genera el pdf
-                        if(timbrado_correcto.equals("true")){
-                            //obtiene serie_folio de la factura que se acaba de guardar
-                            serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura);
+                            command_selected = "facturar_cfditf";
+                            extra_data_array = "'sin datos'";
+
+                            conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura);
+                            impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
+                            impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos);
+                            dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
+
+                            //estos son requeridos para cfditf
+                            datosExtrasXmlFactura.put("prefactura_id", String.valueOf(id_prefactura));
+                            datosExtrasXmlFactura.put("tipo_documento", String.valueOf(select_tipo_documento));
+                            datosExtrasXmlFactura.put("moneda_id", id_moneda);
+                            datosExtrasXmlFactura.put("usuario_id", String.valueOf(id_usuario));
+                            datosExtrasXmlFactura.put("empresa_id", String.valueOf(id_empresa));
+                            datosExtrasXmlFactura.put("sucursal_id", String.valueOf(id_sucursal));
+                            datosExtrasXmlFactura.put("refacturar", refacturar);
+                            datosExtrasXmlFactura.put("app_selected", String.valueOf(app_selected));
+                            datosExtrasXmlFactura.put("command_selected", command_selected);
+                            datosExtrasXmlFactura.put("extra_data_array", extra_data_array);
+                            datosExtrasXmlFactura.put("noPac", noPac);
+                            datosExtrasXmlFactura.put("ambienteFac", ambienteFac);
                             
-                            String cadena_original=this.getBfCfdiTf().getCadenaOriginalTimbre();
-                            //System.out.println("cadena_original:"+cadena_original);
+                            //genera xml factura
+                            this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
+                            String timbrado_correcto = this.getBfCfdiTf().start();
                             
-                            String sello_digital = this.getBfCfdiTf().getSelloDigital();
-                            //System.out.println("sello_digital:"+sello_digital);
+                            String cadRes[] = timbrado_correcto.split("___");
                             
-                            //este es el timbre fiscal, se debe extraer del xml que nos devuelve el web service del timbrado
-                            String sello_digital_sat = this.getBfCfdiTf().getSelloDigitalSat();
-                            
-                            //este es el folio fiscal del la factura timbrada, se obtiene   del xml
-                            String uuid = this.getBfCfdiTf().getUuid();
-                            String fechaTimbre = this.getBfCfdiTf().getFechaTimbrado();
-                            String noCertSAT = this.getBfCfdiTf().getNoCertificadoSAT();
-                            
-                            //conceptos para el pdfcfd
-                            listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
-                            
-                            //datos para el pdf
-                            datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
-                            datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
-                            datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
-                            datosExtrasPdfCfd.put("uuid", uuid);
-                            datosExtrasPdfCfd.put("fechaTimbre", fechaTimbre);
-                            datosExtrasPdfCfd.put("noCertificadoSAT", noCertSAT);
-                            
-                            //pdf factura
-                            if (parametros.get("formato_factura").equals("2")){
-                                pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                                pdfFactura.ViewPDF();
+                            //aqui se checa si el xml fue validado correctamente
+                            //si fue correcto debe traer un valor "true", de otra manera trae un error y ppor lo tanto no se genera el pdf
+                            if(cadRes[0].equals("true")){
+                                //obtiene serie_folio de la factura que se acaba de guardar
+                                serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura, id_empresa);
+                                
+                                String cadena_original=this.getBfCfdiTf().getCadenaOriginalTimbre();
+                                //System.out.println("cadena_original:"+cadena_original);
+
+                                String sello_digital = this.getBfCfdiTf().getSelloDigital();
+                                //System.out.println("sello_digital:"+sello_digital);
+
+                                //este es el timbre fiscal, se debe extraer del xml que nos devuelve el web service del timbrado
+                                String sello_digital_sat = this.getBfCfdiTf().getSelloDigitalSat();
+
+                                //este es el folio fiscal del la factura timbrada, se obtiene   del xml
+                                String uuid = this.getBfCfdiTf().getUuid();
+                                String fechaTimbre = this.getBfCfdiTf().getFechaTimbrado();
+                                String noCertSAT = this.getBfCfdiTf().getNoCertificadoSAT();
+
+                                //conceptos para el pdfcfd
+                                listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
+                                
+                                //datos para el pdf
+                                datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
+                                datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
+                                datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
+                                datosExtrasPdfCfd.put("uuid", uuid);
+                                datosExtrasPdfCfd.put("fechaTimbre", fechaTimbre);
+                                datosExtrasPdfCfd.put("noCertificadoSAT", noCertSAT);
+                                
+                                //pdf factura
+                                if (parametros.get("formato_factura").equals("2")){
+                                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                                    pdfFactura.ViewPDF();
+                                }else{
+                                    pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                                }
+                                
+                                jsonretorno.put("folio",serieFolio);
+                                valorRespuesta="true";
+                                msjRespuesta=cadRes[1];
+                                
                             }else{
-                                pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                                valorRespuesta="false";
+                                msjRespuesta=cadRes[1];
                             }
-                            
-                            
-                            jsonretorno.put("folio",serieFolio);
+                        }else{
+                            valorRespuesta="false";
+                            msjRespuesta="No se puede Timbrar la Factura con el PAC actual.\nVerifique la configuracion del PAC.";
                         }
                     }
                     
@@ -850,6 +880,8 @@ public class PrefacturasController {
         }
         
         jsonretorno.put("success",succes.get("success"));
+        jsonretorno.put("valor",succes.get("valorRespuesta"));
+        jsonretorno.put("msj",succes.get("msjRespuesta"));
         
         System.out.println("Validacion: "+ String.valueOf(jsonretorno.get("success")));
         System.out.println("Actualizo: "+String.valueOf(jsonretorno.get("actualizo")));

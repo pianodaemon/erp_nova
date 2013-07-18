@@ -1415,18 +1415,49 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    
+    //Obtener el tipo de Facturacion
     @Override
-    public String getTipoFacturacion() {
+    public String getTipoFacturacion(Integer idEmp) {
         String valor_retorno="";
-        String sql_query = "SELECT valor FROM erp_parametros_generales WHERE variable='tipo_facturacion'";
+        String sql_query = "SELECT tipo_facturacion FROM gral_emp WHERE id="+idEmp+";";
         
         //System.out.println("Obtiene tipo de facturacion: "+ sql_query);
         Map<String, Object> tipo = this.getJdbcTemplate().queryForMap(sql_query);
-        valor_retorno= tipo.get("valor").toString();
+        valor_retorno= tipo.get("tipo_facturacion").toString();
         
         return valor_retorno;
     }
+    
+    
+    //Obtener el numero del PAC para el Timbrado de la Factura
+    @Override
+    public String getNoPacFacturacion(Integer idEmp) {
+        String valor_retorno="";
+        String sql_query = "SELECT pac_facturacion FROM gral_emp WHERE id="+idEmp+";";
+        
+        //System.out.println("Obtiene tipo de facturacion: "+ sql_query);
+        Map<String, Object> tipo = this.getJdbcTemplate().queryForMap(sql_query);
+        valor_retorno= tipo.get("pac_facturacion").toString();
+        
+        return valor_retorno;
+    }
+    
+    
+    //Ambiente de Facturacion PRUEBAS ó PRODUCCION, solo aplica para Facturacion por Timbre FIscal(cfditf)
+    @Override
+    public String getAmbienteFacturacion(Integer idEmp) {
+        String valor_retorno="";
+        String sql_query = "SELECT (CASE WHEN ambiente_facturacion=true THEN 'produccion' ELSE 'prueba' END) AS ambiente_facturacion FROM gral_emp WHERE id="+idEmp+";";
+        
+        //System.out.println("Obtiene tipo de facturacion: "+ sql_query);
+        Map<String, Object> tipo = this.getJdbcTemplate().queryForMap(sql_query);
+        valor_retorno= tipo.get("ambiente_facturacion").toString();
+        
+        return valor_retorno;
+    }
+    
+    
+    
     
     
     
@@ -1445,11 +1476,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     @Override
-    public String getSerieFolioFactura(Integer id_factura) {
+    public String getSerieFolioFactura(Integer id_factura, Integer idEmp) {
         String sql_to_query="";
         
         //obtener tipo de facturacion
-        String tipo_facturacion = getTipoFacturacion();
+        String tipo_facturacion = getTipoFacturacion(idEmp);
         if(tipo_facturacion.equals("cfd")){
             //para facturacion tipo CFD
             sql_to_query = "SELECT split_part(fac_cfds.nombre_archivo, '.', 1) AS nombre_archivo FROM fac_docs  JOIN erp_proceso ON erp_proceso.id=fac_docs.proceso_id JOIN  fac_cfds ON fac_cfds.proceso_id= erp_proceso.id WHERE fac_docs.id="+id_factura+" ORDER BY fac_cfds.id DESC LIMIT 1;";
@@ -1476,11 +1507,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     @Override
-    public String getSerieFolioFacturaByIdPrefactura(Integer id_prefactura) {
+    public String getSerieFolioFacturaByIdPrefactura(Integer id_prefactura, Integer idEmp) {
         String sql_to_query="";
         
         //obtener tipo de facturacion
-        String tipo_facturacion = getTipoFacturacion();
+        String tipo_facturacion = getTipoFacturacion(idEmp);
         
         if(tipo_facturacion.equals("cfd")){
             //para facturacion tipo CFD

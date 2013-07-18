@@ -331,6 +331,27 @@ public class GralSpringDao implements GralInterfaceDao{
         return fichero;
     }
 
+    
+    
+    //Este metodo es para obtener el usuario del contrato de servisim
+    @Override
+    public String getUserContrato(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.usuario FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String usuario = map.get("usuario").toString();
+        return usuario;
+    }
+    
+    //Este metodo es para obtener la contraseña asignada al usuario por servisim
+    @Override
+    public String getPasswordUserContrato(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf.contrasena FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String contrasena = map.get("contrasena").toString();
+        return contrasena;
+    }
+    
+    
 /*
     @Override
     public String getFicheroXsdTimbreFiscalDigital(Integer id_empresa, Integer id_sucursal) {

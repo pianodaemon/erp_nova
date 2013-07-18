@@ -482,7 +482,7 @@ public class NotasCreditoController {
                     String proposito = "NOTA_CREDITO";
                     
                     //obtener tipo de facturacion
-                    tipo_facturacion = this.getFacdao().getTipoFacturacion();
+                    tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
                     
                     //System.out.println("tipo_facturacion:::"+tipo_facturacion);
                     
@@ -578,16 +578,8 @@ public class NotasCreditoController {
                         this.getBfcfdi().init(dataCliente, listaConceptos,impRetenidos,impTrasladados, leyendas, proposito,datosExtras, id_empresa, id_sucursal);
                         this.getBfcfdi().start();
                         
-                        
                         //aqui se debe actializar el registro
-                        data_string = 
-                                app_selected+"___"+
-                                command_selected+"___"+
-                                id_usuario+"___"+
-                                id_nota_credito+"___"+
-                                Serie+Folio+"___"+
-                                fac_saldado;
-                       
+                        data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado;
                         
                         actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
                         
@@ -641,17 +633,11 @@ public class NotasCreditoController {
                         //System.out.println("timbrado_correcto:"+timbrado_correcto);
                         /***********************************************/
                         //aqui se checa si el xml fue validado correctamente
-                        //si fue correcto debe traer un valor "true", de otra manera trae un error y ppor lo tanto no se genera el pdf
+                        //si fue correcto debe traer un valor "true", de otra manera trae un error y por lo tanto no se genera el pdf
                         if(timbrado_correcto.equals("true")){
                             //System.out.println("timbrado_correcto dentro:"+timbrado_correcto);
                             //aqui se debe actializar el registro
-                            data_string = 
-                                app_selected+"___"+
-                                command_selected+"___"+
-                                id_usuario+"___"+
-                                id_nota_credito+"___"+
-                                Serie+Folio+"___"+
-                                fac_saldado;
+                            data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado;
                             
                             actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
                             
@@ -680,7 +666,6 @@ public class NotasCreditoController {
                             
                             //conceptos para el pdfcfd
                             listaConceptosPdf = this.getFacdao().getNotaCreditoCfd_ListaConceptosPdf(serieFolio);
-                            
                             
                             //datos para el pdf
                             datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
@@ -757,7 +742,7 @@ public class NotasCreditoController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
@@ -815,7 +800,7 @@ public class NotasCreditoController {
         String tipo_facturacion="";
         
         //obtener tipo de facturacion
-        tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota+"___"+motivo_cancelacion.toUpperCase()+"___"+tipo_facturacion;
         
@@ -960,7 +945,7 @@ public class NotasCreditoController {
         
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
@@ -1018,7 +1003,7 @@ public class NotasCreditoController {
         
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);

@@ -435,7 +435,7 @@ public class FacDevolucionesController {
                     String proposito = "NOTA_CREDITO";
                     
                     //obtener tipo de facturacion
-                    tipo_facturacion = this.getFacdao().getTipoFacturacion();
+                    tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
                     
                     //System.out.println("tipo_facturacion:::"+tipo_facturacion);
                     //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la Nota de Credito

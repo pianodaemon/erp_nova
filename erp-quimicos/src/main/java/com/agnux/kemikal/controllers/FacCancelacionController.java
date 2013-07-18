@@ -345,9 +345,9 @@ public class FacCancelacionController {
         validacion = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         if(validacion.get("success").equals("true")){
             
-            tipo_facturacion = this.getFacdao().getTipoFacturacion();
+            tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
             System.out.println("tipo_facturacion:::"+tipo_facturacion);
-            serie_folio = this.getFacdao().getSerieFolioFactura(id_factura);
+            serie_folio = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
             
             if(tipo_facturacion.equals("cfd") ){
                 succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);//llamada al procedimiento para cancelacion
@@ -425,9 +425,7 @@ public class FacCancelacionController {
                         
                         resultado = Runtime.getRuntime().exec(str_execute);
                         
-                        
                         InputStream myInputStream=null;
-                        
                         myInputStream= resultado.getInputStream();
                         
                         BufferedReader reader = new BufferedReader(new InputStreamReader(myInputStream));
@@ -441,6 +439,7 @@ public class FacCancelacionController {
                         System.out.println("Resultado: "+sb.toString());
                         
                         String result = "Error diverza";
+                        
                         Integer errorcode = Integer.parseInt(sb.toString());
                         switch(errorcode){
                             case 0:
@@ -470,6 +469,7 @@ public class FacCancelacionController {
                                 System.out.println("serie_folio:"+serie_folio + "    Cancelado:"+succcess.split(":")[1]);
                             }
                         }
+                        
                         jsonretorno.put("success", succcess);
                         jsonretorno.put("msj", result);
                     } catch (IOException ex) {

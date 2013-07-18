@@ -350,9 +350,9 @@ public class FacturasController {
         validacion = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         if(validacion.get("success").equals("true")){
             
-            tipo_facturacion = this.getFacdao().getTipoFacturacion();
+            tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
             System.out.println("tipo_facturacion:::"+tipo_facturacion);
-            serie_folio = this.getFacdao().getSerieFolioFactura(id_factura);
+            serie_folio = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
             
             if(tipo_facturacion.equals("cfd") ){
                 succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);//llamada al procedimiento para cancelacion
@@ -593,7 +593,7 @@ public class FacturasController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
@@ -651,7 +651,7 @@ public class FacturasController {
         
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
@@ -665,7 +665,7 @@ public class FacturasController {
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
-        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura);
+        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
         
         
         String fileout = dirSalidas + "/" + nombre_archivo +".pdf";
@@ -713,7 +713,7 @@ public class FacturasController {
         
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
@@ -727,7 +727,7 @@ public class FacturasController {
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
-        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura);
+        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
         
         //ruta completa del archivo a descargar
         String fileout = dirSalidas + "/" + nombre_archivo +".xml";
@@ -787,8 +787,8 @@ public class FacturasController {
         String rfcEmpresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
-        String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura);
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
+        String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
         Integer id_prefactura = this.getFacdao().getIdPrefacturaByIdFactura(id_factura);
         
         //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura

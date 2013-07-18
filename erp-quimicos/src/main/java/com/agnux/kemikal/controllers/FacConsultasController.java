@@ -396,7 +396,7 @@ public class FacConsultasController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
@@ -454,7 +454,7 @@ public class FacConsultasController {
         
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
@@ -468,7 +468,7 @@ public class FacConsultasController {
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
-        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura);
+        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
         
         
         String fileout = dirSalidas + "/" + nombre_archivo +".pdf";
@@ -516,7 +516,7 @@ public class FacConsultasController {
         
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
@@ -530,7 +530,7 @@ public class FacConsultasController {
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
-        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura);
+        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
         
         //ruta completa del archivo a descargar
         String fileout = dirSalidas + "/" + nombre_archivo +".xml";
@@ -590,8 +590,8 @@ public class FacConsultasController {
         String rfcEmpresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         
         //obtener tipo de facturacion
-        String tipo_facturacion = this.getFacdao().getTipoFacturacion();
-        String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura);
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
+        String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
         Integer id_prefactura = this.getFacdao().getIdPrefacturaByIdFactura(id_factura);
         
         //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura

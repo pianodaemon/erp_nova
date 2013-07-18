@@ -215,7 +215,11 @@ public class BeanFacturadorCfdiTimbre {
      */
     
     public String start() throws Exception {
-        String retorno="false";
+            String retorno="false";
+            String msj="false";
+            
+            //Este es el msj por default si no entra en ninguna de las condiciones
+            retorno = retorno +"___"+msj;
             
             String comprobante_firmado = this.generarComprobanteFirmado();
             //System.out.println("timbrado_correcto: "+comprobante_firmado);
@@ -258,59 +262,73 @@ public class BeanFacturadorCfdiTimbre {
                 //System.out.println("str_executex :"+success);
                 //si la validación es correcta
                 if(success.equals("true")){
-                    
                     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                     //aqui inicia request al webservice
                     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                    String noPac = this.getDatosExtras().get("noPac");
+                    String ambienteFac = this.getDatosExtras().get("ambienteFac");
+                    String tipo_peticion="timbrecfdi";
                     String ruta_ejecutable_java = this.getGralDao().getJavaVmDir(this.getId_empresa(), this.getId_sucursal());
                     String ruta_jarWebService = this.getGralDao().getCfdiTimbreJarWsDir()+"wscli.jar";
-                    String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa())+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal()) ;
-                    String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal());
-                    String ruta_java_almacen_certificados = this.getGralDao().getJavaRutaCacerts(this.getId_empresa(), this.getId_sucursal());
-                    String tipo="xml";
-                    String version="3.2";
                     String serie_folio = pop.getSerie() + pop.getFolio();
                     String refId=serie_folio;
+                    String str_execute="";
                     
-                    /*   
-                    //estos son los parametros que necesita el jar para establecer la conexion con el web service
+                    //Timbrado con DIVERZA
+                    if(noPac.equals("1")){
+                        /*   
+                        //estos son los parametros que necesita el jar para establecer la conexion con el web service
                         //Datos para timbtado
-                        args[0] = tipo_peticion
-                        args[1] = FicheroPfxTimbradoCfdi
-                        args[2] = PasswdFicheroPfxTimbradoCfdi
-                        args[3] = JavaVmDirCerts
-                        args[4] = path_file
-                        args[5] = xml_file_name
-                        args[6] = tipo
-                        args[7] = version
-                        args[8] = getRfc_emisor
-                        args[9] = getRfc_receptor
-                        args[10] = Serie
-                        args[11] = RefID
-                    12= Ruta del ejecutable de java
-                    */
+                        args[0] = PAC proveedor
+                        args[1] = tipo de ambiente(pruebas, produccion)
+                        args[2] = tipo_peticion
+                        args[3] = FicheroPfxTimbradoCfdi
+                        args[4] = PasswdFicheroPfxTimbradoCfdi
+                        args[5] = JavaVmDirCerts
+                        args[6] = path_file
+                        args[7] = xml_file_name
+                        args[8] = tipo
+                        args[9] = version
+                        args[10] = getRfc_emisor
+                        args[11] = getRfc_receptor
+                        args[12] = Serie
+                        args[13] = RefID
+                         */
+                        String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + this.getGralDao().getRfcEmpresaEmisora(this.getId_empresa())+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal()) ;
+                        String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(this.getId_empresa(), this.getId_sucursal());
+                        String ruta_java_almacen_certificados = this.getGralDao().getJavaRutaCacerts(this.getId_empresa(), this.getId_sucursal());
+                        String tipo="xml";
+                        String version="3.2";
+                        
+                        //aqui se forma la cadena con los parametros que se le pasan a jar
+                        str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "+noPac+" "+ambienteFac+" "+tipo_peticion+ " "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+path_file+" "+xml_file_name+" "+tipo+" "+version+" "+this.getRfc_emisor()+" "+pop.getRfc_receptor()+" "+serie_folio+" "+refId;
+                    }
                     
+                    //Timbrado con SERVISIM
+                    if(noPac.equals("2")){
+                        /*
+                        args[0] = PAC proveedor
+                        args[1] = tipo de ambiente(pruebas, produccion)
+                        args[2] = tipo_peticion(cancelacion, timbrado)
+                        args[3] = Usuario
+                        args[4] = Password
+                        args[5] = dir_fichero_xml
+                        args[6] = name_fichero_xml(serie_folio.xml)
+                        args[7] = refId
+                        */
+                        
+                        String usuario = this.getGralDao().getUserContrato(this.getId_empresa(), this.getId_sucursal());
+                        String contrasena = this.getGralDao().getPasswordUserContrato(this.getId_empresa(), this.getId_sucursal());
+                        
+                        //aqui se forma la cadena con los parametros que se le pasan a jar
+                        str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "+noPac+" "+ambienteFac+" "+tipo_peticion+ " "+usuario+" "+contrasena+" "+path_file+" "+xml_file_name+" "+refId;
+                    }
                     
-                    //aqui se forma la cadena con los parametros que se le pasan a jar
-                    String str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "
-                            + "timbrecfdi "+
-                            ruta_fichero_llave_pfx+" "+
-                            password_pfx+" "+
-                            ruta_java_almacen_certificados+" "+
-                            path_file+" "+
-                            xml_file_name+" "+
-                            tipo+" "+
-                            version+" "+
-                            this.getRfc_emisor()+" "+
-                            pop.getRfc_receptor()+" "+
-                            serie_folio+" "+
-                            refId;
-                    //System.out.println("str_execute :"+str_execute);
+                    System.out.println("str_execute :"+str_execute);
                     
                     Process resultado = Runtime.getRuntime().exec(str_execute); 
                     
                     InputStream myInputStream=null;
-                    
                     myInputStream= resultado.getInputStream();
                     
                     BufferedReader reader = new BufferedReader(new InputStreamReader(myInputStream));
@@ -321,9 +339,19 @@ public class BeanFacturadorCfdiTimbre {
                     }
                     myInputStream.close();
                     
-                    System.out.println("Resultado: "+sb.toString());
                     
-                    if(sb.toString().equals("true")){
+                    String cadenaResult = new String();
+                    String valor1 = new String();
+                    cadenaResult = sb.toString();
+                    String arrayResult[] = sb.toString().split("___");
+                    //toma el valor true o false
+                    valor1 = arrayResult[0];
+                    //toma el mensaje
+                    msj = arrayResult[2];
+                    
+                    System.out.println("Resultado: "+cadenaResult);
+                    
+                    if(valor1.equals("true")){
                         //:::Si llegó aquí es que el request al webservice nos devolvio correctamente el timbre fiscal::::::::
                         //:::Ahora procederemos a guardar los datos a la bd:::::::::::::::::::::::::::::::::::::::::::::::::::
                         
@@ -381,47 +409,34 @@ public class BeanFacturadorCfdiTimbre {
                                 //llamada al procedimiento que guarda los datos de la factura
                                 String ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
                                 
-                                retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
+                                //éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
+                                valor1="true";
+                                //msj="Se guardo con exito en la BD";
                                 
-                                break;
-                                
+                            break;
                                 
                             case NOTA_CREDITO:
-                                
-                                    /*
-                                    prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
-                                    refacturar = this.getDatosExtras().get("refacturar");
-                                    id_moneda = this.getDatosExtras().get("moneda_id");
-                                    
-                                    data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()
-                                            +"___"+pop.getSerie()+"___"+pop.getFolio()+"___"+no_aprobacion+"___"+pop.getTotal()+"___"
-                                            +pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()
-                                            +"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()
-                                            +"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos
-                                            +"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"
-                                            +metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
-                                    
-                                    //llamada al procedimiento que guarda los datos de la factura
-                                    ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
-                                    */
-                            
-                            retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
-                            
+                                System.out.println("LLego en Nota de Credito");
+                                retorno="true";//éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
                             break;
-                                    
                         }
                     }
                     
                     //retorna el error o "true" si el timbrado tuvo exito
-                    retorno = sb.toString();
+                    retorno = valor1+"___"+msj;
                     
                 }else{
                     //finalizar el programa y retornar el error de la validacion del xml.
+                    retorno = "false"+"___"+success;
+                    
                     return retorno;
                 }
                 
             } else {
-                throw new Exception("Falló al generar fichero xml: " + xml_file_name);
+                retorno = "false"+"___"+"Falló al generar fichero xml antes del enviar a timbrar, intente de nuevo.";
+                
+                return retorno;
+                //throw new Exception("Falló al generar fichero xml: " + xml_file_name);
             }
             
             
