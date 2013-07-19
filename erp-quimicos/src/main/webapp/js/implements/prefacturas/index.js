@@ -2064,77 +2064,12 @@ $(function() {
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
-						$('#forma-prefacturas-window').find('div.interrogacion').css({'display':'none'});
-						
-						//factura
-						if( parseInt($select_tipo_documento.val()) == 1 ){
 							
-							jAlert("Se gener&oacute; la Factura: "+data['folio'], 'Atencion!');
+							$('#forma-prefacturas-window').find('div.interrogacion').css({'display':'none'});
 							
-							$no_cliente.attr('disabled','-1'); //deshabilitar
-							$razon_cliente.attr('disabled','-1'); //deshabilitar
-							$observaciones.attr('disabled','-1'); //deshabilitar
-							$select_moneda.attr('disabled','-1'); //deshabilitar
-							$tipo_cambio.attr('disabled','-1'); //deshabilitar
-							$select_vendedor.attr('disabled','-1'); //deshabilitar
-							$select_condiciones.attr('disabled','-1'); //deshabilitar
-							//$sku_producto.attr('disabled','-1'); //deshabilitar
-							//$nombre_producto.attr('disabled','-1'); //deshabilitar
-							$grid_productos.find('#cant').attr("readonly", true);//establece solo lectura campos cantidad del grid
-							$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid
-							$grid_productos.find('#cant').attr('disabled','-1'); //deshabilitar
-							$grid_productos.find('#cost').attr('disabled','-1'); //deshabilitar
-							$grid_productos.find('a').hide();//ocultar
-							$orden_compra.attr('disabled','-1'); //deshabilitar
-							$select_metodo_pago.attr('disabled','-1'); //deshabilitar
-							$select_metodo_pago_original.attr('disabled','-1'); //deshabilitar
-							$select_almacen.attr('disabled','-1'); //deshabilitar
-							//$busca_sku.hide();
-							//$agregar_producto.hide();
-							$boton_facturar.hide();
+							jAlert(data['msj'], 'Atencion!');
 							
-						}
-						
-						
-						//remision
-						if( parseInt($select_tipo_documento.val()) == 2 ){
-							
-							jAlert("Se gener&oacute; la Remisi&oacute;n con Folio: "+data['folio'], 'Atencion!');
-							
-							$no_cliente.attr('disabled','-1'); //deshabilitar
-							$razon_cliente.attr('disabled','-1'); //deshabilitar
-							$observaciones.attr('disabled','-1'); //deshabilitar
-							$select_moneda.attr('disabled','-1'); //deshabilitar
-							$tipo_cambio.attr('disabled','-1'); //deshabilitar
-							$select_vendedor.attr('disabled','-1'); //deshabilitar
-							$select_condiciones.attr('disabled','-1'); //deshabilitar
-							//$sku_producto.attr('disabled','-1'); //deshabilitar
-							//$nombre_producto.attr('disabled','-1'); //deshabilitar
-							$grid_productos.find('#cant').attr("readonly", true);//establece solo lectura campos cantidad del grid
-							$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid
-							$grid_productos.find('#cant').attr('disabled','-1'); //deshabilitar
-							$grid_productos.find('#cost').attr('disabled','-1'); //deshabilitar
-							$grid_productos.find('a').hide();//ocultar
-							$orden_compra.attr('disabled','-1'); //deshabilitar
-							$select_metodo_pago.attr('disabled','-1'); //deshabilitar
-							$select_metodo_pago_original.attr('disabled','-1'); //deshabilitar
-							$select_almacen.attr('disabled','-1'); //deshabilitar
-							
-							//$busca_sku.hide();
-							//$agregar_producto.hide();
-							$boton_facturar.hide();
-						}
-						
-						
-						
-						//guardar nueva prefactura generada con datos de remisiones
-						if( parseInt($select_tipo_documento.val()) == 3 ){
-							//ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
-							$submit_actualizar.hide();
-							$get_datos_grid();
-							if($accion.val() == 'actualizar'){
-								jAlert("Se gener&oacute; la Factura: "+data['folio'], 'Atencion!');
-								
+							if ( data['valor'] == "true" ){
 								$no_cliente.attr('disabled','-1'); //deshabilitar
 								$razon_cliente.attr('disabled','-1'); //deshabilitar
 								$observaciones.attr('disabled','-1'); //deshabilitar
@@ -2153,20 +2088,48 @@ $(function() {
 								$select_metodo_pago.attr('disabled','-1'); //deshabilitar
 								$select_metodo_pago_original.attr('disabled','-1'); //deshabilitar
 								$select_almacen.attr('disabled','-1'); //deshabilitar
-								
 								//$busca_sku.hide();
 								//$agregar_producto.hide();
 								$boton_facturar.hide();
 								
-							}else{
+								//guardar nueva prefactura generada con datos de remisiones
+								if( parseInt($select_tipo_documento.val()) == 3 ){
+									//ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
+									$submit_actualizar.hide();
+								}
 								
-								jAlert("La prefactura se guard&oacute; con &eacute;xito", 'Atencion!');
+								$get_datos_grid();
+								
+								var remove = function() {$(this).remove();};
+								$('#forma-prefacturas-overlay').fadeOut(remove);
 							}
-						}
-						
-						$get_datos_grid();
-						var remove = function() {$(this).remove();};
-						$('#forma-prefacturas-overlay').fadeOut(remove);
+							
+							
+							/*
+							//factura
+							if( parseInt($select_tipo_documento.val()) == 1 ){
+								jAlert("Se gener&oacute; la Factura: "+data['folio'], 'Atencion!');
+							}
+							
+							
+							//remision
+							if( parseInt($select_tipo_documento.val()) == 2 ){
+								jAlert("Se gener&oacute; la Remisi&oacute;n con Folio: "+data['folio'], 'Atencion!');
+							}
+							
+							//guardar nueva prefactura generada con datos de remisiones
+							if( parseInt($select_tipo_documento.val()) == 3 ){
+								//ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
+								$submit_actualizar.hide();
+								$get_datos_grid();
+								if($accion.val() == 'actualizar'){
+									jAlert("Se gener&oacute; la Factura: "+data['folio'], 'Atencion!');
+								}else{
+									jAlert("La prefactura se guard&oacute; con &eacute;xito", 'Atencion!');
+								}
+							}
+							*/
+
 						
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
