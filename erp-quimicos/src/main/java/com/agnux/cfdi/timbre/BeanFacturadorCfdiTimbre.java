@@ -339,6 +339,7 @@ public class BeanFacturadorCfdiTimbre {
                     }
                     myInputStream.close();
                     
+                    //System.out.println("sb.toString: "+sb.toString());
                     
                     String cadenaResult = new String();
                     String valor1 = new String();
@@ -976,7 +977,7 @@ public class BeanFacturadorCfdiTimbre {
         public boolean isMontoDelaOperacionCorrecto(String cadena_a_validar) {
             boolean valor_retorno = false;
             
-            System.err.println("cadena_a_validar:"+cadena_a_validar);
+            //System.err.println("cadena_a_validar:"+cadena_a_validar);
             BigDecimal numero_introducido = new BigDecimal(cadena_a_validar);
             BigDecimal numero_maximo = new BigDecimal("9999999999.99");
             BigDecimal numero_minimo = new BigDecimal("0");

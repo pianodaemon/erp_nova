@@ -843,7 +843,8 @@ public class PrefacturasController {
                                 
                                 jsonretorno.put("folio",serieFolio);
                                 valorRespuesta="true";
-                                msjRespuesta=cadRes[1];
+                                //msjRespuesta=cadRes[1];
+                                msjRespuesta = "Se gener&oacute; la Factura: "+serieFolio;
                                 
                             }else{
                                 valorRespuesta="false";
@@ -855,8 +856,16 @@ public class PrefacturasController {
                         }
                     }
                     
+                }else{
+                    valorRespuesta="true";
+                    msjRespuesta="Se gener&oacute; la Remisi&oacute;n con Folio: "+jsonretorno.get("folio");
                 }
                 
+            }else{
+                if (accion.equals("new") ){
+                    valorRespuesta="true";
+                    msjRespuesta="El registro se gener&oacute; con &eacute;xito, puede proceder a Facturar.";
+                }
             }//termina if accion diferente de new
             
             
@@ -880,11 +889,13 @@ public class PrefacturasController {
         }
         
         jsonretorno.put("success",succes.get("success"));
-        jsonretorno.put("valor",succes.get("valorRespuesta"));
-        jsonretorno.put("msj",succes.get("msjRespuesta"));
+        jsonretorno.put("valor",valorRespuesta);
+        jsonretorno.put("msj",msjRespuesta);
         
         System.out.println("Validacion: "+ String.valueOf(jsonretorno.get("success")));
         System.out.println("Actualizo: "+String.valueOf(jsonretorno.get("actualizo")));
+        System.out.println("valorRespuesta: "+String.valueOf(valorRespuesta));
+        System.out.println("msjRespuesta: "+String.valueOf(msjRespuesta));
         
         
         return jsonretorno;
