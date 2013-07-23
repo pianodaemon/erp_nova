@@ -546,7 +546,7 @@ public class BeanFacturadorCfdiTimbre {
         
         this.setSelloDigital(sello);
         
-        System.out.println("sello emisor1: "+sello);
+        //System.out.println("sello emisor1: "+sello);
         //System.out.println("valor_retorno genera comrobante:"+valor_retorno);
         return valor_retorno;
     }
@@ -561,7 +561,7 @@ public class BeanFacturadorCfdiTimbre {
     private String cadenaOriginal(String comprobante_sin_firmar, Integer id_empresa, Integer id_sucursal) throws Exception {
         String valor_retorno = new String();
         valor_retorno = XmlHelper.transformar(comprobante_sin_firmar, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
-        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
+        //System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXsl(id_empresa, id_sucursal));
         return valor_retorno;
     }
     
@@ -1602,7 +1602,7 @@ public class BeanFacturadorCfdiTimbre {
     
     private String cadenaOriginalTimbre(String comprobante, Integer id_empresa, Integer id_sucursal) throws Exception {
         String valor_retorno = new String();
-        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
+        //System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
         valor_retorno = XmlHelper.transformar(comprobante, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
         
         return valor_retorno;

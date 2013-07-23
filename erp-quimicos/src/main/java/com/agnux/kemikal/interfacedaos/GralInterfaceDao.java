@@ -23,6 +23,7 @@ public interface GralInterfaceDao {
     public String getSslDir();
     public String getCfdEmitidosDir();
     public String getCfdiTimbreEmitidosDir();
+    public String getCfdiTimbreCanceladosDir();
     public String getCfdiTimbreJarWsDir();
     public String getCfdiSolicitudesDir();
     public String getXslDir();

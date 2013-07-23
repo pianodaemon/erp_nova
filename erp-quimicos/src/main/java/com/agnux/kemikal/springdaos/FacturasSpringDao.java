@@ -25,7 +25,9 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author agnux
+ * @author Noé Martinez
+ * gpmarsan@gmail.com
+ * 
  */
 
 public class FacturasSpringDao implements FacturasInterfaceDao{
@@ -132,7 +134,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public String selectFunctionForFacAdmProcesos(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from fac_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         
-        System.out.println("selectFunctionForFacAdmProcesos: "+sql_to_query);
+        //System.out.println("selectFunctionForFacAdmProcesos: "+sql_to_query);
         
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -776,7 +778,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + ") AS sbt";
         
         //System.out.println(sql_query);
-        System.out.println("Obteniendo lista de conceptos: "+sql_query);
+        //System.out.println("Obteniendo lista de conceptos: "+sql_query);
         
         //System.out.println("noIdentificacion "+" | descripcion      "+" | cant"+" | precio_uni"+" | importe"+" | importe_imp"+" | valor_imp"+" | tasa_ret"  );
         
@@ -891,7 +893,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 tasaImpuesto5 = tasa;
                 impuesto5=true;
             }
-            System.out.println("idImpuestoProd:"+idImpuestoProd+" | tasa:"+tasa+" | importe:"+importeImpuestoProd);
+            //System.out.println("idImpuestoProd:"+idImpuestoProd+" | tasa:"+tasa+" | importe:"+importeImpuestoProd);
         }
         
         if(impuesto1 == true){
@@ -900,7 +902,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             impuesto.put("importe", StringHelper.roundDouble(sumaImpuesto1,2));
             impuesto.put("tasa", tasaImpuesto1);
             impuestos.add(impuesto);
-            System.out.println("impuesto1:IVA | tasa:"+tasaImpuesto1+" | importe:"+sumaImpuesto1);
+            //System.out.println("impuesto1:IVA | tasa:"+tasaImpuesto1+" | importe:"+sumaImpuesto1);
         }
         
         if(impuesto2 == true){
@@ -909,7 +911,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             impuesto.put("importe", StringHelper.roundDouble(sumaImpuesto2,2));
             impuesto.put("tasa", tasaImpuesto2);
             impuestos.add(impuesto);
-            System.out.println("impuesto2:IVA | tasa:"+tasaImpuesto2+" | importe:"+sumaImpuesto2);
+            //System.out.println("impuesto2:IVA | tasa:"+tasaImpuesto2+" | importe:"+sumaImpuesto2);
         }
         
         if(impuesto3 == true){
@@ -918,7 +920,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             impuesto.put("importe", StringHelper.roundDouble(sumaImpuesto3,2));
             impuesto.put("tasa", tasaImpuesto3);
             impuestos.add(impuesto);
-            System.out.println("impuesto3:IVA | tasa:"+tasaImpuesto3+" | importe:"+sumaImpuesto3);
+            //System.out.println("impuesto3:IVA | tasa:"+tasaImpuesto3+" | importe:"+sumaImpuesto3);
         }
         
         //esto por si agregan un impuesto mas
@@ -928,7 +930,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             impuesto.put("importe", StringHelper.roundDouble(sumaImpuesto5,2));
             impuesto.put("tasa", tasaImpuesto5);
             impuestos.add(impuesto);
-            System.out.println("impuesto5:IVA | tasa:"+tasaImpuesto5+" | importe:"+sumaImpuesto5);
+            //System.out.println("impuesto5:IVA | tasa:"+tasaImpuesto5+" | importe:"+sumaImpuesto5);
         }
         
         return impuestos;
@@ -985,7 +987,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "JOIN cxc_agen ON cxc_agen.id=fac_docs.cxc_agen_id "
                 + "WHERE  fac_docs.id="+id_factura+";";
         
-        System.out.println("DatosExtrasCfdi: "+sql_to_query);
+        //System.out.println("DatosExtrasCfdi: "+sql_to_query);
         
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         
@@ -1174,7 +1176,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public ArrayList<String> getLeyendasEspecialesCfdi(Integer id_empresa) {
         final ArrayList<String> retorno = new ArrayList<String>();
         String sql_to_query = "SELECT leyenda FROM gral_emp_leyenda WHERE gral_emp_id="+id_empresa+";";
-        System.out.println("getLeyendasEspecialesCfdi:"+sql_to_query);
+        //System.out.println("getLeyendasEspecialesCfdi:"+sql_to_query);
         
         ArrayList<HashMap<String, String>> ret = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1219,7 +1221,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "WHERE erp_prefacturas_detalles.prefacturas_id="+id_prefactura+";";
         
         //System.out.println(sql_query);
-        System.out.println("getListaConceptosXmlCfdiTimbreFiscal: "+sql_query);
+        //System.out.println("getListaConceptosXmlCfdiTimbreFiscal: "+sql_query);
         
         //System.out.println("noIdentificacion "+" | descripcion      "+" | cant"+" | precio_uni"+" | importe"+" | importe_imp"+" | valor_imp"+" | tasa_ret"  );
         
@@ -1528,7 +1530,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             sql_to_query = "SELECT fac_docs.serie_folio FROM erp_prefacturas  JOIN  fac_docs ON fac_docs.proceso_id=erp_prefacturas.proceso_id WHERE erp_prefacturas.id="+id_prefactura+" AND fac_docs.cancelado=false ORDER BY fac_docs.id DESC LIMIT 1;";
         }
         
-        System.out.println("GetSerieFolio:"+sql_to_query);
+        //System.out.println("GetSerieFolio:"+sql_to_query);
         Map<String, Object> map_iva = this.getJdbcTemplate().queryForMap(sql_to_query);
         String serie_folio = map_iva.get("serie_folio").toString();
         return serie_folio;
@@ -1730,7 +1732,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "AND (to_char(fac_docs.momento_creacion,'yyyymmdd') BETWEEN  to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd') AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')) "
                     + "ORDER BY fac_docs.id;";
             
-        System.out.println("ReporteFacturacion:: "+sql_to_query);
+        //System.out.println("ReporteFacturacion:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1818,7 +1820,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "AND (to_char(fac_rems.momento_creacion,'yyyymmdd') BETWEEN  to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd') AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')) "
                     + "ORDER BY fac_rems.id;";
             
-        System.out.println("getDatosReporteRemision:: "+sql_to_query);
+        //System.out.println("getDatosReporteRemision:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_remisiones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1892,7 +1894,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "AND (to_char(fac_rems.momento_creacion,'yyyymmdd')::integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer  AND to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer ) "
                 + "ORDER BY fac_rems.id; ";
         
-        System.out.println("getDatosReporteRemision_facturada:: "+sql_to_query);
+        //System.out.println("getDatosReporteRemision_facturada:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_remisiones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2174,7 +2176,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 +") AS sbt "
                 +"LEFT JOIN gral_mon ON gral_mon.id=sbt.moneda_id LIMIT 1;";
 
-        System.out.println("getDatosCliente: "+sql_query);
+        //System.out.println("getDatosCliente: "+sql_query);
         
         ArrayList<HashMap<String, String>> hm_cli = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -2307,7 +2309,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "WHERE id="+id_nota_credito;
                 
         //System.out.println(sql_query);
-        System.out.println("Obteniendo lista de conceptos: "+sql_query);
+        //System.out.println("Obteniendo lista de conceptos: "+sql_query);
         
         ArrayList<LinkedHashMap<String, String>> hm_conceptos = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -2411,7 +2413,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_nota_credito.cxc_clie_df_id "
                 + "WHERE fac_nota_credito.id="+id_nota_credito;
         
-        System.out.println("sql_to_query"+sql_to_query);
+        //System.out.println("sql_to_query"+sql_to_query);
         
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
         
@@ -2734,7 +2736,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     @Override
     public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdi_ImpuestosTrasladados(Integer id_nota_credito) {
         String sql_to_query = "SELECT impuesto,valor_impuesto FROM fac_nota_credito WHERE  id="+id_nota_credito+" AND impuesto >0 AND impuesto IS NOT NULL;";
-        System.out.println("sql_to_query imp tras:"+sql_to_query);
+        //System.out.println("sql_to_query imp tras:"+sql_to_query);
         
         ArrayList<LinkedHashMap<String, String>> tras = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -2760,7 +2762,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdi_ImpuestosRetenidos(Integer id_nota_credito) {
         String sql_to_query = "SELECT monto_retencion, tasa_retencion_immex as tasa FROM fac_nota_credito WHERE id="+id_nota_credito+"  AND monto_retencion >0 AND monto_retencion IS NOT NULL;";
         
-        System.out.println("sql_to_query retenidos:"+sql_to_query);
+        //System.out.println("sql_to_query retenidos:"+sql_to_query);
         ArrayList<LinkedHashMap<String, String>> ret = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2837,7 +2839,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 
         
         //System.out.println(sql_query);
-        System.out.println("getListaConceptosXmlCfdiTimbreFiscal: "+sql_query);
+        //System.out.println("getListaConceptosXmlCfdiTimbreFiscal: "+sql_query);
         
         //System.out.println("noIdentificacion "+" | descripcion      "+" | cant"+" | precio_uni"+" | importe"+" | importe_imp"+" | valor_imp"+" | tasa_ret"  );
         

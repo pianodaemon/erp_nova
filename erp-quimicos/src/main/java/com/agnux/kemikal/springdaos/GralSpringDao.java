@@ -21,115 +21,120 @@ import org.springframework.jdbc.core.RowMapper;
  */
 public class GralSpringDao implements GralInterfaceDao{
     private JdbcTemplate jdbcTemplate;
-
+    
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }
-
+    
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+    
     @Override
     public String getCfdEmitidosDir() {
         String cfdemitidosdir = System.getenv("HOME") + "/" + "resources" + "/"+"cfd" + "/"+"emitidos" + "/";
         return cfdemitidosdir;
     }
-
+    
     @Override
     public String getCfdiSolicitudesDir() {
         String cfdemitidosdir = System.getenv("HOME") + "/" + "resources" + "/"+"cfdi" + "/"+"solicitudes" + "/";
         return cfdemitidosdir;
     }
-
+    
     @Override
     public String getJvmTmpDir() {
         String jvmtmpdir = System.getProperty("java.io.tmpdir");
         return jvmtmpdir;
     }
-
+    
     @Override
     public String getProdImgDir() {
         String xsldir = System.getenv("HOME") + "/resources/productos/img/";
         return xsldir;
     }
-
+    
     @Override
     public String getProdPdfDir() {
         String xsldir = System.getenv("HOME") + "/resources/productos/pdf/";
         return xsldir;
     }
-
+    
     @Override
     public String getCfdiTimbreEmitidosDir() {
         String cfditimbreemitidosdir = System.getenv("HOME") + "/" + "resources" + "/"+"cfdi" + "/"+"timbre" + "/" + "emitidos" + "/";
         return cfditimbreemitidosdir;
     }
-
+    
+    @Override
+    public String getCfdiTimbreCanceladosDir() {
+        String cfditimbreemitidosdir = System.getenv("HOME") + "/" + "resources" + "/"+"cfdi" + "/"+"timbre" + "/" + "cancelados" + "/";
+        return cfditimbreemitidosdir;
+    }
+    
     @Override
     public String getCfdiTimbreJarWsDir() {
         String cfditimbrejarwsdir = System.getenv("HOME") + "/" + "resources" + "/"+"cfdi" + "/"+"timbre" + "/" + "jarwscli" + "/";
         return cfditimbrejarwsdir;
     }
-
+    
     @Override
     public String getImagesDir() {
         String imagesdir = System.getenv("HOME") + "/" + "resources" + "/"+"images" + "/";
         return imagesdir;
     }
-
+    
     @Override
     public String getSslDir() {
         String ssldir = System.getenv("HOME") + "/" + "resources" + "/"+"ssl" + "/";
         //System.out.println(ssldir);
         return ssldir;
     }
-
+    
     @Override
     public String getXslDir() {
         String xsldir = System.getenv("HOME") + "/" + "resources" +"/"+"schemas" + "/"+"xsl" + "/";
         //System.out.println(xsldir);
         return xsldir;
     }
-
+    
     @Override
     public String getXsdDir() {
         String xsddir = System.getenv("HOME") + "/" + "resources" +"/"+"schemas" + "/"+"xsd" + "/";
         //System.out.println(xsddir);
         return xsddir;
     }
-
+    
     @Override
     public String getTmpDir() {
         String xsldir = System.getenv("HOME") + "/" + "resources" + "/"+"tmp" + "/";
         return xsldir;
     }
-
+    
     @Override
     public String getZebraDir() {
         String zebradir = System.getenv("HOME") + "/" + "resources" + "/"+"zebra";
         return zebradir;
     }
-
+    
     @Override
     public String getZebraInDir() {
         String zebradir = this.getZebraDir()+ "/"+"in";
         return zebradir;
     }
-
-
+    
     @Override
     public String getZebraOutDir() {
         String zebradir = this.getZebraDir()+ "/"+"out";
         return zebradir;
     }
-
+    
     @Override
     public String getZebraProcessingDir() {
         String zebradir = this.getZebraDir()+ "/"+"processing";
         return zebradir;
     }
-
+    
     @Override
     public String getEmpresa_IncluyeModContable(Integer id_empresa){
         String sql_to_query = "SELECT incluye_contabilidad FROM gral_emp WHERE id="+id_empresa;
@@ -142,10 +147,10 @@ public class GralSpringDao implements GralInterfaceDao{
 
         return incluye_contabilidad;
     }
-
-
-
-
+    
+    
+    
+    
     @Override
     public String getEmpresa_NivelCta(Integer id_empresa){
         String sql_to_query = "SELECT nivel_cta FROM gral_emp WHERE id="+id_empresa;
@@ -158,11 +163,11 @@ public class GralSpringDao implements GralInterfaceDao{
 
         return nivel_cta;
     }
-
-
-
-
-
+    
+    
+    
+    
+    
     @Override
     public String getRazonSocialEmpresaEmisora(Integer id_empresa){
         String sql_to_query = "SELECT titulo FROM gral_emp WHERE id ="+id_empresa;

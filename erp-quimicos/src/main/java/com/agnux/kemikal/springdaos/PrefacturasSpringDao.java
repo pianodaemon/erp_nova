@@ -18,6 +18,8 @@ import java.util.Map;
 /**
  *
  * @author Noe Martinez
+ * gpmarsan@gmail.com
+ * 
  */
 public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     
@@ -59,7 +61,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
         //String sql_to_query = "select * from gral_adm_catalogos('"+campos_data+"',array["+extra_data_array+"]);";
         String sql_to_query = "select * from fac_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         
-        System.out.println("Ejacutando Guardar:"+sql_to_query);
+        //System.out.println("Ejacutando Guardar:"+sql_to_query);
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         //return update;
         String valor_retorno="";

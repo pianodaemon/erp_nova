@@ -106,8 +106,11 @@ public class PdfProOrdenProduccionLaboratorio {
             celdaX.setBorderWidthLeft(0);
             tablaX.addCell(celdaX);
             
+            String fe[] = datos.get("fecha_elavorar").split("-");
+            String fechaElab= fe[2]+"/"+fe[1]+"/"+fe[0];
+            
             //columna 5-6 fill 2
-            celdaX = new PdfPCell(new Paragraph("Fecha: "+datos.get("fecha_elavorar"),fuentenegrita));
+            celdaX = new PdfPCell(new Paragraph("Fecha: "+fechaElab,fuentenegrita));
             celdaX.setBorderWidthBottom(1);
             celdaX.setBorderWidthTop(0);
             celdaX.setBorderWidthRight(0);
@@ -118,7 +121,7 @@ public class PdfProOrdenProduccionLaboratorio {
             
             //Inicia fila 3 Nombre de el producto
             //columna 1-2 fill 3
-            celdaX = new PdfPCell(new Paragraph("Nombre del producto: ",fuentenegrita));
+            celdaX = new PdfPCell(new Paragraph("Nombre del Diseño: ",fuentenegrita));
             celdaX.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdaX.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celdaX.setBorderWidthBottom(0);
@@ -129,7 +132,7 @@ public class PdfProOrdenProduccionLaboratorio {
             tablaX.addCell(celdaX);
             
             //columna 3-6 fill 3
-            celdaX = new PdfPCell(new Paragraph("Fecha: "+datos.get("fecha_elavorar"),fuentenegrita));
+            celdaX = new PdfPCell(new Paragraph(datos.get("sku")+"  "+datos.get("descripcion"),fuentenegrita));
             celdaX.setBorderWidthBottom(1);
             celdaX.setBorderWidthTop(0);
             celdaX.setBorderWidthRight(0);
@@ -185,7 +188,7 @@ public class PdfProOrdenProduccionLaboratorio {
             
             //Inicia fila 6 Comentario
             //columna 1-2 fill 6
-            celdaX = new PdfPCell(new Paragraph("Comentario: ",fuentenegrita));
+            celdaX = new PdfPCell(new Paragraph("Observaciones: ",fuentenegrita));
             celdaX.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdaX.setVerticalAlignment(Element.ALIGN_MIDDLE);
             celdaX.setBorderWidthBottom(0);
@@ -519,10 +522,10 @@ public class PdfProOrdenProduccionLaboratorio {
                 }
                 num_mp_tmp++;
             }
-            //System.out.println("antes de pdf 2   cols"+cols+"      with_total:"+with_total);
+            System.out.println("antes de pdf 2   num_cols"+cols+"      with_total:"+with_total);
+            
             with_col = (float)(6/cols);
             float tam_tablay[] = new float[(int)(2+cols+2)];
-            float[] hola;
             
             //System.out.println("antes de pdf 3   cols"+cols+"      with_total:"+with_total);
             tam_tablay[0] = 1f;
@@ -531,7 +534,7 @@ public class PdfProOrdenProduccionLaboratorio {
             
             //System.out.println("antes de pdf 2   with_total:"+with_total);
             for(int i = 1; i <= cols; i++){
-                //System.out.println("antes de pdf 2   with_total:"+1);
+                System.out.println("antes de pdf 2   with_total:"+i);
                 tam_tablay[1+i] = with_col;
             }
             
@@ -574,7 +577,7 @@ public class PdfProOrdenProduccionLaboratorio {
             //System.out.println("Inicia lista d eproductos2");
             
             for(int i = 1; i <= cols; i++){
-                //System.out.println("Inicia lista d eproductos i -"+i);
+                System.out.println("Inicia lista d eproductos i="+i);
                 cell = new PdfPCell(new Paragraph(""+i,smallBoldFont));
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -632,6 +635,8 @@ public class PdfProOrdenProduccionLaboratorio {
                 
                 for(int i = 1; i <= cols; i++){
                     
+                    System.out.println("cols i="+i);
+                    
                     int encontro = 0;
                     for (int j=0;j< productos_version.size();j++){
                         
@@ -639,6 +644,9 @@ public class PdfProOrdenProduccionLaboratorio {
                         
                         if((String.valueOf(producto.get("inv_prod_id")).equals(String.valueOf(producto_version.get("inv_prod_id")))) 
                                 && ( Integer.parseInt(producto_version.get("version").toString().split("\\.")[0]) ==  Integer.parseInt(String.valueOf(i))) ){
+                            
+                            
+                            System.out.println(i+" - "+producto.get("inv_prod_id")+"=="+producto_version.get("inv_prod_id")+"  &&  "+Integer.parseInt(producto_version.get("version").toString().split("\\.")[0])+"=="+Integer.parseInt(String.valueOf(i))+"      Cant="+producto_version.get("cantidad_usada"));
                             
                             encontro = 1;
                             
@@ -658,14 +666,13 @@ public class PdfProOrdenProduccionLaboratorio {
                     }
                     
                     if(encontro == 0){
-
+                        System.out.println(i+" - "+"Nada: "+i);
                         cell = new PdfPCell(new Paragraph("",smallFont));
                         cell.setUseAscender(true);
                         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                         cell.setUseDescender(true);
                         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                         table.addCell(cell);
-
                     }
                     
                 }

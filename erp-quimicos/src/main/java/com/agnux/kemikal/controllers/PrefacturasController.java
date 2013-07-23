@@ -544,7 +544,6 @@ public class PrefacturasController {
             @ModelAttribute("user") UserSessionData user
         ) throws Exception {
         
-        System.out.println("Guardar Prefactura");
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
         HashMap<String, String> parametros = new HashMap<String, String>();
@@ -589,7 +588,7 @@ public class PrefacturasController {
         for(int i=0; i<eliminado.length; i++) {
             arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"'";
             //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
-            System.out.println(arreglo[i]);
+            //System.out.println(arreglo[i]);
         }
         
         //serializar el arreglo
@@ -609,10 +608,10 @@ public class PrefacturasController {
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df;
         //System.out.println("data_string: "+data_string);
         
+        System.out.println("::::::::::::Validacion de la Prefactura::::::::::::::::::");
         succes = this.getPdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
-        
-        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        log.log(Level.INFO, "Despues de validacion {0}", String.valueOf(succes.get("success")));
         
         if( String.valueOf(succes.get("success")).equals("true")){
             retorno = this.getPdao().selectFunctionForThisApp(data_string, extra_data_array);
@@ -630,7 +629,7 @@ public class PrefacturasController {
         }
         
         
-        System.out.println("Actualizo::: "+actualizo);
+        System.out.println("::Actualizó:: "+actualizo);
         
         if(actualizo.equals("1")){
             
@@ -642,15 +641,17 @@ public class PrefacturasController {
                     
                     //obtener tipo de facturacion
                     tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
-                    System.out.println("tipo_facturacion:::"+tipo_facturacion);
+                    //System.out.println("tipo_facturacion:::"+tipo_facturacion);
                     
                     //Obtener el numero del PAC para el Timbrado de la Factura
                     String noPac = this.getFacdao().getNoPacFacturacion(id_empresa);
-                    System.out.println("noPac:::"+noPac);
+                    //System.out.println("noPac:::"+noPac);
                     
                     //Obtener el Ambiente de Facturacion PRUEBAS ó PRODUCCION, solo aplica para Facturacion por Timbre FIscal(cfditf)
                     String ambienteFac = this.getFacdao().getAmbienteFacturacion(id_empresa);
-                    System.out.println("ambienteFac:::"+ambienteFac);
+                    //System.out.println("ambienteFac:::"+ambienteFac);
+                    
+                    System.out.println("Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
                     
                     //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
                     parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
@@ -710,6 +711,7 @@ public class PrefacturasController {
                         
                         jsonretorno.put("folio",serieFolio);
                         valorRespuesta="true";
+                        msjRespuesta = "Se gener&oacute; la Factura: "+serieFolio;
                     }
                     
                     
@@ -723,7 +725,7 @@ public class PrefacturasController {
                             //Solo se permite generar Factura por Conector Fiscal con Diverza
                             extra_data_array = "'sin datos'";
                             command_selected="facturar_cfdi";
-
+                            
                             String Serie=this.getGralDao().getSerieFactura(id_empresa, id_sucursal);
                             String Folio=this.getGralDao().getFolioFactura(id_empresa, id_sucursal);
                             rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
@@ -750,15 +752,16 @@ public class PrefacturasController {
                             //generar archivo de texto para cfdi
                             this.getBfCfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
                             this.getBfCfdi().start();
-
+                            
                             //La siguiente línea se comento porque la actualizacion del folio se hace en el procedimiento.
                             //this.getGralDao().actualizarFolioFactura(id_empresa, id_sucursal);
-
+                            
                             jsonretorno.put("folio",Serie+Folio);
                             valorRespuesta="true";
+                            msjRespuesta = "Se gener&oacute; la Factura: "+Serie+Folio;
                         }else{
                             valorRespuesta="false";
-                            msjRespuesta="No se puede facturar por Conector Fiscal con el PAC actual.\nVerifique la configuracion del PAC.";
+                            msjRespuesta="No se puede Facturar por Conector Fiscal con el PAC actual.\nVerifique la configuraci&oacute;n del tipo de Facturaci&oacute;n y del PAC.";
                         }
                         
                     }
@@ -852,7 +855,7 @@ public class PrefacturasController {
                             }
                         }else{
                             valorRespuesta="false";
-                            msjRespuesta="No se puede Timbrar la Factura con el PAC actual.\nVerifique la configuracion del PAC.";
+                            msjRespuesta="No se puede Timbrar la Factura con el PAC actual.\nVerifique la configuraci&oacute;n del tipo de Facturaci&oacute;n y del PAC.";
                         }
                     }
                     
@@ -893,7 +896,7 @@ public class PrefacturasController {
         jsonretorno.put("msj",msjRespuesta);
         
         System.out.println("Validacion: "+ String.valueOf(jsonretorno.get("success")));
-        System.out.println("Actualizo: "+String.valueOf(jsonretorno.get("actualizo")));
+        //System.out.println("Actualizo: "+String.valueOf(jsonretorno.get("actualizo")));
         System.out.println("valorRespuesta: "+String.valueOf(valorRespuesta));
         System.out.println("msjRespuesta: "+String.valueOf(msjRespuesta));
         

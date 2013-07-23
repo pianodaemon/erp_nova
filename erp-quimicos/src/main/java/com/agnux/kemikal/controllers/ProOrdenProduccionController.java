@@ -1243,6 +1243,7 @@ public class ProOrdenProduccionController {
         ArrayList<HashMap<String, Object>> productos_version = new ArrayList<HashMap<String, Object>>();
         
         ArrayList<HashMap<String, String>> datos_orden = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosOrdenDet = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
         
         //decodificar id de usuario
@@ -1267,7 +1268,18 @@ public class ProOrdenProduccionController {
         
         //Obtiene los datos de la orden de produccion
         datos_orden = this.getProDao().getProOrden_Datos(Integer.parseInt(id_orden));
+        datosOrdenDet = this.getProDao().getProOrden_Detalle(Integer.parseInt(id_orden));
+        
         datos.put("fecha", TimeHelper.getFechaActualYMDH());
+        
+        if(datosOrdenDet.size()>0){
+            datos.put("sku", datosOrdenDet.get(0).get("sku"));
+            datos.put("descripcion", datosOrdenDet.get(0).get("descripcion"));
+        }else{
+            datos.put("sku", "");
+            datos.put("descripcion", "");
+        }
+
         
         datos.put("folio", datos_orden.get(0).get("folio"));
         datos.put("fecha_elavorar", datos_orden.get(0).get("fecha_elavorar"));
