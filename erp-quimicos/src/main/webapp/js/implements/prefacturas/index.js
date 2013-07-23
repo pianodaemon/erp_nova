@@ -1650,10 +1650,13 @@ $(function() {
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
-				jAlert("La prefactura se guard&oacute; con &eacute;xito", 'Atencion!');
+				
+				jAlert(data['msj'], 'Atencion!');
+				
 				var remove = function() {$(this).remove();};
 				$('#forma-prefacturas-overlay').fadeOut(remove);
 				$get_datos_grid();
+				
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				//$('#forma-prefacturas-window').find('.div_one').css({'height':'545px'});//sin errores

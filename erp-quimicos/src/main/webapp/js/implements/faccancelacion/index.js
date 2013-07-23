@@ -1170,21 +1170,23 @@ $(function() {
 							$.post(input_json,$arreglo,function(entry){
 								var cad = entry['success'].split(":");
 								
-								if(cad[0]=='false'){
+								if(entry['success'].trim()=='false'){
 									jAlert(entry['msj'], 'Atencion!');
 								}else{
-									
-									if(cad[1]=='false'){
-										jAlert("La factura "+$serie_folio.val()+" tiene pagos aplicados. Es necesario cancelar primeramente los pagos y despues cancelar la factura.", 'Atencion!');
+									if(entry['valor'].trim()=='false'){
+										//jAlert("La factura "+$serie_folio.val()+" tiene pagos aplicados. Es necesario cancelar primeramente los pagos y despues cancelar la factura.", 'Atencion!');
+										jAlert(entry['msj'], 'Atencion!');
 									}else{
 										$boton_cancelarfactura.hide();
-										jAlert("La factura "+$serie_folio.val()+"  se ha cancelado con &eacute;xito", 'Atencion!');
+										//jAlert("La factura "+$serie_folio.val()+"  se ha cancelado con &eacute;xito", 'Atencion!');
+										jAlert(entry['msj'], 'Atencion!');
 										$get_datos_grid();
+										
+										var remove = function() {$(this).remove();};
+										$('#forma-cancelaemision-overlay').fadeOut(remove);
 									}
 								}
 								
-								var remove = function() {$(this).remove();};
-								$('#forma-cancelaemision-overlay').fadeOut(remove);
 							});//termina llamada json
 						}else{
 							jAlert("Es necesario ingresar el motivo de la cancelaci&oacute;n", 'Atencion!');
