@@ -1968,11 +1968,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
                       +"when  sbt.numero_dias_pago > sbt.dias_tope_comision2  AND sbt.numero_dias_pago <= sbt.dias_tope_comision3 THEN sbt.subtotal * (sbt.comision3::double precision / 100::double precision)  "
                       +"ELSE  0.0   "
                   +"end )  AS total_comision_por_fecha, "
-
-
+                
                 +""+monto
-
-
+                
               +"  from ( "
                       +"SELECT  "
                           +"cxc_agen.id AS numero_agente,  "
@@ -1999,16 +1997,16 @@ public class CxcSpringDao implements CxcInterfaceDao{
                           +"to_date(erp_h_facturas.momento_facturacion::text,'yyyy-mm-dd') as momento_creacion,  "
                           +"gral_mon.id as id_moneda "+coma+""
                           +""+cadena_case
-
                       +"FROM erp_h_facturas "
                       +"JOIN cxc_clie ON cxc_clie.id = erp_h_facturas.cliente_id "
                       +"JOIN cxc_agen ON cxc_agen.id= erp_h_facturas.cxc_agen_id "
                       +"JOIN gral_mon ON gral_mon.id = erp_h_facturas.moneda_id  "
-                      +"WHERE erp_h_facturas.pagado=true "+where+" "
+                      +"WHERE erp_h_facturas.pagado=true "
+                      +"AND erp_h_facturas.cancelacion=false "
+                      +""+where+" "
                       +"AND to_char(erp_h_facturas.fecha_ultimo_pago,'yyyymmdd')::integer between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer  "
                       +"AND erp_h_facturas.empresa_id="+id_empresa
                       +"  " +and_montos
-
                 + "  order by nombre_agente asc,moneda_factura, numero_dias_pago asc "//order by nombre_agente asc,moneda_factura, serie_folio asc
               +")AS sbt order by sbt.numero_agente asc, sbt.moneda_factura asc";
 

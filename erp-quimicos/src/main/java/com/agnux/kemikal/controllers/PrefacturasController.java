@@ -641,15 +641,13 @@ public class PrefacturasController {
                     
                     //obtener tipo de facturacion
                     tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
-                    //System.out.println("tipo_facturacion:::"+tipo_facturacion);
+                    tipo_facturacion = String.valueOf(tipo_facturacion);
                     
                     //Obtener el numero del PAC para el Timbrado de la Factura
                     String noPac = this.getFacdao().getNoPacFacturacion(id_empresa);
-                    //System.out.println("noPac:::"+noPac);
                     
                     //Obtener el Ambiente de Facturacion PRUEBAS ó PRODUCCION, solo aplica para Facturacion por Timbre FIscal(cfditf)
                     String ambienteFac = this.getFacdao().getAmbienteFacturacion(id_empresa);
-                    //System.out.println("ambienteFac:::"+ambienteFac);
                     
                     System.out.println("Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
                     

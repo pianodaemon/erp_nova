@@ -349,15 +349,14 @@ public class FacCancelacionController {
             
             tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
             tipo_facturacion = String.valueOf(tipo_facturacion);
-            System.out.println("tipo_facturacion:::"+tipo_facturacion);
             
             //Obtener el numero del PAC para el Timbrado de la Factura
             String noPac = this.getFacdao().getNoPacFacturacion(id_empresa);
-            System.out.println("noPac:::"+noPac);
             
             //Obtener el Ambiente de Facturacion PRUEBAS ó PRODUCCION, solo aplica para Facturacion por Timbre FIscal(cfditf)
             String ambienteFac = this.getFacdao().getAmbienteFacturacion(id_empresa);
-            System.out.println("ambienteFac:::"+ambienteFac);
+            
+            System.out.println("Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
             
             serie_folio = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
             
@@ -380,7 +379,7 @@ public class FacCancelacionController {
                     //Solo se permite Cancelar Factura por Conector Fiscal con Diverza
                 
                     File toFile = new File(this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
-                    System.out.println("FicheroXML: "+this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
+                    //System.out.println("FicheroXML: "+this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
 
                     if (toFile.exists()) {
                         //si el existe el xml, se procede a la cancelacion
@@ -453,6 +452,21 @@ public class FacCancelacionController {
                             
                             //Cancelacion con DIVERZA
                             if(String.valueOf(noPac).equals("1")){
+                                /*
+                                //Datos para cancelacion
+                                args[0] = PAC proveedor
+                                args[1] = tipo de ambiente(pruebas, produccion)
+                                args[2] = tipo_peticion
+                                args[3] = FicheroPfxTimbradoCfdi
+                                args[4] = PasswdFicheroPfxTimbradoCfdi
+                                args[5] = JavaVmDir
+                                args[6] = getRfc_emisor
+                                args[7] = getRfc_receptor
+                                args[8] = uuid
+                                args[9] = DirCancelados
+                                args[10] = serie_folio
+                                 */
+                                
                                 str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "+noPac+" "+ambienteFac+" "+tipo_peticion+" "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+emisor_rfc+" "+receptor_rfc+" "+uuid+" "+rutaCanceladosDir+" "+serie_folio;
                             }
                             
