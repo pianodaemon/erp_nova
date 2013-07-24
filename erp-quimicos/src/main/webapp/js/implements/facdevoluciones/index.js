@@ -646,12 +646,14 @@ $(function() {
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 						$('#forma-facdevoluciones-window').find('div.interrogacion').css({'display':'none'});
-						jAlert("La devoluci&oacute;n se realiz&oacute; con &eacute;xito\nSe gener&oacute; la Nota de Cr&eacute;dito: "+data['folio'], 'Atencion!');
 						
-						var remove = function() {$(this).remove();};
-						$('#forma-facdevoluciones-overlay').fadeOut(remove);
+						jAlert(data['msj'], 'Atencion!');
 						
-						$get_datos_grid();
+						if ( data['valor'] == "true" ){
+							var remove = function() {$(this).remove();};
+							$('#forma-facdevoluciones-overlay').fadeOut(remove);
+							$get_datos_grid();
+						}
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						//$('#forma-facdevoluciones-window').find('.div_one').css({'height':'545px'});//sin errores

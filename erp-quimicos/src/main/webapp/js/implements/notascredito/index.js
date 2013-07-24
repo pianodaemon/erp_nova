@@ -875,10 +875,20 @@ $(function() {
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
+				
+				jAlert(data['msj'], 'Atencion!');
+				
+				if ( data['valor'] == "true" ){
+					$get_datos_grid();
+					var remove = function() {$(this).remove();};
+					$('#forma-notascredito-overlay').fadeOut(remove);
+				}
+				/*
 				jAlert("Los datos se han guardado con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
 				$('#forma-notascredito-overlay').fadeOut(remove);
 				$get_datos_grid();
+				*/
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-notascredito-window').find('div.interrogacion').css({'display':'none'});
@@ -1276,15 +1286,22 @@ $(function() {
 					if ( data['success'] == "true" ){
 						$('#forma-notascredito-window').find('div.interrogacion').css({'display':'none'});
 						
+						jAlert(data['msj'], 'Atencion!');
+						
+						if ( data['valor'] == "true" ){
+							$get_datos_grid();
+							var remove = function() {$(this).remove();};
+							$('#forma-notascredito-overlay').fadeOut(remove);
+						}
+						
+						
+						/*
 						if( $generar.val() == 'true' ){
 							jAlert("Se gener&oacute; la Nota de Cr&eacute;dito: "+data['folio'], 'Atencion!');
 						}else{
 							jAlert("Los datos de la Nota de Cr&eacute;dito se han guardado con &eacute;xito", 'Atencion!');
 						}
-						
-						$get_datos_grid();
-						var remove = function() {$(this).remove();};
-						$('#forma-notascredito-overlay').fadeOut(remove);
+						*/
 						
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
@@ -1599,10 +1616,22 @@ $(function() {
 							$.post(input_json,$arreglo,function(entry){
 								
 								var cad = entry['success'].split(":");
+								
+								jAlert(entry['msj'], 'Atencion!');
+								
+								if(entry['valor']=='true'){
+									$descargar_pdf.attr('disabled','-1');
+									$descargar_xml.attr('disabled','-1');
+									$cancelar_nota_credito.attr('disabled','-1');
+									
+									$get_datos_grid();
+									var remove = function() {$(this).remove();};
+									$('#forma-cancelaemision-overlay').fadeOut(remove);
+								}
+								
+								/*
 								if(cad[1]=='false'){
-									
 									jAlert("No se ha podido cancelar la Nota de Cr&eacute;dito: "+cad[0]+"", 'Atencion!');
-									
 								}else{
 									$descargar_pdf.attr('disabled','-1');
 									$descargar_xml.attr('disabled','-1');
@@ -1613,6 +1642,7 @@ $(function() {
 								
 								var remove = function() {$(this).remove();};
 								$('#forma-cancelaemision-overlay').fadeOut(remove);
+								*/
 							});//termina llamada json
 						}else{
 							jAlert("Es necesario ingresar el motivo de la cancelaci&oacute;n", 'Atencion!');
