@@ -1389,7 +1389,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE AND compras=TRUE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion, descripcion_abr FROM  gral_mon WHERE borrado_logico=FALSE AND compras=TRUE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1399,6 +1399,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("descripcion",rs.getString("descripcion"));
+                    row.put("descripcion_abr",rs.getString("descripcion_abr"));
                     return row;
                 }
             }
@@ -1656,22 +1657,24 @@ public class InvSpringDao implements InvInterfaceDao{
 	if(!sku.equals("")){
 		where=" AND inv_prod.sku ilike '%"+sku+"%'";
 	}
+        
 	if(!tipo.equals("0")){
 		where +=" AND inv_prod.tipo_de_producto_id="+tipo;
 	}
+        
 	if(!descripcion.equals("")){
 		where +=" AND inv_prod.descripcion ilike '%"+descripcion+"%'";
 	}
-
+        
         String sql_to_query = ""
                 + "SELECT "
-				+"inv_prod.id,"
-				+"inv_prod.sku,"
-                                +"inv_prod.descripcion, "
-                                + "inv_prod.unidad_id, "
-                                + "inv_prod_unidades.titulo AS unidad, "
-				+"inv_prod_tipos.titulo AS tipo,"
-                                + "inv_prod_unidades.decimales "
+                    +"inv_prod.id,"
+                    +"inv_prod.sku,"
+                    +"inv_prod.descripcion, "
+                    + "inv_prod.unidad_id, "
+                    + "inv_prod_unidades.titulo AS unidad, "
+                    +"inv_prod_tipos.titulo AS tipo,"
+                    + "inv_prod_unidades.decimales "
 		+"FROM inv_prod "
                 + "LEFT JOIN inv_prod_tipos ON inv_prod_tipos.id=inv_prod.tipo_de_producto_id "
                 + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
@@ -7639,7 +7642,61 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
+    
+    
+    //busca datos de un producto para agregar al grid de Captura de Costos
+    @Override
+    public ArrayList<HashMap<String, String>> getInvCapturaCosto_DatosProducto(String sku, Integer idEmp, Integer mesActual, Integer anoActual) {
 
-
+        String sql_to_query = ""
+                + "SELECT "
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
+                    + "inv_prod.id AS id_prod, "
+                    + "inv_prod.sku AS codigo, "
+                    + "inv_prod.descripcion,"
+                    + "inv_prod_unidades.titulo AS unidad, "
+                    + "inv_prod_unidades.decimales AS no_dec, "
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo_ultimo, "
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc "
+                + "FROM inv_prod "
+                + "LEFT JOIN inv_prod_cost_prom ON inv_prod_cost_prom.inv_prod_id=inv_prod.id "
+                + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
+                + "WHERE inv_prod.empresa_id="+idEmp+" "
+                + "AND inv_prod.borrado_logico=FALSE "
+                + "AND inv_prod_cost_prom.ano="+anoActual+" "
+                + "AND inv_prod.sku='"+sku+"' "
+                + "ORDER BY inv_prod.descripcion;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_reg",String.valueOf(rs.getInt("id_reg")));
+                    row.put("id_prod",String.valueOf(rs.getInt("id_prod")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("costo_ultimo",StringHelper.roundDouble(rs.getString("costo_ultimo"),2));
+                    row.put("idMon",String.valueOf(rs.getInt("idMon")));
+                    row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
 
 }
