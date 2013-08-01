@@ -60,7 +60,7 @@ public class n2t {
                 else
                     num = "un";
                 break;
-        case 0:	num = "";
+        case 0:	num = "cero";
                 break;
         }
 
