@@ -207,7 +207,7 @@ public class InvCapturaCostosController {
             Model model
         ){
         
-        log.log(Level.INFO, "Ejecutando getCostoJson de {0}", InvAjustesController.class.getName());
+        log.log(Level.INFO, "Ejecutando getCostoJson de {0}", InvCapturaCostosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>(); 
@@ -233,8 +233,73 @@ public class InvCapturaCostosController {
     
     
     
+    //obtiene los productos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value = "/getBuscadorProductos.json")
+    public @ResponseBody
+    HashMap<String, ArrayList<HashMap<String, String>>> getBuscadorProductosJson(
+            @RequestParam(value = "sku", required = true) String sku,
+            @RequestParam(value = "tipo", required = true) String tipo,
+            @RequestParam(value = "descripcion", required = true) String descripcion,
+            @RequestParam(value = "iu", required = true) String id_user,
+            Model model) {
+        
+        log.log(Level.INFO, "Ejecutando getBuscadorProductosJson de {0}", InvCapturaCostosController.class.getName());
+        HashMap<String, ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String, ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> productos = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        productos = this.getInvDao().getBuscadorProductos(sku,tipo ,descripcion, id_empresa);
+        
+        jsonretorno.put("Productos", productos);
+        
+        return jsonretorno;
+    }
     
     
+    
+    
+    //obtiene datos del producto a agregar
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosProducto.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosProductoJson(
+            @RequestParam(value="sku", required=true) String sku,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+    ) {
+        
+        log.log(Level.INFO, "Ejecutando getDatosProductoJson de {0}", InvCapturaCostosController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        //convertir en arreglo la fecha que viene de la vista
+        String f [] = TimeHelper.getFechaActualYMD().split("-");
+        
+        //tomar el año actual
+        Integer ano_actual=Integer.parseInt(f[0]);
+
+        //tomar el mes actual
+        Integer mes_actual=Integer.parseInt(f[1]);
+        
+        datos = this.getInvDao().getInvCapturaCosto_DatosProducto(sku.toUpperCase(), id_empresa, mes_actual, ano_actual);
+        monedas = this.getInvDao().getMonedas();
+        
+        jsonretorno.put("Producto", datos);
+        jsonretorno.put("Monedas", monedas);
+        
+        return jsonretorno;
+    }
     
     
     
