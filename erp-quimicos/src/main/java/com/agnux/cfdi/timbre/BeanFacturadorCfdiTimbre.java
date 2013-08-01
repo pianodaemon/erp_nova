@@ -234,8 +234,15 @@ public class BeanFacturadorCfdiTimbre {
             path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getRfc_emisor();
             ruta_fichero_schema = this.getGralDao().getXsdDir() + this.getGralDao().getFicheroXsdCfdi(this.getId_empresa(), this.getId_sucursal());
             //System.out.println("ruta_fichero_schema: "+ruta_fichero_schema);
+            
+            String Serie = String.valueOf(pop.getSerie());
+            String Folio = String.valueOf(pop.getFolio());
+            
+            if(Serie.equals("null")){Serie = ""; }
+            if(Folio.equals("null")){Folio = ""; }
+            
             //nombre del fichero xml
-            xml_file_name += pop.getSerie() + pop.getFolio()+".xml";
+            xml_file_name += Serie + Folio+".xml";
             //System.out.println("xml_file_name: "+xml_file_name);
             
             File file_xml = new File(path_file+"/"+xml_file_name);
@@ -270,7 +277,7 @@ public class BeanFacturadorCfdiTimbre {
                     String tipo_peticion="timbrecfdi";
                     String ruta_ejecutable_java = this.getGralDao().getJavaVmDir(this.getId_empresa(), this.getId_sucursal());
                     String ruta_jarWebService = this.getGralDao().getCfdiTimbreJarWsDir()+"wscli.jar";
-                    String serie_folio = pop.getSerie() + pop.getFolio();
+                    String serie_folio = Serie + Folio;
                     String refId=serie_folio;
                     String str_execute="";
                     
@@ -405,7 +412,7 @@ public class BeanFacturadorCfdiTimbre {
                                 String refacturar = this.getDatosExtras().get("refacturar");
                                 String id_moneda = this.getDatosExtras().get("moneda_id");
                                 
-                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+pop.getSerie()+"___"+pop.getFolio()+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
+                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+Serie+"___"+Folio+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
                                 
                                 //llamada al procedimiento que guarda los datos de la factura
                                 String ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
@@ -456,7 +463,31 @@ public class BeanFacturadorCfdiTimbre {
         CfdiXmlBuilder cfd = new CfdiXmlBuilder();
         cfd.init();
         
+        String serie = "";
+        String folio = "";
+        
+        switch (Proposito.valueOf(this.getProposito())) {
+            case FACTURA:
+                folio = this.getGralDao().getFolioFactura(this.getId_empresa(), this.getId_sucursal());
+                serie = this.getGralDao().getSerieFactura(this.getId_empresa(), this.getId_sucursal());
+                
+                break;
+            case NOTA_CREDITO:
+                folio = this.getGralDao().getFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
+                serie = this.getGralDao().getSerieNotaCredito(this.getId_empresa(), this.getId_sucursal());
+                break;
+                
+            case NOTA_CARGO:
+                folio = this.getGralDao().getFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
+                serie = this.getGralDao().getSerieNotaCargo(this.getId_empresa(), this.getId_sucursal());
+                break;
+        }
+        
+        
+        
         cfd.construyeNodoFactura(
+                serie,
+                folio,
                 this.getTipoDeComprobante(),
                 this.getCondicionesDePago(),
                 this.getFormaDePago(),
@@ -506,9 +537,9 @@ public class BeanFacturadorCfdiTimbre {
         
         switch (Proposito.valueOf(this.getProposito())) {
             case FACTURA:
-                String folio_factura = this.getGralDao().getFolioFactura(this.getId_empresa(), this.getId_sucursal());
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_factura);
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieFactura(this.getId_empresa(), this.getId_sucursal()));
+                //String folio_factura = this.getGralDao().getFolioFactura(this.getId_empresa(), this.getId_sucursal());
+                //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_factura);
+                //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieFactura(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionFactura(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionFactura(this.getId_empresa(), this.getId_sucursal()));
                 //La siguiente línea se comento porque la actualizacion del folio se hace en el procedimiento.
@@ -516,18 +547,18 @@ public class BeanFacturadorCfdiTimbre {
                 break;
                 
             case NOTA_CREDITO:
-                String folio_credito = this.getGralDao().getFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_credito);
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCredito(this.getId_empresa(), this.getId_sucursal()));
+                //String folio_credito = this.getGralDao().getFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
+                //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_credito);
+                //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCredito(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCredito(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCredito(this.getId_empresa(), this.getId_sucursal()));
                 //this.getGralDao().actualizarFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
                 break;
                 
             case NOTA_CARGO:
-                String folio_notadecargo = this.getGralDao().getFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_notadecargo);
-                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCargo(this.getId_empresa(), this.getId_sucursal()));
+                //String folio_notadecargo = this.getGralDao().getFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
+                //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_notadecargo);
+                //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCargo(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCargo(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCargo(this.getId_empresa(), this.getId_sucursal()));
                 //this.getGralDao().actualizarFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
