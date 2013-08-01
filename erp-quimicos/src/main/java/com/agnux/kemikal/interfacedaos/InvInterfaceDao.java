@@ -325,6 +325,7 @@ public interface InvInterfaceDao {
     
     //Aplicativo de Captura de Costos
     public ArrayList<HashMap<String, Object>> getInvCapturaCosto_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getInvCapturaCosto_DatosProducto(String sku, Integer idEmp, Integer mesActual, Integer anoActual);
     //public ArrayList<HashMap<String, String>> getInvCapturaCosto_Datos(Integer id);
     
 }
