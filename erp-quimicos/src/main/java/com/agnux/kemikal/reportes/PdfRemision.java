@@ -517,14 +517,22 @@ public class PdfRemision {
             
             sumaTotal = StringHelper.roundDouble(datos_remision.get("total"),2);
             BigInteger num = new BigInteger(sumaTotal.split("\\.")[0]);
+            
+            System.out.println("sumaTotal: "+sumaTotal);
+            System.out.println("num: "+num);
+            
             n2t cal = new n2t();
             String centavos = sumaTotal.substring(sumaTotal.indexOf(".")+1);
+            System.out.println("centavos: "+centavos);
+            
             String numero = cal.convertirLetras(num);
+            System.out.println("numero: "+numero);
             //String numeroMay = StringHelper.capitalizaString(numero);
             //String numeroMay = numero;
 
             //convertir a mayuscula la primera letra de la cadena
-            String numeroMay = numero.substring(0, 1).toUpperCase() + numero.substring(1, numero.length());
+            //String numeroMay = numero.substring(0, 1).toUpperCase() + numero.substring(1, numero.length());
+            String numeroMay = numero;
             
             String denominacion = datos_remision.get("titulo_moneda").toLowerCase();
             String denom = datos_remision.get("moneda_abr");
