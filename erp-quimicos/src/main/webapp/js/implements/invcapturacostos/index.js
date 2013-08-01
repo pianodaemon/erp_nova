@@ -7,11 +7,8 @@ $(function() {
 	    return work.join(',');
 	};
 	
-    //arreglo para select tipo de Ajuste
-    var arrayTiposAjuste = {
-				0:"Positivo", //grupo Entradas en la tabla tipos de movimiento de Invetario
-				2:"Negativo",//grupo salidas en la tabla tipos de movimiento de Invetario
-			};
+    //arreglo para select tipo de producto
+    var arrayTProd;
 	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
@@ -80,9 +77,9 @@ $(function() {
 		$get_datos_grid();
 	});
 	
-	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
+	var input_json_busqueda = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
 	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-	$.post(input_json_lineas,$arreglo,function(data){
+	$.post(input_json_busqueda,$arreglo,function(data){
 		//Llena el select tipos de productos en el buscador
 		$select_tipo_productos_busqueda.children().remove();
 		var prod_tipos_html = '<option value="0" selected="yes">[-- --]</option>';
@@ -258,9 +255,9 @@ $(function() {
 	
 	
 	//buscador de productos
-	$busca_productos = function(id_almacen, fecha){
+	$busca_productos = function(sku_buscar, descripcion){
 		//limpiar_campos_grids();
-		$(this).modalPanel_Buscaproducto();
+		$(this).modalPanel_Buscaproducto($('#forma-invcapturacostos-window').find('input[name=nombre_producto]'));
 		var $dialogoc =  $('#forma-buscaproducto-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
 		$dialogoc.append($('div.buscador_productos').find('table.formaBusqueda_productos').clone());
@@ -293,19 +290,22 @@ $(function() {
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 
-		//buscar todos los tipos de productos
-		var input_json_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
-		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-		$.post(input_json_tipos,$arreglo,function(data){
-			//Llena el select tipos de productos en el buscador
-			$select_tipo_producto.children().remove();
-			var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
-			$.each(data['prodTipos'],function(entryIndex,pt){
-				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
-			});
-			$select_tipo_producto.append(prod_tipos_html);
+		
+		//Llena el select tipos de productos en el buscador
+		$select_tipo_producto.children().remove();
+		var prod_tipos_html = '<option value="0">[--Seleccionar Tipo--]</option>';
+		$.each(arrayTProd,function(entryIndex,pt){
+			prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
 		});
 		
+		
+		//Aqui asigno al campo sku del buscador si el usuario ingresó un sku antes de hacer clic en buscar en la ventana principal
+		$campo_sku.val(sku_buscar);
+		
+		//asignamos la descripcion del producto, si el usuario capturo la descripcion antes de abrir el buscador
+		$campo_descripcion.val(descripcion);
+		
+		$campo_sku.focus();
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -314,8 +314,6 @@ $(function() {
 			$arreglo = {	'sku':$campo_sku.val(),
 							'tipo':$select_tipo_producto.val(),
 							'descripcion':$campo_descripcion.val(),
-							'id_almacen':id_almacen,
-							'fecha':fecha,
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 						}
 			
@@ -326,12 +324,13 @@ $(function() {
 					trr = '<tr>';
 						trr += '<td width="120">';
 							trr += '<input type="hidden" id="id_prod_buscador" value="'+producto['id']+'">';
-							trr += '<span class="sku_prod_buscador">'+producto['codigo']+'</span>';
+							trr += '<span class="sku_prod_buscador">'+producto['sku']+'</span>';
 						trr += '</td>';
 						trr += '<td width="280"><span class="titulo_prod_buscador">'+producto['descripcion']+'</span></td>';
 						trr += '<td width="90">';
 							trr += '<span class="unidad_id" style="display:none;">'+producto['unidad_id']+'</span>';
 							trr += '<span class="utitulo">'+producto['unidad']+'</span>';
+                                                       
 						trr += '</td>';
 						trr += '<td width="90"><span class="tipo_prod_buscador">'+producto['tipo']+'</span></td>';
 					trr += '</tr>';
@@ -372,11 +371,17 @@ $(function() {
 			$buscar_plugin_producto.trigger('click');
 		}
 		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_producto, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $buscar_plugin_producto);
+		
 		$cancelar_plugin_busca_producto.click(function(event){
 			//event.preventDefault();
 			var remove = function() {$(this).remove();};
 			$('#forma-buscaproducto-overlay').fadeOut(remove);
+			$('#forma-invcapturacostos-window').find('input[name=nombre_producto]').focus();
 		});
+		
 	}//termina buscador de productos
 	
     
@@ -395,32 +400,29 @@ $(function() {
 		});
 	}
 	
-	$aplicar_evento_focus_input = function( $campo_input ){
-		$campo_input.focus(function(e){
-			if($(this).val() == ' ' || parseFloat($(this).val()) <= 0){
-				$(this).val('');
-			}
-		});
-	}
 	
-	$aplicar_evento_blur_input = function( $campo_input ){
+	
+	
+	$aplicar_evento_blur_tc = function( $campo_input ){
 		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$campo_input.blur(function(e){
-			if(parseFloat($campo_input.val())==0 || $campo_input.val()==""){
-				$campo_input.val(0);
-				$campo_input.val(parseFloat($campo_input.val()).toFixed(2))
+			if($campo_input.val()=='0' || $campo_input.val().trim()==''){
+				$campo_input.val(' ');
 			}
+			$campo_input.val(parseFloat($campo_input.val()).toFixed(4));
+			
+			$campo_input.val($(this).agregar_comas($campo_input.val()));
 		});
 	}
-	
 	
 	
 	
 	$aplicar_evento_focus = function( $campo_input ){
 		$campo_input.focus(function(e){
-			if($(this).val() == ' '){
+			if($(this).val().trim() == ''){
 				$(this).val('');
 			}
+			$(this).val(quitar_comas($(this).val()));
 		});
 	}
 	
@@ -428,9 +430,11 @@ $(function() {
 	$aplicar_evento_blur = function( $campo_input ){
 		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$campo_input.blur(function(e){
-			if($campo_input.val()=='0' || $campo_input.val()==""){
+			if($campo_input.val()=='0' || $campo_input.val().trim()==''){
 				$campo_input.val(' ');
 			}
+			$campo_input.val(parseFloat($campo_input.val()).toFixed(2));
+			$campo_input.val($(this).agregar_comas($campo_input.val()));
 		});
 	}
 	
@@ -440,83 +444,47 @@ $(function() {
 		$campo_href.click(function(e){
 			e.preventDefault();
 			$tr_padre=$(this).parent().parent();
-			//$tr_padre.find('input').val('');//asignar vacio a todos los input del tr
-			//$tr_padre.find('input[name=eliminado]').val('0');//asignamos 0 para indicar que se ha eliminado
 			$tr_padre.remove();//eliminar el tr
-			
-			$grid_productos = $tr_padre.parent();
-			
-			
 		});
 	}
 	
 	
 	
+	
 	//generar tr para agregar al grid
-	$genera_tr = function(noTr, id_producto, codigo, descripcion, unidad, id_almacen, existencia,costo_prom, cant_ajuste, costo_ajuste, tipo_costo, idPres, equivPres, exisPres, ajustePres){
-		var readOnly=''//esta variable indica si el campo costo ajuste va a ser editable o no de pendiendo del tipo de costo que se utiliza para el tipo de movimiento
-		var fondo_input="";
-		
-		//0=Alimentado
-		if(parseInt(tipo_costo)==0){
-			readOnly='';
-			fondo_input='';
-		}
-		
-		//1=Promedio
-		if(parseInt(tipo_costo)==1){
-			readOnly='readOnly="true"';
-			fondo_input='background:#dddddd';
-		}
+	$genera_tr = function(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc){
 		
 		var trr = '';
 		trr = '<tr>';
-			trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
-				trr += '<a href="elimina_producto" class="delete'+ noTr +'">Eliminar</a>';
-				trr += '<input type="hidden" 	name="eliminado" value="1">';//el 1 significa que el registro no ha sido eliminado
-				trr += '<input type="hidden" 	name="id_almacen" value="'+ id_almacen +'">';
-				trr += '<input type="hidden" 	name="no_tr" value="'+ noTr +'">';
+			trr += '<td class="grid" style="border:1px solid #C1DAD7;" width="60">';
+				trr += '<a href="#" class="delete'+ noTr +'">Eliminar</a>';
+				trr += '<input type="hidden" 	name="idreg" id="idd"  class="idreg'+ noTr +'" value="'+id_reg+'">';//este es el id del registro que ocupa el producto en la tabla detalle
+				trr += '<input type="hidden" 	name="notr" class="notr'+ noTr +'" value="'+ noTr +'">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="110">';
-				trr += '<input type="hidden" 	name="idproducto" id="idprod" value="'+ id_producto +'">';
-				trr += '<INPUT TYPE="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:106px;">';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+				trr += '<input type="hidden" 	name="idprod" id="idprod" value="'+ idProd +'">';
+				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:116px;">';
 			trr += '</td>';
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="180">';
-				trr += '<INPUT TYPE="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:176px;">';
+			
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="200">';
+				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:196px;">';
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-				trr += '<INPUT TYPE="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:96px;">';
+				trr += '<input type="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:96px;">';
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-				trr += '<input type="hidden" 	name="equivPres" value="'+ equivPres +'">';
-				trr += '<input type="hidden" 	name="idPresSelec" id="idPresSelec" value="'+idPres+'">';
-				trr += '<select name="select_pres" class="select_pres'+ noTr +'" style="width:96px;"></select>';
+				trr += '<input type="text" 		name="costo_ultimo" value="'+$(this).agregar_comas(costo_ultimo)+'" class="costo_ultimo'+ noTr +'" style="width:96px; text-align:right;">';
 			trr += '</td>';
 			
 			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="cantidad" value="'+$(this).agregar_comas(existencia)+'" class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
+				trr += '<select name="selectMon" class="selectMon'+ noTr +'" style="width:76px;"></select>';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="exisPres" value="'+$(this).agregar_comas(exisPres)+'" class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
-			trr += '</td>';
-			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="costo_prom" value="'+$(this).agregar_comas(costo_prom)+'" class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
-			trr += '</td>';
-			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="cant_ajuste" value="'+cant_ajuste+'" class="cant_ajuste'+noTr+'" style="width:76px;">';
-			trr += '</td>';
-			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="cantAjustePres" value="'+ajustePres+'" id="cantAjustePres'+noTr+'" class="borde_oculto" style="width:76px;">';
-			trr += '</td>';
-			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<INPUT TYPE="text" 		name="costo_ajuste" value="'+costo_ajuste+'" '+readOnly+' class="costo_ajuste'+noTr+'" style="width:76px; '+fondo_input+'">';
+			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+				trr += '<input type="text" 		name="tc" value="'+$(this).agregar_comas(tc)+'" class="tc'+noTr+'" style="width:86px; text-align:right;">';
 			trr += '</td>';
 		trr += '</tr>';
 		
@@ -524,213 +492,29 @@ $(function() {
 	}
 	
 
-	//convertir la Presentacion en Unidad de acuerdo a la Equivalencia
-	$convertirPresAUni = function(idPres, cantPres, arrayPres){
-		var valor=0;
-		$.each(arrayPres,function(entryIndex,pres){
-			if(parseInt(pres['id'])==parseInt(idPres)){
-				valor = parseFloat(cantPres) * parseFloat(pres['equiv']);
-			}
-		});
-		return valor;
-	};
-	
-	
-	
-	
-	//convertir la Cantidad de Unidades en cantidad de Presentaciones
-	$convertirUniAPres = function(idPres, cantUni, arrayPres){
-		var valor=0;
-		//alert("idPres:"+idPres+"\ncantUni:"+cantUni);
-		$.each(arrayPres,function(entryIndex,pres){
-			if(parseInt(pres['id'])==parseInt(idPres)){
-				valor = parseFloat(cantUni) / parseFloat(pres['equiv']);
-			}
-		});
-		return valor;
-	};
-	
-	
-	
-	//busca el almacen y presentacion en el Grid, esto para evitar que se repitan
-	var $buscarRegistroProductoPresentacion = function($grid_productos, idProd, idPres, notr){
-		var encontrado=0;
-		//busca el codigo del producto y Prresentacion en el grid
-		$grid_productos.find('tr').each(function (index){
-			var $regEliminado = $(this).find('input[name=eliminado]');
-			var $idProducto = $(this).find('input[name=idproducto]');
-			var $selectPres = $(this).find('select[name=select_pres]');
-			var $noTr = $(this).find('input[name=no_tr]');
-			
-			if(parseInt($regEliminado.val())!=0){
-				if( (parseInt($idProducto.val())==parseInt(idProd))  &&  (parseInt($selectPres.val())==parseInt(idPres))){
-					if(parseInt($noTr.val())!=parseInt(notr)){
-						encontrado++;
-					}
-				}
-			}
-		});
-		return encontrado;
-	}
-	
-	
-	//aplicar evento change al select de Presentaciones que esta en el Grid
-	$aplicarEventoChangeSelectPres = function($select_pres, idAlmOrigen, arregloPres){
-		//cambiar presentacion
-		$select_pres.change(function(){
-			var idPres = $(this).val();
-			var $this_tr = $(this).parent().parent();
-			$grid_productos = $(this).parent().parent().parent();
-			var idProd = $this_tr.find('input[name=idproducto]').val();
-			var notr = $this_tr.find('input[name=no_tr]').val();
-			
-			$exisPresTr = $this_tr.find('input[name=exisPres]');
-			$exisUniTr = $this_tr.find('input[name=cantidad]');
-			$presIdSelecTr = $this_tr.find('input[name=idPresSelec]');
-			$cantAjustePresTr = $this_tr.find('input[name=cantAjustePres]');
-			$cantAjusteUniTr = $this_tr.find('input[name=cant_ajuste]');
-			
-			//asignar valores en cero
-			$exisPresTr.val(parseFloat(0).toFixed(2));
-			$exisUniTr.val(parseFloat(0).toFixed(2));
-			$cantAjustePresTr.val(parseFloat(0).toFixed(2));
-			$cantAjusteUniTr.val(parseFloat(0).toFixed(2));
-			
-			if(parseInt(idPres) > 0 ){
-				//buscar existencia del producto y la presentacion en el Grid, esto para evitar que se repita
-				var exisProdPres = $buscarRegistroProductoPresentacion($grid_productos, idProd, idPres, notr);
-				
-				if(parseInt(exisProdPres)<=0){
-					//buscar existencias al seleccionar una presentacion
-					var input_json3 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getExisPres.json';
-					var $arreglo3 = {'id_prod':idProd, 'id_pres':idPres, 'id_alm':idAlmOrigen, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-					
-					$.post(input_json3,$arreglo3,function(entry3){
-						if(parseInt(entry3['Existencia'].length) > 0 ){
-							var exisPres = entry3['Existencia'][0]['exis'];
-							var noDec = entry3['Existencia'][0]['no_dec'];
-							
-							//convertir la Cantidad de la Presentacion en cantidad de Unidades
-							var exisUnidad = $convertirPresAUni(idPres, exisPres, arregloPres);
-							
-							//asignar la existencia en Presentaciones
-							$exisPresTr.val(parseFloat(exisPres).toFixed(noDec));
-							
-							//asignar la existencia en Unidades
-							$exisUniTr.val(parseFloat(exisUnidad).toFixed(noDec));
-							
-							//agregar comas
-							$exisPresTr.val($(this).agregar_comas($exisPresTr.val()));
-							$exisUniTr.val($(this).agregar_comas($exisUniTr.val()));
-							
-						}else{
-							//asignar la existencias en Cero
-							$exisPresTr.val(parseFloat(0.0).toFixed(noDec));
-							$exisUniTr.val(parseFloat(0.0).toFixed(noDec));
-							$presIdSelecTr.val(0);
-							
-							jAlert('No hay existencias en &eacute;sta Presentaci&oacute;n.', 'Atencion!', function(r) { 
-								$select_pres.focus();
-							});
-						}
-					});
-					
-					$presIdSelecTr.val(idPres);
-					
-				}else{
-					//aqui entra porque el producto y la presentacion ya estan en el GRID
-					jAlert('No se puede seleccionar &eacute;sta Presentaci&oacute;n para &eacute;ste Producto, ya existe un registro igual.', 'Atencion!', function(r) { 
-						var html_select='';
-						$select_pres.find('option').each(function(){
-							if(parseInt($(this).val())==parseInt($presIdSelecTr.val())){
-								html_select += '<option value="' + $(this).val() + '" selected="yes">' + $(this).text() + '</option>';
-							}else{
-								html_select += '<option value="' + $(this).val() + '"  >' + $(this).text() + '</option>';
-							}
-						});
-						
-						$select_pres.children().remove();
-						$select_pres.append(html_select);
-						$select_pres.focus();
-					});
-				}
-			}else{
-				jAlert('Es necesario seleccionar una Presentaci&oacute;n para realizar el traspaso.', 'Atencion!', function(r) { 
-					$presIdSelecTr.val(idPres);
-					$select_pres.focus();
-				});
-			}
-		});
-	}
-	
-	
-	
-	//funcion para aplicar evento Blur 
-	$aplicar_evento_blur_campo_cantidad = function( $campo_input, noDec, arrayPres, controlExisPres, $select_tipo_ajuste){
-		var $this_tr = $campo_input.parent().parent();
-		
-		$campo_input.blur(function(e){
-			var idPres = $this_tr.find('select[name=select_pres]').val();
-			var $cantUniAjuste = $this_tr.find('input[name=cant_ajuste]');
-			var $cantPresAjuste = $this_tr.find('input[name=cantAjustePres]');
-			var cantUniExis = quitar_comas($this_tr.find('input[name=cantidad]').val());
-			
-			if($cantUniAjuste.val().trim()=='' || parseFloat($campo_input.val())==0 ){
-				$campo_input.val(0);
-				$campo_input.val(parseFloat($campo_input.val()).toFixed(2))
-			}else{
-				
-				//si la configuracion indica que debe controlar existencias por presentacion hay que realizar los calculos
-				if(controlExisPres=='true'){
-					
-					//convertir las Unidades en Presentaciones
-					var exisPres = $convertirUniAPres(idPres, $cantUniAjuste.val(), arrayPres);
-					
-					if(parseInt($select_tipo_ajuste.val())==2){
-						//aqui entra cuando es ajuste Negativo
-						if(parseFloat($cantUniAjuste.val()) > parseFloat(cantUniExis)){
-							jAlert('No es posible realizar un Ajuste mayor a la Existencia de la Presentaci&oacute;n.', 'Atencion!', function(r) { 
-								$cantUniAjuste.val(parseFloat(0).toFixed(noDec));
-								$cantPresAjuste.val(parseFloat(0).toFixed(noDec));
-							});
-						}else{
-							$cantPresAjuste.val(parseFloat(exisPres).toFixed(noDec));
-						}
-					}else{
-						//aqui entra cuando es ajuste Positivo
-						$cantPresAjuste.val(parseFloat(exisPres).toFixed(noDec));
-					}
-				}else{
-					$cantPresAjuste.val(parseFloat(0).toFixed(noDec));
-				}
-			}
-		});
-	}
-        
-	
+
+
 	
 	
 	//buscador de presentaciones disponibles para un producto
-	$buscador_datos_producto = function($grid_productos, codigo_producto, id_alm,fecha, tipo_costo, controlExisPres, $select_tipo_ajuste){
+	$buscador_datos_producto = function($grid_productos, codigo_producto){
 		//verifica si el campo sku no esta vacio para realizar busqueda
 		if(codigo_producto != ''){
 			
 			var encontrado = 0;
-			/*
+			
 			//busca el sku y la presentacion en el grid
 			$grid_productos.find('tr').each(function (index){
-				if(($(this).find('input[name=codigo]').val() == codigo_producto.toUpperCase()) && (parseInt($(this).find('input[name=eliminado]').val())!=0) ){
+				if( $(this).find('input[name=codigo]').val() == codigo_producto.toUpperCase() ){
 					encontrado=1;//el producto ya esta en el grid
 				}
 			});
-			*/
+			
 			
 			
 			if( parseInt(encontrado)==0 ){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosProducto.json';
 				$arreglo = {'sku':codigo_producto,
-							'id_almacen':id_alm,
-							'fecha':fecha,
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 							};
 				
@@ -741,55 +525,47 @@ $(function() {
 					if (entry['Producto'].length > 0){
 						var noTr = $("tr", $grid_productos).size();
 						noTr++;
-						
-						var id_producto = entry['Producto'][0]['id_producto'];
+						alert(noTr);
+						var id_reg = entry['Producto'][0]['id_reg'];
+						var idProd = entry['Producto'][0]['id_prod'];
 						var codigo = entry['Producto'][0]['codigo'];
 						var descripcion = entry['Producto'][0]['descripcion'];
 						var unidad = entry['Producto'][0]['unidad'];
-						var id_almacen = entry['Producto'][0]['id_almacen'];
-						var existencia = entry['Producto'][0]['existencia'];
-						var costo_prom = entry['Costo'][0]['costo_promedio'];
-						var noDec=entry['Producto'][0]['no_dec'];
-						var cant_ajuste='0.00';
-						var costo_ajuste=entry['Costo'][0]['costo_promedio'];
+						var costo_ultimo = entry['Producto'][0]['costo_ultimo'];
+						var tc = entry['Producto'][0]['tc'];
+						var idMon = entry['Producto'][0]['idMon'];
 						
-						var idPres=0;
-						var equivPres=0;
-						var exisPres=0;
-						var ajustePres=0;
-						
-						//idPres, equivPres, exisPres, ajustePres
-						
-						var cadena_tr = $genera_tr(noTr, id_producto, codigo, descripcion, unidad, id_almacen, existencia, costo_prom, cant_ajuste, costo_ajuste, tipo_costo, idPres, equivPres, exisPres, ajustePres);
-						
+						var cadena_tr = $genera_tr(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc);
 						$grid_productos.append(cadena_tr);
 						
-						$aplicar_evento_keypress($grid_productos.find('.cant_ajuste'+noTr));
-						$aplicar_evento_focus_input($grid_productos.find('.cant_ajuste'+noTr));
-						//$aplicar_evento_blur_input($grid_productos.find('.cant_ajuste'+noTr));
+						$permitir_solo_numeros($grid_productos.find('.costo_ultimo'+noTr));
+						$aplicar_evento_keypress($grid_productos.find('.costo_ultimo'+noTr));
+						$aplicar_evento_focus($grid_productos.find('.costo_ultimo'+noTr));
+						$aplicar_evento_blur($grid_productos.find('.costo_ultimo'+noTr));
 						
-						$aplicar_evento_keypress($grid_productos.find('.costo_ajuste'+noTr));
-						$aplicar_evento_focus_input($grid_productos.find('.costo_ajuste'+noTr));
-						$aplicar_evento_blur_input($grid_productos.find('.costo_ajuste'+noTr));
+						$permitir_solo_numeros($grid_productos.find('.tc'+noTr));
+						$aplicar_evento_keypress($grid_productos.find('.tc'+noTr));
+						$aplicar_evento_focus($grid_productos.find('.tc'+noTr));
+						$aplicar_evento_blur_tc($grid_productos.find('.tc'+noTr));
 						$aplicar_evento_eliminar($grid_productos.find('.delete'+noTr));
 						
-						$grid_productos.find('.select_pres'+noTr).children().remove();
-						var pres_hmtl = '<option value="0">[-Seleccionar-]</option>';
-						$.each(entry['Presentaciones'],function(entryIndex,pres){
-							pres_hmtl += '<option value="' + pres['id'] + '">' + pres['titulo'] + '</option>';
+						
+						$grid_productos.find('.selectMon'+noTr).children().remove();
+						var mon_hmtl='';
+						//mon_hmtl = '<option value="0">[-  -]</option>';
+						$.each(entry['Monedas'],function(entryIndex,mon){
+							if(parseInt(mon['id'])==parseInt(idMon)){
+								mon_hmtl += '<option value="' + mon['id'] + '" selected="yes">' + mon['descripcion_abr'] + '</option>';
+							}else{
+								mon_hmtl += '<option value="' + mon['id'] + '">' + mon['descripcion_abr'] + '</option>';
+							}
 						});
-						$grid_productos.find('.select_pres'+noTr).append(pres_hmtl);
+						$grid_productos.find('.selectMon'+noTr).append(mon_hmtl);
 						
-						if (controlExisPres=='true'){
-							//aplicar evento al cambiar presentacion
-							$aplicarEventoChangeSelectPres($grid_productos.find('.select_pres'+noTr), id_alm, entry['Presentaciones'], $select_tipo_ajuste);
-						}
-						
-						$aplicar_evento_blur_campo_cantidad( $grid_productos.find('.cant_ajuste'+noTr), noDec, entry['Presentaciones'], controlExisPres, $select_tipo_ajuste);
 						
 					}else{
 						jAlert("El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.",'! Atencion');
-						$('#forma-invcapturacostos-window').find('input[name=titulo_producto]').val('');
+						$('#forma-invcapturacostos-window').find('input[name=nombre_producto]').val('');
 					}
 				});
 			}else{
@@ -831,27 +607,12 @@ $(function() {
 		
 		$tabs_li_funxionalidad();
 		
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAjuste.json';
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCosto.json';
 		$arreglo = {'identificador':id_to_show,
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 					};
         
 		var $identificador = $('#forma-invcapturacostos-window').find('input[name=identificador]');
-		var $folio = $('#forma-invcapturacostos-window').find('input[name=folio]');
-		var $exis_pres = $('#forma-invcapturacostos-window').find('input[name=exis_pres]');
-		
-		var $select_tipo_ajuste = $('#forma-invcapturacostos-window').find('select[name=select_tipo_ajuste]');
-		var $tipo_ajuste = $('#forma-invcapturacostos-window').find('input[name=tipo_ajuste]');
-		
-		var $fecha_ajuste = $('#forma-invcapturacostos-window').find('input[name=fecha_ajuste]');
-		var $select_tipo_mov = $('#forma-invcapturacostos-window').find('select[name=select_tipo_mov]');
-		var $id_tipo_mov = $('#forma-invcapturacostos-window').find('input[name=id_tipo_mov]');
-		
-		var $tipo_costo = $('#forma-invcapturacostos-window').find('input[name=tipo_costo]');
-		var $select_almacen = $('#forma-invcapturacostos-window').find('select[name=select_almacen]');
-		var $id_almacen = $('#forma-invcapturacostos-window').find('input[name=id_almacen]');
-		
-		var $observaciones = $('#forma-invcapturacostos-window').find('textarea[name=observaciones]');
 		
 		var $sku_producto = $('#forma-invcapturacostos-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-invcapturacostos-window').find('input[name=nombre_producto]');
@@ -860,7 +621,6 @@ $(function() {
 		var $busca_sku = $('#forma-invcapturacostos-window').find('a[href*=busca_sku]');
 		//href para agregar producto al grid
 		var $agregar_producto = $('#forma-invcapturacostos-window').find('a[href*=agregar_producto]');
-		var $descargarpdf = $('#forma-invcapturacostos-window').find('#descargarpdf');
 		
 		//grid de productos
 		var $grid_productos = $('#forma-invcapturacostos-window').find('#grid_productos');
@@ -875,11 +635,11 @@ $(function() {
 		//$campo_factura.css({'background' : '#ffffff'});
 		
 		//ocultar boton de facturar y descargar pdf. Solo debe estar activo en editar
-		$descargarpdf.attr('disabled','-1');
+		//$descargarpdf.attr('disabled','-1');
 		$identificador.val(0);//para nueva pedido el id es 0
 		
-		$folio.css({'background' : '#F0F0F0'});
-		$select_tipo_ajuste.focus();
+		//$folio.css({'background' : '#F0F0F0'});
+		//$select_tipo_ajuste.focus();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -940,194 +700,6 @@ $(function() {
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
 			
-			$fecha_ajuste.val(entry['AnoActual'][0]['fecha_actual']);
-			$exis_pres.val(entry['Par'][0]['exis_pres']);
-			
-			$select_tipo_ajuste.children().remove();
-			var select_html = '';
-			for(var i in arrayTiposAjuste){
-				select_html += '<option value="' + i + '" >' + arrayTiposAjuste[i] + '</option>';
-			}
-			$select_tipo_ajuste.append(select_html);
-			
-			//guardamos el tipo de ajuste
-			$tipo_ajuste.val($select_tipo_ajuste.val());
-			
-			
-			//carga select con los tipos de Movimientos
-			$select_tipo_mov.children().remove();
-			var tmov_hmtl = '';
-			$.each(entry['TMov'],function(entryIndex,mov){
-				if(parseInt($select_tipo_ajuste.val())==parseInt(mov['grupo'])){
-					tmov_hmtl += '<option value="' + mov['id'] + '"  >' + mov['titulo'] + '</option>';
-				}
-			});
-			$select_tipo_mov.append(tmov_hmtl);
-			$id_tipo_mov.val($select_tipo_mov.val());
-			
-			
-			//tomar el tipo de Costo que se utilizara de acuerdo al tipo de movimiento selecionado
-			//el tipo de costo en la vista define si el campo costo ajuste debe estar habilitado para edicion o no.
-			$.each(entry['TMov'],function(entryIndex,mov){
-				if(parseInt($select_tipo_mov.val())==parseInt(mov['id'])){
-					$tipo_costo.val(mov['tipo_costo']);
-				}
-			});
-			
-			
-			//carga select con todos los Almacenes de la Empresa
-			$select_almacen.children().remove();
-			var almacen_hmtl = '';
-			$.each(entry['Almacenes'],function(entryIndex,almacen){
-				almacen_hmtl += '<option value="' + almacen['id'] + '"  >' + almacen['titulo'] + '</option>';
-			});
-			$select_almacen.append(almacen_hmtl);
-			$id_almacen.val($select_almacen.val());
-			
-			
-			//cambiar tipo de ajuste
-			$select_tipo_ajuste.change(function(){
-				var valor_tipo = $(this).val();
-				var valor_tipo_anterior = $tipo_ajuste.val();//tomamos el valor anterior
-				
-				//0:"Positivo", //grupo Entradas en la tabla tipos de movimiento de Invetario
-				//2:"Negativo",//grupo salidas en la tabla tipos de movimiento de Invetario
-				
-				if (parseInt($("tr", $grid_productos).size()) > 0 ){
-					//aqui regresamos el tipo seleccionado anteriormente porque hay productos en el grid
-					$select_tipo_ajuste.children().remove();
-					var select_html = '';
-					for(var i in arrayTiposAjuste){
-						if(valor_tipo_anterior == i){
-							select_html += '<option value="' + i + '" selected="yes">' + arrayTiposAjuste[i] + '</option>';
-						}else{
-							select_html += '<option value="' + i + '">' + arrayTiposAjuste[i] + '</option>';
-						}
-					}
-					$select_tipo_ajuste.append(select_html);
-					jAlert("No es posible cambiar el Tipo de Ajuste mientras existan productos en el listado.", 'Atencion!');
-				}else{
-					$select_tipo_mov.children().remove();
-					var tmov_hmtl = '';
-					$.each(entry['TMov'],function(entryIndex,mov){
-						if(parseInt(valor_tipo)==parseInt(mov['grupo'])){
-							tmov_hmtl += '<option value="' + mov['id'] + '"  >' + mov['titulo'] + '</option>';
-							$tipo_costo.val(mov['tipo_costo']);
-						}
-					});
-					$select_tipo_mov.append(tmov_hmtl);
-					$tipo_ajuste.val(valor_tipo);//tomamos el valor del nuevo tipo seleccionado
-					$id_tipo_mov.val($select_tipo_mov.val());
-				}
-			});
-			
-			
-			//cambiar el tipo de Movimiento
-			$select_tipo_mov.change(function(){
-				var valor_tipo = $(this).val();
-				var valor_tipo_mov_anterior = $id_tipo_mov.val();//tomamos el valor anterior
-				
-				if (parseInt($("tr", $grid_productos).size()) > 0 ){
-					$select_tipo_mov.children().remove();
-					var tmov_hmtl = '';
-					$.each(entry['TMov'],function(entryIndex,mov){
-						if(parseInt($select_tipo_ajuste.val())==parseInt(mov['grupo'])){
-							if(parseInt(valor_tipo_mov_anterior)==parseInt(mov['id'])){
-								tmov_hmtl += '<option value="' + mov['id'] + '" selected="yes">' + mov['titulo'] + '</option>';
-							}else{
-								tmov_hmtl += '<option value="' + mov['id'] + '"  >' + mov['titulo'] + '</option>';
-							}
-						}
-					});
-					$select_tipo_mov.append(tmov_hmtl);
-					
-					jAlert("No es posible cambiar el Tipo de Movimiento mientras existan productos en el listado.", 'Atencion!');
-				}else{
-					$id_tipo_mov.val(valor_tipo);//guardamos el nuevo tipo seleccionado
-					
-					//tomar el tipo de Costo que se utilizara de acuerdo al tipo de movimiento selecionado
-					//el tipo de costo en la vista define si el campo costo ajuste debe estar habilitado para edicion o no.
-					$.each(entry['TMov'],function(entryIndex,mov){
-						if(parseInt($select_tipo_mov.val())==parseInt(mov['id'])){
-							$tipo_costo.val(mov['tipo_costo']);
-						}
-					});
-					
-					
-					
-				}
-			});
-			
-			
-			
-			
-			
-			//cambiar el almacen
-			$select_tipo_mov.change(function(){
-				var valor_tipo = $(this).val();
-				var valor_tipo_mov_anterior = $id_tipo_mov.val();//tomamos el valor anterior
-				
-				if (parseInt($("tr", $grid_productos).size()) > 0 ){
-					$select_tipo_mov.children().remove();
-					var tmov_hmtl = '';
-					$.each(entry['TMov'],function(entryIndex,mov){
-						if(parseInt($select_tipo_ajuste.val())==parseInt(mov['grupo'])){
-							if(parseInt(valor_tipo_mov_anterior)==parseInt(mov['id'])){
-								tmov_hmtl += '<option value="' + mov['id'] + '" selected="yes">' + mov['titulo'] + '</option>';
-							}else{
-								tmov_hmtl += '<option value="' + mov['id'] + '"  >' + mov['titulo'] + '</option>';
-							}
-						}
-					});
-					$select_tipo_mov.append(tmov_hmtl);
-					
-					jAlert("No es posible cambiar el Tipo de Movimiento mientras existan productos en el listado.", 'Atencion!');
-					
-				}else{
-					$id_tipo_mov.val(valor_tipo);//guardamos el nuevo tipo seleccionado
-				}
-			});
-			
-			
-			
-			//cambiar el almacen
-			$select_almacen.change(function(){
-				var valor_alm = $(this).val();
-				var valor_alm_anterior = $id_almacen.val();//tomamos el valor anterior
-				
-				if (parseInt($("tr", $grid_productos).size()) > 0 ){
-					$select_almacen.children().remove();
-					var almacen_hmtl = '';
-					$.each(entry['Almacenes'],function(entryIndex,almacen){
-						if(parseInt(valor_alm_anterior)==parseInt(almacen['id'])){
-							almacen_hmtl += '<option value="' + almacen['id'] + '" selected="yes">' + almacen['titulo'] + '</option>';
-						}else{
-							almacen_hmtl += '<option value="' + almacen['id'] + '"  >' + almacen['titulo'] + '</option>';
-						}
-					});
-					$select_almacen.append(almacen_hmtl);
-					jAlert("No es posible cambiar el Tipo de Movimiento mientras existan productos en el listado.", 'Atencion!');
-				}else{
-					$id_almacen.val(valor_alm);//guardamos el nuevo id de almacen seleccionado
-				}
-			});
-			
-			
-			
-			//agregar producto al grid
-			$agregar_producto.click(function(event){
-				event.preventDefault();
-				var codigo_producto = $sku_producto.val();
-				var id_alm = $select_almacen.val();
-				var fecha = $fecha_ajuste.val();
-				var tipo_costo = $tipo_costo.val();
-				var exisPres = $exis_pres.val();
-				
-				//alert("tipo_costo:"+$tipo_costo.val());
-				$buscador_datos_producto($grid_productos, codigo_producto, id_alm, fecha, tipo_costo, exisPres, $select_tipo_ajuste);
-				
-			});
-			
 			
 		},"json");//termina llamada json
 		
@@ -1137,8 +709,16 @@ $(function() {
 		//buscador de productos
 		$busca_sku.click(function(event){
 			event.preventDefault();
-			$busca_productos($select_almacen.val(), $fecha_ajuste.val());
+			$busca_productos($sku_producto.val(), $nombre_producto.val());
 		});
+		
+		
+		//agregar producto al grid
+		$agregar_producto.click(function(event){
+			event.preventDefault();
+			$buscador_datos_producto($grid_productos, $sku_producto.val());
+		});
+		
 		
 		
 		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
