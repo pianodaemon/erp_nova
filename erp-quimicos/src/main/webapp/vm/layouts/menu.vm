@@ -354,9 +354,11 @@
 													<li class="topline"><a href="../invordsubensamble/startup.agnux">Producci&oacute;n de Subensamble</a></li>
 													
 													<li class="topline"><a href="../invordendev/startup.agnux">Orden de Devoluci&oacute;n</a></li>
+													<li class="topline"><a href="../invcapturacostos/startup.agnux">Captura de Costos</a></li>
+													
 													-->
 													
-													<li class="topline"><a href="../invcapturacostos/startup.agnux">Captura de Costos</a></li>
+													
 													<li class="topline"><a href="../invcontrolcostos/startup.agnux">Control de Costos</a></li>
 													<li class="topline"><a href="../invactualizaprecios/startup.agnux">Actualizar de Precios</a></li>
 													
@@ -546,6 +548,7 @@
 
 
 
+
 									<!-- Menu de produccion "NO BORRAR PORFAVOR, se enojara el papa de Paco"  -->
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Producci&oacute;n &raquo;</a>
@@ -617,6 +620,11 @@
 									
 
 
+									
+
+									
+
+
 
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Configuraciones &raquo;</a>
@@ -641,6 +649,7 @@
 												<ul>
 													<li class="topline"><a href="../graldocs/startup.agnux">Actualizador C&oacute;digos ISO</a></li>
 													<li class="topline"><a href="../graltipocambio/startup.agnux">Actualizador Tipo Cambio</a></li>
+													<li class="topline"><a href="../faccancelacionv2/startup.agnux">Cancelaci&oacute;n de Facturas</a></li>
 												</ul>
 											</li>
 
