@@ -974,7 +974,7 @@ public class PdfReporteRutas {
             tabla.addCell(celda);
              
             //columna 6-9
-            celda = new PdfPCell(new Paragraph("REVISÓ",fuenteCont2));
+            celda = new PdfPCell(new Paragraph("LIBERÓ",fuenteCont2));
             celda.setHorizontalAlignment(Element.ALIGN_CENTER);
             celda.setColspan(4);
             celda.setBorderWidthBottom(0);

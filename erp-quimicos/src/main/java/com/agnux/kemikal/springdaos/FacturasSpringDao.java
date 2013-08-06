@@ -215,6 +215,12 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("oc",rs.getString("oc"));
                     row.put("estado",rs.getString("estado"));
                     row.put("fecha_pago",rs.getString("fecha_pago"));
+                    
+                    if(rs.getString("estado").toUpperCase().equals("CANCELADO")){
+                        row.put("accion","<td><INPUT TYPE=\"button\" classs=\"cancel\" id=\"cancel_"+rs.getInt("id")+"\" value=\"Cancelar\" disabled=\"true\" style=\"width:65px; height:15px; font-weight:bold;\"></td>");
+                    }else{
+                        row.put("accion","<td><INPUT TYPE=\"button\" classs=\"cancel\" id=\"cancel_"+rs.getInt("id")+"\" value=\"Cancelar\" style=\"width:65px; height:15px; font-weight:bold;\"></td>");
+                    }
                     return row;
                 }
             }

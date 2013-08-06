@@ -9,6 +9,7 @@ import com.agnux.cfdi.BeanFromCfdiXml;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 
+import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.helpers.XmlHelper;
 import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
@@ -121,6 +122,7 @@ public class BeanFacturadorCfdiTimbre {
     
     public void init(HashMap<String, String> data, ArrayList<LinkedHashMap<String, String>> conceptos, ArrayList<LinkedHashMap<String, String>> impuestos_retenidos, ArrayList<LinkedHashMap<String, String>> impuestos_trasladados, String propos, LinkedHashMap<String,String> extras, Integer id_empresa, Integer id_sucursal) {
         
+        System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia Seters:::::::::::::::::..");
         this.setId_empresa(id_empresa);
         this.setId_sucursal(id_sucursal);
         
@@ -204,6 +206,7 @@ public class BeanFacturadorCfdiTimbre {
         this.setListaRetenciones(impuestos_retenidos);
         this.setListaTraslados(impuestos_trasladados);
         this.setDatosExtras(extras);
+        System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina Seters:::::::::::::::::..");
     }
     
     
@@ -217,6 +220,8 @@ public class BeanFacturadorCfdiTimbre {
     public String start() throws Exception {
             String retorno="false";
             String msj="false";
+            
+            System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia construccion del XML:::::::::::::::::..");
             
             //Este es el msj por default si no entra en ninguna de las condiciones
             retorno = retorno +"___"+msj;
@@ -253,8 +258,13 @@ public class BeanFacturadorCfdiTimbre {
             }
             
             boolean fichero_xml_ok = FileHelper.createFileWithText(path_file, xml_file_name, comprobante_firmado);
+            
+            System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina construccion del XML:::::::::::::::::..");
+            
             //System.out.println("fichero_xml_ok :"+fichero_xml_ok);
             if (fichero_xml_ok) {
+                System.out.println(TimeHelper.getFechaActualYMDH()+"Inicia Validacion XML");
+                
                 //System.out.println("fichero_xml_ok: "+fichero_xml_ok);
                 //Instancia del validador 
                 validarXml validacion = new validarXml( path_file+"/"+xml_file_name, ruta_fichero_schema);
@@ -262,13 +272,14 @@ public class BeanFacturadorCfdiTimbre {
                 //Aquí se ejecuta la validación del xml contra el Esquema(xsd)
                 String success = validacion.validar();
                 
-                System.out.println("Validacion XML: "+success);
+                System.out.println(TimeHelper.getFechaActualYMDH()+"Termina Validacion XML: "+success);
                 
                 //error po numero de cuenta NA
                 //DOCUMENTO INVÁLIDO: org.xml.sax.SAXParseException; cvc-minLength-valid: El valor 'NA' con la longitud = '2' no es de faceta válida con respecto a minLength '4' para el tipo '#AnonType_NumCtaPagoComprobante'
                 //System.out.println("str_executex :"+success);
                 //si la validación es correcta
                 if(success.equals("true")){
+                    System.out.println(TimeHelper.getFechaActualYMDH()+":::Inicia ejecucion de programa externo para consumir webservice de timbrado");
                     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
                     //aqui inicia request al webservice
                     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -346,6 +357,8 @@ public class BeanFacturadorCfdiTimbre {
                     }
                     myInputStream.close();
                     
+                    
+                    System.out.println(TimeHelper.getFechaActualYMDH()+":::Termina ejecucion de programa externo");
                     //System.out.println("sb.toString: "+sb.toString());
                     
                     String cadenaResult = new String();
@@ -362,7 +375,7 @@ public class BeanFacturadorCfdiTimbre {
                     if(valor1.equals("true")){
                         //:::Si llegó aquí es que el request al webservice nos devolvio correctamente el timbre fiscal::::::::
                         //:::Ahora procederemos a guardar los datos a la bd:::::::::::::::::::::::::::::::::::::::::::::::::::
-                        
+                        System.out.println(TimeHelper.getFechaActualYMDH()+":::Inicia parseo de xml para salvar datos");
                         BeanFromCfdiXml pop2 = new BeanFromCfdiXml(path_file+"/"+xml_file_name);
                         
                         this.setSelloDigital(pop2.getSelloCfd());
@@ -406,6 +419,8 @@ public class BeanFacturadorCfdiTimbre {
                             ano_aprobacion = pop.getAnoAprobacion();
                         }
                         
+                        System.out.println(TimeHelper.getFechaActualYMDH()+":::Termina parseo de xml.");
+                        
                         switch (Proposito.valueOf(this.getProposito())) {
                             case FACTURA:
                                 Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
@@ -414,8 +429,12 @@ public class BeanFacturadorCfdiTimbre {
                                 
                                 data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+Serie+"___"+Folio+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
                                 
+                                System.out.println(TimeHelper.getFechaActualYMDH()+":::Inicia Salvar datos de la Factura.");
+                                
                                 //llamada al procedimiento que guarda los datos de la factura
                                 String ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+                                
+                                System.out.println(TimeHelper.getFechaActualYMDH()+":::Termina Salvar datos.");
                                 
                                 //éste es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
                                 valor1="true";
