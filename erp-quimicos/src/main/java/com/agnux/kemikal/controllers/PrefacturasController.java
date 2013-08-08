@@ -545,7 +545,7 @@ public class PrefacturasController {
             @ModelAttribute("user") UserSessionData user
         ) throws Exception {
         
-        System.out.println(TimeHelper.getFechaActualYMDH()+": INICIO------------------------------------");
+        //System.out.println(TimeHelper.getFechaActualYMDH()+": INICIO------------------------------------");
         
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
@@ -611,12 +611,12 @@ public class PrefacturasController {
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df;
         //System.out.println("data_string: "+data_string);
         
-        System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
+        //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
         succes = this.getPdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
         log.log(Level.INFO, TimeHelper.getFechaActualYMDH()+"Despues de validacion {0}", String.valueOf(succes.get("success")));
         
-        System.out.println(TimeHelper.getFechaActualYMDH()+": Inicia actualizacion de datos de la prefactura");
+        //System.out.println(TimeHelper.getFechaActualYMDH()+": Inicia actualizacion de datos de la prefactura");
         if( String.valueOf(succes.get("success")).equals("true")){
             retorno = this.getPdao().selectFunctionForThisApp(data_string, extra_data_array);
             
@@ -633,7 +633,7 @@ public class PrefacturasController {
         }
         
         
-        System.out.println(TimeHelper.getFechaActualYMDH()+"::Termina Actualizacion de la Prefactura:: "+actualizo);
+        //System.out.println(TimeHelper.getFechaActualYMDH()+"::Termina Actualizacion de la Prefactura:: "+actualizo);
         
         if(actualizo.equals("1")){
             
@@ -653,7 +653,7 @@ public class PrefacturasController {
                     //Obtener el Ambiente de Facturacion PRUEBAS ó PRODUCCION, solo aplica para Facturacion por Timbre FIscal(cfditf)
                     String ambienteFac = this.getFacdao().getAmbienteFacturacion(id_empresa);
                     
-                    System.out.println(TimeHelper.getFechaActualYMDH()+"::::::Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
+                    //System.out.println(TimeHelper.getFechaActualYMDH()+"::::::Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
                     
                     //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
                     parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
@@ -778,7 +778,7 @@ public class PrefacturasController {
                         //Pac 0=Sin PAC, 1=Diverza, 2=ServiSim
                         if(!noPac.equals("0")){
                             //Solo se permite generar Factura para Timbrado con Diverza y ServiSim
-                            System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Obteniendo datos para CFDI:::::::::::::::::..");
+                            //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Obteniendo datos para CFDI:::::::::::::::::..");
                             command_selected = "facturar_cfditf";
                             extra_data_array = "'sin datos'";
 
@@ -801,11 +801,11 @@ public class PrefacturasController {
                             datosExtrasXmlFactura.put("noPac", noPac);
                             datosExtrasXmlFactura.put("ambienteFac", ambienteFac);
                             
-                            System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia BeanFacturador:::::::::::::::::..");
+                            //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia BeanFacturador:::::::::::::::::..");
                             //genera xml factura
                             this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
                             String timbrado_correcto = this.getBfCfdiTf().start();
-                            System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina BeanFacturador:::::::::::::::::..");
+                            //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina BeanFacturador:::::::::::::::::..");
                             String cadRes[] = timbrado_correcto.split("___");
                             
                             //aqui se checa si el xml fue validado correctamente
@@ -828,7 +828,7 @@ public class PrefacturasController {
                                 String fechaTimbre = this.getBfCfdiTf().getFechaTimbrado();
                                 String noCertSAT = this.getBfCfdiTf().getNoCertificadoSAT();
                                 
-                                System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia construccion de PDF:::::::::::::::::..");
+                                //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia construccion de PDF:::::::::::::::::..");
                                 
                                 //conceptos para el pdfcfd
                                 listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
@@ -848,7 +848,7 @@ public class PrefacturasController {
                                 }else{
                                     pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
                                 }
-                                System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina construccion de PDF:::::::::::::::::..");
+                                //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina construccion de PDF:::::::::::::::::..");
                                 
                                 jsonretorno.put("folio",serieFolio);
                                 valorRespuesta="true";
@@ -906,7 +906,7 @@ public class PrefacturasController {
         System.out.println("valorRespuesta: "+String.valueOf(valorRespuesta));
         System.out.println("msjRespuesta: "+String.valueOf(msjRespuesta));
         
-        System.out.println(TimeHelper.getFechaActualYMDH()+": FIN------------------------------------");
+        //System.out.println(TimeHelper.getFechaActualYMDH()+": FIN------------------------------------");
         
         return jsonretorno;
     }

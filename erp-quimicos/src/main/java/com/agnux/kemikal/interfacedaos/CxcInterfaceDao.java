@@ -153,4 +153,6 @@ public interface CxcInterfaceDao {
 
     public ArrayList<HashMap<String, String>> getListaClientes(Integer empresa_id, Integer agente_id );
 
+    public ArrayList<HashMap<String, Object>> getClientsAntCancel_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getClientsAntCancel_DatosAnticipo(Integer id);
 }
