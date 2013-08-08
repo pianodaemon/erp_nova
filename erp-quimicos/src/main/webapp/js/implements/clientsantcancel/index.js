@@ -15,7 +15,7 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/faccancelacionv2";
+	var controller = $contextpath.val()+"/controllers/clientsantcancel";
     
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -47,7 +47,7 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Cancelaci&oacute;n de Facturas(No cancela CFDI ante el SAT)');
+	$('#barra_titulo').find('#td_titulo').append('Cancelaci&oacute;n de Anticipos');
 	
 	//barra para el buscador 
 	//$('#barra_buscador').css({'height':'0px'});
@@ -56,19 +56,14 @@ $(function() {
 	//$('#barra_buscador').hide();
 	
 	
-	
 	var $cadena_busqueda = "";
-	var $busqueda_factura = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_factura]');
+	var $busqueda_num_transaccion = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_num_transaccion]');
 	var $busqueda_cliente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_cliente]');
 	var $busqueda_fecha_inicial = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_inicial]');
 	var $busqueda_fecha_final = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_fecha_final]');
-	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
-	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
-	var $busqueda_select_agente = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_agente]');
+	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('#boton_buscador');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('#boton_limpiar');
-	
-	
 	$buscar.mouseover(function(){
 		$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
 	});
@@ -82,83 +77,44 @@ $(function() {
 	$limpiar.mouseout(function(){
 		$(this).removeClass("onmouseOverLimpiar").addClass("onmouseOutLimpiar");
 	});
-	   
-            
+	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "factura" + signo_separador + $busqueda_factura.val() + "|";
+		valor_retorno += "num_transaccion" + signo_separador + $busqueda_num_transaccion.val() + "|";
 		valor_retorno += "cliente" + signo_separador + $busqueda_cliente.val() + "|";
 		valor_retorno += "fecha_inicial" + signo_separador + $busqueda_fecha_inicial.val() + "|";
-		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val() + "|";
-		valor_retorno += "codigo" + signo_separador + $busqueda_codigo.val() + "|";
-		valor_retorno += "producto" + signo_separador + $busqueda_producto.val() + "|";
-		valor_retorno += "agente" + signo_separador + $busqueda_select_agente.val();
+		valor_retorno += "fecha_final" + signo_separador + $busqueda_fecha_final.val();
 		return valor_retorno;
 	};
-    
+        
 	cadena = to_make_one_search_string();
 	$cadena_busqueda = cadena.toCharCode();
 	
 	$buscar.click(function(event){
-		//event.preventDefault();
+		event.preventDefault();
 		cadena = to_make_one_search_string();
 		$cadena_busqueda = cadena.toCharCode();
 		$get_datos_grid();
 	});
-	
-	
-	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesParaBuscador.json';
-	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-	$.post(input_json_lineas,$arreglo,function(data){
-		//Alimentando los campos select_agente
-		$busqueda_select_agente.children().remove();
-		var agente_hmtl = '<option value="0">[-Seleccionar Agente-]</option>';
-		$.each(data['Agentes'],function(entryIndex,agente){
-			agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_vendedor'] + '</option>';
-		});
-		$busqueda_select_agente.append(agente_hmtl);
-		
-		//asignamos el arreglo a una variable para utilizarla mas adelante
-		arrayAgentes = data['Agentes'];
-	});
-	
-	
+    
 	$limpiar.click(function(event){
-		$busqueda_factura.val('');
+		$busqueda_num_transaccion.val('');
 		$busqueda_cliente.val('');
 		$busqueda_fecha_inicial.val('');
 		$busqueda_fecha_final.val('');
-		$busqueda_codigo.val('');
-		$busqueda_producto.val('');
+		$busqueda_num_transaccion.focus();
 		
-		//Recargar select de agentes
-		$busqueda_select_agente.children().remove();
-		var agente_hmtl = '<option value="0">[-Seleccionar Agente-]</option>';
-		$.each(arrayAgentes,function(entryIndex,agente){
-			agente_hmtl += '<option value="' + agente['id'] + '" >' + agente['nombre_vendedor'] + '</option>';
-		});
-		$busqueda_select_agente.append(agente_hmtl);
-		
-		//asignar el enfoque al limpiar campos
-		$busqueda_factura.focus();
-	});
+		$get_datos_grid();
+	});    
 	
-        
-        
-        
-        
-       
-       
-       
+      
+    TriggerClickVisializaBuscador = 0;
+    
 	//visualizar  la barra del buscador
 	$visualiza_buscador.click(function(event){
 		event.preventDefault();
 		$('#barra_genera_informe').find('.tabla_genera_informe').css({'display':'none'});
-		
-		if(parseInt(TriggerClickVisualizaGeneradorInforme)==1){
-			$generar_informe.trigger('click');
-		}
 		
 		var alto=0;
 		if(TriggerClickVisializaBuscador==0){
@@ -186,17 +142,14 @@ $(function() {
 		};
 		
 		//asignar el enfoque al visualizar Buscador
-		$busqueda_factura.focus();
+		$busqueda_num_transaccion.focus();
 	});
 	
 	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_factura, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_num_transaccion, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_cliente, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_codigo, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_producto, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_agente, $buscar);
 	
 	
 	//----------------------------------------------------------------
@@ -318,128 +271,44 @@ $(function() {
     
     
 	$tabs_li_funxionalidad = function(){
-		$('#forma-faccancelacionv2-window').find('#submit').mouseover(function(){
-			$('#forma-faccancelacionv2-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+		$('#forma-clientsantcancel-window').find('#submit').mouseover(function(){
+			$('#forma-clientsantcancel-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 		});
-		$('#forma-faccancelacionv2-window').find('#submit').mouseout(function(){
-			$('#forma-faccancelacionv2-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+		$('#forma-clientsantcancel-window').find('#submit').mouseout(function(){
+			$('#forma-clientsantcancel-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
 		});
-		$('#forma-faccancelacionv2-window').find('#boton_cancelar').mouseover(function(){
-			$('#forma-faccancelacionv2-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+		$('#forma-clientsantcancel-window').find('#boton_cancelar').mouseover(function(){
+			$('#forma-clientsantcancel-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
 		})
-		$('#forma-faccancelacionv2-window').find('#boton_cancelar').mouseout(function(){
-			$('#forma-faccancelacionv2-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
+		$('#forma-clientsantcancel-window').find('#boton_cancelar').mouseout(function(){
+			$('#forma-clientsantcancel-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
 		});
 		
-		$('#forma-faccancelacionv2-window').find('#close').mouseover(function(){
-			$('#forma-faccancelacionv2-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		$('#forma-clientsantcancel-window').find('#close').mouseover(function(){
+			$('#forma-clientsantcancel-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
 		});
-		$('#forma-faccancelacionv2-window').find('#close').mouseout(function(){
-			$('#forma-faccancelacionv2-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		$('#forma-clientsantcancel-window').find('#close').mouseout(function(){
+			$('#forma-clientsantcancel-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
 		});
 		
 		
-		$('#forma-faccancelacionv2-window').find(".contenidoPes").hide(); //Hide all content
-		$('#forma-faccancelacionv2-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-		$('#forma-faccancelacionv2-window').find(".contenidoPes:first").show(); //Show first tab content
+		$('#forma-clientsantcancel-window').find(".contenidoPes").hide(); //Hide all content
+		$('#forma-clientsantcancel-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+		$('#forma-clientsantcancel-window').find(".contenidoPes:first").show(); //Show first tab content
 		
 		//On Click Event
-		$('#forma-faccancelacionv2-window').find("ul.pestanas li").click(function() {
-			$('#forma-faccancelacionv2-window').find(".contenidoPes").hide();
-			$('#forma-faccancelacionv2-window').find("ul.pestanas li").removeClass("active");
+		$('#forma-clientsantcancel-window').find("ul.pestanas li").click(function() {
+			$('#forma-clientsantcancel-window').find(".contenidoPes").hide();
+			$('#forma-clientsantcancel-window').find("ul.pestanas li").removeClass("active");
 			var activeTab = $(this).find("a").attr("href");
-			$('#forma-faccancelacionv2-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$('#forma-clientsantcancel-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
 			$(this).addClass("active");
 			return false;
 		});
 
 	}
 	
-	
-	var carga_formaPagos00_for_datagrid00 = function(id_to_show, accion_mode){
-		//aqui entra para generar pdf del pago
-		if(accion_mode == 'cancel'){
-			
-					var id_to_show = 0;
-					$(this).modalPanel_faccancelacionv2();
-					var form_to_show = 'formaCancelaEmisionV2';
-					$('#' + form_to_show).each (function(){this.reset();});
-					var $forma_selected = $('#' + form_to_show).clone();
-					$forma_selected.attr({id : form_to_show + id_to_show});
-					$('#forma-faccancelacionv2-window').css({"margin-left": -100,"margin-top": -180});
-					$forma_selected.prependTo('#forma-faccancelacionv2-window');
-					$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
-					
-					var $select_tipo_cancelacion = $('#forma-faccancelacionv2-window').find('select[name=tipo_cancelacion]');
-					var $motivo_cancelacion = $('#forma-faccancelacionv2-window').find('textarea[name=motivo_cancel]');
-					
-					var $cancelar_factura = $('#forma-faccancelacionv2-window').find('a[href*=cancelfact]');
-					var $salir = $('#forma-faccancelacionv2-window').find('a[href*=salir]');
-					
-					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTiposCancelacion.json';
-					$arreglo = {}
-					
-					$.post(input_json,$arreglo,function(entry){
-						$select_tipo_cancelacion.children().remove();
-						var tipo_hmtl = '';
-						$.each(entry['Tipos'],function(entryIndex,tipo){
-								tipo_hmtl += '<option value="' + tipo['id'] + '"  >' + tipo['titulo'] + '</option>';
-						});
-						$select_tipo_cancelacion.append(tipo_hmtl);
-					});
-					
-					
-					//generar informe mensual
-					$cancelar_factura.click(function(event){
-						event.preventDefault();
-						if($motivo_cancelacion.val()!=null && $motivo_cancelacion.val()!=""){
-							var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/cancelar_factura.json';
-							$arreglo = {'id_factura':$id_factura.val(),
-										'tipo_cancelacion':$select_tipo_cancelacion.val(),
-										'motivo':$motivo_cancelacion.val(),
-										'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-										}
-							
-							$.post(input_json,$arreglo,function(entry){
-								var cad = entry['success'].split(":");
-								
-								if(entry['success'].trim()=='false'){
-									jAlert(entry['msj'], 'Atencion!');
-								}else{
-									if(entry['valor'].trim()=='false'){
-										//jAlert("La factura "+$serie_folio.val()+" tiene pagos aplicados. Es necesario cancelar primeramente los pagos y despues cancelar la factura.", 'Atencion!');
-										jAlert(entry['msj'], 'Atencion!');
-									}else{
-										$boton_cancelarfactura.hide();
-										//jAlert("La factura "+$serie_folio.val()+"  se ha cancelado con &eacute;xito", 'Atencion!');
-										jAlert(entry['msj'], 'Atencion!');
-										$get_datos_grid();
-										
-										var remove = function() {$(this).remove();};
-										$('#forma-faccancelacionv2-overlay').fadeOut(remove);
-									}
-								}
-								
-							});//termina llamada json
-						}else{
-							jAlert("Es necesario ingresar el motivo de la cancelaci&oacute;n", 'Atencion!');
-						}
-					});
-					
-					
-					$salir.click(function(event){
-						event.preventDefault();
-						var remove = function() {$(this).remove();};
-						$('#forma-faccancelacionv2-overlay').fadeOut(remove);
-					});
 
-			
-		}
-	}
-    
-    
-    
-    
     
     
     
@@ -449,45 +318,45 @@ $(function() {
 	//Eventos del grid edicion,borrar!
 	var carga_formaCC00_for_datagrid00Cancel = function(id_to_show, accion_mode){
 		//aqui  entra para editar un registro
-		var form_to_show = 'formaCancelaEmisionV2';
+		var form_to_show = 'formClientsAntCancel';
 		
 		$('#' + form_to_show).each (function(){this.reset();});
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$(this).modalPanel_faccancelacionv2();
+		$(this).modalPanel_clientsantcancel();
 					
-		$('#forma-faccancelacionv2-window').css({"margin-left": -420, 	"margin-top": -200});
-		$forma_selected.prependTo('#forma-faccancelacionv2-window');
+		$('#forma-clientsantcancel-window').css({"margin-left": -420, 	"margin-top": -200});
+		$forma_selected.prependTo('#forma-clientsantcancel-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();
 		
-		var $id_factura = $('#forma-faccancelacionv2-window').find('input[name=id_factura]');
-		var $select_tipo_cancelacion = $('#forma-faccancelacionv2-window').find('select[name=tipo_cancelacion]');
-		var $motivo_cancelacion = $('#forma-faccancelacionv2-window').find('textarea[name=motivo_cancel]');
+		var $id_factura = $('#forma-clientsantcancel-window').find('input[name=id_factura]');
+		var $select_tipo_cancelacion = $('#forma-clientsantcancel-window').find('select[name=tipo_cancelacion]');
+		var $motivo_cancelacion = $('#forma-clientsantcancel-window').find('textarea[name=motivo_cancel]');
 		
-		var $cancelar_factura = $('#forma-faccancelacionv2-window').find('#cancelar');
-		var $salir = $('#forma-faccancelacionv2-window').find('#salir');
+		var $cancelar_factura = $('#forma-clientsantcancel-window').find('#cancelar');
+		var $salir = $('#forma-clientsantcancel-window').find('#salir');
 		
 		//botones                        
-		var $cerrar_plugin = $('#forma-faccancelacionv2-window').find('#close');
+		var $cerrar_plugin = $('#forma-clientsantcancel-window').find('#close');
 		
 		
 		$id_factura.val(id_to_show);
 		
 		
-		if(accion_mode == 'cancel'){
+		if(accion_mode == 'edit'){
 			
 			
 			var respuestaProcesada = function(data){
 				if ( data['success'] == 'true' ){
 					var remove = function() {$(this).remove();};
-					$('#forma-faccancelacionv2-overlay').fadeOut(remove);
+					$('#forma-clientsantcancel-overlay').fadeOut(remove);
 					jAlert("Los datos se han actualizado.", 'Atencion!');
 					$get_datos_grid();
 				}else{
 					// Desaparece todas las interrogaciones si es que existen
-					$('#forma-faccancelacionv2-window').find('div.interrogacion').css({'display':'none'});
+					$('#forma-clientsantcancel-window').find('div.interrogacion').css({'display':'none'});
 					
 					var valor = data['success'].split('___');
 					//muestra las interrogaciones
@@ -495,7 +364,7 @@ $(function() {
 						tmp = data['success'].split('___')[element];
 						longitud = tmp.split(':');
 						if( longitud.length > 1 ){
-							$('#forma-faccancelacionv2-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+							$('#forma-clientsantcancel-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
 							.parent()
 							.css({'display':'block'})
 							.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -507,10 +376,13 @@ $(function() {
 			var options = {dataType :  'json', success : respuestaProcesada};
 			$forma_selected.ajaxForm(options);
 			
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTiposCancelacion.json';
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAnticipo.json';
 			$arreglo = {}
 			
 			$.post(input_json,$arreglo,function(entry){
+				
+				
+				
 				$select_tipo_cancelacion.children().remove();
 				var tipo_hmtl = '';
 				$.each(entry['Tipos'],function(entryIndex,tipo){
@@ -543,7 +415,7 @@ $(function() {
 								$get_datos_grid();
 								
 								var remove = function() {$(this).remove();};
-								$('#forma-faccancelacionv2-overlay').fadeOut(remove);
+								$('#forma-clientsantcancel-overlay').fadeOut(remove);
 							}
 						}
 					});//termina llamada json
@@ -556,13 +428,13 @@ $(function() {
 			$salir.click(function(event){
 				event.preventDefault();
 				var remove = function() {$(this).remove();};
-				$('#forma-faccancelacionv2-overlay').fadeOut(remove);
+				$('#forma-clientsantcancel-overlay').fadeOut(remove);
 			});
 			
 			//cerrar plugin
 			$cerrar_plugin.bind('click',function(){
 				var remove = function() {$(this).remove();};
-				$('#forma-faccancelacionv2-overlay').fadeOut(remove);
+				$('#forma-clientsantcancel-overlay').fadeOut(remove);
 			});
 		
 		
@@ -580,16 +452,16 @@ $(function() {
     
     
     $get_datos_grid = function(){
-        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllFacturas.json';
+        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllAnticipos.json';
         
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
         
-        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':20,'input_json':'/'+controller+'/getAllFacturas.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':20,'input_json':'/'+controller+'/getAllAnticipos.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
 		
         $.post(input_json,$arreglo,function(data){
 			
             //pinta_grid
-            $.fn.tablaOrdenableCancel(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formaCC00_for_datagrid00Cancel);
+            $.fn.tablaOrdenableEdit(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formaCC00_for_datagrid00Cancel);
 			
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));

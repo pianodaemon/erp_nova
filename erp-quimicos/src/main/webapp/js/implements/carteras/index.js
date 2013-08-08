@@ -510,11 +510,47 @@ $(function() {
 	}
 	
 	
-	var $agregarDatosClienteSeleccionado = function(idCliente, rfc, noControl, razonSocial){
+	var $agregarDatosClienteSeleccionado = function(idCliente, rfc, noControl, razonSocial, $select_moneda, $select_forma_pago, $select_banco, $campo_banco_deposito, arrayMonedas, arrayFormasPago, arrayBancos, arrayBancosDeposito){
 		$('#forma-carteras-window').find('input[name=identificador_cliente]').val(idCliente);
 		$('#forma-carteras-window').find('input[name=rfccliente]').val(rfc);
 		$('#forma-carteras-window').find('input[name=nocliente]').val(noControl);
 		$('#forma-carteras-window').find('input[name=cliente]').val(razonSocial);
+		
+		
+		//carga select con todas las monedas
+		$select_moneda.children().remove();
+		var tipo_moneda_hmtl="";// = '<option value="0" selected="yes">Seleccione una opcion</option>';
+		$.each(arrayMonedas,function(entryIndex,moneda){
+			tipo_moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+		});
+		$select_moneda.append(tipo_moneda_hmtl);
+		
+		//carga select con todas las formas de pago
+		$select_forma_pago.children().remove();
+		var forma_pago_hmtl="";// = '<option value="0" selected="yes">Seleccione una opcion</option>';
+		$.each(arrayFormasPago,function(entryIndex,fpago){
+			forma_pago_hmtl += '<option value="' + fpago['titulo'] + '"  >' + fpago['titulo'] + '</option>';
+		});
+		$select_forma_pago.append(forma_pago_hmtl);
+		
+		
+		//carga select con todos los bancos
+		$select_banco.children().remove();
+		var banco_hmtl="";// = '<option value="0" selected="yes">Seleccione una opcion</option>';
+		$.each(arrayBancos,function(entryIndex,banco){
+			banco_hmtl += '<option value="' + banco['id'] + '"  >' + banco['titulo'] + '</option>';
+		});
+		$select_banco.append(banco_hmtl);
+	
+		//carga select con todos los bancos de kemikal
+		$campo_banco_deposito.children().remove();
+		var banco_k_hmtl="";// = '<option value="0" selected="yes">Seleccione una opcion</option>';
+		$.each(arrayBancosDeposito,function(entryIndex,bancok){
+			banco_k_hmtl += '<option value="' + bancok['id'] + '"  >' + bancok['titulo'] + '</option>';
+		});
+		$campo_banco_deposito.append(banco_k_hmtl);
+		
+		
 		
 	   //habilitar select de tipo movimiento
 		$('#forma-carteras-window').find('select[name=tipo_mov]').removeAttr('disabled');//habilitar select
@@ -523,7 +559,7 @@ $(function() {
 	
 	
 	//buscador de clientes
-	$busca_clientes = function(tipo, numero_control, razon_social_cliente){
+	$busca_clientes = function(tipo, numero_control, razon_social_cliente, $select_moneda, $select_forma_pago, $select_banco, $campo_banco_deposito, arrayMonedas, arrayFormasPago, arrayBancos, arrayBancosDeposito){
             $(this).modalPanel_Buscacliente();
             var $dialogoc =  $('#forma-buscacliente-window');
             //var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -639,7 +675,7 @@ $(function() {
 							var razonSocial = $(this).find('span.razon').html();
 							
 							//llamada a la funcion para agregar los datos del cliente
-							$agregarDatosClienteSeleccionado(idCliente, rfc, noControl, razonSocial);
+							$agregarDatosClienteSeleccionado(idCliente, rfc, noControl, razonSocial, $select_moneda, $select_forma_pago, $select_banco, $campo_banco_deposito, arrayMonedas, arrayFormasPago, arrayBancos, arrayBancosDeposito);
 							
                         }
                         
@@ -693,7 +729,7 @@ $(function() {
                 var $campo_fecha = $('#forma-carteras-window').find('input[name=fecha_pago]');
                 
                 /***********************************************************************************************************************************/
-                /**/var $campo_banco_kemikal = $('#forma-carteras-window').find('div.ficha_deposito').find('select[name=forma_banco_kemikal]');           /**/
+                /**/var $campo_banco_deposito = $('#forma-carteras-window').find('div.ficha_deposito').find('select[name=forma_banco_kemikal]');           /**/
                 /**/var $campo_cuenta_deposito = $('#forma-carteras-window').find('div.ficha_deposito').find('select[name=cuenta_deposito]');       /**/
                 /**/var $campo_movimiento_deposito = $('#forma-carteras-window').find('div.ficha_deposito').find('input[name=movimiento_deposito]');/**/
                 /**/var $campo_fecha_deposito= $('#forma-carteras-window').find('div.ficha_deposito').find('input[name=fecha_pago_deposito]');      /**/
@@ -1547,11 +1583,11 @@ $(function() {
 						
 						$.post(select_cuenta_json4,$arreglo,function(entry){
 							var trama_hmtl = '<option value="0" >[--    --]</option>';
-							$campo_banco_kemikal.children().remove();
+							$campo_banco_deposito.children().remove();
 							$.each(entry['Bancos_moneda'],function(entryIndex,bank){
 								trama_hmtl += '<option value="' + bank['id'] + '"  >' + bank['titulo'] + '</option>';
 							});
-							$campo_banco_kemikal.append(trama_hmtl);
+							$campo_banco_deposito.append(trama_hmtl);
 						});
 						
 						//vaciar select de centas de deposito
@@ -1561,10 +1597,10 @@ $(function() {
 					});
 					
 							
-					$campo_banco_kemikal.change(function(){
+					$campo_banco_deposito.change(function(){
 						//var select_cuenta_json4=document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'obtener_numero_de_cuenta' + '/' + $campo_banco_frio.val() +'/' + $select_moneda.val()  +'/out.json';
 						var select_cuenta_json4 = document.location.protocol + '//' + document.location.host + '/' + controller + '/obtener_numero_de_cuenta.json';
-						$arreglo = {    'id_banco': $campo_banco_kemikal.val(),
+						$arreglo = {    'id_banco': $campo_banco_deposito.val(),
 										'id_moneda': $select_moneda.val()
 									};
 									
@@ -1890,7 +1926,7 @@ $(function() {
 										'fecha_deposito':$campo_fecha_deposito.val(),
 										
 										/********************************************************/
-										'banco_kemikal':$campo_banco_kemikal.val(),
+										'banco_kemikal':$campo_banco_deposito.val(),
 										'cuenta_deposito':$campo_cuenta_deposito.val(),
 										'movimiento_deposito':$campo_movimiento_deposito.val(),
 										/*******************************************************/										
@@ -2980,7 +3016,7 @@ $(function() {
 		var $id_pago = $('#forma-carteras-window').find('input[name=id_pago]');
 		var $total_tr = $('#forma-carteras-window').find('input[name=total_tr]');
 		var $select_tipo_movimiento = $('#forma-carteras-window').find('select[name=tipo_mov]');
-		var $campo_banco_kemikal = $('#forma-carteras-window').find('div.ficha_deposito').find('select[name=forma_banco_kemikal]');
+		var $campo_banco_deposito = $('#forma-carteras-window').find('div.ficha_deposito').find('select[name=forma_banco_kemikal]');
 		var $select_forma_pago = $('#forma-carteras-window').find('select[name=forma_pago]');
 		var $select_banco = $('#forma-carteras-window').find('select[name=bancos]');
 		var $select_moneda = $('#forma-carteras-window').find('select[name=moneda]');
@@ -3074,66 +3110,69 @@ $(function() {
 			$select_banco.append(banco_hmtl);
 		
 			//carga select con todos los bancos de kemikal
-			//$campo_banco_frio
-			$campo_banco_kemikal.children().remove();
+			$campo_banco_deposito.children().remove();
 			var banco_k_hmtl="";// = '<option value="0" selected="yes">Seleccione una opcion</option>';
 			$.each(entry['Bancos_kemikal'],function(entryIndex,bancok){
 				banco_k_hmtl += '<option value="' + bancok['id'] + '"  >' + bancok['titulo'] + '</option>';
 			});
-			$campo_banco_kemikal.append(banco_k_hmtl);
+			$campo_banco_deposito.append(banco_k_hmtl);
 			
 			
 			$tipo_cambio.val(entry['Tipocambio'][0]['valor_tipo_cambio']);
-		});//termina llamada json
-		
-		
-		
-		//buscador de clientes
-		$busca_cliente.click(function(event){
-			event.preventDefault();
-			//1 para que retorne datos en buscador para realizar pagos
-			$busca_clientes(1, $nocliente.val(), $razon_cliente.val());
-		});
-		
-		//asignar evento keypress al campo Razon Social del cliente
-		$(this).aplicarEventoKeypressEjecutaTrigger($razon_cliente, $busca_cliente);
-		
-		
-		
-		
-		$nocliente.keypress(function(e){
-			if(e.which == 13){
-				
-				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoClient.json';
-				$arreglo2 = {'no_control':$nocliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-				
-				$.post(input_json2,$arreglo2,function(entry2){
-					
-					if(parseInt(entry2['Cliente'].length) > 0 ){
-						var idCliente = entry2['Cliente'][0]['id'];
-						var rfc = entry2['Cliente'][0]['rfc'];
-						var noControl = entry2['Cliente'][0]['numero_control'];
-						var razonSocial = entry2['Cliente'][0]['razon_social'];
-						
-						//llamada a la funcion para agregar los datos del cliente
-						$agregarDatosClienteSeleccionado(idCliente, rfc, noControl, razonSocial);
-						
-					}else{
-						$('#forma-carteras-window').find('input[name=identificador_cliente]').val(0);
-						$('#forma-carteras-window').find('input[name=rfccliente]').val('');
-						$('#forma-carteras-window').find('input[name=nocliente]').val('');
-						$('#forma-carteras-window').find('input[name=cliente]').val('');
-						
-						jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
-							$('#forma-carteras-window').find('input[name=nocliente]').focus(); 
-						});
-					}
-				},"json");//termina llamada json
-				
-				return false;
-			}
-		});
 			
+			
+			
+			
+			//buscador de clientes
+			$busca_cliente.click(function(event){
+				event.preventDefault();
+				//1 para que retorne datos en buscador para realizar pagos
+				$busca_clientes(1, $nocliente.val(), $razon_cliente.val(), $select_moneda, $select_forma_pago, $select_banco, $campo_banco_deposito, entry['Monedas'], entry['Formaspago'], entry['Bancos'], entry['Bancos_kemikal']);
+			});
+			
+			//asignar evento keypress al campo Razon Social del cliente
+			$(this).aplicarEventoKeypressEjecutaTrigger($razon_cliente, $busca_cliente);
+			
+			
+			//$select_tipo_movimiento, $select_moneda, $select_forma_pago, $select_banco, $campo_banco_deposito, arrayTipoMov, arrayMonedas, arrayFormasPago, arrayBancos, arrayBancosDeposito
+			
+			$nocliente.keypress(function(e){
+				if(e.which == 13){
+					
+					var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoClient.json';
+					$arreglo2 = {'no_control':$nocliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+					
+					$.post(input_json2,$arreglo2,function(entry2){
+						
+						if(parseInt(entry2['Cliente'].length) > 0 ){
+							var idCliente = entry2['Cliente'][0]['id'];
+							var rfc = entry2['Cliente'][0]['rfc'];
+							var noControl = entry2['Cliente'][0]['numero_control'];
+							var razonSocial = entry2['Cliente'][0]['razon_social'];
+							
+							//llamada a la funcion para agregar los datos del cliente
+							$agregarDatosClienteSeleccionado(idCliente, rfc, noControl, razonSocial, $select_moneda, $select_forma_pago, $select_banco, $campo_banco_deposito, entry['Monedas'], entry['Formaspago'], entry['Bancos'], entry['Bancos_kemikal']);
+							
+						}else{
+							$('#forma-carteras-window').find('input[name=identificador_cliente]').val(0);
+							$('#forma-carteras-window').find('input[name=rfccliente]').val('');
+							$('#forma-carteras-window').find('input[name=nocliente]').val('');
+							$('#forma-carteras-window').find('input[name=cliente]').val('');
+							
+							jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
+								$('#forma-carteras-window').find('input[name=nocliente]').focus(); 
+							});
+						}
+					},"json");//termina llamada json
+					
+					return false;
+				}
+			});
+			
+		});//termina new
+		
+		
+		
 		
 		
 		
