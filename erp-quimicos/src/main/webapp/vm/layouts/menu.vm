@@ -143,7 +143,7 @@
 													<li class="topline"><a href="../carteras/startup.agnux">Cobranza</a></li>
 													<li class="topline"><a href="../notascredito/startup.agnux">Nota de Cr&eacute;dito</a></li>
 													<li class="topline"><a href="../programacionrutas/startup.agnux">Programaci&oacute;n de Ruta</a></li>
-													<li class="topline"><a href="../clientsantcancel/startup.agnux">Cancelaci&oacute;n de Anticipos</a></li>
+													<li class="topline"><a href="../clientsantcancel/startup.agnux">Anticipos</a></li>
 													<!--
 													<li class="topline"><a href="#">Movimientos</a></li>
 													<li class="topline"><a href="#">Actualizar Precio/Descuento</a></li>

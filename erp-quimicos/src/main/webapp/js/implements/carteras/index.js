@@ -1961,7 +1961,7 @@ $(function() {
 												if ( data['success'] == "true" ){
 													// Desaparece todas las interrogaciones si es que existen
 													$('#forma-carteras-window').find('div.interrogacion').css({'display':'none'});
-													jAlert('Pago registrado con &eacute;xito.\nN&uacute;mero de transacci&oacute;n: '+data['numero_transaccion'],'Atencion!')
+													jAlert('Pago registrado con &eacute;xito.\nN&uacute;mero de transacci&oacute;n: '+data['numero_transaccion'],'Atencion!');
 													
 													$textarea_observaciones.val('');
 													
@@ -1989,6 +1989,10 @@ $(function() {
 															.parent()
 															.css({'display':'block'})
 															.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+															
+															if(tmp.split(':')[0].substring(0, 9) == 'cancelado'){
+																jAlert(tmp.split(':')[1],'Atencion!')
+															}
 														}
 													}
 												}
