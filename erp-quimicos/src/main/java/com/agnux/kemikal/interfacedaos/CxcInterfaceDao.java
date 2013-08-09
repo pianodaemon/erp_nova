@@ -20,7 +20,7 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, Object>> getLocalidadesForThisEntidad(String id_pais,String id_entidad);
     public ArrayList<HashMap<String, Object>> getMonedas();
     public ArrayList<HashMap<String, Object>> getImpuestos();
-
+    
     //catalogo de clientes
     public ArrayList<HashMap<String, Object>> getClientes_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getCliente_Datos(Integer id);
@@ -154,5 +154,5 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, String>> getListaClientes(Integer empresa_id, Integer agente_id );
 
     public ArrayList<HashMap<String, Object>> getClientsAntCancel_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-    public ArrayList<HashMap<String, String>> getClientsAntCancel_DatosAnticipo(Integer id);
+    public ArrayList<HashMap<String, Object>> getClientsAntCancel_DatosAnticipo(Integer id);
 }

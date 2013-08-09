@@ -68,25 +68,21 @@ public class ClientsAntCancelController {
     @Qualifier("daoCxc")
     private CxcInterfaceDao cxcDao;
     
-    
     public HomeInterfaceDao getHomeDao() {
         return HomeDao;
     }
     
-
     public GralInterfaceDao getGralDao() {
         return gralDao;
     }
-
+    
     public void setGralDao(GralInterfaceDao gralDao) {
         this.gralDao = gralDao;
     }
-
-
+    
     public CxcInterfaceDao getCxcDao() {
         return cxcDao;
     }
-    
     
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, @ModelAttribute("user") UserSessionData user)
@@ -102,9 +98,9 @@ public class ClientsAntCancelController {
         infoConstruccionTabla.put("cliente", "Cliente:280");
         infoConstruccionTabla.put("fecha", "Fecha:90");
         infoConstruccionTabla.put("estado", "Estado:90");
-        infoConstruccionTabla.put("observacion", "Observaci&oacute;n:280");
+        //infoConstruccionTabla.put("observacion", "Observaci&oacute;n:280");
         
-        ModelAndView x = new ModelAndView("clientsantcancel/startup", "title", "Cancelaci&oacute;n de Anticipos");
+        ModelAndView x = new ModelAndView("clientsantcancel/startup", "title", "Anticipos de Clientes");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -182,18 +178,21 @@ public class ClientsAntCancelController {
     
     //obtiene los tipos de cancelacion
     @RequestMapping(method = RequestMethod.POST, value="/getAnticipo.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getAnticipoJson(
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAnticipoJson(
             @RequestParam(value="identificador", required=true) Integer identificador,
             Model model
         ) {
         
         log.log(Level.INFO, "Ejecutando getAnticipoJson de {0}", ClientsAntCancelController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
         
         datos = this.getCxcDao().getClientsAntCancel_DatosAnticipo(identificador);
+        monedas = this.getCxcDao().getMonedas();
         
         jsonretorno.put("Datos", datos);
+        jsonretorno.put("Monedas", monedas);
         
         return jsonretorno;
     }
@@ -202,10 +201,105 @@ public class ClientsAntCancelController {
     
     
     
+    //Buscador de clientes
+    @RequestMapping(method = RequestMethod.POST, value="/get_buscador_clientes.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> get_buscador_clientesJson(
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="filtro", required=true) Integer filtro,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        //System.out.println("id_usuario: "+id_usuario);
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Clientes", this.getCxcDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    //Obtener datos del cliente a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoClient.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataByNoClientJson(
+            @RequestParam(value="no_control", required=true) String no_control,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Cliente", this.getCxcDao().getDatosClienteByNoCliente(no_control, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
     
     
     
     
-    
+    //crear y editar
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="identificador", required=true) String id,
+            @RequestParam(value="accion", required=true) String accion,
+            @RequestParam(value="fecha", required=true) String fecha,
+            @RequestParam(value="monto", required=true) String monto,
+            @RequestParam(value="select_moneda", required=true) String select_moneda,
+            @RequestParam(value="id_cliente", required=true) String id_cliente,
+            @RequestParam(value="observaciones", required=true) String observaciones,
+            Model model,@ModelAttribute("user") UserSessionData user
+        ) {
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        HashMap<String, String> succes = new HashMap<String, String>();
+        Integer app_selected = 146;
+        String command_selected = "new";
+        Integer id_usuario= user.getUserId();//variable para el id  del usuario
+        String extra_data_array = "'sin datos'";
+        String actualizo = "0";
+        String valor="";
+        String mensaje="";
+        
+        command_selected = accion;
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+id_cliente+"___"+monto+"___"+fecha+"___"+select_moneda+"___"+observaciones;
+        
+        succes = this.getCxcDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        if( String.valueOf(succes.get("success")).equals("true") ){
+            actualizo = this.getCxcDao().selectFunctionForCxcAdmProcesos(data_string, extra_data_array);
+            valor="true";
+            mensaje=String.valueOf(actualizo);
+        }else{
+            valor="false";
+            mensaje=String.valueOf(succes.get("success"));
+        }
+        
+        jsonretorno.put("success",String.valueOf(succes.get("success")));
+        jsonretorno.put("valor",valor);
+        jsonretorno.put("msj",mensaje);
+        
+        log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
     
 }

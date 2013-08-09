@@ -3700,7 +3700,7 @@ return subfamilias;
                         +"   join gral_mun on gral_mun.id=cxc_clie.municipio_id   "
                         +"   where  cxc_clie.empresa_id=" +empresa_id+" "+cadena_where;
 
-        System.out.print(sql_query);
+        //System.out.print(sql_query);
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -3740,14 +3740,14 @@ return subfamilias;
                     + "gral_mon.descripcion_abr AS moneda, "
                     + "cxc_clie.razon_social AS cliente, "
                     + "to_char(cxc_ant.fecha_anticipo_usuario,'dd/mm/yyyy') AS fecha, "
-                    + "(CASE WHEN cxc_ant.cancelado=TRUE THEN 'CANCELADO' ELSE (CASE WHEN cxc_ant.borrado_logico=TRUE THEN 'APLICADO' ELSE '' END) END) AS estado, "
-                    + "cxc_ant.observaciones AS observacion "
+                    + "(CASE WHEN cxc_ant.cancelado=TRUE THEN 'CANCELADO' ELSE (CASE WHEN cxc_ant.borrado_logico=TRUE THEN 'APLICADO' ELSE '' END) END) AS estado "
+                    //+ "cxc_ant.observaciones AS observacion "
                 + "FROM cxc_ant  "
                 + "JOIN cxc_clie ON cxc_clie.id=cxc_ant.cliente_id "
                 + "JOIN gral_mon ON gral_mon.id=cxc_ant.moneda_id "
                 +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = cxc_ant.id "
                 +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
-
+        
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -3762,48 +3762,51 @@ return subfamilias;
                     row.put("cliente",rs.getString("cliente"));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("estado",rs.getString("estado"));
-                    row.put("observacion",rs.getString("observacion"));
+                    //row.put("observacion",rs.getString("observacion"));
                     return row;
                 }
             }
         );
         return hm;
     }
-
     
     
-
+    
+    
     @Override
-    public ArrayList<HashMap<String, String>> getClientsAntCancel_DatosAnticipo(Integer id) {
+    public ArrayList<HashMap<String, Object>> getClientsAntCancel_DatosAnticipo(Integer id) {
         String sql_query = ""
                 + "SELECT "
                     + "cxc_ant.id, "
                     + "cxc_ant.numero_transaccion, "
                     + "cxc_ant.anticipo_inicial AS monto, "
-                    + "to_char(cxc_ant.fecha_anticipo_usuario,'dd/mm/yyyy') AS fecha, "
+                    + "to_char(cxc_ant.fecha_anticipo_usuario,'yyyy-mm-dd') AS fecha, "
                     + "cxc_ant.observaciones, "
+                    + "cxc_clie.numero_control AS no_cliente, "
                     + "cxc_clie.razon_social AS cliente, "
-                    + "gral_mon.descripcion_abr AS moneda "
+                    + "cxc_ant.moneda_id, "
+                    + "cxc_ant.cancelado "
                 + "FROM cxc_ant "
                 + "JOIN cxc_clie ON cxc_clie.id=cxc_ant.cliente_id "
-                + "JOIN gral_mon ON gral_mon.id=cxc_ant.moneda_id "
                 + "WHERE cxc_ant.id="+id;
         
-        System.out.print(sql_query);
+        //System.out.print(sql_query);
 
-        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    HashMap<String, String> row = new HashMap<String, String>();
+                    HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("numero_transaccion",rs.getString("numero_transaccion"));
                     row.put("monto",StringHelper.roundDouble(rs.getString("monto"),2));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("observaciones",rs.getString("observaciones"));
+                    row.put("no_cliente",rs.getString("no_cliente"));
                     row.put("cliente",rs.getString("cliente"));
-                    row.put("moneda",rs.getString("moneda"));
+                    row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    row.put("cancelado",String.valueOf(rs.getBoolean("cancelado")));
                     return row;
                 }
             }
@@ -3811,7 +3814,7 @@ return subfamilias;
         return hm;
     }
 
-
+    
     
     
 
