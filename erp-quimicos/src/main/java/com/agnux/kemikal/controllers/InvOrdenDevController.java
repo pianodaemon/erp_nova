@@ -85,7 +85,7 @@ public class InvOrdenDevController {
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", InvOrdenEntradaController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", InvOrdenDevController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         //infoConstruccionTabla.put("id", "Acciones:90");
@@ -177,9 +177,143 @@ public class InvOrdenDevController {
     
     
     
+    @RequestMapping(method = RequestMethod.POST, value="/getOrdenDev.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getOrdenDevJson(
+            @RequestParam(value="identificador", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getOrdenDevJson de {0}", InvOrdenDevController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        
+        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> Grid = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> GridLotes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> tiposMovimiento = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        if( id != 0 ){
+            datos = this.getInvDao().getInvOrdenDev_Datos(id);
+            
+            Integer tipoDoc = Integer.parseInt(datos.get(0).get("tipo_doc"));
+            String folioNcto = datos.get(0).get("folio_ncto");
+            Integer clienteId = Integer.parseInt(datos.get(0).get("clie_id"));
+            String folioDoc = datos.get(0).get("folio_doc");
+            
+            if(tipoDoc==1 && !folioNcto.equals("")){
+                Grid = this.getInvDao().getInvOrdenDev_DatosGridNcto(folioNcto, clienteId);
+            }else{
+                Grid = this.getInvDao().getInvOrdenDev_DatosGridOsal(tipoDoc, folioDoc, clienteId);
+            }
+            GridLotes = this.getInvDao().getInvOrdenDev_DatosGridLotes(id);
+        }
+        
+        monedas = this.getInvDao().getMonedas();
+        almacenes = this.getInvDao().getAlmacenes(id_empresa);
+        tiposMovimiento = this.getInvDao().getAllTiposMovimientoInventario(id_empresa);
+        
+        jsonretorno.put("Datos", datos);
+        jsonretorno.put("datosGrid", Grid);
+        jsonretorno.put("Lotes", GridLotes);
+        jsonretorno.put("Monedas", monedas);
+        jsonretorno.put("Almacenes", almacenes);
+        jsonretorno.put("TMovInv", tiposMovimiento);
+        
+        return jsonretorno;
+    }
     
     
     
+    
+    
+    //edicion y nuevo
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="identificador", required=true) Integer identificador,
+            @RequestParam(value="observaciones", required=true) String observaciones,
+            @RequestParam(value="accion", required=true)        String accion,
+            @RequestParam(value="eliminado", required=true)     String[] eliminado,
+            @RequestParam(value="tipo", required=true)          String[] tipo_registro,
+            @RequestParam(value="id_detalle", required=true)    String[] id_detalle,
+            @RequestParam(value="id_alm", required=true)        String[] id_almacen,
+            @RequestParam(value="id_prod_grid", required=true)  String[] id_prod_grid,
+            @RequestParam(value="lote_int", required=true)      String[] lote_interno,
+            @RequestParam(value="lote_id", required=true)       String[] lote_id,
+            @RequestParam(value="cant_dev", required=true)      String[] cant_dev,
+            @RequestParam(value="no_tr", required=true)         String[] no_tr,
+            @RequestParam(value="id_partida", required=true)         String[] id_partida,
+            @ModelAttribute("user") UserSessionData user,
+            Model model
+        ) {
+            
+            HashMap<String, String> jsonretorno = new HashMap<String, String>();
+            HashMap<String, String> succes = new HashMap<String, String>();
+            String extra_data_array = null;
+            String arreglo[];
+            arreglo = new String[tipo_registro.length];
+            String actualizar = "0";
+            String actualizo="0";
+            
+            
+            //aplicativo Ordenes de Devolucion
+            Integer app_selected = 100;
+            String command_selected = "new";
+            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            
+            for(int i=0; i<tipo_registro.length; i++) {
+                
+                arreglo[i]= "'"+
+                        eliminado[i]+"___"+
+                        tipo_registro[i]+"___"+
+                        id_detalle[i]+"___"+
+                        id_almacen[i]+"___"+
+                        id_prod_grid[i]+"___"+
+                        lote_id[i]+"___"+
+                        lote_interno[i]+"___"+
+                        StringHelper.removerComas(cant_dev[i])+"___"+
+                        no_tr[i]+"___"+
+                        id_partida[i]+"'";
+                        
+                System.out.println(arreglo[i]);
+            }
+            
+            //serializar el arreglo
+            extra_data_array = StringUtils.join(arreglo, ",");
+            
+            command_selected = accion;
+            
+            //la accion es para confirmar
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+observaciones.toUpperCase()+"___"+accion;
+            System.out.println("data_string: "+data_string);
+            
+            //aqui entra cuando la accion es Edit o Confirmar
+            succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+            actualizar = String.valueOf(succes.get("success"));
+            
+            log.log(Level.INFO, "despues de validacion {0}", actualizar);
+            
+            if( actualizar.equals("true") ){
+                actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
+            }
+            
+            //jsonretorno.put("success",String.valueOf(succes.get("success")));
+            jsonretorno.put("success",String.valueOf(actualizar));
+            
+            //log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+            log.log(Level.INFO, "Salida json {0}", actualizar);
+        return jsonretorno;
+    }
+
     
     
     

@@ -6621,11 +6621,219 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getInvOrdenDev_Datos(Integer id) {
+        String sql_to_query = ""
+                + "SELECT "
+                    + "inv_odev.id,"
+                    + "inv_odev.folio,"
+                    + "inv_odev.estatus AS estado,"
+                    + "inv_odev.inv_mov_tipo_id AS tipo_mov_id,"
+                    + "inv_odev.tipo_documento AS tipo_doc,"
+                    + "inv_odev.folio_documento AS folio_doc,"
+                    + "inv_odev.fecha_exp AS fecha_doc,"
+                    + "inv_odev.cxc_clie_id AS clie_id,"
+                    + "cxc_clie.numero_control AS no_clie,"
+                    + "cxc_clie.razon_social AS cliente,"
+                    + "inv_odev.inv_alm_id AS alm_dest_id,"
+                    + "inv_odev.moneda_id,"
+                    + "inv_odev.observaciones,"
+                    + "(CASE WHEN inv_odev.folio_ncto IS NULL THEN '' ELSE inv_odev.folio_ncto END) AS folio_ncto,"
+                    + "(CASE WHEN inv_odev.momento_confirmacion IS NULL THEN '' ELSE to_char(inv_odev.momento_confirmacion,'yyyy-mm-dd') END ) AS fecha_confirmacion, "
+                    + "(CASE WHEN inv_odev.momento_creacion IS NULL THEN '' ELSE to_char(inv_odev.momento_creacion,'yyyy-mm-dd') END ) AS fecha_mov,"
+                    + "inv_odev.cancelacion "
+                + "FROM inv_odev "
+                + "JOIN cxc_clie ON cxc_clie.id=inv_odev.cxc_clie_id "
+                + "WHERE inv_odev.id="+ id + ";";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("fecha_mov",rs.getString("fecha_mov"));
+                    row.put("estado",String.valueOf(rs.getInt("estado")));
+                    row.put("tipo_mov_id",String.valueOf(rs.getInt("tipo_mov_id")));
+                    row.put("tipo_doc",String.valueOf(rs.getInt("tipo_doc")));
+                    row.put("folio_doc",rs.getString("folio_doc"));
+                    row.put("fecha_doc",rs.getString("fecha_doc"));
+                    row.put("clie_id",String.valueOf(rs.getInt("clie_id")));
+                    row.put("no_clie",rs.getString("no_clie"));
+                    row.put("cliente",rs.getString("cliente"));
+                    row.put("alm_dest_id",String.valueOf(rs.getInt("alm_dest_id")));
+                    row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    row.put("observaciones",rs.getString("observaciones"));
+                    row.put("folio_ncto",String.valueOf(rs.getString("folio_ncto").trim()));
+                    row.put("cancelacion",String.valueOf(rs.getBoolean("cancelacion")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getInvOrdenDev_DatosGridNcto(String serieFolioNcto, Integer idClie) {
+                String sql_to_query = ""
+                + "SELECT "
+                    + "fac_nota_credito_det.id AS id_det, "
+                    + "fac_nota_credito_det.fac_nota_credito_id AS ncto_id,"
+                    + "fac_nota_credito_det.inv_prod_id AS prod_id, "
+                    + "inv_prod.sku AS codigo, "
+                    + "inv_prod.descripcion AS nombre_producto, "
+                    + "inv_prod_unidades.titulo AS unidad, "
+                    + "fac_nota_credito_det.inv_prod_presentacion_id AS pres_id, "
+                    + "inv_prod_presentaciones.titulo AS presentacion, "
+                    + "fac_nota_credito_det.cant_fac, "
+                    + "fac_nota_credito_det.cantidad AS cant_dev, "
+                    + "fac_nota_credito_det.precio_unitario AS precio_u, "
+                    + "(fac_nota_credito_det.cantidad::double precision * fac_nota_credito_det.precio_unitario::double precision) AS importe,"
+                    + "fac_nota_credito_det.gral_imptos_id AS impto_id, "
+                    + "fac_nota_credito_det.valor_imp "
+                + "FROM fac_nota_credito_det  "
+                + "JOIN fac_nota_credito ON fac_nota_credito.id=fac_nota_credito_det.fac_nota_credito_id "
+                + "JOIN inv_prod ON inv_prod.id=fac_nota_credito_det.inv_prod_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=fac_nota_credito_det.inv_prod_presentacion_id "
+                + "WHERE UPPER(fac_nota_credito.serie_folio)=? AND fac_nota_credito.cxc_clie_id=?;";
+                
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(serieFolioNcto), new Integer(idClie)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_det",String.valueOf(rs.getInt("id_det")));
+                    row.put("ncto_id",String.valueOf(rs.getInt("ncto_id")));
+                    row.put("prod_id",String.valueOf(rs.getInt("prod_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("nombre_producto",rs.getString("nombre_producto"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("pres_id",rs.getString("pres_id"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("cant_fac",StringHelper.roundDouble(rs.getString("cant_fac"),4));
+                    row.put("cant_dev",StringHelper.roundDouble(rs.getString("cant_dev"),4));
+                    row.put("precio_u",StringHelper.roundDouble(rs.getString("precio_u"),2));
+                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
+                    row.put("impto_id",String.valueOf(rs.getInt("impto_id")));
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getString("valor_imp"),4));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getInvOrdenDev_DatosGridOsal(Integer tipoDoc, String folioDoc, Integer clienteId) {
+                String sql_to_query = ""
+                        + "SELECT "
+                            + "inv_osal_detalle.id AS id_det,"
+                            + "inv_osal_detalle.inv_prod_id AS prod_id, "
+                            + "inv_prod.sku AS codigo, "
+                            + "inv_prod.descripcion AS nombre_producto, "
+                            + "inv_prod_unidades.titulo AS unidad, "
+                            + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS pres_id, "
+                            + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
+                            + "inv_osal_detalle.cantidad AS cant_fac, "
+                            + "inv_osal_detalle.cantidad AS cant_dev, "
+                            + "inv_osal_detalle.precio_unitario AS precio_u, "
+                            + "(inv_osal_detalle.precio_unitario * inv_osal_detalle.cantidad) AS importe "
+                        + "FROM inv_osal_detalle "
+                        + "JOIN inv_osal ON inv_osal.id=inv_osal_detalle.inv_osal_id "
+                        + "LEFT JOIN inv_prod on inv_prod.id = inv_osal_detalle.inv_prod_id "
+                        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                        + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_osal_detalle.inv_prod_presentacion_id "
+                        + "WHERE inv_osal.tipo_documento=? AND inv_osal.folio_documento=? AND inv_osal.cxc_clie_id=? "
+                        + "ORDER BY inv_osal_detalle.id;";
+                
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(tipoDoc), new String(folioDoc), new Integer(clienteId)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_det",String.valueOf(rs.getInt("id_det")));
+                    row.put("prod_id",String.valueOf(rs.getInt("prod_id")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("nombre_producto",rs.getString("nombre_producto"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("pres_id",rs.getString("pres_id"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("cant_fac",StringHelper.roundDouble(rs.getString("cant_fac"),4));
+                    row.put("cant_dev",StringHelper.roundDouble(rs.getString("cant_dev"),4));
+                    row.put("precio_u",StringHelper.roundDouble(rs.getString("precio_u"),2));
+                    row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getInvOrdenDev_DatosGridLotes(Integer id) {
+                String sql_to_query = ""
+                + "SELECT "
+                    + "inv_odev_detalle.id AS id_det,"
+                    + "inv_osal_detalle.inv_prod_id AS prod_id,"
+                    + "inv_osal_detalle.inv_prod_presentacion_id AS pres_id,"
+                    + "inv_odev_detalle.inv_lote_id AS lote_id,"
+                    + "inv_lote.lote_int,"
+                    + "inv_odev_detalle.cant_fac_lote,"
+                    + "inv_odev_detalle.cant_dev_lote,"
+                    + "(CASE WHEN to_char(inv_lote.caducidad,'yyyymmdd') = '29991231' THEN ''::character varying ELSE to_char(inv_lote.caducidad,'dd/mm/yyyy') END) AS caducidad, "
+                    + "(CASE WHEN inv_lote.pedimento='' OR inv_lote.pedimento IS NULL THEN ' ' ELSE inv_lote.pedimento END) AS pedimento "
+                + "FROM inv_odev_detalle "
+                + "JOIN inv_osal_detalle ON inv_osal_detalle.id=inv_odev_detalle.inv_osal_detalle_id "
+                + "JOIN inv_lote ON inv_lote.id=inv_odev_detalle.inv_lote_id "
+                + "WHERE inv_odev_detalle.inv_odev_id=?;";
+                
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_det",String.valueOf(rs.getInt("id_det")));
+                    row.put("prod_id",String.valueOf(rs.getInt("prod_id")));
+                    row.put("pres_id",String.valueOf(rs.getInt("pres_id")));
+                    row.put("lote_id",String.valueOf(rs.getInt("lote_id")));
+                    row.put("lote_int",rs.getString("lote_int"));
+                    row.put("cant_fac_lote",StringHelper.roundDouble(rs.getString("cant_fac_lote"),4));
+                    row.put("cant_dev_lote",StringHelper.roundDouble(rs.getString("cant_dev_lote"),4));
+                    row.put("caducidad",rs.getString("caducidad"));
+                    row.put("pedimento",rs.getString("pedimento"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
 
+    
+    
+    
+    
     //TERMINA APLICATIVO DEVOLUCIONES DE MERCANCIAS
     //***********************************************************************************************************************************
-
-
     @Override
     public ArrayList<HashMap<String, String>> getReporteExistenciasLotes_MedidasEtiquetas() {
          String sql_to_query = "SELECT id,titulo FROM inv_etiqueta_medidas;";

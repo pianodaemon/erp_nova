@@ -297,6 +297,7 @@ public class FacDevolucionesController {
             @RequestParam(value="tipo_cambio_nota", required=true) String tipo_cambio_nota,
             @RequestParam(value="saldo_fac", required=true) String saldo_fac,
             @RequestParam(value="idproducto", required=false) String[] producto_id,
+            @RequestParam(value="idpres", required=false) String[] idpres,
             @RequestParam(value="seleccionado", required=false) String[] seleccionado,
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="costo", required=false) String[] costo,
@@ -371,7 +372,7 @@ public class FacDevolucionesController {
                     //System.out.println(costo[i]+"  "+ cantidad_dev[i] +"   "+ importePartida + "   "+impuestoPartida);
                 }
                 
-                arreglo[i]= "'"+seleccionado[i]+"___"+producto_id[i] +"___" + cantidad[i] +"___" + cantidad_dev[i]+"'";
+                arreglo[i]= "'"+seleccionado[i]+"___"+producto_id[i] +"___" + cantidad[i] +"___" + cantidad_dev[i] +"___"+id_impuesto+"___"+valor_iva+"___"+idpres[i]+"___"+costo[i]+"'";
                 //System.out.println(arreglo[i]);
             }
             

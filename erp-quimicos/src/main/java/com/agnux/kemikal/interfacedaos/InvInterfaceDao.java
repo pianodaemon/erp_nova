@@ -285,6 +285,11 @@ public interface InvInterfaceDao {
     
     //metodos para Ordenes de Devolucion
     public ArrayList<HashMap<String, Object>> getInvOrdenDev_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getInvOrdenDev_Datos(Integer id);
+    public ArrayList<HashMap<String, String>> getInvOrdenDev_DatosGridNcto(String serieFolioNcto, Integer idClie);
+    public ArrayList<HashMap<String, String>> getInvOrdenDev_DatosGridOsal(Integer tipoDoc, String folioDoc, Integer clienteId);
+    public ArrayList<HashMap<String, String>> getInvOrdenDev_DatosGridLotes(Integer id);
+    
     
     
     //METODO PARA EL REPORTE DE EXISTENCIAS EN LOTES

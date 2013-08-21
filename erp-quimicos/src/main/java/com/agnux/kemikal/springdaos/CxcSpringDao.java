@@ -2074,8 +2074,9 @@ public class CxcSpringDao implements CxcInterfaceDao{
                       + " JOIN cxc_clie ON cxc_clie.id = fac_docs.cxc_clie_id "
                       + " JOIN cxc_agen ON cxc_agen.id=  fac_docs.cxc_agen_id "
                       + " JOIN gral_mon ON gral_mon.id = fac_docs.moneda_id "
-                      + " JOIN  erp_proceso ON erp_proceso.id= proceso_id "
-                      + " WHERE  to_char(fac_docs.momento_creacion,'yyyymmdd')::integer  between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer  "
+                      + " JOIN erp_proceso ON erp_proceso.id= proceso_id "
+                      + " WHERE to_char(fac_docs.momento_creacion,'yyyymmdd')::integer  between to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer  "
+                      + " AND fac_docs.cancelado=FALSE "
                       + " AND erp_proceso.empresa_id="+id_empresa+" "+where+" "
                     + " order by nombre_agente asc,moneda_factura,serie_folio asc";// by numero_agente,moneda_factura asc ";
         System.out.println("DatosReporteVentaxAgente:: "+sql_to_query);
@@ -2094,8 +2095,6 @@ public class CxcSpringDao implements CxcInterfaceDao{
                     row.put("iva",rs.getString("iva"));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"), 2));
                     row.put("moneda_factura",rs.getString("moneda_factura"));
-
-
                     return row;
                 }
             }

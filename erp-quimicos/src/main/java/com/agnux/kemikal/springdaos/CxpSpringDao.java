@@ -1797,7 +1797,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                                 + " AND cxp_prov.razon_social ILIKE '%"+proveedor+"%' "
                         + ") AS sbt "
                 + ") AS sbt2 "
-                + "ORDER BY clave_proveedor, moneda_factura";
+                + "ORDER BY clave_proveedor, moneda_factura, serie_folio";
         
         System.out.println("sql_to_query: "+sql_to_query);
         

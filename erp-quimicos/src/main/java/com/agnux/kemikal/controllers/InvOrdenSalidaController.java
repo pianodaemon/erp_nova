@@ -345,7 +345,7 @@ public class InvOrdenSalidaController {
     
     
     
-@RequestMapping(value = "/get_genera_pdf_OrdenSalida/{id_ordensalida}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/get_genera_pdf_OrdenSalida/{id_ordensalida}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView get_genera_pdf_invOrdenEntradaJson(
                 @PathVariable("id_ordensalida") Integer id_OrdenSalida,
                 @PathVariable("iu") String id_user,
