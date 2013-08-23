@@ -560,23 +560,27 @@ public class ComSpringDao  implements ComInterfaceDao {
             where +=" AND (cxp_prov.razon_social ilike '%"+razon_social.toUpperCase()+"%' OR cxp_prov.clave_comercial ilike '%"+razon_social.toUpperCase()+"%')";
 	}
         
-        String sql_to_query = "SELECT DISTINCT  cxp_prov.id, "
-                                + "cxp_prov.folio AS numero_proveedor, "
-                                + "cxp_prov.rfc, "
-                                + "cxp_prov.razon_social, "
-                                + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo ||' C.P. '||cxp_prov.cp as direccion, "
-                                + "cxp_prov.proveedortipo_id,  "
-                                + "cxp_prov.descuento,  "
-                                + "cxp_prov.dias_credito_id as id_dias_credito,  "
-                                + "cxp_prov.cxp_prov_tipo_embarque_id as id_tipo_embarque,  "
-                                + "cxp_prov.credito_a_partir as comienzo_de_credito, "
-                                + "cxp_prov.limite_credito, "
-                                + "cxp_prov.moneda_id "
-                            + "FROM cxp_prov "
-                            + "JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
-                            + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
-                            + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
-                            + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico = false "+where;
+        String sql_to_query = ""
+            + "SELECT DISTINCT  cxp_prov.id, "
+                + "cxp_prov.folio AS numero_proveedor, "
+                + "cxp_prov.rfc, "
+                + "cxp_prov.razon_social, "
+                + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo ||' C.P. '||cxp_prov.cp as direccion, "
+                + "cxp_prov.proveedortipo_id,  "
+                + "cxp_prov.descuento,  "
+                + "cxp_prov.dias_credito_id as id_dias_credito,  "
+                + "cxp_prov.cxp_prov_tipo_embarque_id as id_tipo_embarque,  "
+                + "cxp_prov.credito_a_partir as comienzo_de_credito, "
+                + "cxp_prov.limite_credito, "
+                + "cxp_prov.moneda_id, "
+                + "cxp_prov.impuesto AS impuesto_id,"
+                + "(CASE WHEN gral_imptos.iva_1 is null THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impuesto "
+            + "FROM cxp_prov "
+            + "JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
+            + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
+            + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
+            + "LEFT JOIN gral_imptos ON gral_imptos.id=cxp_prov.impuesto "
+            + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico = false "+where;
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
@@ -598,6 +602,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("id_dias_credito",String.valueOf(rs.getInt("id_dias_credito")));
                     row.put("id_tipo_embarque",String.valueOf(rs.getInt("id_tipo_embarque")));
                     row.put("comienzo_de_credito",String.valueOf(rs.getInt("comienzo_de_credito")));
+                    row.put("impuesto_id",String.valueOf(rs.getInt("impuesto_id")));
+                    row.put("valor_impuesto",StringHelper.roundDouble(String.valueOf(rs.getDouble("valor_impuesto")),2));
                     return row;
                 }
             }
@@ -624,11 +630,14 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "cxp_prov.cxp_prov_tipo_embarque_id as id_tipo_embarque,  "
                     + "cxp_prov.credito_a_partir as comienzo_de_credito, "
                     + "cxp_prov.limite_credito, "
-                    + "cxp_prov.moneda_id "
+                    + "cxp_prov.moneda_id,"
+                    + "cxp_prov.impuesto AS impuesto_id,"
+                    + "(CASE WHEN gral_imptos.iva_1 is null THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impuesto "
                 + "FROM cxp_prov "
                 + "JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
                 + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
                 + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
+                + "LEFT JOIN gral_imptos ON gral_imptos.id=cxp_prov.impuesto "
                 + "WHERE empresa_id="+id_empresa+" "
                 + "AND cxp_prov.borrado_logico=false "
                 + "AND cxp_prov.folio='"+numeroProveedor.toUpperCase()+"';";
@@ -653,6 +662,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("id_dias_credito",String.valueOf(rs.getInt("id_dias_credito")));
                     row.put("id_tipo_embarque",String.valueOf(rs.getInt("id_tipo_embarque")));
                     row.put("comienzo_de_credito",String.valueOf(rs.getInt("comienzo_de_credito")));
+                    row.put("impuesto_id",String.valueOf(rs.getInt("impuesto_id")));
+                    row.put("valor_impuesto",StringHelper.roundDouble(String.valueOf(rs.getDouble("valor_impuesto")),2));
                     return row;
                 }
             }

@@ -1580,11 +1580,14 @@ public class InvSpringDao implements InvInterfaceDao{
                                 + "cxp_prov.razon_social, "
                                 + "cxp_prov.calle||' '||cxp_prov.numero||', '|| cxp_prov.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END) ||' C.P. '||cxp_prov.cp as direccion, "
                                 + "cxp_prov.proveedortipo_id,"
-                                + "cxp_prov.moneda_id "
+                                + "cxp_prov.moneda_id, "
+                                + "cxp_prov.impuesto AS impuesto_id,"
+                                + "(CASE WHEN gral_imptos.iva_1 is null THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impuesto "
                             + "FROM cxp_prov "
                             + "JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
                             + "JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
                             + "JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
+                            + "LEFT JOIN gral_imptos ON gral_imptos.id=cxp_prov.impuesto "
                             + "WHERE empresa_id="+id_empresa+" AND cxp_prov.borrado_logico = false "+where;
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -1601,6 +1604,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("direccion",rs.getString("direccion"));
                     row.put("proveedortipo_id",rs.getString("proveedortipo_id"));
+                    row.put("impuesto_id",String.valueOf(rs.getInt("impuesto_id")));
+                    row.put("valor_impuesto",StringHelper.roundDouble(String.valueOf(rs.getDouble("valor_impuesto")),2));
                     return row;
                 }
             }
@@ -1619,11 +1624,14 @@ public class InvSpringDao implements InvInterfaceDao{
                                 + "cxp_prov.razon_social, "
                                 + "cxp_prov.calle||' '||cxp_prov.numero||', '|| cxp_prov.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END) ||' C.P. '||cxp_prov.cp as direccion, "
                                 + "cxp_prov.proveedortipo_id,"
-                                + "cxp_prov.moneda_id "
+                                + "cxp_prov.moneda_id, "
+                                + "cxp_prov.impuesto AS impuesto_id,"
+                                + "(CASE WHEN gral_imptos.iva_1 is null THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impuesto "
                             + "FROM cxp_prov "
                             + "LEFT JOIN gral_pais ON gral_pais.id = cxp_prov.pais_id "
                             + "LEFT JOIN gral_edo ON gral_edo.id = cxp_prov.estado_id "
                             + "LEFT JOIN gral_mun ON gral_mun.id = cxp_prov.municipio_id  "
+                            + "LEFT JOIN gral_imptos ON gral_imptos.id=cxp_prov.impuesto "
                             + "WHERE empresa_id="+id_empresa+" "
                             + "AND cxp_prov.borrado_logico=false "
                             + "AND cxp_prov.folio='"+noProveedor.toUpperCase()+"' LIMIT 1;";
@@ -1642,6 +1650,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("direccion",rs.getString("direccion"));
                     row.put("proveedortipo_id",rs.getString("proveedortipo_id"));
+                    row.put("impuesto_id",String.valueOf(rs.getInt("impuesto_id")));
+                    row.put("valor_impuesto",StringHelper.roundDouble(String.valueOf(rs.getDouble("valor_impuesto")),2));
                     return row;
                 }
             }
