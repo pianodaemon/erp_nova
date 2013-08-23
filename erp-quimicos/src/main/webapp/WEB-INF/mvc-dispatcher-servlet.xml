@@ -55,13 +55,14 @@
         
         
         <!--Conexion a bd instance01 LOCAL-->
-        
+        <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://localhost:5432/kathion" />
 	     <property name="username" value="ms" />
 	     <property name="password" value="ms" />
 	</bean>
+        -->
         
         
         <!--Conexion a bd instance01 es lo mismo para KATHION Y KEMIKAL-->
@@ -94,18 +95,31 @@
 	     <property name="username" value="novasol" />
 	     <property name="password" value="novasol" />
 	</bean>
+       -->
+        <!--
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	     <property name="driverClassName" value="org.postgresql.Driver" />
+	     <property name="url" value="jdbc:postgresql://50.56.242.41:5555/novasol" />
+	     <property name="username" value="novasol" />
+	     <property name="password" value="novasol" />
+	</bean>
         -->
-        
-        
         <!--Conexion Servidor de PRUEBAS -->
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://localhost:5432/pruebas" />
 	     <property name="username" value="pruebas" />
-	     <property name="password" value="pruebas" />
+	     <property name="password" value="sc2013pruebas" />
 	</bean>
         -->
+        
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	     <property name="driverClassName" value="org.postgresql.Driver" />
+	     <property name="url" value="jdbc:postgresql://50.57.127.230:5555/pruebas" />
+	     <property name="username" value="pruebas" />
+	     <property name="password" value="sc2013pruebas" />
+	</bean>
         
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -115,6 +129,7 @@
 	     <property name="password" value="disnp" />
 	</bean>
         -->
+
         
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -133,6 +148,7 @@
 	     <property name="password" value="tools" />
 	</bean>
         -->
+        
         <!--<bean name="beanOutCfdi" class="com.agnux.cfdi.BeanSolicitidesOut"></bean>-->
         
         <!--http://static.springsource.org/spring/docs/2.5.x/reference/beans.html#beans-factory-lifecycle-initializingbean-->

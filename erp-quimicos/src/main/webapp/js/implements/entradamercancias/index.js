@@ -260,7 +260,7 @@ $(function() {
 							'nombre':$campo_nombre.val(),
 							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 						}
-                                    
+						
 			var trr = '';
 			$tabla_resultados.children().remove();
 			$.post(input_json,$arreglo,function(entry){
@@ -271,6 +271,9 @@ $(function() {
 							trr += '<input type="hidden" id="id_prov" value="'+proveedor['id']+'">';
 							trr += '<input type="hidden" id="tipo_prov" value="'+proveedor['proveedortipo_id']+'">';
 							trr += '<input type="hidden" id="no_prov" value="'+proveedor['no_proveedor']+'">';
+							trr += '<input type="hidden" id="no_prov" value="'+proveedor['no_proveedor']+'">';
+							trr += '<input type="hidden" id="impto_id" value="'+proveedor['impuesto_id']+'">';
+							trr += '<input type="hidden" id="valor_impto" value="'+proveedor['valor_impuesto']+'">';
 							trr += '<span class="rfc">'+proveedor['rfc']+'</span>';
 						trr += '</td>';
 						trr += '<td width="250"><span id="razon_social">'+proveedor['razon_social']+'</span></td>';
@@ -301,6 +304,8 @@ $(function() {
 					$('#forma-entradamercancias-window').find('input[name=no_proveedor]').val($(this).find('#no_prov').val());
 					$('#forma-entradamercancias-window').find('input[name=rfcproveedor]').val($(this).find('span.rfc').html());
 					$('#forma-entradamercancias-window').find('input[name=razon_proveedor]').val($(this).find('#razon_social').html());
+					$('#forma-entradamercancias-window').find('input[name=id_impuesto]').val($(this).find('#impto_id').val());
+					$('#forma-entradamercancias-window').find('input[name=valorimpuesto]').val($(this).find('#valor_impto').val());
 					
 					//elimina la ventana de busqueda
 					var remove = function() { $(this).remove(); };
@@ -683,6 +688,8 @@ $(function() {
 		
 		var $hidden_tipo_proveedor = $('#forma-entradamercancias-window').find('input[name=tipo_proveedor]');
 		var $campo_rfc_proveedor = $('#forma-entradamercancias-window').find('input[name=rfcproveedor]');
+		var $id_impuesto = $('#forma-entradamercancias-window').find('input[name=id_impuesto]');
+		var $valorimpuesto = $('#forma-entradamercancias-window').find('input[name=valorimpuesto]');
 		
 		var encontrado = 0;
 		$grid_productos.find('tr').each(function (index){
@@ -690,6 +697,12 @@ $(function() {
 				encontrado=1;//el producto ya esta en el grid
 			}
 		});
+		
+		
+		//si valor del impuesto es null o vacio, se le asigna un 0
+		if( $valorimpuesto.val()== null || $valorimpuesto.val().trim()== ''){
+			$valorimpuesto.val(0);
+		}
 		
 		//alert(encontrado);
 		
@@ -737,26 +750,29 @@ $(function() {
 				tr_prod += '<SELECT name="impuesto" id="imp" class="imp'+trCount+'" style="width:80px;">';
 					
 					//carga select con tipos de impuesto
-					if(parseInt($hidden_tipo_proveedor.val()) == 2){
-						tr_prod += '<option value="0">[--  --]</option>';
-					}else{
-						tr_prod += '<option value="0" selected="yes">[--  --]</option>';
-					}
+					tr_prod += '<option value="0">[--  --]</option>'
+					
 					//aqui se carga el select con los tipos de iva
 					$.each(tiposIva,function(entryIndex,tipos){
 						if(parseInt($hidden_tipo_proveedor.val()) == 2){
-							if(tipos['descripcion'] == 'IVA TASA 0'){
-								tr_prod += '<option value="' + tipos['id'] + '"  selected="yes">' + tipos['descripcion'] + '</option>';
+							if(parseInt(tipos['id']) == 2){
+								tr_prod += '<option value="' + tipos['id'] + '" selected="yes">' + tipos['descripcion'] + '</option>';
+								$id_impuesto.val(tipos['id']);
+								$valorimpuesto.val(tipos['iva_1']);
 							}else{
-								tr_prod += '<option value="' + tipos['id'] + '"  >' + tipos['descripcion'] + '</option>';
+								tr_prod += '<option value="' + tipos['id'] + '" >' + tipos['descripcion'] + '</option>';
 							}
 						}else{
-							tr_prod += '<option value="' + tipos['id'] + '"  >' + tipos['descripcion'] + '</option>';
+							if(parseInt(tipos['id']) == parseInt($id_impuesto.val()) ){
+								tr_prod += '<option value="' + tipos['id'] + '" selected="yes">' + tipos['descripcion'] + '</option>';
+							}else{
+								tr_prod += '<option value="' + tipos['id'] + '" >' + tipos['descripcion'] + '</option>';
+							}
 						}
 					});
 					
 					tr_prod += '</SELECT>';
-					tr_prod += '<input type="hidden" name="valorimp" id="v_imp" value="0">';
+					tr_prod += '<input type="hidden" name="valorimp" id="v_imp" value="'+$valorimpuesto.val()+'">';
 					tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
 					//tr_prod += '<span id="spantotimp">0</span>';
 				tr_prod += '</td>';
@@ -847,7 +863,7 @@ $(function() {
 			$grid_productos.find('#eliminaprod'+ trCount).bind('click',function(event){
 				event.preventDefault();
 				if(parseInt($(this).parent().find('#eliminado').val()) != 0){
-					if($(this).parent().parent().find('#import').val()!=' ' && $(this).parent().parent().find('#import').val()!=''){
+					if($(this).parent().parent().find('#import').val().trim()!=''){
 						//$campo_subtotal.val(parseFloat($campo_subtotal.val()) - parseFloat($(this).parent().parent().find('#import').val()));
 						//calcula total
 						//$campo_total.val(parseFloat($campo_subtotal.val()) + parseFloat($campo_impuesto.val()));
@@ -955,6 +971,8 @@ $(function() {
 		var $campo_rfc_proveedor = $('#forma-entradamercancias-window').find('input[name=rfcproveedor]');
 		var $campo_razon_proveedor = $('#forma-entradamercancias-window').find('input[name=razon_proveedor]');
 		var $hidden_tipo_proveedor = $('#forma-entradamercancias-window').find('input[name=tipo_proveedor]');
+		var $id_impuesto = $('#forma-entradamercancias-window').find('input[name=id_impuesto]');
+		var $valorimpuesto = $('#forma-entradamercancias-window').find('input[name=valorimpuesto]');
 		
 		var $campo_sku = $('#forma-entradamercancias-window').find('input[name=sku_producto]');
 		var $titulo_producto = $('#forma-entradamercancias-window').find('input[name=titulo_producto]');
@@ -1372,6 +1390,8 @@ $(function() {
 					$no_proveedor.val('');
 					$campo_rfc_proveedor.val('');
 					$campo_razon_proveedor.val('');
+					$id_impuesto.val(0);
+					$valorimpuesto.val(0);
 					
 					if(parseInt(entry2['Proveedor'].length) > 0 ){
 						$hidden_id_proveedor.val(entry2['Proveedor'][0]['id']);
@@ -1379,6 +1399,8 @@ $(function() {
 						$no_proveedor.val(entry2['Proveedor'][0]['no_proveedor']);
 						$campo_rfc_proveedor.val(entry2['Proveedor'][0]['rfc']);
 						$campo_razon_proveedor.val(entry2['Proveedor'][0]['razon_social']);
+						$id_impuesto.val(entry2['Proveedor'][0]['impuesto_id']);
+						$valorimpuesto.val(entry2['Proveedor'][0]['valor_impuesto']);
 					}else{						
 						jAlert('N&uacute;mero de Proveedor desconocido.', 'Atencion!', function(r) { 
 							$no_proveedor.focus(); 

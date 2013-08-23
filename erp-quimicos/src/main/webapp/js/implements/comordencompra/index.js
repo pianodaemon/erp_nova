@@ -338,7 +338,7 @@ $(function() {
 	
 	
 	
-	$agregarDatosProveedorSeleccionado = function(array_monedas, array_condiciones, array_via_embarque, rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor){
+	$agregarDatosProveedorSeleccionado = function(array_monedas, array_condiciones, array_via_embarque, rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor, idImptoProv, valorImptoProv){
 		var $rfc_proveedor = $('#forma-comordencompra-window').find('input[name=rfc_proveedor]');
 		var $razon_proveedor = $('#forma-comordencompra-window').find('input[name=razonproveedor]');
 		var $dir_proveedor = $('#forma-comordencompra-window').find('input[name=dirproveedor]');
@@ -369,8 +369,8 @@ $(function() {
 			$valor_impuesto.val(0);
 		}else{
 			//asignamos los valores correspondientes del impuesto
-			$id_impuesto.val($id_impuesto_orig.val());
-			$valor_impuesto.val($valorimpuesto_orig.val());
+			$id_impuesto.val(idImptoProv);
+			$valor_impuesto.val(valorImptoProv);
 		}
 		
 		
@@ -476,6 +476,8 @@ $(function() {
 							trr += '<input type="hidden" id="id_tipo_embarque" value="'+proveedor['id_tipo_embarque']+'">';
 							trr += '<input type="hidden" id="comienzo_de_credito" value="'+proveedor['comienzo_de_credito']+'">';
 							trr += '<input type="hidden" id="tipo_prov" value="'+proveedor['proveedortipo_id']+'">';
+							trr += '<input type="hidden" id="impto_id" value="'+proveedor['impuesto_id']+'">';
+							trr += '<input type="hidden" id="valor_impto" value="'+proveedor['valor_impuesto']+'">';
 							trr += '<span class="rfc">'+proveedor['rfc']+'</span>';
 						trr += '</td>';
 						trr += '<td width="250"><span id="razon_social">'+proveedor['razon_social']+'</span></td>';
@@ -510,8 +512,11 @@ $(function() {
 					var id_dias_credito=$(this).find('#id_dias_credito').val();
 					var id_tipo_embarque=$(this).find('#id_tipo_embarque').val();
 					
+					var idImptoProv=$(this).find('#impto_id').val();
+					var valorImptoProv=$(this).find('#valor_impto').val();
+					
 					//llamada a la función que agrega datos del proveedor seleccionado
-					$agregarDatosProveedorSeleccionado(array_monedas, array_condiciones, array_via_embarque, rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor);
+					$agregarDatosProveedorSeleccionado(array_monedas, array_condiciones, array_via_embarque, rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor, idImptoProv, valorImptoProv);
 					
 					//elimina la ventana de busqueda
 					var remove = function() { $(this).remove(); };
@@ -828,6 +833,8 @@ $(function() {
 		var $grid_productos = $('#forma-comordencompra-window').find('#grid_productos');
 		var $empresa_immex = $('#forma-comordencompra-window').find('input[name=empresa_immex]');
 		var $tasa_ret_immex = $('#forma-comordencompra-window').find('input[name=tasa_ret_immex]');
+		var $tipo_prov = $('#forma-comordencompra-window').find('input[name=tipo_prov]');
+		var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 		
 		var sumaSubTotal = 0; //es la suma de todos los importes
 		var sumaImpuesto = 0; //valor del iva
@@ -839,7 +846,12 @@ $(function() {
 			$valor_impuesto.val(0);
 		}
 		
-
+		if(parseInt($tipo_prov.val())==2){
+			//Si es proveedor extranjero se aplica tasa cero
+			$id_impuesto.val(2);
+			$valor_impuesto.val(0);
+		}
+		
 		$grid_productos.find('tr').each(function (index){
 			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
 				//acumula los importes en la variable subtotal
@@ -872,7 +884,7 @@ $(function() {
 
 	//agregar producto al grid
 	$agrega_producto_grid = function($grid_productos,id_prod,sku,titulo,unidad,id_pres,pres,prec_unitario,$select_moneda, id_moneda, $tipo_cambio,num_dec){
-
+		var $tipo_prov = $('#forma-comordencompra-window').find('input[name=tipo_prov]');
 		var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 		var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
 		//si  el campo tipo de cambio es null o vacio, se le asigna un 0
@@ -880,6 +892,12 @@ $(function() {
 			$valor_impuesto.val(0);
 		}
 
+		if(parseInt($tipo_prov.val())==2){
+			//Si es proveedor extranjero se aplica tasa cero
+			$id_impuesto.val(2);
+			$valor_impuesto.val(0);
+		}
+		
 		var encontrado = 0;
 		//busca el sku y la presentacion en el grid
 		$grid_productos.find('tr').each(function (index){
@@ -979,7 +997,7 @@ $(function() {
 				if(parseInt(numero_decimales)==4){
 					patron = /^-?[0-9]+([,\.][0-9]{0,4})?$/;
 				}
-
+				
 				/*
 				if(patron.test($(this).val())){
 					alert("Si valido"+$(this).val());
@@ -988,7 +1006,7 @@ $(function() {
 					$(this).val('')
 				}
 				*/
-
+				
 				if(!patron.test($(this).val())){
 					//alert("Si valido"+$(this).val());
 				}else{
@@ -1355,9 +1373,11 @@ $(function() {
 							var id_moneda = entry2['Proveedor'][0]['moneda_id'];
 							var id_dias_credito = entry2['Proveedor'][0]['id_dias_credito'];
 							var id_tipo_embarque = entry2['Proveedor'][0]['id_tipo_embarque'];
+							var idImptoProv = entry2['Proveedor'][0]['impuesto_id'];
+							var valorImptoProv = entry2['Proveedor'][0]['valor_impuesto'];
 							
 							//llamada a la función que agrega datos del proveedor seleccionado
-							$agregarDatosProveedorSeleccionado(entry['Monedas'], entry['Condiciones'],entry['via_embarque'], rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor);
+							$agregarDatosProveedorSeleccionado(entry['Monedas'], entry['Condiciones'],entry['via_embarque'], rfc_proveedor, razon_soc_proveedor, dir_proveedor, id_proveedor, tipo_proveedor, id_moneda, id_dias_credito, id_tipo_embarque, no_proveedor, idImptoProv, valorImptoProv);
 							
 						}else{
 							$id_proveedor.val('');

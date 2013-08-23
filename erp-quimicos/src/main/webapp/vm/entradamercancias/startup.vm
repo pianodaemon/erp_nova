@@ -177,8 +177,10 @@
 															<td>
 																<input type="hidden" name="id_proveedor">
 																<input type="hidden" name="tipo_proveedor">
-																<INPUT TYPE="hidden" name="rfcproveedor" readOnly="true">
+																<input type="hidden" name="rfcproveedor" readOnly="true">
 																<input type="text" name="no_proveedor" value="" style="width:130px; border:1px solid #000;">
+																<input type="hidden" name="id_impuesto" value="0">
+																<input type="hidden" name="valorimpuesto" value="0">
 															</td>
 															<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noproveedor"></td>
 															<td width="40"><a  href="busca_proveedor">(Buscar)</a></td>
