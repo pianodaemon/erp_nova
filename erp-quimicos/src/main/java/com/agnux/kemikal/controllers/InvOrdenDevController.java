@@ -11,6 +11,7 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
+import com.agnux.kemikal.reportes.PdfOrdenDevolucion;
 import com.agnux.kemikal.reportes.PdfOrdenEntrada;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
@@ -272,17 +273,7 @@ public class InvOrdenDevController {
             
             for(int i=0; i<tipo_registro.length; i++) {
                 
-                arreglo[i]= "'"+
-                        eliminado[i]+"___"+
-                        tipo_registro[i]+"___"+
-                        id_detalle[i]+"___"+
-                        id_almacen[i]+"___"+
-                        id_prod_grid[i]+"___"+
-                        lote_id[i]+"___"+
-                        lote_interno[i]+"___"+
-                        StringHelper.removerComas(cant_dev[i])+"___"+
-                        no_tr[i]+"___"+
-                        id_partida[i]+"'";
+                arreglo[i]= "'"+eliminado[i]+"___"+tipo_registro[i]+"___"+id_detalle[i]+"___"+id_almacen[i]+"___"+id_prod_grid[i]+"___"+lote_id[i]+"___"+lote_interno[i]+"___"+StringHelper.removerComas(cant_dev[i])+"___"+no_tr[i]+"___"+id_partida[i]+"'";
                         
                 System.out.println(arreglo[i]);
             }
@@ -317,7 +308,107 @@ public class InvOrdenDevController {
     
     
     
-    
+    @RequestMapping(value = "/getPdf/{identificador}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getPdfJson(
+                @PathVariable("identificador") Integer identificador,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request, 
+                HttpServletResponse response, 
+                Model model)
+            throws ServletException, IOException, URISyntaxException, DocumentException {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> datos_empresa = new HashMap<String, String>();
+        HashMap<String, String> datos_cliente = new HashMap<String, String>();
+        
+        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> Grid = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> GridLotes = new ArrayList<HashMap<String, String>>();
+        
+        System.out.println("Generando PDF de Orden de Devolucion");
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        
+        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+        
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+        
+        
+        String[] array_company = razon_social_empresa.split(" ");
+        String company_name= array_company[0].toLowerCase();
+        //String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
+        
+        String ruta_imagen = this.getGralDao().getImagesDir()+this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"_logo.png";
+        
+        File file_dir_tmp = new File(dir_tmp);
+        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+        
+        
+        String file_name = "Orden de Salida_"+company_name+".pdf";
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+        //aplicativo Orden de Devolucion
+        Integer app_selected = 100;
+        
+        datos_empresa.put("emp_razon_social", razon_social_empresa);
+        datos_empresa.put("emp_rfc", this.getGralDao().getRfcEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_calle", this.getGralDao().getCalleDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_no_exterior", this.getGralDao().getNoExteriorDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_colonia", this.getGralDao().getColoniaDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_pais", this.getGralDao().getPaisDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_estado", this.getGralDao().getEstadoDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_municipio", this.getGralDao().getMunicipioDomicilioFiscalEmpresaEmisora(id_empresa));
+        datos_empresa.put("emp_cp", this.getGralDao().getCpDomicilioFiscalEmpresaEmisora(id_empresa));
+        
+        datos_empresa.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
+        datos_empresa.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));
+        
+        
+        if(identificador>0){
+            datos = this.getInvDao().getInvOrdenDev_Datos(identificador);
+            
+            Integer tipoDoc = Integer.parseInt(datos.get(0).get("tipo_doc"));
+            String folioNcto = datos.get(0).get("folio_ncto");
+            Integer clienteId = Integer.parseInt(datos.get(0).get("clie_id"));
+            String folioDoc = datos.get(0).get("folio_doc");
+            
+            if(tipoDoc==1 && !folioNcto.equals("")){
+                Grid = this.getInvDao().getInvOrdenDev_DatosGridNcto(folioNcto, clienteId);
+            }else{
+                Grid = this.getInvDao().getInvOrdenDev_DatosGridOsal(tipoDoc, folioDoc, clienteId);
+            }
+            GridLotes = this.getInvDao().getInvOrdenDev_DatosGridLotes(identificador);
+            
+            datos_cliente.put("clie_razon_social", datos.get(0).get("cliente"));
+            datos_cliente.put("clie_no_control", datos.get(0).get("no_clie"));
+            datos_cliente.put("clie_rfc", datos.get(0).get("rfc"));
+            
+            PdfOrdenDevolucion odev = new PdfOrdenDevolucion(datos_empresa, datos, datos_cliente,Grid,GridLotes, fileout, ruta_imagen);
+            
+        }
+        
+        
+        
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        int size = (int) file.length(); // Tamaño del archivo
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        response.setBufferSize(size);
+        response.setContentLength(size);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        FileCopyUtils.copy(bis, response.getOutputStream());  	
+        response.flushBuffer();
+        
+        return null;        
+    }
+
     
     
     

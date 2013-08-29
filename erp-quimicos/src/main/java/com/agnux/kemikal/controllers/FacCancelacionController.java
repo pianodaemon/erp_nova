@@ -472,6 +472,7 @@ public class FacCancelacionController {
                             
                             //Cancelacion con SERVISIM
                             if(String.valueOf(noPac).equals("2")){
+                                
                                 /*
                                 //Datos para Cancelacion
                                 args[0] = PAC proveedor
@@ -491,6 +492,7 @@ public class FacCancelacionController {
                                 //aqui se forma la cadena con los parametros que se le pasan a jar
                                 str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "+noPac+" "+ambienteFac+" "+tipo_peticion+" "+usuario+" "+contrasena+" "+uuid+" "+emisor_rfc+" "+serie_folio+" "+rutaCanceladosDir;
                             }
+                            
                             
                             System.out.println("str_execute: "+str_execute);
                             Process resultado = null; 

@@ -6647,8 +6647,11 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_odev.cxc_clie_id AS clie_id,"
                     + "cxc_clie.numero_control AS no_clie,"
                     + "cxc_clie.razon_social AS cliente,"
+                    + "cxc_clie.rfc,"
                     + "inv_odev.inv_alm_id AS alm_dest_id,"
                     + "inv_odev.moneda_id,"
+                    + "gral_mon.descripcion AS moneda,"
+                    + "gral_mon.simbolo AS moneda_simbolo,"
                     + "inv_odev.observaciones,"
                     + "(CASE WHEN inv_odev.folio_ncto IS NULL THEN '' ELSE inv_odev.folio_ncto END) AS folio_ncto,"
                     + "(CASE WHEN inv_odev.momento_confirmacion IS NULL THEN '' ELSE to_char(inv_odev.momento_confirmacion,'yyyy-mm-dd') END ) AS fecha_confirmacion, "
@@ -6656,6 +6659,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_odev.cancelacion "
                 + "FROM inv_odev "
                 + "JOIN cxc_clie ON cxc_clie.id=inv_odev.cxc_clie_id "
+                + "JOIN gral_mon ON gral_mon.id=inv_odev.moneda_id "
                 + "WHERE inv_odev.id="+ id + ";";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -6668,6 +6672,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("folio",rs.getString("folio"));
                     row.put("fecha_mov",rs.getString("fecha_mov"));
+                    row.put("fecha_confirmacion",rs.getString("fecha_confirmacion"));
                     row.put("estado",String.valueOf(rs.getInt("estado")));
                     row.put("tipo_mov_id",String.valueOf(rs.getInt("tipo_mov_id")));
                     row.put("tipo_doc",String.valueOf(rs.getInt("tipo_doc")));
@@ -6676,11 +6681,14 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("clie_id",String.valueOf(rs.getInt("clie_id")));
                     row.put("no_clie",rs.getString("no_clie"));
                     row.put("cliente",rs.getString("cliente"));
+                    row.put("rfc",rs.getString("rfc"));
                     row.put("alm_dest_id",String.valueOf(rs.getInt("alm_dest_id")));
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("folio_ncto",String.valueOf(rs.getString("folio_ncto").trim()));
                     row.put("cancelacion",String.valueOf(rs.getBoolean("cancelacion")));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("moneda_simbolo",rs.getString("moneda_simbolo"));
                     return row;
                 }
             }
