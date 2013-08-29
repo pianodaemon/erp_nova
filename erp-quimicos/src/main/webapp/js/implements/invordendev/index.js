@@ -977,7 +977,7 @@ $(function() {
 				//descargar pdf de Orden de Salida
 				$descargar_pdf.click(function(event){
 					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/get_genera_pdf_OrdenSalida/'+$identificador.val()+'/'+iu+'/out.json';
+					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdf/'+$identificador.val()+'/'+iu+'/out.json';
 					window.location.href=input_json;
 				});
 				
