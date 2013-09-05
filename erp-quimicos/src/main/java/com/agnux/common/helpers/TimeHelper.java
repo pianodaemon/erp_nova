@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
 import java.text.DateFormat;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -166,6 +167,35 @@ public class TimeHelper {
 		return mesSalida;
 	}
         
+	public static int getNumDiasMes(int anio, int numMes){
+            int numDias=0;
+            switch(numMes-1){
+                case 0: numDias=31; break;// Enero
+                case 2: numDias=31; break;  // Marzo
+                case 4: numDias=31; break;  // Mayo
+                case 6: numDias=31; break;  // Julio
+                case 7: numDias=31; break;  // Agosto
+                case 9: numDias=31; break;  // Octubre
+                case 11: numDias=31; break; // Diciembre
+                case 3: numDias=30; break;  // Abril
+                case 5: numDias=30; break;  // Junio
+                case 8: numDias=30; break;  // Septiembre
+                case 10: numDias=30; break; // Noviembre
+                case 1:  // Febrero
+                    if ( ((anio%100 == 0) && (anio%400 == 0)) ||((anio%100 != 0) && (anio%  4 == 0))   )
+                         numDias=29;  // Año Bisiesto
+                    else
+                        numDias=28;
+                    break;
+                default:
+                    throw new java.lang.IllegalArgumentException("El mes debe estar entre 0 y 11");
+            }
+            
+            
+            return numDias;
+	}
+        
+
         
         //metodo para convertir fechas de numero a nombre del mes 1 = enero.
         public static String ConvertNumToMonth(int mesEntrada){

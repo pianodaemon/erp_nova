@@ -410,7 +410,7 @@ public class PdfCxcAntiguedadSaldos {
                     suma_parcial_menor_igual_60 = 0.0;
                     suma_parcial_menor_igual_90 = 0.0;
                     suma_parcial_mayor_90 = 0.0;
-                    //suma_parcial_saldo_factura_total= 0.0;
+                    suma_parcial_saldo_factura_total= 0.0;
                     
                     
                     //tomar datos del nuevo cliente 

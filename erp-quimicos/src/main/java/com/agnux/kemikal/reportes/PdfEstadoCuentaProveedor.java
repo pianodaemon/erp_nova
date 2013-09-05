@@ -41,7 +41,7 @@ public class PdfEstadoCuentaProveedor {
     
     
     /*en el metodo creamos el documento lo abrimosañadimos parrafos de texto y lo cerramos, tambien creamos nuestro archivo pdf*/
-    public PdfEstadoCuentaProveedor(String fileout, String ruta_imagen, String razon_soc_empresa, String fecha_corte,ArrayList<HashMap<String, String>> facturas) throws DocumentException, IOException {
+    public PdfEstadoCuentaProveedor(String fileout, String ruta_imagen, String tituloReporte, String razon_soc_empresa, String fecha_corte,ArrayList<HashMap<String, String>> facturas) throws DocumentException, IOException {
         //variables para totales del proveedor
         double suma_monto_total_proveedor;
         double suma_importe_pagado_proveedor;
@@ -79,7 +79,7 @@ public class PdfEstadoCuentaProveedor {
             Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
             Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
             
-            PdfEstadoCuentaProveedor.HeaderFooter event = new PdfEstadoCuentaProveedor.HeaderFooter(razon_soc_empresa, fecha_corte_formateado);
+            PdfEstadoCuentaProveedor.HeaderFooter event = new PdfEstadoCuentaProveedor.HeaderFooter(tituloReporte, razon_soc_empresa, fecha_corte_formateado);
             Document doc = new Document(PageSize.LETTER,-50,-50,60,30);
             doc.addCreator("gpmarsan@gmail.com");
             PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(fileout));
@@ -1522,10 +1522,18 @@ public class PdfEstadoCuentaProveedor {
         Font largeFont = new Font(Font.FontFamily.HELVETICA,10,Font.NORMAL,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
         
+        private String tituloReporte;
         private String empresa;
         private String periodo;
         
+        public String getTituloReporte() {
+            return tituloReporte;
+        }
 
+        public void setTituloReporte(String tituloReporte) {
+            this.tituloReporte = tituloReporte;
+        }
+        
         public String getEmpresa() {
             return empresa;
         }
@@ -1542,7 +1550,8 @@ public class PdfEstadoCuentaProveedor {
             this.periodo = periodo;
         }
         
-        HeaderFooter(String razon_soc_empresa, String periodo){
+        HeaderFooter(String tituloReporte, String razon_soc_empresa, String periodo){
+            this.setTituloReporte(tituloReporte);
             this.setEmpresa(razon_soc_empresa);
             this.setPeriodo(periodo);
         }
@@ -1566,7 +1575,7 @@ public class PdfEstadoCuentaProveedor {
         @Override
         public void onEndPage(PdfWriter writer, Document document) {
             ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase(this.getEmpresa(),largeBoldFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop() -25, 0);
-            ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase("Estado de Cuenta de Proveedores",largeBoldFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop()-38, 0);
+            ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase(this.getTituloReporte(),largeBoldFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop()-38, 0);
             ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase(this.getPeriodo(),largeFont),document.getPageSize().getWidth()/2, document.getPageSize().getTop()-50, 0);
             
             SimpleDateFormat formato = new SimpleDateFormat("'Impreso en' MMMMM d, yyyy 'a las' HH:mm:ss 'hrs.'");

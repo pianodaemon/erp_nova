@@ -9,6 +9,7 @@ import com.agnux.kemikal.interfacedaos.CxpInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -2698,11 +2699,11 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     //ESTO VA EN EL CXP SPRING DAO ES LO UNICO QUE AGREGUÉ
     @Override
-    public ArrayList<HashMap<String, String>> getProveedor_DatosReporteEdoCta(Integer tipo_reporte,Integer id_cliente, String fecha_corte,Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getProveedor_DatosReporteEdoCta(Integer tipo_reporte,String proveedor, String fecha_corte,Integer id_empresa) {
         
         String where_proveedor="";
         if(tipo_reporte==1){
-            where_proveedor=" AND cxp_facturas.cxc_prov_id = "+id_cliente;
+            where_proveedor=" AND cxp_prov.razon_social ilike '%"+proveedor+"%'";
         }
         
         String sql_to_query = " "
@@ -2726,7 +2727,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 + "AND cxp_facturas.cancelacion=FALSE   "+ where_proveedor +" "
                 + "AND cxp_facturas.empresa_id="+ id_empresa + " "
                 //+ "AND cxp_facturas.moneda_id ="+ id_moneda
-                + "ORDER BY cxp_prov.id, cxp_facturas.moneda_id, cxp_facturas.fecha_factura;"; 
+                + "ORDER BY cxp_prov.id, cxp_facturas.moneda_id, cxp_facturas.fecha_factura, cxp_facturas.serie_folio;"; 
         
         System.out.println("Proveedor_DatosReporteEdoCta:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -2751,6 +2752,69 @@ public class CxpSpringDao implements CxpInterfaceDao{
             }
         );
         return hm_facturas;
+    }
+    
+    
+    
+    
+    //Este es el query para el reporte de Saldo Mensual de CXP
+    @Override
+    public ArrayList<HashMap<String, String>> getProveedor_DatosReporteSaldoMensual(Integer tipo_reporte,String proveedor, String fecha_corte,Integer id_empresa) {
+        
+        String sql_to_query = " "
+                + "select * from cxp_reporte_saldo_mensual(?,?,?,?) as foo("
+                + "id_proveedor integer, "
+                + "proveedor character varying, "
+                + "serie_folio character varying, "
+                + "fecha_factura character varying, "
+                + "moneda_id integer, "
+                + "moneda_abr character varying, "
+                + "moneda_simbolo character varying, "
+                + "orden_compra character varying, "
+                + "monto_factura double precision, "
+                + "importe_pagado double precision, "
+                + "saldo_factura double precision);"; 
+        
+        System.out.println("Proveedor_DatosReporteSaldoMensual:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(tipo_reporte), new String (proveedor), new String(fecha_corte), new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("proveedor",rs.getString("proveedor"));
+                    row.put("denominacion",rs.getString("moneda_abr"));
+                    row.put("moneda_simbolo",rs.getString("moneda_simbolo"));
+                    row.put("serie_folio",rs.getString("serie_folio"));
+                    row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("orden_compra",rs.getString("orden_compra"));
+                    row.put("fecha_facturacion",rs.getString("fecha_factura"));
+                    row.put("monto_total",StringHelper.roundDouble(rs.getDouble("monto_factura"), 2));
+                    row.put("importe_pagado",StringHelper.roundDouble(rs.getDouble("importe_pagado"), 2));
+                    row.put("ultimo_pago","&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;");
+                    row.put("saldo_factura",StringHelper.roundDouble(rs.getDouble("saldo_factura"), 2));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+    
+    
+    //Calcular años a mostrar en el reporte
+    @Override
+    public ArrayList<HashMap<String, Object>>  getProveedor_AnioReporteSaldoMensual() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
     }
     
     
