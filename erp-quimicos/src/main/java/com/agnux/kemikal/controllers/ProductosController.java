@@ -173,23 +173,22 @@ public class ProductosController {
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataLineasJson(
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ) {
+        ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        //ArrayList<HashMap<String, String>> arrayLineas = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
-        //HashMap<String, String> cadenaLineas = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         arrayTiposProducto=this.getInvDao().getProducto_Tipos();
+        extra = this.getInvDao().getUserRol(id_usuario);
+        arrayExtra.add(0,extra);
         
-        //cadenaLineas.put("cad_lineas", genera_treeview( this.getInvDao().getProducto_Lineas() ));
-        //arrayLineas.add(cadenaLineas);
-        //jsonretorno.put("Lines",arrayLineas);
         jsonretorno.put("prodTipos", arrayTiposProducto);
-        
+        jsonretorno.put("Extra", arrayExtra);
         return jsonretorno;
     }
     

@@ -158,6 +158,28 @@ public class ClientsController {
     
     
     
+    //obtiene lineas de producto y datos para el buscador
+    @RequestMapping(method = RequestMethod.POST, value="/getInicio.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getInicioJson(
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        
+        extra = this.getCxcDao().getUserRol(id_usuario);
+        arrayExtra.add(0,extra);
+        
+        jsonretorno.put("Extra", arrayExtra);
+        return jsonretorno;
+    }
+    
+    
     
     
     @RequestMapping(method = RequestMethod.POST, value="/get_cliente.json")

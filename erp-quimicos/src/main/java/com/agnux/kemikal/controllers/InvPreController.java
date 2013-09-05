@@ -120,9 +120,10 @@ public class InvPreController {
         ) {
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        
         ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
+        
         arrayTiposProducto=this.getInvDao().getProducto_Tipos();
+        
         jsonretorno.put("prodTipos", arrayTiposProducto);
         
         return jsonretorno;
@@ -141,6 +142,8 @@ public class InvPreController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> presentaciones = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> extra = new HashMap<String, String>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -152,8 +155,12 @@ public class InvPreController {
         //Se le pasa como parametro el cero para que devuelva todas las presentaciones 
         presentaciones = this.getInvDao().getProducto_Presentaciones(0);
         
+        extra = this.getInvDao().getUserRol(id_usuario);
+        arrayExtra.add(0,extra);
+        
         jsonretorno.put("ProdTipos", tiposProducto);
         jsonretorno.put("Presentaciones", presentaciones);
+        jsonretorno.put("Extra", arrayExtra);
         return jsonretorno;
     }
     

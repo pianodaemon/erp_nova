@@ -333,4 +333,7 @@ public interface InvInterfaceDao {
     public ArrayList<HashMap<String, String>> getInvCapturaCosto_DatosProducto(String sku, Integer idEmp, Integer mesActual, Integer anoActual);
     //public ArrayList<HashMap<String, String>> getInvCapturaCosto_Datos(Integer id);
     
+    //Metodo para verificar si un usuario es Administrador
+    public HashMap<String, String> getUserRol(Integer id_user);
+    
 }
