@@ -24,7 +24,7 @@ $(function() {
 				9:"Lista 9",
 				10:"Lista 10"
 			};
-			
+	var rolAdmin=0;
 	
 	String.prototype.toCharCode = function(){
 	    var str = this.split(''), len = str.length, work = new Array(len);
@@ -140,6 +140,20 @@ $(function() {
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_nocontrol, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_razon_social, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_rfc, $buscar);
+	
+	
+	var input_json_inicio = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInicio.json';
+	$arregloI = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+	$.post(input_json_inicio,$arregloI,function(data){
+		rolAdmin=data['Extra'][0]['exis_rol_admin'];
+		/*
+		if(parseInt(rolAdmin)<=0){
+			//SI no es Administrador ocultar boton Actualizar
+			$new_cliente.hide();
+		}
+		*/
+	});
+	
 	
 	
 	$tabs_li_funxionalidad = function(){
@@ -2105,6 +2119,18 @@ $(function() {
 				//$campo_nocontrol.attr('disabled','-1'); //deshabilitar
 				$campo_nocontrol.css({'background' : '#DDDDDD'});
 				
+				if(parseInt(rolAdmin)<=0){
+					//Ocultar boton Actualizar
+					$submit_actualizar.hide();
+					
+					//Quitar enter a todos los campos input
+					$('#forma-clients-window').find('input').keypress(function(e){
+						if(e.which==13 ) {
+							return false;
+						}
+					});
+				}
+				
 				$ac_cuenta.hide();
 				$ac_scuenta.hide();
 				$ac_sscuenta.hide();
@@ -3112,6 +3138,11 @@ $(function() {
 
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
+            
+			if(parseInt(rolAdmin)<=0){
+				//SI no es Administrador ocultar iconos de eliminar en el grid
+				$('#lienzo_recalculable').find('a.cancelar_item').hide();
+			}
         },"json");
     }
 	

@@ -53,7 +53,8 @@ $(function() {
 				3:"A 50 Centavos",
 				4:"Sin Centavos"
 			};
-	
+			
+	var rolAdmin=0;
 	
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -142,6 +143,13 @@ $(function() {
 				presentacion += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
 			});
 			$busqueda_select_pres.append(presentacion);
+			
+			rolAdmin=data['Extra'][0]['exis_rol_admin'];
+			
+			if(parseInt(rolAdmin)<=0){
+				//SI no es Administrador ocultar boton Actualizar
+				$new_invprodlineas.hide();
+			}
 		});
 	}//termina funcion cargar datos buscador principal
 	
@@ -798,6 +806,18 @@ $(function() {
 			}
 		});
 		
+		if(parseInt(rolAdmin)<=0){
+			//Ocultar boton Actualizar
+			$submit_actualizar.hide();
+			
+			//Quitar enter a todos los campos input
+			$('#forma-invpre-window').find('input').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
+		}
+		
 		$productosku.focus();
 		
 		var respuestaProcesada = function(data){
@@ -1178,6 +1198,17 @@ $(function() {
 				}
 			});
 			
+			if(parseInt(rolAdmin)<=0){
+				//Ocultar boton Actualizar
+				$submit_actualizar.hide();
+				
+				//Quitar enter a todos los campos input
+				$('#forma-invpre-window').find('input').keypress(function(e){
+					if(e.which==13 ) {
+						return false;
+					}
+				});
+			}
 			
 			$lista1.focus();//asignar el cursor al campo Lista 1 al cargar la ventana
 			
@@ -1384,6 +1415,12 @@ $(function() {
 
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
+            
+			if(parseInt(rolAdmin)<=0){
+				//SI no es Administrador ocultar iconos de eliminar en el grid
+				$('#lienzo_recalculable').find('a.cancelar_item').hide();
+			}
+			
         },"json");
     }
 

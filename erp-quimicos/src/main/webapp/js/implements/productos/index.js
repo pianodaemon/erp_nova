@@ -8,6 +8,7 @@ $(function() {
 	};
 	
 	var arrayTProd;
+	var rolAdmin=0;
 	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
@@ -70,6 +71,13 @@ $(function() {
 		$select_tipo_productos_busqueda.append(prod_tipos_html);
 		
 		arrayTProd=data['prodTipos'];
+		
+		rolAdmin=data['Extra'][0]['exis_rol_admin'];
+		
+		if(parseInt(rolAdmin)<=0){
+			//SI no es Administrador ocultar boton Actualizar
+			$new_producto.hide();
+		}
 	});
 	
 	
@@ -961,6 +969,18 @@ $(function() {
 		$proveedor.attr({'readOnly':true});
 		$busca_proveedor.hide();
 		
+		if(parseInt(rolAdmin)<=0){
+			//Ocultar boton Actualizar
+			$submit_actualizar.hide();
+			
+			//Quitar enter a todos los campos input
+			$('#forma-product-window').find('input').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
+		}
+		
 		$gas_cuenta.hide();
 		$gas_scuenta.hide();
 		$gas_sscuenta.hide();
@@ -1829,6 +1849,19 @@ $(function() {
 				//$codigo.css({'background' : '#DDDDDD'});
 				$proveedor.attr({'readOnly':true});
 				$busca_proveedor.hide();
+				
+				if(parseInt(rolAdmin)<=0){
+					//Ocultar boton Actualizar
+					$submit_actualizar.hide();
+					
+					//Quitar enter a todos los campos input
+					$('#forma-product-window').find('input').keypress(function(e){
+						if(e.which==13 ) {
+							return false;
+						}
+					});
+				}
+				
 				
 				$gas_cuenta.hide();
 				$gas_scuenta.hide();
@@ -2749,6 +2782,11 @@ $(function() {
 			
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
+            
+			if(parseInt(rolAdmin)<=0){
+				//SI no es Administrador ocultar iconos de eliminar en el grid
+				$('#lienzo_recalculable').find('a.cancelar_item').hide();
+			}
         },"json");
     }
     

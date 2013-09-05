@@ -599,10 +599,4 @@ $(function() {
 	$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_reporte, $busqueda_reporte_edocta);
 	$(this).aplicarEventoKeypressEjecutaTrigger($razon_proveedor, $busqueda_reporte_edocta);
 	$(this).aplicarEventoKeypressEjecutaTrigger($fecha_corte, $busqueda_reporte_edocta);
-	
-});   
-        
-        
-        
-        
-    
+});
