@@ -2,7 +2,7 @@ $(function() {
 	var config =  {
 		empresa: $('#lienzo_recalculable').find('input[name=emp]').val(),
 		sucursal: $('#lienzo_recalculable').find('input[name=suc]').val(),
-		tituloApp: 'Reporte de Estados de Proveedores' ,                 
+		tituloApp: 'Reporte de Saldos por Mes' ,                 
 		contextpath : $('#lienzo_recalculable').find('input[name=contextpath]').val(),
 		
 		userName : $('#lienzo_recalculable').find('input[name=user]').val(),
@@ -33,7 +33,7 @@ $(function() {
 		},
 		
 		getController: function(){
-			return this.contextpath + "/controllers/repedoctaprov";
+			return this.contextpath + "/controllers/cxprepsaldomes";
 			//  return this.controller;
 		}
 	};
@@ -51,15 +51,15 @@ $(function() {
 	
 	//var $proveedor = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=proveedor]');
 	var $select_tipo_reporte = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=tipo_reporte]');
-	var $fecha_corte = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=fecha_corte]');
+	var $select_ano = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_ano]');
+	var $select_mes = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_mes]');
 	var $id_proveedor_edo_cta = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=id_proveedor_edo_cta]');
 	var $razon_proveedor = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=razon_proveedor]');
 	var $buscar_proveedor= $('#lienzo_recalculable').find('table#busqueda tr td').find('a[href*=buscar_proveedor]');
 	var $genera_PDF = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[value$=Generar_PDF]');
-	var $busqueda_reporte_edocta= $('#lienzo_recalculable').find('table#busqueda tr td').find('input[value$=Buscar]');
+	var $busqueda_reporte= $('#lienzo_recalculable').find('table#busqueda tr td').find('input[value$=Buscar]');
 	var $div_reporte_estados_de_cuenta= $('#lienzo_recalculable').find('#divreporteedocta');
 	
-	$fecha_corte.attr('readonly',true);
 	$razon_proveedor.attr('readonly',true);
 	$razon_proveedor.css({'background' : '#DDDDDD'});
 	$buscar_proveedor.hide();
@@ -68,85 +68,8 @@ $(function() {
 	html='<option value="0">General</option>';
 	html+='<option value="1">Por proveedor</option>';
 	$select_tipo_reporte.append(html);
-		
-	//----------------------------------------------------------------
-	//valida la fecha seleccionada
-	function mayor(fecha, fecha2){
-		var xMes=fecha.substring(5, 7);
-		var xDia=fecha.substring(8, 10);
-		var xAnio=fecha.substring(0,4);
-		var yMes=fecha2.substring(5, 7);
-		var yDia=fecha2.substring(8, 10);
-		var yAnio=fecha2.substring(0,4);
-                
-		if (xAnio > yAnio){
-			return(true);
-		}else{
-			if (xAnio == yAnio){
-				if (xMes > yMes){
-					return(true);
-				}
-				if (xMes == yMes){
-					if (xDia > yDia){
-						return(true);
-					}else{
-						return(false);
-					}
-				}else{
-					return(false);
-				}
-			}else{
-				return(false);
-			}
-		}
-	}
-	//muestra la fecha actual
-	var mostrarFecha = function mostrarFecha(){
-		var ahora = new Date();
-		var anoActual = ahora.getFullYear();
-		var mesActual = ahora.getMonth();
-		mesActual = mesActual+1;
-		mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
-		var diaActual = ahora.getDate();
-		diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-		var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
-		return Fecha;
-	}
-	//----------------------------------------------------------------
 	
-	$fecha_corte.val(mostrarFecha());
-	
-	/*
-	$fecha_corte.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100});
-	});
-	$fecha_corte.DatePicker({
-		format:'Y-m-d',
-		onBeforeShow: function(){
-			$fecha_corte.DatePickerSetDate($fecha_corte.val(), true);
-		},
-		date: $fecha_corte.val(),
-		current: $fecha_corte.val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$fecha_corte.val(formated);
-			if (formated.match(patron) ){
-				$fecha_corte.DatePickerHide();
-			};
-		}
-	});
-	*/
+	var array_meses = {0:"- Seleccionar -",  1:"Enero",  2:"Febrero", 3:"Marzo", 4:"Abirl", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"};
 	
 	
 	$select_tipo_reporte.change(function(){
@@ -162,6 +85,42 @@ $(function() {
 			$razon_proveedor.attr('readonly',false);
 		}
 	});
+	
+
+
+	 var arreglo_parametros = { 
+		iu:config.getUi()
+	 };
+		
+	var restful_json_service = config.getUrlForGetAndPost() + '/getDatos.json';
+	$.post(restful_json_service,arreglo_parametros,function(entry){
+		//carga select de años
+		$select_ano.children().remove();
+		var html_anio = '';
+		$.each(entry['Anios'],function(entryIndex,anio){
+			if(parseInt(anio['valor']) == parseInt(entry['Dato'][0]['anioActual']) ){
+				html_anio += '<option value="' + anio['valor'] + '" selected="yes">' + anio['valor'] + '</option>';
+			}else{
+				html_anio += '<option value="' + anio['valor'] + '"  >' + anio['valor'] + '</option>';
+			}
+		});
+		$select_ano.append(html_anio);
+		
+		//cargar select del Mes inicial
+		$select_mes.children().remove();
+		var select_html = '';
+		for(var i in array_meses){
+			if(parseInt(i) == parseInt(entry['Dato'][0]['mesActual']) ){
+				select_html += '<option value="' + i + '" selected="yes">' + array_meses[i] + '</option>';	
+			}else{
+				select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
+			}
+		}
+		$select_mes.append(select_html);
+	});
+
+
+
 
 	$busca_proveedores = function(){
 		$(this).modalPanel_Buscaprov();
@@ -176,7 +135,7 @@ $(function() {
 		
 		var $buscar_plugin_proveedor = $('#forma-buscaproveedor-window').find('#busca_proveedor_modalbox');
 		var $cancelar_plugin_busca_proveedor = $('#forma-buscaproveedor-window').find('#cencela');
-			
+		
 		$('#forma-entradamercancias-window').find('input[name=tipo_proveedor]').val('');
 			
 		//funcionalidad botones
@@ -193,8 +152,8 @@ $(function() {
 		$cancelar_plugin_busca_proveedor.mouseout(function(){
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
-                
-                
+		
+		
 		//click buscar proveedor
 		$buscar_plugin_proveedor.click(function(event){
 			//event.preventDefault();
@@ -258,41 +217,50 @@ $(function() {
 			$('#forma-buscaproveedor-overlay').fadeOut(remove);
 		});
 	}//termina buscador de proveedores
-        
+	
+	
+	
     $buscar_proveedor.click(function(event){
+        //alert("aqui ando");
         event.preventDefault();
-        //Llamada a la funcion que busca proveedores
-        $busca_proveedores();
+        $busca_proveedores();//llamada a la funcion que busca proveedores
     });
+    
+    
 	
-	
-	//Generar PDF del reporte de Estado de Cuenta de Proveedores
+//	//genera pdf del reporte de estados de cuenta de proveedores
 	$genera_PDF.click(function(event){
 		event.preventDefault();
-		var fecha = $fecha_corte.val();
 		var proveedor = '0';
 		if($razon_proveedor.val().trim()!=''){
 			proveedor=$razon_proveedor.val();
 		}
 		
+		var cadena = $select_tipo_reporte.val()+"___"+$select_ano.val()+"___"+$select_mes.val()+"___"+proveedor;
+		
+		//var id_proveedor=$id_proveedor_edo_cta.val();
+		
 		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-		var input_json = config.getUrlForGetAndPost() + '/get_genera_pdf_estado_cuenta_proveedor/'+$select_tipo_reporte.val()+'/'+proveedor+'/'+fecha+'/'+iu+'/out.json'
+		var input_json = config.getUrlForGetAndPost() + '/getPdfSaldoMensual/'+cadena+'/'+iu+'/out.json'
 		window.location.href=input_json;
-	});
+		
+	});//termina llamada json
 	
 	
-	//Buscar datos para mostrar en el navegador
-	$busqueda_reporte_edocta.click(function(event){
+	
+	$busqueda_reporte.click(function(event){
 		event.preventDefault();
 		$div_reporte_estados_de_cuenta.children().remove();
 			
-			var arreglo_parametros = {	tipo_reporte: $select_tipo_reporte.val(),
+			var arreglo_parametros = {	
+										tipo_reporte: $select_tipo_reporte.val(),
 										proveedor: $razon_proveedor.val(),
-										fecha_corte: $fecha_corte.val(),
+										anio_corte: $select_ano.val(),
+										mes_corte: $select_mes.val(),
 										iu:config.getUi()
 									};
 			
-			var restful_json_service = config.getUrlForGetAndPost() + '/getReporteEdoCtaProveedores.json'
+			var restful_json_service = config.getUrlForGetAndPost() + '/getReporteSaldos.json'
 			var proveedoor="";
 			$.post(restful_json_service,arreglo_parametros,function(entry){
 				var body_tabla = entry['Facturas'];
@@ -593,12 +561,12 @@ $(function() {
 				var pix_alto=alto+'px';
 				$('#edocta').tableScroll({height:parseInt(pix_alto)});
 			});
-			
 	});
 	
-	$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_reporte, $busqueda_reporte_edocta);
-	$(this).aplicarEventoKeypressEjecutaTrigger($razon_proveedor, $busqueda_reporte_edocta);
-	$(this).aplicarEventoKeypressEjecutaTrigger($fecha_corte, $busqueda_reporte_edocta);
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_reporte, $busqueda_reporte);
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_ano, $busqueda_reporte);
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_mes, $busqueda_reporte);
+	$(this).aplicarEventoKeypressEjecutaTrigger($razon_proveedor, $busqueda_reporte);
 	
 });   
         
