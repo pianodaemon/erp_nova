@@ -34,7 +34,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  *
- * @author agnux
+ * @author Noe Martinez
+ * gpmarsan@gmail.com
+ * 
  */
 @Controller
 @SessionAttributes({"user"})
