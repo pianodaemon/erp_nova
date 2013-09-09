@@ -124,13 +124,15 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_PRO_ASEG_CALIDAD,
         ROLE_COMPRAS_NETAS_PRODUCTO,
         ROLE_CXC_CANCELA_ANTICIPO,
-        ROLE_CXP_REP_SALDO_MES" />
+        ROLE_CXP_REP_SALDO_MES,
+        ROLE_CXC_REMITENTES" />
         
         
         
         <intercept-url pattern="/controllers/productos/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PRODUCTO" />
         <intercept-url pattern="/controllers/proveedores/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PROVEEDOR" />
         <intercept-url pattern="/controllers/clients/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_CLIENTE" />
+        <intercept-url pattern="/controllers/clientsremiten/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_REMITENTES" />
         <intercept-url pattern="/controllers/cotizaciones/startup.agnux" access="ROLE_ADMIN,ROLE_COTIZACION" />
         <intercept-url pattern="/controllers/entradamercancias/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURAS_COMPRAS" />
         <intercept-url pattern="/controllers/prefacturas/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURACION" />

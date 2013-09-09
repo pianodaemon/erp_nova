@@ -127,6 +127,7 @@
 													<li class="topline"><a href="../clientsclasif2/startup.agnux">Clasificaci&oacute;n 2</a></li>
 													<li class="topline"><a href="../clientsclasif3/startup.agnux">Clasificaci&oacute;n 3</a></li>
 													<li class="topline"><a href="../clientstmovimientos/startup.agnux">Tipos de Movimientos</a></li>
+													<li class="topline" id="transpor"><a href="../clientsremiten/startup.agnux">Remitentes</a></li>
 													<!--
 													<li class="topline"><a href="#">Mensajes</a></li>
 													<li class="topline"><a href="#">Direcciones</a></li>

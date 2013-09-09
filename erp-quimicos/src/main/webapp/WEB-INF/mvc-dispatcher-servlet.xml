@@ -55,14 +55,14 @@
         
         
         <!--Conexion a bd instance01 LOCAL-->
-        <!--
+        
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://localhost:5432/kathion" />
 	     <property name="username" value="ms" />
 	     <property name="password" value="ms" />
 	</bean>
-        -->
+        
         
         
         <!--Conexion a bd instance01 es lo mismo para KATHION Y KEMIKAL-->
@@ -99,14 +99,14 @@
        -->
         
         <!--FACTURACION-->
-        
+        <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://10.178.141.30:5432/db01" />
 	     <property name="username" value="db01" />
 	     <property name="password" value="db01" />
 	</bean>
-        
+        -->
         
         
         <!--Conexion Servidor de PRUEBAS -->
