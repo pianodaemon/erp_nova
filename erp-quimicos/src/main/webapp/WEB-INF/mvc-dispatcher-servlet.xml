@@ -74,7 +74,7 @@
 	     <property name="password" value="instance01" />
 	</bean>
         -->
-        
+
         
         <!--Conexion a bd saar SAAR-->
         <!--
@@ -86,6 +86,7 @@
 	</bean>
         -->
         
+
         
         <!--Conexion a bd NOVASOL-->
         <!--
@@ -96,14 +97,18 @@
 	     <property name="password" value="novasol" />
 	</bean>
        -->
-        <!--
+        
+        <!--FACTURACION-->
+        
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://50.56.242.41:5555/novasol" />
-	     <property name="username" value="novasol" />
-	     <property name="password" value="novasol" />
+	     <property name="url" value="jdbc:postgresql://10.178.141.30:5432/db01" />
+	     <property name="username" value="db01" />
+	     <property name="password" value="db01" />
 	</bean>
-        -->
+        
+        
+        
         <!--Conexion Servidor de PRUEBAS -->
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -113,13 +118,15 @@
 	     <property name="password" value="sc2013pruebas" />
 	</bean>
         -->
-        
+        <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://50.57.127.230:5555/pruebas" />
 	     <property name="username" value="pruebas" />
 	     <property name="password" value="sc2013pruebas" />
 	</bean>
+        -->
+        
         
         <!--
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
