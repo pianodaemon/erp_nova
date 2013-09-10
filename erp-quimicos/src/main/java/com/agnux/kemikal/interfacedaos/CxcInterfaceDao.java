@@ -158,4 +158,8 @@ public interface CxcInterfaceDao {
     
     //Metodo para verificar si un usuario es Administrador
     public HashMap<String, String> getUserRol(Integer id_user);
+    
+    //Catalogo de Remitentes
+    public ArrayList<HashMap<String, Object>> getClientsRemiten_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, Object>> getClientsRemiten_Datos(Integer id);
 }

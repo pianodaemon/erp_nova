@@ -76,7 +76,7 @@ public class ClientsRemitentesController {
         infoConstruccionTabla.put("rfc", "RFC:100");
         infoConstruccionTabla.put("remitente", "Nombre o Razon Social:250");
         infoConstruccionTabla.put("tel", "Tel&eacute;fono:100");
-        infoConstruccionTabla.put("cliente", "Cliente:250");
+        infoConstruccionTabla.put("tipo", "Tipo:100");
         
         ModelAndView x = new ModelAndView("clientsremiten/startup", "title", "Cat&aacute;logo de Remitentes");
         
@@ -117,18 +117,18 @@ public class ClientsRemitentesController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //Catalogo de Direcciones Fiscales de Clientes
-        Integer app_selected = 118;
+        //Catalogo de Remitentes
+        Integer app_selected = 147;
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
-        //variables para el buscador
-        String nocontrol = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("nocontrol")))+"";
-        String razonsoc = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("razonsoc")))+"%";
+        //Variables para el buscador
+        String folio = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"";
+        String remitente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("remitente")))+"%";
         String rfc = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("rfc")))+"%";
         
-        String data_string = app_selected+"___"+id_usuario+"___"+nocontrol.toUpperCase()+"___"+razonsoc+"___"+rfc;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio.toUpperCase()+"___"+remitente.toUpperCase()+"___"+rfc.toUpperCase();
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCxcDao().countAll(data_string);
@@ -142,7 +142,8 @@ public class ClientsRemitentesController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getCxcDao().getClientsDf_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getCxcDao().getClientsRemiten_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
@@ -150,6 +151,176 @@ public class ClientsRemitentesController {
     }
     
     
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getRemitente.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getRemitenteJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getclientsdfJson de {0}", ClientsDirFiscalesController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, Object>> paises = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> estados = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> municipios = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
+
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        if( id != 0  ){
+            datos = this.getCxcDao().getClientsDf_Datos(id);
+            estados = this.getCxcDao().getEntidadesForThisPais(datos.get(0).get("pais_id").toString());
+            municipios = this.getCxcDao().getLocalidadesForThisEntidad(datos.get(0).get("pais_id").toString(), datos.get(0).get("estado_id").toString());
+        }
+        
+        paises = this.getCxcDao().getPaises();
+        
+        jsonretorno.put("Datos", datos);
+        jsonretorno.put("Paises", paises);
+        jsonretorno.put("Estados", estados);
+        jsonretorno.put("Municipios", municipios);
+        return jsonretorno;
+    }
+    
+    
+    //obtiene el las Municipios de un Estado
+    @RequestMapping(method = RequestMethod.POST, value="/getMunicipios.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getMunicipiosJson(
+            @RequestParam(value="id_pais", required=true) String id_pais,
+            @RequestParam(value="id_entidad", required=true) String id_entidad,
+            Model model
+            ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        
+        jsonretorno.put("Municipios", this.getCxcDao().getLocalidadesForThisEntidad(id_pais, id_entidad));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //obtiene el las Estados de un Pais
+    @RequestMapping(method = RequestMethod.POST, value="/getEstados.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getEstadosJson(
+            @RequestParam(value="id_pais", required=true) String id_pais,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        jsonretorno.put("Estados", this.getCxcDao().getEntidadesForThisPais(id_pais));
+        
+        return jsonretorno;
+    }
+    
+    
+    //Crear y editar
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+        @RequestParam(value="identificador", required=true) String identificador,
+        @RequestParam(value="remitente", required=true) String remitente,
+        @RequestParam(value="rfc", required=true) String rfc,
+        @RequestParam(value="calle", required=true) String calle,
+        @RequestParam(value="colonia", required=true) String colonia,
+        @RequestParam(value="numero_int", required=true) String numero_int,
+        @RequestParam(value="numero_ext", required=true) String numero_ext,
+        @RequestParam(value="cp", required=true) String cp,
+        @RequestParam(value="select_tipo", required=true) String select_tipo,
+        @RequestParam(value="select_pais", required=true) String select_pais,
+        @RequestParam(value="select_estado", required=true) String select_estado,
+        @RequestParam(value="select_municipio", required=true) String select_municipio,
+        @RequestParam(value="tel1", required=true) String tel1,
+        @RequestParam(value="tel2", required=true) String tel2,
+        @RequestParam(value="ext1", required=true) String ext1,
+        @RequestParam(value="email", required=true) String email,
+        Model model,@ModelAttribute("user") UserSessionData user
+    ) {
+        
+        //Catalogo de Remitentes
+        Integer app_selected = 147;
+        String command_selected = "new";
+        Integer id_usuario= user.getUserId();//variable para el id  del usuario
+        String arreglo[];
+        String extra_data_array = "'sin datos'";
+        String actualizo = "0";
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        
+        HashMap<String, String> succes = new HashMap<String, String>();
+        
+        if( identificador.equals("0") ){
+            command_selected = "new";
+        }else{
+            command_selected = "edit";
+        }
+        
+        String data_string = 
+        app_selected
+        +"___"+command_selected
+        +"___"+id_usuario
+        +"___"+identificador
+        +"___"+remitente
+        +"___"+rfc
+        +"___"+select_tipo
+        +"___"+calle.toUpperCase()
+        +"___"+numero_int
+        +"___"+numero_ext
+        +"___"+colonia.toUpperCase()
+        +"___"+cp
+        +"___"+select_pais
+        +"___"+select_estado
+        +"___"+select_municipio
+        +"___"+tel1
+        +"___"+ext1
+        +"___"+tel2
+        +"___"+email;
+        
+        System.out.println("data_string: "+data_string);
+        
+        succes = this.getCxcDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        if( String.valueOf(succes.get("success")).equals("true") ){
+            actualizo = this.getCxcDao().selectFunctionForThisApp(data_string, extra_data_array);
+        }
+        
+        jsonretorno.put("success",String.valueOf(succes.get("success")));
+        
+        log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
+    
+    
+    
+    //cambiar a borrado logico un registro
+    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
+    public @ResponseBody HashMap<String, String> logicDeleteJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        System.out.println("Borrado logico de Direccion Fiscal");
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        //Catalogo de Remitentes
+        Integer app_selected = 147;
+        String command_selected = "delete";
+        String extra_data_array = "'sin datos'";
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        
+        jsonretorno.put("success",String.valueOf( this.getCxcDao().selectFunctionForThisApp(data_string,extra_data_array)) );
+        
+        return jsonretorno;
+    }
     
     
     
