@@ -16,9 +16,9 @@ $(function() {
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
 	var controller = $contextpath.val()+"/controllers/clientsremiten";
     
-        //Barra para las acciones
-        $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
-        $('#barra_acciones').find('.table_acciones').css({'display':'block'});
+	//Barra para las acciones
+	$('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
+	$('#barra_acciones').find('.table_acciones').css({'display':'block'});
 	var $new_clientsremiten = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
@@ -37,26 +37,25 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Catalogo de Remitentes');
+	$('#barra_titulo').find('#td_titulo').append('Cat&aacute;logo de Remitentes');
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 	
 	var $cadena_busqueda = "";
-	var $busqueda_nocontrol = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_nocontrol]');
+	var $busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
 	var $busqueda_razon_social = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_razon_social]');
 	var $busqueda_rfc = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_rfc]');
+	var $busqueda_remitente = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_remitente]');
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
-	
-	//alert($select_filtro_por.val());
 	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
 		var signo_separador = "=";
-		valor_retorno += "nocontrol" + signo_separador + $busqueda_nocontrol.val() + "|";
-		valor_retorno += "razonsoc" + signo_separador + $busqueda_razon_social.val() + "|";
+		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
+		valor_retorno += "remitente" + signo_separador + $busqueda_razon_social.val() + "|";
 		valor_retorno += "rfc" + signo_separador + $busqueda_rfc.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
 		return valor_retorno;
@@ -77,10 +76,11 @@ $(function() {
 	
 	$limpiar.click(function(event){
 		event.preventDefault();
-		$busqueda_nocontrol.val('');
+		$busqueda_folio.val('');
 		$busqueda_razon_social.val('');
 		$busqueda_rfc.val('');
-		$busqueda_nocontrol.focus();
+		$busqueda_remitente.val('');
+		$busqueda_folio.focus();
 	});
 	
 	
@@ -110,11 +110,11 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
-		$busqueda_nocontrol.focus();
+		$busqueda_folio.focus();
 	});
 	
 	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
-	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_nocontrol, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_folio, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_razon_social, $buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_rfc, $buscar);
 	
@@ -160,35 +160,35 @@ $(function() {
 	
 
 
-	//buscador de clientes
-	$busca_clientes = function(razon_social_cliente, numero_control){
-		$(this).modalPanel_Buscacliente();
-		var $dialogoc =  $('#forma-buscacliente-window');
+	//buscador de remitentes
+	$busca_remitentes = function(razon_social_remitente, folio){
+		$(this).modalPanel_Buscaremitente();
+		var $dialogoc =  $('#forma-buscaremitente-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
-		$dialogoc.append($('div.buscador_clientes').find('table.formaBusqueda_clientes').clone());
-		$('#forma-buscacliente-window').css({"margin-left": -200, 	"margin-top": -180});
+		$dialogoc.append($('div.buscador_remitentes').find('table.formaBusqueda_remitentes').clone());
+		$('#forma-buscaremitente-window').css({"margin-left": -200, 	"margin-top": -180});
 		
-		var $tabla_resultados = $('#forma-buscacliente-window').find('#tabla_resultado');
+		var $tabla_resultados = $('#forma-buscaremitente-window').find('#tabla_resultado');
 		
-		var $busca_cliente_modalbox = $('#forma-buscacliente-window').find('#busca_cliente_modalbox');
-		var $cancelar_plugin_busca_cliente = $('#forma-buscacliente-window').find('#cencela');
+		var $busca_remitente_modalbox = $('#forma-buscaremitente-window').find('#busca_remitente_modalbox');
+		var $cancelar_plugin_busca_remitente = $('#forma-buscaremitente-window').find('#cencela');
 		
-		var $cadena_buscar = $('#forma-buscacliente-window').find('input[name=cadena_buscar]');
-		var $select_filtro_por = $('#forma-buscacliente-window').find('select[name=filtropor]');
+		var $cadena_buscar = $('#forma-buscaremitente-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscaremitente-window').find('select[name=filtropor]');
 		
 		//funcionalidad botones
-		$busca_cliente_modalbox.mouseover(function(){
+		$busca_remitente_modalbox.mouseover(function(){
 			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
 		});
-		$busca_cliente_modalbox.mouseout(function(){
+		$busca_remitente_modalbox.mouseout(function(){
 			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
 		});
 		
-		$cancelar_plugin_busca_cliente.mouseover(function(){
+		$cancelar_plugin_busca_remitente.mouseover(function(){
 			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
 		});
 		
-		$cancelar_plugin_busca_cliente.mouseout(function(){
+		$cancelar_plugin_busca_remitente.mouseout(function(){
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
@@ -197,27 +197,27 @@ $(function() {
 		$select_filtro_por.children().remove();
 		html='<option value="0">[-- Opcion busqueda --]</option>';
 		
-		if(numero_control !='' && razon_social_cliente==''){
+		if(folio !='' && razon_social_remitente==''){
 			html+='<option value="1" selected="yes">No. de control</option>';
-			$cadena_buscar.val(numero_control);
+			$cadena_buscar.val(folio);
 		}else{
 			html+='<option value="1">No. de control</option>';
 		}
 		html+='<option value="2">RFC</option>';
-		if(razon_social_cliente!=''){
-			$cadena_buscar.val(razon_social_cliente);
+		if(razon_social_remitente!=''){
+			$cadena_buscar.val(razon_social_remitente);
 			html+='<option value="3" selected="yes">Razon social</option>';
 		}
-		if(numero_control =='' && razon_social_cliente==''){
+		if(folio =='' && razon_social_remitente==''){
 			html+='<option value="3" selected="yes">Razon social</option>';
 		}
 		html+='<option value="4">CURP</option>';
 		html+='<option value="5">Alias</option>';
 		$select_filtro_por.append(html);
 		
-		//click buscar clientes
-		$busca_cliente_modalbox.click(function(event){
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorClientes.json';
+		//click buscar remitentes
+		$busca_remitente_modalbox.click(function(event){
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorremitentes.json';
 			$arreglo = {'cadena':$cadena_buscar.val(),
 						 'filtro':$select_filtro_por.val(),
 						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
@@ -226,17 +226,17 @@ $(function() {
 			var trr = '';
 			$tabla_resultados.children().remove();
 			$.post(input_json,$arreglo,function(entry){
-				$.each(entry['Clientes'],function(entryIndex,cliente){
+				$.each(entry['remitentes'],function(entryIndex,remitente){
 					trr = '<tr>';
 						trr += '<td width="80">';
-							trr += '<input type="hidden" id="idclient" value="'+cliente['id']+'">';
-							trr += '<input type="hidden" id="direccion" value="'+cliente['direccion']+'">';
-							trr += '<input type="hidden" id="id_moneda" value="'+cliente['moneda_id']+'">';
-							trr += '<input type="hidden" id="moneda" value="'+cliente['moneda']+'">';
-							trr += '<span class="no_control">'+cliente['numero_control']+'</span>';
+							trr += '<input type="hidden" id="idclient" value="'+remitente['id']+'">';
+							trr += '<input type="hidden" id="direccion" value="'+remitente['direccion']+'">';
+							trr += '<input type="hidden" id="id_moneda" value="'+remitente['moneda_id']+'">';
+							trr += '<input type="hidden" id="moneda" value="'+remitente['moneda']+'">';
+							trr += '<span class="no_control">'+remitente['folio']+'</span>';
 						trr += '</td>';
-						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
-						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
+						trr += '<td width="145"><span class="rfc">'+remitente['rfc']+'</span></td>';
+						trr += '<td width="375"><span class="razon">'+remitente['razon_social']+'</span></td>';
 					trr += '</tr>';
 					
 					$tabla_resultados.append(trr);
@@ -259,17 +259,17 @@ $(function() {
 				
 				//seleccionar un producto del grid de resultados
 				$tabla_resultados.find('tr').click(function(){
-					$('#forma-clientsremiten-window').find('input[name=id_cliente]').val($(this).find('#idclient').val());
+					$('#forma-clientsremiten-window').find('input[name=id_remitente]').val($(this).find('#idclient').val());
 					$('#forma-clientsremiten-window').find('input[name=rfc]').val($(this).find('span.rfc').html());
-					$('#forma-clientsremiten-window').find('input[name=cliente]').val($(this).find('span.razon').html());
-					$('#forma-clientsremiten-window').find('input[name=nocontrol]').val($(this).find('span.no_control').html());
+					$('#forma-clientsremiten-window').find('input[name=remitente]').val($(this).find('span.razon').html());
+					$('#forma-clientsremiten-window').find('input[name=folio]').val($(this).find('span.no_control').html());
 					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
-					$('#forma-buscacliente-overlay').fadeOut(remove);
+					$('#forma-buscaremitente-overlay').fadeOut(remove);
 					
 					
-					$('#forma-clientsremiten-window').find('input[name=cliente]').focus();
+					$('#forma-clientsremiten-window').find('input[name=remitente]').focus();
 				});
 
 			});
@@ -278,21 +278,21 @@ $(function() {
 		
 		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
 		if($cadena_buscar.val() != ''){
-			$busca_cliente_modalbox.trigger('click');
+			$busca_remitente_modalbox.trigger('click');
 		}
 		
-		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_cliente_modalbox);
-		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_cliente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $busca_remitente_modalbox);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $busca_remitente_modalbox);
 		
-		$cancelar_plugin_busca_cliente.click(function(event){
+		$cancelar_plugin_busca_remitente.click(function(event){
 			var remove = function() {$(this).remove();};
-			$('#forma-buscacliente-overlay').fadeOut(remove);
+			$('#forma-buscaremitente-overlay').fadeOut(remove);
 			
-			$('#forma-clientsremiten-window').find('input[name=cliente]').focus();
+			$('#forma-clientsremiten-window').find('input[name=remitente]').focus();
 		});
 		
 		$cadena_buscar.focus();
-	}//termina buscador de clientes
+	}//termina buscador de remitentes
 
 	
 	
@@ -313,26 +313,22 @@ $(function() {
 		$tabs_li_funxionalidad();		
 		
 		var $identificador = $('#forma-clientsremiten-window').find('input[name=identificador]');
-		var $busca_cliente = $('#forma-clientsremiten-window').find('a[href*=busca_cliente]');
-		var $id_cliente = $('#forma-clientsremiten-window').find('input[name=id_cliente]');
-		var $cliente = $('#forma-clientsremiten-window').find('input[name=cliente]');
-		var $nocontrol = $('#forma-clientsremiten-window').find('input[name=nocontrol]');
+		var $select_tipo = $('#forma-clientsremiten-window').find('select[name=select_tipo]');
+		var $busca_remitente = $('#forma-clientsremiten-window').find('a[href*=busca_remitente]');
+		var $remitente = $('#forma-clientsremiten-window').find('input[name=remitente]');
+		var $folio = $('#forma-clientsremiten-window').find('input[name=folio]');
 		var $rfc = $('#forma-clientsremiten-window').find('input[name=rfc]');
 		var $calle = $('#forma-clientsremiten-window').find('input[name=calle]');
 		var $numero_int = $('#forma-clientsremiten-window').find('input[name=numero_int]');
 		var $numero_ext = $('#forma-clientsremiten-window').find('input[name=numero_ext]');
-		var $entrecalles = $('#forma-clientsremiten-window').find('input[name=entrecalles]');
 		var $colonia = $('#forma-clientsremiten-window').find('input[name=colonia]');
 		var $select_pais = $('#forma-clientsremiten-window').find('select[name=select_pais]');
 		var $select_estado = $('#forma-clientsremiten-window').find('select[name=select_estado]');
 		var $select_municipio = $('#forma-clientsremiten-window').find('select[name=select_municipio]');
-		var $contacto = $('#forma-clientsremiten-window').find('input[name=contacto]');
 		var $email = $('#forma-clientsremiten-window').find('input[name=email]');
 		var $tel1 = $('#forma-clientsremiten-window').find('input[name=tel1]');
 		var $ext1 = $('#forma-clientsremiten-window').find('input[name=ext1]');
-		var $fax = $('#forma-clientsremiten-window').find('input[name=fax]');
 		var $tel2 = $('#forma-clientsremiten-window').find('input[name=tel2]');
-		var $ext2 = $('#forma-clientsremiten-window').find('input[name=ext2]');
 		
 		var $cerrar_plugin = $('#forma-clientsremiten-window').find('#close');
 		var $cancelar_plugin = $('#forma-clientsremiten-window').find('#boton_cancelar');
@@ -345,10 +341,9 @@ $(function() {
 			}
 		});
 		
-		//$nocontrol.css({'background' : '#DDDDDD'});
-		$rfc.css({'background' : '#DDDDDD'});
+		$folio.css({'background' : '#DDDDDD'});
+		//$rfc.css({'background' : '#DDDDDD'});
 		$identificador.attr({'value' : 0});
-		$id_cliente.attr({'value' : 0});
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("La direcci&oacute;n fue dada de alta con &eacute;xito", 'Atencion!');
@@ -379,10 +374,16 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getclientsremiten.json';
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRemitente.json';
 		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
+			//Alimentando select de Tipo de Remitente
+			$select_tipo.children().remove();
+			var tipo_hmtl = '<option value="1" selected="yes">Nacional</option>';
+			tipo_hmtl += '<option value="2">Extranjero</option>';
+			$select_tipo.append(tipo_hmtl);
+			
 			//Alimentando los campos select de las pais
 			$select_pais.children().remove();
 			var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar Pais-]</option>';
@@ -436,34 +437,32 @@ $(function() {
 			});
 		},"json");//termina llamada json
         
-        //buscar cliente
-        $busca_cliente.click(function(event){
+        //buscar remitente
+        $busca_remitente.click(function(event){
 			event.preventDefault();
-			$busca_clientes($cliente.val(), $nocontrol.val());
+			$busca_remitentes($remitente.val(), $folio.val());
         });
         
         
-		//ejecutar busqueda de cliente al pulsar enter sobre el campo No de control
-		$nocontrol.keypress(function(e){
+		//ejecutar busqueda de remitente al pulsar enter sobre el campo No de control
+		$folio.keypress(function(e){
 			if(e.which == 13){
 				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoClient.json';
-				$arreglo2 = {'no_control':$nocontrol.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+				$arreglo2 = {'no_control':$folio.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				$.post(input_json2,$arreglo2,function(entry2){
-					if(parseInt(entry2['Cliente'].length) > 0 ){
-						$('#forma-clientsremiten-window').find('input[name=id_cliente]').val(entry2['Cliente'][0]['id']);
-						$('#forma-clientsremiten-window').find('input[name=rfc]').val(entry2['Cliente'][0]['rfc']);
-						$('#forma-clientsremiten-window').find('input[name=cliente]').val(entry2['Cliente'][0]['razon_social']);
-						$('#forma-clientsremiten-window').find('input[name=nocontrol]').val(entry2['Cliente'][0]['numero_control']);
+					if(parseInt(entry2['remitente'].length) > 0 ){
+						$('#forma-clientsremiten-window').find('input[name=rfc]').val(entry2['remitente'][0]['rfc']);
+						$('#forma-clientsremiten-window').find('input[name=remitente]').val(entry2['remitente'][0]['razon_social']);
+						$('#forma-clientsremiten-window').find('input[name=folio]').val(entry2['remitente'][0]['folio']);
 					}else{
 						//limpiar campos
-						$('#forma-clientsremiten-window').find('input[name=id_cliente]').val('');
 						$('#forma-clientsremiten-window').find('input[name=rfc]').val('');
-						$('#forma-clientsremiten-window').find('input[name=cliente]').val('');
-						$('#forma-clientsremiten-window').find('input[name=nocontrol]').val('');
+						$('#forma-clientsremiten-window').find('input[name=remitente]').val('');
+						$('#forma-clientsremiten-window').find('input[name=folio]').val('');
 						
-						jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
-							$('#forma-clientsremiten-window').find('input[name=nocontrol]').focus(); 
+						jAlert('N&uacute;mero de remitente desconocido.', 'Atencion!', function(r) { 
+							$('#forma-clientsremiten-window').find('input[name=folio]').focus(); 
 						});
 					}
 				},"json");//termina llamada json
@@ -473,7 +472,7 @@ $(function() {
 		});
 		
         
-        $(this).aplicarEventoKeypressEjecutaTrigger($cliente, $busca_cliente);
+        $(this).aplicarEventoKeypressEjecutaTrigger($remitente, $busca_remitente);
         
         
         
@@ -490,7 +489,7 @@ $(function() {
 			$buscar.trigger('click');
 		});
 		
-		$nocontrol.focus();
+		$folio.focus();
 	});
 	
 	
@@ -536,43 +535,38 @@ $(function() {
 			$tabs_li_funxionalidad();
                         
 			var $identificador = $('#forma-clientsremiten-window').find('input[name=identificador]');
-			var $busca_cliente = $('#forma-clientsremiten-window').find('a[href*=busca_cliente]');
-			var $id_cliente = $('#forma-clientsremiten-window').find('input[name=id_cliente]');
-			var $cliente = $('#forma-clientsremiten-window').find('input[name=cliente]');
-			var $nocontrol = $('#forma-clientsremiten-window').find('input[name=nocontrol]');
+			var $select_tipo = $('#forma-clientsremiten-window').find('select[name=select_tipo]');
+			var $remitente = $('#forma-clientsremiten-window').find('input[name=remitente]');
+			var $folio = $('#forma-clientsremiten-window').find('input[name=folio]');
 			var $rfc = $('#forma-clientsremiten-window').find('input[name=rfc]');
 			var $calle = $('#forma-clientsremiten-window').find('input[name=calle]');
 			var $numero_int = $('#forma-clientsremiten-window').find('input[name=numero_int]');
 			var $numero_ext = $('#forma-clientsremiten-window').find('input[name=numero_ext]');
-			var $entrecalles = $('#forma-clientsremiten-window').find('input[name=entrecalles]');
 			var $colonia = $('#forma-clientsremiten-window').find('input[name=colonia]');
 			var $cp = $('#forma-clientsremiten-window').find('input[name=cp]');
 			var $select_pais = $('#forma-clientsremiten-window').find('select[name=select_pais]');
 			var $select_estado = $('#forma-clientsremiten-window').find('select[name=select_estado]');
 			var $select_municipio = $('#forma-clientsremiten-window').find('select[name=select_municipio]');
-			var $contacto = $('#forma-clientsremiten-window').find('input[name=contacto]');
 			var $email = $('#forma-clientsremiten-window').find('input[name=email]');
 			var $tel1 = $('#forma-clientsremiten-window').find('input[name=tel1]');
 			var $ext1 = $('#forma-clientsremiten-window').find('input[name=ext1]');
-			var $fax = $('#forma-clientsremiten-window').find('input[name=fax]');
 			var $tel2 = $('#forma-clientsremiten-window').find('input[name=tel2]');
-			var $ext2 = $('#forma-clientsremiten-window').find('input[name=ext2]');
                         
 			var $cerrar_plugin = $('#forma-clientsremiten-window').find('#close');
 			var $cancelar_plugin = $('#forma-clientsremiten-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-clientsremiten-window').find('#submit');
 			
-			$nocontrol.css({'background' : '#DDDDDD'});
-			$cliente.css({'background' : '#DDDDDD'});
+			$folio.css({'background' : '#DDDDDD'});
+			$remitente.css({'background' : '#DDDDDD'});
 			$rfc.css({'background' : '#DDDDDD'});
-			$busca_cliente.hide();
+			$busca_remitente.hide();
 			
-			$nocontrol.attr({ 'readOnly':true });
-			$cliente.attr({ 'readOnly':true });
+			$folio.attr({ 'readOnly':true });
+			$remitente.attr({ 'readOnly':true });
 			
 			if(accion_mode == 'edit'){
                                 
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getclientsremiten.json';
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRemitente.json';
 				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var respuestaProcesada = function(data){
@@ -609,23 +603,18 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					$identificador.attr({'value' : entry['Datos']['0']['identificador']});
-					$id_cliente.attr({'value' : entry['Datos']['0']['id_cliente']});
-					$cliente.attr({'value' : entry['Datos']['0']['cliente']});
-					$nocontrol.attr({'value' : entry['Datos']['0']['numero_control']});
+					$remitente.attr({'value' : entry['Datos']['0']['remitente']});
+					$folio.attr({'value' : entry['Datos']['0']['folio']});
 					$rfc.attr({'value' : entry['Datos']['0']['rfc']});
 					$calle.attr({'value' : entry['Datos']['0']['calle']});
-					$numero_int.attr({'value' : entry['Datos']['0']['numero_interior']});
-					$numero_ext.attr({'value' : entry['Datos']['0']['numero_exterior']});
-					$entrecalles.attr({'value' : entry['Datos']['0']['entre_calles']});
+					$numero_int.attr({'value' : entry['Datos']['0']['no_int']});
+					$numero_ext.attr({'value' : entry['Datos']['0']['no_ext']});
 					$colonia.attr({'value' : entry['Datos']['0']['colonia']});
 					$cp.attr({'value' : entry['Datos']['0']['cp']});
-					$contacto.attr({'value' : entry['Datos']['0']['contacto']});
 					$email.attr({'value' : entry['Datos']['0']['email']});
 					$tel1.attr({'value' : entry['Datos']['0']['telefono1']});
-					$ext1.attr({'value' : entry['Datos']['0']['extension1']});
-					$fax.attr({'value' : entry['Datos']['0']['fax']});
+					$ext1.attr({'value' : entry['Datos']['0']['extension']});
 					$tel2.attr({'value' : entry['Datos']['0']['telefono2']});
-					$ext2.attr({'value' : entry['Datos']['0']['extension2']});
 					
 					//Alimentando los campos select de las pais
 					$select_pais.children().remove();

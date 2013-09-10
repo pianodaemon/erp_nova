@@ -41,13 +41,15 @@
 				<td colspan="13">&nbsp;&nbsp;</td>
 			</tr>
 			<tr>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td>No. Control</td>
-				<td width=10>&nbsp;&nbsp;</td>
-				<td>Razon Social</td>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;</td>
 				<td>RFC</td>
-				<td width=10>&nbsp;&nbsp;</td>
+				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				<td>Razon Social</td>
+				<td width="10">&nbsp;&nbsp;</td>
+				<td>Cliente</td>
+				<td width="10">&nbsp;&nbsp;</td>
 				<td></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td></td>
@@ -57,17 +59,19 @@
 			</tr>
 			<tr>
 				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="busqueda_nocontrol" style="width:90px;"></td>
+				<td><input type="text" name="busqueda_folio" style="width:90px;"></td>
 				<td width=10>&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="busqueda_razon_social" style="width:220px;"></td>
+				<td><input type="text" name="busqueda_rfc" style="width:150px;"></td>
 				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="text" name="busqueda_rfc" style="width:150px;"></td>
+				<td><input type="text" name="busqueda_razon_social" style="width:220px;"></td>
+				<td width=10>&nbsp;&nbsp;</td>
+				<td><input type="text" name="busqueda_cliente" style="width:220px;"></td>
 				<td width=10>&nbsp;&nbsp;</td>
 				<td></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td><INPUT TYPE="button" value="Buscar"></td>
+				<td><input type="button" value="Buscar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				<td ><INPUT TYPE="button" value="Limpiar"></td>
+				<td ><input type="button" value="Limpiar"></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			</tr>
 		</table>
@@ -95,7 +99,7 @@
 					
                     <div id="div_two" title="" class="clientsremiten_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:770px; padding-left:6px;"><strong>Direcci&oacute;n Fiscal de Cliente</strong></div>
+                            <div class="fixed column" id="cierra" style="width:770px; padding-left:6px;"><strong>Remitente</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -107,7 +111,7 @@
                         <div class="columns" >
                             <div class=" fixed column">
                                 <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Direcci&oacute;n</strong></a></li>
+                                    <li><a href="#tabx-1"><strong>Remitente</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -118,18 +122,18 @@
                                     <div id="tabx-1" class="contenidoPes" >
 										
 										
-										<table border="1">
+										<table border="0">
 											<tr>
 												<td width="5"></td>
-												<td width="75">No.&nbsp;de&nbsp;Control</td>
+												<td width="75">Folio</td>
 												<td width="5"></td>
-												<td width="150" colspan="2"><INPUT TYPE="text" name="nocontrol" style="width:150px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nocontrol"></div></td>
+												<td width="150" colspan="2"><input type="text" name="folio" style="width:150px;" readOnly="true"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_folio"></div></td>
 												<td width="5"></td>
-												<td width="70">RFC</td>
+												<td width="70">Tipo</td>
 												<td width="5"></td>
-												<td width="150"><input type="text" name="rfc" readOnly="true" style="width:150px;"></td>
-												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfc"></div></td>
+												<td width="150"><select name="select_tipo" style="width:150px;"></select></td>
+												<td width="35"></td>
 												<td width="5"></td>
 												<td width="75"></td>
 												<td width="5"></td>
@@ -156,16 +160,15 @@
 											</tr>
 											<tr>
 												<td width="5"></td>
-												<td width="75">Cliente</td>
+												<td width="75">Razon Social</td>
 												<td width="5"></td>
-												<td colspan="7">
-													<INPUT TYPE="text" name="cliente" style="width:410px;">
-													<input type="hidden" name="id_cliente">
-												</td>
+												<td colspan="7"><input type="text" name="remitente" style="width:410px;"></td>
 												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cliente"></div></td>
 												<td width="5"></td>
-												<td colspan="3"><a href="busca_cliente">(Buscar&nbsp;cliente)</a></td>
-												<td width="25"></td>
+												<td width="75">RFC</td>
+												<td width="5"></td>
+												<td width="150"><input type="text" name="rfc" style="width:150px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfc"></div></td>
 											</tr>
 
 											<tr>
@@ -175,28 +178,13 @@
 												<td width="5"></td>
 												<td width="75">Calle</td>
 												<td width="5"></td>
-												<td colspan="7"><INPUT TYPE="text" name="calle" style="width:410px;"></td>
+												<td colspan="7"><input type="text" name="calle" style="width:410px;"></td>
 												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_calle"></div></td>
 												<td width="5"></td>
 												<td width="75">No.&nbsp;Interior</td>
 												<td width="5"></td>
-												<td width="150"><INPUT TYPE="text" name="numero_int" style="width:150px;"></td>
+												<td width="150"><input type="text" name="numero_int" style="width:150px;"></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_numeroint"></div></td>
-											</tr>
-											<tr>
-												<td colspan="16">&nbsp;</td>
-											</tr>
-											<tr>
-												<td width="5"></td>
-												<td width="75">Entre&nbsp;calles</td>
-												<td width="5"></td>
-												<td colspan="7"><INPUT TYPE="text" name="entrecalles" style="width:410px;"></td>
-												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_entrecalles"></div></td>
-												<td width="5"></td>
-												<td width="75">No.&nbsp;Exterior</td>
-												<td width="5"></td>
-												<td width="150"><INPUT TYPE="text" name="numero_ext" style="width:150px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_numeroext"></td>
 											</tr>
 											<tr>
 												<td colspan="16">&nbsp;</td>
@@ -205,13 +193,13 @@
 												<td width="5"></td>
 												<td width="75">Colonia</td>
 												<td width="5"></td>
-												<td colspan="7"><INPUT TYPE="text" name="colonia" style="width:410px;"></td>
+												<td colspan="7"><input type="text" name="colonia" style="width:410px;"></td>
 												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_colonia"></div></td>
 												<td width="5"></td>
-												<td width="75">C.P.</td>
+												<td width="75">No.&nbsp;Exterior</td>
 												<td width="5"></td>
-												<td width="150"><INPUT TYPE="text" name="cp" style="width:150px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cp"></div></td>
+												<td width="150"><input type="text" name="numero_ext" style="width:150px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_numeroext"></td>
 											</tr>
 											<tr>
 												<td colspan="16">&nbsp;</td>
@@ -220,34 +208,38 @@
 												<td width="5"></td>
 												<td width="75">Pa&iacute;s</td>
 												<td width="5"></td>
-												<td colspan="2"><SELECT NAME="select_pais" style="width:150px;"></SELECT></td>
+												<td colspan="2"><select name="select_pais" style="width:150px;"></select></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_pais"></div></td>
 												<td width="5"></td>
 												<td width="70">Estado</td>
 												<td width="5"></td>
-												<td width="150"><SELECT NAME="select_estado" style="width:150px;"></SELECT></td>
+												<td width="150"><select name="select_estado" style="width:150px;"></select></td>
 												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_estado"></div></td>
 												<td width="5"></td>
 												<td width="75">Municipio</td>
 												<td width="5"></td>
-												<td width="150"><SELECT NAME="select_municipio" style="width:150px;"></SELECT></td>
+												<td width="150"><select name="select_municipio" style="width:150px;"></select></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_municipio"></div></td>
 											</tr>
 											<tr>
-												<td colspan="16">&nbsp;</td>
+												<td width="5" height="7" colspan="16">&nbsp;</td>
 											</tr>
-												
 											<tr>
 												<td width="5"></td>
-												<td width="75">Contacto</td>
+												<td width="75">C.P.</td>
 												<td width="5"></td>
-												<td colspan="7"><input type="text" name="contacto" style="width:410px;"></td>
-												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_contacto"></div></td>
+												<td colspan="2"><input type="text" name="cp" style="width:150px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_cp"></div></td>
 												<td width="5"></td>
-												<td width="75">E-mail</td>
+												<td width="70">E-mail</td>
 												<td width="5"></td>
-												<td width="150"><INPUT TYPE="text" name="email" style="width:150px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_email"></div></td>
+												<td width="150"><input type="text" name="email" style="width:150px;"></td>
+												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_email"></div></td>
+												<td width="5"></td>
+												<td width="75"></td>
+												<td width="5"></td>
+												<td width="150"></td>
+												<td width="25"></td>
 											</tr>
 											<tr>
 												<td width="5" height="7" colspan="16">&nbsp;</td>
@@ -256,39 +248,20 @@
 												<td width="5"></td>
 												<td width="75">Tel&eacute;fono&nbsp;1</td>
 												<td width="5"></td>
-												<td colspan="2"><INPUT TYPE="text" name="tel1" style="width:150px;"></td>
+												<td colspan="2"><input type="text" name="tel1" style="width:150px;"></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tel1"></div></td>
 												<td width="5"></td>
-												<td width="70">Extensi&oacute;n&nbsp;1</td>
+												<td width="70">Tel&eacute;fono&nbsp;2</td>
 												<td width="5"></td>
-												<td width="150"><INPUT TYPE="text" name="ext1" style="width:150px;"></td>
-												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ext1"></div></td>
+												<td width="150"><input type="text" name="tel2" style="width:150px;"></td>
+												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tel2"></div></td>
 												<td width="5"></td>
-												<td width="75">Fax</td>
+												<td width="75">Extensi&oacute;n&nbsp;</td>
 												<td width="5"></td>
-												<td width="150"><INPUT TYPE="text" name="fax" style="width:150px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fax"></div></td>
+												<td width="150"><input type="text" name="ext1" style="width:150px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ext1"></div></td>
 											</tr>
-											<tr>
-												<td width="5" height="7" colspan="16">&nbsp;</td>
-											</tr>
-											<tr>
-												<td width="5"></td>
-												<td width="75">Tel&eacute;fono&nbsp;2</td>
-												<td width="5"></td>
-												<td colspan="2"><INPUT TYPE="text" name="tel2" style="width:150px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tel2"></div></td>
-												<td width="5"></td>
-												<td width="70">Extensi&oacute;n&nbsp;2</td>
-												<td width="5"></td>
-												<td width="150"><INPUT TYPE="text" name="ext2" style="width:150px;"></td>
-												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ext2"></div></td>
-												<td width="5"></td>
-												<td width="75"></td>
-												<td width="5"></td>
-												<td width="150"></td>
-												<td width="25"></td>
-											</tr>
+
 											
 											
 										</table>
@@ -352,12 +325,12 @@
 												
 												<tr>
 													<td width="50">Buscar</td>
-													<td width="245"><INPUT TYPE="text" name="cadena_buscar" style="width:245px;"></td>
+													<td width="245"><input type="text" name="cadena_buscar" style="width:245px;"></td>
 													<td width="25"></td>
 													<td width="60">Filtro por</td>
-													<td width="150"><SELECT NAME="filtropor" style="width:150px;"></SELECT></td>
+													<td width="150"><select name="filtropor" style="width:150px;"></select></td>
 													<td width="70" align="right">
-														<INPUT TYPE="button" id="busca_cliente_modalbox" class="onmouseOutBuscar">
+														<input type="button" id="busca_cliente_modalbox" class="onmouseOutBuscar">
 													</td>
 												</tr>
 												
@@ -413,7 +386,7 @@
 										<td width="80" style="background:#ffffff"></td>
 										<td width="140" style="background:#ffffff"></td>
 										<td width="380" style="background:#ffffff" align="right">
-											<INPUT TYPE="button" id="cencela" class="onmouseOutCancelar">
+											<input type="button" id="cencela" class="onmouseOutCancelar">
 										</td>
 										
 										<td width="10" style="background:#ffffff"></td>
