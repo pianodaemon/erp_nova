@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.controllers;
+
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
@@ -34,14 +35,14 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  *
  * @author Noe Martinez
  * gpmarsan@gmail.com
- * 09/sep/2013
+ * 11/sep/2013
  * 
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/clientsremiten/")
-public class ClientsRemitentesController {
-    private static final Logger log  = Logger.getLogger(ClientsRemitentesController.class.getName());
+@RequestMapping("/clientsdest/")
+public class ClientsDestController {
+    private static final Logger log  = Logger.getLogger(ClientsDestController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
@@ -68,17 +69,17 @@ public class ClientsRemitentesController {
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", ClientsRemitentesController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", ClientsDestController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("folio", "No.Control:100");
         infoConstruccionTabla.put("rfc", "RFC:100");
-        infoConstruccionTabla.put("remitente", "Nombre o Razon Social:250");
+        infoConstruccionTabla.put("destinatario", "Nombre o Razon Social:250");
         infoConstruccionTabla.put("tel", "Tel&eacute;fono:100");
         infoConstruccionTabla.put("tipo", "Tipo:100");
         
-        ModelAndView x = new ModelAndView("clientsremiten/startup", "title", "Cat&aacute;logo de Remitentes");
+        ModelAndView x = new ModelAndView("clientsdest/startup", "title", "Cat&aacute;logo de Destinatarios");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -102,8 +103,8 @@ public class ClientsRemitentesController {
     
     
     //obtener todas las direcciones fiscales de los clientes
-    @RequestMapping(value="/getAllClientsRemiten.json", method = RequestMethod.POST)
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllClientsRemitenJson(
+    @RequestMapping(value="/getAllClientsDest.json", method = RequestMethod.POST)
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllClientsDestJson(
            @RequestParam(value="orderby", required=true) String orderby,
            @RequestParam(value="desc", required=true) String desc,
            @RequestParam(value="items_por_pag", required=true) int items_por_pag,
@@ -117,19 +118,19 @@ public class ClientsRemitentesController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //Catalogo de Remitentes
-        Integer app_selected = 147;
+        //Catalogo de Destinatarios
+        Integer app_selected = 148;
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         //Variables para el buscador
         String folio = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"";
-        String remitente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("remitente")))+"%";
+        String destinatario = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("destinatario")))+"%";
         String rfc = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("rfc")))+"%";
         String tipo = StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo")));
         
-        String data_string = app_selected+"___"+id_usuario+"___"+folio.toUpperCase()+"___"+remitente.toUpperCase()+"___"+rfc.toUpperCase()+"___"+tipo;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio.toUpperCase()+"___"+destinatario.toUpperCase()+"___"+rfc.toUpperCase()+"___"+tipo;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getCxcDao().countAll(data_string);
@@ -143,7 +144,7 @@ public class ClientsRemitentesController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getCxcDao().getClientsRemiten_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getCxcDao().getClientsDest_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
@@ -153,14 +154,14 @@ public class ClientsRemitentesController {
     
     
     
-    @RequestMapping(method = RequestMethod.POST, value="/getRemitente.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getRemitenteJson(
+    @RequestMapping(method = RequestMethod.POST, value="/getDestinatario.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDestinatarioJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getRemitenteJson de {0}", ClientsRemitentesController.class.getName());
+        log.log(Level.INFO, "Ejecutando getDestinatarioJson de {0}", ClientsDestController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, Object>> paises = new ArrayList<HashMap<String, Object>>();
@@ -174,7 +175,7 @@ public class ClientsRemitentesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         if( id != 0  ){
-            datos = this.getCxcDao().getClientsRemiten_Datos(id);
+            datos = this.getCxcDao().getClientsDest_Datos(id);
             estados = this.getCxcDao().getEntidadesForThisPais(datos.get(0).get("pais_id").toString());
             municipios = this.getCxcDao().getLocalidadesForThisEntidad(datos.get(0).get("pais_id").toString(), datos.get(0).get("estado_id").toString());
         }
@@ -223,7 +224,7 @@ public class ClientsRemitentesController {
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
         @RequestParam(value="identificador", required=true) String identificador,
-        @RequestParam(value="remitente", required=true) String remitente,
+        @RequestParam(value="destinatario", required=true) String destinatario,
         @RequestParam(value="rfc", required=true) String rfc,
         @RequestParam(value="calle", required=true) String calle,
         @RequestParam(value="colonia", required=true) String colonia,
@@ -241,8 +242,8 @@ public class ClientsRemitentesController {
         Model model,@ModelAttribute("user") UserSessionData user
     ) {
         
-        //Catalogo de Remitentes
-        Integer app_selected = 147;
+        //Catalogo de Destinatarios
+        Integer app_selected = 148;
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         String arreglo[];
@@ -270,7 +271,7 @@ public class ClientsRemitentesController {
         +"___"+command_selected
         +"___"+id_usuario
         +"___"+identificador
-        +"___"+remitente.toUpperCase()
+        +"___"+destinatario.toUpperCase()
         +"___"+rfc.toUpperCase()
         +"___"+select_tipo
         +"___"+calle.toUpperCase()
@@ -311,12 +312,12 @@ public class ClientsRemitentesController {
             Model model
             ) {
         
-        System.out.println("Borrado logico de Remitente");
+        System.out.println("Borrado logico de Destinatario");
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
-        //Catalogo de Remitentes
-        Integer app_selected = 147;
+        //Catalogo de Destinatarios
+        Integer app_selected = 148;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         
