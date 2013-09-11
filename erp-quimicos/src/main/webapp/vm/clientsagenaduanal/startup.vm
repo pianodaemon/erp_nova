@@ -6,12 +6,12 @@
         #include("${layoutheader}")
 		
         <!--  css for this catalogo -->
-        <link rel="stylesheet" href="../../css/modalbox/clientsremiten/formaclientsremiten.css" type="text/css" />
+        <link rel="stylesheet" href="../../css/modalbox/clientsagenaduanal/formaclientsagenaduanal.css" type="text/css" />
 		
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
-        <script type="text/javascript" src="../../js/components/modalbox/clientsremiten/modalboxclientsremiten.js"></script>
-        <script type="text/javascript" src="../../js/implements/clientsremiten/index.js" ></script>
+        <script type="text/javascript" src="../../js/components/modalbox/clientsagenaduanal/modalboxclientsagenaduanal.js"></script>
+        <script type="text/javascript" src="../../js/implements/clientsagenaduanal/index.js" ></script>
         
         #include("${layoutmenu}")
         
@@ -42,11 +42,9 @@
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td>No. Control</td>
 				<td width="10">&nbsp;&nbsp;</td>
-				<td>RFC</td>
-				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td>Razon Social</td>
 				<td width="10">&nbsp;&nbsp;</td>
-				<td>Tipo de Remitente</td>
+				<td>Tipo de Agente Aduanal</td>
 				<td width="10">&nbsp;&nbsp;</td>
 				<td></td>
 				<td width="10">&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -59,8 +57,6 @@
 				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><input type="text" name="busqueda_folio" style="width:90px;"></td>
 				<td width=10>&nbsp;&nbsp;</td>
-				<td><input type="text" name="busqueda_rfc" style="width:150px;"></td>
-				<td width=10>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td><input type="text" name="busqueda_razon_social" style="width:220px;"></td>
 				<td width=10>&nbsp;&nbsp;</td>
 				<td><select name="busqueda_select_tipo" style="width:150px;"><option value="0">[--Seleccionar Tipo--]</option></select></td>
@@ -88,16 +84,16 @@
             </tr>
         </table>
         
-        <!--form for direcciones de Proveedores -->
-        <form id="formaDirecciones" action="edit.json" method="POST" >
+        <!--form for Agentes Aduanales -->
+        <form id="formaagenteaduanals" action="edit.json" method="POST" >
         <!--clase la quite por causar problemas      tabulador -->
-                <div id="div_one" class="panelcito_modal clientsremiten_div_one"  style="display:none;" title="">
+                <div id="div_one" class="panelcito_modal clientsagenaduanal_div_one"  style="display:none;" title="">
                 
                 <input type="hidden" name="identificador">
 					
-                    <div id="div_two" title="" class="clientsremiten_div_two">
+                    <div id="div_two" title="" class="clientsagenaduanal_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" id="cierra" style="width:770px; padding-left:6px;"><strong>Remitente</strong></div>
+                            <div class="fixed column" id="cierra" style="width:770px; padding-left:6px;"><strong>Agente Aduanal</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -105,11 +101,11 @@
                     </div>
                     
                     
-                    <div id="div_three" title="" class="clientsremiten_div_three">
+                    <div id="div_three" title="" class="clientsagenaduanal_div_three">
                         <div class="columns" >
                             <div class=" fixed column">
                                 <ul class="pestanas">
-                                    <li><a href="#tabx-1"><strong>Remitente</strong></a></li>
+                                    <li><a href="#tabx-1"><strong>Agente</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -160,15 +156,15 @@
 												<td width="5"></td>
 												<td width="75">Razon Social</td>
 												<td width="5"></td>
-												<td colspan="7"><input type="text" name="remitente" style="width:410px;"></td>
+												<td colspan="7"><input type="text" name="agenteaduanal" style="width:410px;"></td>
 												<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_razonsocial"></div></td>
 												<td width="5"></td>
-												<td width="75">RFC</td>
+												<td width="75"><!--RFC--></td>
 												<td width="5"></td>
-												<td width="150"><input type="text" name="rfc" style="width:150px;"></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfc"></div></td>
+												<td width="150"><!--<input type="text" name="rfc" style="width:150px;">--></td>
+												<td width="25"><!--<div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_rfc"></div>--></td>
 											</tr>
-
+											
 											<tr>
 												<td colspan="16">&nbsp;</td>
 											</tr>
@@ -259,12 +255,7 @@
 												<td width="150"><input type="text" name="ext1" style="width:150px;"></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ext1"></div></td>
 											</tr>
-
-											
-											
 										</table>
-                                        
-                                        
                                     </div>
 									
                                 </div>

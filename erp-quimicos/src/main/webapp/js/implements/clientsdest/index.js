@@ -6,7 +6,7 @@ $(function() {
 		}
 		return work.join(',');
 	};
-
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
         
@@ -14,12 +14,12 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/clientsremiten";
+	var controller = $contextpath.val()+"/controllers/clientsdest";
     
 	//Barra para las acciones
 	$('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
 	$('#barra_acciones').find('.table_acciones').css({'display':'block'});
-	var $new_clientsremiten = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
+	var $new_clientsdest = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
 	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
@@ -37,7 +37,7 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Cat&aacute;logo de Remitentes');
+	$('#barra_titulo').find('#td_titulo').append('Cat&aacute;logo de Destinatarios');
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
@@ -55,7 +55,7 @@ $(function() {
 		var valor_retorno = "";
 		var signo_separador = "=";
 		valor_retorno += "folio" + signo_separador + $busqueda_folio.val() + "|";
-		valor_retorno += "remitente" + signo_separador + $busqueda_razon_social.val() + "|";
+		valor_retorno += "destinatario" + signo_separador + $busqueda_razon_social.val() + "|";
 		valor_retorno += "rfc" + signo_separador + $busqueda_rfc.val() + "|";
 		valor_retorno += "tipo" + signo_separador + $busqueda_select_tipo.val() + "|";
 		valor_retorno += "iu" + signo_separador + $('#lienzo_recalculable').find('input[name=iu]').val() + "|";
@@ -73,7 +73,7 @@ $(function() {
 		$get_datos_grid();
 	});
 	
-	//Alimentando select de Tipo de Remitente
+	//Alimentando select de Tipo de destinatario
 	$busqueda_select_tipo.children().remove();
 	var tipo_hmtl = '<option value="0">[--Seleccionar Tipo--]</option>';
 	tipo_hmtl += '<option value="1">Nacional</option>';
@@ -86,7 +86,7 @@ $(function() {
 		$busqueda_razon_social.val('');
 		$busqueda_rfc.val('');
 		
-		//Alimentando select de Tipo de Remitente
+		//Alimentando select de Tipo de destinatario
 		$busqueda_select_tipo.children().remove();
 		tipo_hmtl = '<option value="0">[--Seleccionar Tipo--]</option>';
 		tipo_hmtl += '<option value="1">Nacional</option>';
@@ -134,38 +134,38 @@ $(function() {
 	
 	
 	$tabs_li_funxionalidad = function(){
-		$('#forma-clientsremiten-window').find('#submit').mouseover(function(){
-			$('#forma-clientsremiten-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+		$('#forma-clientsdest-window').find('#submit').mouseover(function(){
+			$('#forma-clientsdest-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
 		});
-		$('#forma-clientsremiten-window').find('#submit').mouseout(function(){
-			$('#forma-clientsremiten-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+		$('#forma-clientsdest-window').find('#submit').mouseout(function(){
+			$('#forma-clientsdest-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/btn1.png)"});
 		});
-		$('#forma-clientsremiten-window').find('#boton_cancelar').mouseover(function(){
-			$('#forma-clientsremiten-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+		$('#forma-clientsdest-window').find('#boton_cancelar').mouseover(function(){
+			$('#forma-clientsdest-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
 		})
-		$('#forma-clientsremiten-window').find('#boton_cancelar').mouseout(function(){
-			$('#forma-clientsremiten-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
+		$('#forma-clientsdest-window').find('#boton_cancelar').mouseout(function(){
+			$('#forma-clientsdest-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
 		});
 		
-		$('#forma-clientsremiten-window').find('#close').mouseover(function(){
-			$('#forma-clientsremiten-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		$('#forma-clientsdest-window').find('#close').mouseover(function(){
+			$('#forma-clientsdest-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
 		});
-		$('#forma-clientsremiten-window').find('#close').mouseout(function(){
-			$('#forma-clientsremiten-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		$('#forma-clientsdest-window').find('#close').mouseout(function(){
+			$('#forma-clientsdest-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
 		});		
 		
-		$('#forma-clientsremiten-window').find(".contenidoPes").hide(); //Hide all content
-		$('#forma-clientsremiten-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-		$('#forma-clientsremiten-window').find(".contenidoPes:first").show(); //Show first tab content
+		$('#forma-clientsdest-window').find(".contenidoPes").hide(); //Hide all content
+		$('#forma-clientsdest-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+		$('#forma-clientsdest-window').find(".contenidoPes:first").show(); //Show first tab content
 		
 		//On Click Event
-		$('#forma-clientsremiten-window').find("ul.pestanas li").click(function() {
-			$('#forma-clientsremiten-window').find(".contenidoPes").hide();
-			$('#forma-clientsremiten-window').find("ul.pestanas li").removeClass("active");
+		$('#forma-clientsdest-window').find("ul.pestanas li").click(function() {
+			$('#forma-clientsdest-window').find(".contenidoPes").hide();
+			$('#forma-clientsdest-window').find("ul.pestanas li").removeClass("active");
 			var activeTab = $(this).find("a").attr("href");
-			$('#forma-clientsremiten-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$('#forma-clientsdest-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
 			$(this).addClass("active");
 			return false;
 		});
@@ -174,44 +174,44 @@ $(function() {
 	
 	
 	//nuevo 
-	$new_clientsremiten.click(function(event){
+	$new_clientsdest.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
-		$(this).modalPanel_clientsremiten();
+		$(this).modalPanel_clientsdest();
 		
-		var form_to_show = 'formaDirecciones';
+		var form_to_show = 'formaDestinatarios';
 		$('#' + form_to_show).each (function(){this.reset();});
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-clientsremiten-window').css({"margin-left": -400, 	"margin-top": -265});
-		$forma_selected.prependTo('#forma-clientsremiten-window');
+		$('#forma-clientsdest-window').css({"margin-left": -400, 	"margin-top": -265});
+		$forma_selected.prependTo('#forma-clientsdest-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();		
 		
-		var $identificador = $('#forma-clientsremiten-window').find('input[name=identificador]');
-		var $select_tipo = $('#forma-clientsremiten-window').find('select[name=select_tipo]');
-		var $remitente = $('#forma-clientsremiten-window').find('input[name=remitente]');
-		var $folio = $('#forma-clientsremiten-window').find('input[name=folio]');
-		var $rfc = $('#forma-clientsremiten-window').find('input[name=rfc]');
-		var $calle = $('#forma-clientsremiten-window').find('input[name=calle]');
-		var $numero_int = $('#forma-clientsremiten-window').find('input[name=numero_int]');
-		var $numero_ext = $('#forma-clientsremiten-window').find('input[name=numero_ext]');
-		var $colonia = $('#forma-clientsremiten-window').find('input[name=colonia]');
-		var $select_pais = $('#forma-clientsremiten-window').find('select[name=select_pais]');
-		var $select_estado = $('#forma-clientsremiten-window').find('select[name=select_estado]');
-		var $select_municipio = $('#forma-clientsremiten-window').find('select[name=select_municipio]');
-		var $email = $('#forma-clientsremiten-window').find('input[name=email]');
-		var $tel1 = $('#forma-clientsremiten-window').find('input[name=tel1]');
-		var $ext1 = $('#forma-clientsremiten-window').find('input[name=ext1]');
-		var $tel2 = $('#forma-clientsremiten-window').find('input[name=tel2]');
+		var $identificador = $('#forma-clientsdest-window').find('input[name=identificador]');
+		var $select_tipo = $('#forma-clientsdest-window').find('select[name=select_tipo]');
+		var $destinatario = $('#forma-clientsdest-window').find('input[name=destinatario]');
+		var $folio = $('#forma-clientsdest-window').find('input[name=folio]');
+		var $rfc = $('#forma-clientsdest-window').find('input[name=rfc]');
+		var $calle = $('#forma-clientsdest-window').find('input[name=calle]');
+		var $numero_int = $('#forma-clientsdest-window').find('input[name=numero_int]');
+		var $numero_ext = $('#forma-clientsdest-window').find('input[name=numero_ext]');
+		var $colonia = $('#forma-clientsdest-window').find('input[name=colonia]');
+		var $select_pais = $('#forma-clientsdest-window').find('select[name=select_pais]');
+		var $select_estado = $('#forma-clientsdest-window').find('select[name=select_estado]');
+		var $select_municipio = $('#forma-clientsdest-window').find('select[name=select_municipio]');
+		var $email = $('#forma-clientsdest-window').find('input[name=email]');
+		var $tel1 = $('#forma-clientsdest-window').find('input[name=tel1]');
+		var $ext1 = $('#forma-clientsdest-window').find('input[name=ext1]');
+		var $tel2 = $('#forma-clientsdest-window').find('input[name=tel2]');
 		
-		var $cerrar_plugin = $('#forma-clientsremiten-window').find('#close');
-		var $cancelar_plugin = $('#forma-clientsremiten-window').find('#boton_cancelar');
-		var $submit_actualizar = $('#forma-clientsremiten-window').find('#submit');
+		var $cerrar_plugin = $('#forma-clientsdest-window').find('#close');
+		var $cancelar_plugin = $('#forma-clientsdest-window').find('#boton_cancelar');
+		var $submit_actualizar = $('#forma-clientsdest-window').find('#submit');
 		
 		//quitar enter a todos los campos input
-		$('#forma-clientsremiten-window').find('input').keypress(function(e){
+		$('#forma-clientsdest-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
 				return false;
 			}
@@ -224,12 +224,12 @@ $(function() {
 			if ( data['success'] == "true" ){
 				jAlert("Los datos se guardaron  con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
-				$('#forma-clientsremiten-overlay').fadeOut(remove);
+				$('#forma-clientsdest-overlay').fadeOut(remove);
 				//refresh_table();
 				$get_datos_grid();
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
-				$('#forma-clientsremiten-window').find('div.interrogacion').css({'display':'none'});
+				$('#forma-clientsdest-window').find('div.interrogacion').css({'display':'none'});
 				
 				var valor = data['success'].split('___');
                                      
@@ -239,7 +239,7 @@ $(function() {
 					longitud = tmp.split(':');
 					//telUno: Numero Telefonico no Valido___
 					if( longitud.length > 1 ){
-						$('#forma-clientsremiten-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
+						$('#forma-clientsdest-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -250,11 +250,11 @@ $(function() {
 		var options = {dataType :  'json', success : respuestaProcesada};
 		$forma_selected.ajaxForm(options);
 		
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRemitente.json';
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDestinatario.json';
 		$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
-			//Alimentando select de Tipo de Remitente
+			//Alimentando select de Tipo de destinatario
 			$select_tipo.children().remove();
 			var tipo_hmtl = '<option value="1" selected="yes">Nacional</option>';
 			tipo_hmtl += '<option value="2">Extranjero</option>';
@@ -316,23 +316,23 @@ $(function() {
         
         $cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
-			$('#forma-clientsremiten-overlay').fadeOut(remove);
+			$('#forma-clientsdest-overlay').fadeOut(remove);
 		});
 		
 		$cancelar_plugin.click(function(event){
 			var remove = function() {$(this).remove();};
-			$('#forma-clientsremiten-overlay').fadeOut(remove);
+			$('#forma-clientsdest-overlay').fadeOut(remove);
 			$buscar.trigger('click');
 		});
 		
-		$remitente.focus();
+		$destinatario.focus();
 	});
 	
 	
 	
 	
 	
-	var carga_formaDirecciones_for_datagrid00 = function(id_to_show, accion_mode){
+	var carga_formaDestinatarios_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para eliminar una entrada
 		if(accion_mode == 'cancel'){
                      
@@ -340,15 +340,15 @@ $(function() {
 			$arreglo = {'id':id_to_show,
 						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
-			jConfirm('Realmente desea eliminar el Remitente?', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar el Destinatario?', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("El remitente fue eliminado exitosamente.", 'Atencion!');
+							jAlert("El Destinatario fue eliminado exitosamente.", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
-							jAlert("El Remitente no pudo ser eliminado.", 'Atencion!');
+							jAlert("El Destinatario no pudo ser eliminado.", 'Atencion!');
 						}
 					},"json");
 				}
@@ -356,64 +356,64 @@ $(function() {
             
 		}else{
 			//aqui  entra para editar un registro
-			var form_to_show = 'formaDirecciones';
+			var form_to_show = 'formaDestinatarios';
 			
 			$('#' + form_to_show).each (function(){this.reset();});
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
-			$(this).modalPanel_clientsremiten();
-			$('#forma-clientsremiten-window').css({"margin-left": -400, 	"margin-top": -265});
+			$(this).modalPanel_clientsdest();
+			$('#forma-clientsdest-window').css({"margin-left": -400, 	"margin-top": -265});
 			
-			$forma_selected.prependTo('#forma-clientsremiten-window');
+			$forma_selected.prependTo('#forma-clientsdest-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
                         
-			var $identificador = $('#forma-clientsremiten-window').find('input[name=identificador]');
-			var $select_tipo = $('#forma-clientsremiten-window').find('select[name=select_tipo]');
-			var $remitente = $('#forma-clientsremiten-window').find('input[name=remitente]');
-			var $folio = $('#forma-clientsremiten-window').find('input[name=folio]');
-			var $rfc = $('#forma-clientsremiten-window').find('input[name=rfc]');
-			var $calle = $('#forma-clientsremiten-window').find('input[name=calle]');
-			var $numero_int = $('#forma-clientsremiten-window').find('input[name=numero_int]');
-			var $numero_ext = $('#forma-clientsremiten-window').find('input[name=numero_ext]');
-			var $colonia = $('#forma-clientsremiten-window').find('input[name=colonia]');
-			var $cp = $('#forma-clientsremiten-window').find('input[name=cp]');
-			var $select_pais = $('#forma-clientsremiten-window').find('select[name=select_pais]');
-			var $select_estado = $('#forma-clientsremiten-window').find('select[name=select_estado]');
-			var $select_municipio = $('#forma-clientsremiten-window').find('select[name=select_municipio]');
-			var $email = $('#forma-clientsremiten-window').find('input[name=email]');
-			var $tel1 = $('#forma-clientsremiten-window').find('input[name=tel1]');
-			var $ext1 = $('#forma-clientsremiten-window').find('input[name=ext1]');
-			var $tel2 = $('#forma-clientsremiten-window').find('input[name=tel2]');
+			var $identificador = $('#forma-clientsdest-window').find('input[name=identificador]');
+			var $select_tipo = $('#forma-clientsdest-window').find('select[name=select_tipo]');
+			var $destinatario = $('#forma-clientsdest-window').find('input[name=destinatario]');
+			var $folio = $('#forma-clientsdest-window').find('input[name=folio]');
+			var $rfc = $('#forma-clientsdest-window').find('input[name=rfc]');
+			var $calle = $('#forma-clientsdest-window').find('input[name=calle]');
+			var $numero_int = $('#forma-clientsdest-window').find('input[name=numero_int]');
+			var $numero_ext = $('#forma-clientsdest-window').find('input[name=numero_ext]');
+			var $colonia = $('#forma-clientsdest-window').find('input[name=colonia]');
+			var $cp = $('#forma-clientsdest-window').find('input[name=cp]');
+			var $select_pais = $('#forma-clientsdest-window').find('select[name=select_pais]');
+			var $select_estado = $('#forma-clientsdest-window').find('select[name=select_estado]');
+			var $select_municipio = $('#forma-clientsdest-window').find('select[name=select_municipio]');
+			var $email = $('#forma-clientsdest-window').find('input[name=email]');
+			var $tel1 = $('#forma-clientsdest-window').find('input[name=tel1]');
+			var $ext1 = $('#forma-clientsdest-window').find('input[name=ext1]');
+			var $tel2 = $('#forma-clientsdest-window').find('input[name=tel2]');
                         
-			var $cerrar_plugin = $('#forma-clientsremiten-window').find('#close');
-			var $cancelar_plugin = $('#forma-clientsremiten-window').find('#boton_cancelar');
-			var $submit_actualizar = $('#forma-clientsremiten-window').find('#submit');
+			var $cerrar_plugin = $('#forma-clientsdest-window').find('#close');
+			var $cancelar_plugin = $('#forma-clientsdest-window').find('#boton_cancelar');
+			var $submit_actualizar = $('#forma-clientsdest-window').find('#submit');
 			
 			$folio.css({'background' : '#DDDDDD'});
-			//$remitente.css({'background' : '#DDDDDD'});
+			//$destinatario.css({'background' : '#DDDDDD'});
 			//$rfc.css({'background' : '#DDDDDD'});
 			
 			$folio.attr({ 'readOnly':true });
-			//$remitente.attr({ 'readOnly':true });
+			//$destinatario.attr({ 'readOnly':true });
 			
 			if(accion_mode == 'edit'){
                                 
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRemitente.json';
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDestinatario.json';
 				$arreglo = {'id':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
 						jAlert("Los datos se guardaron con &eacute;xito", 'Atencion!');
 						var remove = function() {$(this).remove();};
-						$('#forma-clientsremiten-overlay').fadeOut(remove);
+						$('#forma-clientsdest-overlay').fadeOut(remove);
 						//refresh_table();
 						$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
-						$('#forma-clientsremiten-window').find('div.interrogacion').css({'display':'none'});
+						$('#forma-clientsdest-window').find('div.interrogacion').css({'display':'none'});
 						
 						var valor = data['success'].split('___');
 											 
@@ -423,7 +423,7 @@ $(function() {
 							longitud = tmp.split(':');
 							//telUno: Numero Telefonico no Valido___
 							if( longitud.length > 1 ){
-								$('#forma-clientsremiten-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
+								$('#forma-clientsdest-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -438,7 +438,7 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					$identificador.attr({'value' : entry['Datos']['0']['identificador']});
-					$remitente.attr({'value' : entry['Datos']['0']['remitente']});
+					$destinatario.attr({'value' : entry['Datos']['0']['destinatario']});
 					$folio.attr({'value' : entry['Datos']['0']['folio']});
 					$rfc.attr({'value' : entry['Datos']['0']['rfc']});
 					$calle.attr({'value' : entry['Datos']['0']['calle']});
@@ -463,7 +463,7 @@ $(function() {
 							tipo_hmtl += '<option value="2" selected="yes">Extranjero</option>';
 						}
 					}
-					//Alimentando select de Tipo de Remitente
+					//Alimentando select de Tipo de destinatario
 					$select_tipo.children().remove();
 					$select_tipo.append(tipo_hmtl);
 					
@@ -545,31 +545,31 @@ $(function() {
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-clientsremiten-overlay').fadeOut(remove);
+					$('#forma-clientsdest-overlay').fadeOut(remove);
 				});
 				
 				$cerrar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-clientsremiten-overlay').fadeOut(remove);
+					$('#forma-clientsdest-overlay').fadeOut(remove);
 					$buscar.trigger('click');
 				});
 				
-				$remitente.focus();
+				$destinatario.focus();
 			}
 		}
 	}
     
     $get_datos_grid = function(){
-        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllClientsRemiten.json';
+        var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAllClientsDest.json';
         
         var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
         
-        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllClientsRemiten.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
+        $arreglo = {'orderby':'id','desc':'DESC','items_por_pag':10,'pag_start':1,'display_pag':10,'input_json':'/'+controller+'/getAllClientsDest.json', 'cadena_busqueda':$cadena_busqueda, 'iu':iu}
         
         $.post(input_json,$arreglo,function(data){
             
             //pinta_grid
-            $.fn.tablaOrdenable(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formaDirecciones_for_datagrid00);
+            $.fn.tablaOrdenable(data,$('#lienzo_recalculable').find('.tablesorter'),carga_formaDestinatarios_for_datagrid00);
 
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
