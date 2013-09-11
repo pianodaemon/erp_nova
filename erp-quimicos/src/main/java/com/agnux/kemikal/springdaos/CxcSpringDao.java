@@ -3842,7 +3842,7 @@ return subfamilias;
         
 	String sql_to_query = ""
                 + "SELECT cxc_remitentes.id,cxc_remitentes.folio,cxc_remitentes.rfc,cxc_remitentes.razon_social AS remitente,"
-                    + "(CASE WHEN trim(cxc_remitentes.tel1)='' OR cxc_remitentes.tel1 IS NULL THEN tel2 ELSE cxc_remitentes.tel1||','||cxc_remitentes.tel2 END ) AS tel,"
+                    + "(CASE WHEN trim(cxc_remitentes.tel1)='' OR cxc_remitentes.tel1 IS NULL THEN tel2 ELSE cxc_remitentes.tel1||''||(CASE WHEN cxc_remitentes.tel2='' OR cxc_remitentes.tel2 IS NULL THEN '' ELSE ','||cxc_remitentes.tel2 END ) END ) AS tel,"
                     + "(CASE WHEN cxc_remitentes.tipo=1 THEN 'NACIONAL' WHEN cxc_remitentes.tipo=2 THEN 'EXTRANJERO' ELSE '' END) AS tipo "
                 + "FROM cxc_remitentes "
                 +"JOIN ("+sql_busqueda+") as subt on subt.id=cxc_remitentes.id "
@@ -3874,28 +3874,12 @@ return subfamilias;
     @Override
     public ArrayList<HashMap<String, Object>> getClientsRemiten_Datos(Integer id) {
         String sql_query = ""
-                + "SELECT "
-                + "id,"
-                + "folio,"
-                + "rfc,"
-                + "razon_social AS remitente,"
-                + "tipo,"
-                + "calle,"
-                + "no_int,"
-                + "no_ext,"
-                + "colonia,"
-                + "gral_mun_id,"
-                + "gral_edo_id,"
-                + "gral_pais_id,"
-                + "(CASE WHEN tel1 IS NULL THEN '' ELSE tel1 END) AS tel1,"
-                + "(CASE WHEN tel2 IS NULL THEN '' ELSE tel2 END) AS tel2,"
-                + "ext,"
-                + "email "
+                + "SELECT id,folio,rfc,razon_social AS remitente,tipo,calle,no_int,no_ext,colonia,gral_mun_id,gral_edo_id,gral_pais_id,cp,(CASE WHEN tel1 IS NULL THEN '' ELSE tel1 END) AS tel1,(CASE WHEN tel2 IS NULL THEN '' ELSE tel2 END) AS tel2,ext,email "
                 + "FROM cxc_remitentes "
                 + "WHERE id=?";
 
-        System.out.println("Ejecutando getRemitente:"+ sql_query);
-        System.out.println("identificador: "+id);
+        //System.out.println("Ejecutando getRemitente:"+ sql_query);
+        //System.out.println("identificador: "+id);
 
         ArrayList<HashMap<String, Object>> df = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
@@ -3927,5 +3911,164 @@ return subfamilias;
         return df;
     }
     //AQUI TERMINA METODOS PARA CATALOGO DE REMITENTES
+    //**********************************************************************************************************************
+    
+    
+    //**********************************************************************************************************************
+    //METODOS PARA CATALOGO DE DESTINATARIOS
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsDest_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+                + "SELECT cxc_destinatarios.id,cxc_destinatarios.folio,cxc_destinatarios.rfc,cxc_destinatarios.razon_social AS destinatario,"
+                    + "(CASE WHEN trim(cxc_destinatarios.tel1)='' OR cxc_destinatarios.tel1 IS NULL THEN tel2 ELSE cxc_destinatarios.tel1||''||(CASE WHEN cxc_destinatarios.tel2='' OR cxc_destinatarios.tel2 IS NULL THEN '' ELSE ','||cxc_destinatarios.tel2 END ) END ) AS tel,"
+                    + "(CASE WHEN cxc_destinatarios.tipo=1 THEN 'NACIONAL' WHEN cxc_destinatarios.tipo=2 THEN 'EXTRANJERO' ELSE '' END) AS tipo "
+                + "FROM cxc_destinatarios "
+                +"JOIN ("+sql_busqueda+") as subt on subt.id=cxc_destinatarios.id "
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("destinatario",rs.getString("destinatario"));
+                    row.put("tel",rs.getString("tel"));
+                    row.put("tipo",rs.getString("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsDest_Datos(Integer id) {
+        String sql_query = ""
+                + "SELECT id,folio,rfc,razon_social AS destinatario,tipo,calle,no_int,no_ext,colonia,gral_mun_id,gral_edo_id,gral_pais_id,cp,(CASE WHEN tel1 IS NULL THEN '' ELSE tel1 END) AS tel1,(CASE WHEN tel2 IS NULL THEN '' ELSE tel2 END) AS tel2,ext,email "
+                + "FROM cxc_destinatarios "
+                + "WHERE id=?";
+
+        //System.out.println("Ejecutando getDestinatario:"+ sql_query);
+        //System.out.println("identificador: "+id);
+
+        ArrayList<HashMap<String, Object>> df = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("identificador",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("destinatario",rs.getString("destinatario"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    row.put("calle",rs.getString("calle"));
+                    row.put("no_int",rs.getString("no_int"));
+                    row.put("no_ext",rs.getString("no_ext"));
+                    row.put("colonia",rs.getString("colonia"));
+                    row.put("cp",rs.getString("cp"));
+                    row.put("pais_id",rs.getString("gral_pais_id"));
+                    row.put("estado_id",rs.getString("gral_edo_id"));
+                    row.put("municipio_id",rs.getString("gral_mun_id"));
+                    row.put("telefono1",rs.getString("tel1"));
+                    row.put("telefono2",rs.getString("tel2"));
+                    row.put("extension",rs.getString("ext"));
+                    row.put("email",rs.getString("email"));
+                    return row;
+                }
+            }
+        );
+        return df;
+    }
+    //AQUI TERMINA METODOS PARA CATALOGO DE DESTINATARIOS
+    //**********************************************************************************************************************
+    
+    
+    
+    //**********************************************************************************************************************
+    //METODOS PARA CATALOGO DE AGENTES ADUANALES
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAgenAduanal_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+                + "SELECT cxc_agentes_aduanales.id,cxc_agentes_aduanales.folio,cxc_agentes_aduanales.razon_social AS agente_a,"
+                    + "(CASE WHEN trim(cxc_agentes_aduanales.tel1)='' OR cxc_agentes_aduanales.tel1 IS NULL THEN tel2 ELSE cxc_agentes_aduanales.tel1||''||(CASE WHEN cxc_agentes_aduanales.tel2='' OR cxc_agentes_aduanales.tel2 IS NULL THEN '' ELSE ','||cxc_agentes_aduanales.tel2 END ) END ) AS tel,"
+                    + "(CASE WHEN cxc_agentes_aduanales.tipo=1 THEN 'NACIONAL' WHEN cxc_agentes_aduanales.tipo=2 THEN 'EXTRANJERO' ELSE '' END) AS tipo "
+                + "FROM cxc_agentes_aduanales "
+                +"JOIN ("+sql_busqueda+") as subt on subt.id=cxc_agentes_aduanales.id "
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("agente_a",rs.getString("agente_a"));
+                    row.put("tel",rs.getString("tel"));
+                    row.put("tipo",rs.getString("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAgenAduanal_Datos(Integer id) {
+        String sql_query = ""
+                + "SELECT id,folio,razon_social AS agente_a,tipo,calle,no_int,no_ext,colonia,gral_mun_id,gral_edo_id,gral_pais_id,cp,(CASE WHEN tel1 IS NULL THEN '' ELSE tel1 END) AS tel1,(CASE WHEN tel2 IS NULL THEN '' ELSE tel2 END) AS tel2,ext,email "
+                + "FROM cxc_agentes_aduanales "
+                + "WHERE id=?";
+        
+        //System.out.println("Ejecutando getAgenteAduanal:"+ sql_query);
+        //System.out.println("identificador: "+id);
+        
+        ArrayList<HashMap<String, Object>> df = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("identificador",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("agente_a",rs.getString("agente_a"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    row.put("calle",rs.getString("calle"));
+                    row.put("no_int",rs.getString("no_int"));
+                    row.put("no_ext",rs.getString("no_ext"));
+                    row.put("colonia",rs.getString("colonia"));
+                    row.put("cp",rs.getString("cp"));
+                    row.put("pais_id",rs.getString("gral_pais_id"));
+                    row.put("estado_id",rs.getString("gral_edo_id"));
+                    row.put("municipio_id",rs.getString("gral_mun_id"));
+                    row.put("telefono1",rs.getString("tel1"));
+                    row.put("telefono2",rs.getString("tel2"));
+                    row.put("extension",rs.getString("ext"));
+                    row.put("email",rs.getString("email"));
+                    return row;
+                }
+            }
+        );
+        return df;
+    }
+    //AQUI TERMINA METODOS PARA CATALOGO DE AGENTES ADUANALES
     //**********************************************************************************************************************
 }
