@@ -170,4 +170,9 @@ public interface CxcInterfaceDao {
     //Catalogo de Agentes Aduanales
     public ArrayList<HashMap<String, Object>> getClientsAgenAduanal_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getClientsAgenAduanal_Datos(Integer id);
+    
+    //Aplicativo de Asignacion de Remitentes a Clientes
+    public ArrayList<HashMap<String, Object>> getClientsAsignaRem_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getBuscadorRemitentes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosClienteByNoRemitente(String no_control, Integer id_empresa, Integer id_sucursal);
 }

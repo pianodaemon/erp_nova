@@ -4071,4 +4071,128 @@ return subfamilias;
     }
     //AQUI TERMINA METODOS PARA CATALOGO DE AGENTES ADUANALES
     //**********************************************************************************************************************
+    
+    
+    //--------------------------------------------------------------------------------------------------------------------
+    //ASIGNACION DE REMITENTES A CLIENTES
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAsignaRem_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT "
+				+"cxc_clie.id, "
+				+"cxc_clie.numero_control, "
+				+"cxc_clie.razon_social, "
+				+"cxc_clie.rfc "
+			+"FROM cxc_clie "
+                        +"JOIN ("+sql_busqueda+") as subt on subt.id=cxc_clie.id "
+                        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("rfc",rs.getString("rfc"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+    //TERMINA ASIGNACION DE REMITENTES A CLIENTES
+    //--------------------------------------------------------------------------------------------------------------------
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorRemitentes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+        
+	if(filtro == 1){
+            where=" AND cxc_remitentes.folio ilike '%"+cadena+"%'";
+	}
+	if(filtro == 2){
+            where=" AND cxc_remitentes.rfc ilike '%"+cadena+"%'";
+	}
+	if(filtro == 3){
+            where=" AND cxc_remitentes.razon_social ilike '%"+cadena+"%'";
+	}
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT cxc_remitentes.id,cxc_remitentes.folio,cxc_remitentes.rfc, cxc_remitentes.razon_social, cxc_remitentes.tipo "
+        +"FROM cxc_remitentes "
+        +" WHERE cxc_remitentes.gral_emp_id ="+id_empresa+"  "
+        +" AND cxc_remitentes.borrado_logico=false  "+where+" "
+        + "ORDER BY id limit 100;";
+        
+        System.out.println("BuscarRemitente: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_rem = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm_rem;
+    }
+    
+    //Obtener datos del Remitente a partir del Numero de Control
+    @Override
+    public ArrayList<HashMap<String, Object>> getDatosClienteByNoRemitente(String no_control, Integer id_empresa, Integer id_sucursal) {
+
+        String where="";
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND sucursal_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT cxc_remitentes.id,cxc_remitentes.folio,cxc_remitentes.rfc, cxc_remitentes.razon_social, cxc_remitentes.tipo "
+        +"FROM cxc_remitentes "
+        +" WHERE cxc_remitentes.gral_emp_id ="+id_empresa+"  "
+        +" AND cxc_remitentes.borrado_logico=false  "+where+" "
+        + "AND cxc_remitentes.folio='"+no_control.toUpperCase()+"'"
+        + "ORDER BY id limit 1;";
+        
+        System.out.println("getDatosRemitente: "+sql_query);
+
+        ArrayList<HashMap<String, Object>> hm_rem = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm_rem;
+    }
+    
 }
