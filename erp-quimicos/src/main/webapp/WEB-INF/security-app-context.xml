@@ -127,7 +127,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_CXP_REP_SALDO_MES,
         ROLE_CXC_REMITENTES,
         ROLE_CXC_DESTINATARIOS,
-        ROLE_CXC_AGEN_ADUANAL" />
+        ROLE_CXC_AGEN_ADUANAL,
+        ROLE_CXC_ASIGNA_REMITENTE" />
         
         <intercept-url pattern="/controllers/productos/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PRODUCTO" />
         <intercept-url pattern="/controllers/proveedores/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PROVEEDOR" />
@@ -135,6 +136,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/clientsremiten/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_REMITENTES" />
         <intercept-url pattern="/controllers/clientsdest/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_DESTINATARIOS" />
         <intercept-url pattern="/controllers/clientsagenaduanal/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_AGEN_ADUANAL" />
+        <intercept-url pattern="/controllers/clientsasignarem/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_ASIGNA_REMITENTE" />
+        
         <intercept-url pattern="/controllers/cotizaciones/startup.agnux" access="ROLE_ADMIN,ROLE_COTIZACION" />
         <intercept-url pattern="/controllers/entradamercancias/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURAS_COMPRAS" />
         <intercept-url pattern="/controllers/prefacturas/startup.agnux" access="ROLE_ADMIN,ROLE_FACTURACION" />
