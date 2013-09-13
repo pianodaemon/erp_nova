@@ -4107,6 +4107,64 @@ return subfamilias;
         );
         return hm;
     }
+    
+    
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAsignaRem_Datos(Integer id) {
+        String sql_query = "SELECT  id, numero_control, razon_social FROM cxc_clie WHERE id=? LIMIT 1;";
+        
+        ArrayList<HashMap<String, Object>> hmcli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("identificador",rs.getInt("id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    return row;
+                }
+            }
+        );
+        return hmcli;
+    }
+    
+    
+    //Obtiene los remitentes asignados a un cliente en especifico.
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAsignaRem_RemitentesAsignados(Integer id) {
+        String sql_query = ""
+                + "SELECT "
+                    + "cxc_clie_remitente.id AS iddet,"
+                    + "cxc_clie_remitente.cxc_clie_id AS clie_id,"
+                    + "cxc_clie_remitente.cxc_remitente_id AS rem_id,"
+                    + "cxc_remitentes.folio AS no_control,"
+                    + "cxc_remitentes.razon_social AS nombre,"
+                    + "cxc_remitentes.rfc "
+                + "FROM cxc_clie_remitente "
+                + "JOIN cxc_remitentes ON cxc_remitentes.id=cxc_clie_remitente.cxc_remitente_id "
+                + "WHERE cxc_clie_remitente.cxc_clie_id=?";
+        
+        ArrayList<HashMap<String, Object>> hmrem = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("iddet",rs.getInt("iddet"));
+                    row.put("clie_id",rs.getInt("clie_id"));
+                    row.put("rem_id",rs.getInt("rem_id"));
+                    row.put("no_control",rs.getString("no_control"));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("rfc",rs.getString("rfc"));
+                    return row;
+                }
+            }
+        );
+        return hmrem;
+    }
+    
 
     //TERMINA ASIGNACION DE REMITENTES A CLIENTES
     //--------------------------------------------------------------------------------------------------------------------

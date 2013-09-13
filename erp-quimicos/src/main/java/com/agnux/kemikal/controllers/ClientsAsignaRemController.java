@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -69,7 +70,7 @@ public class ClientsAsignaRemController {
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", ClientsRemitentesController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", ClientsAsignaRemController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
@@ -142,13 +143,72 @@ public class ClientsAsignaRemController {
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
         //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getCxcDao().getClientsRemiten_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        jsonretorno.put("Data", this.getCxcDao().getClientsAsignaRem_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
         return jsonretorno;
     }
+    
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getAsignacion.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAsignacionJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getAsignacionJson de {0}", ClientsAsignaRemController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> grid = new ArrayList<HashMap<String, Object>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        if( id != 0  ){
+            datos = this.getCxcDao().getClientsAsignaRem_Datos(id);
+            grid = this.getCxcDao().getClientsAsignaRem_RemitentesAsignados(id);
+        }
+        
+        jsonretorno.put("Datos", datos);
+        jsonretorno.put("Grid", grid);
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value="/getRemitentesAsignados.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getRemitentesAsignadosJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getRemitentesAsignadosJson de {0}", ClientsAsignaRemController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, Object>> grid = new ArrayList<HashMap<String, Object>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        if( id != 0  ){
+            grid = this.getCxcDao().getClientsAsignaRem_RemitentesAsignados(id);
+        }
+        
+        jsonretorno.put("Asignados", grid);
+        return jsonretorno;
+    }
+    
+    
+    
+    
     
     
     
@@ -260,27 +320,28 @@ public class ClientsAsignaRemController {
     
     
     
+    
     //crear y editar
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
         @RequestParam(value="identificador", required=true) String identificador,
+        @RequestParam(value="id_cliente", required=true) String id_cliente,
         @RequestParam(value="eliminado", required=false) String[] eliminado,
-        @RequestParam(value="iddetalle", required=false) String[] iddetalle,
-        @RequestParam(value="idproducto", required=false) String[] idproducto,
-        @RequestParam(value="id_presentacion", required=false) String[] id_presentacion,
+        @RequestParam(value="iddet", required=false) String[] iddet,
+        @RequestParam(value="idcli", required=false) String[] idcli,
+        @RequestParam(value="idrem", required=false) String[] idrem,
+        @RequestParam(value="noTr", required=false) String[] noTr,
         Model model,@ModelAttribute("user") UserSessionData user
-        ) {
-        
-        Integer app_selected = 118;//Catalogo de Direcciones Fiscales de Clientes
+    ) {
+        //Asignacion de Remitentes
+        Integer app_selected = 150;
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         String arreglo[];
         String extra_data_array = "'sin datos'";
         String actualizo = "0";
         
-        
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
-        
         HashMap<String, String> succes = new HashMap<String, String>();
         
         if( identificador.equals("0") ){
@@ -288,38 +349,25 @@ public class ClientsAsignaRemController {
         }else{
             command_selected = "edit";
         }
-        String data_string = "";
-        /*
-        String data_string = 
-        app_selected
-        +"___"+command_selected
-        +"___"+id_usuario
-        +"___"+identificador
-        +"___"+id_cliente
-        +"___"+calle.toUpperCase()
-        +"___"+numero_int
-        +"___"+numero_ext
-        +"___"+colonia.toUpperCase()
-        +"___"+cp
-        +"___"+select_pais
-        +"___"+select_estado
-        +"___"+select_municipio
-        +"___"+entrecalles.toUpperCase()
-        +"___"+tel1
-        +"___"+ext1
-        +"___"+fax
-        +"___"+tel2
-        +"___"+ext2
-        +"___"+email
-        +"___"+contacto.toUpperCase();
-        */
+        
+        arreglo = new String[eliminado.length];
+        for(int i=0; i<eliminado.length; i++) { 
+            arreglo[i]= "'"+eliminado[i] +"___" + iddet[i] +"___" + idcli[i] +"___" + idrem[i] +"___" + noTr[i]+"'";
+            System.out.println(arreglo[i]);
+        }
+        
+        //Serializar el arreglo
+        extra_data_array = StringUtils.join(arreglo, ",");
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+id_cliente;
+        
         System.out.println("data_string: "+data_string);
         
         succes = this.getCxcDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
         if( String.valueOf(succes.get("success")).equals("true") ){
-            actualizo = this.getCxcDao().selectFunctionForThisApp(data_string, extra_data_array);
+            actualizo = this.getCxcDao().selectFunctionForCxcAdmProcesos(data_string, extra_data_array);
         }
         
         jsonretorno.put("success",String.valueOf(succes.get("success")));
@@ -328,6 +376,32 @@ public class ClientsAsignaRemController {
         return jsonretorno;
     }
     
+    
+    //cambiar a borrado logico un registro
+    @RequestMapping(method = RequestMethod.POST, value="/logicDelete.json")
+    public @ResponseBody HashMap<String, String> logicDeleteJson(
+            @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        System.out.println("Eliminar registro de Asignacion de Remitentes");
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        //Asignacion de Remitentes
+        Integer app_selected = 150;
+        String command_selected = "delete";
+        String extra_data_array = "'sin datos'";
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id;
+        
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        
+        jsonretorno.put("success",String.valueOf( this.getCxcDao().selectFunctionForCxcAdmProcesos(data_string,extra_data_array)) );
+        
+        return jsonretorno;
+    }
     
     
 }
