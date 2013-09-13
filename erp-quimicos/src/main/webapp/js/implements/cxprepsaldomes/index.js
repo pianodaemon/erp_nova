@@ -264,8 +264,6 @@ $(function() {
 			var proveedoor="";
 			$.post(restful_json_service,arreglo_parametros,function(entry){
 				var body_tabla = entry['Facturas'];
-				//var body_tablausd = entry['Facturasusd'];
-				//var body_tablaEur = entry['FacturasEuros'];
 				var header_tabla = {
 					serie_folio			:'Factura',
 					fecha_facturacion	:'Fecha',

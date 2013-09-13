@@ -159,7 +159,7 @@ $(function() {
 	
 	
 	//Buscador de clientes
-	$busca_clientes = function($razoncliente, $nocliente, $id_cliente, $busca_cliente, $agregar_cliente){
+	$busca_clientes = function($razoncliente, $nocliente, $id_cliente, $busca_cliente, $agregar_cliente,  $grid_remitentes, $identificador){
 		$(this).modalPanel_Buscacliente();
 		var $dialogoc =  $('#forma-buscacliente-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -260,6 +260,9 @@ $(function() {
 					$razoncliente.val($(this).find('span.razon').html());
 					$nocliente.val($(this).find('span.no_control').html());
 					$id_cliente.val($(this).find('#idclient').val());
+					
+					//Llamada a la funcion que busca remitentes asigados al cliente seleccionado
+					$remitentes_asignados($(this).find('#idclient').val(), $grid_remitentes, $identificador);
 					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -525,6 +528,37 @@ $(function() {
 	}
 	
 	
+	//Buscar remitentes asignados al cliente seleccionado
+	$remitentes_asignados = function(id_cliente, $grid_remitentes, $identificador){
+		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRemitentesAsignados.json';
+		$arreglo2 = {'id':id_cliente, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+		
+		$.post(input_json2,$arreglo2,function(entry2){
+			//verificar que el arreglo traiga datos
+			if(parseInt(entry2['Asignados'].length) > 0){
+				//Aqui le asignamos el id del cliente para idicar que ya tiene remitentes asignados,
+				//por lo tanto solo se debe actualizar el registro
+				$identificador.val(id_cliente);
+				$.each(entry2['Asignados'],function(entryIndex,grid){
+					var idDetalle= grid['iddet'];
+					var idCliente = grid['clie_id'];
+					var idRemitente = grid['rem_id'];
+					var noControl = grid['no_control'];
+					var razonSocial = grid['nombre'];
+					var rfc = grid['rfc'];
+					
+					//Llamada a la funcion para agregar remitente al grid
+					$agrega_remitente_grid($grid_remitentes, idDetalle, idCliente, idRemitente, noControl, razonSocial, rfc);
+				});
+			}
+		},"json");//termina llamada json
+	}
+	
+	
+	
+	
+	
+	
 	//nuevo 
 	$new_clientsasignarem.click(function(event){
 		event.preventDefault();
@@ -564,7 +598,7 @@ $(function() {
 		var $cancelar_plugin = $('#forma-clientsasignarem-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-clientsasignarem-window').find('#submit');
 		
-		//quitar enter a todos los campos input
+		//Quitar enter a todos los campos input
 		$('#forma-clientsasignarem-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
 				return false;
@@ -616,7 +650,7 @@ $(function() {
 		//Llamada al buscador de clientes
 		$busca_cliente.click(function(event){
 			event.preventDefault();
-			$busca_clientes($razoncliente, $nocliente, $id_cliente, $busca_cliente, $agregar_cliente);
+			$busca_clientes($razoncliente, $nocliente, $id_cliente, $busca_cliente, $agregar_cliente, $grid_remitentes, $identificador);
 		});
 		
 		$(this).aplicarEventoKeypressEjecutaTrigger($razoncliente, $busca_cliente);
@@ -639,6 +673,9 @@ $(function() {
 						
 						$busca_cliente.hide();
 						$agregar_cliente.hide();
+						
+						//Llamada a la cuncion que busca remitentes asigados al cliente seleccionado
+						$remitentes_asignados(id_cliente, $grid_remitentes, $identificador);
 					}else{
 						$id_cliente.val(0);
 						$nocliente.val('');
@@ -784,33 +821,43 @@ $(function() {
 			$tabs_li_funxionalidad();
                         
 			var $identificador = $('#forma-clientsasignarem-window').find('input[name=identificador]');
-			var $select_tipo = $('#forma-clientsasignarem-window').find('select[name=select_tipo]');
-			var $remitente = $('#forma-clientsasignarem-window').find('input[name=remitente]');
-			var $folio = $('#forma-clientsasignarem-window').find('input[name=folio]');
-			var $rfc = $('#forma-clientsasignarem-window').find('input[name=rfc]');
-			var $calle = $('#forma-clientsasignarem-window').find('input[name=calle]');
-			var $numero_int = $('#forma-clientsasignarem-window').find('input[name=numero_int]');
-			var $numero_ext = $('#forma-clientsasignarem-window').find('input[name=numero_ext]');
-			var $colonia = $('#forma-clientsasignarem-window').find('input[name=colonia]');
-			var $cp = $('#forma-clientsasignarem-window').find('input[name=cp]');
-			var $select_pais = $('#forma-clientsasignarem-window').find('select[name=select_pais]');
-			var $select_estado = $('#forma-clientsasignarem-window').find('select[name=select_estado]');
-			var $select_municipio = $('#forma-clientsasignarem-window').find('select[name=select_municipio]');
-			var $email = $('#forma-clientsasignarem-window').find('input[name=email]');
-			var $tel1 = $('#forma-clientsasignarem-window').find('input[name=tel1]');
-			var $ext1 = $('#forma-clientsasignarem-window').find('input[name=ext1]');
-			var $tel2 = $('#forma-clientsasignarem-window').find('input[name=tel2]');
-                        
+			var $razoncliente = $('#forma-clientsasignarem-window').find('input[name=razoncliente]');
+			var $id_cliente = $('#forma-clientsasignarem-window').find('input[name=id_cliente]');
+			var $nocliente = $('#forma-clientsasignarem-window').find('input[name=nocliente]');
+			
+			var $busca_cliente = $('#forma-clientsasignarem-window').find('a[href*=busca_cliente]');
+			var $agregar_cliente = $('#forma-clientsasignarem-window').find('a[href*=agregar_cliente]');
+			
+			var $nombre_remitente = $('#forma-clientsasignarem-window').find('input[name=nombre_remitente]');
+			var $noremitente = $('#forma-clientsasignarem-window').find('input[name=noremitente]');
+			
+			var $busca_remitente = $('#forma-clientsasignarem-window').find('a[href*=busca_remitente]');
+			var $agregar_remitente = $('#forma-clientsasignarem-window').find('a[href*=agregar_remitente]');
+			
+			//Grid de Remitentes
+			var $grid_remitentes = $('#forma-clientsasignarem-window').find('#grid_remitentes');
+			//Grid de errores
+			var $grid_warning = $('#forma-clientsasignarem-window').find('#div_warning_grid').find('#grid_warning');
+			
 			var $cerrar_plugin = $('#forma-clientsasignarem-window').find('#close');
 			var $cancelar_plugin = $('#forma-clientsasignarem-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-clientsasignarem-window').find('#submit');
 			
-			$folio.css({'background' : '#DDDDDD'});
-			//$remitente.css({'background' : '#DDDDDD'});
-			//$rfc.css({'background' : '#DDDDDD'});
+			$nocliente.css({'background' : '#DDDDDD'});
+			$razoncliente.css({'background' : '#DDDDDD'});
 			
-			$folio.attr({ 'readOnly':true });
-			//$remitente.attr({ 'readOnly':true });
+			$nocliente.attr({ 'readOnly':true });
+			$razoncliente.attr({ 'readOnly':true });
+			
+			$busca_cliente.hide();
+			$agregar_cliente.hide();
+			
+			//Quitar enter a todos los campos input
+			$('#forma-clientsasignarem-window').find('input').keypress(function(e){
+				if(e.which==13 ) {
+					return false;
+				}
+			});
 			
 			if(accion_mode == 'edit'){
                                 
@@ -851,110 +898,79 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					$identificador.attr({'value' : entry['Datos']['0']['identificador']});
-					$remitente.attr({'value' : entry['Datos']['0']['remitente']});
-					$folio.attr({'value' : entry['Datos']['0']['folio']});
-					$rfc.attr({'value' : entry['Datos']['0']['rfc']});
-					$calle.attr({'value' : entry['Datos']['0']['calle']});
-					$numero_int.attr({'value' : entry['Datos']['0']['no_int']});
-					$numero_ext.attr({'value' : entry['Datos']['0']['no_ext']});
-					$colonia.attr({'value' : entry['Datos']['0']['colonia']});
-					$cp.attr({'value' : entry['Datos']['0']['cp']});
-					$email.attr({'value' : entry['Datos']['0']['email']});
-					$tel1.attr({'value' : entry['Datos']['0']['telefono1']});
-					$ext1.attr({'value' : entry['Datos']['0']['extension']});
-					$tel2.attr({'value' : entry['Datos']['0']['telefono2']});
+					$id_cliente.attr({'value' : entry['Datos']['0']['identificador']});
+					$razoncliente.attr({'value' : entry['Datos']['0']['razon_social']});
+					$nocliente.attr({'value' : entry['Datos']['0']['numero_control']});
 					
-					var tipo_hmtl='';
-					if(parseInt(entry['Datos'][0]['tipo'])==0){
-						tipo_hmtl = '<option value="0">Seleccionar Tipo</option>';
-					}else{
-						if(parseInt(entry['Datos'][0]['tipo'])==1){
-							tipo_hmtl = '<option value="1" selected="yes">Nacional</option>';
-							tipo_hmtl += '<option value="2">Extranjero</option>';
-						}else{
-							tipo_hmtl = '<option value="1">Nacional</option>';
-							tipo_hmtl += '<option value="2" selected="yes">Extranjero</option>';
-						}
+					//verificar que el arreglo traiga datos
+					if(parseInt(entry['Grid'].length) > 0){
+						$.each(entry['Grid'],function(entryIndex,grid){
+							var idDetalle= grid['iddet'];
+							var idCliente = grid['clie_id'];
+							var idRemitente = grid['rem_id'];
+							var noControl = grid['no_control'];
+							var razonSocial = grid['nombre'];
+							var rfc = grid['rfc'];
+							
+							//Llamada a la funcion para agregar remitente al grid
+							$agrega_remitente_grid($grid_remitentes, idDetalle, idCliente, idRemitente, noControl, razonSocial, rfc);
+						});
 					}
-					//Alimentando select de Tipo de Remitente
-					$select_tipo.children().remove();
-					$select_tipo.append(tipo_hmtl);
-					
-					//Alimentando los campos select de las pais
-					$select_pais.children().remove();
-					var pais_hmtl = '<option value="0" >[-Seleccionar Pais-]</option>';
-					$.each(entry['Paises'],function(entryIndex,pais){
-						if(pais['cve_pais'] == entry['Datos']['0']['pais_id']){
-							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  selected="yes">' + pais['pais_ent'] + '</option>';
-						}else{
-							pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
-						}
-					});
-					$select_pais.append(pais_hmtl);
-					
-					//Alimentando los campos select del estado
-					$select_estado.children().remove();
-					var entidad_hmtl = '<option value="00"  >[-Seleccionar Estado--]</option>';
-					$.each(entry['Estados'],function(entryIndex,entidad){
-						if(entidad['cve_ent'] == entry['Datos']['0']['estado_id']){
-							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  selected="yes">' + entidad['nom_ent'] + '</option>';
-						}else{
-							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-						}
-					});
-					$select_estado.append(entidad_hmtl);
-					
-					
-					//Alimentando los campos select de los municipios
-					$select_municipio.children().remove();
-					var localidad_hmtl = '<option value="00" >[-Seleccionar Municipio-]</option>';
-					$.each(entry['Municipios'],function(entryIndex,mun){
-						if(mun['cve_mun'] == entry['Datos']['0']['municipio_id']){
-							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  selected="yes">' + mun['nom_mun'] + '</option>';
-						}else{
-							localidad_hmtl += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-						}
-					});
-					$select_municipio.append(localidad_hmtl);
-					
-					
-					//carga select estados al cambiar el pais
-					$select_pais.change(function(){
-						var valor_pais = $(this).val();
-						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEstados.json';
-						$arreglo = {'id_pais':valor_pais};
-						$.post(input_json,$arreglo,function(entry){
-							$select_estado.children().remove();
-							var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>'
-							$.each(entry['Estados'],function(entryIndex,entidad){
-								entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
-							});
-							$select_estado.append(entidad_hmtl);
-							var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
-							$select_municipio.children().remove();
-							$select_municipio.append(trama_hmtl_localidades);
-						},"json");//termina llamada json
-					});
-					
-					//carga select municipios al cambiar el estado
-					$select_estado.change(function(){
-						var valor_entidad = $(this).val();
-						var valor_pais = $select_pais.val();
-						
-						var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMunicipios.json';
-						$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
-						$.post(input_json,$arreglo,function(entry){
-							$select_municipio.children().remove();
-							var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>'
-							$.each(entry['Municipios'],function(entryIndex,mun){
-								trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
-							});
-							$select_municipio.append(trama_hmtl_localidades);
-						},"json");//termina llamada json
-					});
-					
 				},"json");//termina llamada json
-                                
+				
+				
+        
+				//Llamada al buscador de Remitentes
+				$busca_remitente.click(function(event){
+					event.preventDefault();
+					if($nocliente.val().trim()!='' ){
+						$busca_remitentes($nombre_remitente, $noremitente, $grid_remitentes, $id_cliente.val());
+					}else{
+						jAlert('Es necesario seleccionar un cliente.', 'Atencion!', function(r) { 
+							$nocliente.focus(); 
+						});
+					}
+				});
+				
+				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_remitente, $busca_remitente);
+				
+				$noremitente.keypress(function(e){
+					if(e.which == 13){
+						
+						if($nocliente.val().trim()!='' ){
+							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoRemitente.json';
+							$arreglo2 = {'no_control':$noremitente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+							
+							$.post(input_json2,$arreglo2,function(entry2){
+								if(parseInt(entry2['Remitente'].length) > 0 ){
+									var idDetalle=0;
+									var idCliente = $id_cliente.val();
+									var idRemitente = entry2['Remitente'][0]['id'];
+									var noControl = entry2['Remitente'][0]['folio'];
+									var razonSocial = entry2['Remitente'][0]['razon_social'];
+									var rfc = entry2['Remitente'][0]['rfc'];
+									
+									//Llamada a la funcion para agregar remitente al grid
+									$agrega_remitente_grid($grid_remitentes, idDetalle, idCliente, idRemitente, noControl, razonSocial, rfc);
+								}else{
+									$noremitente.val('');
+									$nombre_remitente.val('');
+									jAlert('N&uacute;mero de remitente desconocido.', 'Atencion!', function(r) { 
+										$noremitente.focus(); 
+									});
+								}
+							},"json");//termina llamada json
+						}else{
+							jAlert('Es necesario seleccionar un cliente.', 'Atencion!', function(r) { 
+								$nocliente.focus(); 
+							});
+						}
+						return false;
+					}
+				});
+				
+				
+				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
@@ -967,7 +983,7 @@ $(function() {
 					$buscar.trigger('click');
 				});
 				
-				$remitente.focus();
+				$noremitente.focus();
 			}
 		}
 	}
