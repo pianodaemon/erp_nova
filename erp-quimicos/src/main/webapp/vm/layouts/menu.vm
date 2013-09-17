@@ -161,10 +161,8 @@
 												<a href="#" class="sub">Asignaci&oacute;n &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../clientsasignarem/startup.agnux">Remitentes</a></li>
-													<!--
-													<li class="topline"><a href="../repedoctaprov/startup.agnux">Destinatarios</a></li>
+													<li class="topline"><a href="../clientsasignadest/startup.agnux">Destinatarios</a></li>
 													<li class="topline"><a href="../repedoctaprov/startup.agnux">Agentes Aduanales</a></li>
-													-->
 												</ul>
 											</li>
 											
