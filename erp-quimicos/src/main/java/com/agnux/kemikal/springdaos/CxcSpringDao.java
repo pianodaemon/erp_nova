@@ -4165,10 +4165,6 @@ return subfamilias;
         return hmrem;
     }
     
-
-    //TERMINA ASIGNACION DE REMITENTES A CLIENTES
-    //--------------------------------------------------------------------------------------------------------------------
-    
     @Override
     public ArrayList<HashMap<String, Object>> getBuscadorRemitentes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
         String where="";
@@ -4252,5 +4248,371 @@ return subfamilias;
         );
         return hm_rem;
     }
+
+    //TERMINA ASIGNACION DE REMITENTES A CLIENTES
+    //--------------------------------------------------------------------------------------------------------------------
     
+
+    
+    
+    //--------------------------------------------------------------------------------------------------------------------
+    //ASIGNACION DE DESTINATARIOS A CLIENTES
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAsignaDest_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT "
+				+"cxc_clie.id, "
+				+"cxc_clie.numero_control, "
+				+"cxc_clie.razon_social, "
+				+"cxc_clie.rfc "
+			+"FROM cxc_clie "
+                        +"JOIN ("+sql_busqueda+") as subt on subt.id=cxc_clie.id "
+                        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("rfc",rs.getString("rfc"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAsignaDest_Datos(Integer id) {
+        String sql_query = "SELECT  id, numero_control, razon_social FROM cxc_clie WHERE id=? LIMIT 1;";
+        
+        ArrayList<HashMap<String, Object>> hmcli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("identificador",rs.getInt("id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    return row;
+                }
+            }
+        );
+        return hmcli;
+    }
+    
+    
+    //Obtiene los Destinatarios asignados a un cliente en especifico.
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAsignaDest_DestinatariosAsignados(Integer id) {
+        String sql_query = ""
+                + "SELECT "
+                    + "cxc_clie_dest.id AS iddet,"
+                    + "cxc_clie_dest.cxc_clie_id AS clie_id,"
+                    + "cxc_clie_dest.cxc_destinatario_id AS dest_id,"
+                    + "cxc_destinatarios.folio AS no_control,"
+                    + "cxc_destinatarios.razon_social AS nombre,"
+                    + "cxc_destinatarios.rfc "
+                + "FROM cxc_clie_dest "
+                + "JOIN cxc_destinatarios ON cxc_destinatarios.id=cxc_clie_dest.cxc_destinatario_id "
+                + "WHERE cxc_clie_dest.cxc_clie_id=?";
+        
+        ArrayList<HashMap<String, Object>> hmrem = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("iddet",rs.getInt("iddet"));
+                    row.put("clie_id",rs.getInt("clie_id"));
+                    row.put("dest_id",rs.getInt("dest_id"));
+                    row.put("no_control",rs.getString("no_control"));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("rfc",rs.getString("rfc"));
+                    return row;
+                }
+            }
+        );
+        return hmrem;
+    }   
+    
+    
+    //Buscador de Destinatarios
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorDestinatarios(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+        
+	if(filtro == 1){
+            where=" AND cxc_destinatarios.folio ilike '%"+cadena+"%'";
+	}
+	if(filtro == 2){
+            where=" AND cxc_destinatarios.rfc ilike '%"+cadena+"%'";
+	}
+	if(filtro == 3){
+            where=" AND cxc_destinatarios.razon_social ilike '%"+cadena+"%'";
+	}
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT cxc_destinatarios.id,cxc_destinatarios.folio,cxc_destinatarios.rfc, cxc_destinatarios.razon_social, cxc_destinatarios.tipo "
+        +"FROM cxc_destinatarios "
+        +" WHERE cxc_destinatarios.gral_emp_id ="+id_empresa+"  "
+        +" AND cxc_destinatarios.borrado_logico=false  "+where+" "
+        + "ORDER BY id limit 100;";
+        
+        System.out.println("BuscarDest: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm_dest;
+    }
+    
+    //Obtener datos del Destinatario a partir del Numero de Control
+    @Override
+    public ArrayList<HashMap<String, Object>> getDatosByNoDestinatario(String no_control, Integer id_empresa, Integer id_sucursal) {
+        
+        String where="";
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND sucursal_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT cxc_destinatarios.id,cxc_destinatarios.folio,cxc_destinatarios.rfc, cxc_destinatarios.razon_social, cxc_destinatarios.tipo "
+        +"FROM cxc_destinatarios "
+        +" WHERE cxc_destinatarios.gral_emp_id ="+id_empresa+"  "
+        +" AND cxc_destinatarios.borrado_logico=false  "+where+" "
+        + "AND cxc_destinatarios.folio='"+no_control.toUpperCase()+"'"
+        + "ORDER BY id limit 1;";
+        
+        System.out.println("getDatosDest: "+sql_query);
+
+        ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm_dest;
+    }
+    //TERMINA ASIGNACION DE DESTINATARIOS A CLIENTES
+    //--------------------------------------------------------------------------------------------------------------------
+    
+    
+    //--------------------------------------------------------------------------------------------------------------------
+    //ASIGNACION DE AGENTES ADUANALES A CLIENTES
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAsignaAgenA_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = "SELECT "
+				+"cxc_clie.id, "
+				+"cxc_clie.numero_control, "
+				+"cxc_clie.razon_social, "
+				+"cxc_clie.rfc "
+			+"FROM cxc_clie "
+                        +"JOIN ("+sql_busqueda+") as subt on subt.id=cxc_clie.id "
+                        +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query);
+
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("rfc",rs.getString("rfc"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAsignaAgenA_Datos(Integer id) {
+        String sql_query = "SELECT  id, numero_control, razon_social FROM cxc_clie WHERE id=? LIMIT 1;";
+        
+        ArrayList<HashMap<String, Object>> hmcli = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("identificador",rs.getInt("id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    return row;
+                }
+            }
+        );
+        return hmcli;
+    }
+    
+    
+    //Obtiene los Agentes Aduanales asignados a un cliente en especifico.
+    @Override
+    public ArrayList<HashMap<String, Object>> getClientsAsignaAgenA_Asignados(Integer id) {
+        String sql_query = ""
+                + "SELECT "
+                    + "cxc_clie_agen_aduanal.id AS iddet,"
+                    + "cxc_clie_agen_aduanal.cxc_clie_id AS clie_id,"
+                    + "cxc_clie_agen_aduanal.cxc_agente_aduanal_id AS agena_id,"
+                    + "cxc_agentes_aduanales.folio AS no_control,"
+                    + "cxc_agentes_aduanales.razon_social AS nombre,"
+                    + "cxc_agentes_aduanales.rfc "
+                + "FROM cxc_clie_agen_aduanal "
+                + "JOIN cxc_agentes_aduanales ON cxc_agentes_aduanales.id=cxc_clie_agen_aduanal.cxc_agente_aduanal_id "
+                + "WHERE cxc_clie_agen_aduanal.cxc_clie_id=?";
+        
+        ArrayList<HashMap<String, Object>> hmrem = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("iddet",rs.getInt("iddet"));
+                    row.put("clie_id",rs.getInt("clie_id"));
+                    row.put("agena_id",rs.getInt("agena_id"));
+                    row.put("no_control",rs.getString("no_control"));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("rfc",rs.getString("rfc"));
+                    return row;
+                }
+            }
+        );
+        return hmrem;
+    }   
+    
+    //Buscador de Agentes Aduanales
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorAgentesAduanales(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+        
+	if(filtro == 1){
+            where=" AND cxc_agentes_aduanales.folio ilike '%"+cadena+"%'";
+	}
+        /*
+	if(filtro == 2){
+            where=" AND cxc_agentes_aduanales.rfc ilike '%"+cadena+"%'";
+	}
+        */
+	if(filtro == 3){
+            where=" AND cxc_agentes_aduanales.razon_social ilike '%"+cadena+"%'";
+	}
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT cxc_agentes_aduanales.id,cxc_agentes_aduanales.folio, cxc_agentes_aduanales.razon_social, cxc_agentes_aduanales.tipo "
+        +"FROM cxc_agentes_aduanales "
+        +" WHERE cxc_agentes_aduanales.gral_emp_id ="+id_empresa+"  "
+        +" AND cxc_agentes_aduanales.borrado_logico=false  "+where+" "
+        + "ORDER BY id limit 100;";
+        
+        System.out.println("BuscarAgenA: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    //row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm_dest;
+    }
+    
+    //Obtener datos del Agente Aduanal a partir del Numero de Control
+    @Override
+    public ArrayList<HashMap<String, Object>> getDatosByNoAgenteAduanal(String no_control, Integer id_empresa, Integer id_sucursal) {
+        
+        String where="";
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND sucursal_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT cxc_agentes_aduanales.id,cxc_agentes_aduanales.folio, cxc_agentes_aduanales.razon_social, cxc_agentes_aduanales.tipo "
+        +"FROM cxc_agentes_aduanales "
+        +" WHERE cxc_agentes_aduanales.gral_emp_id ="+id_empresa+"  "
+        +" AND cxc_agentes_aduanales.borrado_logico=false  "+where+" "
+        + "AND cxc_agentes_aduanales.folio='"+no_control.toUpperCase()+"'"
+        + "ORDER BY id limit 1;";
+        
+        System.out.println("getDatosAgenA: "+sql_query);
+
+        ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm_dest;
+    }
+    //TERMINA ASIGNACION DE AGENTES ADUANALES A CLIENTES
+    //--------------------------------------------------------------------------------------------------------------------
 }

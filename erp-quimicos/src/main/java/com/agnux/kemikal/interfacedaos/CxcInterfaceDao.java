@@ -175,7 +175,20 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, Object>> getClientsAsignaRem_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, Object>> getClientsAsignaRem_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getClientsAsignaRem_RemitentesAsignados(Integer id);
-    
     public ArrayList<HashMap<String, Object>> getBuscadorRemitentes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosClienteByNoRemitente(String no_control, Integer id_empresa, Integer id_sucursal);
+    
+    //Aplicativo de Asignacion de Destinatarios a Clientes
+    public ArrayList<HashMap<String, Object>> getClientsAsignaDest_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getClientsAsignaDest_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getClientsAsignaDest_DestinatariosAsignados(Integer id);
+    public ArrayList<HashMap<String, Object>> getBuscadorDestinatarios(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosByNoDestinatario(String no_control, Integer id_empresa, Integer id_sucursal);
+    
+    //Aplicativo de Asignacion de Agentes Aduanales a Clientes
+    public ArrayList<HashMap<String, Object>> getClientsAsignaAgenA_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, Object>> getClientsAsignaAgenA_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getClientsAsignaAgenA_Asignados(Integer id);
+    public ArrayList<HashMap<String, Object>> getBuscadorAgentesAduanales(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosByNoAgenteAduanal(String no_control, Integer id_empresa, Integer id_sucursal);
 }

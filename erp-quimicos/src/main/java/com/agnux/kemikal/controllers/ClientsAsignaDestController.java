@@ -36,14 +36,14 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  *
  * @author Noe Martinez
  * gpmarsan@gmail.com
- * 13/sep/2013
+ * 17/sep/2013
  * 
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/clientsasignarem/")
-public class ClientsAsignaRemController {
-    private static final Logger log  = Logger.getLogger(ClientsAsignaRemController.class.getName());
+@RequestMapping("/clientsasignadest/")
+public class ClientsAsignaDestController {
+    private static final Logger log  = Logger.getLogger(ClientsAsignaDestController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
@@ -70,7 +70,7 @@ public class ClientsAsignaRemController {
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", ClientsAsignaRemController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", ClientsAsignaDestController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
@@ -78,7 +78,7 @@ public class ClientsAsignaRemController {
         infoConstruccionTabla.put("razon_social", "Razon&nbsp;social:300");
         infoConstruccionTabla.put("rfc", "RFC:100");
         
-        ModelAndView x = new ModelAndView("clientsasignarem/startup", "title", "Asignaci&oacute;n de Remitentes");
+        ModelAndView x = new ModelAndView("clientsasignadest/startup", "title", "Asignaci&oacute;n de Destinatarios");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -118,8 +118,8 @@ public class ClientsAsignaRemController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //Asignacion de Remitentes
-        Integer app_selected = 150;
+        //Asignacion de Destinatarios
+        Integer app_selected = 151;
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -158,9 +158,9 @@ public class ClientsAsignaRemController {
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
-        log.log(Level.INFO, "Ejecutando getAsignacionJson de {0}", ClientsAsignaRemController.class.getName());
+        log.log(Level.INFO, "Ejecutando getAsignacionJson de {0}", ClientsAsignaDestController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
@@ -171,8 +171,8 @@ public class ClientsAsignaRemController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         if( id != 0  ){
-            datos = this.getCxcDao().getClientsAsignaRem_Datos(id);
-            grid = this.getCxcDao().getClientsAsignaRem_RemitentesAsignados(id);
+            datos = this.getCxcDao().getClientsAsignaDest_Datos(id);
+            grid = this.getCxcDao().getClientsAsignaDest_DestinatariosAsignados(id);
         }
         
         jsonretorno.put("Datos", datos);
@@ -183,14 +183,14 @@ public class ClientsAsignaRemController {
     
     
     
-    @RequestMapping(method = RequestMethod.POST, value="/getRemitentesAsignados.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getRemitentesAsignadosJson(
+    @RequestMapping(method = RequestMethod.POST, value="/getDestinatariosAsignados.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDestinatariosAsignadosJson(
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
         
-        log.log(Level.INFO, "Ejecutando getRemitentesAsignadosJson de {0}", ClientsAsignaRemController.class.getName());
+        log.log(Level.INFO, "Ejecutando getDestinatariosAsignadosJson de {0}", ClientsAsignaDestController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, Object>> grid = new ArrayList<HashMap<String, Object>>();
@@ -199,7 +199,7 @@ public class ClientsAsignaRemController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
         if( id != 0  ){
-            grid = this.getCxcDao().getClientsAsignaRem_RemitentesAsignados(id);
+            grid = this.getCxcDao().getClientsAsignaDest_DestinatariosAsignados(id);
         }
         
         jsonretorno.put("Asignados", grid);
@@ -266,9 +266,9 @@ public class ClientsAsignaRemController {
     }
     
     
-    //Buscador de Remitentes
-    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorRemitentes.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorRemitentesJson(
+    //Buscador de Destinatarios
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorDestinatarios.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorDestinatariosJson(
             @RequestParam(value="cadena", required=true) String cadena,
             @RequestParam(value="filtro", required=true) Integer filtro,
             @RequestParam(value="iu", required=true) String id_user,
@@ -287,15 +287,15 @@ public class ClientsAsignaRemController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = 0;//se le asigna cero para que no filtre por sucursal
         
-        jsonretorno.put("Remitentes", this.getCxcDao().getBuscadorRemitentes(cadena,filtro,id_empresa, id_sucursal));
+        jsonretorno.put("Remitentes", this.getCxcDao().getBuscadorDestinatarios(cadena,filtro,id_empresa, id_sucursal));
         
         return jsonretorno;
     }
     
     
-    //Obtener datos del cliente a partir del Numero de Control
-    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoRemitente.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataByNoRemitenteJson(
+    //Obtener datos del Destinatario a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoDestinatario.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataByNoDestinatarioJson(
             @RequestParam(value="no_control", required=true) String no_control,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
@@ -313,7 +313,7 @@ public class ClientsAsignaRemController {
         //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         Integer id_sucursal = 0;
         
-        jsonretorno.put("Remitente", this.getCxcDao().getDatosClienteByNoRemitente(no_control, id_empresa, id_sucursal));
+        jsonretorno.put("Dest", this.getCxcDao().getDatosByNoDestinatario(no_control, id_empresa, id_sucursal));
         
         return jsonretorno;
     }
@@ -329,12 +329,12 @@ public class ClientsAsignaRemController {
         @RequestParam(value="eliminado", required=false) String[] eliminado,
         @RequestParam(value="iddet", required=false) String[] iddet,
         @RequestParam(value="idcli", required=false) String[] idcli,
-        @RequestParam(value="idrem", required=false) String[] idrem,
+        @RequestParam(value="iddest", required=false) String[] iddest,
         @RequestParam(value="noTr", required=false) String[] noTr,
         Model model,@ModelAttribute("user") UserSessionData user
     ) {
-        //Asignacion de Remitentes
-        Integer app_selected = 150;
+        //Asignacion de Destinatarios
+        Integer app_selected = 151;
         String command_selected = "new";
         Integer id_usuario= user.getUserId();//variable para el id  del usuario
         String arreglo[];
@@ -352,7 +352,7 @@ public class ClientsAsignaRemController {
         
         arreglo = new String[eliminado.length];
         for(int i=0; i<eliminado.length; i++) { 
-            arreglo[i]= "'"+eliminado[i] +"___" + iddet[i] +"___" + idcli[i] +"___" + idrem[i] +"___" + noTr[i]+"'";
+            arreglo[i]= "'"+eliminado[i] +"___" + iddet[i] +"___" + idcli[i] +"___" + iddest[i] +"___" + noTr[i]+"'";
             System.out.println(arreglo[i]);
         }
         
@@ -383,14 +383,14 @@ public class ClientsAsignaRemController {
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
-        System.out.println("Eliminar registro de Asignacion de Remitentes");
+        System.out.println("Eliminar registro de Asignacion de Destinatarios");
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         
-        //Asignacion de Remitentes
-        Integer app_selected = 150;
+        //Asignacion de Destinatarios
+        Integer app_selected = 151;
         String command_selected = "delete";
         String extra_data_array = "'sin datos'";
         
@@ -402,6 +402,4 @@ public class ClientsAsignaRemController {
         
         return jsonretorno;
     }
-    
-    
 }
