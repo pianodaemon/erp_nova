@@ -74,7 +74,7 @@ public class ClientsAsignaDestController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("numero_control", "N&uacute;mero&nbsp;control:100");
+        infoConstruccionTabla.put("numero_control", "No.&nbsp;Cliente:100");
         infoConstruccionTabla.put("razon_social", "Razon&nbsp;social:300");
         infoConstruccionTabla.put("rfc", "RFC:100");
         

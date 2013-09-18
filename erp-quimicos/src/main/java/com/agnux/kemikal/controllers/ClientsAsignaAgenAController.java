@@ -74,7 +74,7 @@ public class ClientsAsignaAgenAController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("numero_control", "N&uacute;mero&nbsp;control:100");
+        infoConstruccionTabla.put("numero_control", "No.&nbsp;Cliente:100");
         infoConstruccionTabla.put("razon_social", "Razon&nbsp;social:300");
         infoConstruccionTabla.put("rfc", "RFC:100");
         
@@ -287,7 +287,7 @@ public class ClientsAsignaAgenAController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = 0;//se le asigna cero para que no filtre por sucursal
         
-        jsonretorno.put("Remitentes", this.getCxcDao().getBuscadorAgentesAduanales(cadena,filtro,id_empresa, id_sucursal));
+        jsonretorno.put("Agentes", this.getCxcDao().getBuscadorAgentesAduanales(cadena,filtro,id_empresa, id_sucursal));
         
         return jsonretorno;
     }
@@ -313,7 +313,7 @@ public class ClientsAsignaAgenAController {
         //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         Integer id_sucursal = 0;
         
-        jsonretorno.put("Dest", this.getCxcDao().getDatosByNoAgenteAduanal(no_control, id_empresa, id_sucursal));
+        jsonretorno.put("Agen", this.getCxcDao().getDatosByNoAgenteAduanal(no_control, id_empresa, id_sucursal));
         
         return jsonretorno;
     }
@@ -329,7 +329,7 @@ public class ClientsAsignaAgenAController {
         @RequestParam(value="eliminado", required=false) String[] eliminado,
         @RequestParam(value="iddet", required=false) String[] iddet,
         @RequestParam(value="idcli", required=false) String[] idcli,
-        @RequestParam(value="iddest", required=false) String[] iddest,
+        @RequestParam(value="idagen", required=false) String[] idagen,
         @RequestParam(value="noTr", required=false) String[] noTr,
         Model model,@ModelAttribute("user") UserSessionData user
     ) {
@@ -352,7 +352,7 @@ public class ClientsAsignaAgenAController {
         
         arreglo = new String[eliminado.length];
         for(int i=0; i<eliminado.length; i++) { 
-            arreglo[i]= "'"+eliminado[i] +"___" + iddet[i] +"___" + idcli[i] +"___" + iddest[i] +"___" + noTr[i]+"'";
+            arreglo[i]= "'"+eliminado[i] +"___" + iddet[i] +"___" + idcli[i] +"___" + idagen[i] +"___" + noTr[i]+"'";
             System.out.println(arreglo[i]);
         }
         

@@ -4181,7 +4181,7 @@ return subfamilias;
         if(id_sucursal==0){
             where +="";
         }else{
-            where +=" AND gral_suc_id="+id_sucursal;
+            where +=" AND cxc_remitentes.gral_suc_id="+id_sucursal;
         }
         
 	String sql_query = ""
@@ -4218,7 +4218,7 @@ return subfamilias;
         if(id_sucursal==0){
             where +="";
         }else{
-            where +=" AND sucursal_id="+id_sucursal;
+            where +=" AND cxc_remitentes.gral_suc_id="+id_sucursal;
         }
         
 	String sql_query = ""
@@ -4365,7 +4365,7 @@ return subfamilias;
         if(id_sucursal==0){
             where +="";
         }else{
-            where +=" AND gral_suc_id="+id_sucursal;
+            where +=" AND cxc_destinatarios.gral_suc_id="+id_sucursal;
         }
         
 	String sql_query = ""
@@ -4402,7 +4402,7 @@ return subfamilias;
         if(id_sucursal==0){
             where +="";
         }else{
-            where +=" AND sucursal_id="+id_sucursal;
+            where +=" AND cxc_destinatarios.gral_suc_id="+id_sucursal;
         }
         
 	String sql_query = ""
@@ -4414,7 +4414,7 @@ return subfamilias;
         + "ORDER BY id limit 1;";
         
         System.out.println("getDatosDest: "+sql_query);
-
+        
         ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -4547,7 +4547,7 @@ return subfamilias;
         if(id_sucursal==0){
             where +="";
         }else{
-            where +=" AND gral_suc_id="+id_sucursal;
+            where +=" AND cxc_agentes_aduanales.gral_suc_id="+id_sucursal;
         }
         
 	String sql_query = ""
@@ -4584,7 +4584,7 @@ return subfamilias;
         if(id_sucursal==0){
             where +="";
         }else{
-            where +=" AND sucursal_id="+id_sucursal;
+            where +=" AND cxc_agentes_aduanales.gral_suc_id="+id_sucursal;
         }
         
 	String sql_query = ""
@@ -4596,7 +4596,7 @@ return subfamilias;
         + "ORDER BY id limit 1;";
         
         System.out.println("getDatosAgenA: "+sql_query);
-
+        
         ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
