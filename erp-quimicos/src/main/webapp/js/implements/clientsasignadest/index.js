@@ -321,11 +321,11 @@ $(function() {
 			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
 		});
 		
-		$boton_buscadestinatario.mouseover(function(){
+		$cancelar_busqueda.mouseover(function(){
 			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
 		});
 		
-		$boton_buscadestinatario.mouseout(function(){
+		$cancelar_busqueda.mouseout(function(){
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
@@ -507,7 +507,7 @@ $(function() {
 			//Asignar enfoque
 			$('#forma-clientsasignadest-window').find('input[name=nodest]').focus();
 		}else{
-			jAlert('El Remitente ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+			jAlert('El Destinatario ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
 				//Limpiar campos
 				$('#forma-clientsasignadest-window').find('input[name=nodest]').val('');
 				$('#forma-clientsasignadest-window').find('input[name=nombre_dest]').val('');
@@ -655,36 +655,50 @@ $(function() {
 		
 		$(this).aplicarEventoKeypressEjecutaTrigger($razoncliente, $busca_cliente);
 		
+		
+		//Agregar datos del Cliente
+		agregarDatosClient = function(){
+			var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoClient.json';
+			$arreglo2 = {'no_control':$nocliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+			
+			$.post(input_json2,$arreglo2,function(entry2){
+				if(parseInt(entry2['Cliente'].length) > 0 ){
+					var id_cliente = entry2['Cliente'][0]['id'];
+					var no_control = entry2['Cliente'][0]['numero_control'];
+					var razon_social = entry2['Cliente'][0]['razon_social'];
+					
+					$razoncliente.val(razon_social);
+					$nocliente.val(no_control);
+					$id_cliente.val(id_cliente);
+					
+					$busca_cliente.hide();
+					$agregar_cliente.hide();
+					
+					//Llamada a la cuncion que busca remitentes asigados al cliente seleccionado
+					$destinatarios_asignados(id_cliente, $grid_destinatarios, $identificador);
+				}else{
+					$id_cliente.val(0);
+					$nocliente.val('');
+					$razoncliente.val('');
+					jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
+						$nocliente.focus(); 
+					});
+				}
+			},"json");//termina llamada json
+		}
+		
+		//Agregar agente
+		$agregar_cliente.click(function(event){
+			event.preventDefault();
+			//Llamada a funcion que agrega los datos del cliente
+			agregarDatosClient();
+		});
+		
 		$nocliente.keypress(function(e){
 			var valor=$(this).val();
 			if(e.which == 13){
-				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoClient.json';
-				$arreglo2 = {'no_control':$nocliente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-				
-				$.post(input_json2,$arreglo2,function(entry2){
-					if(parseInt(entry2['Cliente'].length) > 0 ){
-						var id_cliente = entry2['Cliente'][0]['id'];
-						var no_control = entry2['Cliente'][0]['numero_control'];
-						var razon_social = entry2['Cliente'][0]['razon_social'];
-						
-						$razoncliente.val(razon_social);
-						$nocliente.val(no_control);
-						$id_cliente.val(id_cliente);
-						
-						$busca_cliente.hide();
-						$agregar_cliente.hide();
-						
-						//Llamada a la cuncion que busca remitentes asigados al cliente seleccionado
-						$destinatarios_asignados(id_cliente, $grid_destinatarios, $identificador);
-					}else{
-						$id_cliente.val(0);
-						$nocliente.val('');
-						$razoncliente.val('');
-						jAlert('N&uacute;mero de cliente desconocido.', 'Atencion!', function(r) { 
-							$nocliente.focus(); 
-						});
-					}
-				},"json");//termina llamada json
+				//Agrega datos del cliente
+				agregarDatosClient();
 				return false;
 			}else{
 				if (parseInt(e.which) == 8) {
@@ -728,40 +742,55 @@ $(function() {
 		
 		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_dest, $busca_dest);
 		
+		
+		//Agregar datos del Destinatario
+		agregarDatosDest = function(){
+			if($nocliente.val().trim()!='' ){
+				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoDestinatario.json';
+				$arreglo2 = {'no_control':$nodest.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+				
+				$.post(input_json2,$arreglo2,function(entry2){
+					if(parseInt(entry2['Dest'].length) > 0 ){
+						var idDetalle=0;
+						var idCliente = $id_cliente.val();
+						var idDestinatario = entry2['Dest'][0]['id'];
+						var noControl = entry2['Dest'][0]['folio'];
+						var razonSocial = entry2['Dest'][0]['razon_social'];
+						var rfc = entry2['Dest'][0]['rfc'];
+						
+						//Llamada a la funcion para agregar remitente al grid
+						$agrega_destinatario_grid($grid_destinatarios, idDetalle, idCliente, idDestinatario, noControl, razonSocial, rfc);
+					}else{
+						$nodest.val('');
+						$nombre_dest.val('');
+						jAlert('N&uacute;mero de Destinatario desconocido.', 'Atencion!', function(r) { 
+							$nodest.focus(); 
+						});
+					}
+				},"json");//termina llamada json
+			}else{
+				jAlert('Es necesario seleccionar un cliente.', 'Atencion!', function(r) { 
+					$nocliente.focus(); 
+				});
+			}
+		}
+		
 		$nodest.keypress(function(e){
 			if(e.which == 13){
-				
-				if($nocliente.val().trim()!='' ){
-					var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoDestinatario.json';
-					$arreglo2 = {'no_control':$nodest.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-					
-					$.post(input_json2,$arreglo2,function(entry2){
-						if(parseInt(entry2['Dest'].length) > 0 ){
-							var idDetalle=0;
-							var idCliente = $id_cliente.val();
-							var idDestinatario = entry2['Dest'][0]['id'];
-							var noControl = entry2['Dest'][0]['folio'];
-							var razonSocial = entry2['Dest'][0]['razon_social'];
-							var rfc = entry2['Dest'][0]['rfc'];
-							
-							//Llamada a la funcion para agregar remitente al grid
-							$agrega_destinatario_grid($grid_destinatarios, idDetalle, idCliente, idDestinatario, noControl, razonSocial, rfc);
-						}else{
-							$nodest.val('');
-							$nombre_dest.val('');
-							jAlert('N&uacute;mero de Destinatario desconocido.', 'Atencion!', function(r) { 
-								$nodest.focus(); 
-							});
-						}
-					},"json");//termina llamada json
-				}else{
-					jAlert('Es necesario seleccionar un cliente.', 'Atencion!', function(r) { 
-						$nocliente.focus(); 
-					});
-				}
+				//Agrega datos del destinatario
+				agregarDatosDest();
 				return false;
 			}
 		});
+		
+		
+		//Agregar destinatario
+		$agregar_dest.click(function(event){
+			event.preventDefault();
+			//Agrega datos del destinatario
+			agregarDatosDest();
+		});
+		
         
 		$submit_actualizar.bind('click',function(){
 			var trCount = $("tr", $grid_destinatarios).size();
@@ -945,40 +974,55 @@ $(function() {
 				
 				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_dest, $busca_dest);
 				
+		
+				//Agregar datos del Destinatario
+				agregarDatosDest = function(){
+					if($nocliente.val().trim()!='' ){
+						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoDestinatario.json';
+						$arreglo2 = {'no_control':$nodest.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+						
+						$.post(input_json2,$arreglo2,function(entry2){
+							if(parseInt(entry2['Dest'].length) > 0 ){
+								var idDetalle=0;
+								var idCliente = $id_cliente.val();
+								var idDestinatario = entry2['Dest'][0]['id'];
+								var noControl = entry2['Dest'][0]['folio'];
+								var razonSocial = entry2['Dest'][0]['razon_social'];
+								var rfc = entry2['Dest'][0]['rfc'];
+								
+								//Llamada a la funcion para agregar destinatario al grid
+								$agrega_destinatario_grid($grid_destinatarios, idDetalle, idCliente, idDestinatario, noControl, razonSocial, rfc);
+							}else{
+								$nodest.val('');
+								$nombre_dest.val('');
+								jAlert('N&uacute;mero de Destinatario desconocido.', 'Atencion!', function(r) { 
+									$nodest.focus(); 
+								});
+							}
+						},"json");//termina llamada json
+					}else{
+						jAlert('Es necesario seleccionar un cliente.', 'Atencion!', function(r) { 
+							$nocliente.focus(); 
+						});
+					}
+				}
+				
 				$nodest.keypress(function(e){
 					if(e.which == 13){
-						
-						if($nocliente.val().trim()!='' ){
-							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoDestinatario.json';
-							$arreglo2 = {'no_control':$nodest.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
-							
-							$.post(input_json2,$arreglo2,function(entry2){
-								if(parseInt(entry2['Dest'].length) > 0 ){
-									var idDetalle=0;
-									var idCliente = $id_cliente.val();
-									var idDestinatario = entry2['Dest'][0]['id'];
-									var noControl = entry2['Dest'][0]['folio'];
-									var razonSocial = entry2['Dest'][0]['razon_social'];
-									var rfc = entry2['Dest'][0]['rfc'];
-									
-									//Llamada a la funcion para agregar destinatario al grid
-									$agrega_destinatario_grid($grid_destinatarios, idDetalle, idCliente, idDestinatario, noControl, razonSocial, rfc);
-								}else{
-									$nodest.val('');
-									$nombre_dest.val('');
-									jAlert('N&uacute;mero de Destinatario desconocido.', 'Atencion!', function(r) { 
-										$nodest.focus(); 
-									});
-								}
-							},"json");//termina llamada json
-						}else{
-							jAlert('Es necesario seleccionar un cliente.', 'Atencion!', function(r) { 
-								$nocliente.focus(); 
-							});
-						}
+						//Agrega datos del destinatario
+						agregarDatosDest();
 						return false;
 					}
 				});
+				
+				
+				//Agregar destinatario
+				$agregar_dest.click(function(event){
+					event.preventDefault();
+					//Agrega datos del destinatario
+					agregarDatosDest();
+				});
+				
 				
 				
 				$submit_actualizar.bind('click',function(){

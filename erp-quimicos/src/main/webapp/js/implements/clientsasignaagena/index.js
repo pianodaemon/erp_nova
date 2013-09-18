@@ -14,12 +14,12 @@ $(function() {
 	$username.text($('#lienzo_recalculable').find('input[name=user]').val());
 	
 	var $contextpath = $('#lienzo_recalculable').find('input[name=contextpath]');
-	var controller = $contextpath.val()+"/controllers/clientsasignarem";
+	var controller = $contextpath.val()+"/controllers/clientsasignaagena";
     
 	//Barra para las acciones
 	$('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
 	$('#barra_acciones').find('.table_acciones').css({'display':'block'});
-	var $new_clientsasignarem = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
+	var $new_clientsasignaagena = $('#barra_acciones').find('.table_acciones').find('a[href*=new_item]');
 	var $visualiza_buscador = $('#barra_acciones').find('.table_acciones').find('a[href*=visualiza_buscador]');
 	
 	$('#barra_acciones').find('.table_acciones').find('#nItem').mouseover(function(){
@@ -37,7 +37,7 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Asignaci&oacute;n de Remitentes');
+	$('#barra_titulo').find('#td_titulo').append('Asignaci&oacute;n de Agentes Aduanales');
 	
 	//barra para el buscador 
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
@@ -118,38 +118,38 @@ $(function() {
 	
 	
 	$tabs_li_funxionalidad = function(){
-		$('#forma-clientsasignarem-window').find('#submit').mouseover(function(){
-			$('#forma-clientsasignarem-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+		$('#forma-clientsasignaagena-window').find('#submit').mouseover(function(){
+			$('#forma-clientsasignaagena-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/bt1.png)"});
 		});
-		$('#forma-clientsasignarem-window').find('#submit').mouseout(function(){
-			$('#forma-clientsasignarem-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+		$('#forma-clientsasignaagena-window').find('#submit').mouseout(function(){
+			$('#forma-clientsasignaagena-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
 			//$('#forma-centrocostos-window').find('#submit').css({backgroundImage:"url(../../img/modalbox/btn1.png)"});
 		});
-		$('#forma-clientsasignarem-window').find('#boton_cancelar').mouseover(function(){
-			$('#forma-clientsasignarem-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+		$('#forma-clientsasignaagena-window').find('#boton_cancelar').mouseover(function(){
+			$('#forma-clientsasignaagena-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
 		})
-		$('#forma-clientsasignarem-window').find('#boton_cancelar').mouseout(function(){
-			$('#forma-clientsasignarem-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
+		$('#forma-clientsasignaagena-window').find('#boton_cancelar').mouseout(function(){
+			$('#forma-clientsasignaagena-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
 		});
 		
-		$('#forma-clientsasignarem-window').find('#close').mouseover(function(){
-			$('#forma-clientsasignarem-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		$('#forma-clientsasignaagena-window').find('#close').mouseover(function(){
+			$('#forma-clientsasignaagena-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
 		});
-		$('#forma-clientsasignarem-window').find('#close').mouseout(function(){
-			$('#forma-clientsasignarem-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		$('#forma-clientsasignaagena-window').find('#close').mouseout(function(){
+			$('#forma-clientsasignaagena-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
 		});		
 		
-		$('#forma-clientsasignarem-window').find(".contenidoPes").hide(); //Hide all content
-		$('#forma-clientsasignarem-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
-		$('#forma-clientsasignarem-window').find(".contenidoPes:first").show(); //Show first tab content
+		$('#forma-clientsasignaagena-window').find(".contenidoPes").hide(); //Hide all content
+		$('#forma-clientsasignaagena-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+		$('#forma-clientsasignaagena-window').find(".contenidoPes:first").show(); //Show first tab content
 		
 		//On Click Event
-		$('#forma-clientsasignarem-window').find("ul.pestanas li").click(function() {
-			$('#forma-clientsasignarem-window').find(".contenidoPes").hide();
-			$('#forma-clientsasignarem-window').find("ul.pestanas li").removeClass("active");
+		$('#forma-clientsasignaagena-window').find("ul.pestanas li").click(function() {
+			$('#forma-clientsasignaagena-window').find(".contenidoPes").hide();
+			$('#forma-clientsasignaagena-window').find("ul.pestanas li").removeClass("active");
 			var activeTab = $(this).find("a").attr("href");
-			$('#forma-clientsasignarem-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$('#forma-clientsasignaagena-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
 			$(this).addClass("active");
 			return false;
 		});
@@ -159,7 +159,7 @@ $(function() {
 	
 	
 	//Buscador de clientes
-	$busca_clientes = function($razoncliente, $nocliente, $id_cliente, $busca_cliente, $agregar_cliente,  $grid_remitentes, $identificador){
+	$busca_clientes = function($razoncliente, $nocliente, $id_cliente, $busca_cliente, $agregar_cliente,  $grid_agenaduanales, $identificador){
 		$(this).modalPanel_Buscacliente();
 		var $dialogoc =  $('#forma-buscacliente-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -262,7 +262,7 @@ $(function() {
 					$id_cliente.val($(this).find('#idclient').val());
 					
 					//Llamada a la funcion que busca remitentes asigados al cliente seleccionado
-					$remitentes_asignados($(this).find('#idclient').val(), $grid_remitentes, $identificador);
+					$destinatarios_asignados($(this).find('#idclient').val(), $grid_agenaduanales, $identificador);
 					
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -297,35 +297,35 @@ $(function() {
 	
 	
 	
-	//Buscador de Remitentes
-	$busca_remitentes= function($nombre_remitente, $noremitente, $grid_remitentes, idCliente){
-		$(this).modalPanel_buscaremitente();
-		var $dialogoc =  $('#forma-buscaremitente-window');
+	//Buscador de Agentes Aduanales
+	$busca_agentes_aduanales= function($nombre_agena, $noagena, $grid_agenaduanales, idCliente){
+		$(this).modalPanel_buscaagen();
+		var $dialogoc =  $('#forma-buscaagen-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
-		$dialogoc.append($('div.buscador_remitentes').find('table.formaBusqueda_remitentes').clone());
-		$('#forma-buscaremitente-window').css({"margin-left": -200, 	"margin-top": -180});
+		$dialogoc.append($('div.buscador_buscaagen').find('table.formaBusqueda_buscaagen').clone());
+		$('#forma-buscaagen-window').css({"margin-left": -200, 	"margin-top": -180});
 		
-		var $tabla_resultados = $('#forma-buscaremitente-window').find('#tabla_resultado');
+		var $tabla_resultados = $('#forma-buscaagen-window').find('#tabla_resultado');
 		
-		var $boton_buscaremitente = $('#forma-buscaremitente-window').find('#boton_buscaremitente');
-		var $cancelar_busqueda = $('#forma-buscaremitente-window').find('#cencela');
+		var $boton_buscaagen = $('#forma-buscaagen-window').find('#boton_buscaagen');
+		var $cancelar_busqueda = $('#forma-buscaagen-window').find('#cencela');
 		
-		var $cadena_buscar = $('#forma-buscaremitente-window').find('input[name=cadena_buscar]');
-		var $select_filtro_por = $('#forma-buscaremitente-window').find('select[name=filtropor]');
+		var $cadena_buscar = $('#forma-buscaagen-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscaagen-window').find('select[name=filtropor]');
 		
 		//funcionalidad botones
-		$boton_buscaremitente.mouseover(function(){
+		$boton_buscaagen.mouseover(function(){
 			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
 		});
-		$boton_buscaremitente.mouseout(function(){
+		$boton_buscaagen.mouseout(function(){
 			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
 		});
 		
-		$boton_buscaremitente.mouseover(function(){
+		$cancelar_busqueda.mouseover(function(){
 			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
 		});
 		
-		$boton_buscaremitente.mouseout(function(){
+		$cancelar_busqueda.mouseout(function(){
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
@@ -333,25 +333,25 @@ $(function() {
 		$select_filtro_por.children().remove();
 		html='<option value="0">[-- Opcion busqueda --]</option>';
 		
-		if($noremitente.val() !='' && $nombre_remitente.val()==''){
+		if($noagena.val() !='' && $nombre_agena.val()==''){
 			html+='<option value="1" selected="yes">No. de control</option>';
-			$cadena_buscar.val($noremitente.val());
+			$cadena_buscar.val($noagena.val());
 		}else{
 			html+='<option value="1">No. de control</option>';
 		}
 		html+='<option value="2">RFC</option>';
-		if($nombre_remitente.val()!=''){
-			$cadena_buscar.val($nombre_remitente.val());
+		if($nombre_agena.val()!=''){
+			$cadena_buscar.val($nombre_agena.val());
 			html+='<option value="3" selected="yes">Razon social</option>';
 		}
-		if($noremitente.val() =='' && $nombre_remitente.val()==''){
+		if($noagena.val() =='' && $nombre_agena.val()==''){
 			html+='<option value="3" selected="yes">Razon social</option>';
 		}
 		$select_filtro_por.append(html);
 		
 		//click buscar clientes
-		$boton_buscaremitente.click(function(event){
-			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorRemitentes.json';
+		$boton_buscaagen.click(function(event){
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorAgenA.json';
 			$arreglo = {'cadena':$cadena_buscar.val(),
 						 'filtro':$select_filtro_por.val(),
 						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
@@ -360,14 +360,14 @@ $(function() {
 			var trr = '';
 			$tabla_resultados.children().remove();
 			$.post(input_json,$arreglo,function(entry){
-				$.each(entry['Remitentes'],function(entryIndex,cliente){
+				$.each(entry['Agentes'],function(entryIndex,agen){
 					trr = '<tr>';
 						trr += '<td width="80">';
-							trr += '<input type="hidden" id="id" value="'+cliente['id']+'">';
-							trr += '<span class="no_control">'+cliente['folio']+'</span>';
+							trr += '<input type="hidden" id="id" value="'+agen['id']+'">';
+							trr += '<span class="no_control">'+agen['folio']+'</span>';
 						trr += '</td>';
-						trr += '<td width="145"><span class="rfc">'+cliente['rfc']+'</span></td>';
-						trr += '<td width="375"><span class="razon">'+cliente['razon_social']+'</span></td>';
+						//trr += '<td width="145"><span class="rfc">'+agen['rfc']+'</span></td>';
+						trr += '<td width="520"><span class="razon">'+agen['razon_social']+'</span></td>';
 					trr += '</tr>';
 					
 					$tabla_resultados.append(trr);
@@ -391,23 +391,22 @@ $(function() {
 				//Seleccionar un elemento del resultado
 				$tabla_resultados.find('tr').click(function(){
 					var idDetalle=0;
-					var idRemitente = $(this).find('#id').val();
+					var idAgena = $(this).find('#id').val();
 					var noControl = $(this).find('span.no_control').html();
 					var razonSocial = $(this).find('span.razon').html();
-					var rfc = $(this).find('span.rfc').html();
 					
 					//LLamada a la funcion que agrega tr al grid
-					$agrega_remitente_grid($grid_remitentes, idDetalle, idCliente, idRemitente, noControl, razonSocial, rfc);
+					$agrega_agente_aduanal_grid($grid_agenaduanales, idDetalle, idCliente, idAgena, noControl, razonSocial);
 					
 					//Elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
-					$('#forma-buscaremitente-overlay').fadeOut(remove);
+					$('#forma-buscaagen-overlay').fadeOut(remove);
 					
 					//Limpiar campos
-					$nombre_remitente.val('');
-					$noremitente.val('');
+					$nombre_agena.val('');
+					$noagena.val('');
 
-					$nombre_remitente.focus();
+					$nombre_agena.focus();
 				});
 			});
 		});//termina llamada json
@@ -415,31 +414,31 @@ $(function() {
 		
 		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
 		if($cadena_buscar.val() != ''){
-			$boton_buscaremitente.trigger('click');
+			$boton_buscaagen.trigger('click');
 		}
 		
-		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $boton_buscaremitente);
-		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $boton_buscaremitente);
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $boton_buscaagen);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $boton_buscaagen);
 		
 		$cancelar_busqueda.click(function(event){
 			var remove = function() {$(this).remove();};
-			$('#forma-buscaremitente-overlay').fadeOut(remove);
+			$('#forma-buscaagen-overlay').fadeOut(remove);
 			
 			//$('#forma-clientsdf-window').find('input[name=cliente]').focus();
 		});
 		
 		$cadena_buscar.focus();
-	}//Termina buscador de Remitentes
+	}//Termina buscador de Agentes Aduanales
 	
 	
 	
 	
 	//agregar producto al grid
-	$agrega_remitente_grid = function($grid_remitentes, idDetalle, idCliente, idRemitente, noControl, razonSocial, rfc){
+	$agrega_agente_aduanal_grid = function($grid_agenaduanales, idDetalle, idCliente, idAgena, noControl, razonSocial){
 		var encontrado = 0;
 		//Busca el remitente en el grid para asegurar que no haya sido asignado al cliente
-		$grid_remitentes.find('tr').each(function (index){
-			if( parseInt($(this).find('#idrem').val()) == parseInt(idRemitente) ){
+		$grid_agenaduanales.find('tr').each(function (index){
+			if( parseInt($(this).find('#idagen').val()) == parseInt(idAgena) ){
 				//El remitente ya esta en el grid
 				encontrado=1;
 			}
@@ -449,7 +448,7 @@ $(function() {
 			//Si el remitente no esta en el grid entra aqui
 			
 			//Obtiene numero de trs
-			var tr = $("tr", $grid_remitentes).size();
+			var tr = $("tr", $grid_agenaduanales).size();
 			tr++;
 			
 			var trr = '';
@@ -457,26 +456,23 @@ $(function() {
 				trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
 					trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
 					trr += '<input type="hidden" 	name="eliminado" id="elim" value="1">';//el 1 significa que el registro no ha sido eliminado
-					trr += '<input type="hidden" 	name="iddet" id="iddet" value="'+idDetalle+'">';//este es el id del registro que ocupa el producto en la tabla clientsasignarem_detalles
+					trr += '<input type="hidden" 	name="iddet" id="iddet" value="'+idDetalle+'">';//este es el id del registro que ocupa el producto en la tabla clientsasignaagena_detalles
 					trr += '<input type="hidden" 	name="noTr" value="'+ tr +'">';
 				trr += '</td>';
 				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
 					trr += '<input type="hidden" 	name="idcli" id="idcli" value="'+ idCliente +'">';
-					trr += '<input type="hidden" 	name="idrem" id="idrem" value="'+ idRemitente +'">';
+					trr += '<input type="hidden" 	name="idagen" id="idagen" value="'+ idAgena +'">';
 					trr += noControl;
 				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="400">';
+				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="520">';
 					trr += razonSocial;
 				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
-					trr += rfc;
-				trr += '</td>';
 			trr += '</tr>';
-			$grid_remitentes.append(trr);
+			$grid_agenaduanales.append(trr);
 			
 			
 			//elimina un producto del grid
-			$grid_remitentes.find('#delete'+ tr).bind('click',function(event){
+			$grid_agenaduanales.find('#delete'+ tr).bind('click',function(event){
 				event.preventDefault();
 				$tr = $(this).parent().parent();
 				
@@ -489,7 +485,7 @@ $(function() {
 				//Asigna un 0 al input eliminado como bandera para saber que esta eliminado
 				$tr.find('#elim').val(0);
 				//Asigna un 0 al input del id de Remitente
-				$tr.find('#idrem').val(0);
+				$tr.find('#idagen').val(0);
 				//Asigna un 0 al input del id del cliente
 				$tr.find('#idcli').val(0);
 				
@@ -501,36 +497,36 @@ $(function() {
 			});
 			
 			//Limpiar campos
-			$('#forma-clientsasignarem-window').find('input[name=noremitente]').val('');
-			$('#forma-clientsasignarem-window').find('input[name=nombre_remitente]').val('');
+			$('#forma-clientsasignaagena-window').find('input[name=noagena]').val('');
+			$('#forma-clientsasignaagena-window').find('input[name=nombre_agena]').val('');
 			
 			//Asignar enfoque
-			$('#forma-clientsasignarem-window').find('input[name=noremitente]').focus();
+			$('#forma-clientsasignaagena-window').find('input[name=noagena]').focus();
 		}else{
-			jAlert('El Remitente ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
+			jAlert('El Agente Aduanal ya se encuentra en el listado, seleccione otro diferente.', 'Atencion!', function(r) { 
 				//Limpiar campos
-				$('#forma-clientsasignarem-window').find('input[name=noremitente]').val('');
-				$('#forma-clientsasignarem-window').find('input[name=nombre_remitente]').val('');
+				$('#forma-clientsasignaagena-window').find('input[name=noagena]').val('');
+				$('#forma-clientsasignaagena-window').find('input[name=nombre_agena]').val('');
 			});
 		}
 	}//Termina agregar remitente al grid
 	
 	
 	//Vaciar campos
-	$vaciar_campos = function($id_cliente,$nocliente,$razoncliente, $grid_remitentes, $busca_cliente, $agregar_cliente){
+	$vaciar_campos = function($id_cliente,$nocliente,$razoncliente, $grid_agenaduanales, $busca_cliente, $agregar_cliente){
 		$id_cliente.val(0);
 		$nocliente.val('');
 		$razoncliente.val('');
 		
-		$grid_remitentes.children().remove();
+		$grid_agenaduanales.children().remove();
 		$busca_cliente.show();
 		$agregar_cliente.show();
 	}
 	
 	
 	//Buscar remitentes asignados al cliente seleccionado
-	$remitentes_asignados = function(id_cliente, $grid_remitentes, $identificador){
-		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRemitentesAsignados.json';
+	$destinatarios_asignados = function(id_cliente, $grid_agenaduanales, $identificador){
+		var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getAgentesAsignados.json';
 		$arreglo2 = {'id':id_cliente, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json2,$arreglo2,function(entry2){
@@ -542,13 +538,12 @@ $(function() {
 				$.each(entry2['Asignados'],function(entryIndex,grid){
 					var idDetalle= grid['iddet'];
 					var idCliente = grid['clie_id'];
-					var idRemitente = grid['rem_id'];
+					var idAgena = grid['agena_id'];
 					var noControl = grid['no_control'];
 					var razonSocial = grid['nombre'];
-					var rfc = grid['rfc'];
 					
 					//Llamada a la funcion para agregar remitente al grid
-					$agrega_remitente_grid($grid_remitentes, idDetalle, idCliente, idRemitente, noControl, razonSocial, rfc);
+					$agrega_agente_aduanal_grid($grid_agenaduanales, idDetalle, idCliente, idAgena, noControl, razonSocial);
 				});
 			}
 		},"json");//termina llamada json
@@ -560,46 +555,46 @@ $(function() {
 	
 	
 	//nuevo 
-	$new_clientsasignarem.click(function(event){
+	$new_clientsasignaagena.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
-		$(this).modalPanel_clientsasignarem();
+		$(this).modalPanel_clientsasignaagena();
 		
-		var form_to_show = 'formaAsignaRemitentes';
+		var form_to_show = 'formaAsignaAgentes';
 		$('#' + form_to_show).each (function(){this.reset();});
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-clientsasignarem-window').css({"margin-left": -400, 	"margin-top": -265});
-		$forma_selected.prependTo('#forma-clientsasignarem-window');
+		$('#forma-clientsasignaagena-window').css({"margin-left": -400, 	"margin-top": -265});
+		$forma_selected.prependTo('#forma-clientsasignaagena-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 		$tabs_li_funxionalidad();		
 		
-		var $identificador = $('#forma-clientsasignarem-window').find('input[name=identificador]');
-		var $razoncliente = $('#forma-clientsasignarem-window').find('input[name=razoncliente]');
-		var $id_cliente = $('#forma-clientsasignarem-window').find('input[name=id_cliente]');
-		var $nocliente = $('#forma-clientsasignarem-window').find('input[name=nocliente]');
+		var $identificador = $('#forma-clientsasignaagena-window').find('input[name=identificador]');
+		var $razoncliente = $('#forma-clientsasignaagena-window').find('input[name=razoncliente]');
+		var $id_cliente = $('#forma-clientsasignaagena-window').find('input[name=id_cliente]');
+		var $nocliente = $('#forma-clientsasignaagena-window').find('input[name=nocliente]');
 		
-		var $busca_cliente = $('#forma-clientsasignarem-window').find('a[href*=busca_cliente]');
-		var $agregar_cliente = $('#forma-clientsasignarem-window').find('a[href*=agregar_cliente]');
+		var $busca_cliente = $('#forma-clientsasignaagena-window').find('a[href*=busca_cliente]');
+		var $agregar_cliente = $('#forma-clientsasignaagena-window').find('a[href*=agregar_cliente]');
 		
-		var $nombre_remitente = $('#forma-clientsasignarem-window').find('input[name=nombre_remitente]');
-		var $noremitente = $('#forma-clientsasignarem-window').find('input[name=noremitente]');
+		var $nombre_agena = $('#forma-clientsasignaagena-window').find('input[name=nombre_agena]');
+		var $noagena = $('#forma-clientsasignaagena-window').find('input[name=noagena]');
 		
-		var $busca_remitente = $('#forma-clientsasignarem-window').find('a[href*=busca_remitente]');
-		var $agregar_remitente = $('#forma-clientsasignarem-window').find('a[href*=agregar_remitente]');
+		var $busca_agena = $('#forma-clientsasignaagena-window').find('a[href*=busca_agena]');
+		var $agregar_agena = $('#forma-clientsasignaagena-window').find('a[href*=agregar_agena]');
 		
 		//Grid de Remitentes
-		var $grid_remitentes = $('#forma-clientsasignarem-window').find('#grid_remitentes');
+		var $grid_agenaduanales = $('#forma-clientsasignaagena-window').find('#grid_agenaduanales');
 		//Grid de errores
-		var $grid_warning = $('#forma-clientsasignarem-window').find('#div_warning_grid').find('#grid_warning');
+		var $grid_warning = $('#forma-clientsasignaagena-window').find('#div_warning_grid').find('#grid_warning');
 		
-		var $cerrar_plugin = $('#forma-clientsasignarem-window').find('#close');
-		var $cancelar_plugin = $('#forma-clientsasignarem-window').find('#boton_cancelar');
-		var $submit_actualizar = $('#forma-clientsasignarem-window').find('#submit');
+		var $cerrar_plugin = $('#forma-clientsasignaagena-window').find('#close');
+		var $cancelar_plugin = $('#forma-clientsasignaagena-window').find('#boton_cancelar');
+		var $submit_actualizar = $('#forma-clientsasignaagena-window').find('#submit');
 		
 		//Quitar enter a todos los campos input
-		$('#forma-clientsasignarem-window').find('input').keypress(function(e){
+		$('#forma-clientsasignaagena-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
 				return false;
 			}
@@ -612,12 +607,12 @@ $(function() {
 			if ( data['success'] == "true" ){
 				jAlert("Los datos se guardaron  con &eacute;xito", 'Atencion!');
 				var remove = function() {$(this).remove();};
-				$('#forma-clientsasignarem-overlay').fadeOut(remove);
+				$('#forma-clientsasignaagena-overlay').fadeOut(remove);
 				//refresh_table();
 				$get_datos_grid();
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
-				$('#forma-clientsasignarem-window').find('div.interrogacion').css({'display':'none'});
+				$('#forma-clientsasignaagena-window').find('div.interrogacion').css({'display':'none'});
 				
 				var valor = data['success'].split('___');
                                      
@@ -627,7 +622,7 @@ $(function() {
 					longitud = tmp.split(':');
 					//telUno: Numero Telefonico no Valido___
 					if( longitud.length > 1 ){
-						$('#forma-clientsasignarem-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
+						$('#forma-clientsasignaagena-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
 						.parent()
 						.css({'display':'block'})
 						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -650,7 +645,7 @@ $(function() {
 		//Llamada al buscador de clientes
 		$busca_cliente.click(function(event){
 			event.preventDefault();
-			$busca_clientes($razoncliente, $nocliente, $id_cliente, $busca_cliente, $agregar_cliente, $grid_remitentes, $identificador);
+			$busca_clientes($razoncliente, $nocliente, $id_cliente, $busca_cliente, $agregar_cliente, $grid_agenaduanales, $identificador);
 		});
 		
 		$(this).aplicarEventoKeypressEjecutaTrigger($razoncliente, $busca_cliente);
@@ -676,7 +671,7 @@ $(function() {
 					$agregar_cliente.hide();
 					
 					//Llamada a la cuncion que busca remitentes asigados al cliente seleccionado
-					$remitentes_asignados(id_cliente, $grid_remitentes, $identificador);
+					$destinatarios_asignados(id_cliente, $grid_agenaduanales, $identificador);
 				}else{
 					$id_cliente.val(0);
 					$nocliente.val('');
@@ -688,14 +683,12 @@ $(function() {
 			},"json");//termina llamada json
 		}
 		
-		//Agregar agente
+		//Agregar cliente
 		$agregar_cliente.click(function(event){
 			event.preventDefault();
 			//Llamada a funcion que agrega los datos del cliente
 			agregarDatosClient();
 		});
-		
-		
 		
 		
 		$nocliente.keypress(function(e){
@@ -708,13 +701,13 @@ $(function() {
 				if (parseInt(e.which) == 8) {
 					//Si se oprime la tecla borrar se vacía el campo Numero de Control del Cliente
 					//Tambien vaciamos el grid
-					if(parseInt($("tr", $grid_remitentes).size())>0){
+					if(parseInt($("tr", $grid_agenaduanales).size())>0){
 						//si hay elementos en el grid, preguntar si se desea cambiar el producto seleccionado
 						jConfirm('Hay remitentes en el Listado, \n&eacute;sta seguro que desea cambiar el Cliente seleccionado?', 'Dialogo de Confirmacion', function(r) {
 							// If they confirmed, manually trigger a form submission
 							if (r) {
 								//Llamada a la funcion para vaciar los campos
-								$vaciar_campos($id_cliente,$nocliente,$razoncliente, $grid_remitentes, $busca_cliente, $agregar_cliente);
+								$vaciar_campos($id_cliente,$nocliente,$razoncliente, $grid_agenaduanales, $busca_cliente, $agregar_cliente);
 								$nocliente.focus();
 								return true;
 							}else{
@@ -724,7 +717,7 @@ $(function() {
 						});
 					}else{
 						//Si no hay elementos en el grid, vaciar sin preguntar
-						$vaciar_campos($id_cliente,$nocliente,$razoncliente, $grid_remitentes, $busca_cliente, $agregar_cliente);
+						$vaciar_campos($id_cliente,$nocliente,$razoncliente, $grid_agenaduanales, $busca_cliente, $agregar_cliente);
 						$nocliente.focus();
 					}
 				}
@@ -733,10 +726,10 @@ $(function() {
         
         
 		//Llamada al buscador de Remitentes
-		$busca_remitente.click(function(event){
+		$busca_agena.click(function(event){
 			event.preventDefault();
 			if($nocliente.val().trim()!='' ){
-				$busca_remitentes($nombre_remitente, $noremitente, $grid_remitentes, $id_cliente.val());
+				$busca_agentes_aduanales($nombre_agena, $noagena, $grid_agenaduanales, $id_cliente.val());
 			}else{
 				jAlert('Es necesario seleccionar un cliente.', 'Atencion!', function(r) { 
 					$nocliente.focus(); 
@@ -744,32 +737,30 @@ $(function() {
 			}
 		});
 		
-		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_remitente, $busca_remitente);
+		$(this).aplicarEventoKeypressEjecutaTrigger($nombre_agena, $busca_agena);
 		
 		
-		
-		//Agregar datos del Remitente
-		agregarDatosRemitente = function(){
+		//Agregar datos del Agente Aduanal
+		agregarDatosAgen = function(){
 			if($nocliente.val().trim()!='' ){
-				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoRemitente.json';
-				$arreglo2 = {'no_control':$noremitente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+				var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoAgen.json';
+				$arreglo2 = {'no_control':$noagena.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				$.post(input_json2,$arreglo2,function(entry2){
-					if(parseInt(entry2['Remitente'].length) > 0 ){
+					if(parseInt(entry2['Agen'].length) > 0 ){
 						var idDetalle=0;
 						var idCliente = $id_cliente.val();
-						var idRemitente = entry2['Remitente'][0]['id'];
-						var noControl = entry2['Remitente'][0]['folio'];
-						var razonSocial = entry2['Remitente'][0]['razon_social'];
-						var rfc = entry2['Remitente'][0]['rfc'];
+						var idAgena = entry2['Agen'][0]['id'];
+						var noControl = entry2['Agen'][0]['folio'];
+						var razonSocial = entry2['Agen'][0]['razon_social'];
 						
-						//Llamada a la funcion para agregar remitente al grid
-						$agrega_remitente_grid($grid_remitentes, idDetalle, idCliente, idRemitente, noControl, razonSocial, rfc);
+						//Llamada a la funcion para agregar destinatario al grid
+						$agrega_agente_aduanal_grid($grid_agenaduanales, idDetalle, idCliente, idAgena, noControl, razonSocial);
 					}else{
-						$noremitente.val('');
-						$nombre_remitente.val('');
-						jAlert('N&uacute;mero de remitente desconocido.', 'Atencion!', function(r) { 
-							$noremitente.focus(); 
+						$noagena.val('');
+						$nombre_agena.val('');
+						jAlert('N&uacute;mero de Destinatario desconocido.', 'Atencion!', function(r) { 
+							$noagena.focus(); 
 						});
 					}
 				},"json");//termina llamada json
@@ -781,44 +772,43 @@ $(function() {
 		}
 		
 		
-		$noremitente.keypress(function(e){
+		
+		$noagena.keypress(function(e){
 			if(e.which == 13){
-				//Llamada a la funcion para agregar datos del remitente
-				agregarDatosRemitente();
+				//Llamada a funcion que agrega los datos del destinatario
+				agregarDatosAgen();
 				return false;
 			}
 		});
-        
-		//Agregar Remitente
-		$agregar_remitente.click(function(event){
+		
+		//Agregar agente
+		$agregar_agena.click(function(event){
 			event.preventDefault();
-			//Llamada a la funcion para agregar datos del remitente
-			agregarDatosRemitente();
+			//Llamada a funcion que agrega los datos del destinatario
+			agregarDatosAgen();
 		});
-        
+		
         
 		$submit_actualizar.bind('click',function(){
-			var trCount = $("tr", $grid_remitentes).size();
+			var trCount = $("tr", $grid_agenaduanales).size();
 			if(parseInt(trCount) > 0){
 				return true;
 			}else{
 				jAlert('No hay datos para actualizar', 'Atencion!', function(r) { 
-					$noremitente.focus();
+					$noagena.focus();
 				});
 				return false;
 			}
 		});
-        
-        
-        
+		
         $cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
-			$('#forma-clientsasignarem-overlay').fadeOut(remove);
+			$('#forma-clientsasignaagena-overlay').fadeOut(remove);
 		});
 		
 		$cancelar_plugin.click(function(event){
 			var remove = function() {$(this).remove();};
-			$('#forma-clientsasignarem-overlay').fadeOut(remove);
+			$('#forma-clientsasignaagena-overlay').fadeOut(remove);
 			$buscar.trigger('click');
 		});
 		
@@ -837,15 +827,15 @@ $(function() {
 			$arreglo = {'id':id_to_show,
 						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
-			jConfirm('Realmente desea eliminar el Remitente?', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar el Agente Aduanal?', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("El remitente fue eliminado exitosamente.", 'Atencion!');
+							jAlert("El Agente Aduanal fue eliminado exitosamente.", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
-							jAlert("El Remitente no pudo ser eliminado.", 'Atencion!');
+							jAlert("El Agente Aduanal no pudo ser eliminado.", 'Atencion!');
 						}
 					},"json");
 				}
@@ -853,42 +843,42 @@ $(function() {
             
 		}else{
 			//aqui  entra para editar un registro
-			var form_to_show = 'formaAsignaRemitentes';
+			var form_to_show = 'formaAsignaAgentes';
 			
 			$('#' + form_to_show).each (function(){this.reset();});
 			var $forma_selected = $('#' + form_to_show).clone();
 			$forma_selected.attr({id : form_to_show + id_to_show});
 			
-			$(this).modalPanel_clientsasignarem();
-			$('#forma-clientsasignarem-window').css({"margin-left": -400, 	"margin-top": -265});
+			$(this).modalPanel_clientsasignaagena();
+			$('#forma-clientsasignaagena-window').css({"margin-left": -400, 	"margin-top": -265});
 			
-			$forma_selected.prependTo('#forma-clientsasignarem-window');
+			$forma_selected.prependTo('#forma-clientsasignaagena-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
 			
 			$tabs_li_funxionalidad();
-                        
-			var $identificador = $('#forma-clientsasignarem-window').find('input[name=identificador]');
-			var $razoncliente = $('#forma-clientsasignarem-window').find('input[name=razoncliente]');
-			var $id_cliente = $('#forma-clientsasignarem-window').find('input[name=id_cliente]');
-			var $nocliente = $('#forma-clientsasignarem-window').find('input[name=nocliente]');
 			
-			var $busca_cliente = $('#forma-clientsasignarem-window').find('a[href*=busca_cliente]');
-			var $agregar_cliente = $('#forma-clientsasignarem-window').find('a[href*=agregar_cliente]');
+			var $identificador = $('#forma-clientsasignaagena-window').find('input[name=identificador]');
+			var $razoncliente = $('#forma-clientsasignaagena-window').find('input[name=razoncliente]');
+			var $id_cliente = $('#forma-clientsasignaagena-window').find('input[name=id_cliente]');
+			var $nocliente = $('#forma-clientsasignaagena-window').find('input[name=nocliente]');
 			
-			var $nombre_remitente = $('#forma-clientsasignarem-window').find('input[name=nombre_remitente]');
-			var $noremitente = $('#forma-clientsasignarem-window').find('input[name=noremitente]');
+			var $busca_cliente = $('#forma-clientsasignaagena-window').find('a[href*=busca_cliente]');
+			var $agregar_cliente = $('#forma-clientsasignaagena-window').find('a[href*=agregar_cliente]');
 			
-			var $busca_remitente = $('#forma-clientsasignarem-window').find('a[href*=busca_remitente]');
-			var $agregar_remitente = $('#forma-clientsasignarem-window').find('a[href*=agregar_remitente]');
+			var $nombre_agena = $('#forma-clientsasignaagena-window').find('input[name=nombre_agena]');
+			var $noagena = $('#forma-clientsasignaagena-window').find('input[name=noagena]');
+			
+			var $busca_agena = $('#forma-clientsasignaagena-window').find('a[href*=busca_agena]');
+			var $agregar_agena = $('#forma-clientsasignaagena-window').find('a[href*=agregar_agena]');
 			
 			//Grid de Remitentes
-			var $grid_remitentes = $('#forma-clientsasignarem-window').find('#grid_remitentes');
+			var $grid_agenaduanales = $('#forma-clientsasignaagena-window').find('#grid_agenaduanales');
 			//Grid de errores
-			var $grid_warning = $('#forma-clientsasignarem-window').find('#div_warning_grid').find('#grid_warning');
+			var $grid_warning = $('#forma-clientsasignaagena-window').find('#div_warning_grid').find('#grid_warning');
 			
-			var $cerrar_plugin = $('#forma-clientsasignarem-window').find('#close');
-			var $cancelar_plugin = $('#forma-clientsasignarem-window').find('#boton_cancelar');
-			var $submit_actualizar = $('#forma-clientsasignarem-window').find('#submit');
+			var $cerrar_plugin = $('#forma-clientsasignaagena-window').find('#close');
+			var $cancelar_plugin = $('#forma-clientsasignaagena-window').find('#boton_cancelar');
+			var $submit_actualizar = $('#forma-clientsasignaagena-window').find('#submit');
 			
 			$nocliente.css({'background' : '#DDDDDD'});
 			$razoncliente.css({'background' : '#DDDDDD'});
@@ -900,7 +890,7 @@ $(function() {
 			$agregar_cliente.hide();
 			
 			//Quitar enter a todos los campos input
-			$('#forma-clientsasignarem-window').find('input').keypress(function(e){
+			$('#forma-clientsasignaagena-window').find('input').keypress(function(e){
 				if(e.which==13 ) {
 					return false;
 				}
@@ -915,12 +905,12 @@ $(function() {
 					if ( data['success'] == "true" ){
 						jAlert("Los datos se guardaron con &eacute;xito", 'Atencion!');
 						var remove = function() {$(this).remove();};
-						$('#forma-clientsasignarem-overlay').fadeOut(remove);
+						$('#forma-clientsasignaagena-overlay').fadeOut(remove);
 						//refresh_table();
 						$get_datos_grid();
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
-						$('#forma-clientsasignarem-window').find('div.interrogacion').css({'display':'none'});
+						$('#forma-clientsasignaagena-window').find('div.interrogacion').css({'display':'none'});
 						
 						var valor = data['success'].split('___');
 											 
@@ -930,7 +920,7 @@ $(function() {
 							longitud = tmp.split(':');
 							//telUno: Numero Telefonico no Valido___
 							if( longitud.length > 1 ){
-								$('#forma-clientsasignarem-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
+								$('#forma-clientsasignaagena-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')						
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
@@ -954,24 +944,23 @@ $(function() {
 						$.each(entry['Grid'],function(entryIndex,grid){
 							var idDetalle= grid['iddet'];
 							var idCliente = grid['clie_id'];
-							var idRemitente = grid['rem_id'];
+							var idAgena = grid['agena_id'];
 							var noControl = grid['no_control'];
 							var razonSocial = grid['nombre'];
-							var rfc = grid['rfc'];
-							
+							//alert(idAgena);
 							//Llamada a la funcion para agregar remitente al grid
-							$agrega_remitente_grid($grid_remitentes, idDetalle, idCliente, idRemitente, noControl, razonSocial, rfc);
+							$agrega_agente_aduanal_grid($grid_agenaduanales, idDetalle, idCliente, idAgena, noControl, razonSocial);
 						});
 					}
 				},"json");//termina llamada json
 				
 				
-				
+        
 				//Llamada al buscador de Remitentes
-				$busca_remitente.click(function(event){
+				$busca_agena.click(function(event){
 					event.preventDefault();
 					if($nocliente.val().trim()!='' ){
-						$busca_remitentes($nombre_remitente, $noremitente, $grid_remitentes, $id_cliente.val());
+						$busca_agentes_aduanales($nombre_agena, $noagena, $grid_agenaduanales, $id_cliente.val());
 					}else{
 						jAlert('Es necesario seleccionar un cliente.', 'Atencion!', function(r) { 
 							$nocliente.focus(); 
@@ -979,31 +968,29 @@ $(function() {
 					}
 				});
 				
-				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_remitente, $busca_remitente);
+				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_agena, $busca_agena);
 				
-				
-				//Agregar datos del Remitente
-				agregarDatosRemitente = function(){
+				//Agregar datos del Agente Aduanal
+				agregarDatosAgen = function(){
 					if($nocliente.val().trim()!='' ){
-						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoRemitente.json';
-						$arreglo2 = {'no_control':$noremitente.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+						var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoAgen.json';
+						$arreglo2 = {'no_control':$noagena.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 						
 						$.post(input_json2,$arreglo2,function(entry2){
-							if(parseInt(entry2['Remitente'].length) > 0 ){
+							if(parseInt(entry2['Agen'].length) > 0 ){
 								var idDetalle=0;
 								var idCliente = $id_cliente.val();
-								var idRemitente = entry2['Remitente'][0]['id'];
-								var noControl = entry2['Remitente'][0]['folio'];
-								var razonSocial = entry2['Remitente'][0]['razon_social'];
-								var rfc = entry2['Remitente'][0]['rfc'];
+								var idAgena = entry2['Agen'][0]['id'];
+								var noControl = entry2['Agen'][0]['folio'];
+								var razonSocial = entry2['Agen'][0]['razon_social'];
 								
-								//Llamada a la funcion para agregar remitente al grid
-								$agrega_remitente_grid($grid_remitentes, idDetalle, idCliente, idRemitente, noControl, razonSocial, rfc);
+								//Llamada a la funcion para agregar destinatario al grid
+								$agrega_agente_aduanal_grid($grid_agenaduanales, idDetalle, idCliente, idAgena, noControl, razonSocial);
 							}else{
-								$noremitente.val('');
-								$nombre_remitente.val('');
-								jAlert('N&uacute;mero de remitente desconocido.', 'Atencion!', function(r) { 
-									$noremitente.focus(); 
+								$noagena.val('');
+								$nombre_agena.val('');
+								jAlert('N&uacute;mero de Destinatario desconocido.', 'Atencion!', function(r) { 
+									$noagena.focus(); 
 								});
 							}
 						},"json");//termina llamada json
@@ -1014,30 +1001,31 @@ $(function() {
 					}
 				}
 				
-				$noremitente.keypress(function(e){
+				
+				
+				$noagena.keypress(function(e){
 					if(e.which == 13){
-						//Llamada a la funcion para agregar datos del remitente
-						agregarDatosRemitente();
+						//Llamada a funcion que agrega los datos del Agente Aduanal
+						agregarDatosAgen();
 						return false;
 					}
 				});
 				
-				//Agregar Remitente
-				$agregar_remitente.click(function(event){
+				//Agregar agente
+				$agregar_agena.click(function(event){
 					event.preventDefault();
-					//Llamada a la funcion para agregar datos del remitente
-					agregarDatosRemitente();
+					//Llamada a funcion que agrega los datos del Agente Aduanal
+					agregarDatosAgen();
 				});
-						
 				
 				
 				$submit_actualizar.bind('click',function(){
-					var trCount = $("tr", $grid_remitentes).size();
+					var trCount = $("tr", $grid_agenaduanales).size();
 					if(parseInt(trCount) > 0){
 						return true;
 					}else{
 						jAlert('No hay datos para actualizar', 'Atencion!', function(r) { 
-							$noremitente.focus();
+							$noagena.focus();
 						});
 						return false;
 					}
@@ -1046,16 +1034,16 @@ $(function() {
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-clientsasignarem-overlay').fadeOut(remove);
+					$('#forma-clientsasignaagena-overlay').fadeOut(remove);
 				});
 				
 				$cerrar_plugin.bind('click',function(){
 					var remove = function() {$(this).remove();};
-					$('#forma-clientsasignarem-overlay').fadeOut(remove);
+					$('#forma-clientsasignaagena-overlay').fadeOut(remove);
 					$buscar.trigger('click');
 				});
 				
-				$noremitente.focus();
+				$noagena.focus();
 			}
 		}
 	}
