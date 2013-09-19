@@ -159,6 +159,7 @@
                             <div class=" fixed column">
                                 <ul class="pestanas">
                                     <li><a href="#tabx-1"><strong>Pedido</strong></a></li>
+                                    <li><a href="#tabx-2"><strong>Transportista</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -167,8 +168,6 @@
                                 <div class="fixed column" class="content_x" >
 									
                                     <div id="tabx-1" class="contenidoPes" >
-										
-										
                                         <table border="0" style="margin:0; padding:0;">
                                                 <tr>
                                                     <td width="520"></td>
@@ -268,8 +267,8 @@
                                                                 <td width="10"></td>
                                                                 <td width="70">Moneda</td>
                                                                 <td width="90">
-                                                                    <SELECT NAME="select_moneda" style="width:90px;" title="Moneda de la factura"></SELECT>
-                                                                    <SELECT NAME="select_moneda_original" style="display:none"></SELECT>
+                                                                    <select name="select_moneda" style="width:90px;" title="Moneda de la factura"></select>
+                                                                    <select name="select_moneda_original" style="display:none"></select>
                                                                     <input type="hidden" name="id_impuesto" value="0">
                                                                     <input type="hidden" name="valorimpuesto" value="0">
                                                                 </td>
@@ -291,7 +290,7 @@
 																<td width="30"></td>
 																<td width="55">Almacen</td>
 																<td width="180" colspan="3">
-																	<SELECT NAME="select_almacen" style="width:180px"></SELECT>
+																	<select name="select_almacen" style="width:180px"></select>
 																</td>
 																<td width="25"></td>
                                                             </tr>
@@ -303,7 +302,7 @@
 																<td width="10"></td>
 																<td width="80">M&eacute;todo&nbsp;de&nbsp;pago</td>
 																<td width="190" colspan="3">
-																	<SELECT NAME="select_metodo_pago" style="width:190px"></SELECT>
+																	<select name="select_metodo_pago" style="width:190px"></select>
 																</td>
 																<td width="10"></td>
 																<td width="175" colspan="3">
@@ -317,8 +316,8 @@
 																<td width="90" colspan="2">T&eacute;rminos&nbsp;de&nbsp;pago</td>
 																<td>&nbsp;&nbsp;</td>
 																<td width="140">
-																	<SELECT NAME="select_condiciones" style="width:140px" title="Terminos de pago"></SELECT>
-																	<SELECT NAME="select_condiciones_original" style="display:none"></SELECT>
+																	<select name="select_condiciones" style="width:140px" title="Terminos de pago"></select>
+																	<select name="select_condiciones_original" style="display:none"></select>
 																</td>
 																<td width="25"></td>
 															</tr>
@@ -345,8 +344,8 @@
 																<td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fcompromiso"></div></td>
 																<td width="55">Vendedor</td>
 																<td width="180" colspan="3">
-																	<SELECT NAME="vendedor" style="width:180px"></SELECT>
-																	<SELECT NAME="vendedor_original" style="display:none"></SELECT>
+																	<select name="vendedor" style="width:180px"></select>
+																	<select name="vendedor_original" style="display:none"></select>
 																</td>
 																<td width="25"></td>
                                                             </tr>
@@ -467,7 +466,6 @@
                                                                 </tr>
                                                             </table>
                                                         </div>
-
                                                     </td>
                                                     <td  width="260" align="right" valign="top" style="font-weight: bold;">
                                                         <table border ="0" width="260" class="gral">
@@ -495,16 +493,328 @@
                                                         </table>
                                                     </td>
                                                 </tr>
-
                                         </table>
-
-
-                                    </div>
-
+                                    </div><!--tabx-1-->
+                                    
+                                    <div id="tabx-2" class="contenidoPes" >
+										<table border="0" style="margin:0px; padding:0px;">
+                                                <tr>
+													<td width="10"></td>
+                                                    <td width="870"></td>
+                                                </tr>
+                                                <tr>
+													<td width="10"></td>
+                                                    <td>
+                                                        <table border="0" class="gral" style="margin:0px; margin-bottom:5px; padding:0px;">
+															<tr>
+																<td width="80">Factura&nbsp;de&nbsp;Flete</td>
+																<td width="90">
+																	<input type="checkbox" name="check_flete" checked="true">
+																</td>
+																<td width="25"></td>
+																<td width="70">Documentador</td>
+																<td width="280" colspan="4"><input type="text" name="nombre_documentador" style="width:280px;"></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_documentador"></div></td>
+																<td width="80">Valor&nbsp;Declarado</td>
+																<td width="80"><input type="text" name="valor_declarado" style="width:80px;"></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_vdeclarado"></div></td>
+															</tr>
+															<tr>
+																<td height="5" colspan="9"></td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+															<tr>
+																<td width="80">Tipo&nbsp;Viaje</td>
+																<td width="90">
+																	<select name="select_tviaje" style="width:90px;">
+																		<option value="1" selected="yes">Sencilla</option>
+																		<option value="2" >Full</option>
+																	</select>
+																</td>
+																<td width="25"></td>
+																<td width="70">Remolque 1</td>
+																<td width="90"><input type="text" name="remolque1" style="width:90px;"></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_remolque1"></div></td>
+																<td width="70">Remolque 2</td>
+																<td width="90"><input type="text" name="remolque2" style="width:90px;"></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_remolque2"></div></td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                
+                                                
+                                                <tr>
+													<td width="10"></td>
+                                                    <td>
+														<table border="0" class="gral" style="margin:0px; margin-bottom:6px; padding:0px;">
+															<tr>
+																<td width="80">No.&nbsp;Unidad</td>
+																<td width="90">
+																	<input type="hidden" name="id_vehiculo" value="0">
+																	<input type="text" name="no_economico" style="width:90px; border:1px solid #000;">
+																</td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noeconomico"></div></td>
+																<td width="70">Marca</td>
+																<td width="280"><input type="text" name="marca_vehiculo" style="width:280px;"></td>
+																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_marca"></div></td>
+																<td width="55"><a href="busca_vehiculo">&nbsp;(Buscar)</a></td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td height="5" colspan="10"></td></tr>
+															<tr>
+																<td width="80">No.&nbsp;Operador</td>
+																<td width="90">
+																	<input type="hidden" name="id_vehiculo" value="0">
+																	<input type="text" name="no_economico" style="width:90px; border:1px solid #000;">
+																</td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noeconomico"></div></td>
+																<td width="70">Nombre</td>
+																<td width="280"><input type="text" name="marca_vehiculo" style="width:280px;"></td>
+																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_marca"></div></td>
+																<td width="55"><a href="busca_vehiculo">&nbsp;(Buscar)</a></td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+												
+                                                <tr>
+													<td width="10"></td>
+                                                    <td>
+														<table border="0" class="gral" style="margin:0px; margin-bottom:6px; padding:0px;">
+															<tr>
+																<td width="80">No.&nbsp;Agente</td>
+																<td width="90">
+																	<input type="hidden" name="agena_id" value="0">
+																	<input type="text" name="agena_no" style="width:90px; border:1px solid #000;">
+																</td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_agenano"></div></td>
+																<td width="70">Razon Social</td>
+																<td width="280"><input type="text" name="agena_nombre" style="width:280px;"></td>
+																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_agenanombre"></div></td>
+																<td width="55"><a href="busca_agena">&nbsp;(Buscar)</a></td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+												
+												<!--
+												<tr>
+													<td width="10"></td>
+													<td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">Origen</td>
+												</tr>
+												-->
+                                                <tr>
+													<td width="10"></td>
+                                                    <td>
+														<table border="0" class="gral" style="margin:0px; margin-bottom:6px; padding:0px;">
+															<tr>
+																<td colspan="9" height="2"></td>
+															</tr>
+															<tr>
+																<td width="80"><strong>Origen:</strong>&nbsp;&nbsp;&nbsp;&nbsp;Pa&iacute;s</td>
+																<td width="185"><select name="select_pais" style="width:185px;"></select></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_pais"></div></td>
+																<td width="70">Estado</td>
+																<td width="185"><select name="select_estado" style="width:185px;"></select></td>
+																<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_estado"></div></td>
+																<td width="75">Municipio</td>
+																<td width="185"><select name="select_municipio" style="width:185px;"></select></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_municipio"></div></td>
+															</tr>
+														</table>
+                                                    </td>
+                                                </tr>
+                                                <!--
+												<tr>
+													<td width="10"></td>
+													<td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">Destino</td>
+												</tr>
+												-->
+                                                <tr>
+													<td width="10"></td>
+                                                    <td>
+														<table border="0" class="gral" style="margin:0px; margin-bottom:6px; padding:0px;">
+															<tr>
+																<td colspan="9" height="2"></td>
+															</tr>
+															<tr>
+																<td width="80"><strong>Destino:</strong>&nbsp;&nbsp;Pa&iacute;s</td>
+																<td width="185"><select name="select_pais" style="width:185px;"></select></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_pais"></div></td>
+																<td width="70">Estado</td>
+																<td width="185"><select name="select_estado" style="width:185px;"></select></td>
+																<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_estado"></div></td>
+																<td width="75">Municipio</td>
+																<td width="185"><select name="select_municipio" style="width:185px;"></select></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_municipio"></div></td>
+															</tr>
+															
+														</table>
+                                                    </td>
+                                                </tr>
+                                                
+												<tr>
+													<td width="10"></td>
+													<td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">Remitente</td>
+												</tr>
+                                                <tr>
+													<td width="10"></td>
+                                                    <td>
+														<table border="0" class="gral" style="margin:0px; margin-bottom:6px; padding:0px;">
+															<tr>
+																<td colspan="10" height="2"></td>
+															</tr>
+															<tr>
+																<td width="80">No.&nbsp;Remitente</td>
+																<td width="90">
+																	<input type="hidden" name="rem_id" value="0">
+																	<input type="text" name="rem_no" style="width:90px; border:1px solid #000;">
+																</td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noeconomico"></div></td>
+																<td width="70">Razon Social</td>
+																<td width="280"><input type="text" name="rem_nombre" style="width:280px;"></td>
+																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_marca"></div></td>
+																<td width="55"><a href="busca_vehiculo">&nbsp;(Buscar)</a></td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td height="5" colspan="10"></td></tr>
+															<tr>
+																<td width="80">Direcci&oacute;n</td>
+																<td width="525" colspan="6">
+																	<input type="text" name="rem_dir" style="width:525px;">
+																</td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td height="5" colspan="10"></td></tr>
+															<tr>
+																<td width="80">Dir. Alterna</td>
+																<td width="525" colspan="6">
+																	<input type="text" name="rem_dir_alterna" style="width:525px;">
+																</td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+														</table>
+                                                    </td>
+                                                </tr>
+                                                
+                                                
+												<tr>
+													<td width="10"></td>
+													<td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">Destinatario</td>
+												</tr>
+                                                <tr>
+													<td width="10"></td>
+                                                    <td>
+														<table border="0" class="gral" style="margin:0px; margin-bottom:6px; padding:0px;">
+															<tr>
+																<td colspan="10" height="2"></td>
+															</tr>
+															<tr>
+																<td width="80">No.&nbsp;Destinatario</td>
+																<td width="90">
+																	<input type="hidden" name="dest_id" value="0">
+																	<input type="text" name="dest_no" style="width:90px; border:1px solid #000;">
+																</td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nodest"></div></td>
+																<td width="70">Razon Social</td>
+																<td width="280"><input type="text" name="dest_nombre" style="width:280px;"></td>
+																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_dest"></div></td>
+																<td width="55"><a href="busca_dest">&nbsp;(Buscar)</a></td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td height="5" colspan="10"></td></tr>
+															<tr>
+																<td width="80">Direcci&oacute;n</td>
+																<td width="525" colspan="6">
+																	<input type="text" name="dest_dir" style="width:525px;">
+																</td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+															<tr><td height="5" colspan="10"></td></tr>
+															<tr>
+																<td width="80">Dir. Alterna</td>
+																<td width="525" colspan="6">
+																	<input type="text" name="dest_dir_alterna" style="width:525px;">
+																</td>
+																<td width="80"></td>
+																<td width="80"></td>
+																<td width="25"></td>
+															</tr>
+														</table>
+                                                    </td>
+                                                </tr>
+                                                
+												<tr>
+													<td width="10"></td>
+													<td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF; background-color:#D4D3D3;">Observaciones</td>
+												</tr>
+                                                <tr>
+													<td width="10"></td>
+                                                    <td>
+														<table border="0" class="gral" style="margin:0px; margin-bottom:6px; padding:0px;">
+															<tr>
+																<td colspan="10" height="2"></td>
+															</tr>
+															<tr>
+																<td width="80">Observaciones</td>
+																<td width="525" rowspan="3">
+																	<textarea name="observaciones_transportista" rows="2" cols="60" style="width:525px; resize: none;"></textarea>
+																</td>
+																<td width="25">&nbsp;</td>
+															</tr>
+															<tr>
+																<td width="80">&nbsp;</td>
+																<!--
+																<td width="525" colspan="6">
+																	<input type="text" name="dest_dir_alterna" style="width:525px;">
+																</td>
+																-->
+																<td width="25"></td>
+															</tr>
+															<tr>
+																<td width="80">&nbsp;</td>
+																<!--
+																<td width="525" colspan="6">
+																	<input type="text" name="dest_dir_alterna" style="width:525px;">
+																</td>
+																-->
+																<td width="25">&nbsp;</td>
+															</tr>
+														</table>
+                                                    </td>
+                                                </tr>
+                                                
+                                        </table>
+									</div><!--tabx-2-->
+									
                                 </div>
                             </div>
-
-
+							
+							
                             <div class="fixed column" id="div_botones" style="width:886px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
 								<table border="0" class="tabla_botones">
 									<tr>
@@ -555,11 +865,11 @@
 										</tr>
 										<tr>
 											<td width="50" align="right">Mes&nbsp;</td>
-											<td width="70"><SELECT NAME="select_mes" style="width:70px;"></SELECT></td>
+											<td width="70"><select name="select_mes" style="width:70px;"></select></td>
 											<td width="30"></td>
 											<td width="60" align="right">A&ntilde;o&nbsp;</td>
 											<td width="70">
-												<SELECT NAME="select_anio" style="width:70px;"></SELECT></td>
+												<select name="select_anio" style="width:70px;"></select></td>
 											<td width="10"></td>
 										</tr>
 									</table>
@@ -629,7 +939,7 @@
 											<td width="245"><input type="text" name="cadena_buscar" style="width:245px;"></td>
 											<td width="25"></td>
 											<td width="60">Filtro por</td>
-											<td width="150"><SELECT NAME="filtropor" style="width:150px;"></SELECT></td>
+											<td width="150"><select name="filtropor" style="width:150px;"></select></td>
 											<td width="70" align="right">
 												<!--<a href="busca_cliente_modalbox" style="font-size:13px;">Buscar</a>-->
 												<input type="button" id="busca_cliente_modalbox" class="onmouseOutBuscar">
@@ -741,9 +1051,9 @@
 											<td width="25"></td>
 											<td width="90">Tipo&nbsp;de&nbsp;Producto</td>
 											<td width="200">
-												<SELECT NAME="tipo_producto" style="width:180px;">
+												<select name="tipo_producto" style="width:180px;">
 													<OPTION value="0" selected="yes">[--Seleccionar Tipo--]</OPTION>
-												</SELECT>
+												</select>
 											</td>
 											<td width="25"></td>
 											<td width="90"></td>
@@ -935,7 +1245,7 @@
 							<td width="10"></td>
 							<td width="120">Tipo&nbsp;Cancelaci&oacute;n</td>
 							<td colspan="3" width="270" height="10" style="font-size:13px;">
-								<SELECT NAME="tipo_cancelacion" style="width:200px;"></SELECT>
+								<select name="tipo_cancelacion" style="width:200px;"></select>
 							</td>
 						</tr>
 						<tr>

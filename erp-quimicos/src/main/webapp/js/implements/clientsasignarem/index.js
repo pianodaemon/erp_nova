@@ -6,7 +6,7 @@ $(function() {
 		}
 		return work.join(',');
 	};
-
+	
 	$('#header').find('#header1').find('span.emp').text($('#lienzo_recalculable').find('input[name=emp]').val());
 	$('#header').find('#header1').find('span.suc').text($('#lienzo_recalculable').find('input[name=suc]').val());
 	
