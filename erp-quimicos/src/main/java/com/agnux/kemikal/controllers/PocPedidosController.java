@@ -224,7 +224,10 @@ public class PocPedidosController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
-        extra.put("mod_produccion", userDat.get("incluye_produccion"));//esta variable indica si la empresa incluye modulo de produccion
+        //Esta variable indica si la empresa incluye modulo de produccion
+        extra.put("mod_produccion", userDat.get("incluye_produccion"));
+        //Esta variable indica si la empresa es transportista
+        extra.put("transportista", userDat.get("transportista"));
         
         arrayExtra.add(0,extra);
         

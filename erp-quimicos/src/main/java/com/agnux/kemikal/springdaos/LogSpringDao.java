@@ -134,7 +134,7 @@ public class LogSpringDao implements LogInterfaceDao{
     
     
     
-     @Override
+    @Override
     public ArrayList<HashMap<String, String>> getchoferes(Integer id_empresa) {
         String sql_to_query = "SELECT log_choferes.id,clave,nombre||'  '||apellido_paterno||'  '||apellido_materno  as nombre_chofer FROM log_choferes "
                 + "join gral_emp on gral_emp.id = log_choferes.gral_emp_id "

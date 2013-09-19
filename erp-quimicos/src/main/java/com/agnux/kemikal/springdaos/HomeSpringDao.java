@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -42,6 +43,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                 +"gral_emp.control_exis_pres,"
                 +"gral_emp.incluye_crm, "
                 +"gral_emp.nivel_cta, "
+                +"gral_emp.transportista, "
                 +"gral_usr_suc.gral_suc_id AS sucursal_id, "
                 +"gral_suc.titulo AS sucursal,"
                 +"gral_usr.gral_empleados_id "
@@ -51,7 +53,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
         +"JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
         +"WHERE gral_usr.username ILIKE '"+name+"';";
         
-        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
             sql_to_query, 
@@ -68,6 +70,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                     row.put("control_exi_pres",String.valueOf(rs.getBoolean("control_exis_pres")));
                     row.put("incluye_crm",String.valueOf(rs.getBoolean("incluye_crm")));
                     row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
+                    row.put("transportista",String.valueOf(rs.getBoolean("transportista")));
                     row.put("sucursal_id",String.valueOf(rs.getInt("sucursal_id")));
                     row.put("sucursal",String.valueOf(rs.getString("sucursal")));
                     row.put("empleado_id",String.valueOf(rs.getInt("gral_empleados_id")));
@@ -88,23 +91,25 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
     @Override
     public HashMap<String, String> getUserById(Integer id_user) {
         
-        String sql_to_query = "SELECT gral_usr.id, "
-                                + "gral_usr.username, "
-                                + "gral_suc.empresa_id, "
-                                + "gral_emp.titulo AS empresa, "
-                                + "gral_emp.incluye_produccion, "
-                                + "gral_emp.incluye_contabilidad, "
-                                + "gral_emp.control_exis_pres,"
-                                + "gral_emp.incluye_crm, "
-                                + "gral_emp.nivel_cta, "
-                                + "gral_usr_suc.gral_suc_id AS sucursal_id, "
-                                + "gral_suc.titulo AS sucursal, "
-                                +"gral_usr.gral_empleados_id "
-                            + "FROM gral_usr "
-                            + "JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id = gral_usr.id "
-                            + "JOIN gral_suc ON gral_suc.id = gral_usr_suc.gral_suc_id "
-                            + "JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
-                            + "WHERE gral_usr.id ="+id_user;
+        String sql_to_query = ""
+                + "SELECT gral_usr.id, "
+                    + "gral_usr.username, "
+                    + "gral_suc.empresa_id, "
+                    + "gral_emp.titulo AS empresa, "
+                    + "gral_emp.incluye_produccion, "
+                    + "gral_emp.incluye_contabilidad, "
+                    + "gral_emp.control_exis_pres,"
+                    + "gral_emp.incluye_crm, "
+                    + "gral_emp.nivel_cta, "
+                    +"gral_emp.transportista, "
+                    + "gral_usr_suc.gral_suc_id AS sucursal_id, "
+                    + "gral_suc.titulo AS sucursal, "
+                    +"gral_usr.gral_empleados_id "
+                + "FROM gral_usr "
+                + "JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id = gral_usr.id "
+                + "JOIN gral_suc ON gral_suc.id = gral_usr_suc.gral_suc_id "
+                + "JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
+                + "WHERE gral_usr.id ="+id_user;
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
@@ -123,6 +128,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                     row.put("control_exi_pres",String.valueOf(rs.getBoolean("control_exis_pres")));
                     row.put("incluye_crm",String.valueOf(rs.getBoolean("incluye_crm")));
                     row.put("nivel_cta",String.valueOf(rs.getInt("nivel_cta")));
+                    row.put("transportista",String.valueOf(rs.getBoolean("transportista")));
                     row.put("sucursal_id",String.valueOf(rs.getInt("sucursal_id")));
                     row.put("sucursal",String.valueOf(rs.getString("sucursal")));
                     row.put("empleado_id",String.valueOf(rs.getInt("gral_empleados_id")));
