@@ -13,6 +13,9 @@
         <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaCancelaEmision.css" type="text/css" />
         <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaDireccionesFiscales.css" type="text/css" />
         
+        <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaBuscaUnidad.css" type="text/css" />
+        
+        
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
 		<script type="text/javascript" src="../../js/components/formatearnumeros/agrega_comas.js"></script>
@@ -22,6 +25,9 @@
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxBuscaproducto.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxCancelaEmision.js"></script>
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxDireccionesFiscales.js"></script>
+        
+        <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxBuscaUnidad.js"></script>
+        
         <script type="text/javascript" src="../../js/implements/pocpedidos/index.js" ></script>
         
         
@@ -509,7 +515,7 @@
 															<tr>
 																<td width="80">Factura&nbsp;de&nbsp;Flete</td>
 																<td width="90">
-																	<input type="checkbox" name="check_flete" checked="true">
+																	<input type="checkbox" name="check_flete">
 																</td>
 																<td width="25"></td>
 																<td width="70">Documentador</td>
@@ -572,14 +578,13 @@
 															<tr>
 																<td width="80">No.&nbsp;Operador</td>
 																<td width="90">
-																	<input type="hidden" name="id_vehiculo" value="0">
-																	<input type="text" name="no_economico" style="width:90px; border:1px solid #000;">
+																	<input type="text" name="no_operador" style="width:90px; border:1px solid #000;">
 																</td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noeconomico"></div></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nooperador"></div></td>
 																<td width="70">Nombre</td>
-																<td width="280"><input type="text" name="marca_vehiculo" style="width:280px;"></td>
+																<td width="280"><input type="text" name="nombre_operador" style="width:280px;"></td>
 																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_marca"></div></td>
-																<td width="55"><a href="busca_vehiculo">&nbsp;(Buscar)</a></td>
+																<td width="55"><a href="busca_operador">&nbsp;(Buscar)</a></td>
 																<td width="80"></td>
 																<td width="80"></td>
 																<td width="25"></td>
@@ -626,14 +631,14 @@
 															</tr>
 															<tr>
 																<td width="80"><strong>Origen:</strong>&nbsp;&nbsp;&nbsp;&nbsp;Pa&iacute;s</td>
-																<td width="185"><select name="select_pais" style="width:185px;"></select></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_pais"></div></td>
+																<td width="185"><select name="select_pais_origen" style="width:185px;"></select></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_paisorig"></div></td>
 																<td width="70">Estado</td>
-																<td width="185"><select name="select_estado" style="width:185px;"></select></td>
-																<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_estado"></div></td>
+																<td width="185"><select name="select_estado_origen" style="width:185px;"></select></td>
+																<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_estadoorig"></div></td>
 																<td width="75">Municipio</td>
-																<td width="185"><select name="select_municipio" style="width:185px;"></select></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_municipio"></div></td>
+																<td width="185"><select name="select_municipio_origen" style="width:185px;"></select></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_municipioorig"></div></td>
 															</tr>
 														</table>
                                                     </td>
@@ -653,14 +658,14 @@
 															</tr>
 															<tr>
 																<td width="80"><strong>Destino:</strong>&nbsp;&nbsp;Pa&iacute;s</td>
-																<td width="185"><select name="select_pais" style="width:185px;"></select></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_pais"></div></td>
+																<td width="185"><select name="select_pais_dest" style="width:185px;"></select></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_paisdest"></div></td>
 																<td width="70">Estado</td>
-																<td width="185"><select name="select_estado" style="width:185px;"></select></td>
-																<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_estado"></div></td>
+																<td width="185"><select name="select_estado_dest" style="width:185px;"></select></td>
+																<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_estadodest"></div></td>
 																<td width="75">Municipio</td>
-																<td width="185"><select name="select_municipio" style="width:185px;"></select></td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_municipio"></div></td>
+																<td width="185"><select name="select_municipio_dest" style="width:185px;"></select></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_municipiodest"></div></td>
 															</tr>
 															
 														</table>
@@ -688,7 +693,7 @@
 																<td width="70">Razon Social</td>
 																<td width="280"><input type="text" name="rem_nombre" style="width:280px;"></td>
 																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_marca"></div></td>
-																<td width="55"><a href="busca_vehiculo">&nbsp;(Buscar)</a></td>
+																<td width="55"><a href="busca_remitente">&nbsp;(Buscar)</a></td>
 																<td width="80"></td>
 																<td width="80"></td>
 																<td width="25"></td>
@@ -1365,3 +1370,96 @@
 	</table>	
 </div>
 
+
+
+		<div class="buscador_busquedaunidad" style="display:none;">	
+			<table width="100%" border="0" class="formaBusqueda_busquedaunidad">
+				<tr>
+					<td>
+						<div class="div_dos_busquedaunidad">
+							<table width="100%" border="0">
+								<thead>
+									<tr>
+										<td colspan="8" height="50" valign="top"><div class="titulo_busquedaunidad" width="100%"><strong>Buscador de Unidades</strong></div></td>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff;"></td>
+										<td colspan="2" style="background:#ffffff;" width="600">
+											
+											<table id="tabla_busqueda" border="1"  class="contenidobusqueda">
+												<tr>
+													<td colspan="7" width="600" height="10"></td>
+												</tr>
+												<tr>
+													<td width="75">No.&nbsp;Econ&oacute;mico</td>
+													<td width="125"><input type="text" name="cadena_noeconomico" style="width:125px;"></td>
+													<td width="25"></td>
+													<td width="40">Marca</td>
+													<td width="240"><input type="text" name="cadena_marca" style="width:240px;"></td>
+													<td width="25"></td>
+													<td width="70" align="right">
+														<input type="button" id="boton_busquedaunidad" class="onmouseOutBuscar">
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr style="font-size:13px;">
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="180"  style="background:#A8A9AB;">No.&nbsp;Econ&oacute;mico</td>
+										<td width="420"  style="background:#A8A9AB;">Marca</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td style="background:#ffffff; border: solid 1px #454442;" colspan="2" width="600">
+											<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+												<table  border="0" id="tabla_resultado" width="580">
+													
+												</table>
+											</div>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="4" height="3" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="180" style="background:#ffffff"></td>
+										<td width="420" style="background:#ffffff" align="right">
+											<input type="button" id="cencela" class="onmouseOutCancelar">
+										</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="4" height="6" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+								</tbody>
+								
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>

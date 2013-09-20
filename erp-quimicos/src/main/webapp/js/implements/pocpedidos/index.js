@@ -361,6 +361,123 @@ $(function() {
 	}
 	
 	
+	//Buscador de Unidades(Vehiculo)
+	$busca_unidades= function($id_vehiculo, $no_economico, $marca_vehiculo){
+		$(this).modalPanel_busquedaunidad();
+		var $dialogoc =  $('#forma-busquedaunidad-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_busquedaunidad').find('table.formaBusqueda_busquedaunidad').clone());
+		$('#forma-busquedaunidad-window').css({"margin-left": -200, 	"margin-top": -180});
+		
+		var $tabla_resultados = $('#forma-busquedaunidad-window').find('#tabla_resultado');
+		
+		var $boton_busquedaunidad = $('#forma-busquedaunidad-window').find('#boton_busquedaunidad');
+		var $cancelar_busqueda = $('#forma-busquedaunidad-window').find('#cencela');
+		
+		var $cadena_noeconomico = $('#forma-busquedaunidad-window').find('input[name=cadena_noeconomico]');
+		var $cadena_marca = $('#forma-busquedaunidad-window').find('input[name=cadena_marca]');
+		
+		
+		//funcionalidad botones
+		$boton_busquedaunidad.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$boton_busquedaunidad.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$cancelar_busqueda.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		
+		$cancelar_busqueda.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		$cadena_noeconomico.val($no_economico.val());
+		$cadena_marca.val($marca_vehiculo.val());
+		
+		
+		//click buscar clientes
+		$boton_busquedaunidad.click(function(event){
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorUnidades.json';
+			$arreglo = { 'no_economico':$cadena_noeconomico.val(),
+						 'marca':$cadena_marca.val(),
+						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+						}
+						
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Agentes'],function(entryIndex,agen){
+					trr = '<tr>';
+						trr += '<td width="180">';
+							trr += '<input type="hidden" id="id" value="'+agen['id']+'">';
+							trr += '<span class="no_eco">'+agen['folio']+'</span>';
+						trr += '</td>';
+						trr += '<td width="420"><span class="marca">'+agen['razon_social']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+						//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//Seleccionar un elemento del resultado
+				$tabla_resultados.find('tr').click(function(){
+					var idDetalle=0;
+					var idAgena = $(this).find('#id').val();
+					var noControl = $(this).find('span.no_control').html();
+					var razonSocial = $(this).find('span.razon').html();
+					
+					//LLamada a la funcion que agrega tr al grid
+					$agrega_agente_aduanal_grid($grid_agenaduanales, idDetalle, idCliente, idAgena, noControl, razonSocial);
+					
+					//Elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-busquedaunidad-overlay').fadeOut(remove);
+					
+					//Limpiar campos
+					$nombre_agena.val('');
+					$noagena.val('');
+
+					$nombre_agena.focus();
+				});
+			});
+		});//termina llamada json
+		
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_noeconomico.val().trim()!='' || $cadena_marca.val().trim()!=''){
+			$boton_busquedaunidad.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_noeconomico, $boton_busquedaunidad);
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_marca, $boton_busquedaunidad);
+		
+		$cancelar_busqueda.click(function(event){
+			var remove = function() {$(this).remove();};
+			$('#forma-busquedaunidad-overlay').fadeOut(remove);
+			
+			//$('#forma-clientsdf-window').find('input[name=cliente]').focus();
+		});
+		
+		$cadena_noeconomico.focus();
+	}//Termina buscador de Unidades(Vehiculos)
+
 	
 	
 	//buscador de presentaciones disponibles para un producto
@@ -1527,9 +1644,10 @@ $(function() {
 					$('#forma-pocpedidos-window').find('input[name=sku_producto]').focus();
 				});
 			}
-			
-		
 	}//termina agregar producto al grid
+	
+	
+	
 	
 	//nuevo pedido
 	$new_pedido.click(function(event){
@@ -1614,9 +1732,60 @@ $(function() {
 		var $impuesto = $('#forma-pocpedidos-window').find('input[name=impuesto]');
 		var $total = $('#forma-pocpedidos-window').find('input[name=total]');
 		
+		
+		var $pestana_transportista = $('#forma-pocpedidos-window').find('ul.pestanas').find('a[href=#tabx-2]');
+		var $check_flete = $('#forma-pocpedidos-window').find('input[name=check_flete]');
+		var $nombre_documentador = $('#forma-pocpedidos-window').find('input[name=nombre_documentador]');
+		var $valor_declarado = $('#forma-pocpedidos-window').find('input[name=valor_declarado]');
+		var $select_tviaje = $('#forma-pocpedidos-window').find('select[name=select_tviaje]');
+		var $remolque1 = $('#forma-pocpedidos-window').find('input[name=remolque1]');
+		var $remolque2 = $('#forma-pocpedidos-window').find('input[name=remolque2]');
+		
+		var $id_vehiculo = $('#forma-pocpedidos-window').find('input[name=id_vehiculo]');
+		var $no_economico = $('#forma-pocpedidos-window').find('input[name=no_economico]');
+		var $marca_vehiculo = $('#forma-pocpedidos-window').find('input[name=marca_vehiculo]');
+		
+		var $no_operador = $('#forma-pocpedidos-window').find('input[name=no_operador]');
+		var $nombre_operador = $('#forma-pocpedidos-window').find('input[name=nombre_operador]');
+		
+		var $agena_id = $('#forma-pocpedidos-window').find('input[name=agena_id]');
+		var $agena_no = $('#forma-pocpedidos-window').find('input[name=agena_no]');
+		var $agena_nombre = $('#forma-pocpedidos-window').find('input[name=agena_nombre]');
+		
+		var $select_pais_origen = $('#forma-pocpedidos-window').find('select[name=select_pais_origen]');
+		var $select_estado_origen = $('#forma-pocpedidos-window').find('select[name=select_estado_origen]');
+		var $select_municipio_origen = $('#forma-pocpedidos-window').find('select[name=select_municipio_origen]');
+		
+		var $select_pais_dest = $('#forma-pocpedidos-window').find('select[name=select_pais_dest]');
+		var $select_estado_dest = $('#forma-pocpedidos-window').find('select[name=select_estado_dest]');
+		var $select_municipio_dest = $('#forma-pocpedidos-window').find('select[name=select_municipio_dest]');
+		
+		var $rem_id = $('#forma-pocpedidos-window').find('input[name=rem_id]');
+		var $rem_no = $('#forma-pocpedidos-window').find('input[name=rem_no]');
+		var $rem_nombre = $('#forma-pocpedidos-window').find('input[name=rem_nombre]');
+		var $rem_dir = $('#forma-pocpedidos-window').find('input[name=rem_dir]');
+		var $rem_dir_alterna = $('#forma-pocpedidos-window').find('input[name=rem_dir_alterna]');
+		
+		var $dest_id = $('#forma-pocpedidos-window').find('input[name=dest_id]');
+		var $dest_no = $('#forma-pocpedidos-window').find('input[name=dest_no]');
+		var $dest_nombre = $('#forma-pocpedidos-window').find('input[name=dest_nombre]');
+		var $dest_dir = $('#forma-pocpedidos-window').find('input[name=dest_dir]');
+		var $dest_dir_alterna = $('#forma-pocpedidos-window').find('input[name=dest_dir_alterna]');
+		
+		var $observaciones_transportista = $('#forma-pocpedidos-window').find('textarea[name=observaciones_transportista]');
+		
+		var $busca_vehiculo = $('#forma-pocpedidos-window').find('a[href=busca_vehiculo]');
+		var $busca_operador = $('#forma-pocpedidos-window').find('a[href=busca_operador]');
+		var $busca_agena = $('#forma-pocpedidos-window').find('a[href=busca_agena]');
+		var $busca_remitente = $('#forma-pocpedidos-window').find('a[href=busca_remitente]');
+		var $busca_dest = $('#forma-pocpedidos-window').find('a[href=busca_dest]');
+		
+		
 		var $cerrar_plugin = $('#forma-pocpedidos-window').find('#close');
 		var $cancelar_plugin = $('#forma-pocpedidos-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-pocpedidos-window').find('#submit');
+		
+		$pestana_transportista.parent().hide();
 		
 		//$campo_factura.css({'background' : '#ffffff'});
 		
@@ -1635,7 +1804,8 @@ $(function() {
 		$folio.css({'background' : '#F0F0F0'});
 		//$nocliente.css({'background' : '#F0F0F0'});
 		$dir_cliente.css({'background' : '#F0F0F0'});
-		
+		$remolque2.css({'background' : '#F0F0F0'});
+		$remolque2.attr('readonly',true);
 		
 		//quitar enter a todos los campos input
 		$('#forma-pocpedidos-window').find('input').keypress(function(e){
@@ -1740,9 +1910,9 @@ $(function() {
 		
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
-			$incluye_produccion.val(entry['Extras']['0']['mod_produccion']);
+			$incluye_produccion.val(entry['Extras'][0]['mod_produccion']);
 			
-			if(entry['Extras']['0']['mod_produccion']=='true'){
+			if(entry['Extras'][0]['mod_produccion']=='true'){
 				$('#forma-pocpedidos-window').css({"margin-left": -400, 	"margin-top": -235});
 				$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'width':'1030px'});
 				$('#forma-pocpedidos-window').find('.pocpedidos_div_two').css({'width':'1030px'});
@@ -1807,6 +1977,175 @@ $(function() {
 				hmtl_alm += '<option value="' + alm['id'] + '"  >' + alm['titulo'] + '</option>';
 			});
 			$select_almacen.append(hmtl_alm);
+			
+			
+			
+			if(entry['Extras'][0]['transportista']=='true'){
+				$check_flete.attr('checked',  (entry['Extras'][0]['transportista']=='true')? true:false );
+				$pestana_transportista.parent().show();
+				$nombre_documentador.val(entry['Extras'][0]['nombre_empleado'].trim());
+				
+				$select_tviaje.change(function(){
+					var valor = $(this).val();
+					if(parseInt(valor)==1){
+						$remolque1.css({'background' : '#ffffff'});
+						$remolque2.css({'background' : '#F0F0F0'});
+						$remolque2.val('');
+						$remolque2.attr('readonly',true);
+					}else{
+						$remolque1.css({'background' : '#ffffff'});
+						$remolque2.css({'background' : '#ffffff'});
+						$remolque2.attr('readonly',false);
+					}
+				});
+				
+				
+				//Alimentar select pais origen
+				$select_pais_origen.children().remove();
+				var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar Pais-]</option>';
+				$.each(entry['Paises'],function(entryIndex,pais){
+					pais_hmtl += '<option value="' + pais['cve_pais'] + '"  >' + pais['pais_ent'] + '</option>';
+				});
+				$select_pais_origen.append(pais_hmtl);
+				
+				//Alimentar select estado origen
+				var entidad_hmtl = '<option value="0" selected="yes" >[-Seleccionar Estado--]</option>';
+				$select_estado_origen.children().remove();
+				$select_estado_origen.append(entidad_hmtl);
+				
+				//Alimentar select municipio origen
+				var localidad_hmtl = '<option value="0" selected="yes" >[-Seleccionar Municipio-]</option>';
+				$select_municipio_origen.children().remove();
+				$select_municipio_origen.append(localidad_hmtl);
+		
+				//Alimentar select pais destino
+				$select_pais_dest.children().remove();
+				$select_pais_dest.append(pais_hmtl);
+				
+				//Alimentar select estado destino
+				$select_estado_dest.children().remove();
+				$select_estado_dest.append(entidad_hmtl);
+				
+				//Alimentar select municipio destino
+				$select_municipio_dest.children().remove();
+				$select_municipio_dest.append(localidad_hmtl);
+				
+				//Carga select estados al cambiar el pais Origen
+				$select_pais_origen.change(function(){
+					var valor_pais = $(this).val();
+					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEstados.json';
+					$arreglo = {'id_pais':valor_pais};
+					$.post(input_json,$arreglo,function(entry){
+						$select_estado_origen.children().remove();
+						var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>'
+						$.each(entry['Estados'],function(entryIndex,entidad){
+							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
+						});
+						$select_estado_origen.append(entidad_hmtl);
+						
+						var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
+						$select_municipio_origen.children().remove();
+						$select_municipio_origen.append(trama_hmtl_localidades);
+					},"json");//termina llamada json
+				});
+				
+				//Carga select municipios al cambiar el estado origen
+				$select_estado_origen.change(function(){
+					var valor_entidad = $(this).val();
+					var valor_pais = $select_pais_origen.val();
+					
+					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMunicipios.json';
+					$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
+					$.post(input_json,$arreglo,function(entry){
+						$select_municipio_origen.children().remove();
+						var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>'
+						$.each(entry['Municipios'],function(entryIndex,mun){
+							trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
+						});
+						$select_municipio_origen.append(trama_hmtl_localidades);
+					},"json");//termina llamada json
+				});
+				
+				
+				
+				
+				//Carga select estados al cambiar el pais destino
+				$select_pais_dest.change(function(){
+					var valor_pais = $(this).val();
+					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEstados.json';
+					$arreglo = {'id_pais':valor_pais};
+					$.post(input_json,$arreglo,function(entry){
+						$select_estado_dest.children().remove();
+						var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>'
+						$.each(entry['Estados'],function(entryIndex,entidad){
+							entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
+						});
+						$select_estado_dest.append(entidad_hmtl);
+						
+						var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
+						$select_municipio_dest.children().remove();
+						$select_municipio_dest.append(trama_hmtl_localidades);
+					},"json");//termina llamada json
+				});
+				
+				//Carga select municipios al cambiar el estado destino
+				$select_estado_dest.change(function(){
+					var valor_entidad = $(this).val();
+					var valor_pais = $select_pais_dest.val();
+					
+					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMunicipios.json';
+					$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
+					$.post(input_json,$arreglo,function(entry){
+						$select_municipio_dest.children().remove();
+						var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>'
+						$.each(entry['Municipios'],function(entryIndex,mun){
+							trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
+						});
+						$select_municipio_dest.append(trama_hmtl_localidades);
+					},"json");//termina llamada json
+				});
+				
+				
+				
+				
+				//Buscador de Unidades(Vehiculo)
+				$busca_vehiculo.click(function(event){
+					event.preventDefault();
+					$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+				});
+				
+				//Buscador de Operadores
+				$busca_operador.click(function(event){
+					event.preventDefault();
+					//$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+				});
+				
+				//Buscador de Agentes Aduanales
+				$busca_agena.click(function(event){
+					event.preventDefault();
+					//$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+				});
+				
+				//Buscador de Remitentes
+				$busca_remitente.click(function(event){
+					event.preventDefault();
+					//$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+				});
+				
+				//Buscador de Destinatarios
+				$busca_dest.click(function(event){
+					event.preventDefault();
+					//$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+				});
+				
+			}
+			
+			
+			
+			
+			
+			
+			
 			
 			//buscador de clientes
 			$busca_cliente.click(function(event){
