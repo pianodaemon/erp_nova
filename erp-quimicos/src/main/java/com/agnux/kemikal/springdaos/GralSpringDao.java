@@ -1680,13 +1680,13 @@ public class GralSpringDao implements GralInterfaceDao{
         ArrayList<HashMap<String, String>> puesto = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
         sql_to_query,
             new Object[]{}, new RowMapper(){
-            @Override
-            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-            HashMap<String, Object> row = new HashMap<String, Object>();
-            row.put("id",String.valueOf(rs.getInt("id")));
-            row.put("puesto",rs.getString("puesto"));
-            return row;
-            }
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("puesto",rs.getString("puesto"));
+                    return row;
+                }
             }
         );
         return puesto;
@@ -1699,7 +1699,7 @@ public class GralSpringDao implements GralInterfaceDao{
 
 
 
-        //Catalogo de Departamentos
+    //Catalogo de Departamentos
     @Override
     public ArrayList<HashMap<String, Object>> getGralDeptos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
@@ -2148,5 +2148,19 @@ public class GralSpringDao implements GralInterfaceDao{
         return valor_retorno;
     }
 
+    
+    
+    @Override
+    public String getNombreEmpleadoByIdUser(Integer id_user) {
+        String sql_to_query = ""
+                + "SELECT (CASE WHEN gral_empleados.id IS NULL THEN '' ELSE (CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE gral_empleados.apellido_materno END) END) AS nombre_empleado "
+                + "FROM gral_usr "
+                + "LEFT JOIN gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
+                + "WHERE gral_usr.id="+id_user+";";
+        Map<String, Object> map_empleado = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String nombre_empleado = map_empleado.get("nombre_empleado").toString();
+        return nombre_empleado;
+    }    
+    
 
 }

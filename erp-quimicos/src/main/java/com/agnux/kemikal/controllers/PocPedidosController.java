@@ -192,14 +192,14 @@ public class PocPedidosController {
         return jsonretorno;
     }
     
-
+    
     //Trae los datos del pedido
     @RequestMapping(method = RequestMethod.POST, value="/getPedido.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPedidoJson(
             @RequestParam(value="id_pedido", required=true) String id_pedido,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getPedidoJson de {0}", PocPedidosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
@@ -213,6 +213,12 @@ public class PocPedidosController {
         ArrayList<HashMap<String, String>> metodos_pago = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> datosTrans = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> paises = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> estadosOrigen = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> municipiosOrigen = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> estadosDestino = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> municipiosDestino = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
         HashMap<String, String> tc = new HashMap<String, String>();
         
@@ -227,13 +233,23 @@ public class PocPedidosController {
         //Esta variable indica si la empresa incluye modulo de produccion
         extra.put("mod_produccion", userDat.get("incluye_produccion"));
         //Esta variable indica si la empresa es transportista
-        extra.put("transportista", userDat.get("transportista"));
-        
-        arrayExtra.add(0,extra);
+        extra.put("transportista", userDat.get("transportista").toLowerCase());
         
         if( !id_pedido.equals("0")  ){
             datosPedido = this.getPocDao().getPocPedido_Datos(Integer.parseInt(id_pedido));
             datosGrid = this.getPocDao().getPocPedido_DatosGrid(Integer.parseInt(id_pedido));
+            
+            if(userDat.get("transportista").toLowerCase().equals("true")){
+                //Aqui solo entra cuando la emprsa es transportista
+                datosTrans = this.getPocDao().getPocPedido_DatosTrans(Integer.parseInt(id_pedido));
+                
+                if(datosPedido.get(0).get("flete").equals("true")){
+                    estadosOrigen = this.getPocDao().getEntidadesForThisPais(datosTrans.get(0).get("pais_id_orig").toString());
+                    municipiosOrigen = this.getPocDao().getLocalidadesForThisEntidad(datosTrans.get(0).get("pais_id_orig").toString(), datosTrans.get(0).get("edo_id_orig").toString());
+                    estadosDestino = this.getPocDao().getEntidadesForThisPais(datosTrans.get(0).get("pais_id_dest").toString());
+                    municipiosDestino = this.getPocDao().getLocalidadesForThisEntidad(datosTrans.get(0).get("pais_id_dest").toString(), datosTrans.get(0).get("edo_id_dest").toString());   
+                }
+            }
         }
         
         valorIva= this.getPocDao().getValoriva(id_sucursal);
@@ -246,6 +262,17 @@ public class PocPedidosController {
         metodos_pago = this.getPocDao().getMetodosPago();
         almacenes = this.getPocDao().getPocPedido_Almacenes(id_sucursal);
         
+        if(userDat.get("transportista").toLowerCase().equals("true")){
+            //Aqui solo entra cuando la emprsa es transportista
+            paises = this.getPocDao().getPaises();
+            if(id_pedido.equals("0")){
+                //Solo cuando sea nuevo pedido
+                extra.put("nombre_empleado", this.getGralDao().getNombreEmpleadoByIdUser(id_usuario));
+            }
+        }
+        
+        arrayExtra.add(0,extra);
+        
         jsonretorno.put("datosPedido", datosPedido);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
@@ -256,10 +283,39 @@ public class PocPedidosController {
         jsonretorno.put("MetodosPago", metodos_pago);
         jsonretorno.put("Extras", arrayExtra);
         jsonretorno.put("Almacenes", almacenes);
+        jsonretorno.put("Paises", paises);
+        jsonretorno.put("EdoOrig", estadosOrigen);
+        jsonretorno.put("MunOrig", municipiosOrigen);
+        jsonretorno.put("EdoDest", estadosDestino);
+        jsonretorno.put("MunDest", municipiosDestino);
         return jsonretorno;
     }
     
     
+    //Obtiene el las Municipios de un Estado
+    @RequestMapping(method = RequestMethod.POST, value="/getMunicipios.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getMunicipiosJson(
+            @RequestParam(value="id_pais", required=true) String id_pais,
+            @RequestParam(value="id_entidad", required=true) String id_entidad,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        jsonretorno.put("Municipios", this.getPocDao().getLocalidadesForThisEntidad(id_pais, id_entidad));
+        return jsonretorno;
+    }
+    
+    
+    
+    //Obtiene el las Estados de un Pais
+    @RequestMapping(method = RequestMethod.POST, value="/getEstados.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getEstadosJson(
+            @RequestParam(value="id_pais", required=true) String id_pais,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        jsonretorno.put("Estados", this.getPocDao().getEntidadesForThisPais(id_pais));
+        return jsonretorno;
+    }
     
     
     //Buscador de clientes

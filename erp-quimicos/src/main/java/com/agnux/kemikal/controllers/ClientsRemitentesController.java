@@ -195,12 +195,9 @@ public class ClientsRemitentesController {
             @RequestParam(value="id_pais", required=true) String id_pais,
             @RequestParam(value="id_entidad", required=true) String id_entidad,
             Model model
-            ) {
-        
+        ) {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
-        
         jsonretorno.put("Municipios", this.getCxcDao().getLocalidadesForThisEntidad(id_pais, id_entidad));
-        
         return jsonretorno;
     }
     
@@ -214,7 +211,6 @@ public class ClientsRemitentesController {
         ) {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         jsonretorno.put("Estados", this.getCxcDao().getEntidadesForThisPais(id_pais));
-        
         return jsonretorno;
     }
     

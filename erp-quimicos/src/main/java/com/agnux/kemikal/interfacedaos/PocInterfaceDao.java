@@ -34,7 +34,7 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getValorivaById(Integer idImpto);
 
-    //metodos para aplicativo pedidos y autorizacion de pedidos
+    //Metodos para aplicativo pedidos y autorizacion de pedidos
     public ArrayList<HashMap<String, Object>> getPocPedidos_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getPocPedido_Datos(Integer id_pedido);
     public ArrayList<HashMap<String, String>> getPocPedido_DatosGrid(Integer id_pedido);
@@ -42,7 +42,14 @@ public interface PocInterfaceDao{
     public HashMap<String, String>  getPocPedido_Parametros(Integer id_emp, Integer id_suc);
     public ArrayList<HashMap<String, String>> getPocPedido_DireccionesFiscalesCliente(Integer id_cliente);
     public HashMap<String, String> getDatosPDF(Integer id_pedido);
-
+    
+    //Estos metodos se utilizan para obtener datos de transportista para el pedido
+    public ArrayList<HashMap<String, String>> getPocPedido_DatosTrans(Integer id_pedido);
+    public ArrayList<HashMap<String, String>> getPaises();
+    public ArrayList<HashMap<String, String>> getEntidadesForThisPais(String id_pais);
+    public ArrayList<HashMap<String, String>> getLocalidadesForThisEntidad(String id_pais,String id_entidad);
+    
+    
     //metodos para aplicativo Remisiones de CLientes
     public ArrayList<HashMap<String, Object>> getRemisiones_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getRemisiones_Datos(Integer id_remision);
@@ -59,9 +66,7 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String,String>> getAgente(Integer id_empresa);
     //metodo para alimentar el select de los estados de los pedidos
     public ArrayList<HashMap<String,String>> getEstadoPedido();
-
-
-
+    
     //reporte de Articulos Reservados   pocDao(Proceso Comercial).
     public ArrayList<HashMap<String, String>> getReporteArticulosReservados( Integer id_empresa, Integer id_usuario,String codigo, String descripcion);
 
@@ -100,8 +105,4 @@ public interface PocInterfaceDao{
     //Catalogo de condiciones de Venta
     public ArrayList<HashMap<String, Object>> getCotCondiciones_comerciales_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, String>> getCotCondiciones_Comerciales_Datos(Integer id);
-
-
-
-
 }

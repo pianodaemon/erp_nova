@@ -170,26 +170,24 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String, String>> getDiasNoLaborables(Integer id);
     public ArrayList<HashMap<String, Object>> getDiasNoLaborables_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     
-    
     //Estos son para email y password de compras
     public String geteMailPurchasingEmpresaEmisora(Integer id_empresa);
     public String getPasswordeMailPurchasingEmpresaEmisora(Integer id_empresa);
-    
     
     //Actualizador de codigo ISO
     public ArrayList<HashMap<String, String>> getCodigos_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getTitulo_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getCodigos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc,Integer id_empresa);
-
-    
     
     //Actualizador de Tipos de Cambio.
     public ArrayList<HashMap<String, String>> getTiposdeCambio();
     public ArrayList<HashMap<String, Object>> getTipocambio_PaginaGrid(String data_string, int offset, int items_por_pag, String orderby, String desc);
     public ArrayList<HashMap<String, String>> gettipoCambio_Datos(String erpmonedavers_id);                                         
-
-                                              
+    
     /*Descarga de ficha tecnica*/
     public ArrayList<HashMap<String, Object>> getFichaTecnica_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc,Integer id_empresa);
     public String getCodigoProductoById(String id_producto);
+    
+    //Obtiene el nombre del empleado a partir del id del usuario
+    public String getNombreEmpleadoByIdUser(Integer id_user);
 }

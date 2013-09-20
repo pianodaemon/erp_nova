@@ -163,7 +163,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "cxc_clie.cta_pago_mn, "
                 + "cxc_clie.cta_pago_usd,"
                 + "cxc_clie.lista_precio,"
-                + "poc_pedidos.enviar_obser_fac "
+                + "poc_pedidos.enviar_obser_fac,"
+                + "poc_pedidos.flete "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
         + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
@@ -211,6 +212,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("cta_pago_usd",rs.getString("cta_pago_usd"));
                     row.put("lista_precio",rs.getString("lista_precio"));
                     row.put("enviar_obser",String.valueOf(rs.getBoolean("enviar_obser_fac")));
+                    row.put("flete",String.valueOf(rs.getBoolean("flete")));
                     return row;
                 }
             }
@@ -380,8 +382,164 @@ public class PocSpringDao implements PocInterfaceDao{
 
         return mappdf;
     }
+   
+   
+   
+   
+    //Obtiene datos para el pedido cuando la empresa es transportista
+    @Override
+    public ArrayList<HashMap<String, String>> getPocPedido_DatosTrans(Integer id_pedido) {
+        String sql_query = ""
+        + "SELECT ped_trans.documentador,"
+            + "ped_trans.valor_declarado,"
+            + "ped_trans.tipo_viaje,"
+            + "ped_trans.remolque1,"
+            + "ped_trans.remolque2,"
+            + "ped_trans.no_operador,"
+            + "ped_trans.nombre_operador,"
+            + "ped_trans.gral_mun_id_orig AS mun_id_orig,"
+            + "ped_trans.gral_edo_id_orig AS edo_id_orig,"
+            + "ped_trans.gral_pais_id_orig AS pais_id_orig,"
+            + "ped_trans.gral_mun_id_dest AS mun_id_dest,"
+            + "ped_trans.gral_edo_id_dest AS edo_id_dest,"
+            + "ped_trans.gral_pais_id_dest AS pais_id_dest,"
+            + "ped_trans.trans_observaciones,"
+            + "(CASE WHEN log_vehiculos.id IS NULL THEN 0 ELSE log_vehiculos.id END) AS vehiculo_id,"
+            + "(CASE WHEN log_vehiculos.id IS NULL THEN '' ELSE log_vehiculos.numero_economico END) AS vehiculo_no,"
+            + "(CASE WHEN log_vehiculos.id IS NULL THEN '' ELSE log_vehiculos.marca END) AS vehiculo_marca,"
+            + "(CASE WHEN agen_a.id IS NULL THEN 0 ELSE agen_a.id END) AS agena_id,"
+            + "(CASE WHEN agen_a.id IS NULL THEN '' ELSE agen_a.folio END) AS agena_no,"
+            + "(CASE WHEN agen_a.id IS NULL THEN '' ELSE agen_a.razon_social END) AS agena_nombre,"
+            + "(CASE WHEN rem.id IS NULL THEN 0 ELSE rem.id END) AS rem_id,"
+            + "(CASE WHEN rem.id IS NULL THEN '' ELSE rem.folio END) AS rem_no,"
+            + "(CASE WHEN rem.id IS NULL THEN '' ELSE rem.razon_social END) AS rem_nombre,"
+            + "(CASE WHEN rem.id IS NULL THEN '' ELSE rem.calle||' '||rem.no_int||' '||rem.no_ext||', '||rem.colonia||', '||rem.municipio||', '||rem.estado||', '||rem.pais||' C.P. '||rem.cp END) AS rem_dir,"
+            + "ped_trans.rem_dir_alterna,"
+            + "(CASE WHEN dest.id IS NULL THEN 0 ELSE dest.id END) AS dest_id,"
+            + "(CASE WHEN dest.id IS NULL THEN '' ELSE dest.folio END) AS dest_no,"
+            + "(CASE WHEN dest.id IS NULL THEN '' ELSE dest.razon_social END) AS dest_nombre,"
+            + "(CASE WHEN dest.id IS NULL THEN '' ELSE dest.calle||' '||dest.no_int||' '||dest.no_ext||', '||dest.colonia||', '||dest.municipio||', '||dest.estado||', '||dest.pais||' C.P. '||dest.cp END) AS dest_dir,"
+            + "ped_trans.dest_dir_alterna "
+        + "FROM poc_ped_trans AS ped_trans "
+        + "LEFT JOIN (SELECT cxc_remitentes.id, cxc_remitentes.folio,cxc_remitentes.razon_social,(CASE WHEN cxc_remitentes.calle IS NULL THEN '' ELSE cxc_remitentes.calle END) AS calle, (CASE WHEN cxc_remitentes.no_int IS NULL THEN '' ELSE (CASE WHEN cxc_remitentes.no_int IS NULL OR cxc_remitentes.no_int='' THEN '' ELSE 'NO.INT.'||cxc_remitentes.no_int END)  END) AS no_int, (CASE WHEN cxc_remitentes.no_ext IS NULL THEN '' ELSE (CASE WHEN cxc_remitentes.no_ext IS NULL OR cxc_remitentes.no_ext='' THEN '' ELSE 'NO.EXT.'||cxc_remitentes.no_ext END)  END) AS no_ext, (CASE WHEN cxc_remitentes.colonia IS NULL THEN '' ELSE cxc_remitentes.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_remitentes.cp IS NULL THEN '' ELSE cxc_remitentes.cp END) AS cp FROM cxc_remitentes LEFT JOIN gral_pais ON gral_pais.id = cxc_remitentes.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_remitentes.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_remitentes.gral_mun_id) AS rem ON rem.id=ped_trans.cxc_remitente_id  "
+        + "LEFT JOIN (SELECT cxc_destinatarios.id, cxc_destinatarios.folio,cxc_destinatarios.razon_social,(CASE WHEN cxc_destinatarios.calle IS NULL THEN '' ELSE cxc_destinatarios.calle END) AS calle, (CASE WHEN cxc_destinatarios.no_int IS NULL THEN '' ELSE (CASE WHEN cxc_destinatarios.no_int IS NULL OR cxc_destinatarios.no_int='' THEN '' ELSE 'NO.INT.'||cxc_destinatarios.no_int END)  END) AS no_int, (CASE WHEN cxc_destinatarios.no_ext IS NULL THEN '' ELSE (CASE WHEN cxc_destinatarios.no_ext IS NULL OR cxc_destinatarios.no_ext='' THEN '' ELSE 'NO.EXT.'||cxc_destinatarios.no_ext END)  END) AS no_ext, (CASE WHEN cxc_destinatarios.colonia IS NULL THEN '' ELSE cxc_destinatarios.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_destinatarios.cp IS NULL THEN '' ELSE cxc_destinatarios.cp END) AS cp FROM cxc_destinatarios LEFT JOIN gral_pais ON gral_pais.id = cxc_destinatarios.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_destinatarios.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_destinatarios.gral_mun_id ) AS dest ON dest.id=ped_trans.cxc_destinatario_id "
+        + "LEFT JOIN cxc_agentes_aduanales AS agen_a ON agen_a.id=ped_trans.cxc_agente_aduanal_id "
+        + "LEFT JOIN log_vehiculos ON log_vehiculos.id=ped_trans.log_vehiculo_id "
+        + "WHERE ped_trans.poc_pedido_id=?;";
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_pedido)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("documentador",rs.getString("documentador"));
+                    row.put("valor_declarado",rs.getString("valor_declarado"));
+                    row.put("tipo_viaje",String.valueOf(rs.getInt("tipo_viaje")));
+                    row.put("remolque1",rs.getString("remolque1"));
+                    row.put("remolque2",rs.getString("remolque2"));
+                    row.put("no_operador",rs.getString("no_operador"));
+                    row.put("nombre_operador",rs.getString("nombre_operador"));
+                    row.put("mun_id_orig",String.valueOf(rs.getInt("mun_id_orig")));
+                    row.put("edo_id_orig",String.valueOf(rs.getInt("edo_id_orig")));
+                    row.put("pais_id_orig",String.valueOf(rs.getInt("pais_id_orig")));
+                    row.put("mun_id_dest",String.valueOf(rs.getInt("mun_id_dest")));
+                    row.put("edo_id_dest",String.valueOf(rs.getInt("edo_id_dest")));
+                    row.put("pais_id_dest",String.valueOf(rs.getInt("pais_id_dest")));
+                    row.put("trans_observaciones",rs.getString("trans_observaciones"));
+                    row.put("vehiculo_id",String.valueOf(rs.getInt("vehiculo_id")));
+                    row.put("vehiculo_no",rs.getString("vehiculo_no"));
+                    row.put("vehiculo_marca",rs.getString("vehiculo_marca"));
+                    row.put("agena_id",String.valueOf(rs.getInt("agena_id")));
+                    row.put("agena_no",rs.getString("agena_no"));
+                    row.put("agena_nombre",rs.getString("agena_nombre"));
+                    row.put("rem_id",String.valueOf(rs.getInt("rem_id")));
+                    row.put("rem_no",rs.getString("rem_no"));
+                    row.put("rem_nombre",rs.getString("rem_nombre"));
+                    row.put("rem_dir",rs.getString("rem_dir"));
+                    row.put("rem_dir_alterna",rs.getString("rem_dir_alterna"));
+                    row.put("dest_id",String.valueOf(rs.getInt("dest_id")));
+                    row.put("dest_no",rs.getString("dest_no"));
+                    row.put("dest_nombre",rs.getString("dest_nombre"));
+                    row.put("dest_dir",rs.getString("dest_dir"));
+                    row.put("dest_dir_alterna",rs.getString("dest_dir_alterna"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+   
+   
+   
+   
+   
+    @Override
+    public ArrayList<HashMap<String, String>> getPaises() {
+        String sql_to_query = "SELECT DISTINCT id as cve_pais, titulo as pais_ent FROM gral_pais;";
+        
+        ArrayList<HashMap<String, String>> pais = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cve_pais",rs.getString("cve_pais"));
+                    row.put("pais_ent",rs.getString("pais_ent"));
+                    return row;
+                }
+            }
+        );
+        return pais;
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getEntidadesForThisPais(String id_pais) {
+        String sql_to_query = "SELECT id as cve_ent, titulo as nom_ent FROM gral_edo WHERE pais_id="+id_pais+" order by nom_ent;";
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cve_ent",rs.getString("cve_ent"));
+                    row.put("nom_ent",rs.getString("nom_ent"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
 
 
+
+    @Override
+    public ArrayList<HashMap<String, String>> getLocalidadesForThisEntidad(String id_pais, String id_entidad) {
+        String sql_to_query = "SELECT id as cve_mun, titulo as nom_mun FROM gral_mun WHERE estado_id="+id_entidad+" and pais_id="+id_pais+" order by nom_mun;";
+
+        //System.out.println("Ejecutando query loc_for_this_entidad: "+sql_to_query);
+
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cve_mun",rs.getString("cve_mun"));
+                    row.put("nom_mun",rs.getString("nom_mun"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+   
+   
+   
+   
+   
+   
 
 
     @Override
