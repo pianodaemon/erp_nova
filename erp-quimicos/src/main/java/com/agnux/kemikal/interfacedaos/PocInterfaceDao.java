@@ -24,6 +24,18 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getProductoTipos();
     public ArrayList<HashMap<String, String>> getPresentacionesProducto(String sku,String lista_precio, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getBuscadorUnidades(String no_eco, String marca, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getDatosUnidadByNoEco(String no_economico, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getBuscadorOperadores(String no_operador, String nombre, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getDatosOperadorByNo(String no_operador, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getBuscadorAgentesAduanales(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosByNoAgenteAduanal(String no_control, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getBuscadorRemitentes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosClienteByNoRemitente(String no_control, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getDatosByNoDestinatario(String no_control, Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, Object>> getBuscadorDestinatarios(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
+    
+    
     public ArrayList<HashMap<String, String>> getVerificarImpuesto(Integer idSuc, Integer idTipoClient, ArrayList<HashMap<String, String>> productos);
     public ArrayList<HashMap<String, String>> getMonedas();
     public ArrayList<HashMap<String, String>> getAgentes(Integer id_empresa, Integer id_sucursal);

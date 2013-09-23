@@ -353,7 +353,7 @@ public class ClientsAsignaRemController {
         arreglo = new String[eliminado.length];
         for(int i=0; i<eliminado.length; i++) { 
             arreglo[i]= "'"+eliminado[i] +"___" + iddet[i] +"___" + idcli[i] +"___" + idrem[i] +"___" + noTr[i]+"'";
-            System.out.println(arreglo[i]);
+            //System.out.println(arreglo[i]);
         }
         
         //Serializar el arreglo

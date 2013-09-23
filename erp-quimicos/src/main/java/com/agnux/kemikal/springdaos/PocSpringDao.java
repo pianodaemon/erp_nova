@@ -1290,6 +1290,477 @@ public class PocSpringDao implements PocInterfaceDao{
     }
     
     
+    //Buscador de Unidades(Vehiculos)
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorUnidades(String no_eco, String marca, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+        if(id_sucursal!=0){
+            where = "AND gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = "SELECT id,numero_economico,marca FROM log_vehiculos WHERE numero_economico ILIKE '%"+no_eco+"%' AND marca ILIKE '%"+marca+"%' AND gral_emp_id="+id_empresa+" AND borrado_logico=false "+where+";";
+        
+        //System.out.println("getBuscadorUnidades: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("numero_economico",rs.getString("numero_economico"));
+                    row.put("marca",rs.getString("marca"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //obtener datos de la Unidad a partir del Numero de Economico
+    @Override
+    public ArrayList<HashMap<String, String>> getDatosUnidadByNoEco(String no_eco, Integer id_empresa, Integer id_sucursal) {
+        
+        String where="";
+        if(id_sucursal!=0){
+            where +=" AND gral_suc_id="+id_sucursal;
+        }
+        
+        String sql_query = "SELECT id,numero_economico,marca FROM log_vehiculos WHERE upper(numero_economico)='"+no_eco.toUpperCase()+"' AND gral_emp_id="+id_empresa+" AND borrado_logico=false "+where+" LIMIT 1;";
+        //System.out.println("getDatosVehiculo: "+sql_query);
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("numero_economico",rs.getString("numero_economico"));
+                    row.put("marca",rs.getString("marca"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Buscador de Operadores(Choferes)
+    @Override
+    public ArrayList<HashMap<String, String>> getBuscadorOperadores(String no_operador, String nombre, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+        if(id_sucursal!=0){
+            where = "AND sbt.gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+                + "SELECT * FROM ( "
+                    + "SELECT  id, clave, (CASE WHEN nombre IS NULL THEN '' ELSE nombre END)||' '||(CASE WHEN apellido_paterno IS NULL THEN '' ELSE apellido_paterno END)||' '||(CASE WHEN apellido_materno IS NULL THEN '' ELSE apellido_materno END) AS nombre, gral_emp_id, gral_suc_id, borrado_logico "
+                    + "FROM log_choferes"
+                + ") AS sbt "
+                + "WHERE sbt.clave ILIKE '%"+no_operador+"%' AND sbt.nombre ILIKE '%"+nombre+"%' AND sbt.gral_emp_id="+id_empresa+" AND sbt.borrado_logico=false "+where+";";
+        
+        //System.out.println("getBuscadorUnidades: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("clave",rs.getString("clave"));
+                    row.put("nombre",rs.getString("nombre"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //obtener datos del Operador a partir de la clave
+    @Override
+    public ArrayList<HashMap<String, String>> getDatosOperadorByNo(String no_operador, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+        if(id_sucursal!=0){
+            where = "AND sbt.gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+                + "SELECT * FROM ( "
+                    + "SELECT  id, clave, (CASE WHEN nombre IS NULL THEN '' ELSE nombre END)||' '||(CASE WHEN apellido_paterno IS NULL THEN '' ELSE apellido_paterno END)||' '||(CASE WHEN apellido_materno IS NULL THEN '' ELSE apellido_materno END) AS nombre, gral_emp_id, gral_suc_id, borrado_logico "
+                    + "FROM log_choferes"
+                + ") AS sbt "
+                + "WHERE upper(sbt.clave)='"+no_operador.toUpperCase()+"' AND sbt.gral_emp_id="+id_empresa+" AND sbt.borrado_logico=false "+where+" LIMIT 1;";
+        
+        //System.out.println("getBuscadorUnidades: "+sql_query);
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("clave",rs.getString("clave"));
+                    row.put("nombre",rs.getString("nombre"));
+                    return row;
+                }
+            }
+        );
+        return hm;    
+    }
+    
+    
+    //Buscador de Agentes Aduanales
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorAgentesAduanales(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+        
+	if(filtro == 1){
+            where=" AND cxc_agentes_aduanales.folio ilike '%"+cadena+"%'";
+	}
+        /*
+	if(filtro == 2){
+            where=" AND cxc_agentes_aduanales.rfc ilike '%"+cadena+"%'";
+	}
+        */
+	if(filtro == 3){
+            where=" AND cxc_agentes_aduanales.razon_social ilike '%"+cadena+"%'";
+	}
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND cxc_agentes_aduanales.gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT cxc_agentes_aduanales.id,cxc_agentes_aduanales.folio, cxc_agentes_aduanales.razon_social, cxc_agentes_aduanales.tipo "
+        +"FROM cxc_agentes_aduanales "
+        +" WHERE cxc_agentes_aduanales.gral_emp_id ="+id_empresa+"  "
+        +" AND cxc_agentes_aduanales.borrado_logico=false  "+where+" "
+        + "ORDER BY id limit 100;";
+        
+        System.out.println("BuscarAgenA: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    //row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm_dest;
+    }
+    
+    //Obtener datos del Agente Aduanal a partir del Numero de Control
+    @Override
+    public ArrayList<HashMap<String, Object>> getDatosByNoAgenteAduanal(String no_control, Integer id_empresa, Integer id_sucursal) {
+        
+        String where="";
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND cxc_agentes_aduanales.gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT cxc_agentes_aduanales.id,cxc_agentes_aduanales.folio, cxc_agentes_aduanales.razon_social, cxc_agentes_aduanales.tipo "
+        +"FROM cxc_agentes_aduanales "
+        +" WHERE cxc_agentes_aduanales.gral_emp_id ="+id_empresa+"  "
+        +" AND cxc_agentes_aduanales.borrado_logico=false  "+where+" "
+        + "AND cxc_agentes_aduanales.folio='"+no_control.toUpperCase()+"'"
+        + "ORDER BY id limit 1;";
+        
+        System.out.println("getDatosAgenA: "+sql_query);
+        
+        ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("tipo",rs.getInt("tipo"));
+                    return row;
+                }
+            }
+        );
+        return hm_dest;
+    }
+    
+    //Buscador de Remitentes
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorRemitentes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+        
+	if(filtro == 1){
+            where=" AND cxc_remitentes.folio ilike '%"+cadena+"%'";
+	}
+	if(filtro == 2){
+            where=" AND cxc_remitentes.rfc ilike '%"+cadena+"%'";
+	}
+	if(filtro == 3){
+            where=" AND cxc_remitentes.razon_social ilike '%"+cadena+"%'";
+	}
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND cxc_remitentes.gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT "
+            + "id,"
+            + "folio,"
+            + "razon_social,"
+            + "rfc,"
+            + "(CASE WHEN rem.id IS NULL THEN '' ELSE rem.calle||' '||rem.no_int||' '||rem.no_ext||', '||rem.colonia||', '||rem.municipio||', '||rem.estado||', '||rem.pais||' C.P. '||rem.cp END) AS dir "
+        + "FROM("
+                + "SELECT cxc_remitentes.id, "
+                    + "cxc_remitentes.folio,"
+                    + "cxc_remitentes.razon_social,"
+                    + "cxc_remitentes.rfc,"
+                    + "(CASE WHEN cxc_remitentes.calle IS NULL THEN '' ELSE cxc_remitentes.calle END) AS calle, "
+                    + "(CASE WHEN cxc_remitentes.no_int IS NULL THEN '' ELSE (CASE WHEN cxc_remitentes.no_int IS NULL OR cxc_remitentes.no_int='' THEN '' ELSE 'NO.INT.'||cxc_remitentes.no_int END)  END) AS no_int, "
+                    + "(CASE WHEN cxc_remitentes.no_ext IS NULL THEN '' ELSE (CASE WHEN cxc_remitentes.no_ext IS NULL OR cxc_remitentes.no_ext='' THEN '' ELSE 'NO.EXT.'||cxc_remitentes.no_ext END)  END) AS no_ext, "
+                    + "(CASE WHEN cxc_remitentes.colonia IS NULL THEN '' ELSE cxc_remitentes.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,"
+                    + "(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,"
+                    + "(CASE WHEN cxc_remitentes.cp IS NULL THEN '' ELSE cxc_remitentes.cp END) AS cp "
+                + "FROM cxc_remitentes "
+                + "LEFT JOIN gral_pais ON gral_pais.id = cxc_remitentes.gral_pais_id "
+                + "LEFT JOIN gral_edo ON gral_edo.id = cxc_remitentes.gral_edo_id "
+                + "LEFT JOIN gral_mun ON gral_mun.id = cxc_remitentes.gral_mun_id "
+                +" WHERE cxc_remitentes.gral_emp_id ="+id_empresa+"  "
+                +" AND cxc_remitentes.borrado_logico=false  "+where+" "
+        + ") AS rem ORDER BY id limit 100;";
+        
+        //System.out.println("BuscarRemitente: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_rem = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("dir",rs.getString("dir"));
+                    return row;
+                }
+            }
+        );
+        return hm_rem;
+    }
+    
+    //Obtener datos del Remitente a partir del Numero de Control
+    @Override
+    public ArrayList<HashMap<String, Object>> getDatosClienteByNoRemitente(String no_control, Integer id_empresa, Integer id_sucursal) {
+
+        String where="";
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND cxc_remitentes.gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT "
+            + "id,"
+            + "folio,"
+            + "razon_social,"
+            + "rfc,"
+            + "(CASE WHEN rem.id IS NULL THEN '' ELSE rem.calle||' '||rem.no_int||' '||rem.no_ext||', '||rem.colonia||', '||rem.municipio||', '||rem.estado||', '||rem.pais||' C.P. '||rem.cp END) AS dir "
+        + "FROM("
+                + "SELECT cxc_remitentes.id, "
+                    + "cxc_remitentes.folio,"
+                    + "cxc_remitentes.razon_social,"
+                    + "cxc_remitentes.rfc,"
+                    + "(CASE WHEN cxc_remitentes.calle IS NULL THEN '' ELSE cxc_remitentes.calle END) AS calle, "
+                    + "(CASE WHEN cxc_remitentes.no_int IS NULL THEN '' ELSE (CASE WHEN cxc_remitentes.no_int IS NULL OR cxc_remitentes.no_int='' THEN '' ELSE 'NO.INT.'||cxc_remitentes.no_int END)  END) AS no_int, "
+                    + "(CASE WHEN cxc_remitentes.no_ext IS NULL THEN '' ELSE (CASE WHEN cxc_remitentes.no_ext IS NULL OR cxc_remitentes.no_ext='' THEN '' ELSE 'NO.EXT.'||cxc_remitentes.no_ext END)  END) AS no_ext, "
+                    + "(CASE WHEN cxc_remitentes.colonia IS NULL THEN '' ELSE cxc_remitentes.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,"
+                    + "(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,"
+                    + "(CASE WHEN cxc_remitentes.cp IS NULL THEN '' ELSE cxc_remitentes.cp END) AS cp "
+                + "FROM cxc_remitentes "
+                + "LEFT JOIN gral_pais ON gral_pais.id = cxc_remitentes.gral_pais_id "
+                + "LEFT JOIN gral_edo ON gral_edo.id = cxc_remitentes.gral_edo_id "
+                + "LEFT JOIN gral_mun ON gral_mun.id = cxc_remitentes.gral_mun_id "
+                +" WHERE cxc_remitentes.gral_emp_id ="+id_empresa+"  "
+                +" AND cxc_remitentes.borrado_logico=false  "+where+" "
+                + "AND cxc_remitentes.folio='"+no_control.toUpperCase()+"'"
+        + ") AS rem ORDER BY id limit 1;";
+        
+        
+        //System.out.println("getDatosRemitente: "+sql_query);
+
+        ArrayList<HashMap<String, Object>> hm_rem = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("dir",rs.getString("dir"));
+                    return row;
+                }
+            }
+        );
+        return hm_rem;
+    }
+    
+    
+    
+    //Buscador de Destinatarios
+    @Override
+    public ArrayList<HashMap<String, Object>> getBuscadorDestinatarios(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal) {
+        String where="";
+        
+	if(filtro == 1){
+            where=" AND cxc_destinatarios.folio ilike '%"+cadena+"%'";
+	}
+	if(filtro == 2){
+            where=" AND cxc_destinatarios.rfc ilike '%"+cadena+"%'";
+	}
+	if(filtro == 3){
+            where=" AND cxc_destinatarios.razon_social ilike '%"+cadena+"%'";
+	}
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND cxc_destinatarios.gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT "
+            + "id,"
+            + "folio,"
+            + "razon_social,"
+            + "rfc,"
+            + "(CASE WHEN dest.id IS NULL THEN '' ELSE dest.calle||' '||dest.no_int||' '||dest.no_ext||', '||dest.colonia||', '||dest.municipio||', '||dest.estado||', '||dest.pais||' C.P. '||dest.cp END) AS dir  "
+        + "FROM("
+                + "SELECT cxc_destinatarios.id, "
+                    + "cxc_destinatarios.folio,"
+                    + "cxc_destinatarios.razon_social,"
+                    + "cxc_destinatarios.rfc,"
+                    + "(CASE WHEN cxc_destinatarios.calle IS NULL THEN '' ELSE cxc_destinatarios.calle END) AS calle, "
+                    + "(CASE WHEN cxc_destinatarios.no_int IS NULL THEN '' ELSE (CASE WHEN cxc_destinatarios.no_int IS NULL OR cxc_destinatarios.no_int='' THEN '' ELSE 'NO.INT.'||cxc_destinatarios.no_int END)  END) AS no_int, "
+                    + "(CASE WHEN cxc_destinatarios.no_ext IS NULL THEN '' ELSE (CASE WHEN cxc_destinatarios.no_ext IS NULL OR cxc_destinatarios.no_ext='' THEN '' ELSE 'NO.EXT.'||cxc_destinatarios.no_ext END)  END) AS no_ext, "
+                    + "(CASE WHEN cxc_destinatarios.colonia IS NULL THEN '' ELSE cxc_destinatarios.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,"
+                    + "(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,"
+                    + "(CASE WHEN cxc_destinatarios.cp IS NULL THEN '' ELSE cxc_destinatarios.cp END) AS cp "
+                + "FROM cxc_destinatarios "
+                + "LEFT JOIN gral_pais ON gral_pais.id = cxc_destinatarios.gral_pais_id "
+                + "LEFT JOIN gral_edo ON gral_edo.id = cxc_destinatarios.gral_edo_id "
+                + "LEFT JOIN gral_mun ON gral_mun.id = cxc_destinatarios.gral_mun_id  "
+                +" WHERE cxc_destinatarios.gral_emp_id ="+id_empresa+"  "
+                +" AND cxc_destinatarios.borrado_logico=false  "+where+" "
+        + ") AS dest ORDER BY id limit 100;";
+        
+        //System.out.println("BuscarDest: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("dir",rs.getString("dir"));
+                    return row;
+                }
+            }
+        );
+        return hm_dest;
+    }
+    
+    //Obtener datos del Destinatario a partir del Numero de Control
+    @Override
+    public ArrayList<HashMap<String, Object>> getDatosByNoDestinatario(String no_control, Integer id_empresa, Integer id_sucursal) {
+        
+        String where="";
+        if(id_sucursal==0){
+            where +="";
+        }else{
+            where +=" AND cxc_destinatarios.gral_suc_id="+id_sucursal;
+        }
+        
+	String sql_query = ""
+        + "SELECT "
+            + "id,"
+            + "folio,"
+            + "razon_social,"
+            + "rfc,"
+            + "(CASE WHEN dest.id IS NULL THEN '' ELSE dest.calle||' '||dest.no_int||' '||dest.no_ext||', '||dest.colonia||', '||dest.municipio||', '||dest.estado||', '||dest.pais||' C.P. '||dest.cp END) AS dir  "
+        + "FROM("
+                + "SELECT cxc_destinatarios.id, "
+                    + "cxc_destinatarios.folio,"
+                    + "cxc_destinatarios.razon_social,"
+                    + "cxc_destinatarios.rfc,"
+                    + "(CASE WHEN cxc_destinatarios.calle IS NULL THEN '' ELSE cxc_destinatarios.calle END) AS calle, "
+                    + "(CASE WHEN cxc_destinatarios.no_int IS NULL THEN '' ELSE (CASE WHEN cxc_destinatarios.no_int IS NULL OR cxc_destinatarios.no_int='' THEN '' ELSE 'NO.INT.'||cxc_destinatarios.no_int END)  END) AS no_int, "
+                    + "(CASE WHEN cxc_destinatarios.no_ext IS NULL THEN '' ELSE (CASE WHEN cxc_destinatarios.no_ext IS NULL OR cxc_destinatarios.no_ext='' THEN '' ELSE 'NO.EXT.'||cxc_destinatarios.no_ext END)  END) AS no_ext, "
+                    + "(CASE WHEN cxc_destinatarios.colonia IS NULL THEN '' ELSE cxc_destinatarios.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,"
+                    + "(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,"
+                    + "(CASE WHEN cxc_destinatarios.cp IS NULL THEN '' ELSE cxc_destinatarios.cp END) AS cp "
+                + "FROM cxc_destinatarios "
+                + "LEFT JOIN gral_pais ON gral_pais.id = cxc_destinatarios.gral_pais_id "
+                + "LEFT JOIN gral_edo ON gral_edo.id = cxc_destinatarios.gral_edo_id "
+                + "LEFT JOIN gral_mun ON gral_mun.id = cxc_destinatarios.gral_mun_id  "
+                +" WHERE cxc_destinatarios.gral_emp_id ="+id_empresa+"  "
+                +" AND cxc_destinatarios.borrado_logico=false  "+where+" "
+                + "AND cxc_destinatarios.folio='"+no_control.toUpperCase()+"'"
+        + ") AS dest ORDER BY id limit 1;";
+        
+        //System.out.println("getDatosDest: "+sql_query);
+        
+        ArrayList<HashMap<String, Object>> hm_dest = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("dir",rs.getString("dir"));
+                    return row;
+                }
+            }
+        );
+        return hm_dest;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     //obtener el tipo de Cliente
     @Override
     public int getTipoClient(Integer idClient) {

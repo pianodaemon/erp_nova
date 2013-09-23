@@ -482,6 +482,280 @@ public class PocPedidosController {
     
     
     
+    //Buscar Unidades(vehiculos)
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorUnidades.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorUnidadesJson(
+            @RequestParam(value="no_economico", required=true) String no_economico,
+            @RequestParam(value="marca", required=true) String marca,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        //Le pasamos sucursal cro para que no aplique el filtro
+        Integer id_sucursal=0;
+        jsonretorno.put("Vehiculos", this.getPocDao().getBuscadorUnidades(no_economico,marca,id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    //Obtener datos de la Unidad a partir del Numero economico
+    @RequestMapping(method = RequestMethod.POST, value="/getDataUnidadByNoEco.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataUnidadByNoEcoJson(
+            @RequestParam(value="no_economico", required=true) String no_economico,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //Le pasamos sucursal cro para que no aplique el filtro
+        Integer id_sucursal=0;
+        jsonretorno.put("Vehiculo", this.getPocDao().getDatosUnidadByNoEco(no_economico, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+
+    
+    //Buscar Operadores(choferes)
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorOperadores.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscadorOperadoresJson(
+            @RequestParam(value="no_operador", required=true) String no_operador,
+            @RequestParam(value="nombre", required=true) String nombre,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        //Le pasamos sucursal cro para que no aplique el filtro
+        Integer id_sucursal=0;
+        jsonretorno.put("Operadores", this.getPocDao().getBuscadorOperadores(no_operador,nombre,id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //Obtener datos del Operador a partir de la clave
+    @RequestMapping(method = RequestMethod.POST, value="/getDataOperadorByNo.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataOperadorByNoJson(
+            @RequestParam(value="no_operador", required=true) String no_operador,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //Le pasamos sucursal cro para que no aplique el filtro
+        Integer id_sucursal=0;
+        jsonretorno.put("Operador", this.getPocDao().getDatosOperadorByNo(no_operador, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    //Buscador de Agentes Aduanales
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorAgenA.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorAgenAJson(
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="filtro", required=true) Integer filtro,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        //System.out.println("id_usuario: "+id_usuario);
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = 0;//se le asigna cero para que no filtre por sucursal
+        
+        jsonretorno.put("AgentesAduanales", this.getPocDao().getBuscadorAgentesAduanales(cadena,filtro,id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    //Obtener datos del Agente Aduanal a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoAgen.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataByNoAgenAJson(
+            @RequestParam(value="no_control", required=true) String no_control,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer id_sucursal = 0;
+        
+        jsonretorno.put("AgenA", this.getPocDao().getDatosByNoAgenteAduanal(no_control, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    //Buscador de Remitentes
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorRemitentes.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorRemitentesJson(
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="filtro", required=true) Integer filtro,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        //System.out.println("id_usuario: "+id_usuario);
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = 0;//se le asigna cero para que no filtre por sucursal
+        
+        jsonretorno.put("Remitentes", this.getPocDao().getBuscadorRemitentes(cadena,filtro,id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    //Obtener datos del cliente a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoRemitente.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataByNoRemitenteJson(
+            @RequestParam(value="no_control", required=true) String no_control,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer id_sucursal = 0;
+        
+        jsonretorno.put("Remitente", this.getPocDao().getDatosClienteByNoRemitente(no_control, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //Buscador de Destinatarios
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorDestinatarios.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getBuscadorDestinatariosJson(
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="filtro", required=true) Integer filtro,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+            ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        //System.out.println("id_usuario: "+id_usuario);
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = 0;//se le asigna cero para que no filtre por sucursal
+        
+        jsonretorno.put("Destinatarios", this.getPocDao().getBuscadorDestinatarios(cadena,filtro,id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }
+    
+    
+    //Obtener datos del Destinatario a partir del Numero de Control
+    @RequestMapping(method = RequestMethod.POST, value="/getDataByNoDestinatario.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataByNoDestinatarioJson(
+            @RequestParam(value="no_control", required=true) String no_control,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+       
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer id_sucursal = 0;
+        
+        jsonretorno.put("Dest", this.getPocDao().getDatosByNoDestinatario(no_control, id_empresa, id_sucursal));
+        
+        return jsonretorno;
+    }    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     //edicion y nuevo
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
