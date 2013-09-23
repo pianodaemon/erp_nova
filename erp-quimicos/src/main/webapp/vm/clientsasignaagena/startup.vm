@@ -354,7 +354,7 @@
 		</div>
 		
 		
-		<!--Aqui comienza el formulario para el buscador de Destinatarios-->
+		<!--Aqui comienza el formulario para el buscador de Agentes Aduanales-->
 		<div class="buscador_buscaagen" style="display:none;">	
 			<table width="100%" border="0" class="formaBusqueda_buscaagen">
 				<tr>
@@ -363,7 +363,7 @@
 							<table width="100%" border="0">
 								<thead>
 									<tr>
-										<td colspan="8" height="50" valign="top"><div class="titulo_buscaagen" width="100%"><strong>Buscador de Destinatarios</strong></div></td>
+										<td colspan="8" height="50" valign="top"><div class="titulo_buscaagen" width="100%"><strong>Buscador de Agentes Aduanales</strong></div></td>
 									</tr>
 								</thead>
 								<tbody>

@@ -429,7 +429,7 @@ $(function() {
 		});
 		
 		$cadena_buscar.focus();
-	}//Termina buscador de Remitentes
+	}//Termina buscador de destinatarios
 	
 	
 	

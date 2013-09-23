@@ -374,8 +374,8 @@ $(function() {
 		var $boton_busquedaunidad = $('#forma-busquedaunidad-window').find('#boton_busquedaunidad');
 		var $cancelar_busqueda = $('#forma-busquedaunidad-window').find('#cencela');
 		
-		var $cadena_noeconomico = $('#forma-busquedaunidad-window').find('input[name=cadena_noeconomico]');
-		var $cadena_marca = $('#forma-busquedaunidad-window').find('input[name=cadena_marca]');
+		var $cadena_nooperador = $('#forma-busquedaunidad-window').find('input[name=cadena_nooperador]');
+		var $cadena_nombre = $('#forma-busquedaunidad-window').find('input[name=cadena_nombre]');
 		
 		
 		//funcionalidad botones
@@ -394,28 +394,28 @@ $(function() {
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
-		$cadena_noeconomico.val($no_economico.val());
-		$cadena_marca.val($marca_vehiculo.val());
+		$cadena_nooperador.val($no_economico.val());
+		$cadena_nombre.val($marca_vehiculo.val());
 		
 		
 		//click buscar clientes
 		$boton_busquedaunidad.click(function(event){
 			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorUnidades.json';
-			$arreglo = { 'no_economico':$cadena_noeconomico.val(),
-						 'marca':$cadena_marca.val(),
+			$arreglo = { 'no_economico':$cadena_nooperador.val(),
+						 'marca':$cadena_nombre.val(),
 						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						}
 						
 			var trr = '';
 			$tabla_resultados.children().remove();
 			$.post(input_json,$arreglo,function(entry){
-				$.each(entry['Agentes'],function(entryIndex,agen){
+				$.each(entry['Vehiculos'],function(entryIndex,vehiculo){
 					trr = '<tr>';
 						trr += '<td width="180">';
-							trr += '<input type="hidden" id="id" value="'+agen['id']+'">';
-							trr += '<span class="no_eco">'+agen['folio']+'</span>';
+							trr += '<input type="hidden" id="id" value="'+vehiculo['id']+'">';
+							trr += '<span class="no_eco">'+vehiculo['numero_economico']+'</span>';
 						trr += '</td>';
-						trr += '<td width="420"><span class="marca">'+agen['razon_social']+'</span></td>';
+						trr += '<td width="420"><span class="marca">'+vehiculo['marca']+'</span></td>';
 					trr += '</tr>';
 					
 					$tabla_resultados.append(trr);
@@ -438,46 +438,564 @@ $(function() {
 				
 				//Seleccionar un elemento del resultado
 				$tabla_resultados.find('tr').click(function(){
-					var idDetalle=0;
-					var idAgena = $(this).find('#id').val();
-					var noControl = $(this).find('span.no_control').html();
-					var razonSocial = $(this).find('span.razon').html();
 					
-					//LLamada a la funcion que agrega tr al grid
-					$agrega_agente_aduanal_grid($grid_agenaduanales, idDetalle, idCliente, idAgena, noControl, razonSocial);
+					$id_vehiculo.val($(this).find('#id').val());
+					$no_economico.val($(this).find('span.no_eco').html());
+					$marca_vehiculo.val($(this).find('span.marca').html());
 					
 					//Elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
 					$('#forma-busquedaunidad-overlay').fadeOut(remove);
 					
-					//Limpiar campos
-					$nombre_agena.val('');
-					$noagena.val('');
-
-					$nombre_agena.focus();
+					$no_economico.focus();
 				});
 			});
 		});//termina llamada json
 		
 		
 		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
-		if($cadena_noeconomico.val().trim()!='' || $cadena_marca.val().trim()!=''){
+		if($cadena_nooperador.val().trim()!='' || $cadena_nombre.val().trim()!=''){
 			$boton_busquedaunidad.trigger('click');
 		}
 		
-		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_noeconomico, $boton_busquedaunidad);
-		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_marca, $boton_busquedaunidad);
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_nooperador, $boton_busquedaunidad);
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_nombre, $boton_busquedaunidad);
 		
 		$cancelar_busqueda.click(function(event){
 			var remove = function() {$(this).remove();};
 			$('#forma-busquedaunidad-overlay').fadeOut(remove);
-			
-			//$('#forma-clientsdf-window').find('input[name=cliente]').focus();
 		});
 		
-		$cadena_noeconomico.focus();
+		$no_economico.focus();
 	}//Termina buscador de Unidades(Vehiculos)
 
+	
+	//Buscador de Operadores(Chofer)
+	$busca_operadores= function($no_operador, $nombre_operador){
+		$(this).modalPanel_busquedaoperador();
+		var $dialogoc =  $('#forma-busquedaoperador-window');
+		$dialogoc.append($('div.buscador_busquedaoperador').find('table.formaBusqueda_busquedaoperador').clone());
+		$('#forma-busquedaoperador-window').css({"margin-left": -200, 	"margin-top": -180});
+		
+		var $tabla_resultados = $('#forma-busquedaoperador-window').find('#tabla_resultado');
+		
+		var $boton_busquedaoperador = $('#forma-busquedaoperador-window').find('#boton_busquedaoperador');
+		var $cancelar_busqueda = $('#forma-busquedaoperador-window').find('#cencela');
+		
+		var $cadena_nooperador = $('#forma-busquedaoperador-window').find('input[name=cadena_nooperador]');
+		var $cadena_nombre = $('#forma-busquedaoperador-window').find('input[name=cadena_nombre]');
+		
+		//funcionalidad botones
+		$boton_busquedaoperador.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$boton_busquedaoperador.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$cancelar_busqueda.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		
+		$cancelar_busqueda.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		$cadena_nooperador.val($cadena_nooperador.val());
+		$cadena_nombre.val($nombre_operador.val());
+		
+		//click buscar clientes
+		$boton_busquedaoperador.click(function(event){
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorOperadores.json';
+			$arreglo = { 'no_operador':$cadena_nooperador.val(),
+						 'nombre':$cadena_nombre.val(),
+						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+						}
+						
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Operadores'],function(entryIndex,operador){
+					trr = '<tr>';
+						trr += '<td width="180">';
+							trr += '<input type="hidden" id="id" value="'+operador['id']+'">';
+							trr += '<span class="no_ope">'+operador['clave']+'</span>';
+						trr += '</td>';
+						trr += '<td width="420"><span class="nombre">'+operador['nombre']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+						//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//Seleccionar un elemento del resultado
+				$tabla_resultados.find('tr').click(function(){
+					$no_operador.val($(this).find('span.no_ope').html());
+					$nombre_operador.val($(this).find('span.nombre').html());
+					
+					//Elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-busquedaoperador-overlay').fadeOut(remove);
+					
+					$no_operador.focus();
+				});
+			});
+		});//termina llamada json
+		
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_nooperador.val().trim()!='' || $cadena_nombre.val().trim()!=''){
+			$boton_busquedaoperador.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_nooperador, $boton_busquedaoperador);
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_nombre, $boton_busquedaoperador);
+		
+		$cancelar_busqueda.click(function(event){
+			var remove = function() {$(this).remove();};
+			$('#forma-busquedaoperador-overlay').fadeOut(remove);
+		});
+		
+		$no_operador.focus();
+	}//Termina buscador de Operadores(Choferes)
+	
+	
+	
+	//Buscador de Agentes Aduanales
+	$busca_agentes_aduanales= function($agena_id, $noagena, $noagenambre){
+		$(this).modalPanel_buscaagen();
+		var $dialogoc =  $('#forma-buscaagen-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_buscaagen').find('table.formaBusqueda_buscaagen').clone());
+		$('#forma-buscaagen-window').css({"margin-left": -200, 	"margin-top": -180});
+		
+		var $tabla_resultados = $('#forma-buscaagen-window').find('#tabla_resultado');
+		
+		var $boton_buscaagen = $('#forma-buscaagen-window').find('#boton_buscaagen');
+		var $cancelar_busqueda = $('#forma-buscaagen-window').find('#cencela');
+		
+		var $cadena_buscar = $('#forma-buscaagen-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscaagen-window').find('select[name=filtropor]');
+		
+		//funcionalidad botones
+		$boton_buscaagen.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$boton_buscaagen.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$cancelar_busqueda.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		
+		$cancelar_busqueda.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		var html = '';		
+		$select_filtro_por.children().remove();
+		html='<option value="0">[-- Opcion busqueda --]</option>';
+		
+		if($noagena.val() !='' && $noagenambre.val()==''){
+			html+='<option value="1" selected="yes">No. de control</option>';
+			$cadena_buscar.val($noagena.val());
+		}else{
+			html+='<option value="1">No. de control</option>';
+		}
+		if($noagenambre.val()!=''){
+			$cadena_buscar.val($noagenambre.val());
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}
+		if($noagena.val() =='' && $noagenambre.val()==''){
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}
+		$select_filtro_por.append(html);
+		
+		
+		//click buscar Agentes Aduanales
+		$boton_buscaagen.click(function(event){
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorAgenA.json';
+			$arreglo = {'cadena':$cadena_buscar.val(),
+						 'filtro':$select_filtro_por.val(),
+						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+						}
+						
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['AgentesAduanales'],function(entryIndex,agen){
+					trr = '<tr>';
+						trr += '<td width="80">';
+							trr += '<input type="hidden" id="id" value="'+agen['id']+'">';
+							trr += '<span class="no_control">'+agen['folio']+'</span>';
+						trr += '</td>';
+						trr += '<td width="520"><span class="razon">'+agen['razon_social']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+						//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//Seleccionar un elemento del resultado
+				$tabla_resultados.find('tr').click(function(){
+					$agena_id.val($(this).find('#id').val());
+					$noagena.val($(this).find('span.no_control').html());
+					$noagenambre.val($(this).find('span.razon').html());
+					
+					//Elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscaagen-overlay').fadeOut(remove);
+					$noagena.focus();
+				});
+			});
+		});//termina llamada json
+		
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_buscar.val() != ''){
+			$boton_buscaagen.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $boton_buscaagen);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $boton_buscaagen);
+		
+		$cancelar_busqueda.click(function(event){
+			var remove = function() {$(this).remove();};
+			$('#forma-buscaagen-overlay').fadeOut(remove);
+			$noagena.focus();
+		});
+		
+		$cadena_buscar.focus();
+	}//Termina buscador de Agentes Aduanales
+	
+	
+	
+	//Agregar datos del remitente
+	$agregar_datos_remitente = function($rem_id, $nombre_remitente, $noremitente, $dir_remitente, $busca_remitente, rem_id, rem_nombre, rem_numero, rem_dir){
+		$rem_id.val(rem_id);
+		$nombre_remitente.val(rem_nombre);
+		$noremitente.val(rem_numero);
+		$dir_remitente.val(rem_dir);
+		
+		//Aplicar solo lectura una vez que se ha escogido un remitente
+		$aplicar_readonly_input($nombre_remitente);
+		
+		//Oculta link buscar remitente
+		$busca_remitente.hide();
+		
+		$noremitente.focus();
+	}
+	
+	//Buscador de Remitentes
+	$busca_remitentes= function($rem_id, $nombre_remitente, $noremitente, $dir_remitente, $id_cliente, $busca_remitente){
+		$(this).modalPanel_buscaremitente();
+		var $dialogoc =  $('#forma-buscaremitente-window');
+		//var $dialogoc.prependTo('#forma-buscaproduct-window');
+		$dialogoc.append($('div.buscador_remitentes').find('table.formaBusqueda_remitentes').clone());
+		$('#forma-buscaremitente-window').css({"margin-left": -200, 	"margin-top": -180});
+		
+		var $tabla_resultados = $('#forma-buscaremitente-window').find('#tabla_resultado');
+		
+		var $boton_buscaremitente = $('#forma-buscaremitente-window').find('#boton_buscaremitente');
+		var $cancelar_busqueda = $('#forma-buscaremitente-window').find('#cencela');
+		
+		var $cadena_buscar = $('#forma-buscaremitente-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscaremitente-window').find('select[name=filtropor]');
+		
+		//funcionalidad botones
+		$boton_buscaremitente.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$boton_buscaremitente.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$boton_buscaremitente.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		
+		$boton_buscaremitente.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		var html = '';		
+		$select_filtro_por.children().remove();
+		html='<option value="0">[-- Opcion busqueda --]</option>';
+		
+		if($noremitente.val() !='' && $nombre_remitente.val()==''){
+			html+='<option value="1" selected="yes">No. de control</option>';
+			$cadena_buscar.val($noremitente.val());
+		}else{
+			html+='<option value="1">No. de control</option>';
+		}
+		html+='<option value="2">RFC</option>';
+		if($nombre_remitente.val()!=''){
+			$cadena_buscar.val($nombre_remitente.val());
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}
+		if($noremitente.val() =='' && $nombre_remitente.val()==''){
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}
+		$select_filtro_por.append(html);
+		
+		//click buscar clientes
+		$boton_buscaremitente.click(function(event){
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorRemitentes.json';
+			$arreglo = {'cadena':$cadena_buscar.val(),
+						 'filtro':$select_filtro_por.val(),
+						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+						}
+						
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Remitentes'],function(entryIndex,remitente){
+					trr = '<tr>';
+						trr += '<td width="80">';
+							trr += '<input type="hidden" id="id" value="'+remitente['id']+'">';
+							trr += '<input type="hidden" id="dir" value="'+remitente['dir']+'">';
+							trr += '<span class="no_control">'+remitente['folio']+'</span>';
+						trr += '</td>';
+						trr += '<td width="145"><span class="rfc">'+remitente['rfc']+'</span></td>';
+						trr += '<td width="375"><span class="razon">'+remitente['razon_social']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+						//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//Seleccionar un elemento del resultado
+				$tabla_resultados.find('tr').click(function(){
+					var rem_id = $(this).find('#id').val();
+					var rem_nombre = $(this).find('span.razon').html();
+					var rem_numero = $(this).find('span.no_control').html();
+					var rem_dir = $(this).find('#dir').val();
+					
+					$agregar_datos_remitente($rem_id, $nombre_remitente, $noremitente, $dir_remitente, $busca_remitente, rem_id, rem_nombre, rem_numero, rem_dir);
+					
+					//Elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscaremitente-overlay').fadeOut(remove);
+
+					$nombre_remitente.focus();
+				});
+			});
+		});//termina llamada json
+		
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_buscar.val() != ''){
+			$boton_buscaremitente.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $boton_buscaremitente);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $boton_buscaremitente);
+		
+		$cancelar_busqueda.click(function(event){
+			var remove = function() {$(this).remove();};
+			$('#forma-buscaremitente-overlay').fadeOut(remove);
+			
+			//$('#forma-clientsdf-window').find('input[name=cliente]').focus();
+		});		
+		$cadena_buscar.focus();
+	}//Termina buscador de Remitentes
+	
+	
+	
+	//Agregar datos del destinatario
+	$agregar_datos_destinatario = function($dest_id, $dest_nombre, $dest_no, $dest_dir, $busca_dest, dest_id, dest_nombre, dest_numero, dest_dir){
+		$dest_id.val(dest_id);
+		$dest_nombre.val(dest_nombre);
+		$dest_no.val(dest_numero);
+		$dest_dir.val(dest_dir);
+		
+		//Aplicar solo lectura una vez que se ha escogido un destinatario
+		$aplicar_readonly_input($dest_nombre);
+		
+		//Oculta link buscar destinatario
+		$busca_dest.hide();
+		
+		$dest_no.focus();
+	}
+	
+	
+	//Buscador de Destinatarios
+	$busca_destinatarios= function($dest_id, $dest_nombre, $dest_no, $dest_dir, $id_cliente, $busca_dest){
+		$(this).modalPanel_buscadestinatario();
+		var $dialogoc =  $('#forma-buscadestinatario-window');
+		$dialogoc.append($('div.buscador_buscadestinatario').find('table.formaBusqueda_buscadestinatario').clone());
+		$('#forma-buscadestinatario-window').css({"margin-left": -200, 	"margin-top": -180});
+		
+		var $tabla_resultados = $('#forma-buscadestinatario-window').find('#tabla_resultado');
+		
+		var $boton_buscadestinatario = $('#forma-buscadestinatario-window').find('#boton_buscadestinatario');
+		var $cancelar_busqueda = $('#forma-buscadestinatario-window').find('#cencela');
+		
+		var $cadena_buscar = $('#forma-buscadestinatario-window').find('input[name=cadena_buscar]');
+		var $select_filtro_por = $('#forma-buscadestinatario-window').find('select[name=filtropor]');
+		
+		//funcionalidad botones
+		$boton_buscadestinatario.mouseover(function(){
+			$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
+		});
+		$boton_buscadestinatario.mouseout(function(){
+			$(this).removeClass("onmouseOverBuscar").addClass("onmouseOutBuscar");
+		});
+		
+		$cancelar_busqueda.mouseover(function(){
+			$(this).removeClass("onmouseOutCancelar").addClass("onmouseOverCancelar");
+		});
+		
+		$cancelar_busqueda.mouseout(function(){
+			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
+		});
+		
+		var html = '';		
+		$select_filtro_por.children().remove();
+		html='<option value="0">[-- Opcion busqueda --]</option>';
+		
+		if($dest_no.val() !='' && $dest_nombre.val()==''){
+			html+='<option value="1" selected="yes">No. de control</option>';
+			$cadena_buscar.val($dest_no.val());
+		}else{
+			html+='<option value="1">No. de control</option>';
+		}
+		html+='<option value="2">RFC</option>';
+		if($dest_nombre.val()!=''){
+			$cadena_buscar.val($dest_nombre.val());
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}
+		if($dest_no.val() =='' && $dest_nombre.val()==''){
+			html+='<option value="3" selected="yes">Razon social</option>';
+		}
+		$select_filtro_por.append(html);
+		
+		//click buscar clientes
+		$boton_buscadestinatario.click(function(event){
+			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorDestinatarios.json';
+			$arreglo = {'cadena':$cadena_buscar.val(),
+						 'filtro':$select_filtro_por.val(),
+						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+						}
+						
+			var trr = '';
+			$tabla_resultados.children().remove();
+			$.post(input_json,$arreglo,function(entry){
+				$.each(entry['Destinatarios'],function(entryIndex,dest){
+					trr = '<tr>';
+						trr += '<td width="80">';
+							trr += '<input type="hidden" id="id" value="'+dest['id']+'">';
+							trr += '<input type="hidden" id="dir" value="'+dest['dir']+'">';
+							trr += '<span class="no_control">'+dest['folio']+'</span>';
+						trr += '</td>';
+						trr += '<td width="145"><span class="rfc">'+dest['rfc']+'</span></td>';
+						trr += '<td width="375"><span class="razon">'+dest['razon_social']+'</span></td>';
+					trr += '</tr>';
+					
+					$tabla_resultados.append(trr);
+				});
+				
+				$tabla_resultados.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+				$tabla_resultados.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+
+				$('tr:odd' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({background : '#FBD850'});
+				}, function() {
+						//$(this).find('td').css({'background-color':'#DDECFF'});
+					$(this).find('td').css({'background-color':'#e7e8ea'});
+				});
+				$('tr:even' , $tabla_resultados).hover(function () {
+					$(this).find('td').css({'background-color':'#FBD850'});
+				}, function() {
+					$(this).find('td').css({'background-color':'#FFFFFF'});
+				});
+				
+				//Seleccionar un elemento del resultado
+				$tabla_resultados.find('tr').click(function(){
+					var dest_id = $(this).find('#id').val();
+					var dest_numero = $(this).find('span.no_control').html();
+					var dest_nombre = $(this).find('span.razon').html();
+					var dest_dir = $(this).find('#dir').val();
+											
+					$agregar_datos_remitente($dest_id, $dest_nombre, $dest_no, $dest_dir, $busca_dest, dest_id, dest_nombre, dest_numero, dest_dir);
+					
+					//Elimina la ventana de busqueda
+					var remove = function() {$(this).remove();};
+					$('#forma-buscadestinatario-overlay').fadeOut(remove);
+					
+					$dest_no.focus();
+				});
+			});
+		});//termina llamada json
+		
+		
+		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
+		if($cadena_buscar.val() != ''){
+			$boton_buscadestinatario.trigger('click');
+		}
+		
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_buscar, $boton_buscadestinatario);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_filtro_por, $boton_buscadestinatario);
+		
+		$cancelar_busqueda.click(function(event){
+			var remove = function() {$(this).remove();};
+			$('#forma-buscadestinatario-overlay').fadeOut(remove);
+			$dest_nombre.focus();
+		});
+		
+		$cadena_buscar.focus();
+	}//Termina buscador de destinatarios
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	//buscador de presentaciones disponibles para un producto
@@ -1647,7 +2165,16 @@ $(function() {
 	}//termina agregar producto al grid
 	
 	
+	$aplicar_readonly_input = function($input){
+		$input.css({'background' : '#f0f0f0'});
+		$input.attr('readonly',true);
+	}
 	
+	$quitar_readonly_input = function($input){
+		$input.css({'background' : '#ffffff'});
+		$input.attr('readonly',false);
+	}
+
 	
 	//nuevo pedido
 	$new_pedido.click(function(event){
@@ -1804,8 +2331,12 @@ $(function() {
 		$folio.css({'background' : '#F0F0F0'});
 		//$nocliente.css({'background' : '#F0F0F0'});
 		$dir_cliente.css({'background' : '#F0F0F0'});
-		$remolque2.css({'background' : '#F0F0F0'});
-		$remolque2.attr('readonly',true);
+		//$remolque2.css({'background' : '#F0F0F0'});
+		//$remolque2.attr('readonly',true);
+		
+		$aplicar_readonly_input($remolque2);
+		$aplicar_readonly_input($rem_dir);
+		$aplicar_readonly_input($dest_dir);
 		
 		//quitar enter a todos los campos input
 		$('#forma-pocpedidos-window').find('input').keypress(function(e){
@@ -1997,6 +2528,7 @@ $(function() {
 						$remolque2.css({'background' : '#ffffff'});
 						$remolque2.attr('readonly',false);
 					}
+					$remolque1.focus();
 				});
 				
 				
@@ -2114,29 +2646,263 @@ $(function() {
 					$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
 				});
 				
+				$(this).aplicarEventoKeypressEjecutaTrigger($marca_vehiculo, $busca_vehiculo);
+				
+				$no_economico.keypress(function(e){
+					var valor=$(this).val();
+					if(e.which == 13){
+						if($no_economico.val().trim()!=''){
+							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataUnidadByNoEco.json';
+							$arreglo2 = {'no_economico':$no_economico.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+							$.post(input_json2,$arreglo2,function(entry2){
+								if(parseInt(entry2['Vehiculo'].length) > 0 ){
+									$id_vehiculo.val(entry2['Vehiculo'][0]['id']);
+									$no_economico.val(entry2['Vehiculo'][0]['numero_economico']);
+									$marca_vehiculo.val(entry2['Vehiculo'][0]['marca']);
+								}else{
+									jAlert('N&uacute;mero econ&oacute;mico desconocido.', 'Atencion!', function(r) {
+										$no_economico.val('');
+										$no_economico.focus(); 
+									});
+								}
+							},"json");//termina llamada json
+						}
+						return false;
+					}else{
+						if (parseInt(e.which) == 8) {
+							//Si se oprime la tecla borrar se vacía el campo no_economico 
+							if(parseInt(valor.length)>0 && parseInt($id_vehiculo.val())>0){
+								jConfirm('Seguro que desea cambiar la Unidad seleccionada?', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										$id_vehiculo.val(0);
+										$no_economico.val('');
+										$marca_vehiculo.val('');
+										$no_economico.focus();
+									}else{
+										$no_economico.val(valor);
+										$no_economico.focus();
+									}
+								});
+							}else{
+								$no_economico.focus();
+							}
+						}
+					}
+				});
+				
+				
+				
 				//Buscador de Operadores
 				$busca_operador.click(function(event){
 					event.preventDefault();
-					//$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+					$busca_operadores($no_operador, $nombre_operador);
 				});
+				
+				$(this).aplicarEventoKeypressEjecutaTrigger($nombre_operador, $busca_operador);
+				
+				$no_operador.keypress(function(e){
+					var valor=$(this).val();
+					if(e.which == 13){
+						if($no_operador.val().trim()!=''){
+							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataOperadorByNo.json';
+							$arreglo2 = {'no_operador':$no_operador.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+							$.post(input_json2,$arreglo2,function(entry2){
+								if(parseInt(entry2['Operador'].length) > 0 ){
+									$no_operador.val(entry2['Operador'][0]['clave']);
+									$nombre_operador.val(entry2['Operador'][0]['nombre']);
+								}else{
+									jAlert('N&uacute;mero de Operador desconocido.', 'Atencion!', function(r) {
+										$no_operador.val('');
+										$no_operador.focus(); 
+									});
+								}
+							},"json");//termina llamada json
+						}
+						return false;
+					}
+				});
+				
 				
 				//Buscador de Agentes Aduanales
 				$busca_agena.click(function(event){
 					event.preventDefault();
-					//$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+					$busca_agentes_aduanales($agena_id, $agena_no, $agena_nombre);
 				});
+				
+				$(this).aplicarEventoKeypressEjecutaTrigger($agena_nombre, $busca_agena);
+				
+				$agena_no.keypress(function(e){
+					var valor=$(this).val();
+					if(e.which == 13){
+						if($agena_no.val().trim()!=''){
+							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoAgen.json';
+							$arreglo2 = {'no_control':$agena_no.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+							
+							$.post(input_json2,$arreglo2,function(entry2){
+								if(parseInt(entry2['AgenA'].length) > 0 ){
+									$agena_id.val(entry2['AgenA'][0]['id']);
+									$agena_no.val(entry2['AgenA'][0]['folio']);
+									$agena_nombre.val(entry2['AgenA'][0]['razon_social']);
+								}else{
+									jAlert('N&uacute;mero de Agente Aduanal desconocido.', 'Atencion!', function(r) { 
+										$agena_no.focus(); 
+									});
+								}
+							},"json");//termina llamada json
+						}
+						return false;
+					}else{
+						if (parseInt(e.which) == 8) {
+							//Si se oprime la tecla borrar se vacía el campo agena_no 
+							if(parseInt(valor.length)>0 && parseInt($agena_id.val())>0){
+								jConfirm('Seguro que desea cambiar el Agente Aduanal seleccionado?', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										$agena_id.val(0);
+										$agena_no.val('');
+										$agena_nombre.val('');
+										$agena_no.focus();
+									}else{
+										$agena_no.val(valor);
+										$agena_no.focus();
+									}
+								});
+							}else{
+								$agena_no.focus();
+							}
+						}
+					}
+				});
+				
+				
 				
 				//Buscador de Remitentes
 				$busca_remitente.click(function(event){
 					event.preventDefault();
-					//$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+					$busca_remitentes($rem_id, $rem_nombre, $rem_no, $rem_dir, $id_cliente, $busca_remitente);
 				});
+				
+				$(this).aplicarEventoKeypressEjecutaTrigger($rem_nombre, $busca_remitente);
+					
+				$rem_no.keypress(function(e){
+					var valor=$(this).val();
+					if(e.which == 13){
+						if($rem_no.val().trim()!=''){
+							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoRemitente.json';
+							$arreglo2 = {'no_control':$rem_no.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+							$.post(input_json2,$arreglo2,function(entry2){
+								if(parseInt(entry2['Remitente'].length) > 0 ){
+									var rem_id = entry2['Remitente'][0]['id'];
+									var rem_numero = entry2['Remitente'][0]['folio'];
+									var rem_nombre = entry2['Remitente'][0]['razon_social'];
+									var rem_dir = entry2['Remitente'][0]['dir'];
+									$agregar_datos_remitente($rem_id, $rem_nombre, $rem_no, $rem_dir, $busca_remitente, rem_id, rem_nombre, rem_numero, rem_dir);
+								}else{
+									jAlert('N&uacute;mero de Remitente desconocido.', 'Atencion!', function(r) { 
+										$rem_no.focus(); 
+									});
+								}
+							},"json");//termina llamada json
+						}
+						return false;
+					}else{
+						if (parseInt(e.which) == 8) {
+							//Si se oprime la tecla borrar se vacía el campo agena_no 
+							if(parseInt(valor.length)>0 && parseInt($rem_id.val())>0){
+								jConfirm('Seguro que desea cambiar el Remitente seleccionado?', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										$rem_id.val(0);
+										$rem_no.val('');
+										$rem_nombre.val('');
+										$rem_dir.val('');
+										
+										//Quitar solo lectura una vez que se ha eliminado datos del Remitente
+										$quitar_readonly_input($rem_nombre);
+										
+										//Mostrar link busca remitente
+										$busca_remitente.show();
+										
+										$rem_no.focus();
+									}else{
+										$rem_no.val(valor);
+										$rem_no.focus();
+									}
+								});
+							}else{
+								$rem_no.focus();
+							}
+						}
+					}
+				});
+				
+				
+				
 				
 				//Buscador de Destinatarios
 				$busca_dest.click(function(event){
 					event.preventDefault();
-					//$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+					$busca_destinatarios($dest_id, $dest_nombre, $dest_no, $dest_dir, $id_cliente, $busca_dest);
 				});
+				
+				$(this).aplicarEventoKeypressEjecutaTrigger($dest_nombre, $busca_dest);
+				
+				$dest_no.keypress(function(e){
+					var valor=$(this).val();
+					if(e.which == 13){
+						if($dest_no.val().trim()!=''){
+							var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoDestinatario.json';
+							$arreglo2 = {'no_control':$dest_no.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+							$.post(input_json2,$arreglo2,function(entry2){
+								if(parseInt(entry2['Dest'].length) > 0 ){
+									var dest_id = entry2['Dest'][0]['id'];
+									var dest_numero = entry2['Dest'][0]['folio'];
+									var dest_nombre = entry2['Dest'][0]['razon_social'];
+									var dest_dir = entry2['Dest'][0]['dir'];
+															
+									$agregar_datos_remitente($dest_id, $dest_nombre, $dest_no, $dest_dir, $busca_dest, dest_id, dest_nombre, dest_numero, dest_dir);
+								}else{
+									jAlert('N&uacute;mero de Destinatario desconocido.', 'Atencion!', function(r) { 
+										$dest_no.focus(); 
+									});
+								}
+							},"json");//termina llamada json
+						}
+						return false;
+					}else{
+						if (parseInt(e.which) == 8) {
+							//Si se oprime la tecla borrar se vacía el campo agena_no 
+							if(parseInt(valor.length)>0 && parseInt($dest_id.val())>0){
+								jConfirm('Seguro que desea cambiar el Destinatario seleccionado?', 'Dialogo de Confirmacion', function(r) {
+									// If they confirmed, manually trigger a form submission
+									if (r) {
+										$dest_id.val(0);
+										$dest_no.val('');
+										$dest_nombre.val('');
+										$dest_dir.val('');
+										
+										//Quitar solo lectura una vez que se ha eliminado datos del Remitente
+										$quitar_readonly_input($dest_nombre);
+										
+										//Mostrar link busca remitente
+										$busca_dest.show();
+										
+										$dest_no.focus();
+									}else{
+										$dest_no.val(valor);
+										$dest_no.focus();
+									}
+								});
+							}else{
+								$dest_no.focus();
+							}
+						}
+					}
+				});
+				
+				
+				
 				
 			}
 			

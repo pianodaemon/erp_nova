@@ -14,7 +14,13 @@
         <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaDireccionesFiscales.css" type="text/css" />
         
         <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaBuscaUnidad.css" type="text/css" />
-        
+        <link rel="stylesheet" href="../../css/modalbox/pocpedidos/formaBuscaOperador.css" type="text/css" />
+        <!--Este se toma del aplicativo de asignacion de Agentes-->
+        <link rel="stylesheet" href="../../css/modalbox/clientsasignaagena/formaBuscaAgen.css" type="text/css" />
+        <!--Este se toma del aplicativo de asignacion de Remitentes-->
+        <link rel="stylesheet" href="../../css/modalbox/clientsasignarem/formaBuscaRemitente.css" type="text/css" />
+        <!--Este se toma del aplicativo de asignacion de Remitentes-->
+        <link rel="stylesheet" href="../../css/modalbox/clientsasignadest/formaBuscaDestinatario.css" type="text/css" />
         
         <!--  js for this catalogo -->
         <script type="text/javascript" src="../../js/components/jquery-form/jquery-form.js"></script>
@@ -27,6 +33,13 @@
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxDireccionesFiscales.js"></script>
         
         <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxBuscaUnidad.js"></script>
+        <script type="text/javascript" src="../../js/components/modalbox/pocpedidos/modalboxBuscaOperador.js"></script>
+        <!--Este se toma del aplicativo de asignacion de Agentes-->
+        <script type="text/javascript" src="../../js/components/modalbox/clientsasignaagena/modalboxBuscaAgen.js"></script>
+        <!--Este se toma del aplicativo de asignacion de Remitentes-->
+        <script type="text/javascript" src="../../js/components/modalbox/clientsasignarem/modalboxBuscaRemitente.js"></script>
+        <!--Este se toma del aplicativo de asignacion de Destinatarios-->
+        <script type="text/javascript" src="../../js/components/modalbox/clientsasignadest/modalboxBuscaDestinatario.js"></script>
         
         <script type="text/javascript" src="../../js/implements/pocpedidos/index.js" ></script>
         
@@ -560,10 +573,10 @@
                                                     <td>
 														<table border="0" class="gral" style="margin:0px; margin-bottom:6px; padding:0px;">
 															<tr>
-																<td width="80">No.&nbsp;Unidad</td>
+																<td width="80">No.&nbsp;Eco.&nbsp;Unidad</td>
 																<td width="90">
 																	<input type="hidden" name="id_vehiculo" value="0">
-																	<input type="text" name="no_economico" style="width:90px; border:1px solid #000;">
+																	<input type="text" name="no_economico" style="width:90px; border:1px solid #000;" title="Numero de Unidad">
 																</td>
 																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noeconomico"></div></td>
 																<td width="70">Marca</td>
@@ -578,7 +591,7 @@
 															<tr>
 																<td width="80">No.&nbsp;Operador</td>
 																<td width="90">
-																	<input type="text" name="no_operador" style="width:90px; border:1px solid #000;">
+																	<input type="text" name="no_operador" style="width:90px; border:1px solid #000;" title="Numero de Operador">
 																</td>
 																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nooperador"></div></td>
 																<td width="70">Nombre</td>
@@ -601,7 +614,7 @@
 																<td width="80">No.&nbsp;Agente</td>
 																<td width="90">
 																	<input type="hidden" name="agena_id" value="0">
-																	<input type="text" name="agena_no" style="width:90px; border:1px solid #000;">
+																	<input type="text" name="agena_no" style="width:90px; border:1px solid #000;" title="Numero de Agente Aduanal">
 																</td>
 																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_agenano"></div></td>
 																<td width="70">Razon Social</td>
@@ -687,7 +700,7 @@
 																<td width="80">No.&nbsp;Remitente</td>
 																<td width="90">
 																	<input type="hidden" name="rem_id" value="0">
-																	<input type="text" name="rem_no" style="width:90px; border:1px solid #000;">
+																	<input type="text" name="rem_no" style="width:90px; border:1px solid #000;" title="Numero de Remitente">
 																</td>
 																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noeconomico"></div></td>
 																<td width="70">Razon Social</td>
@@ -738,7 +751,7 @@
 																<td width="80">No.&nbsp;Destinatario</td>
 																<td width="90">
 																	<input type="hidden" name="dest_id" value="0">
-																	<input type="text" name="dest_no" style="width:90px; border:1px solid #000;">
+																	<input type="text" name="dest_no" style="width:90px; border:1px solid #000;" title="Numero de Destinatario">
 																</td>
 																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nodest"></div></td>
 																<td width="70">Razon Social</td>
@@ -1390,7 +1403,7 @@
 										<td width="10" style="background:#ffffff;"></td>
 										<td colspan="2" style="background:#ffffff;" width="600">
 											
-											<table id="tabla_busqueda" border="1"  class="contenidobusqueda">
+											<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
 												<tr>
 													<td colspan="7" width="600" height="10"></td>
 												</tr>
@@ -1457,6 +1470,374 @@
 									</tr>
 								</tbody>
 								
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		
+		
+		<div class="buscador_busquedaoperador" style="display:none;">	
+			<table width="100%" border="0" class="formaBusqueda_busquedaoperador">
+				<tr>
+					<td>
+						<div class="div_dos_busquedaoperador">
+							<table width="100%" border="0">
+								<thead>
+									<tr>
+										<td colspan="8" height="50" valign="top"><div class="titulo_busquedaoperador" width="100%"><strong>Buscador de Unidades</strong></div></td>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff;"></td>
+										<td colspan="2" style="background:#ffffff;" width="600">
+											
+											<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+												<tr>
+													<td colspan="7" width="600" height="10"></td>
+												</tr>
+												<tr>
+													<td width="75">No.&nbsp;Operador</td>
+													<td width="125"><input type="text" name="cadena_nooperador" style="width:125px;"></td>
+													<td width="25"></td>
+													<td width="40">Nombre</td>
+													<td width="240"><input type="text" name="cadena_nombre" style="width:240px;"></td>
+													<td width="25"></td>
+													<td width="70" align="right">
+														<input type="button" id="boton_busquedaoperador" class="onmouseOutBuscar">
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr style="font-size:13px;">
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="180"  style="background:#A8A9AB;">No.&nbsp;Operador</td>
+										<td width="420"  style="background:#A8A9AB;">Nombre del Operador</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td style="background:#ffffff; border: solid 1px #454442;" colspan="2" width="600">
+											<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+												<table  border="0" id="tabla_resultado" width="580">
+													
+												</table>
+											</div>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="4" height="3" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="180" style="background:#ffffff"></td>
+										<td width="420" style="background:#ffffff" align="right">
+											<input type="button" id="cencela" class="onmouseOutCancelar">
+										</td>
+										
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="4" height="6" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+								</tbody>
+								
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+
+		<!--Aqui comienza el formulario para el buscador de Agentes Aduanales-->
+		<div class="buscador_buscaagen" style="display:none;">	
+			<table width="100%" border="0" class="formaBusqueda_buscaagen">
+				<tr>
+					<td>
+						<div class="div_dos_buscaagen">
+							<table width="100%" border="0">
+								<thead>
+									<tr>
+										<td colspan="8" height="50" valign="top"><div class="titulo_buscaagen" width="100%"><strong>Buscador de Agentes Aduanales</strong></div></td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff;"></td>
+										<td colspan="3" style="background:#ffffff;" width="600">
+											<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+												<tr>
+													<td colspan="7" width="600" height="10"></td>
+												</tr>
+												<tr>
+													<td width="50">Buscar</td>
+													<td width="245"><input type="text" name="cadena_buscar" style="width:245px;"></td>
+													<td width="25"></td>
+													<td width="60">Filtro por</td>
+													<td width="150"><select name="filtropor" style="width:150px;"></select></td>
+													<td width="70" align="right">
+														<input type="button" id="boton_buscaagen" class="onmouseOutBuscar">
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr style="font-size:13px;">
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="80"  style="background:#A8A9AB;">No.&nbsp;control</td>
+										<td width="520" colspan="2" style="background:#A8A9AB;">Razon&nbsp;social</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td style="background:#ffffff; border: solid 1px #454442;" colspan="3" width="600">
+											<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+												<table  border="0" id="tabla_resultado" width="580">
+													
+												</table>
+											</div>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="5" height="3" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="80" style="background:#ffffff"></td>
+										<td width="140" style="background:#ffffff"></td>
+										<td width="380" style="background:#ffffff" align="right">
+											<input type="button" id="cencela" class="onmouseOutCancelar">
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="5" height="6" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		
+		
+		<!--Aqui comienza el formulario para el buscador de REMITENTES-->
+		<div class="buscador_remitentes" style="display:none;">	
+			<table width="100%" border="0" class="formaBusqueda_remitentes">
+				<tr>
+					<td>
+						<div class="div_dos_remitentes">
+							<table width="100%" border="0">
+								<thead>
+									<tr>
+										<td colspan="8" height="50" valign="top"><div class="titulo_remitentes" width="100%"><strong>Buscador de Remitentes</strong></div></td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff;"></td>
+										<td colspan="3" style="background:#ffffff;" width="600">
+											<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+												<tr>
+													<td colspan="7" width="600" height="10"></td>
+												</tr>
+												<tr>
+													<td width="50">Buscar</td>
+													<td width="245"><input type="text" name="cadena_buscar" style="width:245px;"></td>
+													<td width="25"></td>
+													<td width="60">Filtro por</td>
+													<td width="150"><select name="filtropor" style="width:150px;"></select></td>
+													<td width="70" align="right">
+														<input type="button" id="boton_buscaremitente" class="onmouseOutBuscar">
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr style="font-size:13px;">
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="80"  style="background:#A8A9AB;">No.&nbsp;control</td>
+										<td width="140"  style="background:#A8A9AB;">RFC</td>
+										<td width="380"  style="background:#A8A9AB;">Razon&nbsp;social</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td style="background:#ffffff; border: solid 1px #454442;" colspan="3" width="600">
+											<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+												<table  border="0" id="tabla_resultado" width="580">
+													
+												</table>
+											</div>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="5" height="3" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="80" style="background:#ffffff"></td>
+										<td width="140" style="background:#ffffff"></td>
+										<td width="380" style="background:#ffffff" align="right">
+											<input type="button" id="cencela" class="onmouseOutCancelar">
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="5" height="6" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+
+		<!--Aqui comienza el formulario para el buscador de Destinatarios-->
+		<div class="buscador_buscadestinatario" style="display:none;">	
+			<table width="100%" border="0" class="formaBusqueda_buscadestinatario">
+				<tr>
+					<td>
+						<div class="div_dos_buscadestinatario">
+							<table width="100%" border="0">
+								<thead>
+									<tr>
+										<td colspan="8" height="50" valign="top"><div class="titulo_buscadestinatario" width="100%"><strong>Buscador de Destinatarios</strong></div></td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff;"></td>
+										<td colspan="3" style="background:#ffffff;" width="600">
+											<table id="tabla_busqueda" border="0"  class="contenidobusqueda">
+												<tr>
+													<td colspan="7" width="600" height="10"></td>
+												</tr>
+												<tr>
+													<td width="50">Buscar</td>
+													<td width="245"><input type="text" name="cadena_buscar" style="width:245px;"></td>
+													<td width="25"></td>
+													<td width="60">Filtro por</td>
+													<td width="150"><select name="filtropor" style="width:150px;"></select></td>
+													<td width="70" align="right">
+														<input type="button" id="boton_buscadestinatario" class="onmouseOutBuscar">
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr style="font-size:13px;">
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										
+										<td width="80"  style="background:#A8A9AB;">No.&nbsp;control</td>
+										<td width="140"  style="background:#A8A9AB;">RFC</td>
+										<td width="380"  style="background:#A8A9AB;">Razon&nbsp;social</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td style="background:#ffffff; border: solid 1px #454442;" colspan="3" width="600">
+											<div style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:600px; height:120px; align=top;">
+												<table  border="0" id="tabla_resultado" width="580">
+													<!--aqui van los resultados de la busqueda-->
+													<!--
+														<tr>
+															<td width="80">No. control</td>
+															<td width="145">RFC</td>
+															<td width="375">Razon social</td>
+														</tr>
+													-->
+												</table>
+											</div>
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="5" height="3" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="80" style="background:#ffffff"></td>
+										<td width="140" style="background:#ffffff"></td>
+										<td width="380" style="background:#ffffff" align="right">
+											<input type="button" id="cencela" class="onmouseOutCancelar">
+										</td>
+										<td width="10" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+									<tr>
+										<td width="10"></td>
+										<td width="10" colspan="5" height="6" style="background:#ffffff"></td>
+										<td width="10"></td>
+									</tr>
+								</tbody>
 							</table>
 						</div>
 					</td>
