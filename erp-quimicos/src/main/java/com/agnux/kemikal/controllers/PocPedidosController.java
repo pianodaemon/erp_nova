@@ -261,10 +261,10 @@ public class PocPedidosController {
         condiciones = this.getPocDao().getCondicionesDePago();
         metodos_pago = this.getPocDao().getMetodosPago();
         almacenes = this.getPocDao().getPocPedido_Almacenes(id_sucursal);
-        
+        paises = this.getPocDao().getPaises();
+            
         if(userDat.get("transportista").toLowerCase().equals("true")){
             //Aqui solo entra cuando la emprsa es transportista
-            paises = this.getPocDao().getPaises();
             if(id_pedido.equals("0")){
                 //Solo cuando sea nuevo pedido
                 extra.put("nombre_empleado", this.getGralDao().getNombreEmpleadoByIdUser(id_usuario));
@@ -272,7 +272,6 @@ public class PocPedidosController {
         }
         
         arrayExtra.add(0,extra);
-        
         jsonretorno.put("datosPedido", datosPedido);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("iva", valorIva);
@@ -283,6 +282,7 @@ public class PocPedidosController {
         jsonretorno.put("MetodosPago", metodos_pago);
         jsonretorno.put("Extras", arrayExtra);
         jsonretorno.put("Almacenes", almacenes);
+        jsonretorno.put("datosTrans", datosTrans);
         jsonretorno.put("Paises", paises);
         jsonretorno.put("EdoOrig", estadosOrigen);
         jsonretorno.put("MunOrig", municipiosOrigen);
@@ -748,15 +748,7 @@ public class PocPedidosController {
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    //edicion y nuevo
+    //Edicion y nuevo
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="id_pedido", required=true) Integer id_pedido,
@@ -788,6 +780,30 @@ public class PocPedidosController {
             @RequestParam(value="costo", required=false) String[] costo,
             @RequestParam(value="noTr", required=false) String[] noTr,
             @RequestParam(value="seleccionado", required=false) String[] seleccionado,
+            
+            @RequestParam(value="transportista", required=true) String transportista,
+            @RequestParam(value="check_flete", required=false) String check_flete,
+            @RequestParam(value="nombre_documentador", required=false) String nombre_documentador,
+            @RequestParam(value="valor_declarado", required=false) String valor_declarado,
+            @RequestParam(value="select_tviaje", required=false) String select_tviaje,
+            @RequestParam(value="remolque1", required=false) String remolque1,
+            @RequestParam(value="remolque2", required=false) String remolque2,
+            @RequestParam(value="id_vehiculo", required=false) String id_vehiculo,
+            @RequestParam(value="no_operador", required=false) String no_operador,
+            @RequestParam(value="nombre_operador", required=false) String nombre_operador,
+            @RequestParam(value="select_pais_origen", required=false) String select_pais_origen,
+            @RequestParam(value="select_estado_origen", required=false) String select_estado_origen,
+            @RequestParam(value="select_municipio_origen", required=false) String select_municipio_origen,
+            @RequestParam(value="select_pais_dest", required=false) String select_pais_dest,
+            @RequestParam(value="select_estado_dest", required=false) String select_estado_dest,
+            @RequestParam(value="select_municipio_dest", required=false) String select_municipio_dest,
+            @RequestParam(value="agena_id", required=false) String agena_id,
+            @RequestParam(value="rem_id", required=false) String rem_id,
+            @RequestParam(value="rem_dir_alterna", required=false) String rem_dir_alterna,
+            @RequestParam(value="dest_id", required=false) String dest_id,
+            @RequestParam(value="dest_dir_alterna", required=false) String dest_dir_alterna,
+            @RequestParam(value="observaciones_transportista", required=false) String observaciones_transportista,
+            
             @ModelAttribute("user") UserSessionData user
         ) {
             
@@ -820,13 +836,25 @@ public class PocPedidosController {
                 }
             }
             
+            if (no_cuenta==null){ no_cuenta=""; }
+            if (select_metodo_pago==null){ select_metodo_pago=0; }
             
-            if (no_cuenta==null){
-                no_cuenta="";
-            }
-            
+            //Verificar valores
+            select_almacen = StringHelper.verificarSelect(select_almacen);
+            select_moneda = StringHelper.verificarSelect(select_moneda);
+            select_condiciones = StringHelper.verificarSelect(select_condiciones);
             check_ruta = StringHelper.verificarCheckBox(check_ruta);
             check_enviar_obser = StringHelper.verificarCheckBox(check_enviar_obser);
+            check_flete = StringHelper.verificarCheckBox(check_flete);
+            select_tviaje = StringHelper.verificarSelect(select_tviaje);
+            select_pais_origen = StringHelper.verificarSelect(select_pais_origen);
+            select_estado_origen = StringHelper.verificarSelect(select_estado_origen);
+            select_municipio_origen = StringHelper.verificarSelect(select_municipio_origen);
+            select_pais_dest = StringHelper.verificarSelect(select_pais_dest);
+            select_estado_dest = StringHelper.verificarSelect(select_estado_dest);
+            select_municipio_dest = StringHelper.verificarSelect(select_municipio_dest);
+            select_tviaje = StringHelper.verificarSelect(select_tviaje);
+            
             if (id_df.equals("0")){
                 id_df="1";//si viene cero, le asignamos uno para indicar que debe tomar la direccion de la tabla cxc_clie.
             }
@@ -852,7 +880,29 @@ public class PocPedidosController {
                     check_ruta+"___"+
                     select_almacen+"___"+
                     id_df+"___"+
-                    check_enviar_obser;
+                    check_enviar_obser+"___"+
+                    check_flete+"___"+
+                    nombre_documentador+"___"+
+                    valor_declarado+"___"+
+                    select_tviaje+"___"+
+                    remolque1+"___"+
+                    remolque2+"___"+
+                    id_vehiculo+"___"+
+                    no_operador+"___"+
+                    nombre_operador+"___"+
+                    select_pais_origen+"___"+
+                    select_estado_origen+"___"+
+                    select_municipio_origen+"___"+
+                    select_pais_dest+"___"+
+                    select_estado_dest+"___"+
+                    select_municipio_dest+"___"+
+                    agena_id+"___"+
+                    rem_id+"___"+
+                    rem_dir_alterna+"___"+
+                    dest_id+"___"+
+                    dest_dir_alterna+"___"+
+                    observaciones_transportista;
+
             //System.out.println("data_string: "+data_string);
             
             succes = this.getPocDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);

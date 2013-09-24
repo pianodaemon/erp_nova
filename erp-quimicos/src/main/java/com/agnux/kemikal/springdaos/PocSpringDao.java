@@ -321,7 +321,8 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "poc_pedidos.gral_usr_id_autoriza, "
                 + "(CASE WHEN poc_pedidos.gral_usr_id_autoriza=0 THEN '' ELSE gral_empleados.nombre_pila||' ' ||gral_empleados.apellido_paterno||' ' ||gral_empleados.apellido_materno END) AS nombre_autorizo_pedido,  "
                 + "(case when cxc_agen.nombre is null then '' else cxc_agen.nombre  end) AS nombre_agente,  "
-                + "poc_pedidos.cancelado "
+                + "poc_pedidos.cancelado,"
+                + "poc_pedidos.flete "
         + "FROM poc_pedidos "
         + "LEFT JOIN erp_proceso ON erp_proceso.id = poc_pedidos.proceso_id "
         + "LEFT JOIN gral_mon ON gral_mon.id = poc_pedidos.moneda_id "
@@ -379,6 +380,7 @@ public class PocSpringDao implements PocInterfaceDao{
         mappdf.put("tasa_retencion_immex", mapdatosquery.get("tasa_retencion_immex").toString() );
         mappdf.put("fecha_expedicion", mapdatosquery.get("fecha_expedicion").toString() );
         mappdf.put("cancelado", mapdatosquery.get("cancelado").toString() );
+        mappdf.put("flete", mapdatosquery.get("flete").toString() );
 
         return mappdf;
     }
