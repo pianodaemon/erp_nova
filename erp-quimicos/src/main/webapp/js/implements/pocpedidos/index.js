@@ -360,9 +360,11 @@ $(function() {
 		});
 	}
 	
+
+												
 	
 	//Buscador de Unidades(Vehiculo)
-	$busca_unidades= function($id_vehiculo, $no_economico, $marca_vehiculo){
+	$busca_unidades= function($id_vehiculo, $no_economico, $marca_vehiculo, $busca_vehiculo){
 		$(this).modalPanel_busquedaunidad();
 		var $dialogoc =  $('#forma-busquedaunidad-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -442,6 +444,10 @@ $(function() {
 					$id_vehiculo.val($(this).find('#id').val());
 					$no_economico.val($(this).find('span.no_eco').html());
 					$marca_vehiculo.val($(this).find('span.marca').html());
+					$busca_vehiculo.hide();
+					
+					//Aplicar solo lectura una vez que se ha escogido la unidad
+					$aplicar_readonly_input($marca_vehiculo);
 					
 					//Elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -576,7 +582,7 @@ $(function() {
 	
 	
 	//Buscador de Agentes Aduanales
-	$busca_agentes_aduanales= function($agena_id, $noagena, $noagenambre){
+	$busca_agentes_aduanales= function($agena_id, $noagena, $noagenambre, $busca_agena){
 		$(this).modalPanel_buscaagen();
 		var $dialogoc =  $('#forma-buscaagen-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -670,6 +676,10 @@ $(function() {
 					$agena_id.val($(this).find('#id').val());
 					$noagena.val($(this).find('span.no_control').html());
 					$noagenambre.val($(this).find('span.razon').html());
+					$busca_agena.hide();
+					
+					//Aplicar solo lectura una vez que se ha escogido un agente aduanal
+					$aplicar_readonly_input($noagenambre);
 					
 					//Elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
@@ -2175,6 +2185,48 @@ $(function() {
 		$input.attr('readonly',false);
 	}
 
+	//Aplicar evento change al select tipo de viaje
+	$aplicar_evento_change_select_tviaje = function($select_tviaje, $remolque1, $remolque2){
+		$select_tviaje.change(function(){
+			var valor = $(this).val();
+			if(parseInt(valor)==1){
+				$remolque1.css({'background' : '#ffffff'});
+				$remolque2.css({'background' : '#f0f0f0'});
+				$remolque2.val('');
+				$remolque2.attr('readonly',true);
+			}else{
+				$remolque1.css({'background' : '#ffffff'});
+				$remolque2.css({'background' : '#ffffff'});
+				$remolque2.attr('readonly',false);
+			}
+			$remolque1.focus();
+		});
+	}
+	
+	
+	
+	//carga los campos select con los datos que recibe como parametro
+	$carga_campos_select = function($campo_select, $arreglo_elementos, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem){
+		var select_html = '';
+		
+		if(texto_elemento_cero != ''){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
+		
+		$.each($arreglo_elementos,function(entryIndex,elemento){
+			if( parseInt(elemento[index_elem]) == parseInt(elemento_seleccionado) ){
+				select_html += '<option value="' + elemento[index_elem] + '" selected="yes">' + elemento[index_text_elem] + '</option>';
+			}else{
+				select_html += '<option value="' + elemento[index_elem] + '" >' + elemento[index_text_elem] + '</option>';
+			}
+		});
+		$campo_select.children().remove();
+		$campo_select.append(select_html);
+	}
+	
+	
+	
+	
 	
 	//nuevo pedido
 	$new_pedido.click(function(event){
@@ -2261,6 +2313,8 @@ $(function() {
 		
 		
 		var $pestana_transportista = $('#forma-pocpedidos-window').find('ul.pestanas').find('a[href=#tabx-2]');
+		
+		var $transportista = $('#forma-pocpedidos-window').find('input[name=transportista]');
 		var $check_flete = $('#forma-pocpedidos-window').find('input[name=check_flete]');
 		var $nombre_documentador = $('#forma-pocpedidos-window').find('input[name=nombre_documentador]');
 		var $valor_declarado = $('#forma-pocpedidos-window').find('input[name=valor_declarado]');
@@ -2442,6 +2496,7 @@ $(function() {
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
 			$incluye_produccion.val(entry['Extras'][0]['mod_produccion']);
+			$transportista.val(entry['Extras'][0]['transportista']);
 			
 			if(entry['Extras'][0]['mod_produccion']=='true'){
 				$('#forma-pocpedidos-window').css({"margin-left": -400, 	"margin-top": -235});
@@ -2516,21 +2571,8 @@ $(function() {
 				$pestana_transportista.parent().show();
 				$nombre_documentador.val(entry['Extras'][0]['nombre_empleado'].trim());
 				
-				$select_tviaje.change(function(){
-					var valor = $(this).val();
-					if(parseInt(valor)==1){
-						$remolque1.css({'background' : '#ffffff'});
-						$remolque2.css({'background' : '#F0F0F0'});
-						$remolque2.val('');
-						$remolque2.attr('readonly',true);
-					}else{
-						$remolque1.css({'background' : '#ffffff'});
-						$remolque2.css({'background' : '#ffffff'});
-						$remolque2.attr('readonly',false);
-					}
-					$remolque1.focus();
-				});
-				
+				//LLamada a la funcion para aplicar el evento change al select tipo de viaje
+				$aplicar_evento_change_select_tviaje($select_tviaje, $remolque1, $remolque2);
 				
 				//Alimentar select pais origen
 				$select_pais_origen.children().remove();
@@ -2643,7 +2685,7 @@ $(function() {
 				//Buscador de Unidades(Vehiculo)
 				$busca_vehiculo.click(function(event){
 					event.preventDefault();
-					$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo);
+					$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo, $busca_vehiculo);
 				});
 				
 				$(this).aplicarEventoKeypressEjecutaTrigger($marca_vehiculo, $busca_vehiculo);
@@ -2659,6 +2701,10 @@ $(function() {
 									$id_vehiculo.val(entry2['Vehiculo'][0]['id']);
 									$no_economico.val(entry2['Vehiculo'][0]['numero_economico']);
 									$marca_vehiculo.val(entry2['Vehiculo'][0]['marca']);
+									$busca_vehiculo.hide();
+									//Aplicar solo lectura una vez que se ha escogido la unidad
+									$aplicar_readonly_input($marca_vehiculo);
+									$no_economico.focus(); 
 								}else{
 									jAlert('N&uacute;mero econ&oacute;mico desconocido.', 'Atencion!', function(r) {
 										$no_economico.val('');
@@ -2678,6 +2724,9 @@ $(function() {
 										$id_vehiculo.val(0);
 										$no_economico.val('');
 										$marca_vehiculo.val('');
+										$busca_vehiculo.show();
+										//Quitar solo lectura una vez que se ha borrado la unidad
+										$quitar_readonly_input($marca_vehiculo);
 										$no_economico.focus();
 									}else{
 										$no_economico.val(valor);
@@ -2727,7 +2776,7 @@ $(function() {
 				//Buscador de Agentes Aduanales
 				$busca_agena.click(function(event){
 					event.preventDefault();
-					$busca_agentes_aduanales($agena_id, $agena_no, $agena_nombre);
+					$busca_agentes_aduanales($agena_id, $agena_no, $agena_nombre, $busca_agena);
 				});
 				
 				$(this).aplicarEventoKeypressEjecutaTrigger($agena_nombre, $busca_agena);
@@ -2744,6 +2793,10 @@ $(function() {
 									$agena_id.val(entry2['AgenA'][0]['id']);
 									$agena_no.val(entry2['AgenA'][0]['folio']);
 									$agena_nombre.val(entry2['AgenA'][0]['razon_social']);
+									$busca_agena.hide();
+									
+									//Aplicar solo lectura una vez que se ha escogido un agente aduanal
+									$aplicar_readonly_input($agena_nombre);
 								}else{
 									jAlert('N&uacute;mero de Agente Aduanal desconocido.', 'Atencion!', function(r) { 
 										$agena_no.focus(); 
@@ -2762,6 +2815,11 @@ $(function() {
 										$agena_id.val(0);
 										$agena_no.val('');
 										$agena_nombre.val('');
+										$busca_agena.show();
+										
+										//Quitar solo lectura una vez que se ha eliminado datos del Agente Aduanal
+										$quitar_readonly_input($agena_nombre);
+										
 										$agena_no.focus();
 									}else{
 										$agena_no.val(valor);
@@ -2900,16 +2958,7 @@ $(function() {
 						}
 					}
 				});
-				
-				
-				
-				
-			}
-			
-			
-			
-			
-			
+			}//Termina datos para transportista
 			
 			
 			
@@ -3286,9 +3335,61 @@ $(function() {
 			var $campo_impuesto_retenido = $('#forma-pocpedidos-window').find('input[name=impuesto_retenido]');
 			var $total = $('#forma-pocpedidos-window').find('input[name=total]');
 			
+			//Variables para transportista
+			var $pestana_transportista = $('#forma-pocpedidos-window').find('ul.pestanas').find('a[href=#tabx-2]');
+			var $transportista = $('#forma-pocpedidos-window').find('input[name=transportista]');
+			var $check_flete = $('#forma-pocpedidos-window').find('input[name=check_flete]');
+			var $nombre_documentador = $('#forma-pocpedidos-window').find('input[name=nombre_documentador]');
+			var $valor_declarado = $('#forma-pocpedidos-window').find('input[name=valor_declarado]');
+			var $select_tviaje = $('#forma-pocpedidos-window').find('select[name=select_tviaje]');
+			var $remolque1 = $('#forma-pocpedidos-window').find('input[name=remolque1]');
+			var $remolque2 = $('#forma-pocpedidos-window').find('input[name=remolque2]');
+			
+			var $id_vehiculo = $('#forma-pocpedidos-window').find('input[name=id_vehiculo]');
+			var $no_economico = $('#forma-pocpedidos-window').find('input[name=no_economico]');
+			var $marca_vehiculo = $('#forma-pocpedidos-window').find('input[name=marca_vehiculo]');
+			
+			var $no_operador = $('#forma-pocpedidos-window').find('input[name=no_operador]');
+			var $nombre_operador = $('#forma-pocpedidos-window').find('input[name=nombre_operador]');
+			
+			var $agena_id = $('#forma-pocpedidos-window').find('input[name=agena_id]');
+			var $agena_no = $('#forma-pocpedidos-window').find('input[name=agena_no]');
+			var $agena_nombre = $('#forma-pocpedidos-window').find('input[name=agena_nombre]');
+			
+			var $select_pais_origen = $('#forma-pocpedidos-window').find('select[name=select_pais_origen]');
+			var $select_estado_origen = $('#forma-pocpedidos-window').find('select[name=select_estado_origen]');
+			var $select_municipio_origen = $('#forma-pocpedidos-window').find('select[name=select_municipio_origen]');
+			
+			var $select_pais_dest = $('#forma-pocpedidos-window').find('select[name=select_pais_dest]');
+			var $select_estado_dest = $('#forma-pocpedidos-window').find('select[name=select_estado_dest]');
+			var $select_municipio_dest = $('#forma-pocpedidos-window').find('select[name=select_municipio_dest]');
+			
+			var $rem_id = $('#forma-pocpedidos-window').find('input[name=rem_id]');
+			var $rem_no = $('#forma-pocpedidos-window').find('input[name=rem_no]');
+			var $rem_nombre = $('#forma-pocpedidos-window').find('input[name=rem_nombre]');
+			var $rem_dir = $('#forma-pocpedidos-window').find('input[name=rem_dir]');
+			var $rem_dir_alterna = $('#forma-pocpedidos-window').find('input[name=rem_dir_alterna]');
+			
+			var $dest_id = $('#forma-pocpedidos-window').find('input[name=dest_id]');
+			var $dest_no = $('#forma-pocpedidos-window').find('input[name=dest_no]');
+			var $dest_nombre = $('#forma-pocpedidos-window').find('input[name=dest_nombre]');
+			var $dest_dir = $('#forma-pocpedidos-window').find('input[name=dest_dir]');
+			var $dest_dir_alterna = $('#forma-pocpedidos-window').find('input[name=dest_dir_alterna]');
+			
+			var $observaciones_transportista = $('#forma-pocpedidos-window').find('textarea[name=observaciones_transportista]');
+			
+			var $busca_vehiculo = $('#forma-pocpedidos-window').find('a[href=busca_vehiculo]');
+			var $busca_operador = $('#forma-pocpedidos-window').find('a[href=busca_operador]');
+			var $busca_agena = $('#forma-pocpedidos-window').find('a[href=busca_agena]');
+			var $busca_remitente = $('#forma-pocpedidos-window').find('a[href=busca_remitente]');
+			var $busca_dest = $('#forma-pocpedidos-window').find('a[href=busca_dest]');
+			//Termina variables para transportista
+			
 			var $cerrar_plugin = $('#forma-pocpedidos-window').find('#close');
 			var $cancelar_plugin = $('#forma-pocpedidos-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-pocpedidos-window').find('#submit');
+			
+			$pestana_transportista.parent().hide();
 			
 			//ocultar boton descargar y facturar. Despues de facturar debe mostrarse
 			//$boton_descargarpdf.hide();
@@ -3813,6 +3914,520 @@ $(function() {
 					$calcula_totales();//llamada a la funcion que calcula totales 
 					
 					
+					
+					
+					
+					
+					
+					//Inicia carga de datos para pestaña de transportista
+					if(entry['Extras'][0]['transportista']=='true'){
+						var elemento_seleccionado = 0;
+						var texto_elemento_cero = '';
+						var index_elem = '';
+						var index_text_elem = '';
+						
+						//LLamada a la funcion para aplicar el evento change al select tipo de viaje
+						$aplicar_evento_change_select_tviaje($select_tviaje, $remolque1, $remolque2);
+						
+						$check_flete.attr('checked',  (entry['datosPedido'][0]['flete']=='true')? true:false );
+						$pestana_transportista.parent().show();
+						
+						if(entry['datosPedido'][0]['flete']=='true'){
+							$nombre_documentador.val(entry['datosTrans'][0]['documentador'].trim());
+							$valor_declarado.val(entry['datosTrans'][0]['valor_declarado'].trim());
+							
+							$remolque1.val(entry['datosTrans'][0]['remolque1'].trim());
+							$remolque2.val(entry['datosTrans'][0]['remolque2'].trim());
+							
+							$id_vehiculo.val(entry['datosTrans'][0]['vehiculo_id']);
+							$no_economico.val(entry['datosTrans'][0]['vehiculo_no']);
+							$marca_vehiculo.val(entry['datosTrans'][0]['vehiculo_marca']);
+							
+							$no_operador.val(entry['datosTrans'][0]['no_operador']);
+							$nombre_operador.val(entry['datosTrans'][0]['nombre_operador']);
+							
+							$agena_id.val(entry['datosTrans'][0]['agena_id']);
+							$agena_no.val(entry['datosTrans'][0]['agena_no']);
+							$agena_nombre.val(entry['datosTrans'][0]['agena_nombre']);
+							
+							$rem_id.val(entry['datosTrans'][0]['rem_id']);
+							$rem_no.val(entry['datosTrans'][0]['rem_no']);
+							$rem_nombre.val(entry['datosTrans'][0]['rem_nombre']);
+							$rem_dir.val(entry['datosTrans'][0]['rem_dir']);
+							$rem_dir_alterna.val(entry['datosTrans'][0]['rem_dir_alterna']);
+							
+							$dest_id.val(entry['datosTrans'][0]['dest_id']);
+							$dest_no.val(entry['datosTrans'][0]['dest_no']);
+							$dest_nombre.val(entry['datosTrans'][0]['dest_nombre']);
+							$dest_dir.val(entry['datosTrans'][0]['dest_dir']);
+							$dest_dir_alterna.val(entry['datosTrans'][0]['dest_dir_alterna']);
+							
+							$observaciones_transportista.text(entry['datosTrans'][0]['trans_observaciones']);
+							
+							if(parseInt(entry['datosTrans'][0]['vehiculo_id'])!=0){
+								$busca_vehiculo.hide();
+								$aplicar_readonly_input($marca_vehiculo);
+							}
+							if(entry['datosTrans'][0]['nombre_operador']!=''){
+								$busca_operador.hide();
+							}
+							if(parseInt(entry['datosTrans'][0]['agena_id'])!=0){
+								$busca_agena.hide();
+								$aplicar_readonly_input($agena_nombre);
+							}
+							if(parseInt(entry['datosTrans'][0]['rem_id'])!=0){
+								$busca_remitente.hide();
+								$aplicar_readonly_input($rem_nombre);
+								$aplicar_readonly_input($rem_dir);
+							}
+							if(parseInt(entry['datosTrans'][0]['dest_id'])!=0){
+								$busca_dest.hide();
+								$aplicar_readonly_input($dest_nombre);
+								$aplicar_readonly_input($dest_dir);
+							}
+							
+							var tviaje_hmtl = '';
+							if(parseInt(entry['datosTrans'][0]['tipo_viaje'])==1){
+								$aplicar_readonly_input($remolque2);
+								tviaje_hmtl = '<option value="1" selected="yes">Sencilla</option>';
+								tviaje_hmtl += '<option value="2" >Full</option>';
+							}else{
+								tviaje_hmtl = '<option value="1">Sencilla</option>';
+								tviaje_hmtl += '<option value="2" selected="yes">Full</option>';
+							}
+							//Alimentar select de tipo de viaje
+							$select_tviaje.children().remove();
+							$select_tviaje.append(tviaje_hmtl);
+							
+							//carga select de pais Origen
+							elemento_seleccionado = entry['datosTrans'][0]['pais_id_orig'];
+							texto_elemento_cero = '[-Seleccionar Pais-]';
+							index_elem = 'cve_pais';
+							index_text_elem = 'pais_ent';
+							$carga_campos_select($select_pais_origen, entry['Paises'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+							
+							//Carga select de estado Origen
+							elemento_seleccionado = entry['datosTrans'][0]['edo_id_orig'];
+							texto_elemento_cero = '[-Seleccionar Estado--]';
+							index_elem = 'cve_ent';
+							index_text_elem = 'nom_ent';
+							$carga_campos_select($select_estado_origen, entry['EdoOrig'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+							
+							//Carga select de municipio Origen
+							elemento_seleccionado = entry['datosTrans'][0]['mun_id_orig'];
+							texto_elemento_cero = '[-Seleccionar Municipio-]';
+							index_elem = 'cve_mun';
+							index_text_elem = 'nom_mun';
+							$carga_campos_select($select_municipio_origen, entry['MunOrig'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+							
+							
+							//carga select de pais Destino
+							elemento_seleccionado = entry['datosTrans'][0]['pais_id_dest'];
+							texto_elemento_cero = '[-Seleccionar Pais-]';
+							index_elem = 'cve_pais';
+							index_text_elem = 'pais_ent';
+							$carga_campos_select($select_pais_dest, entry['Paises'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+							
+							//Carga select de estado Destino
+							elemento_seleccionado = entry['datosTrans'][0]['edo_id_dest'];
+							texto_elemento_cero = '[-Seleccionar Estado--]';
+							index_elem = 'cve_ent';
+							index_text_elem = 'nom_ent';
+							$carga_campos_select($select_estado_dest, entry['EdoDest'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+							
+							//Carga select de municipio Destino
+							elemento_seleccionado = entry['datosTrans'][0]['mun_id_dest'];
+							texto_elemento_cero = '[-Seleccionar Municipio-]';
+							index_elem = 'cve_mun';
+							index_text_elem = 'nom_mun';
+							$carga_campos_select($select_municipio_dest, entry['MunDest'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+						}else{
+							//Aqui entra cuando no es pedido de flete
+							//Esta informacion que se agrega en esta parte es para permitir al usuario la posibilidad de convertirlo en pedido de Flete
+							//carga select de pais Origen
+							elemento_seleccionado = 0;
+							texto_elemento_cero = '[-Seleccionar Pais-]';
+							index_elem = 'cve_pais';
+							index_text_elem = 'pais_ent';
+							$carga_campos_select($select_pais_origen, entry['Paises'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+							
+							//carga select de pais Destino
+							elemento_seleccionado = 0;
+							texto_elemento_cero = '[-Seleccionar Pais-]';
+							index_elem = 'cve_pais';
+							index_text_elem = 'pais_ent';
+							$carga_campos_select($select_pais_dest, entry['Paises'], elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+							
+							$aplicar_readonly_input($remolque2);
+						}
+						
+						
+						//Carga select estados al cambiar el pais Origen
+						$select_pais_origen.change(function(){
+							var valor_pais = $(this).val();
+							var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEstados.json';
+							$arreglo = {'id_pais':valor_pais};
+							$.post(input_json,$arreglo,function(entry){
+								$select_estado_origen.children().remove();
+								var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>'
+								$.each(entry['Estados'],function(entryIndex,entidad){
+									entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
+								});
+								$select_estado_origen.append(entidad_hmtl);
+								
+								var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
+								$select_municipio_origen.children().remove();
+								$select_municipio_origen.append(trama_hmtl_localidades);
+							},"json");//termina llamada json
+						});
+						
+						//Carga select municipios al cambiar el estado origen
+						$select_estado_origen.change(function(){
+							var valor_entidad = $(this).val();
+							var valor_pais = $select_pais_origen.val();
+							
+							var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMunicipios.json';
+							$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
+							$.post(input_json,$arreglo,function(entry){
+								$select_municipio_origen.children().remove();
+								var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>'
+								$.each(entry['Municipios'],function(entryIndex,mun){
+									trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
+								});
+								$select_municipio_origen.append(trama_hmtl_localidades);
+							},"json");//termina llamada json
+						});
+						
+						
+						
+						
+						//Carga select estados al cambiar el pais destino
+						$select_pais_dest.change(function(){
+							var valor_pais = $(this).val();
+							var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEstados.json';
+							$arreglo = {'id_pais':valor_pais};
+							$.post(input_json,$arreglo,function(entry){
+								$select_estado_dest.children().remove();
+								var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar Estado--]</option>'
+								$.each(entry['Estados'],function(entryIndex,entidad){
+									entidad_hmtl += '<option value="' + entidad['cve_ent'] + '"  >' + entidad['nom_ent'] + '</option>';
+								});
+								$select_estado_dest.append(entidad_hmtl);
+								
+								var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>';
+								$select_municipio_dest.children().remove();
+								$select_municipio_dest.append(trama_hmtl_localidades);
+							},"json");//termina llamada json
+						});
+						
+						//Carga select municipios al cambiar el estado destino
+						$select_estado_dest.change(function(){
+							var valor_entidad = $(this).val();
+							var valor_pais = $select_pais_dest.val();
+							
+							var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getMunicipios.json';
+							$arreglo = {'id_pais':valor_pais, 'id_entidad': valor_entidad};
+							$.post(input_json,$arreglo,function(entry){
+								$select_municipio_dest.children().remove();
+								var trama_hmtl_localidades = '<option value="00" selected="yes" >[-Seleccionar Municipio-]</option>'
+								$.each(entry['Municipios'],function(entryIndex,mun){
+									trama_hmtl_localidades += '<option value="' + mun['cve_mun'] + '"  >' + mun['nom_mun'] + '</option>';
+								});
+								$select_municipio_dest.append(trama_hmtl_localidades);
+							},"json");//termina llamada json
+						});
+						
+						
+						
+
+											
+						//Buscador de Unidades(Vehiculo)
+						$busca_vehiculo.click(function(event){
+							event.preventDefault();
+							$busca_unidades($id_vehiculo, $no_economico, $marca_vehiculo, $busca_vehiculo);
+						});
+						
+						$(this).aplicarEventoKeypressEjecutaTrigger($marca_vehiculo, $busca_vehiculo);
+						
+						$no_economico.keypress(function(e){
+							var valor=$(this).val();
+							if(e.which == 13){
+								if($no_economico.val().trim()!=''){
+									var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataUnidadByNoEco.json';
+									$arreglo2 = {'no_economico':$no_economico.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+									$.post(input_json2,$arreglo2,function(entry2){
+										if(parseInt(entry2['Vehiculo'].length) > 0 ){
+											$id_vehiculo.val(entry2['Vehiculo'][0]['id']);
+											$no_economico.val(entry2['Vehiculo'][0]['numero_economico']);
+											$marca_vehiculo.val(entry2['Vehiculo'][0]['marca']);
+											$busca_vehiculo.hide();
+											//Aplicar solo lectura una vez que se ha escogido la unidad
+											$aplicar_readonly_input($marca_vehiculo);
+											$no_economico.focus(); 
+										}else{
+											jAlert('N&uacute;mero econ&oacute;mico desconocido.', 'Atencion!', function(r) {
+												$no_economico.val('');
+												$no_economico.focus(); 
+											});
+										}
+									},"json");//termina llamada json
+								}
+								return false;
+							}else{
+								if (parseInt(e.which) == 8) {
+									//Si se oprime la tecla borrar se vacía el campo no_economico 
+									if(parseInt(valor.length)>0 && parseInt($id_vehiculo.val())>0){
+										jConfirm('Seguro que desea cambiar la Unidad seleccionada?', 'Dialogo de Confirmacion', function(r) {
+											// If they confirmed, manually trigger a form submission
+											if (r) {
+												$id_vehiculo.val(0);
+												$no_economico.val('');
+												$marca_vehiculo.val('');
+												$busca_vehiculo.show();
+												//Quitar solo lectura una vez que se ha borrado la unidad
+												$quitar_readonly_input($marca_vehiculo);
+												$no_economico.focus();
+											}else{
+												$no_economico.val(valor);
+												$no_economico.focus();
+											}
+										});
+									}else{
+										$no_economico.focus();
+									}
+								}
+							}
+						});
+						
+						
+						
+						//Buscador de Operadores
+						$busca_operador.click(function(event){
+							event.preventDefault();
+							$busca_operadores($no_operador, $nombre_operador);
+						});
+						
+						$(this).aplicarEventoKeypressEjecutaTrigger($nombre_operador, $busca_operador);
+						
+						$no_operador.keypress(function(e){
+							var valor=$(this).val();
+							if(e.which == 13){
+								if($no_operador.val().trim()!=''){
+									var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataOperadorByNo.json';
+									$arreglo2 = {'no_operador':$no_operador.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+									$.post(input_json2,$arreglo2,function(entry2){
+										if(parseInt(entry2['Operador'].length) > 0 ){
+											$no_operador.val(entry2['Operador'][0]['clave']);
+											$nombre_operador.val(entry2['Operador'][0]['nombre']);
+										}else{
+											jAlert('N&uacute;mero de Operador desconocido.', 'Atencion!', function(r) {
+												$no_operador.val('');
+												$no_operador.focus(); 
+											});
+										}
+									},"json");//termina llamada json
+								}
+								return false;
+							}
+						});
+						
+						
+						
+						//Buscador de Agentes Aduanales
+						$busca_agena.click(function(event){
+							event.preventDefault();
+							$busca_agentes_aduanales($agena_id, $agena_no, $agena_nombre, $busca_agena);
+						});
+						
+						$(this).aplicarEventoKeypressEjecutaTrigger($agena_nombre, $busca_agena);
+						
+						$agena_no.keypress(function(e){
+							var valor=$(this).val();
+							if(e.which == 13){
+								if($agena_no.val().trim()!=''){
+									var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoAgen.json';
+									$arreglo2 = {'no_control':$agena_no.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+									
+									$.post(input_json2,$arreglo2,function(entry2){
+										if(parseInt(entry2['AgenA'].length) > 0 ){
+											$agena_id.val(entry2['AgenA'][0]['id']);
+											$agena_no.val(entry2['AgenA'][0]['folio']);
+											$agena_nombre.val(entry2['AgenA'][0]['razon_social']);
+											$busca_agena.hide();
+											
+											//Aplicar solo lectura una vez que se ha escogido un agente aduanal
+											$aplicar_readonly_input($agena_nombre);
+										}else{
+											jAlert('N&uacute;mero de Agente Aduanal desconocido.', 'Atencion!', function(r) { 
+												$agena_no.focus(); 
+											});
+										}
+									},"json");//termina llamada json
+								}
+								return false;
+							}else{
+								if (parseInt(e.which) == 8) {
+									//Si se oprime la tecla borrar se vacía el campo agena_no 
+									if(parseInt(valor.length)>0 && parseInt($agena_id.val())>0){
+										jConfirm('Seguro que desea cambiar el Agente Aduanal seleccionado?', 'Dialogo de Confirmacion', function(r) {
+											// If they confirmed, manually trigger a form submission
+											if (r) {
+												$agena_id.val(0);
+												$agena_no.val('');
+												$agena_nombre.val('');
+												$busca_agena.show();
+												
+												//Quitar solo lectura una vez que se ha eliminado datos del Agente Aduanal
+												$quitar_readonly_input($agena_nombre);
+												
+												$agena_no.focus();
+											}else{
+												$agena_no.val(valor);
+												$agena_no.focus();
+											}
+										});
+									}else{
+										$agena_no.focus();
+									}
+								}
+							}
+						});
+
+						
+						
+						
+						//Buscador de Remitentes
+						$busca_remitente.click(function(event){
+							event.preventDefault();
+							$busca_remitentes($rem_id, $rem_nombre, $rem_no, $rem_dir, $id_cliente, $busca_remitente);
+						});
+						
+						$(this).aplicarEventoKeypressEjecutaTrigger($rem_nombre, $busca_remitente);
+							
+						$rem_no.keypress(function(e){
+							var valor=$(this).val();
+							if(e.which == 13){
+								if($rem_no.val().trim()!=''){
+									var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoRemitente.json';
+									$arreglo2 = {'no_control':$rem_no.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+									$.post(input_json2,$arreglo2,function(entry2){
+										if(parseInt(entry2['Remitente'].length) > 0 ){
+											var rem_id = entry2['Remitente'][0]['id'];
+											var rem_numero = entry2['Remitente'][0]['folio'];
+											var rem_nombre = entry2['Remitente'][0]['razon_social'];
+											var rem_dir = entry2['Remitente'][0]['dir'];
+											$agregar_datos_remitente($rem_id, $rem_nombre, $rem_no, $rem_dir, $busca_remitente, rem_id, rem_nombre, rem_numero, rem_dir);
+										}else{
+											jAlert('N&uacute;mero de Remitente desconocido.', 'Atencion!', function(r) { 
+												$rem_no.focus(); 
+											});
+										}
+									},"json");//termina llamada json
+								}
+								return false;
+							}else{
+								if (parseInt(e.which) == 8) {
+									//Si se oprime la tecla borrar se vacía el campo agena_no 
+									if(parseInt(valor.length)>0 && parseInt($rem_id.val())>0){
+										jConfirm('Seguro que desea cambiar el Remitente seleccionado?', 'Dialogo de Confirmacion', function(r) {
+											// If they confirmed, manually trigger a form submission
+											if (r) {
+												$rem_id.val(0);
+												$rem_no.val('');
+												$rem_nombre.val('');
+												$rem_dir.val('');
+												
+												//Quitar solo lectura una vez que se ha eliminado datos del Remitente
+												$quitar_readonly_input($rem_nombre);
+												
+												//Mostrar link busca remitente
+												$busca_remitente.show();
+												
+												$rem_no.focus();
+											}else{
+												$rem_no.val(valor);
+												$rem_no.focus();
+											}
+										});
+									}else{
+										$rem_no.focus();
+									}
+								}
+							}
+						});
+						
+						
+						
+						
+						//Buscador de Destinatarios
+						$busca_dest.click(function(event){
+							event.preventDefault();
+							$busca_destinatarios($dest_id, $dest_nombre, $dest_no, $dest_dir, $id_cliente, $busca_dest);
+						});
+						
+						$(this).aplicarEventoKeypressEjecutaTrigger($dest_nombre, $busca_dest);
+						
+						$dest_no.keypress(function(e){
+							var valor=$(this).val();
+							if(e.which == 13){
+								if($dest_no.val().trim()!=''){
+									var input_json2 = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataByNoDestinatario.json';
+									$arreglo2 = {'no_control':$dest_no.val(),  'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+									$.post(input_json2,$arreglo2,function(entry2){
+										if(parseInt(entry2['Dest'].length) > 0 ){
+											var dest_id = entry2['Dest'][0]['id'];
+											var dest_numero = entry2['Dest'][0]['folio'];
+											var dest_nombre = entry2['Dest'][0]['razon_social'];
+											var dest_dir = entry2['Dest'][0]['dir'];
+																	
+											$agregar_datos_remitente($dest_id, $dest_nombre, $dest_no, $dest_dir, $busca_dest, dest_id, dest_nombre, dest_numero, dest_dir);
+										}else{
+											jAlert('N&uacute;mero de Destinatario desconocido.', 'Atencion!', function(r) { 
+												$dest_no.focus(); 
+											});
+										}
+									},"json");//termina llamada json
+								}
+								return false;
+							}else{
+								if (parseInt(e.which) == 8) {
+									//Si se oprime la tecla borrar se vacía el campo agena_no 
+									if(parseInt(valor.length)>0 && parseInt($dest_id.val())>0){
+										jConfirm('Seguro que desea cambiar el Destinatario seleccionado?', 'Dialogo de Confirmacion', function(r) {
+											// If they confirmed, manually trigger a form submission
+											if (r) {
+												$dest_id.val(0);
+												$dest_no.val('');
+												$dest_nombre.val('');
+												$dest_dir.val('');
+												
+												//Quitar solo lectura una vez que se ha eliminado datos del Remitente
+												$quitar_readonly_input($dest_nombre);
+												
+												//Mostrar link busca remitente
+												$busca_dest.show();
+												
+												$dest_no.focus();
+											}else{
+												$dest_no.val(valor);
+												$dest_no.focus();
+											}
+										});
+									}else{
+										$dest_no.focus();
+									}
+								}
+							}
+						});						
+					}//Termina datos para transportista
+					
+					
+					
+					
+					
+					
+					
+					
 					//si es refacturacion, no se puede cambiar los datos del grid, solo el header de la factura
 					if(entry['datosPedido']['0']['cancelado']=="true"){
 						$cancelar_pedido.hide();
@@ -3844,6 +4459,11 @@ $(function() {
 						$impuesto.attr('disabled','-1'); //deshabilitar
 						$campo_impuesto_retenido.attr('disabled','-1'); //deshabilitar
 						$total.attr('disabled','-1'); //deshabilitar
+						
+						$('#forma-pocpedidos-window').find('#tabx-2').find('input').attr('disabled','-1'); //deshabilitar
+						$('#forma-pocpedidos-window').find('#tabx-2').find('select').attr('disabled','-1'); //deshabilitar
+						$('#forma-pocpedidos-window').find('#tabx-2').find('textarea').attr('disabled','-1'); //deshabilitar
+						$('#forma-pocpedidos-window').find('#tabx-2').find('a').hide();
 					}
 					
 					
@@ -3873,6 +4493,14 @@ $(function() {
 						$grid_productos.find('#cant').attr("readonly", true);//establece solo lectura campos cantidad del grid
 						$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid
 						$grid_productos.find('input[name=checkProd]').attr('disabled','-1'); //deshabilitar
+						
+						
+						$('#forma-pocpedidos-window').find('#tabx-2').find('input').attr("readonly", true);
+						$('#forma-pocpedidos-window').find('#tabx-2').find('input').css({'background' : '#F0F0F0'});
+						$('#forma-pocpedidos-window').find('#tabx-2').find('textarea').attr("readonly", true);
+						$('#forma-pocpedidos-window').find('#tabx-2').find('select').attr('disabled','-1'); //deshabilitar
+						$('#forma-pocpedidos-window').find('#tabx-2').find('input[name=check_flete]').attr('disabled','-1'); //deshabilitar
+						$('#forma-pocpedidos-window').find('#tabx-2').find('a').hide();
 					}else{
 
 						//$fecha_compromiso.val(mostrarFecha());

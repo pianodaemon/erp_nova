@@ -161,6 +161,7 @@
 				<input type="hidden" name="cta_mn">
                 <input type="hidden" name="cta_usd">
                 <input type="hidden" name="incluye_pro">
+                <input type="hidden" name="transportista">
                 <input type="hidden" name="num_lista_precio">
 					
                     <div id="div_two" title="" class="pocpedidos_div_two">
@@ -526,7 +527,7 @@
                                                     <td>
                                                         <table border="0" class="gral" style="margin:0px; margin-bottom:5px; padding:0px;">
 															<tr>
-																<td width="80">Factura&nbsp;de&nbsp;Flete</td>
+																<td width="80">Pedido&nbsp;de&nbsp;Flete</td>
 																<td width="90">
 																	<input type="checkbox" name="check_flete">
 																</td>
@@ -552,7 +553,7 @@
 																		<option value="2" >Full</option>
 																	</select>
 																</td>
-																<td width="25"></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tviaje"></div></td>
 																<td width="70">Remolque 1</td>
 																<td width="90"><input type="text" name="remolque1" style="width:90px;"></td>
 																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_remolque1"></div></td>
@@ -596,7 +597,7 @@
 																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_nooperador"></div></td>
 																<td width="70">Nombre</td>
 																<td width="280"><input type="text" name="nombre_operador" style="width:280px;"></td>
-																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_marca"></div></td>
+																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_operador"></div></td>
 																<td width="55"><a href="busca_operador">&nbsp;(Buscar)</a></td>
 																<td width="80"></td>
 																<td width="80"></td>
@@ -702,7 +703,7 @@
 																	<input type="hidden" name="rem_id" value="0">
 																	<input type="text" name="rem_no" style="width:90px; border:1px solid #000;" title="Numero de Remitente">
 																</td>
-																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_noeconomico"></div></td>
+																<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_remid"></div></td>
 																<td width="70">Razon Social</td>
 																<td width="280"><input type="text" name="rem_nombre" style="width:280px;"></td>
 																<td width="5"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_marca"></div></td>
