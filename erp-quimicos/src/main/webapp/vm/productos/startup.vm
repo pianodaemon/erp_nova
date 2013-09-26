@@ -121,9 +121,8 @@
 				<input type="hidden" name="total_porcentaje" value="0">
 				<input type="hidden" name="total_tr">
 				<input type="hidden" name="incluye_pro">
-
-                                <input type="hidden" name="edito_imagen" value="0">
-                                <input type="hidden" name="edito_pdf" value="0">
+				<input type="hidden" name="edito_imagen" value="0">
+				<input type="hidden" name="edito_pdf" value="0">
 				
                     <div id="div_two" title="" class="product_div_two">
                         <div class="columns on-2">
@@ -142,7 +141,7 @@
 									<li><a href="#tabx-1"><strong>Producto </strong></a></li>
 									<li><a href="#tabx-2"><strong>Datos</strong></a></li>
 									<li><a href="#tabx-3"><strong>Contabilidad</strong></a></li>
-                                                                        <li><a href="#tabx-4"><strong>Descripciones</strong></a></li>
+									<li><a href="#tabx-4"><strong>Descripciones</strong></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -547,8 +546,8 @@
 												<td width="110">Punto&nbsp;de&nbsp;Reorden</td>
 												<td width="5"></td>
 												<td width="50"><input type="text" name="punto_reorden" value="0" style="width:45px;" maxlength="10"></td>
-												<td width="50">&nbsp;</td>
-												<td width="60"></td>
+												<td width="50" align="right">Flete&nbsp;&nbsp;</td>
+												<td width="60"><input type="checkbox" name="check_flete"></td>
 												<td width="40"></td>
 												<td width="50"></td>
 												<td width="195" colspan="2">Seleccionar presentaci&oacute;n default</td>

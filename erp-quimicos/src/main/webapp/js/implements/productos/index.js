@@ -1777,6 +1777,7 @@ $(function() {
 				var $check_stock = $('#forma-product-window').find('input[name=check_stock]');
 				var $check_ventaext = $('#forma-product-window').find('input[name=check_ventaext]');
 				var $check_compraext = $('#forma-product-window').find('input[name=check_compraext]');
+				var $check_flete = $('#forma-product-window').find('input[name=check_flete]');
 				
 				//variables para controlar las imagenes y el pdf
 				var $nameimg = $('#forma-product-window').find('input[name=nameimg]');
@@ -2073,6 +2074,7 @@ $(function() {
 					$check_stock.attr('checked', (entry['Producto'][0]['permitir_stock'] == 'true')? true:false );
 					$check_ventaext.attr('checked', (entry['Producto'][0]['venta_moneda_extranjera'] == 'true')? true:false );
 					$check_compraext.attr('checked', (entry['Producto'][0]['compra_moneda_extranjera'] == 'true')? true:false );
+					$check_flete.attr('checked', (entry['Producto'][0]['flete'] == 'true')? true:false );
 					
 					$nameimg.attr('value', entry['Producto'][0]['archivo_img']);
 					$namepdf.attr('value', entry['Producto'][0]['archivo_pdf']);
