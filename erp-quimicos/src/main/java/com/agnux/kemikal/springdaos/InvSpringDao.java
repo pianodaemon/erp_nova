@@ -496,7 +496,8 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "inv_prod.descripcion_larga, "
                         + "inv_prod.archivo_img, "
                         + "inv_prod.archivo_pdf,"
-                        + "inv_prod.inv_prod_presentacion_id AS presentacion_id "
+                        + "inv_prod.inv_prod_presentacion_id AS presentacion_id, "
+                        + "inv_prod.flete "
                 + "FROM inv_prod  "
                 + "LEFT JOIN cxp_prov ON cxp_prov.id=inv_prod.cxp_prov_id "
                 + "WHERE inv_prod.id=?";
@@ -545,6 +546,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("archivo_img",rs.getString("archivo_img"));
                     row.put("archivo_pdf",rs.getString("archivo_pdf"));
                     row.put("presentacion_id",String.valueOf(rs.getInt("presentacion_id")));
+                    row.put("flete",String.valueOf(rs.getBoolean("flete")));
                     return row;
                 }
             }

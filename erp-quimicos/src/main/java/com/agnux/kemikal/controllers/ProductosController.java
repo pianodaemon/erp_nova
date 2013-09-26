@@ -552,6 +552,7 @@ public class ProductosController {
             @RequestParam(value="descripcion_larga", required=true) String descripcion_larga,
             @RequestParam(value="edito_pdf", required=true) String edito_pdf,
             @RequestParam(value="edito_imagen", required=true) String edito_imagen,
+            @RequestParam(value="check_flete", required=false) String check_flete,
             Model model,@ModelAttribute("user") UserSessionData user
         ) {
             
@@ -622,7 +623,7 @@ public class ProductosController {
             punto_reorden = StringHelper.verificarSelect(punto_reorden);
             select_pres_default = StringHelper.verificarSelect(select_pres_default);
             
-            //verifica los campos CheckBox y les asigna true o false
+            //Verifica los campos CheckBox y les asigna true o false
             check_nolote = StringHelper.verificarCheckBox(check_nolote);
             check_nom = StringHelper.verificarCheckBox(check_nom);
             check_noserie = StringHelper.verificarCheckBox(check_noserie);
@@ -630,6 +631,7 @@ public class ProductosController {
             check_stock = StringHelper.verificarCheckBox(check_stock);
             check_ventaext = StringHelper.verificarCheckBox(check_ventaext);
             check_compraext = StringHelper.verificarCheckBox(check_compraext);
+            check_flete = StringHelper.verificarCheckBox(check_flete);
             
             if( id_producto.equals("0") ){
                 command_selected = "new";
@@ -679,7 +681,8 @@ public class ProductosController {
                     namepdf+"___"+//39
                     descripcion_corta+"___"+//40
                     descripcion_larga+"___"+//41
-                    select_pres_default;//42
+                    select_pres_default+"___"+//42
+                    check_flete;
             
             succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             
