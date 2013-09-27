@@ -219,12 +219,14 @@ public class PocPedidosController {
         ArrayList<HashMap<String, String>> municipiosOrigen = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> estadosDestino = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> municipiosDestino = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> unidadesMedida = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
         HashMap<String, String> tc = new HashMap<String, String>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
@@ -252,6 +254,10 @@ public class PocPedidosController {
             }
         }
         
+        //Aqui se obtienen los parametros de la facturacion, nos intersa saber si se debe permitir cambiar_unidad_medida
+        parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
+        extra.put("cambioUM", parametros.get("cambiar_unidad_medida"));
+        
         valorIva= this.getPocDao().getValoriva(id_sucursal);
         tc.put("tipo_cambio", StringHelper.roundDouble(this.getPocDao().getTipoCambioActual(), 4));
         tipoCambioActual.add(0,tc);
@@ -262,7 +268,8 @@ public class PocPedidosController {
         metodos_pago = this.getPocDao().getMetodosPago();
         almacenes = this.getPocDao().getPocPedido_Almacenes(id_sucursal);
         paises = this.getPocDao().getPaises();
-            
+        unidadesMedida = this.getPocDao().getUnidadesMedida();
+        
         if(userDat.get("transportista").toLowerCase().equals("true")){
             //Aqui solo entra cuando la emprsa es transportista
             if(id_pedido.equals("0")){
@@ -288,6 +295,7 @@ public class PocPedidosController {
         jsonretorno.put("MunOrig", municipiosOrigen);
         jsonretorno.put("EdoDest", estadosDestino);
         jsonretorno.put("MunDest", municipiosDestino);
+        jsonretorno.put("UM", unidadesMedida);
         return jsonretorno;
     }
     
@@ -773,6 +781,7 @@ public class PocPedidosController {
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="idproducto", required=false) String[] idproducto,
+            @RequestParam(value="select_umedida", required=false) String[] select_umedida,
             @RequestParam(value="id_presentacion", required=false) String[] id_presentacion,
             @RequestParam(value="id_imp_prod", required=false) String[] id_impuesto,
             @RequestParam(value="valor_imp", required=false) String[] valor_imp,
@@ -819,7 +828,8 @@ public class PocPedidosController {
             arreglo = new String[eliminado.length];
             
             for(int i=0; i<eliminado.length; i++) { 
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i] +"'";
+                select_umedida[i] = StringHelper.verificarSelect(select_umedida[i]);
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] +"'";
                 //System.out.println(arreglo[i]);
             }
             

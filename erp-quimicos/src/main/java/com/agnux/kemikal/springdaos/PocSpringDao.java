@@ -243,7 +243,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion   "
                 + "FROM poc_pedidos_detalle "
                 + "LEFT JOIN inv_prod on inv_prod.id = poc_pedidos_detalle.inv_prod_id "
-                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_pedidos_detalle.inv_prod_unidad_id "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_pedidos_detalle.presentacion_id "
                 + "WHERE poc_pedidos_detalle.poc_pedido_id="+id_pedido;
         
@@ -584,7 +584,7 @@ public class PocSpringDao implements PocInterfaceDao{
         mapDatos.put("permitir_servicios", String.valueOf(map.get("permitir_servicios")));
         mapDatos.put("permitir_articulos", String.valueOf(map.get("permitir_articulos")));
         mapDatos.put("permitir_kits", String.valueOf(map.get("permitir_kits")));
-
+        mapDatos.put("cambiar_unidad_medida", String.valueOf(map.get("cambiar_unidad_medida")));
         return mapDatos;
     }
 
@@ -1166,10 +1166,10 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm_tp;
     }
-
-
-
-
+    
+    
+    
+    
     @Override
     public ArrayList<HashMap<String, String>> getBuscadorProductos(String sku, String tipo, String descripcion, Integer id_empresa) {
         String where = "";
@@ -1237,13 +1237,14 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "(CASE WHEN inv_pre.gral_mon_id_pre1 IS NULL THEN 0 ELSE (SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id=inv_pre.gral_mon_id_pre"+lista_precio+" ORDER BY momento_creacion DESC LIMIT 1) END ) AS tc, "
                     + " (CASE WHEN inv_pre.precio_"+lista_precio+" IS NULL THEN 'El producto con &eacute;sta presentaci&oacute;n no se encuentra en el cat&aacute;logo de Listas de Precios.\nEs necesario asignarle un precio.' ELSE '1' END ) AS exis_prod_lp ";
         }
-
+        
         sql_query = ""
             + "SELECT "
                     +"inv_prod.id,"
                     +"inv_prod.sku,"
                     +"inv_prod.descripcion AS titulo,"
                     +"inv_prod.gral_impto_id AS id_impto_prod,"
+                    +"inv_prod.unidad_id,"
                     +"(CASE WHEN inv_prod.gral_impto_id=0 THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impto_prod, "
                     +"(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga,"
                     +"(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img,"
@@ -1275,6 +1276,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("titulo",rs.getString("titulo"));
                     row.put("descripcion_larga",rs.getString("descripcion_larga"));
                     row.put("archivo_img",rs.getString("archivo_img"));
+                    row.put("unidad_id",String.valueOf(rs.getInt("unidad_id")));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
                     row.put("presentacion",rs.getString("presentacion"));
@@ -1836,6 +1838,7 @@ public class PocSpringDao implements PocInterfaceDao{
             rowmap.put("titulo", map.get("titulo"));
             rowmap.put("descripcion_larga", map.get("descripcion_larga"));
             rowmap.put("archivo_img", map.get("archivo_img"));
+            rowmap.put("unidad_id", map.get("unidad_id"));
             rowmap.put("unidad", map.get("unidad"));
             rowmap.put("id_presentacion", map.get("id_presentacion"));
             rowmap.put("presentacion", map.get("presentacion"));
@@ -2016,7 +2019,7 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "fac_rems_detalles.valor_imp "
                 + "FROM fac_rems_detalles "
                 + "LEFT JOIN inv_prod on inv_prod.id = fac_rems_detalles.inv_prod_id "
-                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_rems_detalles.inv_prod_unidad_id "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = fac_rems_detalles.inv_prod_presentacion_id "
                 + "WHERE fac_rems_detalles.fac_rems_id="+id_remision;
 
@@ -2141,7 +2144,7 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "(fac_rems_detalles.cantidad * fac_rems_detalles.precio_unitario) AS importe "
                 + "FROM fac_rems_detalles "
                 + "LEFT JOIN inv_prod on inv_prod.id = fac_rems_detalles.inv_prod_id "
-                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_rems_detalles.inv_prod_unidad_id "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = fac_rems_detalles.inv_prod_presentacion_id "
                 + "WHERE fac_rems_detalles.fac_rems_id= "+id_remision;
 
@@ -3129,6 +3132,27 @@ public class PocSpringDao implements PocInterfaceDao{
 
 
 
+     //Obtiene las unidades de medida de los productos
+    @Override
+    public ArrayList<HashMap<String, String>> getUnidadesMedida() {
+        String sql_query = "SELECT id,titulo,titulo_abr,decimales FROM inv_prod_unidades WHERE borrado_logico=FALSE;";
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("titulo_abr",rs.getString("titulo_abr"));
+                    row.put("decimales",String.valueOf(rs.getInt("decimales")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
 
 
 
