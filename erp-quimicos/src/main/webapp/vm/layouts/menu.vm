@@ -127,11 +127,11 @@
 													<li class="topline"><a href="../clientsclasif2/startup.agnux">Clasificaci&oacute;n 2</a></li>
 													<li class="topline"><a href="../clientsclasif3/startup.agnux">Clasificaci&oacute;n 3</a></li>
 													<li class="topline"><a href="../clientstmovimientos/startup.agnux">Tipos de Movimientos</a></li>
-													<!--
+													
 													<li class="topline" id="transpor"><a href="../clientsremiten/startup.agnux">Remitentes</a></li>
 													<li class="topline" id="transpor"><a href="../clientsdest/startup.agnux">Destinatarios</a></li>
 													<li class="topline" id="transpor"><a href="../clientsagenaduanal/startup.agnux">Agentes Aduanales</a></li>
-													-->
+													
 													<!--
 													<li class="topline"><a href="#">Mensajes</a></li>
 													<li class="topline"><a href="#">Direcciones</a></li>
@@ -157,7 +157,7 @@
 													-->
 												</ul>
 											</li>
-											<!--
+											
 											<li>
 												<a href="#" class="sub">Asignaci&oacute;n &raquo;</a>
 												<ul>
@@ -166,7 +166,7 @@
 													<li class="topline"><a href="../clientsasignaagena/startup.agnux">Agentes Aduanales</a></li>
 												</ul>
 											</li>
-											-->
+											
 											<li>
 												<a href="#" class="sub">Reportes &raquo;</a>
 												<ul>
@@ -559,7 +559,74 @@
 
 
 
+									<!-- Menu de produccion "NO BORRAR PORFAVOR, se enojara el papa de Paco"  -->
+									<li class="accessible">
+										<a href="http://jdsharp.us" class="accessible">Producci&oacute;n &raquo;</a>
+										<ul>
+											
+											<li>
+												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
+												<ul>
+													<li><a href="../proequipos/startup.agnux">Equipos</a></li>
+													<li><a href="../proequiposadic/startup.agnux">Equipos Adicionales</a></li>
+													<li><a href="../protipoequipo/startup.agnux">Tipos de Equipo</a></li>
+													<li><a href="../proinstrumentosmedicion/startup.agnux">Instrumentos de Medici&oacute;n</a></li>
+												</ul>
+											</li>
+											
+											<li>
+												<a href="#" class="sub">Procesos &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../proformulasdesarrollo/startup.agnux">Formulas en Desarrollo</a></li>
+													<li class="topline"><a href="../proconfigproduccion/startup.agnux">Configuraci&oacute;n</a></li>
+													<li class="topline"><a href="../propreordenproduccion/startup.agnux">Preorden Producci&oacute;n</a></li>
+													<li class="topline"><a href="../proordenproduccion/startup.agnux">Orden Producci&oacute;n</a></li>
+													<li class="topline"><a href="../procalidad/startup.agnux">Aseguramiento de Calidad</a></li>
+													<li class="topline"><a href="../proordensimulacion/startup.agnux">Simulaci&oacute;n de Producci&oacute;n</a></li>
 
+													<!--
+													<li class="topline"><a href="#">Cancelaci&oacute;n</a></li>
+													<li class="topline"><a href="#">Nota Cargo/Cr&eacute;dito</a></li>
+													<li class="topline"><a href="#">Consulta Cancelaci&oacute;n/Devoluci&oacute;n</a></li>
+													<li class="topline"><a href="#">Recepci&oacute;n Documentos XML</a></li>
+													-->
+												</ul>
+											</li>
+											<li>
+												<a href="#" class="sub">Reportes&raquo;</a>
+												<ul>
+													<!--<li class="topline"><a href="#">F&oacute;rmulas</a></li>-->
+													<li class="topline"><a href="../proreporteproduccion/startup.agnux">Producci&oacute;n</a></li>
+													<li class="topline"><a href="../proreportecalidad/startup.agnux">Reporte de Calidad</a></li>
+												</ul>
+											</li>
+										</ul>
+									</li>
+
+
+
+									
+									<li class="accessible" >
+										<a href="http://jdsharp.us" class="accessible">Envasado &raquo;</a>
+										<ul>
+											<li>
+												<a href="#" class="sub">Procesos &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../envconf/startup.agnux">Configuraci&oacute;n</a></li>
+													<li class="topline"><a href="../envreenv/startup.agnux">Re-Envasado</a></li>
+													<li class="topline"><a href="../envproceso/startup.agnux">Envasado</a></li>
+												</ul>
+											</li>
+											<!--
+											<li>
+												<a href="#" class="sub">Reportes</a>
+												<ul>
+													<li class="topline"><a href="#">xxxx</a></li>
+												</ul>
+											</li>
+											-->
+										</ul>
+									</li>
 									
 
 
