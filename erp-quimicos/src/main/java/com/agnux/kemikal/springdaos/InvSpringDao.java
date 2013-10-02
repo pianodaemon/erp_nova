@@ -5179,7 +5179,7 @@ public class InvSpringDao implements InvInterfaceDao{
                             + "inv_prod.requiere_nom "
                         + "FROM inv_osal_detalle "
                         + "LEFT JOIN inv_prod on inv_prod.id = inv_osal_detalle.inv_prod_id "
-                        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_osal_detalle.inv_prod_unidad_id "
                         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_osal_detalle.inv_prod_presentacion_id "
                         + "WHERE inv_osal_detalle.inv_osal_id=? "
                         + "ORDER BY inv_osal_detalle.id;";

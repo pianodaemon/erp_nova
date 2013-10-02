@@ -229,6 +229,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "poc_pedidos_detalle.inv_prod_id,"
                     + "inv_prod.sku AS codigo,"
                     + "inv_prod.descripcion AS titulo,"
+                    + "poc_pedidos_detalle.inv_prod_unidad_id, "
                     + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
                     + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
                     + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
@@ -258,6 +259,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
                     row.put("codigo",rs.getString("codigo"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("unidad_id",String.valueOf(rs.getInt("inv_prod_unidad_id")));
+                    
                     row.put("unidad",rs.getString("unidad"));
                     row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
                     row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
@@ -3135,7 +3138,7 @@ public class PocSpringDao implements PocInterfaceDao{
      //Obtiene las unidades de medida de los productos
     @Override
     public ArrayList<HashMap<String, String>> getUnidadesMedida() {
-        String sql_query = "SELECT id,titulo,titulo_abr,decimales FROM inv_prod_unidades WHERE borrado_logico=FALSE;";
+        String sql_query = "SELECT id,titulo,titulo_abr,decimales FROM inv_prod_unidades WHERE borrado_logico=FALSE AND (titulo ILIKE '%LITRO%' OR titulo ILIKE '%KILO%');";
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,

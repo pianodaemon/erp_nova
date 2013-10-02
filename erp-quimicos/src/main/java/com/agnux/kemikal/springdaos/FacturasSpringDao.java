@@ -327,7 +327,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "fac_docs_detalles.cantidad_devolucion "
         +"FROM fac_docs_detalles "
         +"LEFT JOIN inv_prod on inv_prod.id = fac_docs_detalles.inv_prod_id  "
-        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id  "
+        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_docs_detalles.inv_prod_unidad_id  "
         +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = fac_docs_detalles.inv_prod_presentacion_id  "
         +"WHERE fac_docs_detalles.fac_doc_id = ? ";
         
@@ -779,7 +779,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                                 + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
                                 + "JOIN gral_mon on gral_mon.id=erp_prefacturas.moneda_id "
                                 + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
-                                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = erp_prefacturas_detalles.inv_prod_unidad_id "
                                 + "WHERE erp_prefacturas_detalles.prefacturas_id="+id_prefactura+" "
                         + ") AS sbt";
         
@@ -1062,7 +1062,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                             +"FROM fac_docs "
                             +"JOIN fac_docs_detalles on fac_docs_detalles.fac_doc_id=fac_docs.id "
                             +"LEFT JOIN inv_prod on inv_prod.id = fac_docs_detalles.inv_prod_id "
-                            +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                            +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_docs_detalles.inv_prod_unidad_id "
                             +"LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=fac_docs_detalles.inv_prod_presentacion_id "
                             +"WHERE fac_docs.id="+id_factura+";";
         
@@ -1223,7 +1223,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
                 + "JOIN gral_mon on gral_mon.id=erp_prefacturas.moneda_id "
                 + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
-                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = erp_prefacturas_detalles.inv_prod_unidad_id "
                 + "WHERE erp_prefacturas_detalles.prefacturas_id="+id_prefactura+";";
         
         //System.out.println(sql_query);
@@ -1318,7 +1318,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         + "JOIN fac_docs_detalles on fac_docs_detalles.fac_doc_id=fac_docs.id "
         + "LEFT JOIN gral_mon on gral_mon.id = fac_docs.moneda_id "
         + "LEFT JOIN inv_prod on inv_prod.id = fac_docs_detalles.inv_prod_id "
-        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_docs_detalles.inv_prod_unidad_id "
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = fac_docs_detalles.inv_prod_presentacion_id "
         + "WHERE fac_docs.serie_folio='"+serieFolio+"';";
         

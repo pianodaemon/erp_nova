@@ -300,7 +300,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                         + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
                         + "LEFT JOIN gral_mon on gral_mon.id = erp_prefacturas.moneda_id "
                         + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
-                        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = erp_prefacturas_detalles.inv_prod_unidad_id "
                         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_prefacturas_detalles.presentacion_id "
                         + "WHERE erp_prefacturas.id="+id_prefactura;
                         
@@ -897,7 +897,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 + "fac_rems_detalles.costo_promedio "
          + "FROM fac_rems_detalles "
          + "LEFT JOIN inv_prod on inv_prod.id = fac_rems_detalles.inv_prod_id "
-         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_rems_detalles.inv_prod_unidad_id "
          + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = fac_rems_detalles.inv_prod_presentacion_id "
          + "WHERE fac_rems_detalles.fac_rems_id="+id_remision;
         
