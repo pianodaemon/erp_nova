@@ -381,8 +381,8 @@ $(function() {
 		var $boton_busquedaunidad = $('#forma-busquedaunidad-window').find('#boton_busquedaunidad');
 		var $cancelar_busqueda = $('#forma-busquedaunidad-window').find('#cencela');
 		
-		var $cadena_nooperador = $('#forma-busquedaunidad-window').find('input[name=cadena_nooperador]');
-		var $cadena_nombre = $('#forma-busquedaunidad-window').find('input[name=cadena_nombre]');
+		var $cadena_noeconomico = $('#forma-busquedaunidad-window').find('input[name=cadena_noeconomico]');
+		var $cadena_marca = $('#forma-busquedaunidad-window').find('input[name=cadena_marca]');
 		
 		
 		//funcionalidad botones
@@ -401,15 +401,15 @@ $(function() {
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 		
-		$cadena_nooperador.val($no_economico.val());
-		$cadena_nombre.val($marca_vehiculo.val());
+		$cadena_noeconomico.val($no_economico.val());
+		$cadena_marca.val($marca_vehiculo.val());
 		
 		
 		//click buscar clientes
 		$boton_busquedaunidad.click(function(event){
 			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getBuscadorUnidades.json';
-			$arreglo = { 'no_economico':$cadena_nooperador.val(),
-						 'marca':$cadena_nombre.val(),
+			$arreglo = { 'no_economico':$cadena_noeconomico.val(),
+						 'marca':$cadena_marca.val(),
 						 'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						}
 						
@@ -465,12 +465,12 @@ $(function() {
 		
 		
 		//si hay algo en el campo cadena_buscar al cargar el buscador, ejecuta la busqueda
-		if($cadena_nooperador.val().trim()!='' || $cadena_nombre.val().trim()!=''){
+		if($cadena_noeconomico.val().trim()!='' || $cadena_marca.val().trim()!=''){
 			$boton_busquedaunidad.trigger('click');
 		}
 		
-		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_nooperador, $boton_busquedaunidad);
-		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_nombre, $boton_busquedaunidad);
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_noeconomico, $boton_busquedaunidad);
+		$(this).aplicarEventoKeypressEjecutaTrigger($cadena_marca, $boton_busquedaunidad);
 		
 		$cancelar_busqueda.click(function(event){
 			var remove = function() {$(this).remove();};
@@ -3515,6 +3515,12 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+					//Almacenar el arreglo de unidades de medida en la variable
+					arrayUM = entry['UM'];
+					
+					//Almacenar valor para variable que indica si se debe permitir el cambio de la unidad de medida
+					cambiarUM = entry['Extras'][0]['cambioUM']
+					
 					$incluye_produccion.val(entry['Extras']['0']['mod_produccion']);
 					
 					if(entry['Extras']['0']['mod_produccion']=='true'){
@@ -3751,7 +3757,8 @@ $(function() {
 								trr += '<input type="text" 	name="nombre" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<input type="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
+								trr += '<select name="select_umedida" class="select_umedida'+ tr +'" style="width:100px;"></select>';
+								trr += '<input type="text" 		name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
 									trr += '<input type="hidden" 	name="id_presentacion"  value="'+  prod['id_presentacion'] +'" 	id="idpres">';
@@ -3790,6 +3797,33 @@ $(function() {
 							
 							trr += '</tr>';
 							$grid_productos.append(trr);
+                            
+                            
+                           
+							//carga select de metodos de pago
+							$grid_productos.find('select.select_umedida'+tr).children().remove();
+							var hmtl_um="";
+							$.each(arrayUM,function(entryIndex,um){
+								if(parseInt(prod['unidad_id']) == parseInt(um['id'])){
+									hmtl_um += '<option value="' + um['id'] + '" selected="yes" >' + um['titulo'] + '</option>';
+								}
+							});
+							$grid_productos.find('select.select_umedida'+tr).append(hmtl_um);
+							
+							
+							
+							
+							
+							
+							if(cambiarUM.trim()=='true'){
+								//Ocultar campo input porque se debe mostrar select para permitir cambio de unidad de medida
+								$grid_productos.find('input[name=unidad'+ tr +']').hide();
+							}else{
+								//Ocultar porque no se permitirá cambiar de unidad de medida
+								$grid_productos.find('select.select_umedida'+tr).hide();
+							}
+                            
+                            
                             
                             if(entry['Extras']['0']['mod_produccion']=='true'){
 								//aplicar evento click al check, cuando la empresa incluya modulo de produccion

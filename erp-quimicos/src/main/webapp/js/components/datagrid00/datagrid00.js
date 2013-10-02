@@ -18,7 +18,7 @@ $.fn.tablaOrdenable = function(data,grid,loadForm){
 	
         
     
-        var alternarColoresFilas = function($elemento_tabla){
+	var alternarColoresFilas = function($elemento_tabla){
 		$('tbody tr:odd' , $elemento_tabla).removeClass('even').addClass('odd');
 		$('tbody tr:even' , $elemento_tabla).removeClass('odd').addClass('even');
 	};
@@ -65,12 +65,14 @@ $.fn.tablaOrdenable = function(data,grid,loadForm){
 		$tr_clickeado.click(function(event){
 			event.preventDefault();
 			$apuntador_tr = $(this).parent().parent();
+			
 			if ( $(this).is('.editar_item') ){
 				var llave = $(this).attr('href').split('_')[1];
 				//$(this).modalPanel();
 				loadForm(llave,'edit');	
 				//$redrawgrid($tbodygrid);
 			};
+			
 			if ( $(this).is('.cancelar_item') ){
 				var llave = $(this).attr('href').split('_')[1];
 				//$(this).modalPanel();
@@ -157,16 +159,16 @@ $.fn.tablaOrdenable = function(data,grid,loadForm){
 			images					: true,
 			mouse					: 'press',
 			onChange     			: function(page){
-                            $grid_parent.find('._current','#paginationdiv').removeClass('_current').hide();
+											$grid_parent.find('._current','#paginationdiv').removeClass('_current').hide();
 
-                            grid = $clonarTable(grid,page);
+											grid = $clonarTable(grid,page);
 
-                            $grid_parent.find('#pag'+page).addClass('_current').show();
+											$grid_parent.find('#pag'+page).addClass('_current').show();
 
-                            $start_pag = page;
-                            $redrawgrid(grid);
+											$start_pag = page;
+											$redrawgrid(grid);
 
-                      }
+									  }
 		});
 		
                
