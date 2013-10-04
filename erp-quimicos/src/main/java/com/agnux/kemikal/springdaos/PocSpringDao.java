@@ -3132,13 +3132,13 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-
-
-
+    
+    
+    
      //Obtiene las unidades de medida de los productos
     @Override
     public ArrayList<HashMap<String, String>> getUnidadesMedida() {
-        String sql_query = "SELECT id,titulo,titulo_abr,decimales FROM inv_prod_unidades WHERE borrado_logico=FALSE AND (titulo ILIKE '%LITRO%' OR titulo ILIKE '%KILO%');";
+        String sql_query = "SELECT id,titulo,titulo_abr,decimales FROM inv_prod_unidades WHERE borrado_logico=FALSE;";
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
@@ -3156,14 +3156,14 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-
-
-
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

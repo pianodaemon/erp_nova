@@ -283,6 +283,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 +"erp_prefacturas_detalles.producto_id,"
                                 +"inv_prod.sku,"
                                 +"inv_prod.descripcion as titulo,"
+                                +"(CASE WHEN inv_prod_unidades.id IS NULL THEN 0 ELSE inv_prod_unidades.id END) AS unidad_id,"
                                 +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
                                 +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
                                 +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
@@ -315,6 +316,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("producto_id",rs.getString("producto_id"));
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("unidad_id",rs.getString("unidad_id"));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("no_dec",rs.getInt("decimales"));
                     row.put("id_presentacion",rs.getString("id_presentacion"));
@@ -885,6 +887,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 + "fac_rems_detalles.inv_prod_id AS producto_id,"
                 + "inv_prod.sku,"
                 + "inv_prod.descripcion as titulo,"
+                + "(CASE WHEN inv_prod_unidades.id IS NULL THEN 0 ELSE inv_prod_unidades.id END) AS unidad_id,"
                 + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
                 + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
                 + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"
@@ -913,6 +916,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("producto_id",rs.getString("producto_id"));
                     row.put("codigo",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
+                    row.put("unidad_id",rs.getInt("unidad_id"));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("id_presentacion",rs.getString("id_presentacion"));
                     row.put("presentacion",rs.getString("presentacion"));

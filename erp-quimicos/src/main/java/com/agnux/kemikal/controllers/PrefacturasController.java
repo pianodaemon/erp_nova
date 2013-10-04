@@ -534,6 +534,7 @@ public class PrefacturasController {
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="idproducto", required=false) String[] idproducto,
+            @RequestParam(value="idUnidad", required=false) String[] idUnidad,
             @RequestParam(value="id_presentacion", required=false) String[] id_presentacion,
             @RequestParam(value="id_imp_prod", required=false) String[] id_impuesto,
             @RequestParam(value="valor_imp", required=false) String[] valor_imp,
@@ -589,7 +590,7 @@ public class PrefacturasController {
         arreglo = new String[eliminado.length];
         
         for(int i=0; i<eliminado.length; i++) {
-            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"'";
+            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"___"+idUnidad[i]+"'";
             //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
             //System.out.println(arreglo[i]);
         }

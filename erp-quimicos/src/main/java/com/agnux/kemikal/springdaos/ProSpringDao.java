@@ -858,7 +858,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("id_tipo",rs.getInt("id_tipo"));
                     row.put("unidad","  "+rs.getString("unidad"));
                     if(String.valueOf(rs.getInt("id_tipo")).equals("2") || String.valueOf(rs.getInt("id_tipo")).equals("1")){
-                        row.put("adicionales",getInv_ListaProductosFormulaIntermedioPdf(String.valueOf(rs.getInt("estruct_id")), tipo_cambio, ano, mes));
+                        row.put("adicionales",getInv_ListaProductosFormulaIntermedioPdf(String.valueOf(rs.getInt("estruct_id")), tipo_cambio, ano, mes, StringHelper.roundDouble(rs.getString("cantidad"),2)));
                     }else{
                         row.put("adicionales",rs.getInt("id_tipo"));
                     }
@@ -875,7 +875,7 @@ public class ProSpringDao implements ProInterfaceDao{
     }
 
     //metodo para obtener los componentes de la formula de tipo intermedio
-    private ArrayList<HashMap<String, String>> getInv_ListaProductosFormulaIntermedioPdf(String formula_id, String tipo_cambio, String ano, String mes) {
+    private ArrayList<HashMap<String, String>> getInv_ListaProductosFormulaIntermedioPdf(String formula_id, String tipo_cambio, String ano, String mes, String cantFormula) {
 
         /*
         String sql_query = ""
@@ -912,14 +912,15 @@ public class ProSpringDao implements ProInterfaceDao{
                     + "tipo,"
                     + "sku,"
                     + "descripcion,"
-                    + "cantidad,"
+                    //+ "cantidad,"
+                    + "((cantidad::double precision / 100) * "+cantFormula+"::double precision) AS cantidad,"
                     + "elemento,"
                     + "id_tipo,"
                     + "unidad,"
                     + "pro_estruc_id,"
-                    + "cant_unidad,"
+                    + "((cant_unidad::double precision / 100) * "+cantFormula+"::double precision) AS cant_unidad,"
                     + "costo_unitario,"
-                    + "(cant_unidad::double precision * costo_unitario::double precision) AS costo_importe "
+                    + "(((cant_unidad::double precision / 100) * "+cantFormula+"::double precision) * costo_unitario::double precision) AS costo_importe "
                     + "FROM( "
                         + "select  "
                             + "pro_estruc_det.inv_prod_id,"
@@ -967,12 +968,12 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("descripcion","  "+rs.getString("descripcion"));
                     row.put("sku","  "+rs.getString("sku"));
                     row.put("unidad","  "+rs.getString("unidad"));
-                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),4));
                     row.put("tipo","  "+rs.getString("tipo"));
                     row.put("id_tipo",rs.getString(rs.getInt("id_tipo")));
                     row.put("adicionales",rs.getString(rs.getInt("id_tipo")));
                     
-                    row.put("cant_unidad",StringHelper.roundDouble(rs.getString("cant_unidad"),2));
+                    row.put("cant_unidad",StringHelper.roundDouble(rs.getString("cant_unidad"),4));
                     row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo_unitario"),2));
                     row.put("costo_importe",StringHelper.roundDouble(rs.getString("costo_importe"),2));
                     return row;
