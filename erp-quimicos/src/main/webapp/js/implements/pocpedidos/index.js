@@ -2013,18 +2013,49 @@ $(function() {
 			$grid_productos.append(trr);
 			
 			
+			var unidadLitroKilo=false;
 			
-			//Carga select de pais Origen
-			elemento_seleccionado = unidadId;
-			texto_elemento_cero = '';
-			index_elem = 'id';
-			index_text_elem = 'titulo';
-			$carga_campos_select($grid_productos.find('select.select_umedida'+tr), arrayUM, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+			if(parseInt(unidad.toUpperCase().search(/KILO/))>-1){
+				unidadLitroKilo=true;
+			}else{
+				if(parseInt(unidad.toUpperCase().search(/LITRO/))>-1){
+					unidadLitroKilo=true;
+				}
+			}
 			
+			var hmtl_um="";
 			if(cambiarUM.trim()=='true'){
+				if(unidadLitroKilo){
+					$grid_productos.find('select.select_umedida'+tr).children().remove();
+					$.each(arrayUM,function(entryIndex,um){
+						if(parseInt(unidadId) == parseInt(um['id'])){
+							hmtl_um += '<option value="' + um['id'] + '" selected="yes" >' + um['titulo'] + '</option>';
+						}else{
+							if(parseInt(um['titulo'].toUpperCase().search(/KILO/))>-1 || parseInt(um['titulo'].toUpperCase().search(/LITRO/))>-1){
+								hmtl_um += '<option value="' + um['id'] + '">' + um['titulo'] + '</option>';
+							}
+						}
+					});
+					$grid_productos.find('select.select_umedida'+tr).append(hmtl_um);
+				}else{
+					$grid_productos.find('select.select_umedida'+tr).children().remove();
+					$.each(arrayUM,function(entryIndex,um){
+						if(parseInt(unidadId) == parseInt(um['id'])){
+							hmtl_um += '<option value="' + um['id'] + '" selected="yes" >' + um['titulo'] + '</option>';
+						}
+					});
+					$grid_productos.find('select.select_umedida'+tr).append(hmtl_um);
+				}
 				//Ocultar campo input porque se debe mostrar select para permitir cambio de unidad de medida
 				$grid_productos.find('input[name=unidad'+ tr +']').hide();
 			}else{
+				//Carga select de pais Origen
+				var elemento_seleccionado = unidadId;
+				var texto_elemento_cero = '';
+				var index_elem = 'id';
+				var index_text_elem = 'titulo';
+				$carga_campos_select($grid_productos.find('select.select_umedida'+tr), arrayUM, elemento_seleccionado, texto_elemento_cero, index_elem, index_text_elem);
+				
 				//Ocultar porque no se permitirá cambiar de unidad de medida
 				$grid_productos.find('select.select_umedida'+tr).hide();
 			}
@@ -3810,11 +3841,6 @@ $(function() {
 							});
 							$grid_productos.find('select.select_umedida'+tr).append(hmtl_um);
 							
-							
-							
-							
-							
-							
 							if(cambiarUM.trim()=='true'){
 								//Ocultar campo input porque se debe mostrar select para permitir cambio de unidad de medida
 								$grid_productos.find('input[name=unidad'+ tr +']').hide();
@@ -3822,6 +3848,7 @@ $(function() {
 								//Ocultar porque no se permitirá cambiar de unidad de medida
 								$grid_productos.find('select.select_umedida'+tr).hide();
 							}
+                            
                             
                             
                             

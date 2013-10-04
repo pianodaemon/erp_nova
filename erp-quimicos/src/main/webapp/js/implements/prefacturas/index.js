@@ -817,6 +817,7 @@ $(function() {
 							trr += '<input type="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 						trr += '</td>';
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+							trr += '<input type="hidden" name="idUnidad" id="idUnidad" value="'+prod['unidad_id']+'">';
 							trr += '<input type="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 						trr += '</td>';
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
@@ -824,8 +825,6 @@ $(function() {
 								trr += '<input type="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 								//trr += '<select name="select_pres" class="selectPres'+ tr +'" style="width:96px;"></select>';
 						trr += '</td>';
-						
-						
 						
 						trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 							trr += '<input type="text" 	name="cantPedido" value="'+  prod['cantidad'] +'" 	id="cantped" class="borde_oculto" style="width:76px;" readOnly="true">';
@@ -853,6 +852,7 @@ $(function() {
 						$grid_productos.append(trr);
 						$grid_productos.find('a').hide();//ocultar
 						
+												
 						/*
 						//cargar select de presentaciones de cada producto
 						$grid_productos.find('select.selectPres'+ tr).children().remove();
@@ -2413,6 +2413,7 @@ $(function() {
 								trr += '<input type="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+								trr += '<input type="hidden" name="idUnidad" id="idUnidad" value="'+prod['unidad_id']+'">';
 								trr += '<input type="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
