@@ -858,12 +858,12 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("id_tipo",rs.getInt("id_tipo"));
                     row.put("unidad","  "+rs.getString("unidad"));
                     if(String.valueOf(rs.getInt("id_tipo")).equals("2") || String.valueOf(rs.getInt("id_tipo")).equals("1")){
-                        row.put("adicionales",getInv_ListaProductosFormulaIntermedioPdf(String.valueOf(rs.getInt("estruct_id")), tipo_cambio, ano, mes, StringHelper.roundDouble(rs.getString("cantidad"),2)));
+                        row.put("adicionales",getInv_ListaProductosFormulaIntermedioPdf(String.valueOf(rs.getInt("estruct_id")), tipo_cambio, ano, mes, StringHelper.roundDouble(rs.getString("cantidad"),4)));
                     }else{
                         row.put("adicionales",rs.getInt("id_tipo"));
                     }
                     
-                    row.put("cant_unidad",StringHelper.roundDouble(rs.getString("cant_unidad"),2));
+                    row.put("cant_unidad",StringHelper.roundDouble(rs.getString("cant_unidad"),4));
                     row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo_unitario"),2));
                     row.put("costo_importe",StringHelper.roundDouble(rs.getString("costo_importe"),2));
                     

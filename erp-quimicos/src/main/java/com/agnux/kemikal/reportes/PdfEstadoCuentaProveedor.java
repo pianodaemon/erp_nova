@@ -167,7 +167,7 @@ public class PdfEstadoCuentaProveedor {
             String simbolo_moneda="";
             if(facturas.size() > 0){
                 simbolo_moneda=facturas.get(0).get("moneda_simbolo").toString();
-                
+                /*
                 cell = new PdfPCell(new Paragraph("Adeudos en Moneda Nacional",largeBoldFont));
                 //cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -177,6 +177,7 @@ public class PdfEstadoCuentaProveedor {
                 cell.setBorder(0);
                 cell.setFixedHeight(18);
                 table.addCell(cell);
+                */
                 
                 //pintamos en el pdf la razon social del primer proveedor
                 cell = new PdfPCell(new Paragraph(facturas.get(0).get("proveedor").toString(),smallBoldFont));

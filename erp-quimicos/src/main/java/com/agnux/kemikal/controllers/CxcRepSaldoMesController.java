@@ -3,16 +3,15 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.controllers;
-
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
-import com.agnux.kemikal.interfacedaos.CxpInterfaceDao;
+import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.reportes.PdfEstadoCuentaProveedor;
+import com.agnux.kemikal.reportes.PdfCxcSaldoMensual;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -45,19 +44,18 @@ import org.springframework.web.bind.annotation.SessionAttributes;
  *
  * @author Noe Martinez
  * gpmarsan@gmail.com
- * 04/septiembre/2013
+ * 11/octubre/2013
  */
 @Controller
 @SessionAttributes({"user"})
-@RequestMapping("/cxprepsaldomes/")
-public class CxpRepSaldoMesController {
-    private static final Logger log  = Logger.getLogger(CxpRepSaldoMesController.class.getName());
+@RequestMapping("/cxcrepsaldomes/")
+public class CxcRepSaldoMesController {
+    private static final Logger log  = Logger.getLogger(CxcRepSaldoMesController.class.getName());
     ResourceProject resource = new ResourceProject();
     
     @Autowired
-    @Qualifier("daoCxp")
-    private CxpInterfaceDao cxpDao;
-  
+    @Qualifier("daoCxc")
+    private CxcInterfaceDao cxcDao;
     
     @Autowired
     @Qualifier("daoHome")
@@ -76,8 +74,8 @@ public class CxpRepSaldoMesController {
         return gralDao;
     }
     
-    public CxpInterfaceDao getCxpDao() {
-        return cxpDao;
+    public CxcInterfaceDao getCxcDao() {
+        return cxcDao;
     }
     
     
@@ -86,10 +84,10 @@ public class CxpRepSaldoMesController {
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", CxpRepSaldoMesController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", CxcRepSaldoMesController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
-        ModelAndView x = new ModelAndView("cxprepsaldomes/startup", "title", "Reporte de Saldos por Mes");
+        ModelAndView x = new ModelAndView("cxcrepsaldomes/startup", "title", "Reporte de Saldos por Mes de Cuentas por Cobrar");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -112,12 +110,12 @@ public class CxpRepSaldoMesController {
     
     
     
-    //cargar tipos de productos
+    //Cargar tipos de productos
    @RequestMapping(method = RequestMethod.POST, value="/getDatos.json")
         public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDatosJson(
         @RequestParam(value="iu", required=true) String id_user,
         Model model
-        ){
+    ){
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, Object> mes = new HashMap<String, Object>();
         ArrayList<HashMap<String, Object>> mesActual = new ArrayList<HashMap<String, Object>>();
@@ -129,36 +127,36 @@ public class CxpRepSaldoMesController {
         mes.put("anioActual", TimeHelper.getFechaActualY());
         mesActual.add(0, mes);
         
-        jsonretorno.put("Anios", this.getCxpDao().getProveedor_AnioReporteSaldoMensual());
+        jsonretorno.put("Anios", this.getCxcDao().getCxc_AnioReporteSaldoMensual());
         jsonretorno.put("Dato", mesActual);
         return jsonretorno;
     }
     
     
     
-        //obtiene los proveedores para el buscador
-    @RequestMapping(method = RequestMethod.POST, value="/getBuscaProveedores.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getBuscaProveedoresJson(
-            @RequestParam(value="rfc", required=true) String rfc,
-            @RequestParam(value="email", required=true) String email,
-            @RequestParam(value="nombre", required=true) String nombre,
+    
+    //Buscador de clientes
+    @RequestMapping(method = RequestMethod.POST, value="/getBuscadorClientes.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> get_buscador_clientesJson(
+            @RequestParam(value="cadena", required=true) String cadena,
+            @RequestParam(value="filtro", required=true) Integer filtro,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
         
-        log.log(Level.INFO, "Ejecutando getBuscaProveedoresJson de {0}", CxpRepAntiguedadSaldosController.class.getName());
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        ArrayList<HashMap<String, String>> proveedores = new ArrayList<HashMap<String, String>>();
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        //System.out.println("id_usuario: "+id_usuario);
+        
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        proveedores = this.getCxpDao().getBuscadorProveedores(rfc, email, nombre,id_empresa);
-        
-        jsonretorno.put("Proveedores", proveedores);
+        jsonretorno.put("Clientes", this.getCxcDao().getBuscadorClientes(cadena,filtro,id_empresa, id_sucursal));
         
         return jsonretorno;
     }
@@ -166,11 +164,14 @@ public class CxpRepSaldoMesController {
     
     
     
-    //obtiene las facturas de los  proveedores
+    
+    
+    
+    //obtiene las facturas de los  clientees
     @RequestMapping(method = RequestMethod.POST, value="/getReporteSaldos.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getReporteSaldosJson(
             @RequestParam("tipo_reporte") Integer tipo_reporte,
-            @RequestParam("proveedor") String proveedor,
+            @RequestParam("cliente") String cliente,
             @RequestParam("anio_corte") Integer anio_corte,
             @RequestParam("mes_corte") Integer mes_corte,
             @RequestParam(value="iu", required=true) String id_user,
@@ -178,7 +179,7 @@ public class CxpRepSaldoMesController {
         ) {
         
                                                                                         
-        log.log(Level.INFO, "Ejecutando getReporteSaldosJson de {0}", CxpRepSaldoMesController.class.getName());
+        log.log(Level.INFO, "Ejecutando getReporteSaldosJson de {0}", CxcRepSaldoMesController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         
         HashMap<String, String> userDat = new HashMap<String, String>();
@@ -206,7 +207,7 @@ public class CxpRepSaldoMesController {
         String fecha_corte = anio_corte+"-"+numMes+"-"+dia_corte;
         
         //obtiene facturas en pesos. Moneda 1
-        facturas = this.getCxpDao().getProveedor_DatosReporteSaldoMensual(tipo_reporte, proveedor, fecha_corte,id_empresa);
+        facturas = this.getCxcDao().getCxc_DatosReporteSaldoMensual(tipo_reporte, cliente, fecha_corte,id_empresa);
         
         jsonretorno.put("Facturas", facturas);
         
@@ -223,13 +224,12 @@ public class CxpRepSaldoMesController {
                 @PathVariable("iu") String id_user_cod,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
-                Model model)
-            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
+                Model model
+       )throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        
-        String tituloReporte="Saldo Mensual de Cuentas por Pagar";
+        String tituloReporte="Saldo Mensual de Cuentas por Cobrar";
         System.out.println("Generando reporte de "+tituloReporte);
         
         //decodificar id de usuario
@@ -259,10 +259,10 @@ public class CxpRepSaldoMesController {
         fmtd.format("%02d",numeroDias);
         String dia_corte = fmtd.toString();
         
-        String proveedor = "";
+        String cliente = "";
         
         if (!ArrayCad[3].equals("0")){
-            proveedor = ArrayCad[3];
+            cliente = ArrayCad[3];
         }
         
         String fecha_corte = ano_corte+"-"+mes_corte+"-"+dia_corte;
@@ -281,17 +281,17 @@ public class CxpRepSaldoMesController {
         File file_dir_tmp = new File(dir_tmp);
         //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        String file_name = "CxcSaldoMensaul_"+fecha_corte+".pdf";
+        String file_name = "CxcSaldoMensual_"+fecha_corte+".pdf";
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
         ArrayList<HashMap<String, String>> facturas = new ArrayList<HashMap<String, String>>();
         
         //obtiene facturas en pesos. Moneda 1
-        facturas = this.getCxpDao().getProveedor_DatosReporteSaldoMensual(tipo_reporte, proveedor, fecha_corte,id_empresa);
+        facturas = this.getCxcDao().getCxc_DatosReporteSaldoMensual(tipo_reporte, cliente, fecha_corte,id_empresa);
         
-        //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del proveedor
-        PdfEstadoCuentaProveedor x = new PdfEstadoCuentaProveedor(fileout,ruta_imagen,tituloReporte,razon_social_empresa,fecha_corte,facturas);
+        //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
+        PdfCxcSaldoMensual x = new PdfCxcSaldoMensual(fileout,ruta_imagen,tituloReporte,razon_social_empresa,fecha_corte,facturas);
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);

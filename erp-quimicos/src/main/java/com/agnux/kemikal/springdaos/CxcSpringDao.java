@@ -12,6 +12,7 @@ import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -4615,4 +4616,55 @@ return subfamilias;
     }
     //TERMINA ASIGNACION DE AGENTES ADUANALES A CLIENTES
     //--------------------------------------------------------------------------------------------------------------------
+    
+    
+    //Medotdos para reporte de saldo Mensual------------------------------------------------------------------------------
+    //Calcular años a mostrar en el reporte de Saldo Mansual
+    @Override
+    public ArrayList<HashMap<String, Object>>  getCxc_AnioReporteSaldoMensual() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+
+    //Este es el query para el reporte de Saldo Mensual de CXP
+    @Override
+    public ArrayList<HashMap<String, String>> getCxc_DatosReporteSaldoMensual(Integer tipo_reporte,String cliente, String fecha_corte,Integer id_empresa) {
+        
+        String sql_to_query = "select * from cxc_reporte_saldo_mensual(?,?,?,?) as foo(id_cliente integer, cliente character varying, serie_folio character varying, fecha_factura character varying, moneda_id integer, moneda_abr character varying, moneda_simbolo character varying, orden_compra character varying, monto_factura double precision, importe_pagado double precision, saldo_factura double precision) ORDER BY cliente, moneda_id, serie_folio;"; 
+        
+        //System.out.println("CxC_DatosReporteSaldoMensual:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(tipo_reporte), new String (cliente), new String(fecha_corte), new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cliente",rs.getString("cliente"));
+                    row.put("moneda_abr",rs.getString("moneda_abr"));
+                    row.put("moneda_simbolo",rs.getString("moneda_simbolo"));
+                    row.put("serie_folio",rs.getString("serie_folio"));
+                    row.put("moneda_id",rs.getString("moneda_id"));
+                    row.put("orden_compra",rs.getString("orden_compra"));
+                    row.put("fecha_factura",rs.getString("fecha_factura"));
+                    row.put("monto_factura",StringHelper.roundDouble(rs.getDouble("monto_factura"), 2));
+                    row.put("importe_pagado",StringHelper.roundDouble(rs.getDouble("importe_pagado"), 2));
+                    row.put("ultimo_pago","&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;");
+                    row.put("saldo_factura",StringHelper.roundDouble(rs.getDouble("saldo_factura"), 2));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+    //Termina Metodo para reporte de Saldo Mensual
 }

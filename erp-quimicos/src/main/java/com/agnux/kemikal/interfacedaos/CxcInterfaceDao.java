@@ -191,4 +191,8 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, Object>> getClientsAsignaAgenA_Asignados(Integer id);
     public ArrayList<HashMap<String, Object>> getBuscadorAgentesAduanales(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getDatosByNoAgenteAduanal(String no_control, Integer id_empresa, Integer id_sucursal);
+    
+    //Calcular años a mostrar en el reporte de Saldo Por mes
+    public ArrayList<HashMap<String, Object>> getCxc_AnioReporteSaldoMensual();
+    public ArrayList<HashMap<String, String>> getCxc_DatosReporteSaldoMensual(Integer tipo_reporte, String cliente, String fecha_corte,Integer id_empresa);
 }
