@@ -2079,6 +2079,7 @@ $(function() {
 			
 			//recalcula importe al perder enfoque el campo cantidad
 			$grid_productos.find('#cant').blur(function(){
+				var $inputCantidad = $(this);
 				if ($(this).val() == ''){
 					$(this).val(' ');
 				}
@@ -2117,7 +2118,16 @@ $(function() {
 					
 				}
 				
-				$calcula_totales();//llamada a la funcion que calcula totales
+				//Buscar cuantos puntos tiene  cantidad
+				var coincidencias = $(this).val().match(/\./g);
+				var numPuntos = coincidencias ? coincidencias.length : 0;
+				if(parseInt(numPuntos)>1){
+					jAlert('El valor ingresado para Cantidad es incorrecto, tiene mas de un punto('+$(this).val()+').', 'Atencion!', function(r) { 
+						$inputCantidad.focus();
+					});
+				}else{
+					$calcula_totales();//llamada a la funcion que calcula totales
+				}
 			});
 			
 			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
@@ -2127,14 +2137,14 @@ $(function() {
 				}
 			});
 			
-			//recalcula importe al perder enfoque el campo costo
+			//Recalcula importe al perder enfoque el campo costo
 			$grid_productos.find('#cost').blur(function(){
-				if ($(this).val() == ''){
+				$inputPrecioU = $(this);
+				if ($(this).val().trim() == ''){
 					$(this).val(' ');
 				}
 				
-				if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
-				{	//calcula el importe
+				if( ($(this).val().trim()!= '') && ($(this).parent().parent().find('#cant').val().trim() != '')){	//calcula el importe
 					$(this).parent().parent().find('#import').val( parseFloat($(this).val()) * parseFloat( $(this).parent().parent().find('#cant').val()) );
 					//redondea el importe en dos decimales
 					//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
@@ -2146,7 +2156,17 @@ $(function() {
 					$(this).parent().parent().find('#import').val('');
 					$(this).parent().parent().find('#totimp').val('');
 				}
-				$calcula_totales();//llamada a la funcion que calcula totales
+				
+				//Buscar cuantos puntos tiene  Precio Unitario
+				var coincidencias = $(this).val().match(/\./g);
+				var numPuntos = coincidencias ? coincidencias.length : 0;
+				if(parseInt(numPuntos)>1){
+					jAlert('El valor ingresado para Precio Unitario es incorrecto, tiene mas de un punto('+$(this).val()+').', 'Atencion!', function(r) { 
+						$inputPrecioU.focus();
+					});
+				}else{
+					$calcula_totales();//llamada a la funcion que calcula totales
+				}
 			});
 			
 			//validar campo costo, solo acepte numeros y punto
