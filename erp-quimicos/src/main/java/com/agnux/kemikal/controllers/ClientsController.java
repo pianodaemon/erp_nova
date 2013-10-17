@@ -172,7 +172,7 @@ public class ClientsController {
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
-        extra = this.getCxcDao().getUserRol(id_usuario);
+        extra = this.getCxcDao().getUserRolAgenteVenta(id_usuario);
         arrayExtra.add(0,extra);
         
         jsonretorno.put("Extra", arrayExtra);

@@ -7795,9 +7795,9 @@ public class InvSpringDao implements InvInterfaceDao{
                 +"  existencia_actual double precision,  "
 		+"  costo double precision  "
 	+"  );";
-
+        
         System.out.println("Ejecutando query: "+ sql_to_query);
-
+        
         ArrayList<HashMap<String, String>> hm_datos_existencias = (ArrayList<HashMap<String, String>>)
         this.jdbcTemplate.query(sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -7812,9 +7812,9 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("fecha_movimiento",rs.getString("fecha_movimiento"));
                     row.put("sucursal",rs.getString("sucursal"));
                     row.put("almacen",rs.getString("almacen"));
-                    row.put("cantidad",String.valueOf(rs.getInt("cantidad")));
-                    row.put("costo",String.valueOf(rs.getInt("costo")));
-                    row.put("existencia_actual",String.valueOf(rs.getInt("existencia_actual")));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),2));
+                    row.put("costo",StringHelper.roundDouble(rs.getDouble("costo"),2));
+                    row.put("existencia_actual",StringHelper.roundDouble(rs.getDouble("existencia_actual"),2));
                     return row;
                 }
             }
@@ -7924,7 +7924,7 @@ public class InvSpringDao implements InvInterfaceDao{
     
     //Verificar si el usuario es Administrador
     @Override
-    public HashMap<String, String> getUserRol(Integer id_user) {
+    public HashMap<String, String> getUserRolAdmin(Integer id_user) {
         HashMap<String, String> data = new HashMap<String, String>();
 
         //verificar si el usuario tiene  rol de ADMINISTTRADOR
@@ -7938,6 +7938,22 @@ public class InvSpringDao implements InvInterfaceDao{
         return data;
     }
     
+    
+    //Verificar si el usuario es un Agente de Ventas
+    @Override
+    public HashMap<String, String> getUserRolAgenteVenta(Integer id_user) {
+        HashMap<String, String> data = new HashMap<String, String>();
+        
+        //verificar si el usuario es un Vendedor
+        //si rol_agente_venta es mayor que cero, el usuario si es Agente de Ventas
+        String sql_to_query = "SELECT count(gral_usr_id) AS rol_agente_venta FROM cxc_agen WHERE gral_usr_id="+id_user+" AND borrado_logico=false;";
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        
+        data.put("rol_agente_venta",map.get("rol_agente_venta").toString());
+        
+        return data;
+    }
     
 
 }

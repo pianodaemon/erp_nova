@@ -184,7 +184,7 @@ public class ProductosController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
         arrayTiposProducto=this.getInvDao().getProducto_Tipos();
-        extra = this.getInvDao().getUserRol(id_usuario);
+        extra = this.getInvDao().getUserRolAgenteVenta(id_usuario);
         arrayExtra.add(0,extra);
         
         jsonretorno.put("prodTipos", arrayTiposProducto);

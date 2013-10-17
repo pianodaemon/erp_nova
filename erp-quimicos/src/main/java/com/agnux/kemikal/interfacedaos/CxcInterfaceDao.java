@@ -157,7 +157,9 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, Object>> getClientsAntCancel_DatosAnticipo(Integer id);
     
     //Metodo para verificar si un usuario es Administrador
-    public HashMap<String, String> getUserRol(Integer id_user);
+    public HashMap<String, String> getUserRolAdmin(Integer id_user);
+    //Metodo para verificar si un usuario es Vendedor
+    public HashMap<String, String> getUserRolAgenteVenta(Integer id_user);
     
     //Catalogo de Remitentes
     public ArrayList<HashMap<String, Object>> getClientsRemiten_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);

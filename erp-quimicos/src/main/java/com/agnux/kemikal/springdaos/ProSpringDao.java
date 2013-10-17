@@ -818,7 +818,12 @@ public class ProSpringDao implements ProInterfaceDao{
                         + "pro_estruc_id, "
                         + "estruct_id,"
                         + "cant_unidad,"
-                        + "costo_unitario,"
+                        //+ "costo_unitario,"
+                        + "(CASE  WHEN upper(unidad) ILIKE '%KILO%' THEN "
+                            + "costo_unitario "
+                        + "ELSE "
+                            + "(CASE WHEN densidad=0 THEN costo_unitario ELSE (costo_unitario / densidad::double precision) END) "
+                        + "END) AS costo_unitario,"
                         + "(cant_unidad::double precision * costo_unitario::double precision) AS costo_importe "
                 + "FROM( "
                     + "select "
@@ -830,6 +835,7 @@ public class ProSpringDao implements ProInterfaceDao{
                         + "pro_estruc_det.elemento, "
                         + "inv_prod_tipos.id as id_tipo, "
                         + "inv_prod_unidades.titulo as unidad, "
+                        + "inv_prod.densidad, "
                         + "pro_estruc_det.pro_estruc_id, "
                         + "pro_estruc.id as estruct_id,"
                         + "(CASE  WHEN upper(inv_prod_unidades.titulo) ILIKE '%KILO%' THEN pro_estruc_det.cantidad ELSE (CASE WHEN inv_prod.densidad=0 THEN pro_estruc_det.cantidad ELSE (pro_estruc_det.cantidad::double precision / inv_prod.densidad::double precision) END) END) AS cant_unidad,"
@@ -919,7 +925,11 @@ public class ProSpringDao implements ProInterfaceDao{
                     + "unidad,"
                     + "pro_estruc_id,"
                     + "((cant_unidad::double precision / 100) * "+cantFormula+"::double precision) AS cant_unidad,"
-                    + "costo_unitario,"
+                    + "(CASE  WHEN upper(unidad) ILIKE '%KILO%' THEN "
+                        + "costo_unitario "
+                    + "ELSE "
+                        + "(CASE WHEN densidad=0 THEN costo_unitario ELSE (costo_unitario / densidad::double precision) END) "
+                    + "END) AS costo_unitario,"
                     + "(((cant_unidad::double precision / 100) * "+cantFormula+"::double precision) * costo_unitario::double precision) AS costo_importe "
                     + "FROM( "
                         + "select  "
@@ -931,6 +941,7 @@ public class ProSpringDao implements ProInterfaceDao{
                             + "pro_estruc_det.elemento, "
                             + "inv_prod_tipos.id as id_tipo, "
                             + "inv_prod_unidades.titulo AS unidad, "
+                            + "inv_prod.densidad, "
                             + "pro_estruc_det.pro_estruc_id,"
                             + "(CASE  WHEN upper(inv_prod_unidades.titulo) ILIKE '%KILO%' THEN pro_estruc_det.cantidad ELSE (CASE WHEN inv_prod.densidad=0 THEN  pro_estruc_det.cantidad ELSE (pro_estruc_det.cantidad::double precision / inv_prod.densidad::double precision) END) END) AS cant_unidad, "
                             + "(CASE WHEN inv_costo.gral_mon_id_"+mes+" IS NULL THEN (CASE WHEN inv_costo.costo_ultimo_"+mes+" IS NULL THEN 0 ELSE inv_costo.costo_ultimo_"+mes+" END) ELSE (CASE WHEN inv_costo.gral_mon_id_"+mes+"<>1 THEN (CASE WHEN inv_costo.costo_ultimo_"+mes+" IS NULL THEN 0 ELSE (inv_costo.costo_ultimo_"+mes+"::double precision * "+ tipo_cambio +"::double precision) END) ELSE (CASE WHEN inv_costo.costo_ultimo_"+mes+" IS NULL THEN 0 ELSE inv_costo.costo_ultimo_"+mes+" END) END) END) AS costo_unitario "
@@ -1246,9 +1257,9 @@ public class ProSpringDao implements ProInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("fineza_inicial",String.valueOf(rs.getInt("fineza_inicial")));
-                    row.put("viscosidads_inicial",String.valueOf(rs.getInt("viscosidads_inicial")));
+                    row.put("viscosidads_inicial",String.valueOf(rs.getDouble("viscosidads_inicial")));
                     row.put("viscosidadku_inicial",String.valueOf(rs.getDouble("viscosidadku_inicial")));
-                    row.put("viscosidadcps_inicial",String.valueOf(rs.getInt("viscosidadcps_inicial")));
+                    row.put("viscosidadcps_inicial",String.valueOf(rs.getDouble("viscosidadcps_inicial")));
                     row.put("densidad_inicial",String.valueOf(rs.getDouble("densidad_inicial")));
                     row.put("volatiles_inicial",String.valueOf(rs.getDouble("volatiles_inicial")));
                     row.put("hidrogeno_inicial",String.valueOf(rs.getDouble("hidrogeno_inicial")));
@@ -1259,9 +1270,9 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("adherencia_inicial",String.valueOf(rs.getDouble("adherencia_inicial")));
 
                     row.put("fineza_final",String.valueOf(rs.getInt("fineza_final")));
-                    row.put("viscosidads_final",String.valueOf(rs.getInt("viscosidads_final")));
+                    row.put("viscosidads_final",String.valueOf(rs.getDouble("viscosidads_final")));
                     row.put("viscosidadku_final",String.valueOf(rs.getDouble("viscosidadku_final")));
-                    row.put("viscosidadcps_final",String.valueOf(rs.getInt("viscosidadcps_final")));
+                    row.put("viscosidadcps_final",String.valueOf(rs.getDouble("viscosidadcps_final")));
                     row.put("densidad_final",String.valueOf(rs.getDouble("densidad_final")));
                     row.put("volatiles_final",String.valueOf(rs.getDouble("volatiles_final")));
                     row.put("hidrogeno_final",String.valueOf(rs.getDouble("hidrogeno_final")));

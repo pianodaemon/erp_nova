@@ -155,7 +155,7 @@ public class InvPreController {
         //Se le pasa como parametro el cero para que devuelva todas las presentaciones 
         presentaciones = this.getInvDao().getProducto_Presentaciones(0);
         
-        extra = this.getInvDao().getUserRol(id_usuario);
+        extra = this.getInvDao().getUserRolAgenteVenta(id_usuario);
         arrayExtra.add(0,extra);
         
         jsonretorno.put("ProdTipos", tiposProducto);

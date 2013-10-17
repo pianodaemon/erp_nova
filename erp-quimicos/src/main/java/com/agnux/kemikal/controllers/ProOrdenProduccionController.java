@@ -440,7 +440,7 @@ public class ProOrdenProduccionController {
     //crear y editar una  formula
     @RequestMapping(method = RequestMethod.POST, value="/guarda_lotes.json")
     public @ResponseBody HashMap<String, String> guardaLotesJson(
-            @RequestParam(value="id", required=true) Integer id,
+        @RequestParam(value="id", required=true) Integer id,
         @RequestParam(value="id_prod", required=true) Integer id_prod,
         @RequestParam(value="tipoorden", required=true) String tipoorden,
         @RequestParam(value="id_formula", required=true) String id_formula,
@@ -488,8 +488,7 @@ public class ProOrdenProduccionController {
         }
         
         
-        String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+
-                fecha_elavorar+"___"+observaciones+"___"+command_selected+"___"+accion+"___"+id_formula;
+        String data_string = app_selected+"___"+command_selected1+"___"+id_usuario+"___"+id+"___"+tipoorden+"___"+fecha_elavorar+"___"+observaciones+"___"+command_selected+"___"+accion+"___"+id_formula;
         
         System.err.println("data_string: "+data_string);
         
@@ -863,7 +862,7 @@ public class ProOrdenProduccionController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        jsonretorno.put("productos", this.daoPro.getProElementosProducto(id_producto, id_orden, id_subproceso));
+        jsonretorno.put("productos", this.getProDao().getProElementosProducto(id_producto, id_orden, id_subproceso));
         
         return jsonretorno;
     }

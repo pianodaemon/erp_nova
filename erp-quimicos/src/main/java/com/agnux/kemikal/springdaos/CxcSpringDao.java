@@ -3818,7 +3818,7 @@ return subfamilias;
     
     //Verificar si el usuario es Administrador
     @Override
-    public HashMap<String, String> getUserRol(Integer id_user) {
+    public HashMap<String, String> getUserRolAdmin(Integer id_user) {
         HashMap<String, String> data = new HashMap<String, String>();
 
         //verificar si el usuario tiene  rol de ADMINISTTRADOR
@@ -3829,6 +3829,22 @@ return subfamilias;
 
         data.put("exis_rol_admin",map.get("exis_rol_admin").toString());
 
+        return data;
+    }
+    
+    //Verificar si el usuario es un Agente de Ventas
+    @Override
+    public HashMap<String, String> getUserRolAgenteVenta(Integer id_user) {
+        HashMap<String, String> data = new HashMap<String, String>();
+        
+        //verificar si el usuario es un Vendedor
+        //si rol_agente_venta es mayor que cero, el usuario si es Agente de Ventas
+        String sql_to_query = "SELECT count(gral_usr_id) AS rol_agente_venta FROM cxc_agen WHERE gral_usr_id="+id_user+" AND borrado_logico=false;";
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        
+        data.put("rol_agente_venta",map.get("rol_agente_venta").toString());
+        
         return data;
     }
     

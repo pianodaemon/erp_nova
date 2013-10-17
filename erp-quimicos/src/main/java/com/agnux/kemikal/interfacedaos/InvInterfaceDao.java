@@ -334,6 +334,7 @@ public interface InvInterfaceDao {
     //public ArrayList<HashMap<String, String>> getInvCapturaCosto_Datos(Integer id);
     
     //Metodo para verificar si un usuario es Administrador
-    public HashMap<String, String> getUserRol(Integer id_user);
+    public HashMap<String, String> getUserRolAdmin(Integer id_user);
+    public HashMap<String, String> getUserRolAgenteVenta(Integer id_user);
     
 }
