@@ -718,7 +718,7 @@ $(function() {
         $cancelar_anticipo.attr('disabled','-1');
         $pdf_anticipo.attr('disabled','-1');
         $no_transaccion.css({'background' : '#DDDDDD'});
-        
+        $pdf_anticipo.hide();
         //$registra_anticipo.hide();
         
 		
@@ -730,11 +730,11 @@ $(function() {
 				if ( data['error_cheque'] == "false" ){
 					jAlert('Anticipo registrado con &eacute;xito.\nN&uacute;mero de transacci&oacute;n: '+data['numero_transaccion'],'Atencion!')
 					$registra_anticipo.hide();
-					
+					/*
 					var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 					var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfReporteAplicacionPagoProveedor/'+data['identificador_pago']+'/'+$id_proveedor.val()+'/'+iu+'/out.json';
 					window.location.href=input_json;
-					
+					*/
 					$get_datos_grid();
 					
 					var remove = function() {$(this).remove();};
@@ -1046,6 +1046,7 @@ $(function() {
 			$busca_proveedor.hide();
 			$fecha_anticipo.attr("readonly", true);
 			$cancelar_anticipo.hide();
+			
 			$pdf_anticipo.hide();
 			
 			//$registra_anticipo.hide();
@@ -1100,7 +1101,7 @@ $(function() {
 					
 					if( entry['Datos']['0']['cancelado'] =='false' ){
 						$cancelar_anticipo.show();
-						$pdf_anticipo.show();
+						//$pdf_anticipo.show();
 					}
 					
 					//cargar select de tipos de movimiento
@@ -1226,6 +1227,7 @@ $(function() {
 				});//termina cancelar factura
                 
 				
+				/*
 				//descargar pdf de pago
 				$pdf_anticipo.click(function(event){
 					if(parseInt($id_anticipo.val()) !=0){
@@ -1234,6 +1236,7 @@ $(function() {
 						window.location.href=input_json;
 					}
 				});
+				*/
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){

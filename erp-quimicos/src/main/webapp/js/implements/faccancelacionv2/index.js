@@ -144,21 +144,13 @@ $(function() {
 		$busqueda_factura.focus();
 	});
 	
-        
-        
-        
-        
-       
-       
-       
+	
+	
+	var TriggerClickVisializaBuscador=0;
 	//visualizar  la barra del buscador
 	$visualiza_buscador.click(function(event){
 		event.preventDefault();
 		$('#barra_genera_informe').find('.tabla_genera_informe').css({'display':'none'});
-		
-		if(parseInt(TriggerClickVisualizaGeneradorInforme)==1){
-			$generar_informe.trigger('click');
-		}
 		
 		var alto=0;
 		if(TriggerClickVisializaBuscador==0){

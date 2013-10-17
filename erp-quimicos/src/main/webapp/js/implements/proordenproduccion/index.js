@@ -2033,7 +2033,15 @@ $(function() {
                                             agregado = $(this).find('input[name=agregado]').val();
                                             cantidad_real_tmp = $(this).find('input[name=cantidad_real]').val();
                                             //1___0___1483___12___d3da21c7-c4ba-49be-a241-9529336c5e75&&&1___0___158___0___2471c2a0-f253-4504-9bca-b7f843a5c72d&&&1___0___148___0___f84b5f6c-6cd4-45cb-a404-b532527f60e2&&&1___0___147___0___ &&&1___0___191___0___ &&&1___0___151___0___ &&&1___0___1493___0___ &&&1___0___1397___0___ &&&1___0___1390___0___ &&&1___0___374___0___ &&&1___0___378___0___ &&&1___0___1180___0___ &&&1___0___149___0___ &&&1___0___150___0___ &&&1___0___91___0___ &&&1___0___160___0___ &&&1___0___127___0___ &&&1___0___1483___0___ 
+                                            /*
+                                            alert(
+												"cantidad_elemento_tmp: "+cantidad_elemento_tmp+"\n"+
+												"cantidad_adicional_tmp: "+cantidad_adicional_tmp+"\n"+
+												"lote_tmp: "+lote_tmp+"\n"+
+												"cantidad_real_tmp: "+cantidad_real_tmp+"\n"
                                             
+                                            );
+                                            */
                                             if(eliminar_tmp != null && lote_tmp != null){
                                                 if(lote_tmp == "" || lote_tmp == " " ){
                                                     lotes_completos = 0;

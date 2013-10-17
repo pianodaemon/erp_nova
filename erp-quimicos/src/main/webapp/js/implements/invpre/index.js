@@ -54,7 +54,7 @@ $(function() {
 				4:"Sin Centavos"
 			};
 			
-	var rolAdmin=0;
+	var rolVendedor=0;
 	
     //Barra para las acciones
     $('#barra_acciones').append($('#lienzo_recalculable').find('.table_acciones'));
@@ -144,9 +144,9 @@ $(function() {
 			});
 			$busqueda_select_pres.append(presentacion);
 			
-			rolAdmin=data['Extra'][0]['exis_rol_admin'];
+			rolVendedor=data['Extra'][0]['rol_agente_venta'];
 			
-			if(parseInt(rolAdmin)<=0){
+			if(parseInt(rolVendedor)>=1){
 				//SI no es Administrador ocultar boton Actualizar
 				$new_invprodlineas.hide();
 			}
@@ -806,7 +806,7 @@ $(function() {
 			}
 		});
 		
-		if(parseInt(rolAdmin)<=0){
+		if(parseInt(rolVendedor)>=1){
 			//Ocultar boton Actualizar
 			$submit_actualizar.hide();
 			
@@ -1198,7 +1198,7 @@ $(function() {
 				}
 			});
 			
-			if(parseInt(rolAdmin)<=0){
+			if(parseInt(rolVendedor)>=1){
 				//Ocultar boton Actualizar
 				$submit_actualizar.hide();
 				
@@ -1416,7 +1416,7 @@ $(function() {
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
             
-			if(parseInt(rolAdmin)<=0){
+			if(parseInt(rolVendedor)>=1){
 				//SI no es Administrador ocultar iconos de eliminar en el grid
 				$('#lienzo_recalculable').find('a.cancelar_item').hide();
 			}

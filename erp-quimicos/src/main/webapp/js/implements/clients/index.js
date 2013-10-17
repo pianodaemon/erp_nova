@@ -24,7 +24,7 @@ $(function() {
 				9:"Lista 9",
 				10:"Lista 10"
 			};
-	var rolAdmin=0;
+	var rolVendedor=0;
 	
 	String.prototype.toCharCode = function(){
 	    var str = this.split(''), len = str.length, work = new Array(len);
@@ -145,9 +145,9 @@ $(function() {
 	var input_json_inicio = document.location.protocol + '//' + document.location.host + '/'+controller+'/getInicio.json';
 	$arregloI = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
 	$.post(input_json_inicio,$arregloI,function(data){
-		rolAdmin=data['Extra'][0]['exis_rol_admin'];
+		rolVendedor=data['Extra'][0]['rol_agente_venta'];
 		/*
-		if(parseInt(rolAdmin)<=0){
+		if(parseInt(rolVendedor)<=0){
 			//SI no es Administrador ocultar boton Actualizar
 			$new_cliente.hide();
 		}
@@ -2119,7 +2119,7 @@ $(function() {
 				//$campo_nocontrol.attr('disabled','-1'); //deshabilitar
 				$campo_nocontrol.css({'background' : '#DDDDDD'});
 				
-				if(parseInt(rolAdmin)<=0){
+				if(parseInt(rolVendedor)>=1){
 					//Ocultar boton Actualizar
 					$submit_actualizar.hide();
 					
@@ -3139,7 +3139,7 @@ $(function() {
             //resetea elastic, despues de pintar el grid y el slider
             Elastic.reset(document.getElementById('lienzo_recalculable'));
             
-			if(parseInt(rolAdmin)<=0){
+			if(parseInt(rolVendedor)>=1){
 				//SI no es Administrador ocultar iconos de eliminar en el grid
 				$('#lienzo_recalculable').find('a.cancelar_item').hide();
 			}
