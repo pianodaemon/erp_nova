@@ -150,7 +150,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public HashMap<String, String> getFac_Parametros(Integer id_emp, Integer id_suc) {
         HashMap<String, String> mapDatos = new HashMap<String, String>();
         String sql_query = "SELECT * FROM fac_par WHERE gral_emp_id="+id_emp+" AND gral_suc_id="+id_suc+";";
-        System.out.println("sql_query: "+sql_query);
+        //System.out.println("sql_query: "+sql_query);
         
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
         
@@ -2382,9 +2382,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "''::character varying AS no_cuenta, "
                     + "'No aplica'::character varying AS condicion_pago, "
                     + "fac_nota_credito.subtotal, "
+                    + "fac_nota_credito.serie_folio_factura, "
                     + "gral_mon.descripcion_abr AS moneda_abr, "
                     + "gral_mon.simbolo AS simbolo_moneda,"
                     + "gral_mon.iso_4217 AS moneda_iso,"
+                    + "gral_mon.iso_4217_anterior AS moneda2, "
                     + "gral_mon.descripcion AS moneda_titulo,"
                     + "cxc_clie.numero_control, "
                     + "cxc_clie.razon_social, "
@@ -2466,10 +2468,19 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         data.put("comprobante_receptor_domicilio_attr_municipio",map.get("municipio").toString());
         data.put("comprobante_receptor_domicilio_attr_estado",map.get("estado").toString());
         data.put("comprobante_receptor_domicilio_attr_codigopostal",map.get("cp").toString());
-        data.put("adenda_id",map.get("adenda_id").toString());
+        data.put("adenda_id",String.valueOf(map.get("adenda_id")));
         
         //este solo se utiliza en el pdfcfd y cfdi
         data.put("numero_control",map.get("numero_control").toString());
+        
+
+        
+        if(Integer.parseInt(String.valueOf(map.get("adenda_id")))==1){
+            //Este campo es utilizado para la adenda de Femsa-Quimiproductos
+            data.put("moneda2",map.get("moneda2").toString().toUpperCase());
+            Map<String, Object> map2 = this.getJdbcTemplate().queryForMap("select orden_compra from fac_docs where serie_folio='"+String.valueOf(map.get("serie_folio_factura"))+"' AND cxc_clie_id="+String.valueOf(map.get("cxc_clie_id")));
+            data.put("orden_compra",String.valueOf(map2.get("orden_compra")).toUpperCase());
+        }
         
         return data;
     }
@@ -2885,28 +2896,44 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 String campo = String.valueOf(row.get("campo"));
                 String valor = String.valueOf(row.get("valor"));
                 
+                data.put(campo, valor);
+                
+                /*
                 if(campo.equals("noVersAdd")){
                     data.put(campo, valor);
                 }
+                
                 if(campo.equals("noSociedad")){
                     data.put(campo, valor);
                 }
                 if(campo.equals("noProveedor")){
                     data.put(campo, valor);
                 }
+                if(campo.equals("noSocio")){
+                    data.put(campo, valor);
+                }
+                */
             }
             
             data.put("noPedido", dataFactura.get("orden_compra"));
             data.put("moneda", dataFactura.get("moneda2"));
-            data.put("noEntrada", "");
-            data.put("noRemision", "");
+            if(tipoDoc==1){
+                //Factura
+                data.put("noEntrada", "agregar valor");
+                data.put("noRemision", "agregar valor");
+            }else{
+                //Nota de Credito
+                data.put("noEntrada", "");
+                data.put("noRemision", "");
+            }
+            
             data.put("noSocio", "");
             data.put("centro", "");
             data.put("iniPerLiq", "");
             data.put("finPerLiq", "");
             data.put("retencion1", "");
             data.put("retencion2", "");
-            data.put("email", "");
+            data.put("email", dataFactura.get("emailEmisor"));
         }
         
         return data;

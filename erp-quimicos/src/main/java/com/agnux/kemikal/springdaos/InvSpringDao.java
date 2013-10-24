@@ -4139,9 +4139,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("id",rs.getInt("id"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    row.put("cantidad",rs.getString("cantidad"));
-
-
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     return row;
                 }
             }
@@ -4163,10 +4161,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("descripcion",rs.getString("descripcion"));
-                    row.put("cantidad",rs.getString("cantidad"));
-
-
-
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     return row;
                 }
             }
@@ -7806,7 +7801,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("codigo",rs.getString("codigo"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    row.put("existencia",rs.getString("existencia"));
+                    row.put("existencia",StringHelper.roundDouble(rs.getString("existencia"),2));
                     row.put("referencia",rs.getString("referencia"));
                     row.put("tipo_movimiento",rs.getString("tipo_movimiento"));
                     row.put("fecha_movimiento",rs.getString("fecha_movimiento"));

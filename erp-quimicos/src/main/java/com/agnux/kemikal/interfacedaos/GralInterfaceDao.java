@@ -40,6 +40,7 @@ public interface GralInterfaceDao {
     public String getRazonSocialEmpresaEmisora(Integer id_empresa);
     public String getRfcEmpresaEmisora(Integer id_empresa);
     public String getRegimenFiscalEmpresaEmisora(Integer id_empresa);
+    public String getEmailSucursal(Integer id_sucursal);
     
     public String getCertificadoEmpresaEmisora(Integer id_empresa, Integer id_sucursal);
     public String getNoCertificadoEmpresaEmisora(Integer id_empresa, Integer id_sucursal);

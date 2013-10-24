@@ -196,6 +196,16 @@ public class GralSpringDao implements GralInterfaceDao{
         return regimen_fiscal_emisora;
     }
 
+    
+    @Override
+    public String getEmailSucursal(Integer id_sucursal){
+        String sql_to_query = "SELECT email FROM gral_suc WHERE id="+id_sucursal+";";
+        Map<String, Object> map_email = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String email = map_email.get("email").toString();
+        return email;
+    }
+    
+    
     @Override
     public String getCertificadoEmpresaEmisora(Integer id_empresa, Integer id_sucursal) {
         String sql_to_query = "SELECT fac_cfds_conf.archivo_certificado FROM fac_cfds_conf WHERE fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";

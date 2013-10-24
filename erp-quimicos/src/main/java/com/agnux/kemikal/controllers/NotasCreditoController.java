@@ -9,6 +9,7 @@ import com.agnux.cfd.v2.BeanFacturador;
 import com.agnux.cfdi.BeanCancelaCfdi;
 import com.agnux.cfdi.BeanFacturadorCfdi;
 import com.agnux.cfdi.BeanFromCfdiXml;
+import com.agnux.cfdi.adendas.AdendaCliente;
 import com.agnux.cfdi.timbre.BeanFacturadorCfdiTimbre;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
@@ -431,8 +432,9 @@ public class NotasCreditoController {
             Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
             String select_tipo_documento = "0";
             String refacturar = "false";
-            //Variable para indicar si se debe agregar el tag Adenda en la Factura
-            boolean agregarAdenda=false;
+            
+            //Variable que indica si terminó bien el proceso de agregar la Adenda, por default es verdadero, si ocurre algu problema en el proceso se le asigna un false.
+            boolean procesoAdendaCorrecto=true;
             
             if( id_nota_credito==0 ){
                 command_selected = "new";
@@ -633,17 +635,9 @@ public class NotasCreditoController {
                             datosExtras.put("noPac", noPac);
                             datosExtras.put("ambienteFac", ambienteFac);
                             
-                            //Verificar si hay que incluir adenda
-                            if (parametros.get("incluye_adenda").equals("true")){
-                                //Verificar si el cliente tiene asignada una adenda
-                                if(Integer.parseInt(dataCliente.get("adenda_id"))>0){
-                                    //dataAdenda
-                                    agregarAdenda=true;
-                                }
-                            }
                             
                             //genera xml factura
-                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal, agregarAdenda, dataAdenda);
+                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal);
                             String timbrado_correcto = this.getBfcfditf().start();
                             
                             String cadRes[] = timbrado_correcto.split("___");
@@ -703,9 +697,57 @@ public class NotasCreditoController {
                                     pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
                                 }
                                 
+                                
+                            
+                                //::::::INICIA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                                System.out.println("incluye_adenda: "+parametros.get("incluye_adenda"));
+                                System.out.println("dataFacturaClienteAdendaID: "+dataCliente.get("adenda_id"));
+                                
+                                //Verificar si hay que incluir adenda
+                                if (parametros.get("incluye_adenda").equals("true")){
+                                    //Verificar si el cliente tiene asignada una adenda
+                                    if(Integer.parseInt(dataCliente.get("adenda_id"))>0){
+                                        String path_file = new String();
+                                        String xml_file_name = new String();
+                                        
+                                        //Tipo 9=Nota de credito
+                                        int tipoDocAdenda=9;
+                                        
+                                        path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+                                        xml_file_name = serieFolio+".xml";
+                                        
+                                        //Agregar estos datos para generar el objeto que contiene los datos de la Adenda
+                                        dataCliente.put("emailEmisor", this.getGralDao().getEmailSucursal(id_sucursal));
+                                        
+                                        
+                                        //1 indica que es Adenda de una factura
+                                        dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataCliente.get("adenda_id")), dataCliente);
+                                        
+                                        //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
+                                        AdendaCliente adenda = new AdendaCliente();
+                                        adenda.createAdenda(1, dataAdenda, path_file, xml_file_name);
+                                        //TERMINA EJECUCION DE CLASE QUE AGREGA LA ADENDA
+                                        
+                                        File file_xml_con_adenda = new File(path_file+"/"+xml_file_name);
+                                        if(!file_xml_con_adenda.exists()){
+                                            //Si el archivo existe indica que se agregó bien la adenda y se creó el nuevo archivo xml
+                                            procesoAdendaCorrecto=false;
+                                        }
+                                        
+                                    }
+                                }
+                                //::::::TERMINA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                                
+                                
+                                
                                 jsonretorno.put("folio",Serie+Folio);
                                 valorRespuesta="true";
                                 msjRespuesta = "Se gener&oacute; la Nota de Cr&eacute;dito: "+Serie+Folio;
+                                
+                                if (!procesoAdendaCorrecto){
+                                    msjRespuesta = msjRespuesta + ", pero no fue posible agregar la Adenda.\nContacte a Soporte.";
+                                }
+                                
                             }else{
                                 valorRespuesta="false";
                                 msjRespuesta=cadRes[1];

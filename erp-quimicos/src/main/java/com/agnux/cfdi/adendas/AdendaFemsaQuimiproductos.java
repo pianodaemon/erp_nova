@@ -9,7 +9,9 @@ import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.obj.AgnuxXmlObject;
 import java.io.File;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.transform.OutputKeys;
@@ -52,9 +54,10 @@ public class AdendaFemsaQuimiproductos extends Adenda{
                 String xmlString = addAdenda.getXmlOutString();
                 
                 
-                System.out.println("pathXmlCfdi: "+pathXmlCfdi+"\n\n");
-                
-                System.out.println("xmlString: "+xmlString);
+                System.out.println("pathXmlCfdi: "+pathXmlCfdi);
+                //Esta impresion es por  si llega a fallar la creacion del nuevo fichero xml con adenda, 
+                //si esto sucede podremos buscar en el log la cadena  que debe contener el xml, ya que en este punto fue timbrado y generado PDF y actualizado el Inventario.
+                System.out.println("xmlCfdiConAdenda:\n"+xmlString);
                 
                 
                 //Crear fichero
@@ -78,7 +81,6 @@ public class AdendaFemsaQuimiproductos extends Adenda{
                 System.out.println("Error al agregar Adenda al CFDI.");
                 Logger.getLogger(AdendaFemsaQuimiproductos.class.getName()).log(Level.SEVERE, null, ex);
             }
-
             
         }else{
             next.createAdenda(noAdenda, dataAdenda, dirXml, fileNameXml);
@@ -93,24 +95,42 @@ public class AdendaFemsaQuimiproductos extends Adenda{
         }
         
         private void construyeNodoAdenda(LinkedHashMap<String, Object> data){
-            String elemento = new String();
+            //String elemento = new String();
             Document tmp = this.getDb().newDocument();
             
             Element root = tmp.createElement("cfdi:Adenda");
             Element child_1 = tmp.createElement("Documento");
             Element child_1_1 = tmp.createElement("FacturaFemsa");
             
+            
+            //noVersAdd,claseDoc,noSociedad,noProveedor,noPedido, moneda,noEntrada,noRemision, noSocio, centro, iniPerLiq, finPerLiq, retencion1, retencion2, email
+            
+            //Esta ciclo for construye exactamente lo mismo que esta abajo comentado.
+            //El arreglo elements debe tener exactamente los mismos nombres de los indices que trae el objeto data.
+            String[] elements = {"noVersAdd","claseDoc","noSociedad","noProveedor","noPedido", "moneda","noEntrada","noRemision", "noSocio", "centro", "iniPerLiq", "finPerLiq", "retencion1", "retencion2", "email"};
+            List<String>  lista_elementos = (List<String>) Arrays.asList(elements);
+            for ( String elemento : lista_elementos){
+                Element element = tmp.createElement(elemento);
+                if(!data.get(elemento).equals("")){
+                    element.setTextContent(String.valueOf(data.get(elemento)));
+                }
+                child_1_1.appendChild(element);
+            }
+            
+            
+            
+            /*
             elemento = "noVersAdd";
             Element noVersAdd = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                noVersAdd.setTextContent(elemento);
+                noVersAdd.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(noVersAdd);
             
             elemento = "claseDoc";
             Element claseDoc = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                claseDoc.setTextContent(elemento);
+                claseDoc.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(claseDoc);
             
@@ -118,94 +138,94 @@ public class AdendaFemsaQuimiproductos extends Adenda{
             elemento = "noSociedad";
             Element noSociedad = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                noSociedad.setTextContent(elemento);
+                noSociedad.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(noSociedad);
             
             elemento = "noProveedor";
             Element noProveedor = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                noProveedor.setTextContent(elemento);
+                noProveedor.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(noProveedor);
             
             elemento = "noPedido";
             Element noPedido = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                noPedido.setTextContent(elemento);
+                noPedido.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(noPedido);
             
             elemento = "moneda";
             Element moneda = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                moneda.setTextContent(elemento);
+                moneda.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(moneda);
             
             elemento = "noEntrada";
             Element noEntrada = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                noEntrada.setTextContent(elemento);
+                noEntrada.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(noEntrada);
             
             elemento = "noRemision";
             Element noRemision = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                noRemision.setTextContent(elemento);
+                noRemision.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(noRemision);
             
             elemento = "noSocio";
             Element noSocio = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                noSocio.setTextContent(elemento);
+                noSocio.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(noSocio);
             
             elemento = "centro";
             Element centro = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                centro.setTextContent(elemento);
+                centro.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(centro);
             
             elemento = "iniPerLiq";
             Element iniPerLiq = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                iniPerLiq.setTextContent(elemento);
+                iniPerLiq.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(iniPerLiq);
             
             elemento = "finPerLiq";
             Element finPerLiq = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                finPerLiq.setTextContent(elemento);
+                finPerLiq.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(finPerLiq);
             
             elemento = "retencion1";
             Element retencion1 = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                retencion1.setTextContent(elemento);
+                retencion1.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(retencion1);
             
             elemento = "retencion2";
             Element retencion2 = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                retencion2.setTextContent(elemento);
+                retencion2.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(retencion2);
             
             elemento = "email";
             Element email = tmp.createElement(elemento);
             if(!data.get(elemento).equals("")){
-                email.setTextContent(elemento);
+                email.setTextContent(String.valueOf(data.get(elemento)));
             }
             child_1_1.appendChild(email);
-            
+            */
             
             child_1.appendChild(child_1_1);
             root.appendChild(child_1);
