@@ -1980,6 +1980,9 @@ $(function() {
                                 
                                 
                                 
+                                
+                                
+                                
                                 //codigo, para guardar las cantidades reales utilizadas por cada lote
                                 $tmp_tr.find('#guardar_uso_real_op'+trCount).click(function(event){
                                     event.preventDefault();
@@ -2506,8 +2509,35 @@ $(function() {
             $aplicar_evento_blur_input_lote($tmp_tr.find('#lote'+ trCount ));
             $aplicar_evento_keypress_input_lote($tmp_tr.find('#lote'+ trCount ));
             $aplicar_evento_click_input_lote($tmp_tr.find('#lote'+ trCount ));
-            
             $aplicar_evento_keypress($tmp_tr.find('#cantidad_adicional'+ trCount));
+            $aplicar_evento_keypress($tmp_tr.find('#cantidad_real'+ trCount));
+            
+            
+			//Validar al perder el enfoque
+			$tmp_tr.find('#cantidad_real'+ trCount).blur(function(){
+				$inputCantReal = $(this);
+				if ($inputCantReal.val().trim() == ''){
+						jAlert('El campo Cantidad Real no debe quedar vac&iacute;o.', 'Atencion!', function(r) { 
+							$inputCantReal.focus();
+						});
+				}else{
+					if (parseInt($inputCantReal.val()) > 0){
+						//Buscar cuantos puntos tiene inputCantReal
+						var coincidencias = $inputCantReal.val().match(/\./g);
+						var numPuntos = coincidencias ? coincidencias.length : 0;
+						if(parseInt(numPuntos)>1){
+							jAlert('El valor ingresado para Cantidad Real es incorrecto, tiene mas de un punto('+$inputCantReal.val()+').', 'Atencion!', function(r) { 
+								$inputCantReal.focus();
+							});
+						}
+					}else{
+						jAlert('La Cantidad Real debe ser mayor a cero.', 'Atencion!', function(r) { 
+							$inputCantReal.focus();
+						});
+					}
+				}
+			});
+            
             
             
             //$tmp_tr.find('#lote'+trCount).click(function(event){
