@@ -318,6 +318,7 @@ public class FacDevolucionesController {
             ArrayList<LinkedHashMap<String,String>> impTrasladados = new ArrayList<LinkedHashMap<String,String>>();
             ArrayList<LinkedHashMap<String,String>> impRetenidos = new ArrayList<LinkedHashMap<String,String>>();
             LinkedHashMap<String,String> datosExtras = new LinkedHashMap<String,String>();
+            LinkedHashMap<String,Object> dataAdenda = new LinkedHashMap<String,Object>();
             
             //variables para Nota de Credito en CFDI
             ArrayList<String> leyendas = new ArrayList<String>();
@@ -352,6 +353,8 @@ public class FacDevolucionesController {
             String refacturar = "false";
             String valorRespuesta="false";
             String msjRespuesta="";
+            //Variable para indicar si se debe agregar el tag Adenda en la Factura
+            boolean agregarAdenda=false;
             
             userDat = this.getHomeDao().getUserById(id_usuario);
             Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -582,8 +585,17 @@ public class FacDevolucionesController {
                             datosExtras.put("noPac", noPac);
                             datosExtras.put("ambienteFac", ambienteFac);
                             
+                            //Verificar si hay que incluir adenda
+                            if (parametros.get("incluye_adenda").equals("true")){
+                                //Verificar si el cliente tiene asignada una adenda
+                                if(Integer.parseInt(dataCliente.get("adenda_id"))>0){
+                                    //dataAdenda
+                                    agregarAdenda=true;
+                                }
+                            }
+                            
                             //genera xml factura
-                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal);
+                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal, agregarAdenda, dataAdenda);
                             String timbrado_correcto = this.getBfcfditf().start();
                             
                             String cadRes[] = timbrado_correcto.split("___");

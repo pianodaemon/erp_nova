@@ -154,4 +154,5 @@ public interface FacturasInterfaceDao {
     public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXml(Integer id_nota_credito);
     
     
+    public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura);
 }

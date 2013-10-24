@@ -409,13 +409,8 @@ public class NotasCreditoController {
             ArrayList<LinkedHashMap<String,String>> impTrasladados = new ArrayList<LinkedHashMap<String,String>>();
             ArrayList<LinkedHashMap<String,String>> impRetenidos = new ArrayList<LinkedHashMap<String,String>>();
             LinkedHashMap<String,String> datosExtras = new LinkedHashMap<String,String>();
-            
-            //variables para Nota de Credito en CFDI
-            //LinkedHashMap<String,String> datosExtrasCfdi = new LinkedHashMap<String,String>();
-            //ArrayList<LinkedHashMap<String,String>> listaConceptosCfdi = new ArrayList<LinkedHashMap<String,String>>();
-            //ArrayList<LinkedHashMap<String,String>> impTrasladadosCfdi = new ArrayList<LinkedHashMap<String,String>>();
-            //ArrayList<LinkedHashMap<String,String>> impRetenidosCfdi = new ArrayList<LinkedHashMap<String,String>>();
             ArrayList<String> leyendas = new ArrayList<String>();
+            LinkedHashMap<String,Object> dataAdenda = new LinkedHashMap<String,Object>();
             
             //variables para PDF de Nota de Credito CFD
             ArrayList<HashMap<String, String>> listaConceptosPdf = new ArrayList<HashMap<String, String>>();
@@ -436,6 +431,8 @@ public class NotasCreditoController {
             Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
             String select_tipo_documento = "0";
             String refacturar = "false";
+            //Variable para indicar si se debe agregar el tag Adenda en la Factura
+            boolean agregarAdenda=false;
             
             if( id_nota_credito==0 ){
                 command_selected = "new";
@@ -636,8 +633,17 @@ public class NotasCreditoController {
                             datosExtras.put("noPac", noPac);
                             datosExtras.put("ambienteFac", ambienteFac);
                             
+                            //Verificar si hay que incluir adenda
+                            if (parametros.get("incluye_adenda").equals("true")){
+                                //Verificar si el cliente tiene asignada una adenda
+                                if(Integer.parseInt(dataCliente.get("adenda_id"))>0){
+                                    //dataAdenda
+                                    agregarAdenda=true;
+                                }
+                            }
+                            
                             //genera xml factura
-                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal);
+                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal, agregarAdenda, dataAdenda);
                             String timbrado_correcto = this.getBfcfditf().start();
                             
                             String cadRes[] = timbrado_correcto.split("___");

@@ -558,6 +558,7 @@ public class PrefacturasController {
         ArrayList<LinkedHashMap<String,String>> impTrasladados = new ArrayList<LinkedHashMap<String,String>>();
         ArrayList<LinkedHashMap<String,String>> impRetenidos = new ArrayList<LinkedHashMap<String,String>>();
         LinkedHashMap<String,String> datosExtrasXmlFactura = new LinkedHashMap<String,String>();
+        LinkedHashMap<String,Object> dataAdenda = new LinkedHashMap<String,Object>();
         
         LinkedHashMap<String,String> datosExtrasCfdi = new LinkedHashMap<String,String>();
         ArrayList<LinkedHashMap<String,String>> listaConceptosCfdi = new ArrayList<LinkedHashMap<String,String>>();
@@ -580,7 +581,10 @@ public class PrefacturasController {
         String serieFolio="";
         String rfcEmisor="";
         Integer id_factura=0;
-        Integer id_usuario= user.getUserId();//variable para el id  del usuario
+        //Variable para el id  del usuario
+        Integer id_usuario= user.getUserId();
+        //Variable para indicar si se debe agregar el tag Adenda en la Factura
+        boolean agregarAdenda=false;
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -782,12 +786,12 @@ public class PrefacturasController {
                             //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Obteniendo datos para CFDI:::::::::::::::::..");
                             command_selected = "facturar_cfditf";
                             extra_data_array = "'sin datos'";
-
+                            
                             conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura);
                             impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
                             impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos);
                             dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
-
+                            
                             //estos son requeridos para cfditf
                             datosExtrasXmlFactura.put("prefactura_id", String.valueOf(id_prefactura));
                             datosExtrasXmlFactura.put("tipo_documento", String.valueOf(select_tipo_documento));
@@ -802,9 +806,28 @@ public class PrefacturasController {
                             datosExtrasXmlFactura.put("noPac", noPac);
                             datosExtrasXmlFactura.put("ambienteFac", ambienteFac);
                             
+                            
+                            System.out.println("incluye_adenda: "+parametros.get("incluye_adenda"));
+                            System.out.println("dataFacturaClienteAdendaID: "+dataFacturaCliente.get("adenda_id"));
+                            
+                            //Verificar si hay que incluir adenda
+                            if (parametros.get("incluye_adenda").equals("true")){
+                                //Verificar si el cliente tiene asignada una adenda
+                                if(Integer.parseInt(dataFacturaCliente.get("adenda_id"))>0){
+                                    
+                                    //1 indica que es Adenda de una factura
+                                    dataAdenda = this.getFacdao().getDatosAdenda(1, Integer.parseInt(dataFacturaCliente.get("adenda_id")), dataFacturaCliente);
+                                    
+                                    
+                                    
+                                    agregarAdenda=true;
+                                }
+                            }
+                            
+                            
                             //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia BeanFacturador:::::::::::::::::..");
                             //genera xml factura
-                            this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
+                            this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal, agregarAdenda, dataAdenda);
                             String timbrado_correcto = this.getBfCfdiTf().start();
                             //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina BeanFacturador:::::::::::::::::..");
                             String cadRes[] = timbrado_correcto.split("___");

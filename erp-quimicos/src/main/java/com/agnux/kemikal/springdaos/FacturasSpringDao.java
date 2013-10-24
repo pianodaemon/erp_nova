@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -149,6 +150,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public HashMap<String, String> getFac_Parametros(Integer id_emp, Integer id_suc) {
         HashMap<String, String> mapDatos = new HashMap<String, String>();
         String sql_query = "SELECT * FROM fac_par WHERE gral_emp_id="+id_emp+" AND gral_suc_id="+id_suc+";";
+        System.out.println("sql_query: "+sql_query);
         
         Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
         
@@ -165,7 +167,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         mapDatos.put("permitir_servicios", String.valueOf(map.get("permitir_servicios")));
         mapDatos.put("permitir_articulos", String.valueOf(map.get("permitir_articulos")));
         mapDatos.put("permitir_kits", String.valueOf(map.get("permitir_kits")));
-        
+        mapDatos.put("incluye_adenda", String.valueOf(map.get("incluye_adenda")).toLowerCase());
         return mapDatos;
     }
 
@@ -591,11 +593,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + "(CASE WHEN fac_metodos_pago.id=7 THEN 'NO APLICA' ELSE erp_prefacturas.no_cuenta END ) AS no_cuenta, "
                         + "cxc_clie_credias.descripcion AS condicion_pago,"
                         + "gral_mon.iso_4217 AS moneda, "
+                        + "gral_mon.iso_4217_anterior AS moneda2, "
                         + "gral_mon.simbolo AS simbolo_moneda, "
                         + "erp_prefacturas.tipo_cambio, "
                         + "cxc_clie.numero_control, "
                         + "cxc_clie.razon_social, "
                         + "cxc_clie.rfc, "
+                        + "cxc_clie.cxc_clie_tipo_adenda_id AS adenda_id, "
+                        + "erp_prefacturas.orden_compra, "
                         + "(CASE WHEN cxc_clie.localidad_alternativa IS NULL THEN '' ELSE cxc_clie.localidad_alternativa END) AS localidad_alternativa, "
                         + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.calle ELSE cxc_clie.calle END ) AS calle,"
                         + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN sbtdf.numero_interior ELSE (CASE WHEN cxc_clie.numero='' OR cxc_clie.numero IS NULL THEN '' ELSE cxc_clie.numero END)  END ) AS numero_interior,"
@@ -633,6 +638,13 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         data.put("comprobante_attr_subtotal",this.getSubTotal());
         data.put("comprobante_attr_total",this.getTotal());
         data.put("comprobante_attr_moneda",map.get("moneda").toString().toUpperCase());
+        
+        //Este campo es utilizado para la adenda de Quimiproductos
+        data.put("moneda2",map.get("moneda2").toString().toUpperCase());
+        data.put("orden_compra",map.get("orden_compra").toString().toUpperCase());
+        
+        
+                
         data.put("comprobante_attr_simbolo_moneda",map.get("simbolo_moneda").toString().toUpperCase());
         data.put("comprobante_attr_tc",StringHelper.roundDouble(map.get("tipo_cambio").toString(), 4));
         data.put("comprobante_attr_metododepago",map.get("metodo_pago").toString().toUpperCase());
@@ -641,31 +653,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             no_cta=map.get("no_cuenta").toString();
         }
         data.put("comprobante_attr_numerocuenta",no_cta);
-        
-        
-        /*
-        //System.out.println("Obteniendo datos del cliente:"+ id_cliente);
-        //obtener datos del cliente
-	String sql_query_cliente = ""
-                + "SELECT  cxc_clie.numero_control, "
-                        + "cxc_clie.razon_social, "
-                        + "cxc_clie.rfc, "
-                        + "(CASE WHEN cxc_clie.localidad_alternativa IS NULL THEN '' ELSE cxc_clie.localidad_alternativa END) AS localidad_alternativa, "
-                        + "cxc_clie.calle, "
-                        + "cxc_clie.numero, "
-                        + "cxc_clie.colonia, "
-                        + "gral_mun.titulo as municipio, "
-                        + "gral_edo.titulo as estado, "
-                        + "gral_pais.titulo as pais, "
-                        + "cxc_clie.cp "
-                + "FROM cxc_clie " 
-                + "JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
-                + "JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
-                + "JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
-                + "WHERE cxc_clie.borrado_logico=false AND cxc_clie.id = "+ id_cliente +" limit 1";
-        
-        Map<String, Object> map_client = this.getJdbcTemplate().queryForMap(sql_query_cliente);
-        */
         
         String numero_ext="";
         if(map.get("numero_exterior").toString().equals("'")){
@@ -694,6 +681,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         data.put("comprobante_receptor_domicilio_attr_estado",map.get("estado").toString());
         data.put("comprobante_receptor_domicilio_attr_pais",map.get("pais").toString());
         data.put("comprobante_receptor_domicilio_attr_codigopostal",map.get("cp").toString());
+        data.put("adenda_id",map.get("adenda_id").toString());
         
         //este solo se utiliza en el pdfcfd y cfdi
         data.put("numero_control",map.get("numero_control").toString());
@@ -2401,6 +2389,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "cxc_clie.numero_control, "
                     + "cxc_clie.razon_social, "
                     + "cxc_clie.rfc, "
+                    + "cxc_clie.cxc_clie_tipo_adenda_id AS adenda_id, "
                     + "(CASE WHEN cxc_clie.localidad_alternativa IS NULL THEN '' ELSE cxc_clie.localidad_alternativa END) AS localidad_alternativa, "
                     + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.calle ELSE cxc_clie.calle END ) AS calle,"
                     + "(CASE WHEN fac_nota_credito.cxc_clie_df_id > 1 THEN sbtdf.numero_interior ELSE (CASE WHEN cxc_clie.numero='' OR cxc_clie.numero IS NULL THEN cxc_clie.numero_exterior ELSE cxc_clie.numero END)  END ) AS numero_interior,"
@@ -2477,6 +2466,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         data.put("comprobante_receptor_domicilio_attr_municipio",map.get("municipio").toString());
         data.put("comprobante_receptor_domicilio_attr_estado",map.get("estado").toString());
         data.put("comprobante_receptor_domicilio_attr_codigopostal",map.get("cp").toString());
+        data.put("adenda_id",map.get("adenda_id").toString());
         
         //este solo se utiliza en el pdfcfd y cfdi
         data.put("numero_control",map.get("numero_control").toString());
@@ -2878,6 +2868,48 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         }
         
         return hm_conceptos;
+    }
+    
+    @Override
+    public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura) {
+        LinkedHashMap<String, Object> data = new LinkedHashMap<String, Object>();
+        String sql_query = "select * from cxc_clie_adenda_datos where cxc_clie_adenda_tipo="+noAdenda;
+        
+        //Agregar el tipo de DOCUMENTO(1=Factura, 2=Consignacion, 3=Retenciones(Honorarios, Arrendamientos, Fletes), 8=Nota de Cargo, 9=Nota de Credito)
+        data.put("claseDoc", tipoDoc);
+        
+        if(noAdenda==1){
+            //Adenda FEMSA QUIMIPRODUCTOS
+            List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql_query);
+            for (Map row : rows) {
+                String campo = String.valueOf(row.get("campo"));
+                String valor = String.valueOf(row.get("valor"));
+                
+                if(campo.equals("noVersAdd")){
+                    data.put(campo, valor);
+                }
+                if(campo.equals("noSociedad")){
+                    data.put(campo, valor);
+                }
+                if(campo.equals("noProveedor")){
+                    data.put(campo, valor);
+                }
+            }
+            
+            data.put("noPedido", dataFactura.get("orden_compra"));
+            data.put("moneda", dataFactura.get("moneda2"));
+            data.put("noEntrada", "");
+            data.put("noRemision", "");
+            data.put("noSocio", "");
+            data.put("centro", "");
+            data.put("iniPerLiq", "");
+            data.put("finPerLiq", "");
+            data.put("retencion1", "");
+            data.put("retencion2", "");
+            data.put("email", "");
+        }
+        
+        return data;
     }
     
     
