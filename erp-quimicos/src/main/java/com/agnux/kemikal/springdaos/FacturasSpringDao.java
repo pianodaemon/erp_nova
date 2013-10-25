@@ -145,7 +145,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-
+    
     @Override
     public HashMap<String, String> getFac_Parametros(Integer id_emp, Integer id_suc) {
         HashMap<String, String> mapDatos = new HashMap<String, String>();
