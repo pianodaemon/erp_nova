@@ -194,7 +194,7 @@
                                         <tr>
                                             <td width="427"></td>
                                             <td>
-                                               <input type="button" id="cancelar" value="Cancelar" style="width:70px; font-weight:bold;">
+                                               <input type="button" id="cancelar" value="Cancelar Factura" style="width:100px; font-weight:bold;">
                                             </td>
                                             <td width="30"></td>
                                             <td>
@@ -203,8 +203,8 @@
                                         </tr>
                                 </table>      
                             </div>
-											
-											
+                            
+                            
                             
                             <!--
                             <div class="fixed column" id="botones" style="width:527px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">

@@ -347,7 +347,7 @@ $(function() {
 
 	}
 	
-	
+	/*
 	var carga_formaPagos00_for_datagrid00 = function(id_to_show, accion_mode){
 		//aqui entra para generar pdf del pago
 		if(accion_mode == 'cancel'){
@@ -428,7 +428,7 @@ $(function() {
 			
 		}
 	}
-    
+    */
     
     
     

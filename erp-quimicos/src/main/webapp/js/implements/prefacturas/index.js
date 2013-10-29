@@ -345,6 +345,44 @@ $(function() {
 	}
 	
 	
+	$tabs_li_funxionalidad_datos_adenda = function(){
+		$('#forma-datosadenda-window').find('#submit').mouseover(function(){
+			$('#forma-datosadenda-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/bt1.png");
+		});
+		$('#forma-datosadenda-window').find('#submit').mouseout(function(){
+			$('#forma-datosadenda-window').find('#submit').removeAttr("src").attr("src","../../img/modalbox/btn1.png");
+		});
+		$('#forma-datosadenda-window').find('#boton_cancelar').mouseover(function(){
+			$('#forma-datosadenda-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/bt2.png)"});
+		})
+		$('#forma-datosadenda-window').find('#boton_cancelar').mouseout(function(){
+			$('#forma-datosadenda-window').find('#boton_cancelar').css({backgroundImage:"url(../../img/modalbox/btn2.png)"});
+		});
+		
+		$('#forma-datosadenda-window').find('#close').mouseover(function(){
+			$('#forma-datosadenda-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close_over.png)"});
+		});
+		$('#forma-datosadenda-window').find('#close').mouseout(function(){
+			$('#forma-datosadenda-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
+		});
+		
+		
+		$('#forma-datosadenda-window').find(".contenidoPes").hide(); //Hide all content
+		$('#forma-datosadenda-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
+		$('#forma-datosadenda-window').find(".contenidoPes:first").show(); //Show first tab content
+		
+		//On Click Event
+		$('#forma-datosadenda-window').find("ul.pestanas li").click(function() {
+			$('#forma-datosadenda-window').find(".contenidoPes").hide();
+			$('#forma-datosadenda-window').find("ul.pestanas li").removeClass("active");
+			var activeTab = $(this).find("a").attr("href");
+			$('#forma-datosadenda-window').find( activeTab , "ul.pestanas li" ).fadeIn().show();
+			$(this).addClass("active");
+			return false;
+		});
+
+	}
+	
 	
 	var quitar_comas= function($valor){
 		$valor = $valor+'';
@@ -714,7 +752,7 @@ $(function() {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Carga datos de la remision seleccionada al Grid de Productos de la factura
 	//Las remisiones a facturar deben tener la misma direccion fiscal, de otra manera no se permite agregar junto con otra remision
-	$agrega_productos_remision_al_grid = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_remision, id_moneda_remision,  array_monedas, array_metodos_pago, id_alm){
+	$agrega_productos_remision_al_grid = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_remision, id_moneda_remision,  array_monedas, array_metodos_pago, id_alm, $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 ){
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosRemision.json';
 		$arreglo = {'id_remision':id_remision, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
@@ -869,6 +907,36 @@ $(function() {
 					});
 				}
 				
+				
+				
+				//***************************************************************************************************************
+				//Aqui va el codigo que muestra los campos para adenda
+				
+				$check_incluye_adenda.click(function(event){
+					//Esto es para evitar que le quiten la seleccion cuando incluye adenda.
+					if(entry['RemExtra']['0']['adenda'] == 'true'){
+						this.checked=true;
+					}
+				});
+				
+				
+				
+				//Ocultar check y boton de la adenda, cuando el cliente no incluya adenda.
+				if(entry['RemExtra']['0']['adenda'] == 'true'){
+					if(parseInt(entry['Datos']['0']['adenda_id'])==1){
+						$adenda.show();
+						$check_incluye_adenda.attr('checked',  (entry['RemExtra']['0']['adenda'] == 'true')? true:false );
+						
+						//Asignar el evento click
+						$agregarDatosAdenda.click(function(event){
+							$cargaFormaDatosAdenda(entry['Datos']['0']['adenda_id'], $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 );
+						});
+					}
+				}
+				//***************************************************************************************************************
+				
+				
+				
 				$calcula_totales();//llamada a la funcion que calcula totales 
 				
 			}else{
@@ -884,7 +952,7 @@ $(function() {
 	
 	
 	//buscador de Remisiones  sin facturar del cliente seleccionado
-	$busca_remisiones = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_cliente, array_monedas, array_metodos_pago, $select_almacen, arrayAlmacenes ){
+	$busca_remisiones = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_cliente, array_monedas, array_metodos_pago, $select_almacen, arrayAlmacenes, $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 ){
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRemisionesCliente.json';
 		$arreglo = {'id_cliente':id_cliente	};
 		
@@ -976,7 +1044,7 @@ $(function() {
 						if( parseInt(encontrado) != 1 ) {
 							if( parseInt(moneda_diferente) != 1 ) {
 								if( parseInt(almacen_diferente) != 1 ) {
-									$agrega_productos_remision_al_grid($grid_productos, $select_moneda, $select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_rem, id_moneda, array_monedas, array_metodos_pago, id_alm);
+									$agrega_productos_remision_al_grid($grid_productos, $select_moneda, $select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_rem, id_moneda, array_monedas, array_metodos_pago, id_alm, $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 );
 									
 									//carga select de almacen con el almacen de donde se saco los productos de la remision
 									$select_almacen.children().remove();
@@ -1526,6 +1594,110 @@ $(function() {
 	
 	
 	
+	//Ventana para agregar datos de la Adenda
+	var $cargaFormaDatosAdenda = function(id_adenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6){
+		//aqui  entra para editar un registro
+		var form_to_show = 'formaDatosAdenda';
+		
+		$('#' + form_to_show).each (function(){this.reset();});
+		var $forma_selected = $('#' + form_to_show).clone();
+		$forma_selected.attr({id : form_to_show + id_adenda});
+		
+		$(this).modalPanel_datosadenda();
+					
+		$('#forma-datosadenda-window').css({"margin-left": -420, 	"margin-top": -200});
+		$forma_selected.prependTo('#forma-datosadenda-window');
+		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_adenda , style:'display:table'});
+		$tabs_li_funxionalidad_datos_adenda();
+		
+		
+		var $adenda1_campo1 = $('#forma-datosadenda-window').find('input[name=adenda1_campo1]');
+		var $adenda1_campo2 = $('#forma-datosadenda-window').find('input[name=adenda1_campo2]');
+		var $check_adenda1_campo3 = $('#forma-datosadenda-window').find('input[name=check_adenda1_campo3]');
+		var $adenda1_campo4 = $('#forma-datosadenda-window').find('input[name=adenda1_campo4]');
+		var $adenda1_campo5 = $('#forma-datosadenda-window').find('input[name=adenda1_campo5]');
+		var $adenda1_campo6 = $('#forma-datosadenda-window').find('input[name=adenda1_campo6]');
+		
+		//Este campo almacena la cadena del warning de la ventana de Adenda
+		var $warning_adenda = $('#forma-prefacturas-window').find('input[name=warning_adenda]');
+		
+		var $aceptar_adenda = $('#forma-datosadenda-window').find('#aceptar_adenda');
+		var $salir = $('#forma-datosadenda-window').find('#salir');
+		
+		//Botones                        
+		var $cerrar_plugin = $('#forma-datosadenda-window').find('#close');
+		
+		
+		if(parseInt(id_adenda)==1){
+			//$campo1, $campo2, $campo3, $campo4, $campo5, $campo6
+			$adenda1_campo1.val($campo1.val());
+			$adenda1_campo2.val($campo2.val());
+			$check_adenda1_campo3.attr('checked',  ($campo3.val().trim() == 'true')? true:false );
+			$adenda1_campo4.val($campo4.val());
+			$adenda1_campo5.val($campo5.val());
+			$adenda1_campo6.val($campo6.val());
+			
+			
+			//Aqui se muestran los warning si es que hay
+			var valor = $warning_adenda.val().split('&&&&&');
+			for (var element in valor){
+				tmp = $warning_adenda.val().split('&&&&&')[element];
+				longitud = tmp.split('$');
+				if( longitud.length > 1 ){
+					$('#forma-datosadenda-window').find('img[rel=warning_' + tmp.split('$')[0] + ']')
+					.parent()
+					.css({'display':'block'})
+					.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split('$')[1]});
+					
+				}
+			}
+			
+			$adenda1_campo1.focus();
+		}
+		
+		
+		//Aceptar datos de la adenda
+		$aceptar_adenda.click(function(event){
+			if(parseInt(id_adenda)==1){
+				//Obtener el valor del campo checkbox
+				var checkbox_marcado = $check_adenda1_campo3.prop("checked");
+				
+				$campo1.val($adenda1_campo1.val());
+				$campo2.val($adenda1_campo2.val());
+				$campo3.val(checkbox_marcado);
+				$campo4.val($adenda1_campo4.val());
+				$campo5.val($adenda1_campo5.val());
+				$campo6.val($adenda1_campo6.val());
+				
+				//eliminar el warning 
+				$warning_adenda.val('');
+				
+				//Cerrar ventana
+				var remove = function() {$(this).remove();};
+				$('#forma-datosadenda-overlay').fadeOut(remove);
+			}
+		});
+		
+		
+		$salir.click(function(event){
+			event.preventDefault();
+			var remove = function() {$(this).remove();};
+			$('#forma-datosadenda-overlay').fadeOut(remove);
+		});
+		
+		//cerrar plugin
+		$cerrar_plugin.bind('click',function(){
+			var remove = function() {$(this).remove();};
+			$('#forma-datosadenda-overlay').fadeOut(remove);
+		});
+		
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -1598,7 +1770,28 @@ $(function() {
 		//href para agregar producto al grid
 		//var $agregar_producto = $('#forma-prefacturas-window').find('a[href*=agregar_producto]');
 		
+		
+		//Boton para agregar datos de la Adenda
+		var $agregarDatosAdenda = $('#forma-prefacturas-window').find('#agregarDatosAdenda');
+		var $check_incluye_adenda = $('#forma-prefacturas-window').find('input[name=check_incluye_adenda]');
+		
+		//Variable para ocultar campos de la adenda cuando no se debe incluir
+		var $adenda = $('#forma-prefacturas-window').find('.adenda');
+		
+		var $campo1 = $('#forma-prefacturas-window').find('input[name=campo1]');
+		var $campo2 = $('#forma-prefacturas-window').find('input[name=campo2]');
+		var $campo3 = $('#forma-prefacturas-window').find('input[name=campo3]');
+		var $campo4 = $('#forma-prefacturas-window').find('input[name=campo4]');
+		var $campo5 = $('#forma-prefacturas-window').find('input[name=campo5]');
+		var $campo6 = $('#forma-prefacturas-window').find('input[name=campo6]');
+		
+		//Este campo almacena la cadena del warning de la ventana de Adenda
+		var $warning_adenda = $('#forma-prefacturas-window').find('input[name=warning_adenda]');
+		
+		
+		//Boton para Facturar
 		var $boton_facturar = $('#forma-prefacturas-window').find('#facturar');
+		
 		//var $boton_descargarpdf = $('#forma-prefacturas-window').find('#descargarpdf');
 		//var $boton_cancelarfactura = $('#forma-prefacturas-window').find('#cancelarfactura');
 		//var $boton_descargarxml = $('#forma-prefacturas-window').find('#descargarxml');
@@ -1683,6 +1876,11 @@ $(function() {
 						
 						//alert(tmp.split(':')[0]);
 						
+						if(tmp.split(':')[0].substring(0, 7) == 'adenda2'){
+							//alert(tmp.split(':')[1]);
+							$warning_adenda.val(tmp.split(':')[1]);
+						}
+						
 						if(parseInt($("tr", $grid_productos).size())>0){
 							for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
 								if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
@@ -1732,15 +1930,38 @@ $(function() {
 		
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
-			//$campo_tc.val(entry['tc']['tipo_cambio']);
-			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
-			$tipo_cambio.val(entry['Extras']['0']['tipo_cambio']);
 			
 			//cargar select de tipos de movimiento
 			var elemento_seleccionado = 3;//Facturacion de Remisiones
 			var mostrar_opciones = 'false';
 			$carga_select_con_arreglo_fijo($select_tipo_documento, array_select_documento, elemento_seleccionado, mostrar_opciones);
+			
+			//$campo_tc.val(entry['tc']['tipo_cambio']);
+			$id_impuesto.val(entry['iva']['0']['id_impuesto']);
+			$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
+			$tipo_cambio.val(entry['Extras']['0']['tipo_cambio']);
+			
+			$check_incluye_adenda, $adenda, $agregarDatosAdenda
+			
+			$check_incluye_adenda.attr('checked',  (entry['Extras']['0']['adenda'] == 'true')? true:false );
+			
+			$check_incluye_adenda.click(function(event){
+				//Esto es para evitar que le quiten la seleccion cuando incluye adenda.
+				if(entry['Extras']['0']['adenda'] == 'true'){
+					this.checked=true;
+				}
+			});
+			
+			//Ocultar check y boton de la adenda, cuando el cliente no incluya adenda.
+			if(entry['Extras']['0']['adenda'] == 'false'){
+				$adenda.hide();
+			}
+			
+			/*
+			$agregarDatosAdenda.click(function(event){
+				cargaFormaDatosAdenda(1);
+			});
+			*/
 			
 			//carga select denominacion con todas las monedas
 			$select_moneda.children().remove();
@@ -1792,7 +2013,7 @@ $(function() {
 			$agregar_remision.click(function(event){
 				event.preventDefault();
 				if(parseInt($id_cliente.val()) != 0){
-					$busca_remisiones($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, $id_cliente.val(), entry['Monedas'], entry['MetodosPago'], $select_almacen, entry['Almacenes'] );
+					$busca_remisiones($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, $id_cliente.val(), entry['Monedas'], entry['MetodosPago'], $select_almacen, entry['Almacenes'], $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 );
 				}else{
 					jAlert('Es necesario seleccionar un Cliente', 'Atencion!', function(r) { $agregar_remision.focus(); });
 				}
@@ -2029,6 +2250,23 @@ $(function() {
 				//href para agregar producto al grid
 				//var $agregar_producto = $('#forma-prefacturas-window').find('a[href*=agregar_producto]');
 				
+				//Boton para agregar datos de la Adenda
+				var $agregarDatosAdenda = $('#forma-prefacturas-window').find('#agregarDatosAdenda');
+				var $check_incluye_adenda = $('#forma-prefacturas-window').find('input[name=check_incluye_adenda]');
+				//Variable para ocultar campos de la adenda cuando no se debe incluir
+				var $adenda = $('#forma-prefacturas-window').find('.adenda');
+				
+				var $campo1 = $('#forma-prefacturas-window').find('input[name=campo1]');
+				var $campo2 = $('#forma-prefacturas-window').find('input[name=campo2]');
+				var $campo3 = $('#forma-prefacturas-window').find('input[name=campo3]');
+				var $campo4 = $('#forma-prefacturas-window').find('input[name=campo4]');
+				var $campo5 = $('#forma-prefacturas-window').find('input[name=campo5]');
+				var $campo6 = $('#forma-prefacturas-window').find('input[name=campo6]');
+				
+				//Este campo almacena la cadena del warning de la ventana de Adenda
+				var $warning_adenda = $('#forma-prefacturas-window').find('input[name=warning_adenda]');
+				
+				
 				var $boton_facturar = $('#forma-prefacturas-window').find('#facturar');
 				
 				var $agregar_remision = $('#forma-prefacturas-window').find('a[href*=agregar_remision]');
@@ -2161,6 +2399,13 @@ $(function() {
 								
 								//alert(tmp.split(':')[0]);
 								
+								
+								if(tmp.split(':')[0].substring(0, 7) == 'adenda2'){
+									//alert(tmp.split(':')[1]);
+									$warning_adenda.val(tmp.split(':')[1]);
+								}
+								
+								
 								if(parseInt($("tr", $grid_productos).size())>0){
 									for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
 										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i) || (tmp.split(':')[0]=='presentacion'+i)){
@@ -2226,8 +2471,42 @@ $(function() {
                     
 					$cta_mn.val(entry['datosPrefactura']['0']['cta_pago_mn']);
 					$cta_usd.val(entry['datosPrefactura']['0']['cta_pago_usd']);
-					
 					$no_cuenta.val(entry['datosPrefactura']['0']['no_cuenta']);
+                    
+                    
+                    
+                    $check_incluye_adenda.attr('checked',  (entry['Extras']['0']['adenda'] == 'true')? true:false );
+                    
+					$check_incluye_adenda.click(function(event){
+						//Esto es para evitar que le quiten la seleccion cuando incluye adenda.
+						if(entry['Extras']['0']['adenda'] == 'true'){
+							this.checked=true;
+						}
+					});
+                    
+                    
+                    //Ocultar check y boton de la adenda, cuando el cliente no incluya adenda.
+					if(entry['Extras']['0']['adenda'] == 'false'){
+						$adenda.hide();
+					}else{
+						//Numero de adenda
+						if(parseInt(entry['datosPrefactura']['0']['adenda_id'])==1){
+							//3=Factura de Remisión
+							if(parseInt(entry['datosPrefactura']['0']['tipo_documento'])!=3){
+								//Si el tipo de documento es diferente de 3, hay que ocultar. 
+								//Esto porque para la adenda 1, es obligatorio que exista una Remision para Facturar con Adenda.
+								$adenda.hide();
+							}
+						}
+					}
+                    
+                    
+					$agregarDatosAdenda.click(function(event){
+						$cargaFormaDatosAdenda(entry['datosPrefactura']['0']['adenda_id'], $campo1, $campo2, $campo3, $campo4, $campo5, $campo6);
+					});
+                    
+                    
+                    
                     
 					//cargar select de tipos de movimiento
 					var elemento_seleccionado = entry['datosPrefactura']['0']['tipo_documento'];
@@ -2637,6 +2916,34 @@ $(function() {
 					
 					$grid_productos.find('a[href*=elimina_producto]').hide();
 					$grid_productos.find('#cost').attr("readonly", true);//establece solo lectura campos costo del grid
+					
+					
+					
+					//Cambiar el tipo de Documento
+					$select_tipo_documento.change(function(){
+						var tipo = $(this).val();
+						if(parseInt(tipo)==1){
+							$boton_facturar.val('Facturar');
+							//Mostrar check y boton de la adenda, cuando el cliente si incluye adenda.
+							if(entry['Extras']['0']['adenda'] == 'true'){
+								//Numero de adenda
+								if(parseInt(entry['datosPrefactura']['0']['adenda_id'])==1){
+									//3=Factura de Remisión
+									if(parseInt(entry['datosPrefactura']['0']['tipo_documento'])==3){
+										//Si el tipo de documento es diferente de 3, hay que ocultar. 
+										//Esto porque para la adenda 1, es obligatorio que exista una Remision para Facturar con Adenda.
+										$adenda.show();
+									}
+								}
+							}
+						}else{
+							$boton_facturar.val('Remisionar');
+							//Ocultar check y boton de la adenda, cuando el cliente si incluye adenda.
+							if(entry['Extras']['0']['adenda'] == 'true'){
+								$adenda.hide();
+							}
+						}
+					});
 				});//termina llamada json
                 
 				
@@ -2729,20 +3036,6 @@ $(function() {
 					
 				});
 				*/
-				
-				
-				
-				//cambiar metodo de pago
-				$select_tipo_documento.change(function(){
-					var tipo = $(this).val();
-					if(parseInt(tipo)==1){
-						$boton_facturar.val('Facturar');
-					}else{
-						$boton_facturar.val('Remisionar');
-					}
-					
-				});
-				
 				
 				
 				
