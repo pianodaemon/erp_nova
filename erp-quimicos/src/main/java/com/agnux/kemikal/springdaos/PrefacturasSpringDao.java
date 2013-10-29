@@ -98,6 +98,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("validaPresPedido",String.valueOf(rs.getBoolean("validar_pres_pedido")));
+                    row.put("incluye_adenda", String.valueOf(rs.getBoolean("incluye_adenda")).toLowerCase());
                     return row;
                 }
             }
@@ -200,6 +201,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 + "cxc_clie.id as cliente_id, "
                                 + "cxc_clie.numero_control, "
                                 + "cxc_clie.razon_social, "
+                                + "cxc_clie.cxc_clie_tipo_adenda_id AS adenda_id, "
                                 + "cxc_clie.empresa_immex, "
                                 + "erp_prefacturas.cxc_clie_df_id, "
                                 + "(CASE WHEN erp_prefacturas.cxc_clie_df_id > 1 THEN "
@@ -247,6 +249,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("cliente_id",rs.getString("cliente_id"));
                     row.put("numero_control",rs.getString("numero_control"));
                     row.put("razon_social",rs.getString("razon_social"));
+                    row.put("adenda_id",String.valueOf(rs.getInt("adenda_id")));
                     row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));
                     row.put("direccion",rs.getString("direccion"));
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
@@ -966,7 +969,8 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                       + "WHEN fac_rems.moneda_id=2 THEN cxc_clie.cta_pago_usd "
                                 + "ELSE '' " 
                                 + "END ) "
-                    + "END) AS no_cuenta "
+                    + "END) AS no_cuenta,"
+                    + "cxc_clie.cxc_clie_tipo_adenda_id AS adenda_id "
                 + "FROM fac_rems "
                 + "JOIN cxc_clie ON cxc_clie.id = fac_rems.cxc_clie_id "
                 + "LEFT JOIN gral_pais ON gral_pais.id = cxc_clie.pais_id "
@@ -988,6 +992,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("direccion",rs.getString("direccion"));
                     row.put("fac_metodos_pago_id",String.valueOf(rs.getInt("fac_metodos_pago_id")));
                     row.put("no_cuenta",rs.getString("no_cuenta"));
+                    row.put("adenda_id",String.valueOf(rs.getInt("adenda_id")));
                     return row;
                 }
             }

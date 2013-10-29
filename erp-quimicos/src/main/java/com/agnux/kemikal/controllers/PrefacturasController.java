@@ -27,7 +27,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -264,27 +263,36 @@ public class PrefacturasController {
         ArrayList<HashMap<String, Object>> metodos_pago = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> almacenes = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> parametros = new ArrayList<HashMap<String, Object>>();
-        //ArrayList<HashMap<String, Object>> pres_x_prod = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        boolean incluirAdenda=false;
+        
+        parametros = this.getPdao().getFac_Parametros(id_sucursal);
         
         if( !id_prefactura.equals("0")  ){
             datosPrefactura = this.getPdao().getPrefactura_Datos(Integer.parseInt(id_prefactura));
             datosGrid = this.getPdao().getPrefactura_DatosGrid(Integer.parseInt(id_prefactura));
-            //pres_x_prod = this.getPdao().getPrefactura_PresPorProd(Integer.parseInt(id_prefactura));
+            
+            //Verificar si hay que incluir adenda
+            if (parametros.get(0).get("incluye_adenda").equals("true")){
+                //Verificar si el cliente tiene asignada una adenda
+                if(Integer.parseInt(String.valueOf(datosPrefactura.get(0).get("adenda_id")))>0){
+                    incluirAdenda=true;
+                }
+            }
         }
         
-        parametros = this.getPdao().getFac_Parametros(id_sucursal);
         
         valorIva= this.getFacdao().getValoriva(id_sucursal);
         extra.put("tipo_cambio", StringHelper.roundDouble(this.getFacdao().getTipoCambioActual(), 4)) ;
         extra.put("controlExiPres", userDat.get("control_exi_pres"));
         extra.put("validaPresPedido", parametros.get(0).get("validaPresPedido"));
+        extra.put("adenda", String.valueOf(incluirAdenda));
         arrayExtras.add(0,extra);
         
         monedas = this.getPdao().getMonedas();
@@ -295,7 +303,6 @@ public class PrefacturasController {
         
         jsonretorno.put("datosPrefactura", datosPrefactura);
         jsonretorno.put("datosGrid", datosGrid);
-        //jsonretorno.put("Pres", pres_x_prod);
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Extras", arrayExtras);
@@ -312,7 +319,7 @@ public class PrefacturasController {
     
     
     
-    //obtiene datos para generador  de informe
+    //Obtiene datos para generador  de informe
     @RequestMapping(method = RequestMethod.POST, value="/datos_generador_informe.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Integer>>> get_datos_generador_informeJson(Model model) {
         HashMap<String,ArrayList<HashMap<String, Integer>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Integer>>>();
@@ -461,6 +468,7 @@ public class PrefacturasController {
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        boolean incluirAdenda=false;
         
         datos_remision = this.getPdao().getDatosRemision(id_remision);
         detalles_remision = this.getPdao().getDetallesRemision(id_remision);
@@ -468,12 +476,26 @@ public class PrefacturasController {
         
         parametros = this.getPdao().getFac_Parametros(id_sucursal);
         
+        
+        
+        //Verificar si hay que incluir adenda
+        if (parametros.get(0).get("incluye_adenda").equals("true")){
+            //Verificar si el cliente tiene asignada una adenda
+            if(Integer.parseInt(String.valueOf(datos_remision.get(0).get("adenda_id")))>0){
+                incluirAdenda=true;
+            }
+        }
+        
+        
+        
+        
         extra.put("validaPresPedido", parametros.get(0).get("validaPresPedido"));
+        extra.put("adenda", String.valueOf(incluirAdenda));
         arrayExtras.add(0,extra);
         
         jsonretorno.put("Datos", datos_remision);
         jsonretorno.put("Conceptos", detalles_remision);
-        //jsonretorno.put("Pres", pres_x_prod);
+        jsonretorno.put("RemExtra", arrayExtras);
         
         return jsonretorno;
     }
@@ -533,6 +555,15 @@ public class PrefacturasController {
             @RequestParam(value="folio_pedido", required=false) String folio_pedido,
             @RequestParam(value="tasa_ret_immex", required=false) String tasa_ret_immex,
             @RequestParam(value="select_almacen", required=false) String select_almacen,
+            
+            //Estos son para datos de la Adenda
+            @RequestParam(value="campo1", required=true) String campo_adenda1,
+            @RequestParam(value="campo2", required=true) String campo_adenda2,
+            @RequestParam(value="campo3", required=true) String campo_adenda3,
+            @RequestParam(value="campo4", required=true) String campo_adenda4,
+            @RequestParam(value="campo5", required=true) String campo_adenda5,
+            @RequestParam(value="campo6", required=true) String campo_adenda6,
+            
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
             @RequestParam(value="idproducto", required=false) String[] idproducto,
@@ -615,8 +646,9 @@ public class PrefacturasController {
             id_df="1";
         }
         
+        
         //System.out.println("data_string: "+data_string);
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1+"___"+campo_adenda2+"___"+campo_adenda3+"___"+campo_adenda4+"___"+campo_adenda5+"___"+campo_adenda6;
         //System.out.println("data_string: "+data_string);
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
