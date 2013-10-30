@@ -2882,57 +2882,83 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     @Override
-    public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura) {
+    public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura, Integer identificador, String serieFolio) {
         LinkedHashMap<String, Object> data = new LinkedHashMap<String, Object>();
         String sql_query = "select * from cxc_clie_adenda_datos where cxc_clie_adenda_tipo="+noAdenda;
-        
-        //Agregar el tipo de DOCUMENTO(1=Factura, 2=Consignacion, 3=Retenciones(Honorarios, Arrendamientos, Fletes), 8=Nota de Cargo, 9=Nota de Credito)
-        data.put("claseDoc", tipoDoc);
-        
+        String sql_datos_adenda = "";
         if(noAdenda==1){
             //Adenda FEMSA QUIMIPRODUCTOS
+            //Agregar el tipo de DOCUMENTO(1=Factura, 2=Consignacion, 3=Retenciones(Honorarios, Arrendamientos, Fletes), 8=Nota de Cargo, 9=Nota de Credito)
+            data.put("claseDoc", tipoDoc);
+            
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql_query);
             for (Map row : rows) {
+                /*noVersAdd, noSociedad, noProveedor, noSocio*/
                 String campo = String.valueOf(row.get("campo"));
                 String valor = String.valueOf(row.get("valor"));
-                
                 data.put(campo, valor);
-                
-                /*
-                if(campo.equals("noVersAdd")){
-                    data.put(campo, valor);
-                }
-                
-                if(campo.equals("noSociedad")){
-                    data.put(campo, valor);
-                }
-                if(campo.equals("noProveedor")){
-                    data.put(campo, valor);
-                }
-                if(campo.equals("noSocio")){
-                    data.put(campo, valor);
-                }
-                */
             }
             
-            data.put("noPedido", dataFactura.get("orden_compra"));
-            data.put("moneda", dataFactura.get("moneda2"));
+            
+            if(tipoDoc==1 || tipoDoc==2){
+                sql_datos_adenda = "SELECT fac_docs_adenda.* FROM fac_docs_adenda JOIN fac_docs ON fac_docs.id=fac_docs_adenda.fac_docs_id  WHERE fac_docs.serie_folio='"+serieFolio+"' AND fac_docs_adenda.prefactura_id="+identificador+" LIMIT 1;";
+            }
+            if(tipoDoc==9){
+                sql_datos_adenda = ""
+                        + "SELECT fac_docs_adenda.* FROM fac_docs_adenda "
+                        + "JOIN fac_docs ON fac_docs.id=fac_docs_adenda.fac_docs_id "
+                        + "JOIN fac_nota_credito ON (fac_nota_credito.serie_folio_factura=fac_docs.serie_folio AND fac_nota_credito.cxc_clie_id=fac_docs.cxc_clie_id) "
+                        + "WHERE fac_nota_credito.serie_folio='"+serieFolio+"' AND fac_nota_credito.id="+identificador+" LIMIT 1;";
+            }
+            
+            System.out.println("sql_datos_adenda: "+sql_datos_adenda);
+            
+            //Obtener datos de la Adenda
+            Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_datos_adenda);
+            /*valor1=NoEntrada, valor2=NoRemision, valor3=Consignacion, valor4=CentroCostos, valor5=FechaInicio, valor6=FechaFin, valor7=Orden Compra, valor8=Moneda*/
+            
             if(tipoDoc==1){
                 //Factura
-                data.put("noEntrada", "agregar valor");
-                data.put("noRemision", "agregar valor");
-            }else{
+                data.put("noEntrada", String.valueOf(map.get("valor1")));
+                data.put("noRemision", String.valueOf(map.get("valor2")));
+                data.put("noPedido", String.valueOf(map.get("valor7")));
+                data.put("moneda", String.valueOf(map.get("valor8")));
+                data.put("centro", "");
+                data.put("iniPerLiq", "");
+                data.put("finPerLiq", "");
+                data.put("retencion1", "");
+                data.put("retencion2", "");
+            }
+            
+            if(tipoDoc==2){
+                //Consignacion
+                String fechaIni=String.valueOf(map.get("valor5")).split("-")[2]+"."+String.valueOf(map.get("valor5")).split("-")[1]+"."+String.valueOf(map.get("valor5")).split("-")[0];
+                String fechaFin=String.valueOf(map.get("valor6")).split("-")[2]+"."+String.valueOf(map.get("valor6")).split("-")[1]+"."+String.valueOf(map.get("valor6")).split("-")[0];
+                
+                data.put("noEntrada", "");
+                data.put("noRemision", "");
+                data.put("centro", String.valueOf(map.get("valor4")));
+                data.put("iniPerLiq", fechaIni);
+                data.put("finPerLiq", fechaFin);
+                data.put("noPedido", String.valueOf(map.get("valor7")));
+                data.put("moneda", String.valueOf(map.get("valor8")));
+                data.put("retencion1", "");
+                data.put("retencion2", "");
+            }
+            
+            if(tipoDoc==9){
                 //Nota de Credito
                 data.put("noEntrada", "");
                 data.put("noRemision", "");
+                data.put("centro", "");
+                data.put("iniPerLiq", "");
+                data.put("finPerLiq", "");
+                data.put("noPedido", String.valueOf(map.get("valor7")));
+                data.put("moneda", String.valueOf(map.get("valor8")));
+                data.put("retencion1", "");
+                data.put("retencion2", "");
             }
             
-            data.put("noSocio", "");
-            data.put("centro", "");
-            data.put("iniPerLiq", "");
-            data.put("finPerLiq", "");
-            data.put("retencion1", "");
-            data.put("retencion2", "");
             data.put("email", dataFactura.get("emailEmisor"));
         }
         

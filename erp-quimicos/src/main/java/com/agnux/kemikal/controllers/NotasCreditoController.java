@@ -721,7 +721,7 @@ public class NotasCreditoController {
                                         
                                         
                                         //1 indica que es Adenda de una factura
-                                        dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataCliente.get("adenda_id")), dataCliente);
+                                        dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataCliente.get("adenda_id")), dataCliente, id_nota_credito, serieFolio);
                                         
                                         //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
                                         AdendaCliente adenda = new AdendaCliente();

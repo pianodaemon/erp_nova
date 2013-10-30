@@ -31,6 +31,7 @@ public interface PrefacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getPrefacturas__PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, Object>> getPrefactura_Datos(Integer id_prefactura);
     public ArrayList<HashMap<String, Object>> getPrefactura_DatosGrid(Integer id_prefactura);
+    public ArrayList<HashMap<String, Object>> getPrefactura_DatosAdenda(Integer id_prefactura);
     public ArrayList<HashMap<String, Object>> getPrefactura_PresPorProd(Integer id_prefactura);
     public ArrayList<HashMap<String, Object>> getMonedas();
     public ArrayList<HashMap<String, Object>> getDatosRemision(Integer id_remision);
@@ -49,7 +50,4 @@ public interface PrefacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> get_presentaciones_producto(String sku, Integer id_empresa);
     public HashMap<String, Object> getPrecioUnitario(Integer id_cliente, Integer id_producto, Integer id_pres,Integer id_empresa, Integer id_sucursal);
     
-
-    
 }
-

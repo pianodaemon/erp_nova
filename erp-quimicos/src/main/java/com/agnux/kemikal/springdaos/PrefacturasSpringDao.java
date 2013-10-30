@@ -197,6 +197,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                                 + "erp_proceso.proceso_flujo_id, "
                                 + "erp_prefacturas.moneda_id, "
                                 + "gral_mon.descripcion as moneda, "
+                                + "gral_mon.iso_4217_anterior AS mon_iso4217_anterior, "
                                 + "erp_prefacturas.observaciones, "
                                 + "cxc_clie.id as cliente_id, "
                                 + "cxc_clie.numero_control, "
@@ -245,6 +246,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("proceso_flujo_id",rs.getInt("proceso_flujo_id"));
                     row.put("moneda_id",rs.getString("moneda_id"));
                     row.put("moneda",rs.getString("moneda"));
+                    row.put("moneda2",rs.getString("mon_iso4217_anterior"));
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("cliente_id",rs.getString("cliente_id"));
                     row.put("numero_control",rs.getString("numero_control"));
@@ -340,6 +342,41 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
         );
         return hm_grid;
     }
+    
+    
+    
+    
+    
+    //Obtener datos para la Adenda
+    @Override
+    public ArrayList<HashMap<String, Object>> getPrefactura_DatosAdenda(Integer id_prefactura) {
+        String sql_query = "SELECT * FROM fac_docs_adenda WHERE prefactura_id="+id_prefactura+";";
+        
+        //System.out.println("Obtiene datos grid prefactura: "+sql_query);
+        ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,  
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id_adenda",String.valueOf(rs.getInt("id")));
+                    row.put("valor1",String.valueOf(rs.getString("valor1")));
+                    row.put("valor2",String.valueOf(rs.getString("valor2")));
+                    row.put("valor3",String.valueOf(rs.getString("valor3")).toLowerCase());
+                    row.put("valor4",String.valueOf(rs.getString("valor4")));
+                    row.put("valor5",String.valueOf(rs.getString("valor5")));
+                    row.put("valor6",String.valueOf(rs.getString("valor6")));
+                    row.put("valor7",String.valueOf(rs.getString("valor7")));
+                    row.put("valor8",String.valueOf(rs.getString("valor8")));
+                    return row;
+                }
+            }
+        );
+        return hm_grid;
+    }
+    
+    
+    
     
     
     //Obtener las presentaciones de cada producto de la Prefactura
@@ -955,6 +992,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     + "fac_rems.folio AS folio_remision,"
                     + "fac_rems.folio_pedido,"
                     + "fac_rems.orden_compra,"
+                    + "gral_mon.iso_4217_anterior AS mon_iso4217_anterior, "
                     + "fac_rems.fac_metodos_pago_id,"
                     + "fac_rems.cxc_clie_df_id,"
                     + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN "
@@ -977,6 +1015,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 + "LEFT JOIN gral_edo ON gral_edo.id = cxc_clie.estado_id "
                 + "LEFT JOIN gral_mun ON gral_mun.id = cxc_clie.municipio_id "
                 + "LEFT JOIN (SELECT cxc_clie_df.id, (CASE WHEN cxc_clie_df.calle IS NULL THEN '' ELSE cxc_clie_df.calle END) AS calle, (CASE WHEN cxc_clie_df.numero_interior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_interior IS NULL OR cxc_clie_df.numero_interior='' THEN '' ELSE 'NO.INT.'||cxc_clie_df.numero_interior END)  END) AS numero_interior, (CASE WHEN cxc_clie_df.numero_exterior IS NULL THEN '' ELSE (CASE WHEN cxc_clie_df.numero_exterior IS NULL OR cxc_clie_df.numero_exterior='' THEN '' ELSE 'NO.EXT.'||cxc_clie_df.numero_exterior END )  END) AS numero_exterior, (CASE WHEN cxc_clie_df.colonia IS NULL THEN '' ELSE cxc_clie_df.colonia END) AS colonia,(CASE WHEN gral_mun.id IS NULL OR gral_mun.id=0 THEN '' ELSE gral_mun.titulo END) AS municipio,(CASE WHEN gral_edo.id IS NULL OR gral_edo.id=0 THEN '' ELSE gral_edo.titulo END) AS estado,(CASE WHEN gral_pais.id IS NULL OR gral_pais.id=0 THEN '' ELSE gral_pais.titulo END) AS pais,(CASE WHEN cxc_clie_df.cp IS NULL THEN '' ELSE cxc_clie_df.cp END) AS cp  FROM cxc_clie_df LEFT JOIN gral_pais ON gral_pais.id = cxc_clie_df.gral_pais_id LEFT JOIN gral_edo ON gral_edo.id = cxc_clie_df.gral_edo_id LEFT JOIN gral_mun ON gral_mun.id = cxc_clie_df.gral_mun_id ) AS sbtdf ON sbtdf.id = fac_rems.cxc_clie_df_id "
+                + "LEFT JOIN gral_mon ON gral_mon.id = fac_rems.moneda_id  "
                 + "WHERE fac_rems.id="+id_remision;
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -993,6 +1032,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("fac_metodos_pago_id",String.valueOf(rs.getInt("fac_metodos_pago_id")));
                     row.put("no_cuenta",rs.getString("no_cuenta"));
                     row.put("adenda_id",String.valueOf(rs.getInt("adenda_id")));
+                    row.put("moneda2",rs.getString("mon_iso4217_anterior"));
                     return row;
                 }
             }

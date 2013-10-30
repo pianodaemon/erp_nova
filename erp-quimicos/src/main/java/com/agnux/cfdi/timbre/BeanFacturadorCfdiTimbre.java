@@ -422,19 +422,19 @@ public class BeanFacturadorCfdiTimbre {
                         if(pop.getAnoAprobacion()!=null ){
                             ano_aprobacion = pop.getAnoAprobacion();
                         }
-
+                        
                         System.out.println(TimeHelper.getFechaActualYMDH()+":::Termina parseo de xml.");
-
+                        
                         switch (Proposito.valueOf(this.getProposito())) {
                             case FACTURA:
                                 Integer prefactura_id = Integer.parseInt(this.getDatosExtras().get("prefactura_id"));
                                 String refacturar = this.getDatosExtras().get("refacturar");
                                 String id_moneda = this.getDatosExtras().get("moneda_id");
-
+                                
                                 data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+Serie+"___"+Folio+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
-
+                                
                                 System.out.println(TimeHelper.getFechaActualYMDH()+":::Inicia Salvar datos de la Factura.");
-
+                                
                                 //llamada al procedimiento que guarda los datos de la factura
                                 String ret = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
 

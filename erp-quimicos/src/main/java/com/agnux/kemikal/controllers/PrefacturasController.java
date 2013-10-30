@@ -246,7 +246,7 @@ public class PrefacturasController {
     
     @RequestMapping(method = RequestMethod.POST, value="/getPrefactura.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getPrefacturaJson(
-            @RequestParam(value="id_prefactura", required=true) String id_prefactura,
+            @RequestParam(value="id_prefactura", required=true) Integer id_prefactura,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
@@ -254,6 +254,8 @@ public class PrefacturasController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         ArrayList<HashMap<String, Object>> datosPrefactura = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> datosGrid = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> datosAdenda = new ArrayList<HashMap<String, Object>>();
+        
         ArrayList<HashMap<String, Object>> valorIva = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> arrayExtras = new ArrayList<HashMap<String, Object>>();
@@ -274,14 +276,16 @@ public class PrefacturasController {
         
         parametros = this.getPdao().getFac_Parametros(id_sucursal);
         
-        if( !id_prefactura.equals("0")  ){
-            datosPrefactura = this.getPdao().getPrefactura_Datos(Integer.parseInt(id_prefactura));
-            datosGrid = this.getPdao().getPrefactura_DatosGrid(Integer.parseInt(id_prefactura));
+        if( id_prefactura!=0  ){
+            datosPrefactura = this.getPdao().getPrefactura_Datos(id_prefactura);
+            datosGrid = this.getPdao().getPrefactura_DatosGrid(id_prefactura);
             
             //Verificar si hay que incluir adenda
             if (parametros.get(0).get("incluye_adenda").equals("true")){
                 //Verificar si el cliente tiene asignada una adenda
                 if(Integer.parseInt(String.valueOf(datosPrefactura.get(0).get("adenda_id")))>0){
+                    //Obtener datos de la Adenda
+                    datosAdenda = this.getPdao().getPrefactura_DatosAdenda(id_prefactura);
                     incluirAdenda=true;
                 }
             }
@@ -303,6 +307,7 @@ public class PrefacturasController {
         
         jsonretorno.put("datosPrefactura", datosPrefactura);
         jsonretorno.put("datosGrid", datosGrid);
+        jsonretorno.put("datosAdenda", datosAdenda);
         jsonretorno.put("iva", valorIva);
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Extras", arrayExtras);
@@ -476,8 +481,6 @@ public class PrefacturasController {
         
         parametros = this.getPdao().getFac_Parametros(id_sucursal);
         
-        
-        
         //Verificar si hay que incluir adenda
         if (parametros.get(0).get("incluye_adenda").equals("true")){
             //Verificar si el cliente tiene asignada una adenda
@@ -485,9 +488,6 @@ public class PrefacturasController {
                 incluirAdenda=true;
             }
         }
-        
-        
-        
         
         extra.put("validaPresPedido", parametros.get(0).get("validaPresPedido"));
         extra.put("adenda", String.valueOf(incluirAdenda));
@@ -563,6 +563,8 @@ public class PrefacturasController {
             @RequestParam(value="campo4", required=true) String campo_adenda4,
             @RequestParam(value="campo5", required=true) String campo_adenda5,
             @RequestParam(value="campo6", required=true) String campo_adenda6,
+            @RequestParam(value="campo7", required=true) String campo_adenda7,
+            @RequestParam(value="campo8", required=true) String campo_adenda8,
             
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
@@ -580,7 +582,6 @@ public class PrefacturasController {
         ) throws Exception {
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+": INICIO------------------------------------");
-        
         HashMap<String, String> jsonretorno = new HashMap<String, String>();
         HashMap<String, String> succes = new HashMap<String, String>();
         HashMap<String, String> parametros = new HashMap<String, String>();
@@ -648,7 +649,7 @@ public class PrefacturasController {
         
         
         //System.out.println("data_string: "+data_string);
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1+"___"+campo_adenda2+"___"+campo_adenda3+"___"+campo_adenda4+"___"+campo_adenda5+"___"+campo_adenda6;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase();
         //System.out.println("data_string: "+data_string);
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
@@ -904,8 +905,12 @@ public class PrefacturasController {
                                         String path_file = new String();
                                         String xml_file_name = new String();
                                         
-                                        //Tipo 1=factura
+                                        //Tipo de DOCUMENTO(1=Factura, 2=Consignacion, 3=Retenciones(Honorarios, Arrendamientos, Fletes), 8=Nota de Cargo, 9=Nota de Credito)
                                         int tipoDocAdenda=1;
+                                        if(campo_adenda3.toLowerCase().equals("true")){
+                                            tipoDocAdenda=2;
+                                        }
+                                        
                                         
                                         path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                                         xml_file_name = serieFolio+".xml";
@@ -921,7 +926,7 @@ public class PrefacturasController {
                                          */
                                         
                                         //1 indica que es Adenda de una factura
-                                        dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataFacturaCliente.get("adenda_id")), dataFacturaCliente);
+                                        dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataFacturaCliente.get("adenda_id")), dataFacturaCliente, id_prefactura, serieFolio);
                                         
                                         //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
                                         AdendaCliente adenda = new AdendaCliente();
@@ -933,7 +938,6 @@ public class PrefacturasController {
                                             //Si el archivo existe indica que se agregó bien la adenda y se creó el nuevo archivo xml
                                             procesoAdendaCorrecto=false;
                                         }
-                                        
                                     }
                                 }
                                 //::::::TERMINA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::
