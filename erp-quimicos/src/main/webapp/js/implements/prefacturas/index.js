@@ -752,7 +752,7 @@ $(function() {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Carga datos de la remision seleccionada al Grid de Productos de la factura
 	//Las remisiones a facturar deben tener la misma direccion fiscal, de otra manera no se permite agregar junto con otra remision
-	$agrega_productos_remision_al_grid = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_remision, id_moneda_remision,  array_monedas, array_metodos_pago, id_alm, $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 ){
+	$agrega_productos_remision_al_grid = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_remision, id_moneda_remision,  array_monedas, array_metodos_pago, id_alm, $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6, $campo7, $campo8 ){
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDatosRemision.json';
 		$arreglo = {'id_remision':id_remision, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
@@ -921,15 +921,30 @@ $(function() {
 				
 				
 				
+				
+				
+				
 				//Ocultar check y boton de la adenda, cuando el cliente no incluya adenda.
 				if(entry['RemExtra']['0']['adenda'] == 'true'){
 					if(parseInt(entry['Datos']['0']['adenda_id'])==1){
 						$adenda.show();
 						$check_incluye_adenda.attr('checked',  (entry['RemExtra']['0']['adenda'] == 'true')? true:false );
 						
+						
+						//Cargar datos
+						//$campo1.val();//No. Entrada
+						$campo2.val(valor_folio_remision);//No. Remision
+						$campo3.val();//Consignacion
+						//$campo4.val();//Centro Costos
+						//$campo5.val();//Fecha Inicio
+						//$campo6.val();//Fecha Fin
+						$campo7.val($orden_compra.val());//Orden de Compra
+						$campo8.val(entry['Datos'][0]['moneda2']);//Moneda
+						
+						
 						//Asignar el evento click
 						$agregarDatosAdenda.click(function(event){
-							$cargaFormaDatosAdenda(entry['Datos']['0']['adenda_id'], $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 );
+							$cargaFormaDatosAdenda(entry['Datos']['0']['adenda_id'], $campo1, $campo2, $campo3, $campo4, $campo5, $campo6, $campo7, $campo8);
 						});
 					}
 				}
@@ -952,7 +967,7 @@ $(function() {
 	
 	
 	//buscador de Remisiones  sin facturar del cliente seleccionado
-	$busca_remisiones = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_cliente, array_monedas, array_metodos_pago, $select_almacen, arrayAlmacenes, $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 ){
+	$busca_remisiones = function($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_cliente, array_monedas, array_metodos_pago, $select_almacen, arrayAlmacenes, $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6, $campo7, $campo8 ){
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getRemisionesCliente.json';
 		$arreglo = {'id_cliente':id_cliente	};
 		
@@ -1044,7 +1059,7 @@ $(function() {
 						if( parseInt(encontrado) != 1 ) {
 							if( parseInt(moneda_diferente) != 1 ) {
 								if( parseInt(almacen_diferente) != 1 ) {
-									$agrega_productos_remision_al_grid($grid_productos, $select_moneda, $select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_rem, id_moneda, array_monedas, array_metodos_pago, id_alm, $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 );
+									$agrega_productos_remision_al_grid($grid_productos, $select_moneda, $select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, id_rem, id_moneda, array_monedas, array_metodos_pago, id_alm, $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6, $campo7, $campo8 );
 									
 									//carga select de almacen con el almacen de donde se saco los productos de la remision
 									$select_almacen.children().remove();
@@ -1595,7 +1610,7 @@ $(function() {
 	
 	
 	//Ventana para agregar datos de la Adenda
-	var $cargaFormaDatosAdenda = function(id_adenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6){
+	var $cargaFormaDatosAdenda = function(id_adenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6, $campo7, $campo8){
 		//aqui  entra para editar un registro
 		var form_to_show = 'formaDatosAdenda';
 		
@@ -1617,6 +1632,8 @@ $(function() {
 		var $adenda1_campo4 = $('#forma-datosadenda-window').find('input[name=adenda1_campo4]');
 		var $adenda1_campo5 = $('#forma-datosadenda-window').find('input[name=adenda1_campo5]');
 		var $adenda1_campo6 = $('#forma-datosadenda-window').find('input[name=adenda1_campo6]');
+		var $adenda1_campo7 = $('#forma-datosadenda-window').find('input[name=adenda1_campo7]');
+		var $adenda1_campo8 = $('#forma-datosadenda-window').find('input[name=adenda1_campo8]');
 		
 		//Este campo almacena la cadena del warning de la ventana de Adenda
 		var $warning_adenda = $('#forma-prefacturas-window').find('input[name=warning_adenda]');
@@ -1636,7 +1653,8 @@ $(function() {
 			$adenda1_campo4.val($campo4.val());
 			$adenda1_campo5.val($campo5.val());
 			$adenda1_campo6.val($campo6.val());
-			
+			$adenda1_campo7.val($campo7.val());
+			$adenda1_campo8.val($campo8.val());
 			
 			//Aqui se muestran los warning si es que hay
 			var valor = $warning_adenda.val().split('&&&&&');
@@ -1648,7 +1666,6 @@ $(function() {
 					.parent()
 					.css({'display':'block'})
 					.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split('$')[1]});
-					
 				}
 			}
 			
@@ -1668,6 +1685,8 @@ $(function() {
 				$campo4.val($adenda1_campo4.val());
 				$campo5.val($adenda1_campo5.val());
 				$campo6.val($adenda1_campo6.val());
+				$campo7.val($adenda1_campo7.val());
+				$campo8.val($adenda1_campo8.val());
 				
 				//eliminar el warning 
 				$warning_adenda.val('');
@@ -1784,6 +1803,8 @@ $(function() {
 		var $campo4 = $('#forma-prefacturas-window').find('input[name=campo4]');
 		var $campo5 = $('#forma-prefacturas-window').find('input[name=campo5]');
 		var $campo6 = $('#forma-prefacturas-window').find('input[name=campo6]');
+		var $campo7 = $('#forma-prefacturas-window').find('input[name=campo7]');
+		var $campo8 = $('#forma-prefacturas-window').find('input[name=campo8]');
 		
 		//Este campo almacena la cadena del warning de la ventana de Adenda
 		var $warning_adenda = $('#forma-prefacturas-window').find('input[name=warning_adenda]');
@@ -2013,7 +2034,7 @@ $(function() {
 			$agregar_remision.click(function(event){
 				event.preventDefault();
 				if(parseInt($id_cliente.val()) != 0){
-					$busca_remisiones($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, $id_cliente.val(), entry['Monedas'], entry['MetodosPago'], $select_almacen, entry['Almacenes'], $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6 );
+					$busca_remisiones($grid_productos, $select_moneda,$select_metodo_pago, $folio_pedido, $orden_compra, $no_cuenta, $id_cliente.val(), entry['Monedas'], entry['MetodosPago'], $select_almacen, entry['Almacenes'], $check_incluye_adenda, $adenda, $agregarDatosAdenda, $campo1, $campo2, $campo3, $campo4, $campo5, $campo6, $campo7, $campo8 );
 				}else{
 					jAlert('Es necesario seleccionar un Cliente', 'Atencion!', function(r) { $agregar_remision.focus(); });
 				}
@@ -2262,6 +2283,9 @@ $(function() {
 				var $campo4 = $('#forma-prefacturas-window').find('input[name=campo4]');
 				var $campo5 = $('#forma-prefacturas-window').find('input[name=campo5]');
 				var $campo6 = $('#forma-prefacturas-window').find('input[name=campo6]');
+				var $campo7 = $('#forma-prefacturas-window').find('input[name=campo7]');
+				var $campo8 = $('#forma-prefacturas-window').find('input[name=campo8]');
+				
 				
 				//Este campo almacena la cadena del warning de la ventana de Adenda
 				var $warning_adenda = $('#forma-prefacturas-window').find('input[name=warning_adenda]');
@@ -2497,12 +2521,26 @@ $(function() {
 								//Esto porque para la adenda 1, es obligatorio que exista una Remision para Facturar con Adenda.
 								$adenda.hide();
 							}
+							
+							if(parseInt(entry['datosAdenda'].length)>0){
+								$campo1.val(entry['datosAdenda'][0]['valor1']);//NoEntrada
+								$campo2.val(entry['datosAdenda'][0]['valor2']);//NoRemision
+								$campo3.val(entry['datosAdenda'][0]['valor3']);//Consignacion
+								$campo4.val(entry['datosAdenda'][0]['valor4']);//CentroCostos
+								$campo5.val(entry['datosAdenda'][0]['valor5']);//FechaInicio
+								$campo6.val(entry['datosAdenda'][0]['valor6']);//FechaFin
+								$campo7.val(entry['datosAdenda'][0]['valor7']);//Orden Compra
+								$campo8.val(entry['datosAdenda'][0]['valor8']);//Moneda
+							}else{
+								$campo7.val(entry['datosPrefactura'][0]['orden_compra']);
+								$campo8.val(entry['datosPrefactura'][0]['moneda2']);
+							}
 						}
 					}
                     
                     
 					$agregarDatosAdenda.click(function(event){
-						$cargaFormaDatosAdenda(entry['datosPrefactura']['0']['adenda_id'], $campo1, $campo2, $campo3, $campo4, $campo5, $campo6);
+						$cargaFormaDatosAdenda(entry['datosPrefactura']['0']['adenda_id'], $campo1, $campo2, $campo3, $campo4, $campo5, $campo6, $campo7, $campo8);
 					});
                     
                     

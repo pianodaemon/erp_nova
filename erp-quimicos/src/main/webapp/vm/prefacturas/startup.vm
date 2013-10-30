@@ -370,6 +370,8 @@
 																<input type="hidden" name="campo4">
 																<input type="hidden" name="campo5">
 																<input type="hidden" name="campo6">
+																<input type="hidden" name="campo7">
+																<input type="hidden" name="campo8">
 																
 																<input type="hidden" name="warning_adenda">
 															</td>
@@ -926,9 +928,26 @@
 													
 													<table border="0" class="gral">
 														<tr>
+															<td width="90">Orden de Compra</td>
+															<td width="100"><input type="text" name="adenda1_campo7" style="width:100px;"></td>
+															<td width="40"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_campo7"></div></td>
+															<td width="90">Moneda</td>
+															<td width="100"><input type="text" name="adenda1_campo8" style="width:100px;"></td>
+															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_campo8"></div></td>
+														</tr>
+														<tr>
+															<td width="90" height="15"></td>
+															<td width="100"></td>
+															<td width="40"></td>
+															<td width="90"></td>
+															<td width="100"></td>
+															<td width="25"></td>
+														</tr>
+														
+														<tr>
 															<td width="90">No. de Entrada</td>
 															<td width="100"><input type="text" name="adenda1_campo1" style="width:100px;"></td>
-															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_campo1"></div></td>
+															<td width="40"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_campo1"></div></td>
 															<td width="90">No. de Remisi&oacute;n</td>
 															<td width="100"><input type="text" name="adenda1_campo2" style="width:100px;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_campo2"></div></td>
@@ -936,7 +955,7 @@
 														<tr>
 															<td width="90" height="15"></td>
 															<td width="100"></td>
-															<td width="25"></td>
+															<td width="40"></td>
 															<td width="90"></td>
 															<td width="100"></td>
 															<td width="25"></td>
@@ -944,7 +963,7 @@
 														<tr>
 															<td width="90">Consignaci&oacute;n</td>
 															<td width="100"><input type="checkbox" name="check_adenda1_campo3"></td>
-															<td width="25"></td>
+															<td width="40"></td>
 															<td width="90">Centro de Costos</td>
 															<td width="100"><input type="text" name="adenda1_campo4" style="width:100px;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_campo4"></div></td>
@@ -952,7 +971,7 @@
 														<tr>
 															<td width="90" height="12"></td>
 															<td width="100"></td>
-															<td width="25"></td>
+															<td width="40"></td>
 															<td width="90"></td>
 															<td width="100"></td>
 															<td width="25"></td>
@@ -960,15 +979,15 @@
 														<tr>
 															<td width="90">Fecha Inicio</td>
 															<td width="100"><input type="text" name="adenda1_campo5" style="width:100px;"></td>
-															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_campo5"></div></td>
+															<td width="40"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_campo5"></div></td>
 															<td width="90">Fecha Fin</td>
 															<td width="100"><input type="text" name="adenda1_campo6" style="width:100px;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_campo6"></div></td>
 														</tr>
 														<tr>
-															<td width="90" height="50"></td>
+															<td width="90" height="45"></td>
 															<td width="100"></td>
-															<td width="25"></td>
+															<td width="40"></td>
 															<td width="90"></td>
 															<td width="100"></td>
 															<td width="25"></td>
