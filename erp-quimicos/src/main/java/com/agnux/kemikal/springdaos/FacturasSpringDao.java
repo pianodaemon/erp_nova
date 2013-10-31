@@ -2903,6 +2903,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             if(tipoDoc==1 || tipoDoc==2){
                 sql_datos_adenda = "SELECT fac_docs_adenda.* FROM fac_docs_adenda JOIN fac_docs ON fac_docs.id=fac_docs_adenda.fac_docs_id  WHERE fac_docs.serie_folio='"+serieFolio+"' AND fac_docs_adenda.prefactura_id="+identificador+" LIMIT 1;";
             }
+            
             if(tipoDoc==9){
                 sql_datos_adenda = ""
                         + "SELECT fac_docs_adenda.* FROM fac_docs_adenda "
