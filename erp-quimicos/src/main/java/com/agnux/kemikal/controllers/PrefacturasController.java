@@ -895,8 +895,7 @@ public class PrefacturasController {
                                 
                                 
                                 //::::::INICIA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                                System.out.println("incluye_adenda: "+parametros.get("incluye_adenda"));
-                                System.out.println("dataFacturaClienteAdendaID: "+dataFacturaCliente.get("adenda_id"));
+                                System.out.println("incluye_adenda: "+parametros.get("incluye_adenda")+"  |  dataFacturaClienteAdendaID: "+dataFacturaCliente.get("adenda_id"));
                                 
                                 //Verificar si hay que incluir adenda
                                 if (parametros.get("incluye_adenda").equals("true")){

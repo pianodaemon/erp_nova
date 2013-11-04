@@ -2967,6 +2967,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     
+    //Verificar si la factura ligada a la Nota de Credito Incluye Adenda
+    @Override
+    public int buscarAdendaFactura(Integer idNotaCredito) {
+        String sql_to_query = "SELECT count(fac_docs_adenda.id) FROM fac_docs_adenda JOIN fac_docs ON fac_docs.id=fac_docs_adenda.fac_docs_id JOIN fac_nota_credito ON (fac_nota_credito.serie_folio_factura=fac_docs.serie_folio AND fac_nota_credito.cxc_clie_id=fac_docs.cxc_clie_id) WHERE fac_nota_credito.id="+idNotaCredito;
+        
+        int rowCount = this.getJdbcTemplate().queryForInt(sql_to_query);
+        return rowCount;
+    }
     
     
     

@@ -155,4 +155,5 @@ public interface FacturasInterfaceDao {
     
     
     public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura, Integer identificador, String serieFolio);
+    public int buscarAdendaFactura(Integer idNotaCredito);
 }

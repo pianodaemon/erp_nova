@@ -4594,7 +4594,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "left join pro_estruc on pro_estruc.id=op.pro_estruc_id "
                 + "where op.id="+produccion_id+";";
 
-        //System.out.println("esto es el query ¬†: ¬†"+sql_query);
+        System.out.println("Query produccion: "+sql_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
