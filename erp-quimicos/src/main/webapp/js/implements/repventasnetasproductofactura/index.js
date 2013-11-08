@@ -1,5 +1,3 @@
-
-
 $(function() {
     var config =  {
         tituloApp: 'Ventas Netas por Producto Desglosado por factura' ,
@@ -655,6 +653,10 @@ $(function() {
         var id_subfamilia= $select_subfamilia.val();
         var id_agente = $select_agente.val();
         var usuario=config.getUi();
+        
+        //Sustituir el signo % porque generan problemas al enviar la peticion Get, esto porque algunos productos tienen este signo
+        producto = producto.replace("%","");
+        
         var cadena = tipo_reporte+"___"+cliente+"___"+producto+"___"+fecha_inicial+"___"+fecha_final+"___"+usuario+"___"+id_linea+"___"+id_marca+"___"+id_familia+"___"+id_subfamilia+"___"+tipo_costo+"___"+id_agente;
 
         if(fecha_inicial != 0 && fecha_final !=0){

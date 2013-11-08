@@ -1646,7 +1646,6 @@ $(function() {
 		
 		
 		if(parseInt(id_adenda)==1){
-			//$campo1, $campo2, $campo3, $campo4, $campo5, $campo6
 			$adenda1_campo1.val($campo1.val());
 			$adenda1_campo2.val($campo2.val());
 			$check_adenda1_campo3.attr('checked',  ($campo3.val().trim() == 'true')? true:false );
@@ -1668,6 +1667,79 @@ $(function() {
 					.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split('$')[1]});
 				}
 			}
+			
+			
+			
+			
+			$adenda1_campo5.attr("readonly", true);
+			$adenda1_campo5.click(function (s){
+				var a=$('div.datepicker');
+				a.css({'z-index':100});
+			});
+			
+			$adenda1_campo5.DatePicker({
+				format:'Y-m-d',
+				date: $adenda1_campo5.val(),
+				current: $adenda1_campo5.val(),
+				starts: 1,
+				position: 'bottom',
+				locale: {
+					days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+					daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+					daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+					months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+					monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+					weekMin: 'se'
+				},
+				onChange: function(formated, dates){
+					var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+					$adenda1_campo5.val(formated);
+					if (formated.match(patron) ){
+						var valida_fecha=mayor($adenda1_campo5.val(),mostrarFecha());
+						if (valida_fecha==true){
+							jAlert("Fecha no valida",'! Atencion');
+							$adenda1_campo5.val(mostrarFecha());
+						}else{
+							$adenda1_campo5.DatePickerHide();	
+						}
+					}
+				}
+			});
+			
+			$adenda1_campo6.attr("readonly", true);
+			$adenda1_campo6.click(function (s){
+				var a=$('div.datepicker');
+				a.css({'z-index':100});
+			});
+			
+			$adenda1_campo6.DatePicker({
+				format:'Y-m-d',
+				date: $adenda1_campo6.val(),
+				current: $adenda1_campo6.val(),
+				starts: 1,
+				position: 'bottom',
+				locale: {
+					days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+					daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+					daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+					months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+					monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+					weekMin: 'se'
+				},
+				onChange: function(formated, dates){
+					var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+					$adenda1_campo6.val(formated);
+					if (formated.match(patron) ){
+						var valida_fecha=mayor($adenda1_campo6.val(),mostrarFecha());
+						if (valida_fecha==true){
+							jAlert("Fecha no valida",'! Atencion');
+							$adenda1_campo6.val(mostrarFecha());
+						}else{
+							$adenda1_campo6.DatePickerHide();	
+						}
+					}
+				}
+			});
 			
 			$adenda1_campo1.focus();
 		}
@@ -2429,7 +2501,6 @@ $(function() {
 									$warning_adenda.val(tmp.split(':')[1]);
 								}
 								
-								
 								if(parseInt($("tr", $grid_productos).size())>0){
 									for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
 										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i) || (tmp.split(':')[0]=='presentacion'+i)){
@@ -2982,6 +3053,68 @@ $(function() {
 							}
 						}
 					});
+					
+					
+					
+
+					
+					$boton_facturar.click(function(event){
+						var tipo = '';
+						var ejecutar=true;
+						
+						if( parseInt($select_tipo_documento.val())==1  ||  parseInt($select_tipo_documento.val())==3 ) {
+							tipo = 'Facturacion';
+						}
+						
+						if( parseInt($select_tipo_documento.val())==2 ) {
+							tipo = 'Remision';
+						}
+						
+						
+						if( parseInt($select_tipo_documento.val())==1  ||  parseInt($select_tipo_documento.val())==3 ) {
+							//Ocultar check y boton de la adenda, cuando el cliente no incluya adenda.
+							if(entry['Extras'][0]['adenda'] == 'true'){
+								//Numero de adenda
+								if(parseInt(entry['datosPrefactura'][0]['adenda_id'])==1){
+									//1=Factura
+									if(parseInt(entry['datosPrefactura'][0]['tipo_documento'])==1 || parseInt(entry['datosPrefactura'][0]['tipo_documento'])==0){
+										//Confirmacion para facturar sin Remision para adenda 1
+										ejecutar=false;
+									}
+								}
+							}
+						}
+						
+						
+						jConfirm('Confirmar '+tipo+'?', 'Dialogo de Confirmacion', function(r) {
+							// If they confirmed, manually trigger a form submission
+							if (r) {
+								if(ejecutar){
+									$submit_actualizar.trigger('click');
+								}else{
+									
+									jAlert('Es necesario crear primero una Remisi&oacute;n para poder agregar la adenda a la Factura.', 'Atencion!', function(r) { 
+										$boton_facturar.focus();
+									});
+									
+									/*
+									//Confirm para Facturar si Remsion
+									jConfirm('Es necesario crear primero una Remisi&oacute;n para poder agregar la adenda a la Factura.\nDesea Facturar si Remisi&oacute;n?', 'Dialogo de Confirmacion', function(r) {
+										// If they confirmed, manually trigger a form submission
+										if (r) {
+											$submit_actualizar.trigger('click');
+										}
+									});
+									*/
+								}
+							}else{
+								//aqui no hay nada
+							}
+						});
+						
+					});
+					
+					
 				});//termina llamada json
                 
 				
@@ -3080,26 +3213,7 @@ $(function() {
 				
 				
 				
-				$boton_facturar.click(function(event){
-					var tipo = '';
-					if( parseInt($select_tipo_documento.val())==1  ||  parseInt($select_tipo_documento.val())==3 ) {
-						tipo = 'Facturacion';
-					}
-					
-					if( parseInt($select_tipo_documento.val())==2 ) {
-						tipo = 'Remision';
-					}
-					
-					jConfirm('Confirmar '+tipo+'?', 'Dialogo de Confirmacion', function(r) {
-						// If they confirmed, manually trigger a form submission
-						if (r) {
-							$submit_actualizar.trigger('click');
-						}else{
-							//aqui no hay nada
-						}
-					});
-					
-				});
+
                 
 				
 				
