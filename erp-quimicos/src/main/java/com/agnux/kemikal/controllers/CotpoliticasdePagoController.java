@@ -9,7 +9,6 @@ import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
-import com.agnux.kemikal.interfacedaos.CxpInterfaceDao;
 import com.agnux.kemikal.interfacedaos.PocInterfaceDao;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class CotpoliticasdePagoController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
 
         infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("descripcion", "Politica:200");
+        infoConstruccionTabla.put("descripcion", "Politica:600");
 
         ModelAndView x = new ModelAndView("cotpoliticasdepago/startup", "title", "Politicas de Pago");//nombre de la carpeta de la vista
 

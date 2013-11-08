@@ -925,7 +925,7 @@ public class PrefacturasController {
                                          */
                                         
                                         //1 indica que es Adenda de una factura
-                                        dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataFacturaCliente.get("adenda_id")), dataFacturaCliente, id_prefactura, serieFolio);
+                                        dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataFacturaCliente.get("adenda_id")), dataFacturaCliente, id_prefactura, serieFolio, id_empresa);
                                         
                                         //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
                                         AdendaCliente adenda = new AdendaCliente();

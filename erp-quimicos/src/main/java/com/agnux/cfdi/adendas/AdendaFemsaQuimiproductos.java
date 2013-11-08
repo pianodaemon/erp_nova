@@ -98,7 +98,7 @@ public class AdendaFemsaQuimiproductos extends Adenda{
             //String elemento = new String();
             Document tmp = this.getDb().newDocument();
             
-            Element root = tmp.createElement("cfdi:Adenda");
+            Element root = tmp.createElement("cfdi:Addenda");
             Element child_1 = tmp.createElement("Documento");
             Element child_1_1 = tmp.createElement("FacturaFemsa");
             

@@ -655,11 +655,13 @@ public class FacDevolucionesController {
                                 if (parametros.get("incluye_adenda").equals("true")){
                                     //Verificar si el cliente tiene asignada una adenda
                                     if(Integer.parseInt(dataCliente.get("adenda_id"))>0){
+                                        /*
                                         //Buscar si la Factura ligada a la Nota de credito Incluye Adenda
                                         int exis = this.getFacdao().buscarAdendaFactura(id_nota_credito);
                                         
                                         //Si es mayor que cero si Incluye Adenda
                                         if(exis>0){
+                                        */
                                             String path_file = new String();
                                             String xml_file_name = new String();
                                             
@@ -674,7 +676,7 @@ public class FacDevolucionesController {
                                             
                                             
                                             //1 indica que es Adenda de una factura
-                                            dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataCliente.get("adenda_id")), dataCliente, id_nota_credito, serieFolio);
+                                            dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataCliente.get("adenda_id")), dataCliente, id_nota_credito, serieFolio, id_empresa);
                                             
                                             //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
                                             AdendaCliente adenda = new AdendaCliente();
@@ -686,9 +688,11 @@ public class FacDevolucionesController {
                                                 //Si el archivo existe indica que se agregó bien la adenda y se creó el nuevo archivo xml
                                                 procesoAdendaCorrecto=false;
                                             }
+                                        /*
                                         }else{
                                            System.out.println("La factura ligada a esta Nota de Credito no incluye Adenda, por lo tanto la Nota de Credito tampoco se le incluyó la Adenda.");
                                         }
+                                        */
                                     }
                                 }
                                 //::::::TERMINA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -53,8 +53,8 @@ public class PdfRemision {
         this.setRows(conceptos);
         this.setImagen(ruta_imagen);
         
-        PdfRemision.ImagenPDF ipdf = new PdfRemision.ImagenPDF();
-        PdfRemision.CeldaPDF cepdf = new PdfRemision.CeldaPDF();
+        ImagenPDF ipdf = new ImagenPDF();
+        CeldaPDF cepdf = new CeldaPDF();
         //TablaPDF tpdf = new TablaPDF();
         
         
@@ -74,16 +74,15 @@ public class PdfRemision {
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileout));
             document.open();
             
-            float [] widths = {3,12,5};
+            float [] widths = {6,12,6};
             encabezado = new PdfPTable(widths);
             encabezado.setKeepTogether(false);
             
             //IMAGEN --> logo empresa
             cell = new PdfPCell(ipdf.addContent());
             cell.setBorder(0);
+//cell.setBorderWidth(1);
             cell.setRowspan(6);
-            //cell.setBorder(1);
-            //cell.setBorder(11);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setUseAscender(true);
@@ -94,8 +93,7 @@ public class PdfRemision {
             //RAZON SOCIAL --> BeanFromCFD (X_emisor)
             cell = new PdfPCell(new Paragraph(datos_remision.get("emisor_razon_social").toUpperCase(),largeBoldFont));
             cell.setBorder(0);
-            //cell.setBorder(1);
-            //cell.setBorder(11);
+//cell.setBorderWidth(1);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             encabezado.addCell(cell);
@@ -105,21 +103,20 @@ public class PdfRemision {
                     datos_remision.get("folio") + "&" +
                     datos_remision.get("lugar_expedicion") + "\n" + datos_remision.get("fecha_remision")+"&"+
                     datos_remision.get("dias_credito")+ "&" +
-                    datos_remision.get("cancelado");
-            
+                    datos_remision.get("cancelado")+ "&" +
+                    datos_remision.get("orden_compra")+" ";
+                    
             //System.out.println("Esta es la cadena"+cadena);
             cell = new PdfPCell(cepdf.addContent(cadena));
             cell.setBorder(0);
-            //cell.setBorder(1);
-            //cell.setBorder(11);
+//cell.setBorderWidth(1);
             cell.setRowspan(7);
             encabezado.addCell(cell);
             
             
             cell = new PdfPCell(new Paragraph("",largeBoldFont));
             cell.setBorder(0);
-            //cell.setBorder(1);
-            //cell.setBorder(11);
+//cell.setBorderWidth(1);
             cell.setFixedHeight(10);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -129,8 +126,7 @@ public class PdfRemision {
             //cell = new PdfPCell(new Paragraph("2",largeBoldFont));
             cell = new PdfPCell(new Paragraph( datos_remision.get("emisor_calle").toUpperCase()+ " " + datos_remision.get("emisor_numero").toUpperCase() +  "\n" + datos_remision.get("emisor_colonia").toUpperCase() + "\n" + datos_remision.get("emisor_municipio").toUpperCase() + ", " + datos_remision.get("emisor_estado").toUpperCase()+ ", " + datos_remision.get("emisor_pais").toUpperCase() + "\nC.P. " + datos_remision.get("emisor_cp") + "    R.F.C.: " + datos_remision.get("emisor_rfc"), smallFont));
             cell.setBorder(0);
-            //cell.setBorder(1);
-            //cell.setBorder(11);
+//cell.setBorderWidth(1);
             cell.setRowspan(2);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -138,8 +134,7 @@ public class PdfRemision {
             
             cell = new PdfPCell(new Paragraph("",largeBoldFont));
             cell.setBorder(0);
-            //cell.setBorder(1);
-            //cell.setBorder(11);
+//cell.setBorderWidth(1);
             cell.setUseAscender(true);
             cell.setFixedHeight(10);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -147,8 +142,7 @@ public class PdfRemision {
             
             cell = new PdfPCell(new Paragraph("SUCURSAL: "+datos_remision.get("sucursal_emisor").toUpperCase(),smallFont));
             cell.setBorder(0);
-            //cell.setBorder(1);
-            //cell.setBorder(11);
+//cell.setBorderWidth(1);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             encabezado.addCell(cell);
@@ -171,8 +165,7 @@ public class PdfRemision {
             
             cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(datosCliente), smallFont));
             cell.setBorder(0);
-            //cell.setBorder(1);
-            //cell.setBorder(11);
+//cell.setBorderWidth(1);
             cell.setColspan(2);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -369,7 +362,10 @@ public class PdfRemision {
             cell.setUseAscender(true);
             cell.setUseDescender(true);
             cell.setBorderWidthBottom(1);
-            cell.setFixedHeight(200);
+            if(contador<=8){
+                cell.setFixedHeight(220);
+            }
+            
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             tabla_contenedor_conceptos.addCell(cell);
@@ -710,8 +706,8 @@ public class PdfRemision {
             try {
                 img = Image.getInstance(getImagen());
                 //img.scaleAbsoluteHeight(100);
-                img.scaleAbsoluteHeight(120);
-                img.scaleAbsoluteWidth(100);
+                img.scaleAbsoluteHeight(90);
+                img.scaleAbsoluteWidth(145);
                 img.setAlignment(0);
             }
             catch(Exception e){
@@ -752,12 +748,15 @@ public class PdfRemision {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             table.addCell(cell);
             
+            
             //celda vacia
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
+            cell.setFixedHeight(8);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("FOLIO REMISION",smallBoldFont));// AQUI HIBA EL FOLIO
+            
+            cell = new PdfPCell(new Paragraph("FOLIO REMISIÓN",smallBoldFont));// AQUI HIBA EL FOLIO
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -772,10 +771,13 @@ public class PdfRemision {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             table.addCell(cell);
             
+            
             //celda vacia
             cell = new PdfPCell(new Paragraph(" ", smallFont));
             cell.setBorder(1);
+            cell.setFixedHeight(8);
             table.addCell(cell);
+            
             
             cell = new PdfPCell(new Paragraph("LUGAR Y FECHA",smallBoldFont));
             cell.setUseAscender(true);
@@ -792,10 +794,13 @@ public class PdfRemision {
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             table.addCell(cell);
             
+            
             //celda vacia
             cell = new PdfPCell(new Paragraph(" ", smallFont));
             cell.setBorder(0);
+            cell.setFixedHeight(8);
             table.addCell(cell);
+            
             
             cell = new PdfPCell(new Paragraph("DIAS DE CREDITO",smallBoldFont));
             cell.setUseAscender(true);
@@ -810,14 +815,34 @@ public class PdfRemision {
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setFixedHeight(20);
             table.addCell(cell);
+            
+            //celda vacia
+            cell = new PdfPCell(new Paragraph(" ", smallFont));
+            cell.setBorder(0);
+            cell.setFixedHeight(8);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("NO. ORDEN COMPRA",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(temp[5].trim(),smallFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
+            table.addCell(cell);
+            
             
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             cell.setBorder(0);
-            //cell.setFixedHeight(20);
             table.addCell(cell);
             
             return table;

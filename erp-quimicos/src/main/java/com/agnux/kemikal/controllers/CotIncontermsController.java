@@ -79,7 +79,7 @@ public class CotIncontermsController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         infoConstruccionTabla.put("id", "Acciones:90");
         infoConstruccionTabla.put("nombre", "Nombre:120");
-        infoConstruccionTabla.put("descripcion", "Descripci&oacute;n:400");
+        infoConstruccionTabla.put("descripcion", "Descripci&oacute;n:600");
         
         ModelAndView x = new ModelAndView("cotincoterms/startup", "title", "Cat&aacute;logo de Incoterms");
         x = x.addObject("layoutheader", resource.getLayoutheader());

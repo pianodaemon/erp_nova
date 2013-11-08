@@ -2881,10 +2881,13 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         return hm_conceptos;
     }
     
+    
+    
+    //Obtener datos para la Adenda
     @Override
-    public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura, Integer identificador, String serieFolio) {
+    public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura, Integer identificador, String serieFolio, Integer id_emp) {
         LinkedHashMap<String, Object> data = new LinkedHashMap<String, Object>();
-        String sql_query = "select * from cxc_clie_adenda_datos where cxc_clie_adenda_tipo="+noAdenda;
+        String sql_query = "select * from cxc_clie_adenda_datos where cxc_clie_adenda_tipo="+noAdenda+" and gral_emp_id="+id_emp;
         String sql_datos_adenda = "";
         if(noAdenda==1){
             //Adenda FEMSA QUIMIPRODUCTOS
@@ -2914,12 +2917,13 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             
             System.out.println("sql_datos_adenda: "+sql_datos_adenda);
             
-            //Obtener datos de la Adenda
-            Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_datos_adenda);
             /*valor1=NoEntrada, valor2=NoRemision, valor3=Consignacion, valor4=CentroCostos, valor5=FechaInicio, valor6=FechaFin, valor7=Orden Compra, valor8=Moneda*/
             
             if(tipoDoc==1){
                 //Factura
+                //Obtener datos de la Adenda
+                Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_datos_adenda);
+                
                 data.put("noEntrada", String.valueOf(map.get("valor1")));
                 data.put("noRemision", String.valueOf(map.get("valor2")));
                 data.put("noPedido", String.valueOf(map.get("valor7")));
@@ -2933,6 +2937,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             
             if(tipoDoc==2){
                 //Consignacion
+                //Obtener datos de la Adenda
+                Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_datos_adenda);
+                
                 String fechaIni=String.valueOf(map.get("valor5")).split("-")[2]+"."+String.valueOf(map.get("valor5")).split("-")[1]+"."+String.valueOf(map.get("valor5")).split("-")[0];
                 String fechaFin=String.valueOf(map.get("valor6")).split("-")[2]+"."+String.valueOf(map.get("valor6")).split("-")[1]+"."+String.valueOf(map.get("valor6")).split("-")[0];
                 
@@ -2949,15 +2956,35 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             
             if(tipoDoc==9){
                 //Nota de Credito
-                data.put("noEntrada", "");
-                data.put("noRemision", "");
-                data.put("centro", "");
-                data.put("iniPerLiq", "");
-                data.put("finPerLiq", "");
-                data.put("noPedido", String.valueOf(map.get("valor7")));
-                data.put("moneda", String.valueOf(map.get("valor8")));
-                data.put("retencion1", "");
-                data.put("retencion2", "");
+                
+                //Buscar si la Factura ligada a la Nota de credito Incluye Adenda
+                int exis = this.buscarAdendaFactura(identificador);
+                
+                //Si es mayor que cero si Incluye Adenda
+                if(exis>0){
+                    //Obtener datos de la Adenda
+                    Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_datos_adenda);
+                    
+                    data.put("noEntrada", "");
+                    data.put("noRemision", "");
+                    data.put("centro", "");
+                    data.put("iniPerLiq", "");
+                    data.put("finPerLiq", "");
+                    data.put("noPedido", String.valueOf(map.get("valor7")));
+                    data.put("moneda", String.valueOf(dataFactura.get("moneda2")));
+                    data.put("retencion1", "");
+                    data.put("retencion2", "");
+                }else{
+                    data.put("noEntrada", "");
+                    data.put("noRemision", "");
+                    data.put("centro", "");
+                    data.put("iniPerLiq", "");
+                    data.put("finPerLiq", "");
+                    data.put("noPedido", "");
+                    data.put("moneda", String.valueOf(dataFactura.get("moneda2")));
+                    data.put("retencion1", "");
+                    data.put("retencion2", "");
+                }
             }
             
             data.put("email", dataFactura.get("emailEmisor"));
@@ -2973,6 +3000,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         String sql_to_query = "SELECT count(fac_docs_adenda.id) FROM fac_docs_adenda JOIN fac_docs ON fac_docs.id=fac_docs_adenda.fac_docs_id JOIN fac_nota_credito ON (fac_nota_credito.serie_folio_factura=fac_docs.serie_folio AND fac_nota_credito.cxc_clie_id=fac_docs.cxc_clie_id) WHERE fac_nota_credito.id="+idNotaCredito;
         
         int rowCount = this.getJdbcTemplate().queryForInt(sql_to_query);
+        
         return rowCount;
     }
     
