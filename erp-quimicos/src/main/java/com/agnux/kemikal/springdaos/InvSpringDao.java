@@ -5264,7 +5264,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_lote ON inv_lote.id=inv_lote_detalle.inv_lote_id "
                 + "WHERE inv_osal_detalle.inv_osal_id=? "
                 + "ORDER BY inv_lote.id;";
-
+        
         //System.out.println(sql_to_query);
         //System.out.println("id: "+id);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
