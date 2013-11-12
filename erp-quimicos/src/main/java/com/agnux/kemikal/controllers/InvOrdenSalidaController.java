@@ -299,7 +299,7 @@ public class InvOrdenSalidaController {
                         cant_sur[i]+"___"+
                         no_tr[i]+"'";
                         
-                System.out.println(arreglo[i]);
+                //System.out.println(arreglo[i]);
             }
             
             //serializar el arreglo

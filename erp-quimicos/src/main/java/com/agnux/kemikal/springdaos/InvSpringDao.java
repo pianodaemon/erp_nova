@@ -6658,7 +6658,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN cxc_clie ON cxc_clie.id=inv_odev.cxc_clie_id "
                 + "JOIN gral_mon ON gral_mon.id=inv_odev.moneda_id "
                 + "WHERE inv_odev.id="+ id + ";";
-        
+       // System.out.println("OrdenDev: "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -6694,7 +6694,6 @@ public class InvSpringDao implements InvInterfaceDao{
     }
     
     
-    
     @Override
     public ArrayList<HashMap<String, String>> getInvOrdenDev_DatosGridNcto(String serieFolioNcto, Integer idClie) {
                 String sql_to_query = ""
@@ -6720,6 +6719,8 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=fac_nota_credito_det.inv_prod_presentacion_id "
                 + "WHERE UPPER(fac_nota_credito.serie_folio)=? AND fac_nota_credito.cxc_clie_id=?;";
                 
+        //System.out.println("DatosNCTO_Odev: "+sql_to_query);
+        
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -6774,6 +6775,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "WHERE inv_osal.tipo_documento=? AND inv_osal.folio_documento=? AND inv_osal.cxc_clie_id=? "
                         + "ORDER BY inv_osal_detalle.id;";
                 
+        //System.out.println("DatosOsal: "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -6819,7 +6821,8 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "JOIN inv_osal_detalle ON inv_osal_detalle.id=inv_odev_detalle.inv_osal_detalle_id "
                 + "JOIN inv_lote ON inv_lote.id=inv_odev_detalle.inv_lote_id "
                 + "WHERE inv_odev_detalle.inv_odev_id=?;";
-                
+          
+        System.out.println("LotesOdev: "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

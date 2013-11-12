@@ -12,7 +12,6 @@ import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import com.agnux.kemikal.reportes.PdfOrdenDevolucion;
-import com.agnux.kemikal.reportes.PdfOrdenEntrada;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -137,13 +136,13 @@ public class InvOrdenDevController {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
         
-        //aplicativo Ordenes de Devolucion
+        //Aplicativo Ordenes de Devolucion
         Integer app_selected = 100;
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         
-        //variables para el buscador
+        //Variables para el buscador
         String folio = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("folio")))+"%";
         String factura = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("factura")))+"%";
         String cliente = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("cliente")))+"%";
@@ -152,21 +151,21 @@ public class InvOrdenDevController {
         
         String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+factura+"___"+cliente+"___"+fecha_inicial+"___"+fecha_final;
         
-        //obtiene total de registros en base de datos, con los parametros de busqueda
+        //Obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getInvDao().countAll(data_string);
         
-        //calcula el total de paginas
+        //Calcula el total de paginas
         int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
         
-        //variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
+        //Variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
         DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags,id_user_cod);
         
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
-        //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
+        //Obtiene los registros para el grid, de acuerdo a los parametros de busqueda
         jsonretorno.put("Data", this.getInvDao().getInvOrdenDev_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
         
-        //obtiene el hash para los datos que necesita el datagrid
+        //Obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
         
         return jsonretorno;
@@ -275,7 +274,7 @@ public class InvOrdenDevController {
                 
                 arreglo[i]= "'"+eliminado[i]+"___"+tipo_registro[i]+"___"+id_detalle[i]+"___"+id_almacen[i]+"___"+id_prod_grid[i]+"___"+lote_id[i]+"___"+lote_interno[i]+"___"+StringHelper.removerComas(cant_dev[i])+"___"+no_tr[i]+"___"+id_partida[i]+"'";
                         
-                System.out.println(arreglo[i]);
+                //System.out.println(arreglo[i]);
             }
             
             //serializar el arreglo
