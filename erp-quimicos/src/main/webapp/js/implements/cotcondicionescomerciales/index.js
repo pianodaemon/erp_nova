@@ -280,7 +280,7 @@ $(function() {
 			$tabs_li_funxionalidad();
 
 			var $campo_id = $('#forma-cotcondicionescomerciales-window').find('input[name=identificador]');
-			var $campo_titulo = $('#forma-cotcondicionescomerciales-window').find('input[name=titulo]');
+			var $campo_titulo = $('#forma-cotcondicionescomerciales-window').find('textarea[name=titulo]');
 
 			var $cerrar_plugin = $('#forma-cotcondicionescomerciales-window').find('#close');
 			var $cancelar_plugin = $('#forma-cotcondicionescomerciales-window').find('#boton_cancelar');
@@ -326,7 +326,7 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					$campo_id.attr({ 'value' : entry['Condicion_Comercial']['0']['id'] });
-					$campo_titulo.attr({ 'value' : entry['Condicion_Comercial']['0']['descripcion'] });
+					$campo_titulo.text(entry['Condicion_Comercial']['0']['descripcion']);
 				},"json");//termina llamada json
 
 

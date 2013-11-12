@@ -101,24 +101,20 @@
                         <div class="columns" style="background:#731F6C;">
                             <div class="container" style="background:white;">
                                 <div class="fixed column" class="content_x" >
-
                                     <div id="tabx-1" class="contenidoPes" >
                                         <table border="0">
-                                                <tr>
-                                                        <td width="5"></td>
-							<td width="300" align="left">Condicion&nbsp;Comercial:&nbsp;</td>
-                                                        <td width="50"></td>
-                                                        <td width="5"></td>
-						</tr>
-						<tr>
-							<td width="5"></td>
-							<td width="300" ><textarea name="titulo"   style="width:450px; height:100px; resize: none;"></textarea></td>
-							<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
-							<td width="5"></td>
-
-						</tr>
-
-
+											<tr>
+												<td width="5"></td>
+												<td width="300" align="left">Condicion&nbsp;Comercial:&nbsp;</td>
+												<td width="50"></td>
+												<td width="5"></td>
+											</tr>
+											<tr>
+												<td width="5"></td>
+												<td width="300" ><textarea name="titulo"   style="width:450px; height:100px; resize: none;"></textarea></td>
+												<td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_titulo"></div></td>
+												<td width="5"></td>
+											</tr>
                                         </table>
                                     </div>
 

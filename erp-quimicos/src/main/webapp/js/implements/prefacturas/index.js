@@ -3056,7 +3056,7 @@ $(function() {
 					
 					
 					
-
+					
 					
 					$boton_facturar.click(function(event){
 						var tipo = '';
@@ -3135,7 +3135,7 @@ $(function() {
 						return false;
 					}		
 				});
-
+				
 				
 				//aplicar tipo de cambio a todos los costos al cambiar valor de tipo de cambio
 				$tipo_cambio.blur(function(){
