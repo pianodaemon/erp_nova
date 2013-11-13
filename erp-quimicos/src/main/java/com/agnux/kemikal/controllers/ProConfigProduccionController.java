@@ -107,7 +107,7 @@ public class ProConfigProduccionController {
         x = x.addObject("url", resource.getUrl(request));
         x = x.addObject("username", user.getUserName());
         x = x.addObject("empresa", user.getRazonSocialEmpresa());
-        x = x.addObject("empresa", user.getRazonSocialEmpresa());
+        x = x.addObject("sucursal", user.getSucursal());
         
         String userId = String.valueOf(user.getUserId());
         

@@ -6715,7 +6715,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "FROM fac_nota_credito_det  "
                 + "JOIN fac_nota_credito ON fac_nota_credito.id=fac_nota_credito_det.fac_nota_credito_id "
                 + "JOIN inv_prod ON inv_prod.id=fac_nota_credito_det.inv_prod_id "
-                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "JOIN inv_prod_unidades ON inv_prod_unidades.id=fac_nota_credito_det.inv_prod_unidad_id "
                 + "JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=fac_nota_credito_det.inv_prod_presentacion_id "
                 + "WHERE UPPER(fac_nota_credito.serie_folio)=? AND fac_nota_credito.cxc_clie_id=?;";
                 
@@ -6770,7 +6770,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         + "FROM inv_osal_detalle "
                         + "JOIN inv_osal ON inv_osal.id=inv_osal_detalle.inv_osal_id "
                         + "LEFT JOIN inv_prod on inv_prod.id = inv_osal_detalle.inv_prod_id "
-                        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+                        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_osal_detalle.inv_prod_unidad_id "
                         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_osal_detalle.inv_prod_presentacion_id "
                         + "WHERE inv_osal.tipo_documento=? AND inv_osal.folio_documento=? AND inv_osal.cxc_clie_id=? "
                         + "ORDER BY inv_osal_detalle.id;";
