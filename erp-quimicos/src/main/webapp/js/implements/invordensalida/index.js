@@ -660,7 +660,6 @@ $(function() {
 				var $observaciones = $('#forma-invordensalida-window').find('textarea[name=observaciones]');
 				var $select_almacen_origen = $('#forma-invordensalida-window').find('select[name=select_almacen_origen]');
 				
-				
 				//tabla contenedor del listado de productos
 				var $grid_productos = $('#forma-invordensalida-window').find('#grid_productos');
 				
@@ -683,6 +682,13 @@ $(function() {
 				$folio_pedido.attr("readonly", true);
 				$fecha_doc.attr("readonly", true);
 				$campo_tc.attr("readonly", true);
+				$folio_salida.css({'background' : '#f0f0f0'});
+				$folio_pedido.css({'background' : '#f0f0f0'});
+				$orden_compra.css({'background' : '#f0f0f0'});
+				$folio_doc.css({'background' : '#f0f0f0'});
+				$campo_tc.css({'background' : '#f0f0f0'});
+				$fecha_doc.css({'background' : '#f0f0f0'});
+				$campo_razoncliente.css({'background' : '#f0f0f0'});
 				//$observaciones.attr("readonly", true);
 				$accion.val('edit');
 				$submit_actualizar.hide();

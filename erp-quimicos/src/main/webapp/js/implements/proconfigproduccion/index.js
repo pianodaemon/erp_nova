@@ -73,13 +73,13 @@ $(function() {
 	var $cadena_busqueda = "";
 	var $campo_busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
 	var $campo_busqueda_descripcionproceso = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_descripcionproceso]');
-        var $campo_busqueda_sku = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_sku]');
+	var $campo_busqueda_sku = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_sku]');
 	var $campo_busqueda_descripcionproducto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_descripcionproducto]');
 	
 	var array_subprocesos_disponibles = new Array(); //este arreglo carga los procesos disponibles
 	var array_subprocesos_seleccionados = new Array(); //este arreglo carga los procesos seleccionados
-        var array_maquinas = new Array(); //este arreglo carga la maquinas
-        var array_instrumentos = new Array(); //este arreglo carga los procesos disponibles
+	var array_maquinas = new Array(); //este arreglo carga la maquinas
+	var array_instrumentos = new Array(); //este arreglo carga los procesos disponibles
         
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
@@ -87,7 +87,6 @@ $(function() {
 	
 	var to_make_one_search_string = function(){
 		var valor_retorno = "";
-		
 		var signo_separador = "=";
 		valor_retorno += "folio_proceso" + signo_separador + $campo_busqueda_folio.val() + "|";
 		valor_retorno += "descripcion_proceso" + signo_separador + $campo_busqueda_descripcionproceso.val() + "|";
@@ -113,55 +112,65 @@ $(function() {
 		$campo_busqueda_descripcionproceso.val('');
 		$campo_busqueda_sku.val('');
 		$campo_busqueda_descripcionproducto.val('');
+		
+		$campo_busqueda_folio.focus();
 	});
         
 	//visualizar  la barra del buscador
 	TriggerClickVisializaBuscador = 0;
 	$visualiza_buscador.click(function(event){
-            event.preventDefault();
-            
-            var alto=0;
-            if(TriggerClickVisializaBuscador==0){
-                 TriggerClickVisializaBuscador=1;
-                 var height2 = $('#cuerpo').css('height');
-                 //alert('height2: '+height2);
-                 
-                 alto = parseInt(height2)-220;
-                 var pix_alto=alto+'px';
-                 //alert('pix_alto: '+pix_alto);
+		event.preventDefault();
+		
+		var alto=0;
+		if(TriggerClickVisializaBuscador==0){
+			 TriggerClickVisializaBuscador=1;
+			 var height2 = $('#cuerpo').css('height');
+			 //alert('height2: '+height2);
+			 
+			 alto = parseInt(height2)-220;
+			 var pix_alto=alto+'px';
+			 //alert('pix_alto: '+pix_alto);
 
-                 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-                 $('#barra_buscador').animate({height: '60px'}, 500);
-                 $('#cuerpo').css({'height': pix_alto});
-                 
-                 //alert($('#cuerpo').css('height'));
-            }else{
-                 TriggerClickVisializaBuscador=0;
-                 var height2 = $('#cuerpo').css('height');
-                 alto = parseInt(height2)+220;
-                 var pix_alto=alto+'px';
+			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
+			 $('#barra_buscador').animate({height: '60px'}, 500);
+			 $('#cuerpo').css({'height': pix_alto});
+			 
+			 //alert($('#cuerpo').css('height'));
+		}else{
+			 TriggerClickVisializaBuscador=0;
+			 var height2 = $('#cuerpo').css('height');
+			 alto = parseInt(height2)+220;
+			 var pix_alto=alto+'px';
 
-                 $('#barra_buscador').animate({height:'0px'}, 500);
-                 $('#cuerpo').css({'height': pix_alto});
-            };
+			 $('#barra_buscador').animate({height:'0px'}, 500);
+			 $('#cuerpo').css({'height': pix_alto});
+		};
+		$campo_busqueda_folio.focus();
 	});
 	
-        /*funcion para colorear la fila en la que pasa el puntero*/
-        $colorea_tr_grid = function($tabla){
-            $tabla.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
-            $tabla.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+	//Aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_descripcionproceso, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_sku, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_descripcionproducto, $buscar);
+	
+	
+	/*funcion para colorear la fila en la que pasa el puntero*/
+	$colorea_tr_grid = function($tabla){
+		$tabla.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+		$tabla.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
 
-            $('tr:odd' , $tabla).hover(function () {
-                    $(this).find('td').css({background : '#FBD850'});
-            }, function() {
-                    $(this).find('td').css({'background-color':'#e7e8ea'});
-            });
-            $('tr:even' , $tabla).hover(function () {
-                    $(this).find('td').css({'background-color':'#FBD850'});
-            }, function() {
-                    $(this).find('td').css({'background-color':'#FFFFFF'});
-            });
-        };
+		$('tr:odd' , $tabla).hover(function () {
+				$(this).find('td').css({background : '#FBD850'});
+		}, function() {
+				$(this).find('td').css({'background-color':'#e7e8ea'});
+		});
+		$('tr:even' , $tabla).hover(function () {
+				$(this).find('td').css({'background-color':'#FBD850'});
+		}, function() {
+				$(this).find('td').css({'background-color':'#FFFFFF'});
+		});
+	};
         
 	$tabs_li_funxionalidad = function(){
             var $select_prod_tipo = $('#forma-proconfigproduccion-window').find('select[name=prodtipo]');

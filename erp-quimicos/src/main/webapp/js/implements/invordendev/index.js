@@ -73,7 +73,8 @@ $(function() {
 		$busqueda_factura.val('');
 		$campo_busqueda_cliente.val(''); 
 		$busqueda_fecha_inicial.val('');
-		$busqueda_fecha_final.val(''); 
+		$busqueda_fecha_final.val('');
+		$campo_busqueda_folio.focus();
 	});
 	
 	//visualizar  la barra del buscador
@@ -105,7 +106,15 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$campo_busqueda_folio.focus();
 	});
+	
+	//Aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_factura, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_cliente, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_inicial, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_fecha_final, $buscar);
 	
 	$tabs_li_funxionalidad = function(){
 		var $select_prod_tipo = $('#forma-invordendev-window').find('select[name=prodtipo]');
@@ -918,6 +927,7 @@ $(function() {
 							$descargar_pdf.removeAttr('disabled');
 							$grid_productos.find('input[name=lote_int]').attr({ 'readOnly':true });
 							$grid_productos.find('input[name=cant_dev]').attr({ 'readOnly':true });
+							//$grid_productos.find('input[name=cant_dev]').css({'background' : '#f0f0f0'});
 							$grid_productos.find('a').hide();
 							
 							//quitar el enter en todos los input del grid

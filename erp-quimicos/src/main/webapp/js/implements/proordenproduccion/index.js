@@ -75,10 +75,10 @@ $(function() {
 	var $cadena_busqueda = "";
 	var $campo_busqueda_folio = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_folio]');
 	var $select_buscador_tipoorden = $('#barra_buscador').find('.tabla_buscador').find('select[name=buscador_tipoorden]');
-        var $sku_producto_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=sku_producto_busqueda]');
-        
-        var array_productos_proceso = new Array(); //este arreglo carga la maquinas
-        var array_instrumentos = new Array(); //este arreglo carga la maquinas
+	var $sku_producto_busqueda = $('#barra_buscador').find('.tabla_buscador').find('input[name=sku_producto_busqueda]');
+	
+	var array_productos_proceso = new Array(); //este arreglo carga la maquinas
+	var array_instrumentos = new Array(); //este arreglo carga la maquinas
         
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
@@ -156,66 +156,73 @@ $(function() {
 	$cadena_busqueda = cadena.toCharCode();
 	
 	$buscar.click(function(event){
-            event.preventDefault();
-            cadena = to_make_one_search_string();
-            $cadena_busqueda = cadena.toCharCode();
-            $get_datos_grid();
+		event.preventDefault();
+		cadena = to_make_one_search_string();
+		$cadena_busqueda = cadena.toCharCode();
+		$get_datos_grid();
 	});
 	
 	$limpiar.click(function(event){
-            event.preventDefault();
-            $campo_busqueda_folio.val('');
-            $sku_producto_busqueda.val('');
-        });
+		event.preventDefault();
+		$campo_busqueda_folio.val('');
+		$sku_producto_busqueda.val('');
+		
+		$campo_busqueda_folio.focus();
+	});
         
 	//visualizar  la barra del buscador
 	TriggerClickVisializaBuscador = 0;
 	$visualiza_buscador.click(function(event){
-            event.preventDefault();
-            
-            var alto=0;
-            if(TriggerClickVisializaBuscador==0){
-                 TriggerClickVisializaBuscador=1;
-                 var height2 = $('#cuerpo').css('height');
-                 //alert('height2: '+height2);
-                 
-                 alto = parseInt(height2)-220;
-                 var pix_alto=alto+'px';
-                 //alert('pix_alto: '+pix_alto);
-                 
-                 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
-                 $('#barra_buscador').animate({height: '60px'}, 500);
-                 $('#cuerpo').css({'height': pix_alto});
-                 
-                 //alert($('#cuerpo').css('height'));
-            }else{
-                 TriggerClickVisializaBuscador=0;
-                 var height2 = $('#cuerpo').css('height');
-                 alto = parseInt(height2)+220;
-                 var pix_alto=alto+'px';
+		event.preventDefault();
+		
+		var alto=0;
+		if(TriggerClickVisializaBuscador==0){
+			 TriggerClickVisializaBuscador=1;
+			 var height2 = $('#cuerpo').css('height');
+			 //alert('height2: '+height2);
+			 
+			 alto = parseInt(height2)-220;
+			 var pix_alto=alto+'px';
+			 //alert('pix_alto: '+pix_alto);
+			 
+			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
+			 $('#barra_buscador').animate({height: '60px'}, 500);
+			 $('#cuerpo').css({'height': pix_alto});
+			 
+			 //alert($('#cuerpo').css('height'));
+		}else{
+			 TriggerClickVisializaBuscador=0;
+			 var height2 = $('#cuerpo').css('height');
+			 alto = parseInt(height2)+220;
+			 var pix_alto=alto+'px';
 
-                 $('#barra_buscador').animate({height:'0px'}, 500);
-                 $('#cuerpo').css({'height': pix_alto});
-            };
+			 $('#barra_buscador').animate({height:'0px'}, 500);
+			 $('#cuerpo').css({'height': pix_alto});
+		};
+		$campo_busqueda_folio.focus();
 	});
 	
-        
-        /*funcion para colorear la fila en la que pasa el puntero*/
-        $colorea_tr_grid = function($tabla){
-            $tabla.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
-            $tabla.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
-            
-            $('tr:odd' , $tabla).hover(function () {
-                $(this).find('td').css({background : '#FBD850'});
-            }, function() {
-                $(this).find('td').css({'background-color':'#e7e8ea'});
-            });
-            $('tr:even' , $tabla).hover(function () {
-                $(this).find('td').css({'background-color':'#FBD850'});
-            }, function() {
-                $(this).find('td').css({'background-color':'#FFFFFF'});
-            });
-        };
+	//Aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($campo_busqueda_folio, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($select_buscador_tipoorden, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($sku_producto_busqueda, $buscar);
+	
+	/*funcion para colorear la fila en la que pasa el puntero*/
+	$colorea_tr_grid = function($tabla){
+		$tabla.find('tr:odd').find('td').css({'background-color' : '#e7e8ea'});
+		$tabla.find('tr:even').find('td').css({'background-color' : '#FFFFFF'});
+		
+		$('tr:odd' , $tabla).hover(function () {
+			$(this).find('td').css({background : '#FBD850'});
+		}, function() {
+			$(this).find('td').css({'background-color':'#e7e8ea'});
+		});
+		$('tr:even' , $tabla).hover(function () {
+			$(this).find('td').css({'background-color':'#FBD850'});
+		}, function() {
+			$(this).find('td').css({'background-color':'#FFFFFF'});
+		});
+	};
         
         //----------------------------------------------------------------
 	//valida la fecha seleccionada
