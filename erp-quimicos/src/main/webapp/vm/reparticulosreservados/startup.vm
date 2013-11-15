@@ -35,28 +35,31 @@
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td >
-                         <div class="articulosreservados" >
-                                   <table id="filtros" border="0" style="background-color:#ffffff;" >
-                                             <tr>
-                                                  <td colspan="11">&nbsp;&nbsp;</td>
-                                             </tr>
-                                             <tr>
-                                                  <td >&nbsp;</td>
-                                                  <td width="40">C&oacute;digo:</td>
-                                                  <td width="100"><INPUT TYPE="text" name="codigo" style="width:100px;"></td>
-                                                  <td width="20">&nbsp;</td>
-                                                  <td width="50">Descripci&oacute;n</td>
-                                                  <td width="250"><INPUT TYPE="text" name="descripcion" style="width:250px;"></td>
-                                                  <td width="20" >&nbsp;</td>
-                                                  <td width="80"><INPUT TYPE="button"  value="Buscar"></td>
-                                                  <td ></td>
-                                                  <td width="70"><INPUT TYPE="button"  value="Generar_PDF"></td>
-                                                  <td width="370">&nbsp;&nbsp;</td>
-                                             </tr>
-                                             <tr>
-                                                  <td colspan="11">&nbsp;&nbsp;</td>
-                                             </tr>
-                                    </table>
+					 <div class="articulosreservados" >
+					   <table id="filtros" border="0" style="background-color:#ffffff;" >
+							 <tr>
+								  <td colspan="14">&nbsp;&nbsp;</td>
+							 </tr>
+							 <tr>
+								  <td >&nbsp;</td>
+								  <td width="40">Pedido&nbsp;</td>
+								  <td width="100"><INPUT TYPE="text" name="folio_pedido" style="width:100px;"></td>
+								  <td width="25">&nbsp;</td>
+								  <td width="40">C&oacute;digo&nbsp;</td>
+								  <td width="100"><INPUT TYPE="text" name="codigo" style="width:100px;"></td>
+								  <td width="25">&nbsp;</td>
+								  <td width="50">Descripci&oacute;n&nbsp;</td>
+								  <td width="250"><INPUT TYPE="text" name="descripcion" style="width:250px;"></td>
+								  <td width="25" >&nbsp;</td>
+								  <td width="80"><INPUT TYPE="button"  value="Buscar"></td>
+								  <td ></td>
+								  <td width="70"><INPUT TYPE="button"  value="Generar_PDF"></td>
+								  <td width="370">&nbsp;&nbsp;</td>
+							 </tr>
+							 <tr>
+								  <td colspan="14">&nbsp;&nbsp;</td>
+							 </tr>
+						</table>
                     </div>
                 </td>
             </tr>

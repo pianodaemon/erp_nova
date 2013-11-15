@@ -50,7 +50,8 @@ $(function() {
 	//barra para el buscador 
 	$('#barra_buscador').hide();
 
-
+	
+	var $folio_pedido = $('#lienzo_recalculable').find('input[name=folio_pedido]');
 	var $codigo = $('#lienzo_recalculable').find('input[name=codigo]');
 	var $descripcion = $('#lienzo_recalculable').find('input[name=descripcion]');
 	var $genera_reporte_articulos_resevados = $('#lienzo_recalculable').find('div.articulosreservados').find('table#filtros tr td').find('input[value$=Generar_PDF]');
@@ -62,9 +63,13 @@ $(function() {
 	$genera_reporte_articulos_resevados.click(function(event){
 		event.preventDefault();
 		
+		var folio='0'
 		var cod='0';
 		var desc='0';
 		
+		if($folio_pedido.val()!=''){
+			folio=$folio_pedido.val();
+		}
 		if($codigo.val()!=''){
 			cod=$codigo.val();
 		}
@@ -72,12 +77,13 @@ $(function() {
 			desc=$descripcion.val();
 		}
 		
-		var input_json = config.getUrlForGetAndPost()+'/getallArticulosReservados/'+cod+'/'+desc+'/'+config.getUi()+'/out.json';
+		var input_json = config.getUrlForGetAndPost()+'/getallArticulosReservados/'+folio+'/'+cod+'/'+desc+'/'+config.getUi()+'/out.json';
 		window.location.href=input_json;
 	});
 		
-   articulos_reservados = function($cod,$desc){
+   articulos_reservados = function($folio,$cod,$desc){
 		var arreglo_parametros = {
+			folio:$folio,
 			codigo:$cod,
 			descripcion:$desc,
 			iu:config.getUi()
@@ -242,16 +248,18 @@ $(function() {
 	$Buscar.click(function(event){
 		event.preventDefault();
 		$articulos_reservados.children().remove();
-		$cod=$codigo.val();
-		$desc=$descripcion.val();
-		articulos_reservados($cod,$desc );
+		var $folio=$folio_pedido.val();
+		var $cod=$codigo.val();
+		var $desc=$descripcion.val();
+		articulos_reservados($folio,$cod,$desc );
 	});
 	
 	
+	$(this).aplicarEventoKeypressEjecutaTrigger($folio_pedido, $Buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($codigo, $Buscar);
 	$(this).aplicarEventoKeypressEjecutaTrigger($descripcion, $Buscar);
 	
-	$codigo.focus();
+	$folio_pedido.focus();
 	
 });
         
