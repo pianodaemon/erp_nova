@@ -4307,7 +4307,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer, agregado boolean, "
                 + "cantidad_usada double precision, guardado boolean) order by elemento";
 
-        //System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
+        System.out.println("OrdenProdFormula: "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4540,7 +4540,7 @@ public class ProSpringDao implements ProInterfaceDao{
 
     //metodo para obtener los numeros de lote, de cada produto producido, por la orden de produccion
     private String getLoteProd_OrdenPOroduccion(String folio_op, String inv_mov_tipo,String inv_prod_id,String tipo_doc ) {
-
+        
         String valor_retorno = "0";
 
         String sql_busqueda = "select count (inv_lote.lote_int) as lote from "
@@ -4555,20 +4555,21 @@ public class ProSpringDao implements ProInterfaceDao{
 
         //si rowCount es mayor que cero si se encontro registro y extraemos el valor
         if (rowCount > 0){
-
-            String sql_to_query = "select inv_lote.lote_int from "
-                    + "(select id from inv_oent where inv_mov_tipo_id="+inv_mov_tipo+"  AND tipo_documento="+tipo_doc+" AND folio_documento ilike '"+folio_op+"' ) as oent join "
-                    + "inv_oent_detalle on inv_oent_detalle.inv_oent_id=oent.id AND inv_oent_detalle.inv_prod_id="+inv_prod_id+" "
+            
+            String sql_to_query = ""
+                    + "select inv_lote.lote_int "
+                    + "from (select id from inv_oent where inv_mov_tipo_id="+inv_mov_tipo+"  AND tipo_documento="+tipo_doc+" AND folio_documento ilike '"+folio_op+"' ) as oent "
+                    + "join inv_oent_detalle on inv_oent_detalle.inv_oent_id=oent.id AND inv_oent_detalle.inv_prod_id="+inv_prod_id+" "
                     + "join inv_lote on inv_lote.inv_oent_detalle_id=inv_oent_detalle.id";
-
+            
             //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-            //System.out.println("Ejacutando Guardar:"+sql_to_query);
+            System.out.println("Ejacutando Guardar:"+sql_to_query);
             //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
 
             Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
 
             valor_retorno = update.get("lote_int").toString();
-
+            
         }else{
             valor_retorno="0";
         }
@@ -4612,7 +4613,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "left join pro_estruc on pro_estruc.id=op.pro_estruc_id "
                 + "where op.id="+produccion_id+";";
 
-        //System.out.println("Query produccion: "+sql_query);
+        System.out.println("Query produccion: "+sql_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
@@ -4650,6 +4651,7 @@ public class ProSpringDao implements ProInterfaceDao{
 
                     String lote = "";
                     if(proceso.equals("4")){
+                             //getLoteProd_OrdenPOroduccion(String folio_op,String inv_mov_tipo,String inv_prod_id,String tipo_doc )
                         lote = getLoteProd_OrdenPOroduccion(String.valueOf(rs.getString("folio")), "10",String.valueOf(rs.getInt("inv_prod_id")),"4" );
                     }else{
                         lote = "";

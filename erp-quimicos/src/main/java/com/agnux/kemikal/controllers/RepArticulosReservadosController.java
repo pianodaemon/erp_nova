@@ -113,6 +113,7 @@ public class RepArticulosReservadosController {
     //obtiene datos 
     @RequestMapping(value="/getallArticulosReservados.json", method = RequestMethod.POST)
     public @ResponseBody ArrayList<HashMap<String, String>> getallArticulosReservadosJson(
+            @RequestParam(value="folio", required=true) String folio,
             @RequestParam(value="codigo", required=true) String codigo,
             @RequestParam(value="descripcion", required=true) String descripcion,
             @RequestParam(value="iu", required=true) String id_user_cod,
@@ -128,14 +129,15 @@ public class RepArticulosReservadosController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        ArrayList<HashMap<String, String>> z = this.getPocDao().getReporteArticulosReservados(id_empresa,id_usuario,codigo,descripcion);
+        ArrayList<HashMap<String, String>> z = this.getPocDao().getReporteArticulosReservados(id_empresa,id_usuario,folio,codigo,descripcion);
         return z;
         
     }
     
     
-     @RequestMapping(value = "/getallArticulosReservados/{cod}/{desc}/{iu}/out.json", method = RequestMethod.GET ) 
+     @RequestMapping(value = "/getallArticulosReservados/{folio}/{cod}/{desc}/{iu}/out.json", method = RequestMethod.GET ) 
      public ModelAndView PdfVentasNetasxCliente(
+             @PathVariable("folio") String folio,
              @PathVariable("cod") String codigo,
              @PathVariable("desc") String descripcion,
              @PathVariable("iu") String id_user,
@@ -180,6 +182,10 @@ public class RepArticulosReservadosController {
         datosEncabezadoPie.put("codigo1", "");
         datosEncabezadoPie.put("codigo2","");
         
+        if(folio.equals("0")){
+            folio="";
+        }
+        
         if(codigo.equals("0")){
             codigo="";
         }
@@ -188,7 +194,7 @@ public class RepArticulosReservadosController {
             descripcion="";
         }
         
-        lista_articulos_reservados = this.getPocDao().getReporteArticulosReservados(id_empresa,id_usuario,codigo,descripcion);  //llamando al pocDao
+        lista_articulos_reservados = this.getPocDao().getReporteArticulosReservados(id_empresa,id_usuario,folio,codigo,descripcion);  //llamando al pocDao
          
         //instancia a la clase que construye el pdf de la del reporte de Articulos Reservados
         PdfReporteArticulosReservados x = new PdfReporteArticulosReservados(datosEncabezadoPie, fileout,lista_articulos_reservados,datos);

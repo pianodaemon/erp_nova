@@ -2320,40 +2320,65 @@ public class PocSpringDao implements PocInterfaceDao{
     
     //metodo para reporte de articulos reservados
     @Override
-    public ArrayList<HashMap<String, String>> getReporteArticulosReservados(Integer id_empresa,Integer id_usuario,String codigo, String descripcion) {
+    public ArrayList<HashMap<String, String>> getReporteArticulosReservados(Integer id_empresa,Integer id_usuario, String folio_pedido, String codigo, String descripcion) {
         //System.out.println("Codigo: "+codigo+"Descripcion: "+descripcion);
         String   cadena_where="";
         if(!codigo.equals("")){
-            cadena_where=" and inv_prod.sku ILIKE '%"+codigo +"%'";
+            cadena_where=" and inv_prod.sku ILIKE '%"+codigo.toUpperCase() +"%'";
         }
         
         if(!descripcion.equals("")){
-            cadena_where=" and inv_prod.descripcion ILIKE '%"+descripcion +"%'";
+            cadena_where=cadena_where+" and inv_prod.descripcion ILIKE '%"+descripcion.toUpperCase() +"%'";
+        }
+        
+        if(!folio_pedido.equals("")){
+            cadena_where=cadena_where+" and poc_pedidos.folio ILIKE '%"+folio_pedido.toUpperCase()+"%'";
         }
         
        String sql_to_query =""
-               + "SELECT  "
-                   + "poc_pedidos.id as id_pedido, "
-                   + "poc_pedidos.folio as pedido, "
-                   + "to_char(poc_pedidos.momento_creacion,'dd/mm/yyyy') as fecha, "
-                   + "cxc_clie.razon_social as cliente,  "
-                   + "poc_pedidos_detalle.reservado AS cantidad,  "
-                   + "(case when poc_pedidos.moneda_id=1 then  poc_pedidos_detalle.precio_unitario  else (poc_pedidos_detalle.precio_unitario * tipo_cambio  )end ) as precio_unitario,  "
-                   + "poc_pedidos.moneda_id, "
-                   + "poc_pedidos_detalle.reservado * poc_pedidos_detalle.precio_unitario as importe_sin_checar_tipo_cambio, "
-                   + "(case when poc_pedidos.moneda_id=1 then  poc_pedidos_detalle.reservado * poc_pedidos_detalle.precio_unitario else ((poc_pedidos_detalle.precio_unitario * tipo_cambio )*  poc_pedidos_detalle.reservado )  end) as importe, "
-                   + "inv_prod.sku, "
-                   + "inv_prod.descripcion "
-               + "FROM poc_pedidos_detalle "
-               + "join inv_prod on inv_prod.id = poc_pedidos_detalle.inv_prod_id  "
-               + "join poc_pedidos on poc_pedidos.id =  poc_pedidos_detalle.poc_pedido_id  "
-               + "join cxc_clie on cxc_clie.id = poc_pedidos.cxc_clie_id "
-               + "join erp_proceso on erp_proceso.id = poc_pedidos.proceso_id  "
-               + "WHERE poc_pedidos.cancelado=false AND erp_proceso.proceso_flujo_id IN (2,4,7,8) "
-               + "AND erp_proceso.empresa_id= "+id_empresa +" "+cadena_where+" "
-               + "order by inv_prod.descripcion asc, poc_pedidos.id desc ";
+       + "SELECT  "
+           + "poc_pedidos.id as id_pedido, "
+           + "poc_pedidos.folio as pedido, "
+           + "to_char(poc_pedidos.momento_creacion,'dd/mm/yyyy') as fecha, "
+           + "cxc_clie.razon_social as cliente,  "
+           + "(CASE WHEN uni_prod.id<>uni_venta.id THEN  "
+               + "(CASE WHEN uni_venta.titulo ~* 'LITRO*' THEN  "
+                   + "(poc_pedidos_detalle.reservado / (CASE WHEN inv_prod.densidad=0 THEN 1 ELSE inv_prod.densidad END)) "
+               + "ELSE  "
+                   + "(CASE WHEN uni_venta.titulo ~* 'KILO*' THEN  "
+                        + "(poc_pedidos_detalle.reservado * (CASE WHEN inv_prod.densidad=0 THEN 1 ELSE inv_prod.densidad END)) "
+                   + "ELSE  "
+                        + "poc_pedidos_detalle.reservado "
+                   + "END) "
+               + "END) "
+           + "ELSE "
+                + "poc_pedidos_detalle.reservado	 "
+           + "END ) AS cantidad, "
+           //+ "poc_pedidos_detalle.reservado AS cantidad,  "
+           + "(case when poc_pedidos.moneda_id=1 then  poc_pedidos_detalle.precio_unitario  else (poc_pedidos_detalle.precio_unitario * tipo_cambio  )end ) as precio_unitario,  "
+           + "poc_pedidos.moneda_id, "
+           + "(CASE WHEN uni_prod.id<>uni_venta.id THEN (CASE WHEN uni_venta.titulo ~* 'LITRO*' THEN (poc_pedidos_detalle.reservado / (CASE WHEN inv_prod.densidad=0 THEN 1 ELSE inv_prod.densidad END))ELSE (CASE WHEN uni_venta.titulo ~* 'KILO*' THEN (poc_pedidos_detalle.reservado * (CASE WHEN inv_prod.densidad=0 THEN 1 ELSE inv_prod.densidad END)) ELSE poc_pedidos_detalle.reservado END) END) ELSE poc_pedidos_detalle.reservado END) * poc_pedidos_detalle.precio_unitario as importe_sin_checar_tipo_cambio,  "
+           //+ "(case when poc_pedidos.moneda_id=1 then  poc_pedidos_detalle.reservado * poc_pedidos_detalle.precio_unitario else ((poc_pedidos_detalle.precio_unitario * tipo_cambio )*  poc_pedidos_detalle.reservado )  end) as importe, "
+           + "(case when poc_pedidos.moneda_id=1 then  "
+                + "(poc_pedidos_detalle.precio_unitario * (CASE WHEN uni_prod.id<>uni_venta.id THEN (CASE WHEN uni_venta.titulo ~* 'LITRO*' THEN (poc_pedidos_detalle.reservado / (CASE WHEN inv_prod.densidad=0 THEN 1 ELSE inv_prod.densidad END))ELSE (CASE WHEN uni_venta.titulo ~* 'KILO*' THEN (poc_pedidos_detalle.reservado * (CASE WHEN inv_prod.densidad=0 THEN 1 ELSE inv_prod.densidad END)) ELSE poc_pedidos_detalle.reservado END) END) ELSE poc_pedidos_detalle.reservado END)) "
+           + "else "
+                + "((poc_pedidos_detalle.precio_unitario * tipo_cambio ) *  (CASE WHEN uni_prod.id<>uni_venta.id THEN (CASE WHEN uni_venta.titulo ~* 'LITRO*' THEN (poc_pedidos_detalle.reservado / (CASE WHEN inv_prod.densidad=0 THEN 1 ELSE inv_prod.densidad END))ELSE (CASE WHEN uni_venta.titulo ~* 'KILO*' THEN (poc_pedidos_detalle.reservado * (CASE WHEN inv_prod.densidad=0 THEN 1 ELSE inv_prod.densidad END)) ELSE poc_pedidos_detalle.reservado END) END) ELSE poc_pedidos_detalle.reservado END) )  "
+           + "end) as importe,"
+           + "inv_prod.sku, "
+           + "inv_prod.descripcion, "
+           + "(CASE WHEN uni_venta.decimales IS NULL THEN 0 ELSE uni_venta.decimales END) AS no_dec "
+       + "FROM poc_pedidos_detalle "
+       + "join inv_prod on inv_prod.id = poc_pedidos_detalle.inv_prod_id  "
+       + "join poc_pedidos on poc_pedidos.id =  poc_pedidos_detalle.poc_pedido_id  "
+       + "join cxc_clie on cxc_clie.id = poc_pedidos.cxc_clie_id "
+       + "join erp_proceso on erp_proceso.id = poc_pedidos.proceso_id  "
+       + "join inv_prod_unidades AS uni_prod on uni_prod.id=inv_prod.unidad_id "
+       + "join inv_prod_unidades AS uni_venta on uni_venta.id=poc_pedidos_detalle.inv_prod_unidad_id "
+       + "WHERE poc_pedidos.cancelado=false AND erp_proceso.proceso_flujo_id IN (2,4,7,8) "
+       + "AND erp_proceso.empresa_id= "+id_empresa +" "+cadena_where+" "
+       + "order by inv_prod.descripcion asc, poc_pedidos.id desc ";
        
-       //System.out.println("Articulos Reservados:"+ sql_to_query);
+       System.out.println("ArticulosReservados: "+ sql_to_query);
        
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,
@@ -2365,12 +2390,13 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("pedido",rs.getString("pedido"));
                     row.put("fecha",rs.getString("fecha"));
                     row.put("cliente",rs.getString("cliente"));
-                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),2));
-                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),2));
-                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),rs.getInt("no_dec")));
+                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4));
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4));
                     row.put("sku",rs.getString("sku"));
                     row.put("descripcion",rs.getString("descripcion"));
-
+                    
                     return row;
                 }
             }

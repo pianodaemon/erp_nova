@@ -125,7 +125,7 @@ public class PdfReporteArticulosReservados {
 
                  if(!Producto.equals(registro.get("descripcion").toString()) ){
                          if (tmp == 0){
-
+                             
                               cell = new PdfPCell(new Paragraph(registro.get("descripcion").toString(),smallFont));
                               cell.setUseAscender(true);
                               cell.setHorizontalAlignment(Element.ALIGN_LEFT);
