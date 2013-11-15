@@ -481,8 +481,6 @@ public class PdfProOrdenProduccion {
                     }
                 }
                 
-                
-                
                 reporte.add(tablaFormX);
                 
                 
@@ -672,6 +670,12 @@ public class PdfProOrdenProduccion {
                                 texto_especificacion = "header";
                              }//comentado por mi 17 dec 201
                                 
+                             
+                             String res_tmp ="";
+                             TablaPDF tabla_tmp = new TablaPDF();
+                             
+                             res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("fineza_inicial"), registrotmp.get("fineza_final"), "Micras");
+                             if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para fineza
                                 celdaXX = new PdfPCell(new Paragraph("FINEZA: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -681,7 +685,7 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //fineza
-                                String res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("fineza_inicial"), registrotmp.get("fineza_final"), "Micras");
+                                
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -700,7 +704,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //fineza
-                                TablaPDF tabla_tmp = new TablaPDF();
                                 celdaXX = new PdfPCell(tabla_tmp.addResultadosAnalisis(especificaciones_produccion, "fineza1"));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -715,9 +718,12 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                             }
+                             
+
                                 
-                                
-                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("viscosidads_inicial"), registrotmp.get("viscosidads_final"), "Segundos");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para VISCOSIDAD
                                 celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -727,7 +733,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //VISCOSIDAD
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("viscosidads_inicial"), registrotmp.get("viscosidads_final"), "Segundos");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -759,9 +764,12 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            }
                                 
+                            
                                 
-                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("viscosidadku_inicial"), registrotmp.get("viscosidadku_final"), "KU");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para VISCOSIDAD KU
                                 celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -771,7 +779,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //VISCOSIDAD KU
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("viscosidadku_inicial"), registrotmp.get("viscosidadku_final"), "KU");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -803,10 +810,13 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            }    
+
                                 
                                 
                                 
-                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("viscosidadcps_inicial"), registrotmp.get("viscosidadcps_final"), "CPS");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para VISCOSIDAD CPS
                                 celdaXX = new PdfPCell(new Paragraph("VISCOSIDAD: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -816,7 +826,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //VISCOSIDAD CPS
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("viscosidadcps_inicial"), registrotmp.get("viscosidadcps_final"), "CPS");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -848,9 +857,14 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            } 
+
                                 
                                 
                                 
+                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("densidad_inicial"), registrotmp.get("densidad_final"), "Kg\\/L");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para DENSIDAD
                                 celdaXX = new PdfPCell(new Paragraph("DENSIDAD: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -860,7 +874,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //DENSIDAD
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("densidad_inicial"), registrotmp.get("densidad_final"), "Kg\\/L");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -892,8 +905,13 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            } 
+
                                 
                                 
+                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("volatiles_inicial"), registrotmp.get("volatiles_final"), "%");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para % No VOLATILES
                                 celdaXX = new PdfPCell(new Paragraph("% No VOLATILES: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -903,7 +921,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //% No VOLATILES
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("volatiles_inicial"), registrotmp.get("volatiles_final"), "%");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -935,11 +952,13 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            } 
+
                                 
                                 
                                 
-                                
-                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("hidrogeno_inicial"), registrotmp.get("hidrogeno_final"), " ");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para pH
                                 celdaXX = new PdfPCell(new Paragraph("pH: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -949,7 +968,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //pH
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("hidrogeno_inicial"), registrotmp.get("hidrogeno_final"), " ");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -981,9 +999,12 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            } 
+
                                 
                                 
-                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("cubriente_inicial"), registrotmp.get("cubriente_final"), "%");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para CUBRIENTE
                                 celdaXX = new PdfPCell(new Paragraph("CUBRIENTE: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -993,7 +1014,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //CUBRIENTE
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("cubriente_inicial"), registrotmp.get("cubriente_final"), "%");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1024,13 +1044,15 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthTop(0);
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
-                                tablaXX.addCell(celdaXX);
+                                tablaXX.addCell(celdaXX);                                
+                            } 
+
                                 
                                 
                                 
                                 
-                                
-                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("tono_inicial"), registrotmp.get("tono_final"), "");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para TONO
                                 celdaXX = new PdfPCell(new Paragraph("TONO: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -1040,7 +1062,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //TONO
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("tono_inicial"), registrotmp.get("tono_final"), "");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1072,10 +1093,12 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            } 
+
                                 
                                 
-                                
-                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("brillo_inicial"), registrotmp.get("brillo_final"), "Unid. de brillo");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para BRILLO
                                 celdaXX = new PdfPCell(new Paragraph("BRILLO: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -1085,7 +1108,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //BRILLO
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("brillo_inicial"), registrotmp.get("brillo_final"), "Unid. de brillo");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1117,12 +1139,18 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            } 
+
                                 
                                 
                                 
                                 
-                                
-                                
+                            if(registrotmp.get("dureza_inicial").equals("N.A.")){
+                                res_tmp = "";
+                            }else{
+                                res_tmp = "DE "+registrotmp.get("dureza_inicial")+" A "+registrotmp.get("dureza_final")+" Letras";
+                            }
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para DUREZA
                                 celdaXX = new PdfPCell(new Paragraph("DUREZA: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -1133,11 +1161,6 @@ public class PdfProOrdenProduccion {
                                 
                                 //DUREZA
                                 System.out.println("DUREZA:  "+registrotmp.get("inst_dureza"));
-                                if(registrotmp.get("dureza_inicial").equals("N.A.")){
-                                    res_tmp = "";
-                                }else{
-                                    res_tmp = "DE "+registrotmp.get("dureza_inicial")+" A "+registrotmp.get("dureza_final")+" Letras";
-                                }
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1169,11 +1192,13 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            } 
+
                                 
                                 
                                 
-                                
-                                
+                            res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("adherencia_inicial"), registrotmp.get("adherencia_final"), "%");
+                            if(!res_tmp.equals("N.A.") && !res_tmp.trim().equals("")){
                                 //columna 1 fil1 para ADHERENCIA
                                 celdaXX = new PdfPCell(new Paragraph("ADHERENCIA: ",smallFont));
                                 celdaXX.setBorderWidthBottom(0);
@@ -1183,7 +1208,6 @@ public class PdfProOrdenProduccion {
                                 tablaXX.addCell(celdaXX);
                                 
                                 //ADHERENCIA
-                                res_tmp = cadena_especificaciones(texto_especificacion, registrotmp.get("adherencia_inicial"), registrotmp.get("adherencia_final"), "%");
                                 celdaXX = new PdfPCell(new Paragraph(res_tmp,smallFont));
                                 celdaXX.setBorderWidthBottom(0);
                                 celdaXX.setBorderWidthTop(0);
@@ -1215,6 +1239,8 @@ public class PdfProOrdenProduccion {
                                 celdaXX.setBorderWidthRight(0);
                                 celdaXX.setBorderWidthLeft(0);
                                 tablaXX.addCell(celdaXX);
+                            } 
+
                                 
                             //}
                             

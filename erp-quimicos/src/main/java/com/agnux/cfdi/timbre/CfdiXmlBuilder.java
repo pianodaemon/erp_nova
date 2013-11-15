@@ -46,7 +46,36 @@ public class CfdiXmlBuilder {
             //Document tmp = this.getDomImpl().createDocument("http://www.sat.gob.mx/cfd/2", "Comprobante", null);
             Document tmp = this.getDomImpl().createDocument("", "cfdi:Comprobante", null);
             tmp.getDocumentElement().setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
-            tmp.getDocumentElement().setAttribute("xsi:schemaLocation","http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd http://www.sat.gob.mx/detallista http://www.sat.gob.mx/sitio_internet/cfd/detallista/detallista.xsd http://www.sat.gob.mx/ecc http://www.sat.gob.mx/sitio_internet/cfd/ecc/ecc.xsd http://www.sat.gob.mx/terceros http://www.sat.gob.mx/sitio_internet/cfd/terceros/terceros11.xsd http://www.sat.gob.mx/implocal http://www.sat.gob.mx/sitio_internet/cfd/implocal/implocal.xsd http://www.buzonfiscal.com/ns/addenda/bf/2 http://www.buzonfiscal.com/schema/xsd/Addenda_BF_v2.2.xsd http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/TimbreFiscalDigital/TimbreFiscalDigital.xsd http://www.sat.gob.mx/iedu http://www.sat.gob.mx/sitio_internet/cfd/iedu/iedu.xsd http://www.sat.gob.mx/ventavehiculos http://www.sat.gob.mx/sitio_internet/cfd/ventavehiculos/ventavehiculos.xsd http://http://www.sat.gob.mx/TuristaPasajeroExtranjero http://www.sat.gob.mx/sitio_internet/cfd/TuristaPasajeroExtranjero/TuristaPasajeroExtranjero.xsd http://www.sat.gob.mx/pfic http://www.sat.gob.mx/sitio_internet/cfd/pfic/pfic.xsd http://www.sat.gob.mx/leyendasFiscales http://www.sat.gob.mx/sitio_internet/cfd/leyendasFiscales/leyendasFisc.xsd http://www.sat.gob.mx/donat http://www.sat.gob.mx/sitio_internet/cfd/donat/donat11.xsd http://www.sat.gob.mx/divisas http://www.sat.gob.mx/sitio_internet/cfd/divisas/Divisas.xsd http://www.buzonfiscal.com/ns/addenda/bf/3 http://www.buzonfiscal.com/schema/xsd/Addenda_BF_v3.xsd");
+            tmp.getDocumentElement().setAttribute("xsi:schemaLocation","http://www.sat.gob.mx/cfd/3 "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd "
+            + "http://www.sat.gob.mx/detallista "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/detallista/detallista.xsd "
+            + "http://www.sat.gob.mx/ecc "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/ecc/ecc.xsd "
+            + "http://www.sat.gob.mx/terceros "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/terceros/terceros11.xsd "
+            + "http://www.sat.gob.mx/implocal "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/implocal/implocal.xsd "
+            + "http://www.buzonfiscal.com/ns/addenda/bf/2 "
+            + "http://www.buzonfiscal.com/schema/xsd/Addenda_BF_v2.2.xsd "
+            + "http://www.sat.gob.mx/TimbreFiscalDigital "
+            + "http://www.sat.gob.mx/sitio_internet/TimbreFiscalDigital/TimbreFiscalDigital.xsd "
+            + "http://www.sat.gob.mx/iedu "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/iedu/iedu.xsd "
+            + "http://www.sat.gob.mx/ventavehiculos "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/ventavehiculos/ventavehiculos.xsd "
+            + "http://www.sat.gob.mx/TuristaPasajeroExtranjero "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/TuristaPasajeroExtranjero/TuristaPasajeroExtranjero.xsd "
+            + "http://www.sat.gob.mx/pfic "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/pfic/pfic.xsd "
+            + "http://www.sat.gob.mx/leyendasFiscales "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/leyendasFiscales/leyendasFisc.xsd "
+            + "http://www.sat.gob.mx/donat "
+            + "http://www.sat.gob.mx/sitio_internet/cfd/donat/donat11.xsd "
+            //+ "http://www.sat.gob.mx/divisas "
+            //+ "http://www.sat.gob.mx/sitio_internet/cfd/divisas/Divisas.xsd "
+            + "http://www.buzonfiscal.com/ns/addenda/bf/3 "
+            + "http://www.buzonfiscal.com/schema/xsd/Addenda_BF_v3.xsd");
             //http://www.sat.gob.mx/ecb http://www.sat.gob.mx/sitio_internet/cfd/ecb/ecb.xsd (Derogado a partir del 1 de julio 2013)
             //tmp.getDocumentElement().setAttribute("xmlns:ecb","http://www.sat.gob.mx/ecb");
             tmp.getDocumentElement().setAttribute("xmlns:implocal","http://www.sat.gob.mx/implocal");
@@ -59,7 +88,7 @@ public class CfdiXmlBuilder {
             tmp.getDocumentElement().setAttribute("xmlns:iedu","http://www.sat.gob.mx/iedu");
             tmp.getDocumentElement().setAttribute("xmlns:donat","http://www.sat.gob.mx/donat");
             tmp.getDocumentElement().setAttribute("xmlns:terceros","http://www.sat.gob.mx/terceros");
-            tmp.getDocumentElement().setAttribute("xmlns:divisas","http://www.sat.gob.mx/divisas");
+            //tmp.getDocumentElement().setAttribute("xmlns:divisas","http://www.sat.gob.mx/divisas");
             tmp.getDocumentElement().setAttribute("xmlns:tpe","http://www.sat.gob.mx/TuristaPasajeroExtranjero");
             tmp.getDocumentElement().setAttribute("xmlns:cfdi","http://www.sat.gob.mx/cfd/3");
             tmp.getDocumentElement().setAttribute("xmlns:ecc","http://www.sat.gob.mx/ecc");

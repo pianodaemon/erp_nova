@@ -857,7 +857,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     + "where pro_estruc_det.pro_estruc_id="+formula_id+" "
                 + ") AS sbt order by elemento;";
         
-        System.out.println("DatosFormula: "+sql_query);
+        //System.out.println("DatosFormula: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -887,7 +887,7 @@ public class ProSpringDao implements ProInterfaceDao{
         );
         return hm_grid;
     }
-
+    
     //metodo para obtener los componentes de la formula de tipo intermedio
     private ArrayList<HashMap<String, String>> getInv_ListaProductosFormulaIntermedioPdf(String formula_id, String tipo_cambio, String ano, String mes, String cantFormula) {
 
@@ -962,7 +962,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + ") AS sbt order by elemento;";
         
         
-        System.out.println("DatosIntermedio: "+sql_query);
+        //System.out.println("DatosIntermedio: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -1040,7 +1040,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join pro_proc_esp on pro_proc_esp.pro_subproceso_prod_id=pro_subproceso_prod.id "
                 + "where pro_subproceso_prod.pro_estruc_id="+formula_id+" limit 1";
         
-        System.out.println("buscarEspecificaciones: "+sql_busqueda);
+        //System.out.println("buscarEspecificaciones: "+sql_busqueda);
         
         //esto es para revisar que exista el registro
         int rowCount = this.getJdbcTemplate().queryForInt(sql_busqueda);
@@ -1074,7 +1074,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     + "pro_subproceso_prod.pro_subprocesos_id=pro_subprocesos.id where pro_subproceso_prod.pro_estruc_id="+formula_id+" order by "
                     + "pro_proc_esp.id, pro_subprocesos.id";
 
-            System.out.println("getEspecificaciones: "+sql_query);
+            //System.out.println("getEspecificaciones: "+sql_query);
             hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_query,
                 new Object[]{}, new RowMapper() {
@@ -1088,10 +1088,10 @@ public class ProSpringDao implements ProInterfaceDao{
                         */
 
                         row.put("id", String.valueOf(rs.getInt("id")));
-                        row.put("fineza_inicial", String.valueOf(rs.getInt("fineza_inicial")));
-                        row.put("viscosidads_inicial", String.valueOf(rs.getInt("viscosidads_inicial")));
+                        row.put("fineza_inicial", String.valueOf(rs.getDouble("fineza_inicial")));
+                        row.put("viscosidads_inicial", String.valueOf(rs.getDouble("viscosidads_inicial")));
                         row.put("viscosidadku_inicial", String.valueOf(rs.getDouble("viscosidadku_inicial")));
-                        row.put("viscosidadcps_inicial", String.valueOf(rs.getInt("viscosidadcps_inicial")));
+                        row.put("viscosidadcps_inicial", String.valueOf(rs.getDouble("viscosidadcps_inicial")));
                         row.put("densidad_inicial", String.valueOf(rs.getDouble("densidad_inicial")));
                         row.put("volatiles_inicial", String.valueOf(rs.getDouble("volatiles_inicial")));
                         row.put("hidrogeno_inicial", String.valueOf(rs.getDouble("hidrogeno_inicial")));
@@ -1100,11 +1100,11 @@ public class ProSpringDao implements ProInterfaceDao{
                         row.put("brillo_inicial", String.valueOf(rs.getDouble("brillo_inicial")));
                         row.put("dureza_inicial", rs.getString("dureza_inicial"));
                         row.put("adherencia_inicial", String.valueOf(rs.getDouble("adherencia_inicial")));
-
-                        row.put("fineza_final", String.valueOf(rs.getInt("fineza_final")));
-                        row.put("viscosidads_final", String.valueOf(rs.getInt("viscosidads_final")));
+                        
+                        row.put("fineza_final", String.valueOf(rs.getDouble("fineza_final")));
+                        row.put("viscosidads_final", String.valueOf(rs.getDouble("viscosidads_final")));
                         row.put("viscosidadku_final", String.valueOf(rs.getDouble("viscosidadku_final")));
-                        row.put("viscosidadcps_final", String.valueOf(rs.getInt("viscosidadcps_final")));
+                        row.put("viscosidadcps_final", String.valueOf(rs.getDouble("viscosidadcps_final")));
                         row.put("densidad_final", String.valueOf(rs.getDouble("densidad_final")));
                         row.put("volatiles_final", String.valueOf(rs.getDouble("volatiles_final")));
                         row.put("hidrogeno_final", String.valueOf(rs.getDouble("hidrogeno_final")));
@@ -1260,7 +1260,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "pro_instrumentos_tono, pro_instrumentos_brillo, pro_instrumentos_dureza, pro_instrumentos_adherencia, "
                 + "pro_instrumentos_hidrogeno from pro_proc_esp where pro_proceso_id="+id;
         
-        System.out.println("getSubprocesoEspecificaciones: "+sql_to_query);
+        //System.out.println("getSubprocesoEspecificaciones: "+sql_to_query);
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1270,7 +1270,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("id",String.valueOf(rs.getInt("id")));
-                    row.put("fineza_inicial",String.valueOf(rs.getInt("fineza_inicial")));
+                    row.put("fineza_inicial",String.valueOf(rs.getDouble("fineza_inicial")));
                     row.put("viscosidads_inicial",String.valueOf(rs.getDouble("viscosidads_inicial")));
                     row.put("viscosidadku_inicial",String.valueOf(rs.getDouble("viscosidadku_inicial")));
                     row.put("viscosidadcps_inicial",String.valueOf(rs.getDouble("viscosidadcps_inicial")));
@@ -1283,7 +1283,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     row.put("dureza_inicial",rs.getString("dureza_inicial"));
                     row.put("adherencia_inicial",String.valueOf(rs.getDouble("adherencia_inicial")));
 
-                    row.put("fineza_final",String.valueOf(rs.getInt("fineza_final")));
+                    row.put("fineza_final",String.valueOf(rs.getDouble("fineza_final")));
                     row.put("viscosidads_final",String.valueOf(rs.getDouble("viscosidads_final")));
                     row.put("viscosidadku_final",String.valueOf(rs.getDouble("viscosidadku_final")));
                     row.put("viscosidadcps_final",String.valueOf(rs.getDouble("viscosidadcps_final")));
