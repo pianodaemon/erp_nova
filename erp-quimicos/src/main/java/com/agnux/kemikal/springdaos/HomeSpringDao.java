@@ -53,7 +53,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
         +"JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
         +"WHERE gral_usr.username ILIKE '"+name+"';";
         
-        log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
             sql_to_query, 

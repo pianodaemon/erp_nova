@@ -96,15 +96,16 @@ public class InvControlCostosController {
         infoConstruccionTabla.put("descripcion","Descripci&oacute;n:150");
         infoConstruccionTabla.put("unidad", "Unidad:80");
         infoConstruccionTabla.put("presentacion", "Presentaci&oacute;n:100");
-        infoConstruccionTabla.put("orden_compra", "O.C.:90");
-        infoConstruccionTabla.put("factura_prov", "Fac. Prov.:90");
-        infoConstruccionTabla.put("moneda", "Moneda:65");
-        infoConstruccionTabla.put("tipo_cambio", "T.C.:70");
-        infoConstruccionTabla.put("costo", "C.U.:70");
-        infoConstruccionTabla.put("costo_importacion", "I.G.I.:70");
-        infoConstruccionTabla.put("costo_directo", "G.I.:70");
-        infoConstruccionTabla.put("costo_referencia", "C.I.T.:70");
-        infoConstruccionTabla.put("precio_minimo", "P.M.:90");
+        infoConstruccionTabla.put("orden_compra", "O.C.:80");
+        infoConstruccionTabla.put("factura_prov", "Fac. Prov.:80");
+        infoConstruccionTabla.put("moneda", "Moneda:60");
+        infoConstruccionTabla.put("tipo_cambio", "T.C.:50");
+        infoConstruccionTabla.put("costo", "C.U.:65");
+        infoConstruccionTabla.put("costo_importacion", "I.G.I.:60");
+        infoConstruccionTabla.put("costo_directo", "G.I.:60");
+        infoConstruccionTabla.put("costo_adic", "C.A.:60");
+        infoConstruccionTabla.put("costo_referencia", "C.I.T.:65");
+        infoConstruccionTabla.put("precio_minimo", "P.M.:80");
         infoConstruccionTabla.put("moneda_pm", "Moneda&nbsp;P.M.:90");
         
         
@@ -389,6 +390,7 @@ public class InvControlCostosController {
             @RequestParam(value="directo", required=true) String directo,
             @RequestParam(value="pminimo", required=true) String pminimo,
             @RequestParam(value="tc", required=true) String tc,
+            @RequestParam(value="costo_adic", required=true) String costo_adic,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
         ) {
@@ -425,7 +427,7 @@ public class InvControlCostosController {
         }
         
         
-        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___%"+producto+"%___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tc+"___"+codigo+"___"+ano+"___"+mes;
+        String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___%"+producto+"%___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tc+"___"+codigo+"___"+ano+"___"+mes+"___"+costo_adic;
         
         productos = this.getInvDao().selectFunctionForInvReporte(app_selected, data_string);
         
@@ -453,6 +455,7 @@ public class InvControlCostosController {
             @RequestParam(value="costo_directo", required=true) String costo_directo,
             @RequestParam(value="precio_minimo", required=true) String precio_minimo,
             @RequestParam(value="tipo_cambio", required=true) String tipo_cambio,
+            @RequestParam(value="costo_adic", required=true) String costo_adic,
             @ModelAttribute("user") UserSessionData user,
             Model model
         ) {
@@ -469,7 +472,7 @@ public class InvControlCostosController {
             
             command_selected = "edit";
             
-            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+select_tipo_prod+"___"+select_marca+"___"+select_familia+"___"+select_subfamilia+"___%"+producto+"%___%"+codigo+"%___"+select_presentacion+"___"+tipo_costo+"___"+costo_importacion+"___"+costo_directo+"___"+precio_minimo;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+select_tipo_prod+"___"+select_marca+"___"+select_familia+"___"+select_subfamilia+"___%"+producto+"%___%"+codigo+"%___"+select_presentacion+"___"+tipo_costo+"___"+costo_importacion+"___"+costo_directo+"___"+precio_minimo+"___"+costo_adic;
             
             actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
             

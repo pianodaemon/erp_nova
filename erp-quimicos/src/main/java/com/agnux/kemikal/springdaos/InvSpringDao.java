@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -82,7 +83,7 @@ public class InvSpringDao implements InvInterfaceDao{
     public String selectFunctionForApp_MovimientosInventario(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from inv_adm_movimientos('"+campos_data+"',array["+extra_data_array+"]);";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-        System.out.println("getInvMovimientos:"+sql_to_query);
+        //System.out.println("getInvMovimientos:"+sql_to_query);
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -122,7 +123,7 @@ public class InvSpringDao implements InvInterfaceDao{
         String sql_to_query = "";
 
         if(id_app==125){
-            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY descripcion;";
+            sql_to_query = "select * from inv_reporte('"+campos_data+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo_adic double precision, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY descripcion;";
             //System.out.println("InvReporte: "+sql_to_query);
 
             ArrayList<HashMap<String, String>> hm125 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -140,6 +141,7 @@ public class InvSpringDao implements InvInterfaceDao{
                         row.put("orden_compra",rs.getString("orden_compra"));
                         row.put("factura_prov",rs.getString("factura_prov"));
                         row.put("moneda",rs.getString("moneda"));
+                        row.put("costo_adic",StringHelper.roundDouble(rs.getDouble("costo_adic"),2));
                         row.put("costo",StringHelper.roundDouble(rs.getDouble("costo"),2));
                         row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
                         row.put("costo_importacion",StringHelper.roundDouble(rs.getDouble("costo_importacion"),2));
@@ -247,7 +249,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                         +"moneda_id integer,"
                                         +"simbolo_moneda character varying "
                                     +") ORDER BY descripcion ASC;";
-            System.out.println("InvReporte: "+sql_to_query);
+            //System.out.println("InvReporte: "+sql_to_query);
 
             ArrayList<HashMap<String, String>> hm133 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,
@@ -289,7 +291,7 @@ public class InvSpringDao implements InvInterfaceDao{
 					+"exis_pres double precision, "
 					+"exis_uni double precision "
                                     +") ORDER BY descripcion ASC;";
-            System.out.println("InvExiPres: "+sql_to_query);
+            //System.out.println("InvExiPres: "+sql_to_query);
 
             ArrayList<HashMap<String, String>> hm139 = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,
@@ -7548,7 +7550,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "WHERE inv_otras_det.inv_otras_id=? "
                 + "ORDER BY inv_otras_det.id;";
 
-        //System.out.println(sql_to_query);
+        System.out.println(sql_to_query);
 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -7617,7 +7619,7 @@ public class InvSpringDao implements InvInterfaceDao{
 
         if(orderBy.equals("id")) orderBy="descripcion";
 
-        String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
+        String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(producto_id integer, codigo character varying, descripcion character varying, unidad character varying, presentacion_id integer, presentacion character varying, orden_compra character varying, factura_prov character varying, moneda character varying, costo_adic double precision, costo double precision, tipo_cambio double precision, moneda_id integer, costo_importacion double precision, costo_directo double precision, costo_referencia double precision, precio_minimo double precision, moneda_pm character varying  ) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
         //System.out.println("ControlCostos_PaginaGrid: "+sql_to_query);
 
         ArrayList<HashMap<String, Object>> hm125 = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -7635,6 +7637,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("orden_compra",rs.getString("orden_compra"));
                     row.put("factura_prov",rs.getString("factura_prov"));
                     row.put("moneda",rs.getString("moneda"));
+                    row.put("costo_adic",StringHelper.roundDouble(rs.getDouble("costo_adic"),2));
                     row.put("costo",StringHelper.roundDouble(rs.getDouble("costo"),2));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
                     row.put("costo_importacion",StringHelper.roundDouble(rs.getDouble("costo_importacion"),2));
@@ -7744,12 +7747,12 @@ public class InvSpringDao implements InvInterfaceDao{
     //metodo  para el grid y paginado
     @Override
     public ArrayList<HashMap<String, Object>> getInvActualizaPrecio_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
-
+        
         if(orderBy.equals("id")) orderBy="descripcion";
-
+        
         String sql_to_query = "select * from inv_reporte('"+data_string+"')as foo(prod_id integer, codigo character varying, descripcion character varying, unidad character varying, pres_id integer, presentacion character varying, moneda_id integer, moneda character varying, tc double precision, precio_minimo double precision) ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?;";
         //System.out.println("getInvActualizaPrecio: "+sql_to_query);
-
+        
         ArrayList<HashMap<String, Object>> hm125 = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(pageSize),new Integer(offset)}, new RowMapper(){
@@ -7773,9 +7776,9 @@ public class InvSpringDao implements InvInterfaceDao{
         return hm125;
     }
     //------------termina metodos para aplicativo Actualizador de Precios
-
-
-
+    
+    
+    
     //Metodo que extrae losmovimientos
     @Override
     public ArrayList<HashMap<String, String>> getMovimientos(Integer tipo_movimiento,Integer id_almacen,String codigo, String descripcion,String fecha_inicial,String fecha_final ,Integer id_empresa, Integer id_usuario) {
@@ -7870,30 +7873,27 @@ public class InvSpringDao implements InvInterfaceDao{
     }
     
     
-    //busca datos de un producto para agregar al grid de Captura de Costos
+    
+    //Obtiene el costo de un producto al seleccionar editar un registro del grid
     @Override
-    public ArrayList<HashMap<String, String>> getInvCapturaCosto_DatosProducto(String sku, Integer idEmp, Integer mesActual, Integer anoActual) {
-
+    public ArrayList<HashMap<String, String>> getInvCapturaCosto_CostoProducto(Integer id, Integer anoActual, Integer mesActual) {
         String sql_to_query = ""
-                + "SELECT "
-                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
-                    + "inv_prod.id AS id_prod, "
-                    + "inv_prod.sku AS codigo, "
-                    + "inv_prod.descripcion,"
-                    + "inv_prod_unidades.titulo AS unidad, "
-                    + "inv_prod_unidades.decimales AS no_dec, "
-                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo_ultimo, "
-                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
-                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc "
-                + "FROM inv_prod "
-                + "LEFT JOIN inv_prod_cost_prom ON inv_prod_cost_prom.inv_prod_id=inv_prod.id "
-                + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
-                + "WHERE inv_prod.empresa_id="+idEmp+" "
-                + "AND inv_prod.borrado_logico=FALSE "
-                + "AND inv_prod_cost_prom.ano="+anoActual+" "
-                + "AND inv_prod.sku='"+sku+"' "
-                + "ORDER BY inv_prod.descripcion;";
-        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        + "SELECT "
+            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
+            + "inv_prod.id AS id_prod, "
+            + "inv_prod.sku AS codigo, "
+            + "inv_prod.descripcion,"
+            + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad, "
+            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
+            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo_ultimo, "
+            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
+            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc "
+        + "FROM inv_prod "
+        + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano="+anoActual+") "
+        + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
+        + "WHERE inv_prod_cost_prom.id="+id+" "
+        + "ORDER BY inv_prod.descripcion LIMIT 1;";
+        //System.out.println("costoProd: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -7916,6 +7916,60 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm;
     }
+    
+    
+    
+    
+    
+    //Busca datos de un producto para agregar al grid de Captura de Costos
+    @Override
+    public ArrayList<HashMap<String, String>> getInvCapturaCosto_DatosProducto(String sku, Integer idEmp, Integer mesActual, Integer anoActual) {
+        
+        String sql_to_query = ""
+        + "SELECT "
+            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
+            + "inv_prod.id AS id_prod, "
+            + "inv_prod.sku AS codigo, "
+            + "inv_prod.descripcion,"
+            + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad, "
+            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
+            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo_ultimo, "
+            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
+            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc "
+        + "FROM inv_prod "
+        + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano="+anoActual+") "
+        + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
+        + "WHERE inv_prod.sku='"+sku+"' AND inv_prod.empresa_id="+idEmp+" AND inv_prod.borrado_logico=FALSE "
+        + "ORDER BY inv_prod.descripcion;";
+        //System.out.println("datosProd: "+sql_to_query);
+        
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id_reg",String.valueOf(rs.getInt("id_reg")));
+                    row.put("id_prod",String.valueOf(rs.getInt("id_prod")));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("unidad",rs.getString("unidad"));
+                    row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
+                    row.put("costo_ultimo",StringHelper.roundDouble(rs.getString("costo_ultimo"),2));
+                    row.put("idMon",String.valueOf(rs.getInt("idMon")));
+                    row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
+    
     
     
     
@@ -7953,5 +8007,4 @@ public class InvSpringDao implements InvInterfaceDao{
         return data;
     }
     
-
 }

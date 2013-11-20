@@ -4,7 +4,6 @@
  */
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
-import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.DataPost;
@@ -13,13 +12,7 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
-import com.agnux.kemikal.reportes.PdfAjusteInventario;
-import com.itextpdf.text.DocumentException;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,9 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -96,7 +87,7 @@ public class InvCapturaCostosController {
         infoConstruccionTabla.put("moneda", "Moneda:120");
         infoConstruccionTabla.put("tc", "Tipo Cambio:100");
         infoConstruccionTabla.put("costo","Costo:100");
-        infoConstruccionTabla.put("fecha", "Fecha Actualizaci&oacute;n:120");
+        infoConstruccionTabla.put("fecha", "Fecha Actualizaci&oacute;n:130");
         
         ModelAndView x = new ModelAndView("invcapturacostos/startup", "title", "Captura de Costo");
         
@@ -210,20 +201,34 @@ public class InvCapturaCostosController {
         log.log(Level.INFO, "Ejecutando getCostoJson de {0}", InvCapturaCostosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>(); 
+        ArrayList<HashMap<String, String>> costoProd = new ArrayList<HashMap<String, String>>(); 
+        ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         if( identificador != 0 ){
-            //datosGrid = this.getInvDao().getInvAjustes_DatosGrid(identificador, datosAjuste.get(0).get("fecha_ajuste"), Integer.parseInt(datosAjuste.get(0).get("id_almacen")) );
+            //Aquí solo debe entrar cuando es EDITAR.
+            //Convertir en arreglo la fecha actual
+            String f [] = TimeHelper.getFechaActualYMD().split("-");
+            
+            //Tomar el año actual
+            Integer ano_actual=Integer.parseInt(f[0]);
+            
+            //Tomar el mes actual
+            Integer mes_actual=Integer.parseInt(f[1]);
+            
+            costoProd = this.getInvDao().getInvCapturaCosto_CostoProducto(identificador, ano_actual, mes_actual);
         }
         
-        jsonretorno.put("DatosGrid", datosGrid);
+        monedas = this.getInvDao().getMonedas();
+        
+        jsonretorno.put("Monedas", monedas);
+        jsonretorno.put("Costo", costoProd);
         
         return jsonretorno;
     }
@@ -233,7 +238,7 @@ public class InvCapturaCostosController {
     
     
     
-    //obtiene los productos para el buscador
+    //Obtiene los productos para el buscador
     @RequestMapping(method = RequestMethod.POST, value = "/getBuscadorProductos.json")
     public @ResponseBody
     HashMap<String, ArrayList<HashMap<String, String>>> getBuscadorProductosJson(
@@ -264,7 +269,7 @@ public class InvCapturaCostosController {
     
     
     
-    //obtiene datos del producto a agregar
+    //Obtiene datos del producto a agregar
     @RequestMapping(method = RequestMethod.POST, value="/getDatosProducto.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosProductoJson(
             @RequestParam(value="sku", required=true) String sku,
@@ -278,29 +283,86 @@ public class InvCapturaCostosController {
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        //convertir en arreglo la fecha que viene de la vista
+        //Convertir en arreglo la fecha actual
         String f [] = TimeHelper.getFechaActualYMD().split("-");
         
-        //tomar el año actual
+        //Tomar el año actual
         Integer ano_actual=Integer.parseInt(f[0]);
-
-        //tomar el mes actual
+        
+        //Tomar el mes actual
         Integer mes_actual=Integer.parseInt(f[1]);
         
         datos = this.getInvDao().getInvCapturaCosto_DatosProducto(sku.toUpperCase(), id_empresa, mes_actual, ano_actual);
         monedas = this.getInvDao().getMonedas();
         
         jsonretorno.put("Producto", datos);
-        jsonretorno.put("Monedas", monedas);
+        //jsonretorno.put("Monedas", monedas);
         
         return jsonretorno;
     }
     
+    
+    
+    
+    //Edicion y nuevo
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="identificador", required=true) Integer identificador,
+            @RequestParam(value="idreg", required=false) String[] idreg,
+            @RequestParam(value="idprod", required=false) String[] idprod,
+            @RequestParam(value="costo_ultimo", required=false) String[] costo_ultimo,
+            @RequestParam(value="selectMon", required=false) String[] selectMon,
+            @RequestParam(value="tc", required=false) String[] tc,
+            @RequestParam(value="notr", required=false) String[] notr,
+            @ModelAttribute("user") UserSessionData user
+        ) {
+        
+        //System.out.println("Actualizar costos");
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        HashMap<String, String> succes = new HashMap<String, String>();
+        
+        //Aplicativo para Captura de Costos(INV)
+        Integer app_selected = 145;
+        
+        //Aqui le dejamos por default "edit", porque siempre seran actualizaciones de registros
+        String command_selected = "edit";
+        Integer id_usuario= user.getUserId();//variable para el id  del usuario
+        
+        String arreglo[];
+        arreglo = new String[idreg.length];
+        
+        for(int i=0; i<idreg.length; i++) { 
+            selectMon[i] = StringHelper.verificarSelect(selectMon[i]);
+            arreglo[i]= "'"+idreg[i] +"___" + idprod[i] +"___" + costo_ultimo[i] +"___" + selectMon[i] +"___" + tc[i] +"___" + notr[i] +"'";
+            //System.out.println(arreglo[i]);
+        }
+        
+        //Serializar el arreglo
+        String extra_data_array = StringUtils.join(arreglo, ",");
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador;
+        
+        //System.out.println("data_string: "+data_string);
+        succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
+        String actualizo = "0";
+        
+        if( String.valueOf(succes.get("success")).equals("true") ){
+            actualizo = this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string, extra_data_array);
+            jsonretorno.put("actualizo",String.valueOf(actualizo));
+        }
+        
+        jsonretorno.put("success",String.valueOf(succes.get("success")));
+        
+        log.log(Level.INFO, "Salida json {0}", String.valueOf(jsonretorno.get("success")));
+        return jsonretorno;
+    }
     
     
     

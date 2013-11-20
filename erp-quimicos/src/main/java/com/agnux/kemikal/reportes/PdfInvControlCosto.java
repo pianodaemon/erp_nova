@@ -92,7 +92,7 @@ public class PdfInvControlCosto {
         
         try {
             HeaderFooter event = new HeaderFooter(this.getDatosHeaderFooter());
-            Document document = new Document(PageSize.LETTER.rotate(),-50,-50,60,30);
+            Document document = new Document(PageSize.LETTER.rotate(),-60,-60,60,30);
             document.addCreator("gpmarsan@gmail.com");
            // Document document =      new Document(PageSize.LETTER.rotate(), -50, -50, 60, 30);
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(this.getFile_out()));
@@ -102,7 +102,7 @@ public class PdfInvControlCosto {
             
             document.open();
             
-            float [] widths = {1,3,1.4f,1.6f,1,1,0.8f,0.8f,1,1,1,1,1,0.8f};
+            float [] widths = {1,3,1.4f,1.6f,1,1,0.8f,0.8f,1,1,1,1,1,1,0.8f};
             PdfPTable table = new PdfPTable(widths);
             table.setKeepTogether(false);
             table.setHeaderRows(1);
@@ -155,7 +155,7 @@ public class PdfInvControlCosto {
             cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("M.Fac.",smallBoldFont));
+            cell = new PdfPCell(new Paragraph("Mon.",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setUseDescender(true);
@@ -195,6 +195,14 @@ public class PdfInvControlCosto {
             table.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("G.I.",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("C.A.",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -287,6 +295,11 @@ public class PdfInvControlCosto {
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 table.addCell(cell);
                 
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(map.get("costo_adic")), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                table.addCell(cell);
+                
                 cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(map.get("costo_referencia")), smallFont));
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -315,7 +328,7 @@ public class PdfInvControlCosto {
             
             
             //aquí empieza la tbla de de descripción de Abreviaturas de los campos
-            float [] widths3 = {0.8f,5,0.8f,5,0.8f,5,0.8f,5};
+            float [] widths3 = {0.8f,5,0.8f,5,0.8f,5,1,5};
             tableAbreviaturas = new PdfPTable(widths3);
             tableAbreviaturas.setKeepTogether(true);
             int altura_fila=11;
@@ -390,7 +403,7 @@ public class PdfInvControlCosto {
             cell.setBorder(0);
             tableAbreviaturas.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("Costo Integrado Total (de Importación)",smallFont));
+            cell = new PdfPCell(new Paragraph("Costo Integrado Total",smallFont));
             cell.setBorder(0);
             tableAbreviaturas.addCell(cell);
             
@@ -425,6 +438,40 @@ public class PdfInvControlCosto {
             tableAbreviaturas.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("Precio Mínimo de Venta",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            //FILA 4
+            cell = new PdfPCell(new Paragraph("Mon.:",smallFont));
+            cell.setBorder(0);
+            cell.setFixedHeight(altura_fila);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Moneda de la Factura de Compra",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("	C.A.:",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Costo Adicional",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("M.P.M.:",smallFont));
+            cell.setBorder(0);
+            tableAbreviaturas.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("Moneda del Precio Mínimo de Venta",smallFont));
             cell.setBorder(0);
             tableAbreviaturas.addCell(cell);
             
