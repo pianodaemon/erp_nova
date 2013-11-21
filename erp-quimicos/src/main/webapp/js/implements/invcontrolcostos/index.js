@@ -530,65 +530,33 @@ $(function() {
     
 	
 	//funcion que genera tr para agregar 
-	$genera_tr = function(noTr, producto_id, codigo, descripcion, unidad, presentacion, orden_compra, factura_prov, moneda, costo, tipo_cambio, costo_importacion, costo_directo, costo_referencia, precio_minimo, moneda_pm ){
+	$genera_tr = function(noTr, producto_id, codigo, descripcion, unidad, presentacion, orden_compra, factura_prov, moneda, costo, tipo_cambio, costo_importacion, costo_directo, costo_referencia, precio_minimo, costo_adic, moneda_pm ){
 		var tr_prod='';
 			tr_prod += '<tr>';
 			tr_prod += '<td width="80" class="grid" style="font-size: 11px; border:1px solid #C1DAD7; text-align:left;">';
 				tr_prod += '<input type="hidden" name="no_tr" id="notr" value="'+ noTr +'">';
 				tr_prod += '<input type="hidden" name="id_prod" id="idprod" value="'+  producto_id +'">';
-				//tr_prod += '<input type="text"  name="sku" value="'+codigo+'"  id="codigo'+ noTr +'" class="borde_oculto" style="width:76px;" readOnly="true">';
 				tr_prod += codigo;
 			tr_prod += '</td>';
-			tr_prod += '<td width="148" class="grid" align="right" style="font-size:11px;  border:1px solid #C1DAD7;">';
+			tr_prod += '<td width="147" class="grid" align="right" style="font-size:11px;  border:1px solid #C1DAD7;">';
 				tr_prod += '<input type="text" name="desc" value="'+descripcion+'" id="desc'+ noTr +'" class="borde_oculto" style="width:145px;" readOnly="true">';
 			tr_prod += '</td>';
 			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 				tr_prod += '<input type="text" name="unidad" class="borde_oculto" value="'+unidad+'" readOnly="true" style="width:66px;">';
 			tr_prod += '</td>';
 			tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:left;">';
-				tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="0">';
-				//tr_prod += '<input type="text" name="presentacion" class="borde_oculto" value="'+presentacion+'" readOnly="true" style="width:76px;">';
-				tr_prod += presentacion;
-			tr_prod += '</td>';
-			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:left;">';
-				//tr_prod += '<input type="text" name="oc" class="borde_oculto" value="'+orden_compra+'" readOnly="true" style="width:66px;">';
-				tr_prod += orden_compra;
-			tr_prod += '</td>';
-			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:left;">';
-				//tr_prod += '<input type="text" name="fac" class="borde_oculto" value="'+factura_prov+'" readOnly="true" style="width:66px;">';
-				tr_prod += factura_prov;
-			tr_prod += '</td>';
-			tr_prod += '<td width="40" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				//tr_prod += '<input type="text" name="moneda" class="borde_oculto" value="'+moneda+'" readOnly="true" style="width:46px;">';
-				tr_prod += moneda;
-			tr_prod += '</td>';
-			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
-				//tr_prod += '<input type="text" name="tc" class="borde_oculto" value="'+tipo_cambio+'" readOnly="true" style="width:56px;">';
-				tr_prod +=tipo_cambio;
-			tr_prod += '</td>';
-			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				//tr_prod += '<input type="text" name="costo" class="borde_oculto" value="'+costo+'" readOnly="true" style="width:56px;">';
-				tr_prod +=costo;
-			tr_prod += '</td>';
-			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
-				//tr_prod += '<input type="text" name="ci" class="borde_oculto" value="'+costo_importacion+'" readOnly="true" style="width:56px;">';
-				tr_prod +=costo_importacion;
-			tr_prod += '</td>';
-			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
-				//tr_prod += '<input type="text" name="cd" class="borde_oculto" value="'+costo_directo+'" readOnly="true" style="width:56px;">';
-				tr_prod +=costo_directo;
-			tr_prod += '</td>';
-			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
-				//tr_prod += '<input type="text" name="cr" class="borde_oculto" value="'+costo_referencia+'" readOnly="true" style="width:56px;">';
-				tr_prod +=costo_referencia;
-			tr_prod += '</td>';
-			tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">';
-				//tr_prod += '<input type="text" name="pm" class="borde_oculto" value="'+precio_minimo+'" readOnly="true" style="width:56px;">';
-				tr_prod +=precio_minimo;
-			tr_prod += '</td>';
-			tr_prod += '<td width="45" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-				tr_prod += moneda_pm;
-			tr_prod += '</td>';
+				tr_prod += '<input type="hidden" name="id_pres" id="idpres" value="0">'+ presentacion +'</td>';
+			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:left;">'+ orden_compra +'</td>';
+			tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:left;">'+ factura_prov +'</td>';
+			tr_prod += '<td width="45" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">'+ moneda +'</td>';
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">'+ tipo_cambio +'</td>';
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">'+ costo +'</td>';
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">'+ costo_importacion +'</td>';
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">'+ costo_directo +'</td>';
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">'+ costo_adic +'</td>';
+			tr_prod += '<td width="60" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">'+ costo_referencia +'</td>';
+			tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7; text-align:right;">'+ precio_minimo +'</td>';
+			tr_prod += '<td width="45" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">'+ moneda_pm +'</td>';
 		tr_prod += '</tr>';
 		
 		return tr_prod;
@@ -611,7 +579,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		
-		$('#forma-invcontrolcostos-window').css({ "margin-left": -425, 	"margin-top": -230 });
+		$('#forma-invcontrolcostos-window').css({ "margin-left": -470, 	"margin-top": -230 });
 		
 		$forma_selected.prependTo('#forma-invcontrolcostos-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -643,6 +611,8 @@ $(function() {
 		var $costo_importacion = $('#forma-invcontrolcostos-window').find('input[name=costo_importacion]');
 		var $costo_directo = $('#forma-invcontrolcostos-window').find('input[name=costo_directo]');
 		var $precio_minimo = $('#forma-invcontrolcostos-window').find('input[name=precio_minimo]');
+		var $costo_adic = $('#forma-invcontrolcostos-window').find('input[name=costo_adic]');
+		
 		var $check_simulacion = $('#forma-invcontrolcostos-window').find('input[name=check_simulacion]');
 		var $calculo_simulacion = $('#forma-invcontrolcostos-window').find('input[name=calculo_simulacion]');
 		
@@ -674,21 +644,25 @@ $(function() {
 		$costo_importacion.val(parseFloat(0).toFixed(2));
 		$costo_directo.val(parseFloat(0).toFixed(2));
 		$precio_minimo.val(parseFloat(0).toFixed(2));
+		$costo_adic.val(parseFloat(0).toFixed(2));
 		$tipo_cambio.val(parseFloat(0).toFixed(4));
 		
 		$permitir_solo_numeros($costo_importacion);
 		$permitir_solo_numeros($costo_directo);
 		$permitir_solo_numeros($precio_minimo);
+		$permitir_solo_numeros($costo_adic);
 		$permitir_solo_numeros($tipo_cambio);
 		
 		$aplicar_evento_focus( $costo_importacion );
 		$aplicar_evento_focus( $costo_directo );
 		$aplicar_evento_focus( $precio_minimo );
+		$aplicar_evento_focus( $costo_adic );
 		$aplicar_evento_focus( $tipo_cambio );
 		
 		$aplicar_evento_blur( $costo_importacion );
 		$aplicar_evento_blur( $costo_directo );
 		$aplicar_evento_blur( $precio_minimo );
+		$aplicar_evento_blur( $costo_adic );
 		//$aplicar_evento_blur( $tipo_cambio );
 		
 		$tipo_cambio.css({'background' : '#F0F0F0'});
@@ -786,10 +760,16 @@ $(function() {
 			
 			//carga select de Presentaciones
 			$select_presentacion.children().remove();
-			//var presentacion_hmtl = '<option value="0">[--Seleccionar Presentaci&oacute;n--]</option>';
-			var presentacion_hmtl = '';
+			var presentacion_hmtl = '<option value="0">[--Seleccionar Presentaci&oacute;n--]</option>';
+			//var presentacion_hmtl = '';
+			var primer_elemento=0;
 			$.each(entry['Presentaciones'],function(entryIndex,pres){
-				presentacion_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+				if(parseInt(primer_elemento)<=0){
+					//Esto es para que quede seleccionado el primer elemento
+					presentacion_hmtl += '<option value="' + pres['id'] + '" selected="yes" >' + pres['titulo'] + '</option>';
+				}else{
+					presentacion_hmtl += '<option value="' + pres['id'] + '"  >' + pres['titulo'] + '</option>';
+				}
 			});
 			$select_presentacion.append(presentacion_hmtl);
 			
@@ -889,7 +869,7 @@ $(function() {
 		//buscar producto
 		$buscar_producto.click(function(event){
 			event.preventDefault();
-			$busca_productos($producto.val(), $select_tipo_prod.val(), $select_marca.val(), $select_familia.val(), $select_subfamilia.val() );
+			$busca_productos($producto.val(), $codigo.val(), $select_tipo_prod.val(), $select_marca.val(), $select_familia.val(), $select_subfamilia.val() );
 		});
 		
 		$aplicar_evento_keypress($producto, $buscar_producto);
@@ -914,6 +894,10 @@ $(function() {
 				}
 			}
 			
+			if($costo_adic.val().trim()==''){
+				$costo_adic.val(0);
+			}
+			
 			//eliminar contenidos
 			$grid_productos.children().remove();
 			
@@ -932,6 +916,7 @@ $(function() {
 							'directo':$costo_directo.val(),
 							'pminimo':$precio_minimo.val(),
 							'tc':$tipo_cambio.val(),
+							'costo_adic':$costo_adic.val(),
 							'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
 						};
 						
@@ -952,12 +937,13 @@ $(function() {
 					var costo_directo=prod['costo_directo'];
 					var costo_referencia=prod['costo_referencia'];
 					var precio_minimo=prod['precio_minimo'];
+					var costo_adic=prod['costo_adic'];
 					var moneda_pm=prod['moneda_pm'];
 					
 					var noTr = $("tr", $grid_productos).size();
 					noTr++;
 					
-					var nuevo_tr = $genera_tr(noTr, producto_id, codigo, descripcion, unidad, presentacion, orden_compra, factura_prov, moneda, costo, tipo_cambio, costo_importacion, costo_directo, costo_referencia, precio_minimo, moneda_pm);
+					var nuevo_tr = $genera_tr(noTr, producto_id, codigo, descripcion, unidad, presentacion, orden_compra, factura_prov, moneda, costo, tipo_cambio, costo_importacion, costo_directo, costo_referencia, precio_minimo, costo_adic, moneda_pm);
 					//alert(nuevo_tr);
 					$grid_productos.append(nuevo_tr);//agrega el tr a la tabla
 					

@@ -3260,15 +3260,15 @@ $(function() {
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
 			$arreglo = {'id_pedido':id_to_show,
 						'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
-			jConfirm('Realmente desea eliminar  la factura?', 'Dialogo de confirmacion', function(r) {
+			jConfirm('Realmente desea eliminar  el pedido?', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){
 						if ( entry['success'] == '1' ){
-							jAlert("La factura fue eliminada exitosamente", 'Atencion!');
+							jAlert("El pedido fue eliminado exitosamente", 'Atencion!');
 							$get_datos_grid();
 						}
 						else{
-							jAlert("La factura no pudo ser eliminada", 'Atencion!');
+							jAlert("El pedido no pudo ser eliminada", 'Atencion!');
 						}
 					},"json");
 				}

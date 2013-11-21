@@ -30,7 +30,7 @@
 		<table class="table_acciones" style="display:none" border="0">
 			<tr>
 				<td width="15" height="30"></td>
-				<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Nuevo Ajuste</span></a></td>
+				<td height="30"><a href="new_item" class="tooltip"><div class="onmouseOutNewItem" id="nItem"></div><span>Captura de Costo de Reposici&oacute;n</span></a></td>
 				<td width="15" height="30"></td>
 				<td height="30"><a href="visualiza_buscador" class="tooltip"><div class="onmouseOutVisualizaBuscador" id="vbuscador"></div><span>Busqueda</span></a> </td>
 			</tr>
@@ -100,11 +100,10 @@
         <!--clase la quite por causar problemas      tabulador -->
                 <div id="div_one" class="panelcito_modal invcapturacostos_div_one"  style="display:none;" title="">
                 <input type="hidden" name="identificador">
-                <input type="hidden" name="exis_pres">
 					
                     <div id="div_two" title="" class="invcapturacostos_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:780px; padding-left:6px;"><strong>Captura de Costo</strong></div>
+                            <div class="fixed column" style="width:780px; padding-left:6px;"><strong>Captura de Costo de Reposici&oacute;n</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -182,22 +181,22 @@
                                                             <table border ="0">
                                                                 <tr>
                                                                     <td width="10"></td>
-                                                                    <td width="900" colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
+                                                                    <td width="780" colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
                                                                     <td width="10"></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td width="10"></td>
                                                                     <td width="20" style="background-color:#A8A9AB; font-weight: bold;"></td>
-                                                                    <td width="150" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo&nbsp;producto</td>
-                                                                    <td width="250" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n</td>
-                                                                    <td width="400" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
+                                                                    <td width="120" style="background-color:#A8A9AB; font-weight: bold;">C&oacute;digo&nbsp;producto</td>
+                                                                    <td width="240" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n</td>
+                                                                    <td width="390" style="background-color:#A8A9AB; font-weight: bold;">Descripci&oacute;n&nbsp;del&nbsp;error</td>
                                                                     <td width="10"></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td width="10"></td>
                                                                     <td colspan="5"> 
-                                                                        <div align="left" style="width:950px; height:70px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
-                                                                            <table id="grid_warning" border="0" style="width:1070px;"">
+                                                                        <div align="left" style="width:800px; height:100px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+                                                                            <table id="grid_warning" border="0" style="width:780px;"">
                                                                                 <!-- Aqui se muestran los warning
                                                                                 style="background-color:#e7e8ea;"
                                                                                 -->
