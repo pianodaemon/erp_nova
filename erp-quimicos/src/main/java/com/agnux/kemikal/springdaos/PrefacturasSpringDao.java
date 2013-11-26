@@ -310,7 +310,7 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_prefacturas_detalles.presentacion_id "
                         + "WHERE erp_prefacturas.id="+id_prefactura;
                         
-        //System.out.println("Obtiene datos grid prefactura: "+sql_query);
+        System.out.println("Obtiene datos grid prefactura: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {

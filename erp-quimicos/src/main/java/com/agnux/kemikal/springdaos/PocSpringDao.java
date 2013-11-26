@@ -2324,15 +2324,15 @@ public class PocSpringDao implements PocInterfaceDao{
         //System.out.println("Codigo: "+codigo+"Descripcion: "+descripcion);
         String   cadena_where="";
         if(!codigo.equals("")){
-            cadena_where=" and inv_prod.sku ILIKE '%"+codigo.toUpperCase() +"%'";
+            cadena_where=" AND inv_prod.sku ILIKE '%"+codigo.toUpperCase() +"%'";
         }
         
         if(!descripcion.equals("")){
-            cadena_where=cadena_where+" and inv_prod.descripcion ILIKE '%"+descripcion.toUpperCase() +"%'";
+            cadena_where=cadena_where+" AND inv_prod.descripcion ILIKE '%"+descripcion.toUpperCase() +"%'";
         }
         
         if(!folio_pedido.equals("")){
-            cadena_where=cadena_where+" and poc_pedidos.folio ILIKE '%"+folio_pedido.toUpperCase()+"%'";
+            cadena_where=cadena_where+" AND poc_pedidos.folio ILIKE '%"+folio_pedido.toUpperCase()+"%'";
         }
         
        String sql_to_query =""
@@ -2374,11 +2374,13 @@ public class PocSpringDao implements PocInterfaceDao{
        + "join erp_proceso on erp_proceso.id = poc_pedidos.proceso_id  "
        + "join inv_prod_unidades AS uni_prod on uni_prod.id=inv_prod.unidad_id "
        + "join inv_prod_unidades AS uni_venta on uni_venta.id=poc_pedidos_detalle.inv_prod_unidad_id "
-       + "WHERE poc_pedidos.cancelado=false AND erp_proceso.proceso_flujo_id IN (2,4,7,8) "
+       + "WHERE poc_pedidos.cancelado=false "
+       + "AND erp_proceso.proceso_flujo_id IN (2,4,7,8) "
        + "AND erp_proceso.empresa_id= "+id_empresa +" "+cadena_where+" "
+       + "AND poc_pedidos_detalle.reservado>0 "
        + "order by inv_prod.descripcion asc, poc_pedidos.id desc ";
        
-       System.out.println("ArticulosReservados: "+ sql_to_query);
+       //System.out.println("ArticulosReservados: "+ sql_to_query);
        
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query,

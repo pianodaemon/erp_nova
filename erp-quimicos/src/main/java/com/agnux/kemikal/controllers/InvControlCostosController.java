@@ -426,6 +426,9 @@ public class InvControlCostosController {
             pminimo="0";
         }
         
+        if(costo_adic.equals("")){
+            costo_adic="0";
+        }
         
         String data_string = app_selected+"___"+id_usuario+"___"+tipo_prod+"___"+mar+"___"+fam+"___"+subfam+"___%"+producto+"%___"+pres+"___"+tipo_costo+"___"+simulacion+"___"+importacion+"___"+directo+"___"+pminimo+"___"+tc+"___"+codigo+"___"+ano+"___"+mes+"___"+costo_adic;
         
@@ -490,9 +493,10 @@ public class InvControlCostosController {
     
     
     
-    @RequestMapping(value = "/getPdfReporteCostos/{cadena}/{iu}/out.json", method = RequestMethod.GET ) 
+    @RequestMapping(value = "/getPdfReporteCostos/{cadena}/{costo_adic}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getPdfReporteCostos(
                 @PathVariable("cadena") String cadena,
+                @PathVariable("costo_adic") String costo_adic,
                 @PathVariable("iu") String id_user,
                 HttpServletRequest request, 
                 HttpServletResponse response, 
@@ -512,7 +516,7 @@ public class InvControlCostosController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         //cadena de parametros de la busqueda
-        String data_string = app_selected+"___"+id_usuario+"___"+cadena+"___"+0+"___"+0;
+        String data_string = app_selected+"___"+id_usuario+"___"+cadena+"___"+0+"___"+0+"___"+costo_adic;
         
         String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
         String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
