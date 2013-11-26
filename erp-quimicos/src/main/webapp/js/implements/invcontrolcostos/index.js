@@ -1023,15 +1023,15 @@ $(function() {
 				simulacion="true";
 			}
 			
-			if($costo_importacion.val()=='') $costo_importacion.val(0);
-			if($costo_directo.val()=='') $costo_directo.val(0);
-			if($precio_minimo.val()=='') $precio_minimo.val(0);
+			if($costo_importacion.val().trim()=='') $costo_importacion.val(0);
+			if($costo_directo.val().trim()=='') $costo_directo.val(0);
+			if($precio_minimo.val().trim()=='') $precio_minimo.val(0);
+			if($costo_adic.val().trim()=='') $costo_adic.val(0);
 			//if($producto.val()=='') $producto.val("%%");
 			
 			//aqui se construye la cadena con los parametros de la busqueda
 			var cadena = $select_tipo_prod.val()+"___"+$select_marca.val()+"___"+$select_familia.val()+"___"+$select_subfamilia.val()+"___"+$producto.val()+"___"+$select_presentacion.val()+"___"+tipo_costo+"___"+simulacion+"___"+$costo_importacion.val()+"___"+$costo_directo.val()+"___"+$precio_minimo.val()+"___"+$tipo_cambio.val()+"___"+$codigo.val();
-			
-			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfReporteCostos/'+cadena+'/'+iu+'/out.json';
+			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPdfReporteCostos/'+cadena+'/'+$costo_adic.val()+'/'+iu+'/out.json';
 			
 			var trCount = $("tr", $grid_productos).size();
 			if(parseInt(trCount) > 0){
