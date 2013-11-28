@@ -857,7 +857,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     + "where pro_estruc_det.pro_estruc_id="+formula_id+" "
                 + ") AS sbt order by elemento;";
         
-        //System.out.println("DatosFormula: "+sql_query);
+        System.out.println("DatosFormula: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{}, new RowMapper() {
@@ -1139,7 +1139,8 @@ public class ProSpringDao implements ProInterfaceDao{
         HashMap<String, String> datos = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> hm_grid = new ArrayList<HashMap<String, String>>();
 
-        String sql_busqueda = "select count(pro_proc_procedimiento.id) as cantidad from "
+        String sql_busqueda = ""
+                + "select count(pro_proc_procedimiento.id) as cantidad from "
                 + "pro_subproceso_prod join pro_proc_procedimiento on pro_proc_procedimiento.pro_subproceso_prod_id=pro_subproceso_prod.id "
                 + "where pro_subproceso_prod.pro_estruc_id="+formula_id+" limit 1";
 
@@ -1158,11 +1159,17 @@ public class ProSpringDao implements ProInterfaceDao{
                     + "pro_subproceso_prod.pro_subprocesos_id=pro_subprocesos.id where pro_subproceso_prod.pro_estruc_id="+formula_id+" "
                     + "order by pro_subprocesos.id,pro_proc_procedimiento.posicion";
             */
-            String sql_query = "select pro_proc_procedimiento.id,pro_subproceso_prod.id as pro_subp_prod_id, pro_proc_procedimiento.posicion, "
-                    + "pro_proc_procedimiento.descripcion, pro_subprocesos.titulo from pro_subproceso_prod join pro_proc_procedimiento on "
-                    + "pro_proc_procedimiento.pro_subproceso_prod_id=pro_subproceso_prod.id join pro_subprocesos on "
-                    + "pro_subproceso_prod.pro_subprocesos_id=pro_subprocesos.id where pro_subproceso_prod.pro_estruc_id="+formula_id+" "
-                    + "order by pro_subproceso_prod.id,pro_subprocesos.id,pro_proc_procedimiento.posicion";
+            String sql_query = ""
+            + "select "
+                + "pro_proc_procedimiento.id,"
+                + "pro_subproceso_prod.id as pro_subp_prod_id, "
+                + "pro_proc_procedimiento.posicion, "
+                + "pro_proc_procedimiento.descripcion, "
+                + "pro_subprocesos.titulo "
+            + "from pro_subproceso_prod join pro_proc_procedimiento on pro_proc_procedimiento.pro_subproceso_prod_id=pro_subproceso_prod.id "
+            + "join pro_subprocesos on pro_subproceso_prod.pro_subprocesos_id=pro_subprocesos.id "
+            + "where pro_subproceso_prod.pro_estruc_id="+formula_id+" "
+            + "order by pro_subproceso_prod.id,pro_subprocesos.id,pro_proc_procedimiento.posicion";
 
             //System.out.println("Obtiene datos pdf ruta: "+sql_query);
             hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1176,7 +1183,6 @@ public class ProSpringDao implements ProInterfaceDao{
                         row.put("posicion",String.valueOf(rs.getInt("posicion")));
                         row.put("descripcion","  "+rs.getString("descripcion"));
                         row.put("titulo","  "+rs.getString("titulo"));
-
                         return row;
                     }
                 }
@@ -1260,7 +1266,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "pro_instrumentos_tono, pro_instrumentos_brillo, pro_instrumentos_dureza, pro_instrumentos_adherencia, "
                 + "pro_instrumentos_hidrogeno from pro_proc_esp where pro_proceso_id="+id;
         
-        //System.out.println("getSubprocesoEspecificaciones: "+sql_to_query);
+        System.out.println("getSubprocesoEspecificaciones: "+sql_to_query);
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -3941,7 +3947,8 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "from "
                 + "(select id, pro_orden_prod_id,num_lote, cantidad,pro_subprocesos_id, inv_prod_id,gral_empleados_id, pro_equipos_id, "
                 + "pro_equipos_adic_id  from pro_orden_prod_det where pro_orden_prod_id="+id+" "
-                + ") as tmp_det_orden  left join pro_subprocesos on  pro_subprocesos.id=tmp_det_orden.pro_subprocesos_id "
+                + ") as tmp_det_orden  "
+                + "left join pro_subprocesos on  pro_subprocesos.id=tmp_det_orden.pro_subprocesos_id "
                 + "left join inv_prod on inv_prod.id=tmp_det_orden.inv_prod_id "
                 + "left JOIN inv_prod_unidades as inv_unid ON inv_unid.id=inv_prod.unidad_id "
                 + "left join gral_empleados on gral_empleados.id=tmp_det_orden.gral_empleados_id "
@@ -4037,7 +4044,7 @@ public class ProSpringDao implements ProInterfaceDao{
             + "left JOIN inv_prod_unidades as inv_unid ON inv_unid.id=tmp_det_orden.unidad_id "
             + "left join pro_orden_prod_subp_esp as esp on esp.pro_orden_prod_det_id=tmp_det_orden.id;";
 
-        //System.out.println("Ejecutando query de: "+ sql_to_query);
+        System.out.println("getEspecificacionesDetalle: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4307,7 +4314,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "lote character varying, inv_osal_id integer, inv_alm_id integer, gral_suc_id integer, agregado boolean, "
                 + "cantidad_usada double precision, guardado boolean) order by elemento";
 
-        System.out.println("OrdenProdFormula: "+sql_to_query);
+        //System.out.println("OrdenProdFormula: "+sql_to_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4340,7 +4347,8 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join pro_subprocesos on pro_subprocesos.id=opd.pro_subprocesos_id "
                 + "where opd.pro_orden_prod_id="+orden_prod_id+" and opd.pro_subprocesos_id="+id_subproceso+") as tmp_det_orden "
                 + "left join pro_orden_prod_subp_esp as esp on esp.pro_orden_prod_det_id=tmp_det_orden.id;";
-
+        
+        //System.out.println("getEspecificacoinesProduccion: "+sql_to_query);
         //System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
         ArrayList<HashMap<String, String>> hm_especificaciones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4406,7 +4414,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join pro_subproceso_prod as subp_conf on subp_conf.pro_procesos_id=conf.id join pro_proc_esp on pro_proc_esp.pro_subproceso_prod_id=subp_conf.id "
                 + "where subp_conf.pro_subprocesos_id="+id_subproceso;
 
-        //System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
+        //System.out.println("getEspecificacoinesEstandar: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_especificaciones = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -4469,14 +4477,22 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join pro_subprocesos on pro_subprocesos.id=opd.pro_subprocesos_id "
                 + "where opd.pro_orden_prod_id="+produccion_id;
        */
-        String sql_to_query = "select opd.id, opd.pro_orden_prod_id,opd.num_lote, opd.cantidad,opd.pro_subprocesos_id, opd.inv_prod_id,"
-                + "pro_subprocesos.titulo as subproceso, pro_equipos.titulo as equipo, pro_equipos_adic.titulo as equipo_adic, "
+        String sql_to_query = ""
+        + "select "
+                + "opd.id, "
+                + "opd.pro_orden_prod_id, "
+                + "opd.num_lote, "
+                + "opd.cantidad,opd.pro_subprocesos_id, "
+                + "opd.inv_prod_id,"
+                + "pro_subprocesos.titulo as subproceso, "
+                + "pro_equipos.titulo as equipo, "
+                + "pro_equipos_adic.titulo as equipo_adic, "
                 + "gral_empleados.nombre_pila||' '||gral_empleados.apellido_paterno||' '||gral_empleados.apellido_materno as empleado "
-                + "from pro_orden_prod_det as opd join pro_subprocesos on pro_subprocesos.id=opd.pro_subprocesos_id "
-                + "left join gral_empleados on gral_empleados.id=opd.gral_empleados_id "
-                + "left join pro_equipos on pro_equipos.id=opd.pro_equipos_id "
-                + "left join pro_equipos_adic on pro_equipos_adic.id=opd.pro_equipos_adic_id "
-                + "where opd.pro_orden_prod_id="+produccion_id;
+        + "from pro_orden_prod_det as opd join pro_subprocesos on pro_subprocesos.id=opd.pro_subprocesos_id "
+        + "left join gral_empleados on gral_empleados.id=opd.gral_empleados_id "
+        + "left join pro_equipos on pro_equipos.id=opd.pro_equipos_id "
+        + "left join pro_equipos_adic on pro_equipos_adic.id=opd.pro_equipos_adic_id "
+        + "where opd.pro_orden_prod_id="+produccion_id;
 
         final String id_empresa = empresa_id;
         //System.out.println("esto es el query ¬†: ¬†"+sql_to_query);
@@ -4563,7 +4579,7 @@ public class ProSpringDao implements ProInterfaceDao{
                     + "join inv_lote on inv_lote.inv_oent_detalle_id=inv_oent_detalle.id";
             
             //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
-            System.out.println("Ejacutando Guardar:"+sql_to_query);
+            //System.out.println("Ejacutando Guardar:"+sql_to_query);
             //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
 
             Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -4613,7 +4629,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "left join pro_estruc on pro_estruc.id=op.pro_estruc_id "
                 + "where op.id="+produccion_id+";";
 
-        System.out.println("Query produccion: "+sql_query);
+        //System.out.println("Query produccion: "+sql_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
@@ -4799,7 +4815,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "JOIN pro_estruc on prod_tmp.id=pro_estruc.inv_prod_id"
                 + " where pro_estruc.borrado_logico=false AND gral_emp_id="+id_empresa+" ";
 
-        System.out.println("getVersionesFormulas: "+ sql_to_query);
+        //System.out.println("getVersionesFormulas: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4834,7 +4850,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "join inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
                 + "order by elemento";
 
-        System.out.println("Ejecutando query de: "+ sql_to_query);
+        //System.out.println("Ejecutando query de: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -4881,7 +4897,7 @@ public class ProSpringDao implements ProInterfaceDao{
                 + "WHERE pro_estruc.borrado_logico=false "
                 + "AND pro_estruc.id="+id_formula+"";
 
-        System.out.println("getVersionesFormulas: "+ sql_to_query);
+        //System.out.println("getVersionesFormulas: "+ sql_to_query);
 
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -5537,7 +5553,7 @@ public class ProSpringDao implements ProInterfaceDao{
                         +"JOIN ("+sql_busqueda+") as subt on subt.id=pro_equipos.id "
                         +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
 
-        System.out.println("Busqueda GetPage: "+sql_to_query+"  data_string"+data_string );
+        //System.out.println("Busqueda GetPage: "+sql_to_query+"  data_string"+data_string );
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -5636,7 +5652,7 @@ public class ProSpringDao implements ProInterfaceDao{
             "dureza_inicial character varying, " +
             "adherencia_inicial character varying) order by version, sku;";
         
-        System.out.println("esto es el query ¬†: ¬†"+sql_query);
+        //System.out.println("esto es el query ¬†: ¬†"+sql_query);
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
@@ -5750,7 +5766,7 @@ public class ProSpringDao implements ProInterfaceDao{
                                     +"cantk double precision, "
                                     +"cantl double precision "
                                 +") ORDER BY id;";
-        System.out.println("ReporteCalidad: "+sql_to_query);
+        //System.out.println("ReporteCalidad: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> data = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
