@@ -665,7 +665,7 @@ public class ClientsController {
             +"___"+select_lista_precio
             +"___"+select_metodo_pago;
             
-            System.out.println("data_string: "+data_string);
+            //System.out.println("data_string: "+data_string);
             
             succes = this.getCxcDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             

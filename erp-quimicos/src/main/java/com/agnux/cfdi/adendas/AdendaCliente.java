@@ -17,12 +17,12 @@ public class AdendaCliente extends Adenda{
     @Override
     public void createAdenda(Integer noAdenda, LinkedHashMap<String, Object> dataAdenda, String dirXml, String fileNameXml) {
         AdendaFemsaQuimiproductos femsaQuimiproductos = new AdendaFemsaQuimiproductos();
-        //Adenda lala = new AdendaLala();
+        AdendaSunchemical sunChemical = new AdendaSunchemical();
         //Adenda soriana = new AdendaSoriana();
         //Adenda walmart = new AdendaWalmart();
         
         this.SetNext(femsaQuimiproductos);
-        //femsa.SetNext(lala);
+        femsaQuimiproductos.SetNext(sunChemical);
         //lala.SetNext(soriana);
         //soriana.SetNext(walmart);
         

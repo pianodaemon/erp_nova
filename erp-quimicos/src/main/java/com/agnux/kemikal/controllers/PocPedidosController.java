@@ -880,7 +880,7 @@ public class PocPedidosController {
                     tipo_cambio+"___"+
                     id_agente+"___"+
                     select_condiciones+"___"+
-                    orden_compra+"___"+
+                    orden_compra.toUpperCase()+"___"+
                     fecha_compromiso+"___"+
                     lugar_entrega.toUpperCase()+"___"+
                     transporte.toUpperCase()+"___"+

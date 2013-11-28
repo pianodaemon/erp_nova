@@ -58,7 +58,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
     @Override
     public String selectFunctionForThisApp(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from gral_adm_catalogos('"+campos_data+"',array["+extra_data_array+"]);";
-        System.out.println(sql_to_query);
+        //System.out.println(sql_to_query);
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
         valor_retorno = update.get("gral_adm_catalogos").toString();
@@ -225,8 +225,8 @@ public class CxcSpringDao implements CxcInterfaceDao{
             +"FROM cxc_clie "
             +"WHERE cxc_clie.borrado_logico=false AND cxc_clie.id=?;";
 
-        System.out.println("Ejecutando getCliente_Datos:"+ sql_query);
-        System.out.println("IdCliente: "+id);
+        //System.out.println("Ejecutando getCliente_Datos:"+ sql_query);
+        //System.out.println("IdCliente: "+id);
 
         ArrayList<HashMap<String, Object>> cliente = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
@@ -378,7 +378,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
             +"LEFT JOIN ctb_cta AS tbl_cta_ac_comp ON tbl_cta_ac_comp.id=cxc_clie.ctb_cta_id_activo_comple "
             +"WHERE cxc_clie.borrado_logico=false AND cxc_clie.id=?;";
 
-        System.out.println("getCliente_DatosContabilidad: "+ sql_query);
+        //System.out.println("getCliente_DatosContabilidad: "+ sql_query);
         ArrayList<HashMap<String, Object>> contab = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {

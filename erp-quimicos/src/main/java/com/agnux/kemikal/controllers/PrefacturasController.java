@@ -649,7 +649,7 @@ public class PrefacturasController {
         
         
         //System.out.println("data_string: "+data_string);
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase();
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra.toUpperCase()+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase();
         //System.out.println("data_string: "+data_string);
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
@@ -899,14 +899,18 @@ public class PrefacturasController {
                                 
                                 //Verificar si hay que incluir adenda
                                 if (parametros.get("incluye_adenda").equals("true")){
+                                    
+                                    Integer numAdenda = Integer.parseInt(dataFacturaCliente.get("adenda_id"));
+                                    
                                     //Verificar si el cliente tiene asignada una adenda
-                                    if(Integer.parseInt(dataFacturaCliente.get("adenda_id"))>0){
+                                    if(numAdenda>0){
                                         String path_file = new String();
                                         String xml_file_name = new String();
                                         
                                         //Tipo de DOCUMENTO(1=Factura, 2=Consignacion, 3=Retenciones(Honorarios, Arrendamientos, Fletes), 8=Nota de Cargo, 9=Nota de Credito)
                                         int tipoDocAdenda=1;
                                         if(campo_adenda3.toLowerCase().equals("true")){
+                                            //2=Consignacion
                                             tipoDocAdenda=2;
                                         }
                                         
@@ -914,8 +918,11 @@ public class PrefacturasController {
                                         path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                                         xml_file_name = serieFolio+".xml";
                                         
-                                        //Agregar estos datos para generar el objeto que contiene los datos de la Adenda
-                                        dataFacturaCliente.put("emailEmisor", this.getGralDao().getEmailSucursal(id_sucursal));
+                                        
+                                        if(numAdenda==1){
+                                            //Agregar estos datos para generar el objeto que contiene los datos de la Adenda
+                                            dataFacturaCliente.put("emailEmisor", this.getGralDao().getEmailSucursal(id_sucursal));
+                                        }
                                         
                                         /*
                                         if(this.getBfCfdiTf().getTotalRetenciones().doubleValue()>0){
@@ -929,7 +936,7 @@ public class PrefacturasController {
                                         
                                         //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
                                         AdendaCliente adenda = new AdendaCliente();
-                                        adenda.createAdenda(1, dataAdenda, path_file, xml_file_name);
+                                        adenda.createAdenda(numAdenda, dataAdenda, path_file, xml_file_name);
                                         //TERMINA EJECUCION DE CLASE QUE AGREGA LA ADENDA
                                         
                                         File file_xml_con_adenda = new File(path_file+"/"+xml_file_name);

@@ -1,6 +1,6 @@
 /*
  * Clase para Crear Adenda para Quimiproductos.
- * Aqui se reciben los datos necesarios, se crea el xml y se incrusta en el archivo xml antes del timrado.
+ * Aqui se reciben los datos necesarios, se crea el xml y se incrusta en el archivo xml despues del timrado.
  * 
  */
 package com.agnux.cfdi.adendas;

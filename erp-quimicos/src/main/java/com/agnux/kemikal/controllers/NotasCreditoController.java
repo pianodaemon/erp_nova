@@ -704,15 +704,17 @@ public class NotasCreditoController {
                                 
                                 //Verificar si hay que incluir adenda
                                 if (parametros.get("incluye_adenda").equals("true")){
+                                    Integer numAdenda = Integer.parseInt(dataCliente.get("adenda_id"));
+                                    
                                     //Verificar si el cliente tiene asignada una adenda
-                                    if(Integer.parseInt(dataCliente.get("adenda_id"))>0){
-                                        /*
+                                    if(numAdenda>0){
+                                        
                                         //Buscar si la Factura ligada a la Nota de credito Incluye Adenda
                                         int exis = this.getFacdao().buscarAdendaFactura(id_nota_credito);
                                         
                                         //Si es mayor que cero si Incluye Adenda
                                         if(exis>0){
-                                            */
+                                           
                                             
                                             String path_file = new String();
                                             String xml_file_name = new String();
@@ -725,14 +727,14 @@ public class NotasCreditoController {
 
                                             //Agregar estos datos para generar el objeto que contiene los datos de la Adenda
                                             dataCliente.put("emailEmisor", this.getGralDao().getEmailSucursal(id_sucursal));
-
-
+                                            
+                                            
                                             //1 indica que es Adenda de una factura
                                             dataAdenda = this.getFacdao().getDatosAdenda(tipoDocAdenda, Integer.parseInt(dataCliente.get("adenda_id")), dataCliente, id_nota_credito, serieFolio, id_empresa);
-
+                                            
                                             //INICIA EJECUCION DE CLASE QUE AGREGA LA ADENDA
                                             AdendaCliente adenda = new AdendaCliente();
-                                            adenda.createAdenda(1, dataAdenda, path_file, xml_file_name);
+                                            adenda.createAdenda(numAdenda, dataAdenda, path_file, xml_file_name);
                                             //TERMINA EJECUCION DE CLASE QUE AGREGA LA ADENDA
                                             
                                             File file_xml_con_adenda = new File(path_file+"/"+xml_file_name);
@@ -740,11 +742,11 @@ public class NotasCreditoController {
                                                 //Si el archivo existe indica que se agregó bien la adenda y se creó el nuevo archivo xml
                                                 procesoAdendaCorrecto=false;
                                             }
-                                        /*
+                                            
                                         }else{
                                            System.out.println("La factura ligada a esta Nota de Credito no incluye Adenda, por lo tanto la Nota de Credito tampoco se le incluyó la Adenda.");
                                         }
-                                         */
+                                         
                                     }
                                 }
                                 //::::::TERMINA AGREGAR ADENDA AL XML DEL CFDI::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -2889,9 +2889,17 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         LinkedHashMap<String, Object> data = new LinkedHashMap<String, Object>();
         String sql_query = "select * from cxc_clie_adenda_datos where cxc_clie_adenda_tipo="+noAdenda+" and gral_emp_id="+id_emp;
         String sql_datos_adenda = "";
+        
+        //Adenda FEMSA QUIMIPRODUCTOS
         if(noAdenda==1){
-            //Adenda FEMSA QUIMIPRODUCTOS
-            //Agregar el tipo de DOCUMENTO(1=Factura, 2=Consignacion, 3=Retenciones(Honorarios, Arrendamientos, Fletes), 8=Nota de Cargo, 9=Nota de Credito)
+            /*
+            //Agregar el tipo de DOCUMENTO:
+             * 1=Factura, 
+             * 2=Consignacion, 
+             * 3=Retenciones(Honorarios, Arrendamientos, Fletes), 
+             * 8=Nota de Cargo, 
+             * 9=Nota de Credito
+             */
             data.put("claseDoc", tipoDoc);
             
             List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql_query);
@@ -2989,6 +2997,33 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             
             data.put("email", dataFactura.get("emailEmisor"));
         }
+        
+        
+        //Addenda SUNCHEMICAL SA DE CV
+        if(noAdenda==2){
+            
+            //Factura
+            if(tipoDoc==1){
+                sql_datos_adenda = "SELECT fac_docs_adenda.* FROM fac_docs_adenda JOIN fac_docs ON fac_docs.id=fac_docs_adenda.fac_docs_id  WHERE fac_docs.serie_folio='"+serieFolio+"' AND fac_docs_adenda.prefactura_id="+identificador+" LIMIT 1;";
+            }
+            
+            //Nota de credito
+            if(tipoDoc==9){
+                sql_datos_adenda = ""
+                        + "SELECT fac_docs_adenda.* FROM fac_docs_adenda "
+                        + "JOIN fac_docs ON fac_docs.id=fac_docs_adenda.fac_docs_id "
+                        + "JOIN fac_nota_credito ON (fac_nota_credito.serie_folio_factura=fac_docs.serie_folio AND fac_nota_credito.cxc_clie_id=fac_docs.cxc_clie_id) "
+                        + "WHERE fac_nota_credito.serie_folio='"+serieFolio+"' AND fac_nota_credito.id="+identificador+" LIMIT 1;";
+            }
+            
+            //System.out.println("sql_datos_adenda: "+sql_datos_adenda);
+            //Obtener datos de la Adenda
+            Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_datos_adenda);
+            
+            data.put("PO_NUMBER", String.valueOf(map.get("valor1")));
+        }
+        
+        
         
         return data;
     }
