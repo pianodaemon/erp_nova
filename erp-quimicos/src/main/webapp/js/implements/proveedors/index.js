@@ -1171,10 +1171,12 @@ $(function() {
 	
 	//comienza editar
     var carga_formaProveedors00_for_datagrid00 = function(id_to_show, accion_mode){
-
+		
 		if(accion_mode == 'cancel'){
 			var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/' + 'logicDelete.json';
-			$arreglo = {'id':id_to_show};
+			$arreglo = {'id':id_to_show,
+						'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+					};
 			jConfirm('Realmente desea eliminar el proveedor seleccionado', 'Dialogo de confirmacion', function(r) {
 				if (r){
 					$.post(input_json,$arreglo,function(entry){

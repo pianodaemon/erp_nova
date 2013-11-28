@@ -2383,7 +2383,7 @@ $(function() {
 				var $cancelar_plugin = $('#forma-prefacturas-window').find('#boton_cancelar');
 				var $submit_actualizar = $('#forma-prefacturas-window').find('#submit');
 				
-				//ocultar boton actualizar porque ya esta facturado, ya no se puede guardar cambios
+				//Ocultar boton actualizar porque ya esta facturado, ya no se puede guardar cambios
 				$submit_actualizar.hide();
 				$titulo_remision.hide();
 				$agregar_remision.hide();
@@ -2398,6 +2398,7 @@ $(function() {
 				$no_cliente.css({'background' : '#F0F0F0'});
 				$razon_cliente.css({'background' : '#F0F0F0'});
 				$dir_cliente.css({'background' : '#F0F0F0'});
+				$orden_compra.attr("readonly", true);
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -2607,6 +2608,17 @@ $(function() {
 								$campo8.val(entry['datosPrefactura'][0]['moneda2']);
 							}
 						}
+						
+						//Numero de adenda
+						if(parseInt(entry['datosPrefactura']['0']['adenda_id'])==2){
+							//Ocultar campos
+							$adenda.hide();
+							
+							//Habilitar campo Orden de Compra
+							$orden_compra.attr("readonly", false);
+							
+						}
+						
 					}
                     
                     
@@ -3016,7 +3028,7 @@ $(function() {
 					
 					//$observaciones.attr("readonly", true);
 					//$tipo_cambio.attr("readonly", true);
-					$orden_compra.attr("readonly", true);
+					//$orden_compra.attr("readonly", true);
 					//$digitos.attr("readonly", true);
 					
 					$busca_cliente.hide();

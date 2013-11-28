@@ -305,10 +305,10 @@
 															<td width="75">Orden&nbsp;de&nbsp;compra</td>
 															<td>&nbsp;&nbsp;</td>
 															<td>
-																<input type="text" name="orden_compra" style="width:75px;" readOnly="true">
+																<input type="text" name="orden_compra" style="width:75px;">
 																<input type="hidden" name="orden_compra_original">
 															</td>
-															<td width="30"></td>
+															<td width="30"><div class="interrogacion"><img src="../../img/help-16x16.png" ALIGN="top" rel="warning_oc"></div></td>
 															<td width="55">Vendedor</td>
 															<td width="250" colspan="3">
 																<select name="vendedor" style="width:250px"></select>
