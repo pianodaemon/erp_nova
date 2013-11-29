@@ -74,38 +74,36 @@ public class PdfReportePronosticoCobranza {
             //String[] titulos = {"Cliente","Factura","Lunes","Martes","Miercoles","Jueves","Viernes","Total"};
           int p_reg = 0;
            for (HashMap<String, String>  k : this.getRows()){
-                        if(p_reg == 0){
-                                PdfPCell celda = null;
-                                
-                                celda = new PdfPCell(new Paragraph( "Del:  " + k.get("lunes_proximo"),smallFont));
-                                celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                celda.setBorder(0);
-                                table_titulos.addCell(celda);
-                              
-                                celda = new PdfPCell(new Paragraph("        Al:        " +k.get("viernes_proximo"),smallFont));
-                                celda.setUseAscender(true);
-                                celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                                celda.setBorder(0);
-                                table_titulos.addCell(celda);
-                                
-                                
-                                celda = new PdfPCell(new Paragraph("   ",smallFont));
-                                celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                                celda.setColspan(2);
-                                celda.setBorder(0);
-                                celda.setFixedHeight(15);
-                                table_titulos.addCell(celda);
-                        }
-                        p_reg= 1;
-           
-           
+                if(p_reg == 0){
+                    PdfPCell celda = null;
+
+                    celda = new PdfPCell(new Paragraph( "Del:  " + k.get("lunes_proximo"),smallFont));
+                    celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    celda.setBorder(0);
+                    table_titulos.addCell(celda);
+
+                    celda = new PdfPCell(new Paragraph("        Al:        " +k.get("viernes_proximo"),smallFont));
+                    celda.setUseAscender(true);
+                    celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    celda.setBorder(0);
+                    table_titulos.addCell(celda);
+
+
+                    celda = new PdfPCell(new Paragraph("   ",smallFont));
+                    celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    celda.setColspan(2);
+                    celda.setBorder(0);
+                    celda.setFixedHeight(15);
+                    table_titulos.addCell(celda);
+                }
+                p_reg= 1;
          }
             document.add(table_titulos);
             //FIN DE LA TABLA DE FECHAS
  
             
             
-            
+            /*
             float [] widths = {4f,1f,1f,1f,1f,1f,1f,1f};
             table_titulos = new PdfPTable(widths);
             table_titulos.setKeepTogether(false);
@@ -130,8 +128,38 @@ public class PdfReportePronosticoCobranza {
                 table_titulos.addCell(cell);
             }
             document.add(table_titulos);
-            
+            */
 
+
+            
+            
+           float [] filas = {4f,1f,1f,1f,1f,1f,1f,1f};
+            table_iteraciones = new PdfPTable(filas);
+            table_iteraciones.setKeepTogether(false);
+            table_iteraciones.setHeaderRows(1);
+            
+            String[] titulos = {"Cliente","Factura","Lunes","Martes","Miercoles","Jueves","Viernes","Total"};
+            
+            for (int i = 0; i<=titulos.length -1; i++){
+                cell = new PdfPCell(new Paragraph(titulos[i],smallBoldFont));
+                String cliente = titulos[i];
+                if(titulos[0] == "Cliente"){
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                }else{
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                }
+               
+                cell.setUseAscender(true);
+                cell.setUseDescender(true);
+                cell.setBackgroundColor(BaseColor.BLACK);
+                cell.setBorder(0);
+                cell.setBorderWidthLeft(0);
+                table_iteraciones.addCell(cell);
+            }
+            
+            
+            
+            
             int primer_registro = 0;
             String cliente = "";
             
@@ -140,11 +168,6 @@ public class PdfReportePronosticoCobranza {
             //table_iteraciones
             System.out.print(lista_pronostico.size());
             
-            
-           float [] filas = {4f,1f,1f,1f,1f,1f,1f,1f};
-            table_iteraciones = new PdfPTable(filas);
-            table_iteraciones.setKeepTogether(false);
-            table_iteraciones.setKeepTogether(true);
             
             double  t_lunes = 0.0;
             double  t_martes = 0.0;
@@ -164,8 +187,9 @@ public class PdfReportePronosticoCobranza {
                 //Indices del HashMap que representa el row
                String[] wordList = {"cliente","factura","lunes","martes","miercoles","jueves","viernes","total"};
                java.util.List<String>  rows= (java.util.List<String>) Arrays.asList(wordList);
-               System.out.print("Esto es lo que trae el arreglo de objetos");
-               System.out.print(rows);
+               //System.out.print("Esto es lo que trae el arreglo de objetos");
+               //System.out.print(rows);
+               
                 if(cliente.equals(i.get("cliente"))){
                    if(primer_registro == 0){
                          for (String omega : rows){
