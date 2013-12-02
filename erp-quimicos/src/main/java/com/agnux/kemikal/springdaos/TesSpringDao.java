@@ -248,14 +248,14 @@ public class TesSpringDao implements TesInterfaceDao{
         String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
         
 	String sql_to_query = "SELECT tes_che.id, "
-                                + " tes_che.titulo AS chequera, "
-                                + "erp_monedas.descripcion_abr AS moneda, "
+                                + "tes_che.titulo AS chequera, "
+                                + "gral_mon.descripcion_abr AS moneda, "
                                 + "tes_ban.titulo as banco, "
                                 + "tes_che.num_sucursal, "
                                 + "tes_che.nombre_sucursal, "
                                 + "tes_che.clabe "
                                 + "FROM  tes_che "
-                                + "JOIN erp_monedas ON erp_monedas.id=tes_che.moneda_id "
+                                + "JOIN gral_mon ON gral_mon.id=tes_che.moneda_id "
                                 + "JOIN tes_ban ON tes_ban.id=tes_che.tes_ban_id "
                             + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = tes_che.id "
                             +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
@@ -358,9 +358,9 @@ public class TesSpringDao implements TesInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, String>> getBancos() {
+    public ArrayList<HashMap<String, String>> getBancos(Integer idEmpresa) {
         String sql_to_query = "select distinct id as id_banco, titulo as banco from tes_ban "
-                +"where borrado_logico=false "
+                +"where borrado_logico=false and gral_emp_id="+idEmpresa+" "
                 +"order by titulo ASC;";
         
         ArrayList<HashMap<String, String>> hm_bancos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -380,7 +380,7 @@ public class TesSpringDao implements TesInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getMonedas() {
-        String sql_to_query = "SELECT id, descripcion FROM  erp_monedas WHERE borrado_logico=FALSE ORDER BY id ASC;";
+        String sql_to_query = "SELECT id, descripcion FROM  gral_mon WHERE borrado_logico=FALSE ORDER BY id ASC;";
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_monedas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

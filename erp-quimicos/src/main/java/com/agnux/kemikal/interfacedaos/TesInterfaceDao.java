@@ -34,7 +34,7 @@ public interface TesInterfaceDao {
     public ArrayList<HashMap<String, Object>> getTesChequeraGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getTesChequera_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getMonedas();
-     public ArrayList<HashMap<String, String>> getBancos();
+    public ArrayList<HashMap<String, String>> getBancos(Integer idEmpresa);
     
     public ArrayList<HashMap<String, String>> getPaises();
     public ArrayList<HashMap<String, String>> getEntidadesForThisPais(String id_pais);

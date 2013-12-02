@@ -206,7 +206,7 @@ public class CarterasController {
         ArrayList<HashMap<String, Object>> formaPago = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> monedas = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> bancos = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> bancosKemikal = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> bancosEmpresa = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> tipoCambio = new ArrayList<HashMap<String, Object>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
@@ -230,7 +230,7 @@ public class CarterasController {
         formaPago = this.getCxcDao().getCartera_FormasPago();
         monedas = this.getCxcDao().getMonedas();
         bancos = this.getCxcDao().getBancos(id_empresa);
-        bancosKemikal = this.getCxcDao().getCartera_BancosEmpresa(id_empresa);
+        bancosEmpresa = this.getCxcDao().getCartera_BancosEmpresa(id_empresa);
         tipoCambio = this.getCxcDao().getTipoCambioActual();
         
         
@@ -240,7 +240,7 @@ public class CarterasController {
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Formaspago", formaPago);
         jsonretorno.put("Bancos", bancos);
-        jsonretorno.put("Bancos_kemikal", bancosKemikal);
+        jsonretorno.put("Bancos_kemikal", bancosEmpresa);
         jsonretorno.put("Tipocambio", tipoCambio);
         
         

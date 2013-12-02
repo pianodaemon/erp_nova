@@ -11,6 +11,7 @@ import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
+import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +53,13 @@ public class TesChequeraController {
         return tesDao;
     }
     
+    @Autowired
+    @Qualifier("daoHome")
+    private HomeInterfaceDao HomeDao;
+    
+    public HomeInterfaceDao getHomeDao() {
+        return HomeDao;
+    }
     
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
@@ -149,17 +157,25 @@ public class TesChequeraController {
     @RequestMapping(method = RequestMethod.POST, value="/getTesChera.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getInvSeccionJson(
             @RequestParam(value="id", required=true) Integer id,
+            @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
-            ) {
+    ) {
         
         log.log(Level.INFO, "Ejecutando getTesChera de {0}", TesChequeraController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-                       ArrayList<HashMap<String, String>> datoschequera = new ArrayList<HashMap<String, String>>();
-                       ArrayList<HashMap<String, String>> Bancos = new ArrayList<HashMap<String, String>>(); //hasmap para la vista
-                       ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>(); //hasmap para la vista
-                       ArrayList<HashMap<String, String>> paises = new ArrayList<HashMap<String, String>>();
-                       ArrayList<HashMap<String, String>> entidades = new ArrayList<HashMap<String, String>>();
-                       ArrayList<HashMap<String, String>> municipios = new ArrayList<HashMap<String, String>>();
+       ArrayList<HashMap<String, String>> datoschequera = new ArrayList<HashMap<String, String>>();
+       ArrayList<HashMap<String, String>> Bancos = new ArrayList<HashMap<String, String>>(); //hasmap para la vista
+       ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>(); //hasmap para la vista
+       ArrayList<HashMap<String, String>> paises = new ArrayList<HashMap<String, String>>();
+       ArrayList<HashMap<String, String>> entidades = new ArrayList<HashMap<String, String>>();
+       ArrayList<HashMap<String, String>> municipios = new ArrayList<HashMap<String, String>>();
+       HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         if( id != 0  ){
             datoschequera = this.getTesDao().getTesChequera_Datos(id);
@@ -167,7 +183,7 @@ public class TesChequeraController {
             municipios = this.getTesDao().getMunicipiosForThisEntidad(datoschequera.get(0).get("pais_id").toString(), datoschequera.get(0).get("estado_id").toString());
         }
         
-        Bancos = this.getTesDao().getBancos();
+        Bancos = this.getTesDao().getBancos(id_empresa);
         monedas = this.getTesDao().getMonedas();
         paises = this.getTesDao().getPaises();
         jsonretorno.put("Chequera", datoschequera);
