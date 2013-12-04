@@ -7,14 +7,13 @@ package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.common.helpers.FileHelper;
-import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
-import com.agnux.kemikal.interfacedaos.CxpInterfaceDao;
+import com.agnux.kemikal.interfacedaos.ComInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.reportes.ComRepDiasEntregaPromedio;
-import com.agnux.kemikal.reportes.PdfEstadoCuentaProveedor;
+import com.agnux.kemikal.reportes.ComRepDiasEntregaPromedioPdf;
+import com.agnux.kemikal.reportes.ComRepDiasEntregaPromedioXls;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -22,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
@@ -57,8 +55,8 @@ public class ComOcDiasEntController {
     ResourceProject resource = new ResourceProject();
     
     @Autowired
-    @Qualifier("daoCxp")
-    private CxpInterfaceDao cxpDao;
+    @Qualifier("daoCom")
+    private ComInterfaceDao ComDao;
   
     
     @Autowired
@@ -78,8 +76,8 @@ public class ComOcDiasEntController {
         return gralDao;
     }
     
-    public CxpInterfaceDao getCxpDao() {
-        return cxpDao;
+    public ComInterfaceDao getComDao() {
+        return ComDao;
     }
     
     
@@ -91,7 +89,7 @@ public class ComOcDiasEntController {
         log.log(Level.INFO, "Ejecutando starUp de {0}", ComOcDiasEntController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
-        ModelAndView x = new ModelAndView("comdiasentrega/startup", "title", "D&iacute;as de entrega promedio");
+        ModelAndView x = new ModelAndView("comdiasentrega/startup", "title", "D&iacute;as de entrega O.C.");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -111,32 +109,6 @@ public class ComOcDiasEntController {
         
         return x;
     }
-    
-    
-    /*
-    //cargar tipos de productos
-   @RequestMapping(method = RequestMethod.POST, value="/getDatos.json")
-        public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDatosJson(
-        @RequestParam(value="iu", required=true) String id_user,
-        Model model
-        ){
-        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
-        HashMap<String, Object> mes = new HashMap<String, Object>();
-        ArrayList<HashMap<String, Object>> mesActual = new ArrayList<HashMap<String, Object>>();
-        
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
-        
-        mes.put("mesActual", TimeHelper.getMesActual());
-        mes.put("anioActual", TimeHelper.getFechaActualY());
-        mesActual.add(0, mes);
-        
-        jsonretorno.put("Anios", this.getCxpDao().getProveedor_AnioReporteSaldoMensual());
-        jsonretorno.put("Dato", mesActual);
-        return jsonretorno;
-    }
-     * 
-     */
     
     
     
@@ -160,7 +132,7 @@ public class ComOcDiasEntController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        proveedores = this.getCxpDao().getBuscadorProveedores(rfc, email, nombre,id_empresa);
+        proveedores = this.getComDao().getBuscadorProveedores(rfc, email, nombre,id_empresa);
         
         jsonretorno.put("Proveedores", proveedores);
         
@@ -194,7 +166,7 @@ public class ComOcDiasEntController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
         //Obtiene datos de las compras
-        compras = this.getCxpDao().getOC_DiasEntrega(tipo_reporte, proveedor, f_inicial, f_final,id_empresa);
+        compras = this.getComDao().getOC_DiasEntrega(tipo_reporte, proveedor, f_inicial, f_final,id_empresa);
         
         jsonretorno.put("Data", compras);
         
@@ -208,19 +180,19 @@ public class ComOcDiasEntController {
     
     
     
-    //Genera pdf de estados de cuenta
+    //Genera Reporte de Dicas Promedio de entrega de OC
     @RequestMapping(value = "/getReporte/{cadena}/{iu}/out.json", method = RequestMethod.GET ) 
     public ModelAndView getReporteJson(
                 @PathVariable("cadena") String cadena,
                 @PathVariable("iu") String id_user_cod,
-                HttpServletRequest request, 
+                HttpServletRequest request,
                 HttpServletResponse response, 
                 Model model)
             throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         
-        String tituloReporte="Reporte de Dias de Entrega Promedio de O.C.";
+        String tituloReporte="Reporte de Días de Entrega de O.C.";
         System.out.println("Generando reporte de "+tituloReporte);
         
         //decodificar id de usuario
@@ -237,12 +209,12 @@ public class ComOcDiasEntController {
         String f_inicial = ArrayCad[1];
         String f_final = ArrayCad[2];
         String proveedor = ArrayCad[3];
-        
+        String tipoFichero = ArrayCad[4];
         
         String arrayFI[] = f_inicial.split("-");
         String arrayFF[] = f_final.split("-");
         
-        String periodo = "Del "+arrayFI[2]+"/"+arrayFI[1]+"/"+arrayFI[0] +" al "+ arrayFF[2]+"/"+arrayFF[1]+"/"+arrayFF[0];
+        String periodo = "Periodo del "+arrayFI[2]+"/"+arrayFI[1]+"/"+arrayFI[0] +" al "+ arrayFF[2]+"/"+arrayFF[1]+"/"+arrayFF[0];
         
         
         //obtener el directorio temporal
@@ -253,123 +225,26 @@ public class ComOcDiasEntController {
         File file_dir_tmp = new File(dir_tmp);
         //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
-        String file_name = "OC_DIAS_PROM"+f_inicial+"_"+f_final+".xls";
+        String file_name = "OC_DIAS_PROM"+f_inicial+"_"+f_final+"."+tipoFichero;
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
         ArrayList<HashMap<String, String>> compras = new ArrayList<HashMap<String, String>>();
         
         //obtiene facturas en pesos. Moneda 1
-        compras = this.getCxpDao().getOC_DiasEntrega(tipo_reporte, proveedor, f_inicial, f_final,id_empresa);
+        compras = this.getComDao().getOC_DiasEntrega(tipo_reporte, proveedor, f_inicial, f_final,id_empresa);
         
-        //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del proveedor
-        ComRepDiasEntregaPromedio x = new ComRepDiasEntregaPromedio(fileout,tituloReporte,razon_social_empresa,periodo,compras);
+
         
-        System.out.println("Recuperando archivo: " + fileout);
-        File file = new File(fileout);
-        int size = (int) file.length(); // Tamaño del archivo
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-        response.setBufferSize(size);
-        response.setContentLength(size);
-        response.setContentType("application/xls");
-        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
-        FileCopyUtils.copy(bis, response.getOutputStream());  	
-        response.flushBuffer();
-        
-        FileHelper.delete(fileout);
-        
-        return null;
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //Genera pdf de estados de cuenta
-    @RequestMapping(value = "/getPdfSaldoMensual/{cadena}/{iu}/out.json", method = RequestMethod.GET ) 
-    public ModelAndView get_genera_pdf_edoctaJson(
-                @PathVariable("cadena") String cadena,
-                @PathVariable("iu") String id_user_cod,
-                HttpServletRequest request, 
-                HttpServletResponse response, 
-                Model model)
-            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
-        
-        HashMap<String, String> userDat = new HashMap<String, String>();
-        
-        
-        String tituloReporte="Saldo Mensual de Cuentas por Pagar";
-        System.out.println("Generando reporte de "+tituloReporte);
-        
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        //System.out.println("id_usuario: "+id_usuario);
-        
-        userDat = this.getHomeDao().getUserById(id_usuario);
-        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        
-        String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
-        
-        String ArrayCad[] = cadena.split("___");
-        Integer tipo_reporte = Integer.parseInt(ArrayCad[0]);
-        String ano_corte = ArrayCad[1];
-        String mes_corte = ArrayCad[2];
-        
-        //Formatear el numero del mes para que tenga dos digitos
-        Formatter fmtm = new Formatter();
-        fmtm.format("%02d",Integer.parseInt(mes_corte));
-        mes_corte = fmtm.toString();
-        
-        //Obtener el numero de dias del mes
-        int numeroDias = TimeHelper.getNumDiasMes(Integer.parseInt(ano_corte), Integer.parseInt(mes_corte));
-        
-        //Formatear el numero de dias para que tenga dos digitos
-        Formatter fmtd = new Formatter();
-        fmtd.format("%02d",numeroDias);
-        String dia_corte = fmtd.toString();
-        
-        String proveedor = "";
-        
-        if (!ArrayCad[3].equals("0")){
-            proveedor = ArrayCad[3];
+        if(tipoFichero.equals("pdf")){
+            //Instancia de la clase que construye el pdf
+            ComRepDiasEntregaPromedioPdf pdf = new ComRepDiasEntregaPromedioPdf(fileout,tituloReporte,razon_social_empresa,periodo,compras);
         }
         
-        String fecha_corte = ano_corte+"-"+mes_corte+"-"+dia_corte;
-        
-        
-        //obtener el directorio temporal
-        //String dir_tmp = System.getProperty("java.io.tmpdir");
-        String dir_tmp = this.getGralDao().getTmpDir();
-        
-        String[] array_company = razon_social_empresa.split(" ");
-        String company_name= array_company[0].toLowerCase();
-        String ruta_imagen = this.getGralDao().getImagesDir() +"logo_"+ company_name +".png";
-        
-        System.out.println("ruta_imagen: "+ruta_imagen);
-        
-        File file_dir_tmp = new File(dir_tmp);
-        //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
-        
-        String file_name = "CxcSaldoMensaul_"+fecha_corte+".pdf";
-        //ruta de archivo de salida
-        String fileout = file_dir_tmp +"/"+  file_name;
-        
-        ArrayList<HashMap<String, String>> facturas = new ArrayList<HashMap<String, String>>();
-        
-        //obtiene facturas en pesos. Moneda 1
-        facturas = this.getCxpDao().getProveedor_DatosReporteSaldoMensual(tipo_reporte, proveedor, fecha_corte,id_empresa);
-        
-        //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del proveedor
-        PdfEstadoCuentaProveedor x = new PdfEstadoCuentaProveedor(fileout,ruta_imagen,tituloReporte,razon_social_empresa,fecha_corte,facturas);
+        if(tipoFichero.equals("xls")){
+            //Instancia de la clase que construye el xls
+            ComRepDiasEntregaPromedioXls excel = new ComRepDiasEntregaPromedioXls(fileout,tituloReporte,razon_social_empresa,periodo,compras);
+        }
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
@@ -377,7 +252,7 @@ public class ComOcDiasEntController {
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
         response.setBufferSize(size);
         response.setContentLength(size);
-        response.setContentType("application/pdf");
+        response.setContentType("application/"+tipoFichero);
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();

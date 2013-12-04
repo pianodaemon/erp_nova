@@ -141,6 +141,4 @@ public interface CxpInterfaceDao {
     public ArrayList<HashMap<String, String>> getProvNotasCredito_Datos(Integer id);
     public HashMap<String, String> getProvNotasCredito_DatosPDF(Integer id);
     
-    //Reporte de Evaluacion de proveedores
-    public ArrayList<HashMap<String, String>> getOC_DiasEntrega(Integer tipo_reporte,String proveedor, String f_inicial,String f_final,Integer id_empresa);
 }

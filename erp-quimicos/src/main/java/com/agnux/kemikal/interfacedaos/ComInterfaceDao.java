@@ -71,4 +71,6 @@ public interface ComInterfaceDao {
 
     public HashMap<String, String> getCom_Requisicion_DatosPDF(Integer id_requisicion);
     
+    //Reporte de Dias de entrega OC
+    public ArrayList<HashMap<String, String>> getOC_DiasEntrega(Integer tipo_reporte,String proveedor, String f_inicial,String f_final,Integer id_empresa);
 }
