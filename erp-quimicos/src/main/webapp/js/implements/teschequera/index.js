@@ -90,9 +90,9 @@ $(function() {
 	
 	$limpiar.click(function(event){
 		event.preventDefault();
-                var  banco_hmtl = '';
-                banco_hmtl = '<option value="0" selected="yes">[-Seleccionar un Banco-]</option>';
-                $busqueda_select_banco.append(banco_hmtl);
+		var  banco_hmtl = '';
+		banco_hmtl = '<option value="0" selected="yes">[-Seleccionar un Banco-]</option>';
+		$busqueda_select_banco.append(banco_hmtl);
                 
 	});
 	
@@ -228,15 +228,15 @@ $(function() {
 		var $select_municipio = $('#forma-chequeras-window').find('select[name=municipio]');
 		//fin de variable de pestana  (Datos)
                 
-                //// variable de pestana tres (Otros)
-                var $campo_tel1 = $('#forma-chequeras-window').find('input[name=tel1]');
+		//// variable de pestana tres (Otros)
+		var $campo_tel1 = $('#forma-chequeras-window').find('input[name=tel1]');
 		var $campo_ext1 = $('#forma-chequeras-window').find('input[name=ext1]');
 		var $campo_tel2 = $('#forma-chequeras-window').find('input[name=tel2]');
 		var $campo_ext2 = $('#forma-chequeras-window').find('input[name=ext2]');
-                var $campo_fax = $('#forma-chequeras-window').find('input[name=fax]');
-                var $campo_gerente = $('#forma-chequeras-window').find('input[name=gerente]');
-                var $campo_ejecutivo= $('#forma-chequeras-window').find('input[name=ejecutivo]');
-                var $campo_email = $('#forma-chequeras-window').find('input[name=email]');
+		var $campo_fax = $('#forma-chequeras-window').find('input[name=fax]');
+		var $campo_gerente = $('#forma-chequeras-window').find('input[name=gerente]');
+		var $campo_ejecutivo= $('#forma-chequeras-window').find('input[name=ejecutivo]');
+		var $campo_email = $('#forma-chequeras-window').find('input[name=email]');
 		//fin de variables de la pestaña (Otros)
                 
                 
@@ -282,25 +282,25 @@ $(function() {
 		
 		$.post(input_json,$arreglo,function(entry){
 			$select_banco.children().remove();
-                            var banco_hmtl = '';
-                            var banco_hmtl = '<option value="0" selected="yes">[-Seleccionar un Banco-]</option>';
-                            $.each(entry['Bancos'],function(entryIndex,banco){
-                                banco_hmtl += '<option value="' + banco['id_banco'] + '"  >' + banco['banco'] + '</option>';
-                            });
-                        $select_banco.append(banco_hmtl);
-                        
-                        
-                        
-                        $select_moneda.children().remove();
-                            var moneda_hmtl = '';
-                            $.each(entry['Monedas'],function(entryIndex,moneda){
-                                moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
-                            });
-                        $select_moneda.append(moneda_hmtl);
-                        
-                        
-                        
-                        var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar entidad--]</option>';
+			var banco_hmtl = '';
+			var banco_hmtl = '<option value="0" selected="yes">[-Seleccionar un Banco-]</option>';
+			$.each(entry['Bancos'],function(entryIndex,banco){
+				banco_hmtl += '<option value="' + banco['id_banco'] + '"  >' + banco['banco'] + '</option>';
+			});
+			$select_banco.append(banco_hmtl);
+			
+			
+			
+			$select_moneda.children().remove();
+				var moneda_hmtl = '';
+				$.each(entry['Monedas'],function(entryIndex,moneda){
+					moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
+				});
+			$select_moneda.append(moneda_hmtl);
+			
+			
+			
+			var entidad_hmtl = '<option value="00" selected="yes" >[-Seleccionar entidad--]</option>';
 			$select_entidad.children().remove();
 			$select_entidad.append(entidad_hmtl);
 
@@ -308,7 +308,7 @@ $(function() {
 			$select_municipio.children().remove();
 			$select_municipio.append(localidad_hmtl);
                         
-                        //Alimentando los campos select de las pais
+			//Alimentando los campos select de las pais
 			$select_pais.children().remove();
 			var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
 			$.each(entry['Paises'],function(entryIndex,pais){
@@ -320,10 +320,10 @@ $(function() {
                         
                                 
                         
-                        //carga select estados al cambiar el pais
-                        $select_pais.change(function(){
-                                var valor_pais = $(this).val();
-                                var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
+			//carga select estados al cambiar el pais
+			$select_pais.change(function(){
+					var valor_pais = $(this).val();
+					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEntidades.json';
 				$arreglo = {'id_pais':valor_pais};
 				$.post(input_json,$arreglo,function(entry){
 					$select_entidad.children().remove();
@@ -425,40 +425,40 @@ $(function() {
                         
                         
 			//variables Pestaña (Chequera)
-                        var $campo_id = $('#forma-chequeras-window').find('input[name=identificador]');
+			var $campo_id = $('#forma-chequeras-window').find('input[name=identificador]');
 
-                        var $chequera = $('#forma-chequeras-window').find('input[name=chequera]');
-                        var $select_moneda = $('#forma-chequeras-window').find('select[name=moneda]');
-                        var $check_modificar_consecutivo = $('#forma-chequeras-window').find('input[name=check_modificar_consecutivo]');
-                        var $check_modificar_fecha = $('#forma-chequeras-window').find('input[name=check_modificar_fecha]');
-                        var $check_modificar_cheque = $('#forma-chequeras-window').find('input[name=check_modificar_cheque]');
-                        var $check_imprimir_chequeningles = $('#forma-chequeras-window').find('input[name=check_imprimir_chequeningles]');
-                        //fin de variables Pestaña (Chequera)
+			var $chequera = $('#forma-chequeras-window').find('input[name=chequera]');
+			var $select_moneda = $('#forma-chequeras-window').find('select[name=moneda]');
+			var $check_modificar_consecutivo = $('#forma-chequeras-window').find('input[name=check_modificar_consecutivo]');
+			var $check_modificar_fecha = $('#forma-chequeras-window').find('input[name=check_modificar_fecha]');
+			var $check_modificar_cheque = $('#forma-chequeras-window').find('input[name=check_modificar_cheque]');
+			var $check_imprimir_chequeningles = $('#forma-chequeras-window').find('input[name=check_imprimir_chequeningles]');
+			//fin de variables Pestaña (Chequera)
 
 
-                        //variables Pestaña Dos (Datos)
-                        var $select_banco = $('#forma-chequeras-window').find('select[name=select_banco]');
-                        var $campo_numero_sucursal = $('#forma-chequeras-window').find('input[name=numero_sucursal]');
-                        var $campo_nombre_sucursal = $('#forma-chequeras-window').find('input[name=nombre_sucursal]');
-                        var $campo_calle = $('#forma-chequeras-window').find('input[name=calle]');
-                        var $campo_numero = $('#forma-chequeras-window').find('input[name=numero]');
-                        var $campo_colonia = $('#forma-chequeras-window').find('input[name=colonia]');
-                        var $campo_cp = $('#forma-chequeras-window').find('input[name=cp]');
-                        var $select_pais = $('#forma-chequeras-window').find('select[name=pais]');
-                        var $select_entidad = $('#forma-chequeras-window').find('select[name=estado]');
-                        var $select_municipio = $('#forma-chequeras-window').find('select[name=municipio]');
-                        //fin de variable de pestana  (Datos)
+			//variables Pestaña Dos (Datos)
+			var $select_banco = $('#forma-chequeras-window').find('select[name=select_banco]');
+			var $campo_numero_sucursal = $('#forma-chequeras-window').find('input[name=numero_sucursal]');
+			var $campo_nombre_sucursal = $('#forma-chequeras-window').find('input[name=nombre_sucursal]');
+			var $campo_calle = $('#forma-chequeras-window').find('input[name=calle]');
+			var $campo_numero = $('#forma-chequeras-window').find('input[name=numero]');
+			var $campo_colonia = $('#forma-chequeras-window').find('input[name=colonia]');
+			var $campo_cp = $('#forma-chequeras-window').find('input[name=cp]');
+			var $select_pais = $('#forma-chequeras-window').find('select[name=pais]');
+			var $select_entidad = $('#forma-chequeras-window').find('select[name=estado]');
+			var $select_municipio = $('#forma-chequeras-window').find('select[name=municipio]');
+			//fin de variable de pestana  (Datos)
 
-                        //// variable de pestana tres (Otros)
-                        var $campo_tel1 = $('#forma-chequeras-window').find('input[name=tel1]');
-                        var $campo_ext1 = $('#forma-chequeras-window').find('input[name=ext1]');
-                        var $campo_tel2 = $('#forma-chequeras-window').find('input[name=tel2]');
-                        var $campo_ext2 = $('#forma-chequeras-window').find('input[name=ext2]');
-                        var $campo_fax = $('#forma-chequeras-window').find('input[name=fax]');
-                        var $campo_gerente = $('#forma-chequeras-window').find('input[name=gerente]');
-                        var $campo_ejecutivo= $('#forma-chequeras-window').find('input[name=ejecutivo]');
-                        var $campo_email = $('#forma-chequeras-window').find('input[name=email]');
-                        //fin de variables de la pestaña (Otros)
+			//// variable de pestana tres (Otros)
+			var $campo_tel1 = $('#forma-chequeras-window').find('input[name=tel1]');
+			var $campo_ext1 = $('#forma-chequeras-window').find('input[name=ext1]');
+			var $campo_tel2 = $('#forma-chequeras-window').find('input[name=tel2]');
+			var $campo_ext2 = $('#forma-chequeras-window').find('input[name=ext2]');
+			var $campo_fax = $('#forma-chequeras-window').find('input[name=fax]');
+			var $campo_gerente = $('#forma-chequeras-window').find('input[name=gerente]');
+			var $campo_ejecutivo= $('#forma-chequeras-window').find('input[name=ejecutivo]');
+			var $campo_email = $('#forma-chequeras-window').find('input[name=email]');
+			//fin de variables de la pestaña (Otros)
 			
 			var $cerrar_plugin = $('#forma-chequeras-window').find('#close');
 			var $cancelar_plugin = $('#forma-chequeras-window').find('#boton_cancelar');

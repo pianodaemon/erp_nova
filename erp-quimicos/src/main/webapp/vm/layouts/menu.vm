@@ -249,7 +249,7 @@
 													<li class="topline"><a href="../repprogramacionpagos/startup.agnux">Programaci&oacute;n de pagos</a></li>
 													<li class="topline"><a href="../cxprepantiguedadsaldos/startup.agnux">Antig&uuml;edad de Saldos</a></li>
 													<li class="topline"><a href="../cxprepsaldomes/startup.agnux">Saldo Mensual</a></li>
-													<li class="topline"><a href="../cxpevaluacionprov/startup.agnux">Evaluaci&oacute;n</a></li>
+													
 													
 													<!--
 													<li class="topline"><a href="#">Saldo Mensual</a></li>
@@ -269,7 +269,7 @@
 
 													<li class="topline"><a href="../com_requisicion/startup.agnux">Requisici&oacute;n</a></li>
 													<li class="topline"><a href="../com_oc_req/startup.agnux">Autorizaci&oacute;n de Requisici&oacute;n</a></li>
-
+													
 													<li class="topline"><a href="../comordencompra/startup.agnux">Orden de Compra</a></li>
 													<li class="topline"><a href="../comcompraautorizacion/startup.agnux">Autorizaci&oacute;n de O. C.</a></li>
 													<li class="topline"><a href="../entradamercancias/startup.agnux">Facturas de Compras</a></li>
@@ -288,7 +288,8 @@
 												<a href="#" class="sub">Reportes&raquo;</a>
 												<ul>
 													<li class="topline"><a href="../invrepcomprasnetasporproducto/startup.agnux">Compras Netas por Producto</a></li>
-													<li class="topline"><a href="../repestadisticocompras/startup.agnux">Estadistico de Compras</a></li>
+													<li class="topline"><a href="../repestadisticocompras/startup.agnux">Estad&iacute;stico de Compras</a></li>
+													<li class="topline"><a href="../comdiasentrega/startup.agnux">D&iacute;as de Entrega Promedio</a></li>
 												</ul>
 											</li>
 										</ul>
