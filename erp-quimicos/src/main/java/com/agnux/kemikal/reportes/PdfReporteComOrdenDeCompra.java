@@ -104,11 +104,14 @@ public class PdfReporteComOrdenDeCompra {
                             +"\n"+"R.F.C. "+datosOrdenCompra.get("emisor_rfc").toUpperCase();
                         
                                 
-        
-        
+        boolean mostrarNumPag=false;
+        if(conceptosOrdenCompra.size()>=13){
+            mostrarNumPag=true;
+        }
         //datos para el pie de pagina
         datosOrdenCompra.put("codigo1", datosEncabezadoPie.get("codigo1"));
         datosOrdenCompra.put("codigo2", datosEncabezadoPie.get("codigo2"));
+        datosOrdenCompra.put("mostrar_pag", String.valueOf(mostrarNumPag));
         
         HeaderFooter event = new HeaderFooter(datosOrdenCompra);
         Document reporte = new Document(PageSize.LETTER, -50, -50, 20, 30);
@@ -301,7 +304,13 @@ public class PdfReporteComOrdenDeCompra {
             tabla.setKeepTogether(false);
             
             celda = new PdfPCell(tablita.addContent(datosOrdenCompra,conceptosOrdenCompra));
-            celda.setFixedHeight(300);
+            
+            //Esto es para permitir que se se desplace hacia abajo cuando son muchos registros
+            if(conceptosOrdenCompra.size()<14){
+                //Si es menor de 14 registros, le damos un tamaño fijo
+                celda.setFixedHeight(300);
+            }
+            
             celda.setUseAscender(true);
             celda.setHorizontalAlignment(Element.ALIGN_CENTER);
             celda.setUseDescender(true);
@@ -855,6 +864,15 @@ public class PdfReporteComOrdenDeCompra {
         private String codigo2;
         private String direccion_empresa;
         private String codigo_p;
+        private boolean mostrarPag;
+
+        public boolean isMostrarPag() {
+            return mostrarPag;
+        }
+
+        public void setMostrarPag(boolean mostrarPag) {
+            this.mostrarPag = mostrarPag;
+        }
         
         
         //ESTOS  SON LOS GETER Y SETTER DE LAS VARIABLES PRIVADAS DE LA CLASE
@@ -914,6 +932,8 @@ public class PdfReporteComOrdenDeCompra {
             this.setCodigo2(datosOCompra.get("codigo2")); 
             this.setDireccion_empresa(datosOCompra.get("direccion_empresa"));
             this.setCodigo_p(datosOCompra.get("codigo_p"));
+            this.setMostrarPag(Boolean.parseBoolean(datosOCompra.get("mostrar_pag")));
+            
         }
         
         
@@ -957,20 +977,21 @@ public class PdfReporteComOrdenDeCompra {
             cb.showText(text_left);
             cb.endText();
             
-            /*
-            //texto centro pie de pagina
-            String text_center ="Página " + writer.getPageNumber() + " de ";
-            float text_center_Size = helv.getWidthPoint(text_center, 7);
-            float pos_text_center = (document.getPageSize().getWidth()/2)-(text_center_Size/2);
-            float adjust = text_center_Size + 3; 
-            cb.beginText();  
-            cb.setFontAndSize(helv, 7);  
-            cb.setTextMatrix(pos_text_center, textBase );  //definir la posicion de text
-            cb.showText(text_center);
-            cb.endText();
-            cb.addTemplate(total, pos_text_center + adjust, textBase);
             
-            */
+            if(this.isMostrarPag()){
+                //texto centro pie de pagina
+                String text_center ="" + writer.getPageNumber() + " / ";
+                float text_center_Size = helv.getWidthPoint(text_center, 7);
+                float pos_text_center = (document.getPageSize().getWidth()/2)-(text_center_Size/2);
+                float adjust = text_center_Size + 3; 
+                cb.beginText();  
+                cb.setFontAndSize(helv, 7);  
+                cb.setTextMatrix(pos_text_center, textBase );  //definir la posicion de text
+                cb.showText(text_center);
+                cb.endText();
+                cb.addTemplate(total, pos_text_center + adjust, textBase);
+            }
+            
             //texto inferior derecha pie de pagina
             String text_right = this.getCodigo2();
             float textRightSize = helv.getWidthPoint(text_right, 7);
