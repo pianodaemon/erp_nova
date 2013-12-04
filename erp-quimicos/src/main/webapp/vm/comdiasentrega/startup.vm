@@ -60,10 +60,10 @@
 							<td width="20"></td>
 							
 							<td width="25"><img src="../../img/catalogo/calendario.png" align="top"></td>
-							<td width="90"><input type="text" name="fecha_inicial" style="width:90px;"></td>
+							<td width="90"><input type="text" name="fecha_inicial" style="width:90px;" readOnly="true"></td>
 							<td width="15"></td>
 							<td width="25"><img src="../../img/catalogo/calendario.png" align="top"></td>
-							<td width="90"><input type="text" name="fecha_final" style="width:90px;"></td>
+							<td width="90"><input type="text" name="fecha_final" style="width:90px;" readOnly="true"></td>
 							
 							<td width="20" class="proveedor"></td>
 							<td width="300" class="proveedor">

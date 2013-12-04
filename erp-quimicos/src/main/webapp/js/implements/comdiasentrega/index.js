@@ -2,7 +2,7 @@ $(function() {
 	var config =  {
 		empresa: $('#lienzo_recalculable').find('input[name=emp]').val(),
 		sucursal: $('#lienzo_recalculable').find('input[name=suc]').val(),
-		tituloApp: 'Reporte de D&iacute;as de entrega promedio' ,                 
+		tituloApp: 'Reporte de D&iacute;as de entrega de O.C.' ,                 
 		contextpath : $('#lienzo_recalculable').find('input[name=contextpath]').val(),
 		
 		userName : $('#lienzo_recalculable').find('input[name=user]').val(),
@@ -375,7 +375,7 @@ $(function() {
 			f_final=$fecha_final.val();
 		}
 				
-		var cadena = $select_tipo_reporte.val()+"___"+f_inicial+"___"+f_final+"___"+proveedor;
+		var cadena = $select_tipo_reporte.val()+"___"+f_inicial+"___"+f_final+"___"+proveedor+"___xls";
 		
 		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 		var input_json = config.getUrlForGetAndPost() + '/getReporte/'+cadena+'/'+iu+'/out.json'
@@ -389,16 +389,23 @@ $(function() {
 	$genera_PDF.click(function(event){
 		event.preventDefault();
 		var proveedor = '0';
+		var f_inicial = '0';
+		var f_final = '0';
+		
 		if($razon_proveedor.val().trim()!=''){
 			proveedor=$razon_proveedor.val();
 		}
+		if($fecha_inicial.val().trim()!=''){
+			f_inicial=$fecha_inicial.val();
+		}
+		if($fecha_final.val().trim()!=''){
+			f_final=$fecha_final.val();
+		}
 		
-		var cadena = $select_tipo_reporte.val()+"___"+$select_ano.val()+"___"+$select_mes.val()+"___"+proveedor;
-		
-		//var id_proveedor=$id_proveedor_edo_cta.val();
+		var cadena = $select_tipo_reporte.val()+"___"+f_inicial+"___"+f_final+"___"+proveedor+"___pdf";
 		
 		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-		var input_json = config.getUrlForGetAndPost() + '/getPdfSaldoMensual/'+cadena+'/'+iu+'/out.json'
+		var input_json = config.getUrlForGetAndPost() + '/getReporte/'+cadena+'/'+iu+'/out.json'
 		window.location.href=input_json;
 		
 	});//termina llamada json
@@ -536,7 +543,7 @@ $(function() {
 				
 				$div_reporte_estados_de_cuenta.append(html_reporte); 
 				var height2 = $('#cuerpo').css('height');
-				var alto = parseInt(height2)-300;
+				var alto = parseInt(height2)-240;
 				var pix_alto=alto+'px';
 				$('#edocta').tableScroll({height:parseInt(pix_alto)});
 			});
