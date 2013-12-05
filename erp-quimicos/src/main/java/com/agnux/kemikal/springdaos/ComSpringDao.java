@@ -56,7 +56,7 @@ public class ComSpringDao  implements ComInterfaceDao {
     public String selectFunctionForThisApp(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from com_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         
-        System.out.println("Ejacutando Guardar:"+sql_to_query);
+        //System.out.println("Ejacutando Guardar:"+sql_to_query);
         //int update = this.getJdbcTemplate().queryForInt(sql_to_query);
         //return update;
         String valor_retorno="";
@@ -182,7 +182,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + "FROM erp_monedavers "
                 + "WHERE to_char(momento_creacion,'yyyymmdd')::integer <= to_char('"+fecha+"'::timestamp with time zone,'yyyymmdd')::integer "
                 + "AND moneda_id="+id_moneda+" ORDER BY momento_creacion DESC LIMIT 1;";
-        System.out.println("Obteniendo TC: "+sql_to_query);
+        //System.out.println("Obteniendo TC: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> hm_tc = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -316,7 +316,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "left join cxp_prov_credias on cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
                     + "join cxp_prov_tipos_embarque on cxp_prov_tipos_embarque.id =com_orden_compra.tipo_embarque_id "
                     + "WHERE com_orden_compra.id="+id_orden_compra;
-       System.out.println("getComOrdenCompra_Datos::::"+sql_query); 
+       //System.out.println("getComOrdenCompra_Datos::::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -518,7 +518,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     +" JOIN ("+sql_busqueda+") as subt on subt.id=com_orden_compra.id "
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
-        System.out.println("getComOrdenCompra_PaginaGrid: "+sql_to_query);
+        //System.out.println("getComOrdenCompra_PaginaGrid: "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query, 
             new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -719,7 +719,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + " LEFT JOIN gral_empleados AS tblEmpAutoriza ON tblEmpAutoriza.id = tblUserCrea.gral_empleados_id  "
                 + " WHERE com_orden_compra.id="+id_ordenCompra;
         
-        System.out.println("getDatosPDFOrdenCompra:"+sql_query);
+        //System.out.println("getDatosPDFOrdenCompra:"+sql_query);
         Map<String, Object> mapdatosquery = this.getJdbcTemplate().queryForMap(sql_query);
         mappdf.put("id_ordencompra", mapdatosquery.get("id").toString());
         mappdf.put("grupo", mapdatosquery.get("grupo").toString());
@@ -1209,7 +1209,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     +" JOIN ("+sql_busqueda+") as subt on subt.id=com_oc_req.id "
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
-        	System.out.println("datos del grid principal: "+sql_to_query);
+        	//System.out.println("datos del grid principal: "+sql_to_query);
 		ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
 		    sql_to_query, 
 		    new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -1249,7 +1249,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     +"JOIN gral_usr ON gral_usr.id=com_oc_req.gral_usr_id_creacion "
                     +"LEFT JOIN gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
                     + " WHERE com_oc_req.id= "+id_requisicion;
-       System.out.println("ESto es del header de Requisicion de orden de compra::::"+sql_query); 
+       //System.out.println("ESto es del header de Requisicion de orden de compra::::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -1292,7 +1292,7 @@ public class ComSpringDao  implements ComInterfaceDao {
 		    +" LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_oc_req_detalle.presentacion_id "
 		    +" WHERE com_oc_req_detalle.com_oc_req_id="+id_requisicion;
         
-		System.out.println("Obtiene datos grid requisiciones: "+sql_query);
+		//System.out.println("Obtiene datos grid requisiciones: "+sql_query);
 		ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
 		    sql_query,  
 		    new Object[]{}, new RowMapper() {
@@ -1346,7 +1346,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     +" JOIN com_proceso_flujo on com_proceso_flujo.id = com_proceso.com_proceso_flujo_id  where com_orden_compra.tipo_orden_compra = 1"
                     + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
         
-		System.out.println("datos del grid principal: "+sql_to_query);
+		//System.out.println("datos del grid principal: "+sql_to_query);
 		ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
 		    sql_to_query, 
 		    new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -1401,7 +1401,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "join cxp_prov_tipos_embarque on cxp_prov_tipos_embarque.id =com_orden_compra.tipo_embarque_id "
                     + "WHERE com_orden_compra.id="+id_com_oc_req;
        
-		System.out.println("ESto es header de com_oc_req cuandoedita::::"+sql_query); 
+		//System.out.println("ESto es header de com_oc_req cuandoedita::::"+sql_query); 
 		ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
 		    sql_query,  
 		    new Object[]{}, new RowMapper() {
@@ -1454,7 +1454,7 @@ public class ComSpringDao  implements ComInterfaceDao {
             +"  where com_oc_req_detalle.status=false and com_oc_req.cancelado =false and com_oc_req.status=0  "
             +"  GROUP BY com_oc_req_detalle.inv_prod_id,inv_prod.sku,inv_prod.descripcion,inv_prod_unidades.titulo,inv_prod_unidades.decimales";
                     
-       System.out.println("ESto es el grid de requisiciones a autorizar a orden de compra<:::"+sql_query); 
+      // System.out.println("ESto es el grid de requisiciones a autorizar a orden de compra<:::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -1500,7 +1500,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_orden_compra_detalle.presentacion_id "
                 + "WHERE com_orden_compra_detalle.com_orden_compra_id="+id_com_oc_req;
         
-        System.out.println("Obtiene datos grid requisiciones cuando edita: "+sql_query);
+        //System.out.println("Obtiene datos grid requisiciones cuando edita: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{}, new RowMapper() {
@@ -1547,7 +1547,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                                 + " tipo_cambio double precision, " 
                                 + " total_pesos double precision,  fecha_factura text); ";
 
-       System.out.println("getEstadisticoCompras:"+ sql_to_query);
+       //System.out.println("getEstadisticoCompras:"+ sql_to_query);
           
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_to_query, 
