@@ -769,18 +769,19 @@ $(function() {
                                 $id_preorden.val(id_to_show);
                                 
                                 $command_selected.val("edit");
-				var respuestaProcesada = function(data){
+					var respuestaProcesada = function(data){
                                     //1 para cunado se guandaron los cambios o fuardo uno nuevo y 2 par acuendo sel e dio click en cerrar o la X
 					if ( data['success'] == "1" || data['success']=="2"){
-                                            
-                                            if ( data['success'] == "2" ){
-                                                jAlert("Salio sin guardar cambios", 'Atencion!');
-                                            }else{
-                                                jAlert("Cambios guardados exitosamente", 'Atencion!');
-                                            }
-                                            var remove = function() {$(this).remove();};
-                                            $('#forma-propreordenproduccion-overlay').fadeOut(remove);
-                                            $get_datos_grid();
+							if ( data['success'] == "2" ){
+								if($command_selected.val()!='cerrar'){
+									jAlert("Salio sin guardar cambios", 'Atencion!');
+								}
+							}else{
+								jAlert("Cambios guardados exitosamente", 'Atencion!');
+							}
+							var remove = function() {$(this).remove();};
+							$('#forma-propreordenproduccion-overlay').fadeOut(remove);
+							$get_datos_grid();
 					}else{
                                             /*
 						// Desaparece todas las interrogaciones si es que existen
@@ -971,11 +972,11 @@ $(function() {
                                     return false;
                                 });
                                 
-				//cerrar plugin
+								//cerrar plugin
                                 $cerrar_plugin.bind('click',function(){
                                     $command_selected.val("cerrar");
                                     
-                                    jConfirm('Desea cancelar la preorden?', 'Dialogo de Confirmacion', function(r) {
+                                    jConfirm('Desea salir sin guardar cambios?', 'Dialogo de Confirmacion', function(r) {
                                         // If they confirmed, manually trigger a form submission
                                         if (r) $submit_actualizar.parents("FORM").submit();
                                     });
@@ -988,7 +989,7 @@ $(function() {
                                 $cancelar_plugin.click(function(event){
                                     $command_selected.val("cerrar");
                                     
-                                    jConfirm('Desea cancelar la preorden?', 'Dialogo de Confirmacion', function(r) {
+                                    jConfirm('Desea salir sin guardar cambios?', 'Dialogo de Confirmacion', function(r) {
                                         // If they confirmed, manually trigger a form submission
                                         if (r) $submit_actualizar.parents("FORM").submit();
                                     });

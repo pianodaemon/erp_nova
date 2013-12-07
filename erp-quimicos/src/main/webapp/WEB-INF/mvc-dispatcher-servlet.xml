@@ -55,125 +55,16 @@
         
         
         <!--Conexion a bd instance01 LOCAL-->
-        <!--
+        
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	     <property name="driverClassName" value="org.postgresql.Driver" />
 	     <property name="url" value="jdbc:postgresql://localhost:5432/kathion" />
 	     <property name="username" value="ms" />
 	     <property name="password" value="ms" />
 	</bean>
-        -->
         
-        
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://localhost:5432/novasol2" />
-	     <property name="username" value="ms" />
-	     <property name="password" value="ms" />
-	</bean>
-        
-        
-        <!--Conexion a bd instance01 es lo mismo para KATHION Y KEMIKAL-->
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://localhost:5432/instance01" />
-	     <property name="username" value="instance01" />
-	     <property name="password" value="instance01" />
-	</bean>
-        -->
         
 
-        
-        <!--Conexion a bd saar SAAR-->
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://localhost:5432/saar" />
-	     <property name="username" value="saar" />
-	     <property name="password" value="saar" />
-	</bean>
-        -->
-        
-
-        
-        <!--Conexion a bd NOVASOL-->
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://localhost:5432/novasol" />
-	     <property name="username" value="novasol" />
-	     <property name="password" value="novasol" />
-	</bean>
-       -->
-       
-       <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://50.56.242.41:5555/novasol" />
-	     <property name="username" value="novasol" />
-	     <property name="password" value="novasol" />
-	</bean>
-       -->
-        
-        
-        <!--FACTURACION-->
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://10.178.141.30:5432/db01" />
-	     <property name="username" value="db01" />
-	     <property name="password" value="db01" />
-	</bean>
-        -->
-        
-        
-        <!--Conexion Servidor de PRUEBAS -->
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://localhost:5432/pruebas" />
-	     <property name="username" value="pruebas" />
-	     <property name="password" value="sc2013pruebas" />
-	</bean>
-        -->
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://50.57.127.230:5555/pruebas" />
-	     <property name="username" value="pruebas" />
-	     <property name="password" value="sc2013pruebas" />
-	</bean>
-        -->
-        
-        
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://localhost:5432/disnp" />
-	     <property name="username" value="disnp" />
-	     <property name="password" value="disnp" />
-	</bean>
-        -->
-
-        
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://localhost:5432/tools" />
-	     <property name="username" value="tools" />
-	     <property name="password" value="tools" />
-	</bean>
-        -->
-        
-        <!--
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-	     <property name="driverClassName" value="org.postgresql.Driver" />
-	     <property name="url" value="jdbc:postgresql://50.56.103.12:5555/tools" />
-	     <property name="username" value="tools" />
-	     <property name="password" value="tools" />
-	</bean>
-        -->
         
         <!--<bean name="beanOutCfdi" class="com.agnux.cfdi.BeanSolicitidesOut"></bean>-->
         
