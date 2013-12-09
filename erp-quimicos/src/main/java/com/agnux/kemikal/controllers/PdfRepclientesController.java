@@ -219,7 +219,7 @@ public class PdfRepclientesController {
         File file_dir_tmp = new File(dir_tmp);
         System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
 
-        String file_name = "REPCLIENTES Agente:"+id_agente+".pdf";
+        String file_name = "REPCLIENTES_"+nombreMes+".pdf";
 
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
