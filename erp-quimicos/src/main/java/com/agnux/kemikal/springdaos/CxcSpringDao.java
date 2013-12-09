@@ -3521,8 +3521,8 @@ return subfamilias;
                 + "from cxc_ant "
                 + "join cxc_clie on cxc_clie.id = cxc_ant.cliente_id "
                 + "where cxc_ant.empresa_id= "+id_empresa+" "
-                + "cxc_ant.cancelado=false "
-                + "cxc_ant.borrado_logico=false "
+                + "and cxc_ant.cancelado=false "
+                + "and cxc_ant.borrado_logico=false "
                 + ""+where+" "
                 + "and to_char(cxc_ant.fecha_anticipo_usuario,'yyyymmdd'):: integer BETWEEN to_char('"+fecha_inicial+"'::timestamp with time zone,'yyyymmdd')::integer and to_char('"+fecha_final+"'::timestamp with time zone,'yyyymmdd')::integer "
                 + "ORDER BY cxc_ant.fecha_anticipo_usuario ";
