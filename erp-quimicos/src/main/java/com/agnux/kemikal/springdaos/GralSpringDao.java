@@ -2051,8 +2051,8 @@ public class GralSpringDao implements GralInterfaceDao{
                                 +" WHERE gral_mon.borrado_logico=false "
                                 +" order by "+orderBy+" "+asc+" limit ? OFFSET ?";
 
-        System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
-        System.out.println("esto es el query  :  "+sql_to_query);
+        //System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        //System.out.println("esto es el query  :  "+sql_to_query);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
@@ -2088,7 +2088,7 @@ public class GralSpringDao implements GralInterfaceDao{
                                 +" FROM erp_monedavers  "
                                +" JOIN gral_mon ON gral_mon.id = erp_monedavers.moneda_id "
                               + " WHERE erp_monedavers.id ="+erp_monedavers_id;
-        System.out.println("Id de la tabla erp_Monedavers:  "+erp_monedavers_id);
+        //System.out.println("Id de la tabla erp_Monedavers:  "+erp_monedavers_id);
         ArrayList<HashMap<String, String>> datos_tc = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2173,4 +2173,61 @@ public class GralSpringDao implements GralInterfaceDao{
     }    
     
 
+    //Aplicativo de cambio de Contraseña de Usuario
+    @Override
+    public ArrayList<HashMap<String, Object>> GralUserEdit_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+                + "SELECT "
+                    + "gral_usr.id,"
+                    + "gral_usr.username AS usern,"
+                    + "(CASE WHEN gral_empleados.id IS NULL THEN '' ELSE (CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE gral_empleados.apellido_materno END) END) AS nombre_empleado "
+                + "FROM gral_usr "
+                + "LEFT JOIN gral_empleados ON gral_empleados.id=gral_usr.gral_empleados_id "
+                + "JOIN ("+sql_busqueda+") AS sbt ON sbt.id = gral_usr.id "
+                + "order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        //System.out.println("esto es el query  :  "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("usern",rs.getString("usern"));
+                    row.put("nombre_empleado",rs.getString("nombre_empleado"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, String>> GralUserEdit_Datos(Integer id) {
+        String sql_to_query = "SELECT gral_usr.id, gral_usr.username as usern FROM gral_usr WHERE gral_usr.id="+id;
+        
+        //System.out.println("sql_to_query:  "+sql_to_query);
+        ArrayList<HashMap<String, String>> datos_tc = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("usern",rs.getString("usern"));
+                    return row;
+                }
+            }
+        );
+        return datos_tc;
+    }
+    
+    
+    
+
+    
 }

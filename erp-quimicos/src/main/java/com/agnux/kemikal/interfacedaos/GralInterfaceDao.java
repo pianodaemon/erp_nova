@@ -191,4 +191,8 @@ public interface GralInterfaceDao {
     
     //Obtiene el nombre del empleado a partir del id del usuario
     public String getNombreEmpleadoByIdUser(Integer id_user);
+    
+    //Aplicativo de Cambio de Contraseña de Usuario
+    public ArrayList<HashMap<String, Object>> GralUserEdit_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> GralUserEdit_Datos(Integer id);  
 }
