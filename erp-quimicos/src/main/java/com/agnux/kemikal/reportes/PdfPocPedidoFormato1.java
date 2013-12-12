@@ -66,6 +66,7 @@ public class PdfPocPedidoFormato1 {
         
         PdfPTable encabezado;
         PdfPTable tabla_conceptos;
+        PdfPTable tabla_totales;
         PdfPTable tablaObser;
         PdfPTable tablaDatosExtras;
         
@@ -176,32 +177,14 @@ public class PdfPocPedidoFormato1 {
             
             
             
-            /*
-            tabla_conceptos = new PdfPTable(1);
-            tabla_conceptos.setKeepTogether(true);
-            
-            cell = new PdfPCell(new Paragraph("CONCEPTOS.",largeBoldFont));
-            cell.setBorder(0);
-//          cell.setBorder(11); //borde lateral derecho
-//          cell.setBorder(12); //borde lateral izquierdo
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setUseDescender(true);
-            //cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tabla_conceptos.addCell(cell);
-            
-            
-            document.add(tabla_conceptos);
-            */
-            
-            
             String moneda = "";
             
             //INICIO DE LA TABLA DE PEDIDO ENTREGADO ??
-            float [] anchocolumnas = {1f, 5f, 1f, 2f,1.5f, 0.5f,1.3f, 0.5f,1.5f};
+            float [] anchocolumnas = {1.5f, 4.8f, 1f, 1.8f,1.2f, 0.5f,1.3f, 0.5f,1.5f};
             
             tabla_conceptos = new PdfPTable(anchocolumnas);
-            tabla_conceptos.setKeepTogether(true);
+            tabla_conceptos.setKeepTogether(false);
+            tabla_conceptos.setHeaderRows(1);
             
             String[] columnas = {"CODIGO","DESCRIPCION","UNIDAD","PRESENTACION","CANTIDAD", "","P.UNITARIO","","IMPORTE"};
             java.util.List<String>  lista_columnas = (java.util.List<String>) Arrays.asList(columnas);
@@ -210,12 +193,12 @@ public class PdfPocPedidoFormato1 {
            contador = 0;
            
            for ( String columna_titulo : lista_columnas){
-                    PdfPCell cellX = new PdfPCell(new Paragraph(columna_titulo,smallBoldFont));
-                    cellX.setUseAscender(true);
-                    cellX.setUseDescender(true);
-                    cellX.setBackgroundColor(BaseColor.BLACK);
-                    cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    tabla_conceptos.addCell(cellX);
+                PdfPCell cellX = new PdfPCell(new Paragraph(columna_titulo,smallBoldFont));
+                cellX.setUseAscender(true);
+                cellX.setUseDescender(true);
+                cellX.setBackgroundColor(BaseColor.BLACK);
+                cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
+                tabla_conceptos.addCell(cellX);
            }
            for (HashMap<String, String> registro : this.getRows()){
                
@@ -228,7 +211,7 @@ public class PdfPocPedidoFormato1 {
                         
                         if (omega.equals("codigo")){
                             celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
-                            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                             celda.setBorder(0);
                         tabla_conceptos.addCell(celda);
@@ -247,8 +230,7 @@ public class PdfPocPedidoFormato1 {
                             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                             celda.setBorder(0);
-                        tabla_conceptos.addCell(celda);
-                           
+                            tabla_conceptos.addCell(celda);
                         }
                         
                         if (omega.equals("presentacion")){
@@ -256,12 +238,12 @@ public class PdfPocPedidoFormato1 {
                             celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                             celda.setBorder(0);
-                        tabla_conceptos.addCell(celda);
+                            tabla_conceptos.addCell(celda);
                         }
                         
                         if (omega.equals("cantidad")){
                             celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
-                            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                             celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                             celda.setBorder(0);
                             tabla_conceptos.addCell(celda);
@@ -296,6 +278,24 @@ public class PdfPocPedidoFormato1 {
              
             }
            
+           //Agregar tabla conceptos al Documento
+           document.add(tabla_conceptos);
+           
+           /*
+           System.out.println("Height: "+tabla_conceptos.getTotalHeight());
+           
+           if(tabla_conceptos.getTotalHeight()>570 && tabla_conceptos.getTotalHeight()<595){
+               //Agregar pagina Nueva
+               document.newPage();
+           }
+           */
+            //Inicia tabla TOTALES
+            float [] anchoColumnasTotales = {1.5f, 4.8f, 1f, 1.8f,1.2f, 0.5f,1.3f, 0.5f,1.5f};
+            
+            tabla_totales = new PdfPTable(anchoColumnasTotales);
+            tabla_totales.setKeepTogether(false);
+           
+           
            /*
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorder(0);
@@ -304,7 +304,7 @@ public class PdfPocPedidoFormato1 {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
            */
            
            
@@ -318,7 +318,7 @@ public class PdfPocPedidoFormato1 {
             cell.setUseAscender(true);
             cell.setUseDescender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("Subtotal:",smallFont));
             cell.setBorderWidthTop(1);
@@ -329,7 +329,7 @@ public class PdfPocPedidoFormato1 {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             cell = new PdfPCell(new Paragraph(Datos_Pedido.get("simbolo_moneda"),smallFont));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -338,7 +338,7 @@ public class PdfPocPedidoFormato1 {
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(1);
             cell.setBorderWidthRight(0);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             cell = new PdfPCell(new Paragraph(Datos_Pedido.get("subtotal"),smallFont));
             cell.setBorderWidthTop(1);
@@ -348,7 +348,7 @@ public class PdfPocPedidoFormato1 {
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseAscender(true);
             cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             /////////////////////////////////////////////////////////////////////////////////////////////777777777
             /*
@@ -358,7 +358,7 @@ public class PdfPocPedidoFormato1 {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             */
             
             cell = new PdfPCell(new Paragraph("IVA",smallFont));
@@ -370,7 +370,7 @@ public class PdfPocPedidoFormato1 {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
            
             cell = new PdfPCell(new Paragraph(Datos_Pedido.get("simbolo_moneda"),smallFont));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -379,7 +379,7 @@ public class PdfPocPedidoFormato1 {
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(1);
             cell.setBorderWidthRight(0);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             
             cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(Datos_Pedido.get("impuesto"),2)),smallFont));
@@ -390,7 +390,7 @@ public class PdfPocPedidoFormato1 {
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(1);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             /*
             cell = new PdfPCell(new Paragraph("",smallFont));
@@ -399,7 +399,7 @@ public class PdfPocPedidoFormato1 {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             */
             
             cell = new PdfPCell(new Paragraph("IVA Retenido:",smallFont));
@@ -411,7 +411,7 @@ public class PdfPocPedidoFormato1 {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             cell = new PdfPCell(new Paragraph(Datos_Pedido.get("simbolo_moneda"),smallFont));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -420,7 +420,7 @@ public class PdfPocPedidoFormato1 {
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(1);
             cell.setBorderWidthRight(0);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             
             cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(Datos_Pedido.get("monto_retencion"),2)),smallFont));
@@ -431,7 +431,7 @@ public class PdfPocPedidoFormato1 {
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(1);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             /*
             cell = new PdfPCell(new Paragraph("",smallFont));
@@ -440,7 +440,7 @@ public class PdfPocPedidoFormato1 {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             */
             
             cell = new PdfPCell(new Paragraph("Total a Pagar:",smallFont));
@@ -452,7 +452,7 @@ public class PdfPocPedidoFormato1 {
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             cell = new PdfPCell(new Paragraph(Datos_Pedido.get("simbolo_moneda"),smallFont));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -461,7 +461,7 @@ public class PdfPocPedidoFormato1 {
             cell.setBorderWidthBottom(1);
             cell.setBorderWidthLeft(1);
             cell.setBorderWidthRight(0);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             
             cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(Datos_Pedido.get("total"),2)),smallFont));
@@ -472,15 +472,12 @@ public class PdfPocPedidoFormato1 {
             cell.setBorderWidthBottom(1);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(1);
-            tabla_conceptos.addCell(cell);
+            tabla_totales.addCell(cell);
             
             
+            //Agregar tabla Totales al Documento
+            document.add(tabla_totales);
             
-            
-            
-            
-            document.add(tabla_conceptos);
-            //FIN DE LA TABLA  DE PEDIDOS ENTREGADO ??
             
            
       ///??????????????????????????????????????????????????????????????????????      

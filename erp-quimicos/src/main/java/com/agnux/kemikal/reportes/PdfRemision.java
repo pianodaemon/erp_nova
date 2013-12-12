@@ -60,7 +60,7 @@ public class PdfRemision {
         
         //this.setTelefono(telefono);
         PdfPTable encabezado;
-        PdfPTable tabla_contenedor_conceptos;
+        PdfPTable tabla_etiqueta;
         PdfPTable tabla_conceptos;
         PdfPTable tabla_totales;
         PdfPTable tablavacia;
@@ -203,25 +203,23 @@ public class PdfRemision {
             
             //--------INICIA TABLA CONTENEDOR DE LA TABLA CONCEPTOS---------------------------------------------------------------------------
            
-            tabla_contenedor_conceptos = new PdfPTable(1);
-            tabla_contenedor_conceptos.setKeepTogether(true);
+            tabla_etiqueta = new PdfPTable(1);
+            tabla_etiqueta.setKeepTogether(true);
             
-            tabla_contenedor_conceptos.addCell(cell);
+            tabla_etiqueta.addCell(cell);
             cell = new PdfPCell(new Paragraph("CONCEPTOS",largeBoldFont));
             cell.setBorder(0);
-            //cell.setBorder(11); //borde lateral derecho
-            //cell.setBorder(4); //borde lateral izquierdo
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setUseDescender(true);
-            //cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tabla_contenedor_conceptos.addCell(cell);
+            tabla_etiqueta.addCell(cell);
+            
+            //Agregar tabla para etiqueta CONCEPTOS
+            document.add(tabla_etiqueta);
             
             
-            //document.add(tabla_contenedor_conceptos);
             
             //--------INICIA TABLA CONCEPTOS---------------------------------------------------------------------------
-           
             double sumaimporte=0.0;
             double iva=0.0;
             double iva_retenido=0.0;
@@ -229,10 +227,11 @@ public class PdfRemision {
             String moneda = "";
             
             //INICIO DE LA TABLA DE PEDIDO ENTREGADO
-            float [] anchocolumnas = {1f, 1f, 2f, 4f, 0.5f,1.3f, 0.5f,1.5f};
+            float [] anchocolumnas = {1.5f, 1f, 1.5f, 4f, 0.5f,1.3f, 0.5f,1.5f};
             
             tabla_conceptos = new PdfPTable(anchocolumnas);
             tabla_conceptos.setKeepTogether(true);
+            tabla_conceptos.setHeaderRows(1);
             
             String[] columnas = {"CODIGO","CANTIDAD","UNIDAD","DESCRIPCION","","P.UNITARIO","","IMPORTE"};
             List<String>  lista_columnas = (List<String>) Arrays.asList(columnas);
@@ -248,130 +247,91 @@ public class PdfRemision {
             }
             
            for (HashMap<String, String> registro : this.getRows()){
+                //Indices del HashMap que representa el row
+                String[] wordList = {"codigo","cantidad","unidad","descripcion","denominacion","precio_unitario","denominacion","importe"};
+                List<String>  indices = (List<String>) Arrays.asList(wordList);
+                for (String omega : indices){
+                    PdfPCell celda = null;
 
-
-                    //Indices del HashMap que representa el row
-                    String[] wordList = {"codigo","cantidad","unidad","descripcion","denominacion","precio_unitario","denominacion","importe"};
-                   
-                    List<String>  indices = (List<String>) Arrays.asList(wordList);
-                
-                    for (String omega : indices){
-                        PdfPCell celda = null;
-                        
-                        if (omega.equals("codigo")){
-                            celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
-                            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                            celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
+                    if (omega.equals("codigo")){
+                        celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
                         tabla_conceptos.addCell(celda);
-                        }
-                        
-                        if (omega.equals("cantidad")){
-                            //celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
-                            celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
-                            celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                            celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
-                        tabla_conceptos.addCell(celda);
-                           
-                        }
-                        
-                        if (omega.equals("unidad")){
-                            celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
-                            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                            celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
-                        tabla_conceptos.addCell(celda);
-                           
-                        }
-                        
-                        if (omega.equals("descripcion")){
-                            celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
-                            celda.setHorizontalAlignment(Element.ALIGN_LEFT);
-                            celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
-                            tabla_conceptos.addCell(celda);
-                         
-                        }
-                        if (omega.equals("denominacion")){
-                            
-                            /*moneda=registro.get("denominacion");
-                            if(moneda.equals("M.N.")){
-                                celda = new PdfPCell(new Paragraph("$",smallFont));
-                                celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                                celda.setBorder(0);
-                                tabla_conceptos.addCell(celda);
-                            }else{
-                                celda = new PdfPCell(new Paragraph("USD",smallFont));
-                                celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                                celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                                celda.setBorder(0);
-                                tabla_conceptos.addCell(celda);
-                            }*/
-                            
-                            celda = new PdfPCell(new Paragraph(datos_remision.get("simbolo_moneda"),smallFont));
-                            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                            celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
-                            tabla_conceptos.addCell(celda);
-                         
-                        }
-                        
-                        
-                        
-                        if (omega.equals("precio_unitario")){
-                            //celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
-                            celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
-                            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                            celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(4); //borde lateral izquierdo
-                            celda.setBorder(0);
-                        tabla_conceptos.addCell(celda);
-                        }
-                        
-                        if (omega.equals("importe")){
-                            celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
-                            celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                            celda.setVerticalAlignment(Element.ALIGN_TOP);
-                            celda.setBorder(0);
-                            tabla_conceptos.addCell(celda);
-                            
-                           /*
-                            sumaimporte=sumaimporte + Double.parseDouble(registro.get("importe".intern()));
-                            iva=  Double.parseDouble(registro.get("iva".intern()));
-                            iva_retenido=  Double.parseDouble(registro.get("iva_retenido".intern()));
-                            moneda = registro.get("moneda").toString().toUpperCase();
-                            * 
-                            */
-                        }
-                         
                     }
-                
+
+                    if (omega.equals("cantidad")){
+                        //celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                        celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
+                        tabla_conceptos.addCell(celda);
+                    }
+
+                    if (omega.equals("unidad")){
+                        celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
+                        tabla_conceptos.addCell(celda);
+                    }
+
+                    if (omega.equals("descripcion")){
+                        celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
+                        tabla_conceptos.addCell(celda);
+                    }
+
+                    if (omega.equals("denominacion")){
+                        celda = new PdfPCell(new Paragraph(datos_remision.get("simbolo_moneda"),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
+                        tabla_conceptos.addCell(celda);
+                    }
+
+                    if (omega.equals("precio_unitario")){
+                        celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
+                        tabla_conceptos.addCell(celda);
+                    }
+
+                    if (omega.equals("importe")){
+                        celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
+                        tabla_conceptos.addCell(celda);
+                    }
+                }
                 contador++;
-                
             }
            
+            for(int i=contador; i<=25; i++){
+                PdfPCell celda = null;
+                celda = new PdfPCell(new Paragraph("",smallFont));
+                celda.setHorizontalAlignment(Element.ALIGN_LEFT);
+                celda.setVerticalAlignment(Element.ALIGN_TOP);
+                celda.setBorder(0);
+                celda.setColspan(8);
+                celda.setFixedHeight(10);
+                tabla_conceptos.addCell(celda);
+            }
            
             
-            
+            //agregamos al documento la tabla de conceptos
+            document.add(tabla_conceptos);
             //--------TERMINA TABLA CONCEPTOS---------------------------------------------------------------------------
             
-            //aqui agregamos la tabla conceptos a una celda de la tabla contenedor conceptos
-            cell = new PdfPCell( tabla_conceptos );
-            cell.setUseAscender(true);
-            cell.setUseDescender(true);
-            cell.setBorderWidthBottom(1);
-            if(contador<=8){
-                cell.setFixedHeight(220);
-            }
             
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            tabla_contenedor_conceptos.addCell(cell);
             
-            //agregamos al documento la tabla contenedor de conceptos
-            document.add(tabla_contenedor_conceptos);
+
             
             
             //--------INICIA TABLA DE TOTALES---------------------------------------------------------------------------
@@ -382,7 +342,7 @@ public class PdfRemision {
             
            
             cell = new PdfPCell(new Paragraph("",smallFont));
-            cell.setBorderWidthTop(0);
+            cell.setBorderWidthTop(1);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(1);
             cell.setBorderWidthRight(0);
@@ -394,10 +354,9 @@ public class PdfRemision {
             
             
             cell = new PdfPCell(new Paragraph("Subtotal:",smallBoldFontBlack));
-            cell.setBorder(0);
             cell.setColspan(2);
             cell.setUseAscender(true);
-            cell.setBorderWidthTop(0);
+            cell.setBorderWidthTop(1);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(1);
@@ -406,7 +365,7 @@ public class PdfRemision {
             tabla_totales.addCell(cell);
             
             cell = new PdfPCell(new Paragraph(datos_remision.get("simbolo_moneda"),smallBoldFontBlack));
-            cell.setBorderWidthTop(0);
+            cell.setBorderWidthTop(1);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(0);
@@ -416,7 +375,7 @@ public class PdfRemision {
             tabla_totales.addCell(cell);
             
             cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(datos_remision.get("subtotal"),2)),smallBoldFontBlack));
-            cell.setBorderWidthTop(0);
+            cell.setBorderWidthTop(1);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(1);
@@ -425,6 +384,8 @@ public class PdfRemision {
             cell.setUseDescender(true);
             tabla_totales.addCell(cell);
             /////////////////////////////////////////////////////////////////////////////////////////////777777777
+            
+            
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorderWidthTop(0);
             cell.setBorderWidthBottom(0);
@@ -514,15 +475,15 @@ public class PdfRemision {
             sumaTotal = StringHelper.roundDouble(datos_remision.get("total"),2);
             BigInteger num = new BigInteger(sumaTotal.split("\\.")[0]);
             
-            System.out.println("sumaTotal: "+sumaTotal);
-            System.out.println("num: "+num);
+            //System.out.println("sumaTotal: "+sumaTotal);
+            //System.out.println("num: "+num);
             
             n2t cal = new n2t();
             String centavos = sumaTotal.substring(sumaTotal.indexOf(".")+1);
-            System.out.println("centavos: "+centavos);
+            //System.out.println("centavos: "+centavos);
             
             String numero = cal.convertirLetras(num);
-            System.out.println("numero: "+numero);
+            //System.out.println("numero: "+numero);
             //String numeroMay = StringHelper.capitalizaString(numero);
             //String numeroMay = numero;
 

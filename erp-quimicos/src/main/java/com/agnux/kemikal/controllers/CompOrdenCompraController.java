@@ -454,7 +454,7 @@ public class CompOrdenCompraController {
                     tipo_envarque_id;
             
             
-            System.out.println("data_string: "+data_string);
+            //System.out.println("data_string: "+data_string);
             
             succes = this.getComDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             
@@ -494,7 +494,7 @@ public class CompOrdenCompraController {
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        System.out.println("id_usuario: "+id_usuario);
+        //System.out.println("id_usuario: "+id_usuario);
         
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
