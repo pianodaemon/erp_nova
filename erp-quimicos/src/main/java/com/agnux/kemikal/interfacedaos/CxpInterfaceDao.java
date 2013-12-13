@@ -27,7 +27,6 @@ public interface CxpInterfaceDao {
     public ArrayList<HashMap<String, String>> getTasaFletes();
     public ArrayList<HashMap<String, String>> getFleteras(Integer id_empresa, Integer id_sucursal);
     
-    
     //catalogo de proveedores
     public ArrayList<HashMap<String, Object>> getProveedor_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getProveedor(Integer idProveedor);
@@ -82,10 +81,8 @@ public interface CxpInterfaceDao {
     public ArrayList<HashMap<String, Object>> getProveedorestMovimientos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getProveedorestMovimientos_Datos(Integer id);
     
-    
     //Reporte de Antiguedad de Saldos de Cuentas por Pagar
     public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldosCxP(String proveedor, Integer id_empresa);
-    
     
     //aplicativo pagos a proveedores
     public ArrayList<HashMap<String, Object>> getProveedoresPagos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
@@ -101,20 +98,14 @@ public interface CxpInterfaceDao {
     public ArrayList<HashMap<String, String>> getProveedoresPagos_Detalles(Integer id_pago);
     public ArrayList<HashMap<String, String>> getProveedoresPagos_PagosAplicados(Integer id_pago, Integer id_proveedor);
     
-    
-    
     //catalogo de direcciones de proveedores
     public ArrayList<HashMap<String, Object>> getProveedoresDirecciones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getProveedoresDirecciones_Datos(Integer id);
-    
-    
     
     //aplicativo pagos a proveedores
     public ArrayList<HashMap<String, Object>> getProveedoresAnticipos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy , String asc);
     public ArrayList<HashMap<String, String>> getProveedoresAnticipos_Datos(Integer id_anticipo);
     public ArrayList<HashMap<String, String>> getProveedoresAnticipos_FormasPago();
-    
-    
     
     //Aplicativo Parametros de Anticipos proveedor
     public ArrayList<HashMap<String, String>> getSucursales(Integer id_empresa);
@@ -125,7 +116,6 @@ public interface CxpInterfaceDao {
     
     //reporte de programacio de Pagos 
     public ArrayList<HashMap<String, String>> getProgramacionPagos(String num_semanas, String opcion_seleccionada, Integer id_empresa);
-    
     
     //ESTO VA EN EL CXP INTERFACE DAO
     public ArrayList<HashMap<String, String>> getProveedor_DatosReporteEdoCta(Integer tipo_reporte, String proveedor, String fecha_corte,Integer id_empresa);
@@ -141,4 +131,7 @@ public interface CxpInterfaceDao {
     public ArrayList<HashMap<String, String>> getProvNotasCredito_Datos(Integer id);
     public HashMap<String, String> getProvNotasCredito_DatosPDF(Integer id);
     
+    //Metodos para Reporte de Proveedores
+    public ArrayList<HashMap<String, String>> getListaProveedores(String folio,String razon_proveedor,Integer empresa_id);
+
 }

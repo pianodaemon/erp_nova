@@ -646,13 +646,67 @@ public class LogSpringDao implements LogInterfaceDao{
 
     
     
+    //Obtiene datos para el gri del Catalogo de Operadores
+    @Override
+    public ArrayList<HashMap<String, Object>> getOperadores_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+        String sql_to_query = ""
+                + "SELECT log_choferes.id, log_choferes.clave as numero_control, log_choferes.nombre  || ' ' || CASE " +
+                                "WHEN log_choferes.apellido_paterno is NULL THEN '' " +
+                                "ELSE log_choferes.apellido_paterno END || ' ' || CASE " +
+                                "WHEN log_choferes.apellido_materno is NULL THEN '' " +
+                                "ELSE log_choferes.apellido_materno END AS nombre " +
+                                "FROM log_choferes "                       
+                                +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = log_choferes.id "
+                                +"WHERE log_choferes.borrado_logico=false "
+                                +"order by "+orderBy+" "+asc+" limit ? OFFSET ?";
+        
+        //System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        //System.out.println("esto es el query  :  "+sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query, 
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("numero_control",rs.getString("numero_control"));
+                    row.put("nombre",rs.getString("nombre"));
+                   
+                    return row;
+                }
+            }
+        );
+        return hm; 
+    }
+
     
-    
-    
-    
-    
-    
-    
+
+
+    ///Obtiene datos de operadores
+    @Override
+    public ArrayList<HashMap<String, String>> getOperadores_Datos(Integer id) {
+        
+        String sql_to_query = "SELECT id,clave,nombre,apellido_paterno,apellido_materno FROM log_choferes WHERE id="+id;
+        
+        ArrayList<HashMap<String, String>> dato_operador = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("clave",rs.getString("clave"));
+                    row.put("nombre",rs.getString("nombre"));
+                    row.put("apellido_paterno",rs.getString("apellido_paterno"));
+                    row.put("apellido_materno",rs.getString("apellido_materno"));
+                    return row;
+                }
+            }
+        );
+        return dato_operador;
+    }
     
     
 }

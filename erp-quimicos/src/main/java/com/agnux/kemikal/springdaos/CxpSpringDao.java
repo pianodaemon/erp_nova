@@ -3085,4 +3085,50 @@ public class CxpSpringDao implements CxpInterfaceDao{
     //TERMINA METODOS PARA NOTAS DE CREDITO A PROVEEDORES
     //**********************************************************************************************************************************
 
+    
+    
+    //Reporte de Proveedores
+    @Override
+    public ArrayList<HashMap<String, String>> getListaProveedores(String folio,String razon_proveedor,Integer empresa_id) {
+
+            String sql_query = "SELECT cxp_prov.id, "
+                    + "cxp_prov.folio, "
+                    + "cxp_prov.razon_social, "
+                    + "cxp_prov.rfc,"
+                    + "cxp_prov.calle||',  #'||cxp_prov.numero||', '||cxp_prov.colonia||', '|| gral_mun.titulo||' C.P.'||cxp_prov.cp||', '||gral_edo.abreviacion||', '||gral_pais.abreviacion as direccion_proveedor,"
+                    + "(telefono1 || ', ' || telefono2) AS telefonos, "
+                    + "correo_electronico, "
+                    + "to_char(cxp_prov.momento_creacion,'DD/MM/YYYY')as momento_creacion "
+                    + "FROM cxp_prov "
+                        +"   join gral_pais on gral_pais.id=cxp_prov.pais_id   "
+                        +"   join gral_edo on gral_edo.id=cxp_prov.estado_id   "
+                        +"   join gral_mun on gral_mun.id=cxp_prov.municipio_id   "
+                        +"   where "
+                     + " cxp_prov.folio ILIKE '%"+folio+"%' AND cxp_prov.razon_social ILIKE '%"+razon_proveedor+"%' "
+                    + "AND cxp_prov.borrado_logico = false AND cxp_prov.empresa_id=" +empresa_id+""
+                    + "ORDER BY cxp_prov.id";
+          
+        ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("folio",rs.getString("folio"));
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("rfc",rs.getString("rfc"));
+                    row.put("direccion_proveedor",rs.getString("direccion_proveedor"));
+                    row.put("telefonos",rs.getString("telefonos"));
+                    row.put("correo_electronico",rs.getString("correo_electronico"));
+                    row.put("momento_creacion",rs.getString("momento_creacion"));
+
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
 }

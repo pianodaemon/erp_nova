@@ -38,6 +38,9 @@ public interface LogInterfaceDao {
     
     public ArrayList<HashMap<String, String>> getVehiculo_Datos(Integer id); 
     public ArrayList<HashMap<String, Object>> getVehiculos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-
     
+    //Metodos para el catalogo de Operadores
+    public ArrayList<HashMap<String, String>> getOperadores_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getOperadores_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+
 }

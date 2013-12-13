@@ -6,9 +6,7 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.interfacedaos.InvInterfaceDao;
 import com.agnux.kemikal.reportes.PdfReporteClientes;
-import com.agnux.kemikal.reportes.PdfReporteMovimientos;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -48,6 +46,7 @@ yooo
 public class PdfRepclientesController {
     private static final Logger log  = Logger.getLogger(PdfRepclientesController.class.getName());
     ResourceProject resource = new ResourceProject();
+    
     @Autowired
     @Qualifier("daoCxc")
     private CxcInterfaceDao cxcDao;
@@ -59,9 +58,7 @@ public class PdfRepclientesController {
     public void setCxcDao(CxcInterfaceDao cxcDao) {
         this.cxcDao = cxcDao;
     }
-
-
-
+    
     @Autowired
     @Qualifier("daoHome")
     private HomeInterfaceDao HomeDao;
@@ -69,21 +66,15 @@ public class PdfRepclientesController {
     @Autowired
     @Qualifier("daoGral")
     private GralInterfaceDao gralDao;
-
-
-
-
+    
     public HomeInterfaceDao getHomeDao() {
         return HomeDao;
     }
-
-
+    
     public GralInterfaceDao getGralDao() {
         return gralDao;
     }
-
-
-
+    
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response,
             @ModelAttribute("user") UserSessionData user)
@@ -91,10 +82,9 @@ public class PdfRepclientesController {
 
         log.log(Level.INFO, "Ejecutando starUp de {0}", PdfRepclientesController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
-
-
+        
         ModelAndView x = new ModelAndView("crmrepclientes/startup", "title", "Reporte de Clientes");
-
+        
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
         x = x.addObject("layoutfooter", resource.getLayoutfooter());
@@ -103,20 +93,19 @@ public class PdfRepclientesController {
         x = x.addObject("username", user.getUserName());
         x = x.addObject("empresa", user.getRazonSocialEmpresa());
         x = x.addObject("sucursal", user.getSucursal());
-
+        
         String userId = String.valueOf(user.getUserId());
-
+        
         String codificado = Base64Coder.encodeString(userId);
-
+        
         //id de usuario codificado
         x = x.addObject("iu", codificado);
-
+        
         return x;
     }
-
-
-
-
+    
+    
+    
     //obtiene datos para el buscador
     @RequestMapping(method = RequestMethod.POST, value="/getDatosBusqueda.json")
     //obtiene los tipos de agente
@@ -134,16 +123,10 @@ public class PdfRepclientesController {
         jsonretorno.put("Agentes", this.getCxcDao().getAgentes(id_empresa));
 
         return jsonretorno;
-
     }
-
-
-
-
-
-
-
-
+    
+    
+    
     @RequestMapping(method = RequestMethod.POST, value = "/getReporteClientes.json")
     public @ResponseBody
     HashMap<String, ArrayList<HashMap<String, String>>> getMovimientosJson(
@@ -184,15 +167,10 @@ public class PdfRepclientesController {
 
         System.out.println("Generando Reporte de Clientes");
         Integer id_agente=0;
-
-
-
+        
         String arrayCad [] = cadena.split("___");
-
         id_agente = Integer.parseInt(arrayCad [0]);
-
-
-
+        
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
@@ -242,14 +220,4 @@ public class PdfRepclientesController {
 
         return null;
     }
-
-
-
-
-
-
-
-
-
-
 }
