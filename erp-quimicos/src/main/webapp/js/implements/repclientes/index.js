@@ -48,7 +48,7 @@ $(function() {
             }
         });
     }
-
+    
     $('#header').find('#header1').find('span.emp').text(config.getEmp());
     $('#header').find('#header1').find('span.suc').text(config.getSuc());
     $('#header').find('#header1').find('span.username').text(config.getUserName());
@@ -59,26 +59,19 @@ $(function() {
     //barra para el buscador
     $('#barra_buscador').hide();
 
-    //var $tabla_clientes = $('#lienzo_recalculable').find('#table_clientes');
-    var $tabla_clientes = $('#lienzo_recalculable').find('#lista_clientes');
+    //var $divreporte = $('#lienzo_recalculable').find('#table_clientes');
+    var $divreporte = $('#lienzo_recalculable').find('#divreporte');
     var $select_agentes = $('#lienzo_recalculable').find('select[name=select_agentes]');
-
-
-
+    
     var $boton_busqueda = $('#lienzo_recalculable').find('#boton_busqueda');
     var $boton_genera_pdf = $('#lienzo_recalculable').find('#boton_genera_pdf');
-
-
-
-
+    
     var input_json = config.getUrlForGetAndPost()+'/getDatosBusqueda.json';
     $arreglo = {
         'iu':iu = $('#lienzo_recalculable').find('input[name=iu]').val()
     };
     $.post(input_json,$arreglo,function(entry){
         //aqui van los campos que se cargan desde un principio.
-
-
         $select_agentes.children().remove();
         var almacen_hmtl = '';
         var almacen_hmtl = '<option value="0" selected="yes">[--Todos--]</option>';
@@ -86,93 +79,63 @@ $(function() {
             almacen_hmtl += '<option value="' + alm['id'] + '"  >' + alm['nombre_agente'] + '</option>';
         });
         $select_agentes.append(almacen_hmtl);
-
     });//termina llamada json
 
 
 
     $boton_genera_pdf.click(function(event){
         //event.preventDefault();
-
-
         var cadena =  $select_agentes.val() ;
-
         var input_json = config.getUrlForGetAndPost() + '/getReporteClientes/'+cadena+'/'+config.getUi()+'/out.json';
         window.location.href=input_json;
     });
-
-
-
-    var height2 = $('#cuerpo').css('height');
-    var alto = parseInt(height2)-240;
-    var pix_alto=alto+'px';
-
-    $('#table_clientes').tableScroll({
-        height:parseInt(pix_alto)
-    });
-
-
-
+    
+    
     //ejecutar busqueda del reporte
     $boton_busqueda.click(function(event){
-
-
-        $tabla_clientes.find('tbody').children().remove();
+		//Eliminar tabla anterior que se encuentra en el divreporte
+        $divreporte.children().remove();
         var input_json = config.getUrlForGetAndPost()+'/getReporteClientes.json';
-
-
-
-
+        
         $arreglo = {
             'id_agente':$select_agentes.val(),
             'iu': config.getUi()
         };
         var trr="";
+        
         $.post(input_json,$arreglo,function(entry){
-
-            trr +='<thead> <tr>';
-
-
-                trr +='<td >Razon&nbsp;Social</td>';
-                trr +='<td >Telefono(s)</td>';
-                trr +='<td >Email</td>';
-                trr +='<td >Direccion</td>';
-
-            trr +='</tr> </thead>';
+			trr = '<table id="table_rep">';
+			trr +='<thead> <tr>';
+				trr +='<td >Razon&nbsp;Social</td>';
+				trr +='<td >Telefono(s)</td>';
+				trr +='<td >Email</td>';
+				trr +='<td >Direcci&oacute;n</td>';
+			trr +='</tr> </thead>';
+			
             if(entry['Clientes'].length > 0 ){
                 $.each(entry['Clientes'],function(entryIndex,cliente){
                     trr += '<tr>';
                         trr += '<td width="200px">'+cliente['razon_social']+'</td>';
                         trr += '<td >'+cliente['telefonos']+'</td>';
-
                         trr += '<td width="150px">'+cliente['email']+'</td>';
                         trr += '<td >'+cliente['direccion_cliente']+'</td>';
                     trr += '</tr>';
                 });
-                $tabla_clientes.find('tbody').append(trr);
-
-
             }else{
                 jAlert("Esta consulta no genero Resultados",'Atencion!!!');
             }
-
-
-//            var height2 = $('#cuerpo').css('height');
-//            var alto = parseInt(height2)-300;
-//            var pix_alto=alto+'px';
-//
-//            $('#lista_clientes').tableScroll({
-//                height:parseInt(pix_alto)
-//            });
-
-
-var height2 = $('#cuerpo').css('height');
-var alto = parseInt(height2)-275;
-var pix_alto=alto+'px';
-$('#lista_clientes').tableScroll({height:parseInt(pix_alto)});
-
-
-
+            /*
+			var html_tfoot +='<tfoot>';
+			html_tfoot +='</tfoot>';
+            trr += html_tfoot;
+            */
+            trr += '</table>';
+            $divreporte.append(trr);
+            
+			var height2 = $('#cuerpo').css('height');
+			var alto = parseInt(height2)-275;
+			var pix_alto=alto+'px';
+			$('#table_rep').tableScroll({height:parseInt(pix_alto)});
         });
 
     });

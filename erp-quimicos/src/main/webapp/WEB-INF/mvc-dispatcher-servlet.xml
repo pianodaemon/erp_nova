@@ -63,7 +63,6 @@
 	     <property name="password" value="ms" />
 	</bean>
         
-        
 
         
         <!--<bean name="beanOutCfdi" class="com.agnux.cfdi.BeanSolicitidesOut"></bean>-->
@@ -75,47 +74,6 @@
         <bean name="beanFacturadorCfdiTf" class="com.agnux.cfdi.timbre.BeanFacturadorCfdiTimbre"></bean>
         <bean name="beanCancelaCfdi" class="com.agnux.cfdi.BeanCancelaCfdi"></bean>
         
-        <!--
-        <bean name="daoProveedor" class="com.agnux.kemikal.springdaos.ProveedoresSpringDao">
-	     <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
-        </bean>
-        -->
-        
-        <!--
-        <bean name="daoClient" class="com.agnux.kemikal.springdaos.ClientsSpringDao">
-	     <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
-        </bean>
-        -->
-        
-        <!--
-        <bean name="daoEntradamercancia" class="com.agnux.kemikal.springdaos.EntradamercanciasSpringDao">
-	     <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
-        </bean>
-        -->
-        
-        <!--
-        <bean name="daoCartera" class="com.agnux.kemikal.springdaos.CarterasSpringDao">
-	     <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
-        </bean>
-        -->
-        
-        <!--
-        <bean name="daoProduct" class="com.agnux.kemikal.springdaos.ProductosSpringDao">
-	     <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
-        </bean>
-        -->
-        
-        <!--
-        <bean name="daoTraspasomercancia" class="com.agnux.kemikal.springdaos.TraspasomercanciasSpringDao">
-	     <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
-        </bean>
-        -->
-        
-        <!--
-        <bean name="daoMoneda" class="com.agnux.kemikal.springdaos.MonedasSpringDao">
-	     <property name="jdbcTemplate" ref="jdbcTemplateSpring" />
-        </bean>
-        -->
         
         <bean name="daoHome" class="com.agnux.kemikal.springdaos.HomeSpringDao">
 	     <property name="jdbcTemplate" ref="jdbcTemplateSpring" />

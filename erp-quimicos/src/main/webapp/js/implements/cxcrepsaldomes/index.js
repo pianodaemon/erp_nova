@@ -555,12 +555,9 @@ $(function() {
 					}
 				}
 				
-				
 				html_reporte +='<tfoot>';
 					html_reporte += html_footer;
 				html_reporte +='</tfoot>';
-				
-				
 				
 				html_reporte += '</table>';
 				
