@@ -249,7 +249,7 @@
 													<li class="topline"><a href="../repprogramacionpagos/startup.agnux">Programaci&oacute;n de pagos</a></li>
 													<li class="topline"><a href="../cxprepantiguedadsaldos/startup.agnux">Antig&uuml;edad de Saldos</a></li>
 													<li class="topline"><a href="../cxprepsaldomes/startup.agnux">Saldo Mensual</a></li>
-													
+													<li class="topline"><a href="../repprov/startup.agnux">Proveedores</a></li>
 													
 													<!--
 													<li class="topline"><a href="#">Saldo Mensual</a></li>
@@ -485,6 +485,7 @@
 												<a href="#" class="sub">Cat&aacute;logos &raquo;</a>
 												<ul>
 													<li><a href="../logvehiculos/startup.agnux">Unidades</a></li>
+													<li><a href="../logoperadores/startup.agnux">Operadores</a></li>
 												</ul>
 											</li>
 
@@ -502,7 +503,7 @@
 
 
 
-									<!--
+									
 									<li class="accessible">
 										<a href="http://jdsharp.us" class="accessible">Contabilidad &raquo;</a>
 										<ul>
@@ -518,7 +519,7 @@
 											</li>
 										</ul>
 									</li>
-									-->
+									
 
 
 
