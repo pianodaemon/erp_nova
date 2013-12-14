@@ -282,40 +282,40 @@ public class ComSpringDao  implements ComInterfaceDao {
     @Override
     public ArrayList<HashMap<String, String>> getComOrdenCompra_Datos(Integer id_orden_compra) {
         String sql_query = ""
-                    + "SELECT  "
-                    + "com_orden_compra.id, "
-                    + "cxp_prov.rfc, "
-                    + "cxp_prov.folio AS no_proveedor, "
-                    + "com_orden_compra.folio,  "
-                    + "com_orden_compra.cancelado,  "
-                    + "com_orden_compra.observaciones, "
-                    + "cxp_prov.id as proveedor_id, "
-                    + "cxp_prov.razon_social, "
-                    + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxp_prov.cp AS direccion, "
-                    + "com_orden_compra.moneda_id, "
-                    + "gral_mon.descripcion_abr AS moneda, "
-                    + "com_orden_compra.tipo_cambio, "
-                    + "com_orden_compra.grupo, "
-
-                    //+ "comorden_compra.cxp_prov_credias_id, "
-                    + "cxp_prov_credias.id  as  cxp_prov_credias_id ,"
-                    + "cxp_prov_credias.descripcion AS termino, "
-
-                    + "com_orden_compra.consignado_a, "
-                    + "com_orden_compra.tipo_embarque_id as tipo_embarque_id, "
-                    + "cxp_prov_tipos_embarque.titulo AS    tipo_embarque,  "
-                    + "com_orden_compra.status  "
-
-
-                    + "from com_orden_compra "
-                    + "join cxp_prov on cxp_prov.id=com_orden_compra.proveedor_id "
-                    + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
-                    + "join gral_edo on gral_edo.id=cxp_prov .estado_id "
-                    + "join gral_pais on  gral_pais.id=cxp_prov .pais_id "
-                    + "join gral_mon on gral_mon.id= com_orden_compra.moneda_id "
-                    + "left join cxp_prov_credias on cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
-                    + "join cxp_prov_tipos_embarque on cxp_prov_tipos_embarque.id =com_orden_compra.tipo_embarque_id "
-                    + "WHERE com_orden_compra.id="+id_orden_compra;
+        + "SELECT  "
+            + "com_orden_compra.id, "
+            + "cxp_prov.rfc, "
+            + "cxp_prov.folio AS no_proveedor, "
+            + "com_orden_compra.folio,  "
+            + "com_orden_compra.cancelado,  "
+            + "com_orden_compra.observaciones, "
+            + "cxp_prov.id as proveedor_id, "
+            + "cxp_prov.razon_social, "
+            + "cxp_prov.proveedortipo_id, "
+            + "cxp_prov.calle||' '||cxp_prov.numero||', '||cxp_prov.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxp_prov.cp AS direccion, "
+            + "com_orden_compra.moneda_id, "
+            + "gral_mon.descripcion_abr AS moneda, "
+            + "com_orden_compra.tipo_cambio, "
+            + "com_orden_compra.grupo, "
+            //+ "comorden_compra.cxp_prov_credias_id, "
+            + "cxp_prov_credias.id  as  cxp_prov_credias_id ,"
+            + "cxp_prov_credias.descripcion AS termino, "
+            + "com_orden_compra.consignado_a, "
+            + "com_orden_compra.tipo_embarque_id as tipo_embarque_id, "
+            + "cxp_prov_tipos_embarque.titulo AS    tipo_embarque,  "
+            + "com_orden_compra.status,"
+            + "com_orden_compra.subtotal,"
+            + "com_orden_compra.impuesto,"
+            + "com_orden_compra.total "
+        + "from com_orden_compra "
+        + "join cxp_prov on cxp_prov.id=com_orden_compra.proveedor_id "
+        + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
+        + "join gral_edo on gral_edo.id=cxp_prov .estado_id "
+        + "join gral_pais on  gral_pais.id=cxp_prov .pais_id "
+        + "join gral_mon on gral_mon.id= com_orden_compra.moneda_id "
+        + "left join cxp_prov_credias on cxp_prov_credias.id=com_orden_compra.cxp_prov_credias_id "
+        + "join cxp_prov_tipos_embarque on cxp_prov_tipos_embarque.id =com_orden_compra.tipo_embarque_id "
+        + "WHERE com_orden_compra.id="+id_orden_compra;
        //System.out.println("getComOrdenCompra_Datos::::"+sql_query); 
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
@@ -331,18 +331,21 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("observaciones",rs.getString("observaciones"));
                     row.put("proveedor_id",String.valueOf(rs.getInt("proveedor_id")));
                     row.put("razon_social",rs.getString("razon_social"));
+                    row.put("prov_tipo_id",String.valueOf(rs.getInt("proveedortipo_id")));
                     row.put("direccion",rs.getString("direccion"));
                     row.put("moneda_id",rs.getString("moneda_id"));
                     row.put("moneda",rs.getString("moneda"));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
                     row.put("grupo",rs.getString("grupo"));
-                    
                     row.put("cxp_prov_credias_id",rs.getString("cxp_prov_credias_id"));
                     row.put("termino",rs.getString("termino"));
                     row.put("consignado_a",rs.getString("consignado_a"));
                     row.put("tipo_embarque_id",rs.getString("tipo_embarque_id"));
                     row.put("tipo_embarque",rs.getString("tipo_embarque"));
                     row.put("status",String.valueOf(rs.getInt("status")));
+                    row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
+                    row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
+                    row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
                     return row;
                 }
             }

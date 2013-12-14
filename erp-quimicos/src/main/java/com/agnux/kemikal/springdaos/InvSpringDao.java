@@ -1302,6 +1302,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "cxp_prov.razon_social, "
                     + "cxp_prov.proveedortipo_id,"
                     + "com_orden_compra.moneda_id,"
+                    + "com_orden_compra.tipo_cambio,"
                     + "com_orden_compra.subtotal, "
                     + "com_orden_compra.impuesto,"
                     + "com_orden_compra.total "
@@ -1324,6 +1325,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("razon_social",rs.getString("razon_social"));
                     row.put("proveedortipo_id",String.valueOf(rs.getInt("proveedortipo_id")));
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
+                    row.put("tc",StringHelper.roundDouble(rs.getString("tipo_cambio"),4));
                     row.put("subtotal",StringHelper.roundDouble(rs.getString("subtotal"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getString("impuesto"),2));
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
