@@ -1507,6 +1507,7 @@ $(function() {
 			var $no_proveedor = $('#forma-comordencompra-window').find('input[name=no_proveedor]');
 			var $rfc_proveedor = $('#forma-comordencompra-window').find('input[name=rfc_proveedor]');
 			var $razon_proveedor = $('#forma-comordencompra-window').find('input[name=razonproveedor]');
+			var $tipo_prov = $('#forma-comordencompra-window').find('input[name=tipo_prov]');
 			var $dir_proveedor = $('#forma-comordencompra-window').find('input[name=dirproveedor]');
 			var $empresa_immex = $('#forma-comordencompra-window').find('input[name=empresa_immex]');
 			var $tasa_ret_immex = $('#forma-comordencompra-window').find('input[name=tasa_ret_immex]');
@@ -1678,6 +1679,7 @@ $(function() {
 					$rfc_proveedor.val(entry['datosOrdenCompra']['0']['rfc']);
 					$razon_proveedor.val(entry['datosOrdenCompra']['0']['razon_social']);
 					$dir_proveedor.val(entry['datosOrdenCompra']['0']['direccion']);
+					$tipo_prov.val(entry['datosOrdenCompra']['0']['prov_tipo_id']);
 					$observaciones.text(entry['datosOrdenCompra']['0']['observaciones']);
 					$grupo.val(entry['datosOrdenCompra']['0']['grupo']);
 					consigandoA.val(entry['datosOrdenCompra']['0']['consignado_a']);
@@ -1700,7 +1702,7 @@ $(function() {
 					$select_moneda.append(moneda_hmtl);
 					//$select_moneda.find('option').clone().appendTo($select_moneda_original);
 
-                                        //carga select condiciones con los terminos
+					//carga select condiciones con los terminos
 					$select_condiciones.children().remove();
 					var terminos_html = '';
 					$.each(entry['Condiciones'],function(entryIndex,Condiciones){

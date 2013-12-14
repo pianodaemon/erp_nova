@@ -1178,6 +1178,7 @@ $(function() {
 				$campo_razon_proveedor.val('');
 				$hidden_tipo_proveedor.val('');
 				$no_proveedor.val('');
+				$campo_tc.val('');
 				
 				$grid_productos.children().remove();
 				
@@ -1188,17 +1189,18 @@ $(function() {
 				
 				$.post(input_json2,$arreglo2,function(entry){
 					
-					$hidden_id_proveedor.val(entry['DatosOC']['0']['proveedor_id']);
-					$campo_rfc_proveedor.val(entry['DatosOC']['0']['rfc']);
-					$campo_razon_proveedor.val(entry['DatosOC']['0']['razon_social']);
-					$hidden_tipo_proveedor.val(entry['DatosOC']['0']['proveedortipo_id']);
-					$no_proveedor.val(entry['DatosOC']['0']['no_proveedor']);
-							
+					$hidden_id_proveedor.val(entry['DatosOC'][0]['proveedor_id']);
+					$campo_rfc_proveedor.val(entry['DatosOC'][0]['rfc']);
+					$campo_razon_proveedor.val(entry['DatosOC'][0]['razon_social']);
+					$hidden_tipo_proveedor.val(entry['DatosOC'][0]['proveedortipo_id']);
+					$no_proveedor.val(entry['DatosOC'][0]['no_proveedor']);
+					$campo_tc.val(entry['DatosOC'][0]['tc']);
+					
 					//carga select denominacion con todas las monedas
 					$select_denominacion.children().remove();
 					var moneda_hmtl = '';
 					$.each(Monedas,function(entryIndex,moneda){
-						if(parseInt(moneda['id']) == parseInt(entry['DatosOC']['0']['moneda_id'])){
+						if(parseInt(moneda['id']) == parseInt(entry['DatosOC'][0]['moneda_id'])){
 							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
 						}else{
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';

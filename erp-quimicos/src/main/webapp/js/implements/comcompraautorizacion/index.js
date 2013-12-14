@@ -593,8 +593,11 @@ $(function() {
 					$observaciones.text(entry['datosOrdenCompra']['0']['observaciones']);
 					$orden_compra.val(entry['datosOrdenCompra']['0']['orden_compra']);
 					$transporte.val(entry['datosOrdenCompra']['0']['transporte']);
-
 					$tipo_cambio.val(entry['datosOrdenCompra']['0']['tipo_cambio']);
+					
+					$subtotal.val(entry['datosOrdenCompra'][0]['subtotal']);
+					$impuesto.val(entry['datosOrdenCompra'][0]['impuesto']);
+					$total.val(entry['datosOrdenCompra'][0]['total']);
 
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
