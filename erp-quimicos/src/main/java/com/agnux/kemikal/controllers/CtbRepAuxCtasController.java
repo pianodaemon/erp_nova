@@ -179,7 +179,7 @@ public class CtbRepAuxCtasController {
    
    
    
-     //Genera pdf Reporte de Proveedores
+     //Genera pdf Reporte Auxiliar de Cuentas
     @RequestMapping(value = "/getPdfAuxCtas/{cadena}/{iu}/out.json", method = RequestMethod.GET )
     public ModelAndView getGeneraPdfRemisionJson(
                 @PathVariable("cadena") String cadena,
