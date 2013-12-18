@@ -517,6 +517,12 @@
 													<li><a href="../tipopolizas/startup.agnux">Tipos de P&oacute;liza</a></li>
 												</ul>
 											</li>
+											<li>
+												<a href="#" class="sub">Reportes &raquo;</a>
+												<ul>
+													<li class="topline"><a href="../ctbrepauxcta/startup.agnux">Auxiliar de Cuentas</a></li>
+												</ul>
+											</li>
 										</ul>
 									</li>
 									
@@ -555,7 +561,7 @@
 												</ul>
 											</li>
 											<li>
-												<a href="#" class="sub">Reportes</a>
+												<a href="#" class="sub">Reportes &raquo;</a>
 												<ul>
 													<li class="topline"><a href="../crmreportevisitas/startup.agnux">Visitas</a></li>
 												</ul>

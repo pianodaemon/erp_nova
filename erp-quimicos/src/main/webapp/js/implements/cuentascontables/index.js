@@ -43,8 +43,6 @@ $(function() {
 	$('#barra_buscador').append($('#lienzo_recalculable').find('.tabla_buscador'));
 	$('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
     
-    
-	
 	var $cadena_busqueda = "";
 	var $busqueda_select_cuenta_mayor = $('#barra_buscador').find('.tabla_buscador').find('select[name=busqueda_select_cuenta_mayor]');
 	var $busqueda_descripcion = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_descripcion]');
@@ -76,25 +74,27 @@ $(function() {
 	
 	
 	
+	$ubtener_cuentas_mayor = function(){
+		var input_json_cuentas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCuentasMayor.json';
+		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
+		$.post(input_json_cuentas,$arreglo,function(data){
+			$busqueda_select_cuenta_mayor.children().remove();
+			var cta_html = '<option value="0" selected="yes">[-- --]</option>';
+			$.each(data['CtaMay'],function(entryIndex,ctamay){
+				cta_html += '<option value="' + ctamay['id'] + '"  >( ' + ctamay['cta_mayor']+', '+ ctamay['clasificacion'] +' ) '+ ctamay['descripcion'] + '</option>';
+			});
+			$busqueda_select_cuenta_mayor.append(cta_html);
+		});
+	}
+	
+	//Cargar datos al cargar la ventana
+	$ubtener_cuentas_mayor();
+	
 	$limpiar.click(function(event){
 		event.preventDefault();
 		$busqueda_descripcion.val('');
+		$ubtener_cuentas_mayor();
 	});
-	
-	
-	
-	var input_json_lineas = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCuentasMayor.json';
-	$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-	$.post(input_json_lineas,$arreglo,function(data){
-		$busqueda_select_cuenta_mayor.children().remove();
-		var cta_html = '<option value="0" selected="yes">[-- --]</option>';
-		$.each(data['CtaMay'],function(entryIndex,ctamay){
-			cta_html += '<option value="' + ctamay['id'] + '"  >( ' + ctamay['cta_mayor']+', '+ ctamay['clasificacion'] +' ) '+ ctamay['descripcion'] + '</option>';
-		});
-		$busqueda_select_cuenta_mayor.append(cta_html);
-	});
-	
-	
 	
 	
 	TriggerClickVisializaBuscador = 0;
@@ -125,8 +125,13 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		
+		$busqueda_select_cuenta_mayor.focus();
 	});
 	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_cuenta_mayor, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_descripcion, $buscar);
 	
 	
 	$tabs_li_funxionalidad = function(){
@@ -292,6 +297,8 @@ $(function() {
 			estatus_hmtl += '<option value="2">Desactivada</option>';
 			$select_estatus.append(estatus_hmtl);
 			
+			
+			$cuenta.focus();
 		},"json");//termina llamada json
 		
 		
@@ -314,10 +321,6 @@ $(function() {
 			$('#forma-cuentascontables-overlay').fadeOut(remove);
 			$buscar.trigger('click');
 		});
-                
-                
-                
-		
 	});
 	
 	
@@ -479,6 +482,7 @@ $(function() {
 					$select_estatus.children().remove();
 					$select_estatus.append(estatus_hmtl);
 					
+					$cuenta.focus();
 				},"json");//termina llamada json
 				
 				$descripcion.change(function(){
