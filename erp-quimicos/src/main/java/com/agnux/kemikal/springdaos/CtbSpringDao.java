@@ -3,11 +3,13 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.springdaos;
+import com.agnux.common.helpers.StringHelper;
 import com.agnux.kemikal.interfacedaos.CtbInterfaceDao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -485,15 +487,95 @@ public class CtbSpringDao implements CtbInterfaceDao{
         );
         return hm;
     }
-    
-    
-    
-    
-    
-    
-    
     //TERMINA METODOS PARA CATALOGO DE CUENTAS CONTABLES
     //**********************************************************************************
     
+    
+    
+    //Medotdos para reporte de Auxiliar de Cuentas------------------------------------------------------------------------------
+    //Calcular años a mostrar en el reporte de Auxiliar de Cuentas
+    @Override
+    public ArrayList<HashMap<String, Object>>  getCtbRepAuxCtas_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    //Obtener las Subcuentas del Nivel que se le indique
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbRepAuxCtas_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa) {
+        String sql_query="";
+        
+        switch(nivel) {
+            case 1: 
+                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                break;
+            case 2: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 3: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssubcta AS cta, (CASE WHEN sssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND borrado_logico=FALSE AND estatus=1 ORDER BY ssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 4: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT sssubcta AS cta, (CASE WHEN ssssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY sssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 5: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssssubcta AS cta, descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+" AND sssubcta="+ssscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY ssssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+        }
+        
+        System.out.println("getCtasNivel "+nivel+": "+sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cta",rs.getString("cta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCtbRepAuxCtas_Datos(String data_string) {
+        
+        String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial double precision, debe double precision, haber double precision, saldo_final double precision) ORDER BY cliente, moneda_id, serie_folio;"; 
+        
+        //System.out.println("CxC_DatosReporteSaldoMensual:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("saldo_inicial",StringHelper.roundDouble(rs.getDouble("saldo_inicial"), 2));
+                    row.put("debe",StringHelper.roundDouble(rs.getDouble("debe"), 2));
+                    row.put("haber",StringHelper.roundDouble(rs.getDouble("haber"), 2));
+                    row.put("saldo_final",StringHelper.roundDouble(rs.getDouble("saldo_final"), 2));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+
+
     
 }

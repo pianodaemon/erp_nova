@@ -98,6 +98,13 @@ public interface GralInterfaceDao {
     public String getEstadoSucursalEmisora(Integer id_sucursal);
     public String getMunicipioSucursalEmisora(Integer id_sucursal);
     
+    /*
+    Obtiene todos los datos de la Empresa Emisora. 
+    Esto es como alternativa para no utilizar los metodos que obtiene estos datos uno por uno.
+    */
+    public HashMap<String, String> getEmisor_Datos(Integer id_emp);
+    
+    
     //obtiene codigo1 para formato controlado por iso
     public String getCodigo1Iso(Integer id_empresa, Integer id_app);
     

@@ -472,26 +472,12 @@ public class EntradamercanciasController {
             String command_selected = "new";
             Integer id_usuario= user.getUserId();//variable para el id  del usuario
             
-            /*
-            no_partida
-            cantidad
-            costo
-            id_prod_grid
-            impuesto
-            pedimento
-            eliminado
-            lote
-            id_pres
-            caducidad
-            */
-            
             if(total_tr > 0){
                 for(int i=0; i<eliminado.length; i++) { 
                     if(Integer.parseInt(eliminado[i]) != 0){
                         no_partida++;//si no esta eliminado incrementa el contador de partidas
                     }
                     arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+costo[i]+"___"+id_prod_grid[i]+"___"+impuesto[i]+"___"+valor_imp[i]+"___"+id_pres[i]+"___"+eliminado[i]+"'";
-                    System.out.println(arreglo[i]);
                 }
                 //serializar el arreglo
                 extra_data_array = StringUtils.join(arreglo, ",");
@@ -499,17 +485,13 @@ public class EntradamercanciasController {
                 extra_data_array ="'sin datos'";
             }
             
-            
             if( id_entrada==0 ){
                 command_selected = "new";
             }else{
                 command_selected = "edit";
             }
             
-            
-            
             String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_entrada+"___"+id_proveedor+"___"+factura.toUpperCase()+"___"+expedicion+"___"+numeroguia+"___"+ordencompra+"___"+denominacion+"___"+tc+"___"+observaciones.toUpperCase()+"___"+fletera_id+"___"+flete+"___"+almacen_destino+"___"+tipo_documento;
-            System.out.println("data_string: "+data_string);
             
             //succes = this.getEdao().selectFunctionValidateAaplicativo(data_string,9,string_array);
             succes = this.getInvDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
@@ -549,8 +531,6 @@ public class EntradamercanciasController {
         String extra_data_array = "'sin datos'";
         
         String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_entrada+"___"+motivo_cancelacion.toUpperCase();
-        
-
         
         jsonretorno.put("success",String.valueOf( this.getInvDao().selectFunctionForApp_MovimientosInventario(data_string,extra_data_array)) );
         
@@ -617,7 +597,6 @@ public class EntradamercanciasController {
         
         
         datosEntrada = this.getInvDao().getEntrada_Datos(id_entrada);
-        
         datos_entrada.put("folio_entrada", datosEntrada.get(0).get("no_entrada"));
         datos_entrada.put("fecha_entrada", datosEntrada.get(0).get("fecha_entrada"));
         datos_entrada.put("factura", datosEntrada.get(0).get("factura"));
@@ -661,14 +640,11 @@ public class EntradamercanciasController {
             datos_proveedor.put("prov_contacto", proveedorContactos.get(0).get("contacto"));
         }
         
-        
-        
         //obtiene el listado de productos para el pdf
         lista_productos = this.getInvDao().getEntradas_DatosGrid(id_entrada);
         
         //instancia a la clase que construye el pdf del reporte de facturas
         pdfEntradas ent = new pdfEntradas(datos_empresa, datos_entrada, datos_proveedor,lista_productos, fileout, ruta_imagen);
-        
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
@@ -682,8 +658,6 @@ public class EntradamercanciasController {
         response.flushBuffer();
         
         FileHelper.delete(fileout);
-        
         return null;
-        
     } 
 }

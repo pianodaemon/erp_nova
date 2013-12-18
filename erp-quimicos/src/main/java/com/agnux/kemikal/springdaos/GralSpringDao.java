@@ -2228,6 +2228,52 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     
+    
+    //Obtiene todos los datos de la Empresa Emisora
+    @Override
+    public HashMap<String, String> getEmisor_Datos(Integer id_emp) {
+        HashMap<String, String> mapDatos = new HashMap<String, String>();
+        String sql_query = ""
+                + "SELECT "
+                + "gral_emp.titulo,"
+                + "gral_emp.rfc,"
+                + "gral_emp.calle,"
+                + "gral_emp.colonia,"
+                + "gral_emp.numero_interior,"
+                + "gral_emp.numero_exterior,"
+                + "gral_pais.titulo AS pais,"
+                + "gral_edo.titulo AS estado,"
+                + "gral_mun.titulo AS municipio "
+                + "gral_emp.cp,"
+                + "gral_emp.telefono,"
+                + "gral_emp.regimen_fiscal,"
+                + "(CASE WHEN gral_emp.pagina_web IS NULL THEN '' ELSE gral_emp.pagina_web END) AS pagina_web,"
+                + "FROM gral_emp  "
+                + "JOIN gral_pais ON gral_pais.id=gral_emp.pais_id "
+                + "JOIN gral_edo ON gral_edo.id=gral_emp.estado_id "
+                + "JOIN gral_mun ON gral_mun.id=gral_emp.municipio_id "
+                + "WHERE gral_emp.id="+id_emp+";";
+        System.out.println("getDatosEmp: "+sql_query);
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_query);
+        mapDatos.put("emp_razon_social", String.valueOf(map.get("titulo")));
+        mapDatos.put("emp_rfc", String.valueOf(map.get("rfc")));
+        mapDatos.put("emp_calle", String.valueOf(map.get("calle")));
+        mapDatos.put("emp_no_interior", String.valueOf(map.get("numero_interior")));
+        mapDatos.put("emp_no_exterior", String.valueOf(map.get("numero_exterior")));
+        mapDatos.put("emp_colonia", String.valueOf(map.get("colonia")));
+        mapDatos.put("emp_pais", String.valueOf(map.get("pais")));
+        mapDatos.put("emp_estado", String.valueOf(map.get("estado")));
+        mapDatos.put("emp_municipio", String.valueOf(map.get("munnicipio")));
+        mapDatos.put("emp_cp", String.valueOf(map.get("cp")));
+        mapDatos.put("emp_tel", String.valueOf(map.get("telefono")));
+        mapDatos.put("emp_regimen_fiscal", String.valueOf(map.get("regimen_fiscal")));
+        mapDatos.put("emp_pagina_web", String.valueOf(map.get("pagina_web")));
+        
+        return mapDatos;
+    }
+    
+    
 
     
 }

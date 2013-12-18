@@ -40,5 +40,10 @@ public interface CtbInterfaceDao {
     public ArrayList<HashMap<String, String>> getCuentasContables_Datos(Integer id);
     public ArrayList<HashMap<String, String>> getCuentasContables_CuentasMayor(Integer id_empresa);
     
+    //Medotdos para reporte de Auxiliar de Cuentas
+    public ArrayList<HashMap<String, Object>> getCtbRepAuxCtas_Anios();
+    public ArrayList<HashMap<String, Object>> getCtbRepAuxCtas_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCtbRepAuxCtas_Datos(String data_string);
+    
     
 }
