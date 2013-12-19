@@ -479,7 +479,7 @@ public class FacDevolucionesController {
                         
                         //pdf Nota
                         if (parametros.get("formato_factura").equals("2")){
-                            pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
+                            pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataCliente, listaConceptosPdf, leyendas, datosExtrasPdf, id_empresa, id_sucursal);
                             pdfFactura.ViewPDF();
                         }else{
                             pdfCfd pdfFactura = new pdfCfd(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
@@ -641,7 +641,7 @@ public class FacDevolucionesController {
 
                                 //pdf Nota
                                 if (parametros.get("formato_factura").equals("2")){
-                                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);
+                                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataCliente, listaConceptosPdf,  leyendas, datosExtrasPdf, id_empresa, id_sucursal);
                                     pdfFactura.ViewPDF();
                                 }else{
                                     pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataCliente, listaConceptosPdf, datosExtrasPdf, id_empresa, id_sucursal);

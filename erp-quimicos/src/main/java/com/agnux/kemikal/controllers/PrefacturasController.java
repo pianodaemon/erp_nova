@@ -707,6 +707,7 @@ public class PrefacturasController {
                         impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
                         impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos);
                         dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
+                        leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
                         
                         command_selected = "facturar_cfd";
                         extra_data_array = "'sin datos'";
@@ -746,7 +747,7 @@ public class PrefacturasController {
                         
                         //pdf factura
                         if (parametros.get("formato_factura").equals("2")){
-                            pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                            pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, leyendas, datosExtrasPdfCfd, id_empresa, id_sucursal);
                             pdfFactura.ViewPDF();
                         }else{
                             pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
@@ -791,7 +792,7 @@ public class PrefacturasController {
                             impTrasladadosCfdi = this.getFacdao().getImpuestosTrasladadosCfdi(id_factura, id_sucursal);
                             impRetenidosCfdi = this.getFacdao().getImpuestosRetenidosCfdi(id_factura);
                             leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
-
+                            
                             //generar archivo de texto para cfdi
                             this.getBfCfdi().init(dataFacturaCliente, listaConceptosCfdi,impRetenidosCfdi,impTrasladadosCfdi, leyendas, proposito,datosExtrasCfdi, id_empresa, id_sucursal);
                             this.getBfCfdi().start();
@@ -827,6 +828,7 @@ public class PrefacturasController {
                             impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
                             impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos);
                             dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
+                            leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
                             
                             //estos son requeridos para cfditf
                             datosExtrasXmlFactura.put("prefactura_id", String.valueOf(id_prefactura));
@@ -885,7 +887,7 @@ public class PrefacturasController {
                                 
                                 //pdf factura
                                 if (parametros.get("formato_factura").equals("2")){
-                                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, leyendas, datosExtrasPdfCfd, id_empresa, id_sucursal);
                                     pdfFactura.ViewPDF();
                                 }else{
                                     pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);

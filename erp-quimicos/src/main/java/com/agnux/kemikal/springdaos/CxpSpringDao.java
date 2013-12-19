@@ -3106,7 +3106,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                         +"   where "
                      + " cxp_prov.folio ILIKE '%"+folio+"%' AND cxp_prov.razon_social ILIKE '%"+razon_proveedor+"%' "
                     + "AND cxp_prov.borrado_logico = false AND cxp_prov.empresa_id=" +empresa_id+""
-                    + "ORDER BY cxp_prov.id";
+                    + "ORDER BY cxp_prov.razon_social";
           
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,

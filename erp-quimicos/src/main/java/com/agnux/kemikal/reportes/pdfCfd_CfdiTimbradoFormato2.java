@@ -68,6 +68,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
     private String noCertificadoSAT;
     
     private ArrayList<HashMap<String, String>> rows;
+    private ArrayList<String> leyendas;
     private HashMap<String, String> encabezado;
     private HashMap<String, String> datosCliente;
     private HashMap<String, String> datosExtras;
@@ -106,10 +107,11 @@ public class pdfCfd_CfdiTimbradoFormato2 {
     private String etiqueta_tipo_doc;
     
     
-    public pdfCfd_CfdiTimbradoFormato2(GralInterfaceDao gDao,HashMap<String, String> datosCliente, ArrayList<HashMap<String, String>> listaConceptos, HashMap<String, String> extras, Integer id_empresa, Integer id_sucursal) {
+    public pdfCfd_CfdiTimbradoFormato2(GralInterfaceDao gDao,HashMap<String, String> datosCliente, ArrayList<HashMap<String, String>> listaConceptos, ArrayList<String> leyendasEspeciales, HashMap<String, String> extras, Integer id_empresa, Integer id_sucursal) {
         this.setRows(listaConceptos);
         this.setDatosCliente(datosCliente);
         this.setDatosExtras(extras);
+        this.setLeyendas(leyendasEspeciales);
         
         this.setGralDao(gDao);
         this.setTipo_facturacion(extras.get("tipo_facturacion"));
@@ -233,6 +235,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
         tablaConceptos tablaCon = new tablaConceptos();
         celdaDatosFiscales tablaSellos = new celdaDatosFiscales();
         PdfPTable table_observ;
+        PdfPTable table_leyendas;
         
         ImagenPDF ipdf = new ImagenPDF();
         CeldaPDF cepdf = new CeldaPDF();
@@ -386,10 +389,8 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             document.add(table_observ);
             
             
-            //agregar tabla vacia
+            //Agregar tabla vacia
             document.add(tableVacia);
-            
-            
             
             
             //------------------------------------------------------------------
@@ -397,8 +398,64 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             document.add(tablaSellos.addContent());
             //------------------------------------------------------------------
             
-            
-            
+            //Agregar Leyendas solo cuando es Factura
+            if (this.getProposito().equals("FACTURA")){
+                int noElements=this.getLeyendas().size();
+                
+                //Agregar solo cuando existan leyendas
+                if(noElements>0){
+                    //Agregar tabla vacia
+                    document.add(tableVacia);
+                    
+                    //Aqui comienza la tabla de para las Leyendas Especiales
+                    float [] widths_table_leyendas = {1};
+                    table_leyendas = new PdfPTable(widths_table_leyendas);
+                    table_leyendas.setKeepTogether(false);
+                    int counter=0;
+                    
+                    for (String i : this.getLeyendas()){
+                        cell = new PdfPCell(new Paragraph(i,smallFont));
+                        
+                        if(counter==0){
+                            if(noElements==1){
+                                //Cuando solo es un elmento hay que pintar todos los bordes
+                                cell.setBorderWidthBottom(0.5f);
+                                cell.setBorderWidthLeft(0.5f);
+                                cell.setBorderWidthRight(0.5f);
+                                cell.setBorderWidthTop(0.5f);                                
+                            }else{
+                                //Si es mas de un elemento solo hay que pintar borde Superior, Izquierdo y Derecho
+                                cell.setBorderWidthBottom(0);
+                                cell.setBorderWidthLeft(0.5f);
+                                cell.setBorderWidthRight(0.5f);
+                                cell.setBorderWidthTop(0.5f);   
+                            }
+                        }else{
+                            if(counter<(noElements-1)){
+                                //Aqui entra cuando no es el primero ni el ultimo elemento. Solo se debe pintar el borde Izquierdo y Derecho
+                                cell.setBorderWidthBottom(0);
+                                cell.setBorderWidthLeft(0.5f);
+                                cell.setBorderWidthRight(0.5f);
+                                cell.setBorderWidthTop(0);   
+                            }else{
+                                //Aqui entra cuando es el ultimo elemento. Hay que pintar borde Inferior, Izquierda y Derecha
+                                cell.setBorderWidthBottom(0.5f);
+                                cell.setBorderWidthLeft(0.5f);
+                                cell.setBorderWidthRight(0.5f);
+                                cell.setBorderWidthTop(0);
+                            }
+                        }
+                        
+                        cell.setVerticalAlignment(Element.ALIGN_TOP);
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        table_leyendas.addCell(cell);
+                        counter++;
+                    }
+                    //Agregar tabla Leyendas Especiales al DOCUMENTO
+                    document.add(table_leyendas);
+                }
+            }
+
             
             
             //CERRAR EL DOCUMENTO
@@ -1643,6 +1700,14 @@ public class pdfCfd_CfdiTimbradoFormato2 {
         this.rows = rows;
     }
     
+
+    public ArrayList<String> getLeyendas() {
+        return leyendas;
+    }
+
+    public void setLeyendas(ArrayList<String> leyendas) {
+        this.leyendas = leyendas;
+    }
     
     public HashMap<String, String> getDatosCliente() {
         return datosCliente;

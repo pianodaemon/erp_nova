@@ -579,6 +579,7 @@ public class FacConsultasController {
         ArrayList<HashMap<String, String>> listaConceptosPdfCfd = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> datosExtrasPdfCfd= new HashMap<String, String>();
         HashMap<String, String> parametros = new HashMap<String, String>();
+        ArrayList<String> leyendas = new ArrayList<String>();
         String generado ="false";
         String dirSalidas = "";
         
@@ -596,6 +597,9 @@ public class FacConsultasController {
         
         //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
         parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
+        
+        //Obtiene las leyendas para agregarlo al PDF
+        leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
         
         String proposito = "FACTURA";
         String fileout="";
@@ -655,7 +659,7 @@ public class FacConsultasController {
                 
                 //pdf factura
                 if (parametros.get("formato_factura").equals("2")){
-                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, leyendas, datosExtrasPdfCfd, id_empresa, id_sucursal);
                     pdfFactura.ViewPDF();
                 }else{
                     pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
@@ -730,7 +734,7 @@ public class FacConsultasController {
                 
                 //pdf factura
                 if (parametros.get("formato_factura").equals("2")){
-                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, leyendas, datosExtrasPdfCfd, id_empresa, id_sucursal);
                     pdfFactura.ViewPDF();
                 }else{
                     pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
