@@ -28,7 +28,7 @@
             <tr>
                 <td>&nbsp;&nbsp;</td>
                 <td style="background-color:#ffffff;" >
-					<table id="busqueda" border="1" align="left" width="1220">
+					<table id="busqueda" border="0" align="left" width="1220">
 						<tr>
 							<td colspan="24" height="8"></td>
 						</tr>
@@ -93,7 +93,7 @@
 							<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="60"><input type="button"  value="Buscar" style="width:60px;"></td>
 							<td width="25"></td>
-							<td width="95"><input type="button"  value="Generar_PDF"></td>
+							<td width="95"><input type="button" value="PDF" style="width:60px;"></td>
 						</tr>
 						
 					</table>
