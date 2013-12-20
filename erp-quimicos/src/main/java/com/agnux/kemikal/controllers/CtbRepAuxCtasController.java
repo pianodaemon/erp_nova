@@ -87,7 +87,7 @@ public class CtbRepAuxCtasController {
             @ModelAttribute("user") UserSessionData user)
             throws ServletException, IOException {
         
-        log.log(Level.INFO, "Ejecutando starUp de {0}", CxcRepSaldoMesController.class.getName());
+        log.log(Level.INFO, "Ejecutando starUp de {0}", CtbRepAuxCtasController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         ModelAndView x = new ModelAndView("ctbrepauxcta/startup", "title", "Reporte de Auxiliar de Cuentas");
         
@@ -179,9 +179,62 @@ public class CtbRepAuxCtasController {
    
    
    
+    //Obtiene datos para mostrar en el navegador
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosReporte.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosReporteJson(
+            @RequestParam(value="tipo_reporte", required=true) String tipo_reporte,
+            @RequestParam(value="ano", required=true) String ano,
+            @RequestParam(value="mes", required=true) String mes,
+            @RequestParam(value="cuentas", required=true) String cuentas,
+            @RequestParam(value="cta", required=false) String cta,
+            @RequestParam(value="scta", required=false) String scta,
+            @RequestParam(value="sscta", required=false) String sscta,
+            @RequestParam(value="ssscta", required=false) String ssscta,
+            @RequestParam(value="sssscta", required=false) String sssscta,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+        ) {
+        
+        log.log(Level.INFO, "Ejecutando getDatosReporteJson de {0}", CtbRepAuxCtasController.class.getName());
+        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
+        
+        //Reporte Auxiliar de Cuentas
+        Integer app_selected = 157;
+        String command_selected="reporte";
+        String tipo_doc="nav";
+        //Decodificar id de usuario
+        Integer id_user = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        //userDat = this.getHomeDao().getUserById(id_user);
+        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        //Verificar valores por si viene null
+        cta = StringHelper.verificarSelect(cta);
+        scta = StringHelper.verificarSelect(scta);
+        sscta = StringHelper.verificarSelect(sscta);
+        ssscta = StringHelper.verificarSelect(ssscta);
+        sssscta = StringHelper.verificarSelect(sssscta);
+        
+        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+tipo_reporte+"___"+ano+"___"+mes+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
+        
+        //Obtiene datos del Reporte Auxiliar de Cuentas
+        datos = this.getCtbDao().getCtbRepAuxCtas_Datos(data_string);
+        
+        jsonretorno.put("Data", datos);
+        
+        return jsonretorno;
+    }
+    
+    
+   
+   
+   
+   
      //Genera pdf Reporte Auxiliar de Cuentas
     @RequestMapping(value = "/getPdfAuxCtas/{cadena}/{iu}/out.json", method = RequestMethod.GET )
-    public ModelAndView getGeneraPdfRemisionJson(
+    public ModelAndView getGeneraPdfRepAuxCtasJson(
                 @PathVariable("cadena") String cadena,
                 @PathVariable("iu") String id_user_cod,
                 HttpServletRequest request,
@@ -199,6 +252,8 @@ public class CtbRepAuxCtasController {
         //Reporte Auxiliar de Cuentas
         Integer app_selected = 157;
         String command_selected="reporte";
+        String tipo_doc="pdf";
+        
         //Decodificar id de usuario
         Integer id_user = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_user);
@@ -216,7 +271,7 @@ public class CtbRepAuxCtasController {
         String ssscta=arrayCad[7];
         String sssscta=arrayCad[8];
         
-        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+tipo_reporte+"___"+ano+"___"+mes+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta;
+        String data_string = app_selected+"___"+id_user+"___"+command_selected+"___"+tipo_reporte+"___"+ano+"___"+mes+"___"+cuentas+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta+"___"+tipo_doc;
         
         //Obtiene datos de la Empresa Emisora
         datosEmpresaEmisora = this.getGralDao().getEmisor_Datos(id_empresa);
@@ -229,7 +284,8 @@ public class CtbRepAuxCtasController {
         
         //Agregar datos para el Encabezado y Pie de pagina
         datosEncabezadoPie.put("empresa", datosEmpresaEmisora.get("emp_razon_social"));
-        datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
+        //datosEncabezadoPie.put("titulo_reporte", this.getGralDao().getTituloReporte(id_empresa, app_selected));
+        datosEncabezadoPie.put("titulo_reporte", "Auxiliar de Cuentas");
         datosEncabezadoPie.put("periodo", impreso_en);
         datosEncabezadoPie.put("codigo1", this.getGralDao().getCodigo1Iso(id_empresa, app_selected));
         datosEncabezadoPie.put("codigo2", this.getGralDao().getCodigo2Iso(id_empresa, app_selected));

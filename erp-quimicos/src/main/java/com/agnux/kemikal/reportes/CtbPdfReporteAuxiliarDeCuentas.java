@@ -97,7 +97,7 @@ public class CtbPdfReporteAuxiliarDeCuentas {
         Font smallFont = new Font(Font.FontFamily.HELVETICA,8,Font.NORMAL,BaseColor.BLACK);
         
         HeaderFooter event = new HeaderFooter(this.getDatosHeaderFooter());
-        Document doc = new Document(PageSize.LETTER.rotate(),-50,-50,60,30);
+        Document doc = new Document(PageSize.LETTER,-50,-50,60,30);
         doc.addCreator("gpmarsan@gmail.com");
         doc.addAuthor("Noe Martinez");
         PdfWriter writer = null;
@@ -122,7 +122,7 @@ public class CtbPdfReporteAuxiliarDeCuentas {
                 String dato="";
                 int colspan=1;
                 if (columna_titulo.equals("direccion")){
-                    dato = this.getDatosEmp().get("emp_calle")+" "+this.getDatosEmp().get("emp_no_exterior")+", "+this.getDatosEmp().get("emp_colonia");
+                    dato = this.getDatosEmp().get("emp_calle").toUpperCase()+" "+this.getDatosEmp().get("emp_no_exterior")+", "+this.getDatosEmp().get("emp_colonia");
                     colspan = 3;
                 }
                 
@@ -131,7 +131,7 @@ public class CtbPdfReporteAuxiliarDeCuentas {
                 }
                 
                 if (columna_titulo.equals("dato")){
-                    dato = this.getDatosEmp().get("emp_rfc");
+                    dato = this.getDatosEmp().get("emp_rfc").toUpperCase();
                 }
                 
                 PdfPCell cellX = new PdfPCell(new Paragraph(dato,smallFontBlack));
@@ -150,7 +150,7 @@ public class CtbPdfReporteAuxiliarDeCuentas {
                 String dato="";
                 int colspan=1;
                 if (columna_titulo.equals("direccion")){
-                    dato = this.getDatosEmp().get("emp_municipio")+", "+this.getDatosEmp().get("emp_estado")+", "+this.getDatosEmp().get("emp_pais")+", C.P."+this.getDatosEmp().get("emp_cp");
+                    dato = this.getDatosEmp().get("emp_municipio").toUpperCase()+", "+this.getDatosEmp().get("emp_estado").toUpperCase()+", "+this.getDatosEmp().get("emp_pais").toUpperCase()+", C.P."+this.getDatosEmp().get("emp_cp");
                     colspan = 3;
                 }
                 
@@ -224,7 +224,7 @@ public class CtbPdfReporteAuxiliarDeCuentas {
                 String[] wordList = {"cuenta","descripcion","saldo_inicial","debe","haber","saldo_final"};
                 
                 List<String>  indices = (List<String>) Arrays.asList(wordList);
-
+                String valor="";
                 for (String omega : indices){
                     PdfPCell celda = null;
 
@@ -241,26 +241,34 @@ public class CtbPdfReporteAuxiliarDeCuentas {
                     }
 
                     if (omega.equals("saldo_inicial")){
-                        celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(i.get(omega)),smallFont));
+                        valor="";
+                        if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
+                        celda = new PdfPCell(new Paragraph(valor,smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
 
                     if (omega.equals("debe")){
-                        celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(i.get(omega)),smallFont));
+                        valor="";
+                        if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
+                        celda = new PdfPCell(new Paragraph(valor,smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
 
 
                     if (omega.equals("haber")){
-                        celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(i.get(omega)),smallFont));
+                        valor="";
+                        if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
+                        celda = new PdfPCell(new Paragraph(valor,smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }
 
                     if (omega.equals("saldo_final")){
-                        celda = new PdfPCell(new Paragraph(StringHelper.AgregaComas(i.get(omega)),smallFont));
+                        valor="";
+                        if(!i.get(omega).equals("")){ valor=StringHelper.AgregaComas(i.get(omega)); }
+                        celda = new PdfPCell(new Paragraph(valor,smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     }

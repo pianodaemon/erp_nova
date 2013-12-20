@@ -554,9 +554,9 @@ public class CtbSpringDao implements CtbInterfaceDao{
     @Override
     public ArrayList<HashMap<String, String>> getCtbRepAuxCtas_Datos(String data_string) {
         
-        String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial double precision, debe double precision, haber double precision, saldo_final double precision) ORDER BY cliente, moneda_id, serie_folio;"; 
-        
-        //System.out.println("CxC_DatosReporteSaldoMensual:: "+sql_to_query);
+        String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new String(data_string)}, new RowMapper(){
@@ -565,10 +565,10 @@ public class CtbSpringDao implements CtbInterfaceDao{
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("cuenta",rs.getString("cuenta"));
                     row.put("descripcion",rs.getString("descripcion"));
-                    row.put("saldo_inicial",StringHelper.roundDouble(rs.getDouble("saldo_inicial"), 2));
-                    row.put("debe",StringHelper.roundDouble(rs.getDouble("debe"), 2));
-                    row.put("haber",StringHelper.roundDouble(rs.getDouble("haber"), 2));
-                    row.put("saldo_final",StringHelper.roundDouble(rs.getDouble("saldo_final"), 2));
+                    row.put("saldo_inicial",rs.getString("saldo_inicial"));
+                    row.put("debe",rs.getString("debe"));
+                    row.put("haber",rs.getString("haber"));
+                    row.put("saldo_final",rs.getString("saldo_final"));
                     return row;
                 }
             }

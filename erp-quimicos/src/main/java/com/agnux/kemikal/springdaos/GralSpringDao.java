@@ -2243,11 +2243,11 @@ public class GralSpringDao implements GralInterfaceDao{
                 + "gral_emp.numero_exterior,"
                 + "gral_pais.titulo AS pais,"
                 + "gral_edo.titulo AS estado,"
-                + "gral_mun.titulo AS municipio "
+                + "gral_mun.titulo AS municipio, "
                 + "gral_emp.cp,"
                 + "gral_emp.telefono,"
                 + "gral_emp.regimen_fiscal,"
-                + "(CASE WHEN gral_emp.pagina_web IS NULL THEN '' ELSE gral_emp.pagina_web END) AS pagina_web,"
+                + "(CASE WHEN gral_emp.pagina_web IS NULL THEN '' ELSE gral_emp.pagina_web END) AS pagina_web "
                 + "FROM gral_emp  "
                 + "JOIN gral_pais ON gral_pais.id=gral_emp.pais_id "
                 + "JOIN gral_edo ON gral_edo.id=gral_emp.estado_id "
@@ -2264,7 +2264,7 @@ public class GralSpringDao implements GralInterfaceDao{
         mapDatos.put("emp_colonia", String.valueOf(map.get("colonia")));
         mapDatos.put("emp_pais", String.valueOf(map.get("pais")));
         mapDatos.put("emp_estado", String.valueOf(map.get("estado")));
-        mapDatos.put("emp_municipio", String.valueOf(map.get("munnicipio")));
+        mapDatos.put("emp_municipio", String.valueOf(map.get("municipio")));
         mapDatos.put("emp_cp", String.valueOf(map.get("cp")));
         mapDatos.put("emp_tel", String.valueOf(map.get("telefono")));
         mapDatos.put("emp_regimen_fiscal", String.valueOf(map.get("regimen_fiscal")));
