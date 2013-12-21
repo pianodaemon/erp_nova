@@ -45,5 +45,6 @@ public interface CtbInterfaceDao {
     public ArrayList<HashMap<String, Object>> getCtbRepAuxCtas_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
     public ArrayList<HashMap<String, String>> getCtbRepAuxCtas_Datos(String data_string);
     
-    
+    //Obtiene las sucursales de la empresa
+    public ArrayList<HashMap<String, Object>> getCtb_Sucursales(Integer idEmp);
 }

@@ -135,6 +135,7 @@ public class CtbRepAuxCtasController {
         jsonretorno.put("Dato", arrayExtra);
         //Aqui solo nos interesa las subcuentas del nivel uno, por lo tanto le pasamos el numero 1
         jsonretorno.put("Cta", this.getCtbDao().getCtbRepAuxCtas_Ctas(1,"","", "", "", id_empresa));
+        jsonretorno.put("Suc", this.getCtbDao().getCtb_Sucursales(id_empresa));
         
         return jsonretorno;
     }
@@ -184,7 +185,7 @@ public class CtbRepAuxCtasController {
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDatosReporteJson(
             @RequestParam(value="tipo_reporte", required=true) String tipo_reporte,
             @RequestParam(value="ano", required=true) String ano,
-            @RequestParam(value="mes", required=true) String mes,
+            @RequestParam(value="mes", required=false) String mes,
             @RequestParam(value="cuentas", required=true) String cuentas,
             @RequestParam(value="cta", required=false) String cta,
             @RequestParam(value="scta", required=false) String scta,

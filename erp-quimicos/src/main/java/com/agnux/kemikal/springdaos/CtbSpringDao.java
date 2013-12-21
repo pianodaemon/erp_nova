@@ -575,7 +575,26 @@ public class CtbSpringDao implements CtbInterfaceDao{
         );
         return hm_facturas;
     }
-
-
+    
+    
+    //Obtiene las sucursales de la empresa indicada
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtb_Sucursales(Integer idEmp) {
+        
+        String sql_to_query = "SELECT id, titulo FROM gral_suc WHERE empresa_id=? AND borrado_logico=false;"; 
+        ArrayList<HashMap<String, Object>> hm_facturas = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(idEmp)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
     
 }
