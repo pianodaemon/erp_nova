@@ -60,10 +60,58 @@ $(function() {
 	var $select_subsubsubsubcuenta = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_subsubsubsubcuenta]');
 	
 	var $descripcion = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[name=descripcion]');
+	var $select_sucursal = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_sucursal]');
 	
 	var $genera_PDF = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[value$=PDF]');
 	var $busqueda_reporte= $('#lienzo_recalculable').find('table#busqueda tr td').find('input[value$=Buscar]');
 	var $div_rep= $('#lienzo_recalculable').find('#div_rep');
+	
+	var $div_busqueda= $('#lienzo_recalculable').find('#div_busqueda');
+	var $tr_oculto= $('#lienzo_recalculable').find('#tr_oculto');
+	var $vermas= $('#lienzo_recalculable').find('#vermas');
+	var $vermenos= $('#lienzo_recalculable').find('#vermenos');
+	
+	//Ocultar tr
+	$tr_oculto.hide();
+	
+	//Muestra trs al hacer clic en esta imagen
+	$vermas.click(function(event){
+		event.preventDefault();
+		$div_busqueda.animate({height: '100px'}, 500);
+		
+		//Redimensionar el espacio para el resultado del reporte
+		var height2 = $('#cuerpo').css('height');
+		var alto = parseInt(height2)-282;
+		var pix_alto=alto+'px';
+		$('#table_rep').tableScroll({height:parseInt(pix_alto)});
+		
+		$vermas.hide();
+		$vermenos.show();
+		$tr_oculto.show();
+		verMas=true;
+	});
+	
+	
+	
+	//Oculta trs al hacer clic en esta imagen
+	$vermenos.click(function(event){
+		event.preventDefault();
+		$div_busqueda.animate({height: '58px'}, 500);
+		
+		//Redimensionar el espacio para el resultado del reporte
+		var height2 = $('#cuerpo').css('height');
+		var alto = parseInt(height2)-240;
+		var pix_alto=alto+'px';
+		$('#table_rep').tableScroll({height:parseInt(pix_alto)});
+		
+		$vermenos.hide();
+		$vermas.show();
+		$tr_oculto.hide();
+		verMas=false;
+	});
+	
+	
+	
 	
 	
 	$descripcion.css({'background' : '#DDDDDD'});
@@ -75,6 +123,13 @@ $(function() {
 	$select_subsubsubcuenta.attr('disabled','-1');
 	$select_subsubsubsubcuenta.attr('disabled','-1');
 	$descripcion.attr('disabled','-1');
+	
+	//Ocultar las cuentas por default, solo se mostraran mas adelante de acuerdo al nivel definido para la empresa
+	$select_cuenta.hide();
+	$select_subcuenta.hide();
+	$select_subsubcuenta.hide();
+	$select_subsubsubcuenta.hide();
+	$select_subsubsubsubcuenta.hide();
 	
 	$select_tipo_reporte.children().remove();
 	var html='<option value="1">Mensual</option>';
@@ -89,7 +144,8 @@ $(function() {
 	var array_meses = {0:"- Seleccionar -",  1:"Enero",  2:"Febrero", 3:"Marzo", 4:"Abirl", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"};
 	var array_ctas_nivel1;
 	var array_ctas;
-	
+	var mesActual=0;
+	var verMas=false;
 	
 	var arreglo_parametros = { iu:config.getUi() };
 	var restful_json_service = config.getUrlForGetAndPost() + '/getDatos.json';
@@ -117,6 +173,15 @@ $(function() {
 			}
 		}
 		$select_mes.append(select_html);
+
+		//cargar select de sucursales
+		$select_sucursal.children().remove();
+		var html_suc = '';
+		$.each(entry['Suc'],function(entryIndex,suc){
+			html_suc += '<option value="' + suc['id'] + '"  >' + suc['titulo'] + '</option>';
+		});
+		$select_sucursal.append(html_suc);
+		
 		
 		/*
 		$select_cuenta.children().remove();
@@ -127,15 +192,44 @@ $(function() {
 		$select_cuenta.append(html_cta);
 		*/
 		
+		//Visualizar subcuentas de acuerdo al nivel definido para la empresa
+		if(parseInt(entry['Dato'][0]['nivel_cta']) >=1 ){ $select_cuenta.show(); };
+		if(parseInt(entry['Dato'][0]['nivel_cta']) >=2 ){ $select_subcuenta.show(); };
+		if(parseInt(entry['Dato'][0]['nivel_cta']) >=3 ){ $select_subsubcuenta.show(); };
+		if(parseInt(entry['Dato'][0]['nivel_cta']) >=4 ){ $select_subsubsubcuenta.show(); };
+		if(parseInt(entry['Dato'][0]['nivel_cta']) >=5 ){ $select_subsubsubsubcuenta.show(); };
+		
 		array_ctas_nivel1=entry['Cta'];
+		mesActual = entry['Dato'][0]['mesActual'];
 	});
 	
 	
 	
-	
+	$select_tipo_reporte.change(function(){
+		if(parseInt($(this).val())==1){
+			$select_mes.removeAttr('disabled');
+			
+			//Recargar select de Meses
+			$select_mes.children().remove();
+			var select_html = '';
+			for(var i in array_meses){
+				if(parseInt(i) == parseInt(mesActual) ){
+					select_html += '<option value="' + i + '" selected="yes">' + array_meses[i] + '</option>';	
+				}else{
+					select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
+				}
+			}
+			$select_mes.append(select_html);
+			$select_mes.focus();
+		}else{
+			$select_mes.children().remove();
+			$select_mes.attr('disabled','-1');
+			$select_tipo_reporte.focus();
+		}
+	});
 	
 	$select_cuentas.change(function(){
-		if(parseInt($(this).val())==0){
+		if(parseInt($(this).val())==1){
 			$descripcion.val('');
 			$select_cuenta.children().remove();
 			$select_subcuenta.children().remove();
@@ -231,11 +325,16 @@ $(function() {
 	//Crear y descargar PDF de Reporte Auxiliar de Cuentas
 	$genera_PDF.click(function(event){
 		event.preventDefault();
+		var mes="0";
 		var cta="0";
 		var scta="0";
 		var sscta="0";
 		var ssscta="0";
 		var sssscta="0";
+		
+		if($select_mes.val()!=null && $select_mes.val()!=""){
+			mes=$select_mes.val();
+		}
 		
 		if($select_cuenta.val()!=null && $select_cuenta.val()!=""){
 			cta=$select_cuenta.val();
@@ -253,7 +352,7 @@ $(function() {
 			sssscta=$select_subsubsubsubcuenta.val();
 		}
 		
-		var cadena = $select_tipo_reporte.val()+"___"+$select_ano.val()+"___"+$select_mes.val()+"___"+$select_cuentas.val()+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta;
+		var cadena = $select_tipo_reporte.val()+"___"+$select_ano.val()+"___"+mes+"___"+$select_cuentas.val()+"___"+cta+"___"+scta+"___"+sscta+"___"+ssscta+"___"+sssscta;
 		//alert(cadena);
 		var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
 		var input_json = config.getUrlForGetAndPost() + '/getPdfAuxCtas/'+cadena+'/'+iu+'/out.json';
@@ -265,12 +364,17 @@ $(function() {
 	$busqueda_reporte.click(function(event){
 		event.preventDefault();
 		$div_rep.children().remove();
-			
+		
+		var mes="0";
 		var cta="0";
 		var scta="0";
 		var sscta="0";
 		var ssscta="0";
 		var sssscta="0";
+		
+		if($select_mes.val()!=null && $select_mes.val()!=""){
+			mes=$select_mes.val();
+		}
 		
 		if($select_cuenta.val()!=null && $select_cuenta.val()!=""){
 			cta=$select_cuenta.val();
@@ -291,7 +395,7 @@ $(function() {
 		var arreglo_parametros = {	
 			tipo_reporte: $select_tipo_reporte.val(),
 			ano: $select_ano.val(),
-			mes: $select_mes.val(),
+			mes: mes,
 			cuentas: $select_cuentas.val(),
 			cta: cta,
 			scta: scta,
@@ -385,7 +489,13 @@ $(function() {
 			
 			$div_rep.append(html_reporte); 
 			var height2 = $('#cuerpo').css('height');
-			var alto = parseInt(height2)-240;
+			var alto = 0;
+			if(verMas){
+				//Entra aqui si esta activado la opcion ver mas parametros de la busqueda
+				alto = parseInt(height2)-282;
+			}else{
+				alto = parseInt(height2)-240;
+			}
 			var pix_alto=alto+'px';
 			$('#table_rep').tableScroll({height:parseInt(pix_alto)});
 		});
@@ -403,9 +513,4 @@ $(function() {
 	$(this).aplicarEventoKeypressEjecutaTrigger($select_subsubsubsubcuenta, $busqueda_reporte);
 	
 	$select_tipo_reporte.focus();
-});   
-        
-        
-        
-        
-    
+});
