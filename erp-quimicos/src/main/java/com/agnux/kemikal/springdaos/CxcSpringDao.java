@@ -2293,9 +2293,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                         +  " SELECT  cxc_clie.numero_control,  "
                                         + " cxc_clie.razon_social AS cliente, "
                                         + " '$'::character varying as pesos,  "
-                                        + " (CASE WHEN fac_docs.moneda_id=1  "
-                                        + " THEN fac_docs.subtotal * 1  "
-                                        + " ELSE fac_docs.subtotal * fac_docs.tipo_cambio END) AS totalporfactura,  "
+                                        + " (CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal * 1 ELSE fac_docs.subtotal * fac_docs.tipo_cambio END) AS totalporfactura,  "
                                         + " '%'::character varying as porcentaje   "
                                         + " FROM fac_docs     "
                                         + " JOIN erp_proceso on erp_proceso.id=fac_docs.proceso_id  "
@@ -2358,7 +2356,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                                     + " venta_pesos double precision,  "
                                     + " costo double precision,  "
                                     + " fecha_factura text,"
-
+                                    + " momento_creacion timestamp with time zone,"
                                     + "id_presentacion Integer, "
                                     + "presentacion character varying"
                                     + "); ";
@@ -2417,6 +2415,27 @@ public class CxcSpringDao implements CxcInterfaceDao{
 
         return hm_tp;
     }
+    
+    //obtiene tipos de productos(Retorna String Object)
+    @Override
+    public ArrayList<HashMap<String, Object>> getProductoTiposV2() {
+	String sql_query = "SELECT DISTINCT id,titulo FROM inv_prod_tipos WHERE borrado_logico=false order by id;";
+        ArrayList<HashMap<String, Object>> hm_tp = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+
+        return hm_tp;
+    }
+    
     //obtiene las lineas de los  productos
 @Override
 public ArrayList<HashMap<String, String>> getLineas() {
@@ -2978,7 +2997,7 @@ return subfamilias;
 
     // obtiene el SQL de estadisticas anuales de ventas
     @Override
-    public ArrayList<HashMap<String, String>> getEstadisticaVentas(Integer mes_in,Integer mes_fin,Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getEstadisticaVentas(Integer mes_in,Integer mes_fin, Integer anio, Integer id_empresa) {
 
         String where="";
 
@@ -3020,7 +3039,8 @@ return subfamilias;
                                             +"WHERE erp_proceso.empresa_id ="+id_empresa + " "
                                             +"AND fac_docs.cancelado=false "
                                             +"AND EXTRACT(MONTH FROM fac_docs.momento_creacion) between "+mes_in+ " and "+mes_fin+ " "
-                                            + "AND EXTRACT(YEAR  FROM fac_docs.momento_creacion)=EXTRACT(YEAR FROM now()) "
+                                            + "AND EXTRACT(YEAR  FROM fac_docs.momento_creacion)="+anio+" "
+                                            //+ "AND EXTRACT(YEAR  FROM fac_docs.momento_creacion)=EXTRACT(YEAR FROM now()) "
                                     +") AS sbt "
                             +")as sbt2 "
                             +"GROUP BY razon_social ";
@@ -3059,7 +3079,7 @@ return subfamilias;
 
 // obtiene el SQL de estadisticas anuales de ventas
     @Override
-    public ArrayList<HashMap<String, String>> getEstadisticaVentasProducto(Integer mes_in,Integer mes_fin,Integer tipo_producto, Integer familia,Integer subfamilia,Integer id_empresa) {
+    public ArrayList<HashMap<String, String>> getEstadisticaVentasProducto(Integer mes_in,Integer mes_fin,Integer tipo_producto, Integer familia,Integer subfamilia,Integer id_empresa, Integer anio) {
         String where="";
 
         if(tipo_producto != 0){
@@ -3115,7 +3135,8 @@ return subfamilias;
                                             +"WHERE erp_proceso.empresa_id ="+id_empresa + " "
                                             +"AND fac_docs.cancelado=false "
                                             +"AND EXTRACT(MONTH FROM fac_docs.momento_creacion) between "+mes_in+ " and "+mes_fin+ " "
-                                            + "AND EXTRACT(YEAR  FROM fac_docs.momento_creacion)=EXTRACT(YEAR FROM now()) "
+                                            + "AND EXTRACT(YEAR  FROM fac_docs.momento_creacion)="+anio+" "
+                                            //+ "AND EXTRACT(YEAR  FROM fac_docs.momento_creacion)=EXTRACT(YEAR FROM now()) "
                                             +where+" "
                                     +") AS sbt "
                             +")as sbt2 "

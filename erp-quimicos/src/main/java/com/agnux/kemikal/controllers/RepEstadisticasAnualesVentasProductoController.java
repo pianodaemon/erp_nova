@@ -105,7 +105,7 @@ public class RepEstadisticasAnualesVentasProductoController {
         return x;
     }
     
-    
+    /*
     //cargar tipos de productos
    @RequestMapping(method = RequestMethod.POST, value="/getProdTipos.json")
         public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getProdTiposJson(
@@ -126,7 +126,32 @@ public class RepEstadisticasAnualesVentasProductoController {
         jsonretorno.put("Mes", mesActual);
         return jsonretorno;
     }
-    
+    */
+   
+   
+   
+    //Cargar cargar datos iniciales para el buscador
+   @RequestMapping(method = RequestMethod.POST, value="/getDatos.json")
+        public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDatosJson(
+        @RequestParam(value="iu", required=true) String id_user,
+        Model model
+    ){
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, Object> mes = new HashMap<String, Object>();
+        ArrayList<HashMap<String, Object>> mesActual = new ArrayList<HashMap<String, Object>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        mes.put("mesActual", TimeHelper.getMesActual());
+        mes.put("anioActual", TimeHelper.getFechaActualY());
+        mesActual.add(0, mes);
+        
+        jsonretorno.put("Anios", this.getCxcDao().getCxc_AnioReporteSaldoMensual());
+        jsonretorno.put("ProdTipo", this.getCxcDao().getProductoTiposV2());
+        jsonretorno.put("Dato", mesActual);
+        return jsonretorno;
+    }
     
    
    
@@ -171,6 +196,7 @@ public class RepEstadisticasAnualesVentasProductoController {
             @RequestParam("familia_id")Integer familia,
             @RequestParam("subfamilia_id")Integer subfamilia,
             @RequestParam("tipo")Integer tipo_producto,
+            @RequestParam("anio")Integer anio,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
@@ -185,7 +211,7 @@ public class RepEstadisticasAnualesVentasProductoController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        Estadisticas = this.getCxcDao().getEstadisticaVentasProducto(mes_in,mes_fin,tipo_producto,familia,subfamilia,id_empresa);
+        Estadisticas = this.getCxcDao().getEstadisticaVentasProducto(mes_in,mes_fin,tipo_producto,familia,subfamilia,id_empresa, anio);
         
         jsonretorno.put("Estadisticas", Estadisticas);
         
@@ -210,6 +236,7 @@ public class RepEstadisticasAnualesVentasProductoController {
         Integer familia = Integer.parseInt(datitos[2]);
         Integer subfamilia = Integer.parseInt(datitos[3]);
         Integer tipo_producto = Integer.parseInt(datitos[4]);
+        Integer anio = Integer.parseInt(datitos[5]);
         
         System.out.println("Generando reporte de facturacion");
 
@@ -238,7 +265,7 @@ public class RepEstadisticasAnualesVentasProductoController {
         ArrayList<HashMap<String, String>> lista_ventas_anuales = new ArrayList<HashMap<String, String>>();
         
         //obtiene las facturas del periodo indicado
-        lista_ventas_anuales = this.cxcDao.getEstadisticaVentasProducto(mes_in,mes_fin,tipo_producto,familia,subfamilia,id_empresa);
+        lista_ventas_anuales = this.getCxcDao().getEstadisticaVentasProducto(mes_in,mes_fin,tipo_producto,familia,subfamilia,id_empresa, anio);
         
         //instancia a la clase que construye el pdf del reporte de facturas
         PdfEstadisticoVentasAnualesXProducto x = new PdfEstadisticoVentasAnualesXProducto(fileout,ruta_imagen,razon_social_empresa,mesInicial,mesFinal,lista_ventas_anuales);

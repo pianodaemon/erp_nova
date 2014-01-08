@@ -87,6 +87,7 @@ public interface CxcInterfaceDao {
     //public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia,Integer tipo_costo);
     public ArrayList<HashMap<String, String>> getVentasNetasProductoFactura(Integer tipo_reporte,String cliente, String producto, String fecha_inicial, String fecha_final, Integer id_empresa,Integer id_linea, Integer id_marca, Integer id_familia, Integer id_subfamilia,Integer tipo_costo,Integer id_agente);
     public ArrayList<HashMap<String, String>> getProductoTipos();
+    public ArrayList<HashMap<String, Object>> getProductoTiposV2();
     public ArrayList<HashMap<String, String>> getLineas();
     public ArrayList<HashMap<String, String>> getMarcas();
     public ArrayList<HashMap<String, String>> getFamilias();
@@ -125,10 +126,10 @@ public interface CxcInterfaceDao {
     public ArrayList<HashMap<String, String>> getDatos_ReporteAntiguedadSaldos(Integer tipo, String cliente, Integer id_empresa);
 
 
-    public ArrayList<HashMap<String,String>> getEstadisticaVentas(Integer mes_in,Integer mes_fin,Integer id_empresa);
+    public ArrayList<HashMap<String,String>> getEstadisticaVentas(Integer mes_in,Integer mes_fin, Integer anio, Integer id_empresa);
 
     //reporte de estadistico de ventas por producto
-    public ArrayList<HashMap<String,String>> getEstadisticaVentasProducto(Integer mes_in,Integer mes_fin,Integer tipo_producto, Integer familia,Integer subfamilia,Integer id_empresa);
+    public ArrayList<HashMap<String,String>> getEstadisticaVentasProducto(Integer mes_in,Integer mes_fin,Integer tipo_producto, Integer familia,Integer subfamilia,Integer id_empresa, Integer anio);
     public ArrayList<HashMap<String,String>> getFamilias(Integer tipo_producto, Integer id_empresa);
     public ArrayList<HashMap<String,String>> getSubFamilias(Integer familia_id);
 

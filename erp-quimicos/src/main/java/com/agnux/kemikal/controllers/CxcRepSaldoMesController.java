@@ -110,7 +110,7 @@ public class CxcRepSaldoMesController {
     
     
     
-    //Cargar tipos de productos
+    //Cargar cargar datos iniciales para el buscador
    @RequestMapping(method = RequestMethod.POST, value="/getDatos.json")
         public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDatosJson(
         @RequestParam(value="iu", required=true) String id_user,

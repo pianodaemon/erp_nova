@@ -118,7 +118,7 @@ public class RepEstadisticasAnualesVentasController {
     }
     
     
-    
+    /*
     //cargar tipos de productos
    @RequestMapping(method = RequestMethod.POST, value="/getMesActual.json")
         public @ResponseBody HashMap<String, String> getMesActualJson(
@@ -130,6 +130,29 @@ public class RepEstadisticasAnualesVentasController {
         jsonretorno.put("mesActual", TimeHelper.getMesActual());
         return jsonretorno;
     }
+    */
+    
+    //Cargar cargar datos iniciales para el buscador
+   @RequestMapping(method = RequestMethod.POST, value="/getDatos.json")
+        public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDatosJson(
+        @RequestParam(value="iu", required=true) String id_user,
+        Model model
+    ){
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, Object> mes = new HashMap<String, Object>();
+        ArrayList<HashMap<String, Object>> mesActual = new ArrayList<HashMap<String, Object>>();
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        mes.put("mesActual", TimeHelper.getMesActual());
+        mes.put("anioActual", TimeHelper.getFechaActualY());
+        mesActual.add(0, mes);
+        
+        jsonretorno.put("Anios", this.getCxcDao().getCxc_AnioReporteSaldoMensual());
+        jsonretorno.put("Dato", mesActual);
+        return jsonretorno;
+    }
     
     
 
@@ -138,7 +161,7 @@ public class RepEstadisticasAnualesVentasController {
     public  @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getEstadisticaAnualVentasJson(
             @RequestParam("mes_in") Integer mes_in,
             @RequestParam("mes_fin") Integer mes_fin,
-            
+            @RequestParam("anio") Integer anio,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
             ) {
@@ -168,7 +191,7 @@ public class RepEstadisticasAnualesVentasController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        Estadisticas = this.getCxcDao().getEstadisticaVentas(mes_in,mes_fin,id_empresa);
+        Estadisticas = this.getCxcDao().getEstadisticaVentas(mes_in,mes_fin,anio,id_empresa);
         
 
         for (int x=0; x<=Estadisticas.size()-1;x++){
@@ -205,13 +228,14 @@ public class RepEstadisticasAnualesVentasController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         
-        System.out.println("Generando reporte de facturacion");
+        System.out.println("Generando reporte Estadistico de Ventas Anuales por Cliente");
         
         //Integer opciones=0;
         //String factura="";
         //String cliente="";
         String mes_inicial="";
         String mes_final="";
+        Integer anio=0;
         
         String arrayCad [] = cadena.split("___");
         //opciones = Integer.parseInt(arrayCad [0]);
@@ -219,6 +243,7 @@ public class RepEstadisticasAnualesVentasController {
         //cliente = "%"+arrayCad [2]+"%";
         mes_inicial = arrayCad [0];
         mes_final = arrayCad [1];
+        anio = Integer.parseInt(arrayCad [2]);
         Integer mesInicial = Integer.parseInt(mes_inicial);
         Integer mesFinal = Integer.parseInt(mes_final);
         //decodificar id de usuario
@@ -251,7 +276,7 @@ public class RepEstadisticasAnualesVentasController {
         ArrayList<HashMap<String, String>> lista_ventas_anuales = new ArrayList<HashMap<String, String>>();
         
         //obtiene las facturas del periodo indicado
-        lista_ventas_anuales = this.cxcDao.getEstadisticaVentas(mesInicial, mesFinal, id_empresa);
+        lista_ventas_anuales = this.getCxcDao().getEstadisticaVentas(mesInicial, mesFinal, anio, id_empresa);
         
         //instancia a la clase que construye el pdf del reporte de facturas
         PdfEstadisticoVentasAnualesXCliente x = new PdfEstadisticoVentasAnualesXCliente(fileout,ruta_imagen,razon_social_empresa,mes_inicial,mes_final,lista_ventas_anuales);

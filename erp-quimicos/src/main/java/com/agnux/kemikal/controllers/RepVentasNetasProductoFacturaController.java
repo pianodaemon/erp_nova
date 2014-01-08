@@ -237,7 +237,7 @@ public class RepVentasNetasProductoFacturaController {
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        System.out.println("id_usuario: " + id_usuario);
+        //System.out.println("id_usuario: " + id_usuario);
 
         userDat = this.getHomeDao().getUserById(id_usuario);
 
