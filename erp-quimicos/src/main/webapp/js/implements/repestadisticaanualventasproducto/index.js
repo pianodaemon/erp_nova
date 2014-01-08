@@ -66,6 +66,7 @@ $(function() {
         //barra para el buscador 
         $('#barra_buscador').hide();
 		
+		var $select_ano = $('#lienzo_recalculable').find('table#busqueda tr td').find('select[name=select_ano]');
         var $mes_inicial = $('#lienzo_recalculable').find('select[name=mes_inicial]');
         var $mes_final = $('#lienzo_recalculable').find('select[name=mes_final]');
         var $genera_reporte_estadistico = $('#lienzo_recalculable').find('table#busqueda tr td').find('input[value$=Generar_PDF]');
@@ -107,6 +108,60 @@ $(function() {
 			$div_reporte_estadisticasventas.children().remove();
 		});
 
+
+
+
+
+		var arreglo_parametros = { 
+			iu:config.getUi()
+		};
+
+		var restful_json_service = config.getUrlForGetAndPost() + '/getDatos.json';
+		$.post(restful_json_service,arreglo_parametros,function(entry){
+			//carga select de años
+			$select_ano.children().remove();
+			var html_anio = '';
+			$.each(entry['Anios'],function(entryIndex,anio){
+				if(parseInt(anio['valor']) == parseInt(entry['Dato'][0]['anioActual']) ){
+					html_anio += '<option value="' + anio['valor'] + '" selected="yes">' + anio['valor'] + '</option>';
+				}else{
+					html_anio += '<option value="' + anio['valor'] + '"  >' + anio['valor'] + '</option>';
+				}
+			});
+			$select_ano.append(html_anio);
+			
+			//cargar select del Mes Final
+			$mes_final.children().remove();
+			var select_html = '';
+			for(var i in array_meses){
+				if(parseInt(i) == parseInt(entry['Dato'][0]['mesActual']) ){
+					select_html += '<option value="' + i + '" selected="yes">' + array_meses[i] + '</option>';	
+				}else{
+					select_html += '<option value="' + i + '"  >' + array_meses[i] + '</option>';	
+				}
+			}
+			$mes_final.append(select_html);
+			
+			
+            //cargar select tipos de producto
+			$select_tipo_producto.children().remove();
+			var tipo ='<option value="0" selected="yes">Seleccione Tipo</option>';
+			$.each(entry['ProdTipo'],function(entryIndex,data){
+				tipo +='<option value= "' + data['id'] + '" >' + data['titulo'] + '</option>';
+			});
+			$select_tipo_producto.append(tipo);
+			
+			$select_familia.children().remove();
+			var familia_hmtl ='<option value="0" selected="yes">Seleccione Familia</option>';
+			$select_familia.append(familia_hmtl);
+            
+            $select_subfamilia.children().remove();
+			var subfamilia_hmtl ='<option value="0" selected="yes">Seleccione Subfamilia</option>';
+			$select_subfamilia.append(subfamilia_hmtl);
+			
+		});
+
+		/*
          var arreglo_parametros = { 
             iu:config.getUi()
          };
@@ -148,6 +203,8 @@ $(function() {
 			
             
         });
+        */
+        
         
         
 		//carga select familias al cambiar tipo de producto
@@ -205,7 +262,7 @@ $(function() {
         
 		$genera_reporte_estadistico.click(function(event){
                 event.preventDefault();
-                var cadena = $mes_inicial.val()+"_"+$mes_final.val()+"_"+$select_familia.val()+"_"+$select_subfamilia.val()+"_"+$select_tipo_producto.val();
+                var cadena = $mes_inicial.val()+"_"+$mes_final.val()+"_"+$select_familia.val()+"_"+$select_subfamilia.val()+"_"+$select_tipo_producto.val()+"_"+$select_ano.val();
                 var input_json = config.getUrlForGetAndPost() + '/MakePDF/'+cadena+'/'+config.getUi()+'/out.json';
                 window.location.href=input_json;
                 
@@ -221,6 +278,7 @@ $(function() {
                         familia_id:$select_familia.val(),
                         subfamilia_id:$select_subfamilia.val(),
                         tipo:$select_tipo_producto.val(),
+                        anio:$select_ano.val(),
                         iu:config.getUi()
                     };
 
@@ -243,14 +301,14 @@ $(function() {
                                         octubre :'Octubre',
                                         noviembr:'Noviembre',
                                         diciem  :'Diciembre',
-                                        total   :'Total Anual'
+                                        total   :'Total&nbsp;Anual'
                                 };
 
 
                                 var TPventa_neta=0.0;
                                 var Sumatoriaventa_neta = 0.0;
                                 var sumatotoriaporciento = 0.0;
-                                var html_reporte = '<table id="ventas" width="1100">';
+                                var html_reporte = '<table id="ventas" width="1140">';
                                 var porcentaje = 0.0;
 
                                 var numero_control=0.0; 
@@ -265,7 +323,7 @@ $(function() {
                                         var attrValue = header_tabla[key];
 
                                         if(attrValue == "Producto"){
-                                                html_reporte +='<td width="100px" align="left">'+attrValue+'</td>'; 
+                                                html_reporte +='<td width="120px" align="left">'+attrValue+'</td>'; 
                                         }
                                         if(attrValue == "Enero"){
                                                 html_reporte +='<td width="50px" align="left">'+attrValue+'</td>'; 
@@ -304,7 +362,7 @@ $(function() {
                                         if(attrValue == "Diciembre"){
                                                 html_reporte +='<td width="50px" align="left">'+attrValue+'</td>'; 
                                         }
-                                        if(attrValue == "Total Anual"){
+                                        if(attrValue == "Total&nbsp;Anual"){
                                                 html_reporte +='<td width="70px" align="left">'+attrValue+'</td>'; 
                                         }
                                 }
@@ -328,7 +386,7 @@ $(function() {
 
                                         totalano=parseFloat(totalano)+parseFloat(body_tabla[i]["suma_total"]);
                                         html_reporte +='<tr>';
-                                        html_reporte +='<td width="100px" align="left">'+body_tabla[i]["descripcion"]+'</td>'; 
+                                        html_reporte +='<td width="120px" align="left">'+body_tabla[i]["descripcion"]+'</td>'; 
                                         html_reporte +='<td width="50px" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["enero"]).toFixed(2))+'</td>'; 
                                         html_reporte +='<td width="50px" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["febrero"]).toFixed(2))+'</td>'; 
                                         html_reporte +='<td width="50px" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["marzo"]).toFixed(2))+'</td>'; 
@@ -361,7 +419,7 @@ $(function() {
 
                                 html_reporte +='<tfoot>';
                                     html_reporte +='<tr>';
-                                        html_reporte +='<td width="100px" align="right" id="sin_borde">Total Mensual</td>'
+                                        html_reporte +='<td width="120px" align="right" id="sin_borde">Total Mensual</td>'
                                         html_reporte +='<td width="50px" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes).toFixed(2))+'</td>'; 
                                         html_reporte +='<td width="50px" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes2).toFixed(2))+'</td>'; 
                                         html_reporte +='<td width="50px" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes3).toFixed(2))+'</td>'; 
