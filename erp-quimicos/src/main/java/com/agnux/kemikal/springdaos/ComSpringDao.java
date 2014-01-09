@@ -920,18 +920,21 @@ public class ComSpringDao  implements ComInterfaceDao {
     //obtener las partidas de la Factura de Compra
     @Override
     public ArrayList<HashMap<String, String>> getComFacDevolucion_Partidas(Integer id_proveedor, String factura) {
-        String sql_to_query = "SELECT "
-                + "com_fac_detalle.id AS id_detalle,"
-                + "com_fac.inv_alm_id AS id_almacen,"
-                + "com_fac_detalle.producto_id, "
-                + "inv_prod.sku, "
-                + "inv_prod.descripcion AS titulo, "
-                + "inv_prod_unidades.titulo AS unidad, "
-                + "com_fac_detalle.costo_unitario AS costo, "
-                + "com_fac_detalle.cantidad, "
-                + "(com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) AS importe, "
-                + "com_fac_detalle.tipo_de_impuesto_sobre_partida AS id_impuesto, "
-                + "com_fac_detalle.cantidad_devolucion AS cantidad_devuelto "
+        String sql_to_query = ""
+                + "SELECT "
+                    + "com_fac_detalle.id AS id_detalle,"
+                    + "com_fac.inv_alm_id AS id_almacen,"
+                    + "com_fac_detalle.producto_id, "
+                    + "inv_prod.sku, "
+                    + "inv_prod.descripcion AS titulo, "
+                    + "inv_prod_unidades.titulo AS unidad, "
+                    + "inv_prod_presentaciones.id AS pres_id, "
+                    + "inv_prod_presentaciones.titulo AS presentacion, "
+                    + "com_fac_detalle.costo_unitario AS costo, "
+                    + "com_fac_detalle.cantidad, "
+                    + "(com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) AS importe, "
+                    + "com_fac_detalle.tipo_de_impuesto_sobre_partida AS id_impuesto, "
+                    + "com_fac_detalle.cantidad_devolucion AS cantidad_devuelto "
                 + "FROM com_fac "
                 + "JOIN com_fac_detalle ON com_fac_detalle.com_fac_id=com_fac.id "
                 + "LEFT JOIN inv_prod on inv_prod.id = com_fac_detalle.producto_id  "
@@ -952,6 +955,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("unidad",rs.getString("unidad"));
+                    row.put("pres_id",String.valueOf(rs.getInt("pres_id")));
+                    row.put("presentacion",rs.getString("presentacion"));
                     row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo"),2));
                     row.put("cantidad_fac",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
@@ -1054,6 +1059,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "inv_prod.sku, "
                     + "inv_prod.descripcion AS titulo, "
                     + "inv_prod_unidades.titulo AS unidad, "
+                    + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS pres_id, "
+                    + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
                     + "com_fac_detalle.costo_unitario AS costo, "
                     + "com_fac_detalle.cantidad, "
                     + "(com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) AS importe, "
@@ -1065,6 +1072,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + "JOIN com_fac_detalle ON com_fac_detalle.id=com_fac_detalle_dev.id_com_fac_detalle "
                 + "LEFT JOIN inv_prod on inv_prod.id = com_fac_detalle.producto_id   "
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id  "
+                + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_fac_detalle_dev.presentacion_id "
                 + "WHERE com_fac_detalle_dev.id_cxp_nota_credito=?;";
                                 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -1079,6 +1087,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("unidad",rs.getString("unidad"));
+                    row.put("pres_id",String.valueOf(rs.getInt("pres_id")));
+                    row.put("presentacion",rs.getString("presentacion"));
                     row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo"),2));
                     row.put("cantidad_fac",StringHelper.roundDouble(rs.getString("cantidad"),2));
                     row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
