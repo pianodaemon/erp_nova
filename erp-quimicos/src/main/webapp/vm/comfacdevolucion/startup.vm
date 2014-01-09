@@ -120,7 +120,7 @@
 				
                     <div id="div_two" title="" class="comfacdevolucion_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:910px; padding-left:6px;"><strong>Devoluci&oacute;n a Proveedor</strong></div>
+                            <div class="fixed column" style="width:990px; padding-left:6px;"><strong>Devoluci&oacute;n a Proveedor</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -144,13 +144,13 @@
 										
                                         <table border="0" style="margin:0; padding:0;">
 											<tr>
-												<td width="550"></td>
+												<td width="630"></td>
 												<td width="10"></td>
 												<td width="90"></td>
 												<td width="300"></td>
 											</tr>
 											<tr>
-												<td valign="top" width="550"  > 
+												<td valign="top" width="630"  > 
 													<table border="0" class="gral">
 														
 														<tr>
@@ -372,6 +372,7 @@
 																<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="90">&nbsp;C&oacute;digo</td>
 																<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="200">&nbsp;Descripci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;Unidad</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Presentaci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;Cantidad</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="75">&nbsp;Costo&nbsp;Unitario</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Importe</td>
@@ -381,7 +382,7 @@
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:890; height: 115px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:970; height: 115px; border:1px solid #C1DAD7 !important;">	
 														<table>
 															<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos" class="gral">
 																
@@ -452,10 +453,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:923px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
+                            <div class="fixed column" style="width:983px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="823"></td>
+										<td width="983"></td>
 										<td>
 											<div id="boton_actualizar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn1.png'); background-repeat:no-repeat;"></div>
 											

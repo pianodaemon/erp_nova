@@ -678,6 +678,9 @@ $(function() {
 						var codigo_producto = partida['sku'];
 						var titulo_producto = partida['titulo'];
 						var unidad_medida = partida['unidad'];
+						var pres_id = partida['pres_id'];
+						var pres = partida['presentacion'];
+						
 						var cantidad_fac = partida['cantidad_fac'];
 						var costo_unitario = partida['costo_unitario'];
 						var importe = partida['importe'];
@@ -686,7 +689,7 @@ $(function() {
 						var cant_devolucion = '0.00';
 						id_almacen_salida = partida['id_almacen'];
 						
-						var nuevo_tr = crear_tr(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion);
+						var nuevo_tr = crear_tr(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion, pres_id, pres);
 						
 						$grid_productos.append(nuevo_tr);
 						
@@ -776,7 +779,7 @@ $(function() {
 	
 	
 	//metodo  que carga el grid con las partidas de la Factura de compra
-	crear_tr = function(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion){
+	crear_tr = function(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion, pres_id, pres){
 		var tr='';
 		tr += '<tr>';
 			tr += '<td width="25" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
@@ -794,6 +797,10 @@ $(function() {
 			tr += '</td>';
 			tr += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 				tr += '<input type="text" 	name="unidad" value="'+ unidad_medida +'" class="borde_oculto" readOnly="true" style="width:66px;">';
+			tr += '</td>';
+			tr += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+				tr += '<input type="hidden" name="pres_id" 	value="'+ pres_id +'">';
+				tr += '<input type="text" 	name="presentacion" value="'+ pres +'" class="borde_oculto" readOnly="true" style="width:76px;">';
 			tr += '</td>';
 			
 			tr += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
@@ -1549,6 +1556,9 @@ $(function() {
 						var codigo_producto = partida['sku'];
 						var titulo_producto = partida['titulo'];
 						var unidad_medida = partida['unidad'];
+						var pres_id = partida['pres_id'];
+						var pres = partida['presentacion'];
+						
 						var cantidad_fac = partida['cantidad_fac'];
 						var costo_unitario = partida['costo_unitario'];
 						var importe = partida['importe'];
@@ -1556,7 +1566,7 @@ $(function() {
 						var id_impuesto_partida = partida['id_impuesto'];
 						var cant_devolucion = partida['cantidad_devolucion'];
 						
-						var nuevo_tr = crear_tr(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion);
+						var nuevo_tr = crear_tr(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion, pres_id, pres);
 						
 						$grid_productos.append(nuevo_tr);
 					});
