@@ -1276,10 +1276,9 @@ $(function() {
 			//Alimentando select de ieps
 			$select_ieps.children().remove();
 			var ieps_hmtl = '<option value="0">[--IEPS--]</option>';
-			/*
-			$.each(entry['ClasifStock'],function(entryIndex,iva){
-				ieps_hmtl += '<option value="' + iva['id'] + '"  >' + iva['descripcion'] + '</option>';
-			});*/
+			$.each(entry['Ieps'],function(entryIndex,ieps){
+				ieps_hmtl += '<option value="' + ieps['id'] + '"  >' + ieps['titulo'] + '</option>';
+			});
 			$select_ieps.append(ieps_hmtl);
 			
 			//carga select de presentaciones disponibles
@@ -2316,13 +2315,19 @@ $(function() {
 					$select_iva.append(iva_hmtl);
 					
 					
+					
 					//Alimentando select de ieps
 					$select_ieps.children().remove();
 					var ieps_hmtl = '<option value="0">[--IEPS--]</option>';
-					/*$.each(entry['ClasifStock'],function(entryIndex,iva){
-						ieps_hmtl += '<option value="' + iva['id'] + '"  >' + iva['descripcion'] + '</option>';
-					});*/
+					$.each(entry['Ieps'],function(entryIndex,ieps){
+						if(parseInt(entry['Producto'][0]['ieps'])==parseInt(ieps['id'])){
+							ieps_hmtl += '<option value="' + ieps['id'] + '" selected="yes">' + ieps['titulo'] + '</option>';
+						}else{
+							ieps_hmtl += '<option value="' + ieps['id'] + '"  >' + ieps['titulo'] + '</option>';
+						}
+					});
 					$select_ieps.append(ieps_hmtl);
+					
 					
 					
 					//carga select de presentaciones disponibles

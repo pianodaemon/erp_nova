@@ -127,7 +127,7 @@
                     
                     <div id="div_two" title="" class="entradamercancias_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:938px; padding-left:6px;"><strong>Facturas Compras</strong></div>
+                            <div class="fixed column" style="width:1088px; padding-left:6px;"><strong>Facturas Compras</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px;background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -148,7 +148,7 @@
 									
                                     <div id="tabx-1" class="contenidoPes" >
 											
-										<table border="0" style="margin:0; padding:0;">
+										<table border="1" style="margin:0; padding:0;">
 											<tr>
 												<td valign="top" colspan="3" > 
 													
@@ -266,7 +266,7 @@
 														<tr>
 															<td width="10"></td>
 															<td colspan="4">
-																<textarea name="observaciones" rows="3" cols="60" style="width:360px; resize:none;"></textarea>
+																<textarea name="observaciones" rows="3" cols="60" style="width:400px; resize:none;"></textarea>
 															</td>
 															<td width="10"></td>
 														</tr>
@@ -330,10 +330,13 @@
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="75">&nbsp;Costo&nbsp;Unitario</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Importe</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="82">&nbsp;Impuesto</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;IEPS</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Monto</td>
+																
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1020; height: 115px; border:1px solid #C1DAD7 !important;">	
 														<table>
 															<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos" class="gral">
 																
@@ -351,7 +354,7 @@
 															<td width="10" ></td>
 															<td width="650" colspan="5" rowspan="5">
 																<div id="div_warning_grid"  style="width:640px; height:90px; display:none;">
-																	<table border="0">
+																	<table border="1">
 																		<tr>
 																			<td width="20"></td>
 																			<td width="310" colspan="2"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos&nbsp;del&nbsp;listado&nbsp;de&nbsp;productos</div></td>
@@ -413,10 +416,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:955px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
+                            <div class="fixed column" style="width:1105px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="955"></td>
+										<td width="1105"></td>
 										<td>
 											<!--<input  id="submit" style="width:77px; height:24px; background-image:url('../../img/modalbox/btn1.png'); background-repeat:no-repeat;">-->
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>

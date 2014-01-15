@@ -38,8 +38,12 @@ $(function() {
 	var $busqueda_codigo = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_codigo]');
 	var $busqueda_producto = $('#barra_buscador').find('.tabla_buscador').find('input[name=busqueda_producto]');
 	
-	var tiposIva = new Array(); //este arreglo carga los select del grid cada que se agrega un nuevo producto
-	var Monedas = new Array(); 
+	//Este arreglo almacena los diferentes valores para el IVA
+	var tiposIva = new Array();
+	//Este arreglo almacena los diferentes valores para el IEPS
+	var arrayIeps = new Array(); 
+	//Almacena las diferentes monedas
+	var Monedas = new Array();
 	
 	var $buscar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Buscar]');
 	var $limpiar = $('#barra_buscador').find('.tabla_buscador').find('input[value$=Limpiar]');
@@ -1127,6 +1131,9 @@ $(function() {
 		
 		
 		$.post(input_json,$arreglo,function(entry){
+			//Asignar los valores del IEPS al arreglo
+			arrayIeps=entry['Ieps'];
+			
 			$tasa_fletes.attr({ 'value' : entry['tasaFletes']['0']['valor'] });
 			//alert(entry['tasaFletes']['0']['valor']);
 			
@@ -1718,6 +1725,9 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+					//Asignar los valores del IEPS al arreglo
+					arrayIeps=entry['Ieps'];
+					
 					$tasa_fletes.attr({ 'value' : entry['tasaFletes']['0']['valor'] });
 					$id_entrada.attr({ 'value' : entry['datosEntrada']['0']['id'] });
 					$campo_factura.attr({ 'value' : entry['datosEntrada']['0']['factura'] });
@@ -1847,6 +1857,24 @@ $(function() {
 									tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
 								tr_prod += '</td>';
 								
+								tr_prod += '<td width="70" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+									tr_prod += '<select name="select_ieps" id="selectIeps" style="width:66px;">';
+									if(parseInt(prodGrid['ieps_id'])<=0){
+										tr_prod += '<option value="0">[-- --]</option>';
+									}
+									$.each(arrayIeps,function(entryIndex,ieps){
+										if(ieps['id'] == prodGrid['ieps_id']){
+											tr_prod += '<option value="' + ieps['id'] + '"  selected="yes">' + ieps['titulo'] + '</option>';
+										}
+									});
+									tr_prod += '</select>';
+									tr_prod += '<input type="hidden" name="valorieps" id="v_ieps" value="' + prodGrid['valor_ieps'] + '">';
+								tr_prod += '</td>';
+								
+								tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="imp_ieps" value="0" style="width:61px; text-align:right;" readOnly="true">';
+								tr_prod += '</td>';
+								
 								if(prodGrid['pedimento_aduanal']!='' && prodGrid['pedimento_aduanal']!=null){
 									valor_pedimento=prodGrid['pedimento_aduanal'];
 								}
@@ -1862,14 +1890,14 @@ $(function() {
 									}
 								});
 								
-								//recalcula importe al perder enfoque el campo costo
+								//Recalcula importe al perder enfoque el campo costo
 								$grid_productos.find('input[name=costo]').blur(function(){
 									if ($(this).val() == ''  || $(this).val() == null){
 										$(this).val(' ');
 									}
 									
-									if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
-									{	//calcula el importe
+									if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') ){	
+										//Calcula el importe
 										$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val()));
 										//redondea el importe en dos decimales
 										//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
@@ -1879,7 +1907,7 @@ $(function() {
 									}
 									$calcula_totales();//llamada a la funcion que calcula totales
 								});
-
+								
 								//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 								$grid_productos.find('input[name=cantidad]').focus(function(e){
 									if($(this).val() == ' '){
