@@ -35,6 +35,8 @@ public interface PocInterfaceDao{
     public ArrayList<HashMap<String, Object>> getDatosByNoDestinatario(String no_control, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, Object>> getBuscadorDestinatarios(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getUnidadesMedida();
+    //Obtiene todos los impuestos del ieps(Impuesto Especial sobre Productos y Servicios)
+    public ArrayList<HashMap<String, String>> getIeps(Integer idEmp, Integer idSuc);
     
     public ArrayList<HashMap<String, String>> getVerificarImpuesto(Integer idSuc, Integer idTipoClient, ArrayList<HashMap<String, String>> productos);
     public ArrayList<HashMap<String, String>> getMonedas();

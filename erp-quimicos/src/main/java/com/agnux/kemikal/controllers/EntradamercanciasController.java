@@ -155,16 +155,7 @@ public class EntradamercanciasController {
         String producto = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("producto")))+"%";
         
         
-        String data_string = 
-                app_selected+"___"+
-                id_usuario+"___"+
-                folio+"___"+
-                orden_compra+"___"+
-                factura+"___"+
-                proveedor+"___"+
-                tipoDoc+"___"+
-                codigo+"___"+
-                producto;
+        String data_string = app_selected+"___"+id_usuario+"___"+folio+"___"+orden_compra+"___"+factura+"___"+proveedor+"___"+tipoDoc+"___"+codigo+"___"+producto;
         
         //obtiene total de registros en base de datos, con los parametros de busqueda
         int total_items = this.getInvDao().countAll(data_string);
@@ -259,6 +250,7 @@ public class EntradamercanciasController {
         
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> impuestos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> ieps = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> tasaFletes = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosEntrada = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> datosProveedor = new ArrayList<HashMap<String, String>>();
@@ -283,6 +275,7 @@ public class EntradamercanciasController {
         
         monedas = this.getInvDao().getMonedas();
         impuestos = this.getInvDao().getEntradas_Impuestos();
+        ieps = this.getInvDao().getIeps(id_empresa, 0);
         tasaFletes = this.getInvDao().getEntradas_TasaFletes();
         fleteras = this.getInvDao().geteEntradas_Fleteras(id_empresa,id_sucursal);
         almacenes = this.getInvDao().getAlmacenes2(id_empresa);
@@ -292,6 +285,7 @@ public class EntradamercanciasController {
         jsonretorno.put("datosProveedor", datosProveedor);
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Impuestos", impuestos);
+        jsonretorno.put("Ieps", ieps);
         jsonretorno.put("tasaFletes", tasaFletes);
         jsonretorno.put("Fleteras", fleteras);
         jsonretorno.put("Almacenes", almacenes);
@@ -382,7 +376,7 @@ public class EntradamercanciasController {
     
     
     
-    //obtiene los presentaciones del producto seleccionado
+    //Obtiene los presentaciones del producto seleccionado
     @RequestMapping(method = RequestMethod.POST, value="/get_presentaciones_producto.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getPresentacionesproductoJson(
             @RequestParam(value="sku", required=true) String sku,

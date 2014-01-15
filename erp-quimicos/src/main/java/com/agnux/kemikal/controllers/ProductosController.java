@@ -295,11 +295,12 @@ public class ProductosController {
         ArrayList<HashMap<String, String>> secciones = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> grupos = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> marcas = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> familias = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> subfamilias = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> familias = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<String, String>> subfamilias = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> clasif_stock = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> clases = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> impuestos = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> ieps = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> tiposProducto = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> unidades = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> ingredientes = new ArrayList<HashMap<String, String>>();
@@ -316,6 +317,7 @@ public class ProductosController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_suc=0;
         extra.put("mod_produccion", userDat.get("incluye_produccion"));//esta variable indica si la empresa incluye modulo de produccion
         extra.put("incluye_contab", userDat.get("incluye_contab"));//esta variable indica si la empresa incluye modulo de Contabilidad
         extra.put("nivel_cta", userDat.get("nivel_cta"));
@@ -341,6 +343,7 @@ public class ProductosController {
         clasif_stock = this.getInvDao().getProducto_ClasificacionStock(id_empresa);
         clases = this.getInvDao().getProducto_Clases(id_empresa);
         impuestos = this.getInvDao().getEntradas_Impuestos();
+        ieps = this.getInvDao().getIeps(id_empresa, id_suc);
         tiposProducto = this.getInvDao().getProducto_Tipos();
         unidades = this.getInvDao().getProducto_Unidades();
         presentaciones = this.getInvDao().getProducto_Presentaciones(id_del_producto);
@@ -356,6 +359,7 @@ public class ProductosController {
         jsonretorno.put("ClasifStock", clasif_stock);
         jsonretorno.put("Clases", clases);
         jsonretorno.put("Impuestos", impuestos);
+        jsonretorno.put("Ieps", ieps);
         jsonretorno.put("Unidades",unidades);
         jsonretorno.put("ProdTipos", tiposProducto);
         jsonretorno.put("Ingredientes", ingredientes);

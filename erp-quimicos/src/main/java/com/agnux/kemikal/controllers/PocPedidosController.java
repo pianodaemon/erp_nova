@@ -220,6 +220,7 @@ public class PocPedidosController {
         ArrayList<HashMap<String, String>> estadosDestino = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> municipiosDestino = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> unidadesMedida = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> ieps = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
         HashMap<String, String> tc = new HashMap<String, String>();
         HashMap<String, String> parametros = new HashMap<String, String>();
@@ -269,6 +270,7 @@ public class PocPedidosController {
         almacenes = this.getPocDao().getPocPedido_Almacenes(id_sucursal);
         paises = this.getPocDao().getPaises();
         unidadesMedida = this.getPocDao().getUnidadesMedida();
+        ieps = this.getPocDao().getIeps(id_empresa, 0);
         
         if(userDat.get("transportista").toLowerCase().equals("true")){
             //Aqui solo entra cuando la emprsa es transportista
@@ -296,6 +298,7 @@ public class PocPedidosController {
         jsonretorno.put("EdoDest", estadosDestino);
         jsonretorno.put("MunDest", municipiosDestino);
         jsonretorno.put("UM", unidadesMedida);
+        jsonretorno.put("Ieps", ieps);
         return jsonretorno;
     }
     
@@ -785,6 +788,10 @@ public class PocPedidosController {
             @RequestParam(value="id_presentacion", required=false) String[] id_presentacion,
             @RequestParam(value="id_imp_prod", required=false) String[] id_impuesto,
             @RequestParam(value="valor_imp", required=false) String[] valor_imp,
+            
+            @RequestParam(value="idIeps", required=false) String[] idIeps,
+            @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
+            
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="costo", required=false) String[] costo,
             @RequestParam(value="noTr", required=false) String[] noTr,
@@ -829,7 +836,7 @@ public class PocPedidosController {
             
             for(int i=0; i<eliminado.length; i++) { 
                 select_umedida[i] = StringHelper.verificarSelect(select_umedida[i]);
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] +"'";
+                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] + "___"+noTr[i] + "___"+seleccionado[i]+ "___" + select_umedida[i] + "___" + idIeps[i] + "___" + tasaIeps[i] +"'";
                 //System.out.println(arreglo[i]);
             }
             

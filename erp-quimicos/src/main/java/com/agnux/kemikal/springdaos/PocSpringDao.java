@@ -219,34 +219,36 @@ public class PocSpringDao implements PocInterfaceDao{
         );
         return hm;
     }
-
-
-
+    
+    
+    
     @Override
     public ArrayList<HashMap<String, String>> getPocPedido_DatosGrid(Integer id_pedido) {
         String sql_query = ""
-                + "SELECT poc_pedidos_detalle.id as id_detalle,"
-                    + "poc_pedidos_detalle.inv_prod_id,"
-                    + "inv_prod.sku AS codigo,"
-                    + "inv_prod.descripcion AS titulo,"
-                    + "poc_pedidos_detalle.inv_prod_unidad_id, "
-                    + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
-                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
-                    + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
-                    + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
-                    + "poc_pedidos_detalle.cantidad,"
-                    + "poc_pedidos_detalle.precio_unitario,"
-                    + "(poc_pedidos_detalle.cantidad * poc_pedidos_detalle.precio_unitario) AS importe, "
-                    + "poc_pedidos_detalle.gral_imp_id,"
-                    + "poc_pedidos_detalle.valor_imp,"
-                    + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 'checked' ELSE '' END) AS valor_check, "
-                    + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 1 ELSE 0 END) AS valor_selecionado, "
-                    + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion   "
-                + "FROM poc_pedidos_detalle "
-                + "LEFT JOIN inv_prod on inv_prod.id = poc_pedidos_detalle.inv_prod_id "
-                + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_pedidos_detalle.inv_prod_unidad_id "
-                + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_pedidos_detalle.presentacion_id "
-                + "WHERE poc_pedidos_detalle.poc_pedido_id="+id_pedido;
+        + "SELECT poc_pedidos_detalle.id as id_detalle,"
+            + "poc_pedidos_detalle.inv_prod_id,"
+            + "inv_prod.sku AS codigo,"
+            + "inv_prod.descripcion AS titulo,"
+            + "poc_pedidos_detalle.inv_prod_unidad_id, "
+            + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
+            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
+            + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
+            + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) as presentacion,"
+            + "poc_pedidos_detalle.cantidad,"
+            + "poc_pedidos_detalle.precio_unitario,"
+            + "(poc_pedidos_detalle.cantidad * poc_pedidos_detalle.precio_unitario) AS importe, "
+            + "poc_pedidos_detalle.gral_imp_id,"
+            + "poc_pedidos_detalle.valor_imp,"
+            + "poc_pedidos_detalle.gral_ieps_id,"
+            + "(poc_pedidos_detalle.valor_ieps * 100) AS valor_ieps, "
+            + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 'checked' ELSE '' END) AS valor_check, "
+            + "(CASE WHEN poc_pedidos_detalle.backorder=TRUE THEN 1 ELSE 0 END) AS valor_selecionado, "
+            + "(poc_pedidos_detalle.cantidad - poc_pedidos_detalle.reservado) AS cant_produccion   "
+        + "FROM poc_pedidos_detalle "
+        + "LEFT JOIN inv_prod on inv_prod.id = poc_pedidos_detalle.inv_prod_id "
+        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = poc_pedidos_detalle.inv_prod_unidad_id "
+        + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = poc_pedidos_detalle.presentacion_id "
+        + "WHERE poc_pedidos_detalle.poc_pedido_id="+id_pedido;
         
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
         ArrayList<HashMap<String, String>> hm_grid = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -270,9 +272,14 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
                     row.put("gral_imp_id",String.valueOf(rs.getInt("gral_imp_id")));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2));
+                    
+                    row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
+                    
                     row.put("valor_check",rs.getString("valor_check"));
                     row.put("valor_selecionado",String.valueOf(rs.getInt("valor_selecionado")));
                     row.put("cant_produccion",StringHelper.roundDouble(rs.getDouble("cant_produccion"), rs.getInt("no_dec") ) );
+                    
                     return row;
                 }
             }
@@ -1247,8 +1254,11 @@ public class PocSpringDao implements PocInterfaceDao{
                     +"inv_prod.sku,"
                     +"inv_prod.descripcion AS titulo,"
                     +"inv_prod.gral_impto_id AS id_impto_prod,"
-                    +"inv_prod.unidad_id,"
+                    +"inv_prod.unidad_id,"                
                     +"(CASE WHEN inv_prod.gral_impto_id=0 THEN 0 ELSE gral_imptos.iva_1 END) AS valor_impto_prod, "
+                    +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.id END) AS ieps_id, "
+                    +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.tasa END) AS ieps_tasa, "
+                    
                     +"(CASE WHEN inv_prod.descripcion_larga IS NULL THEN '' ELSE inv_prod.descripcion_larga END) AS descripcion_larga,"
                     +"(CASE WHEN inv_prod.archivo_img='' THEN '' ELSE inv_prod.archivo_img END) AS archivo_img,"
                     +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
@@ -1261,6 +1271,7 @@ public class PocSpringDao implements PocInterfaceDao{
             +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
             +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
             +"LEFT JOIN gral_imptos ON gral_imptos.id=inv_prod.gral_impto_id "
+            +"LEFT JOIN gral_ieps ON gral_ieps.id=inv_prod.ieps "
             +"LEFT JOIN inv_pre ON (inv_pre.inv_prod_id=inv_prod.id AND inv_pre.inv_prod_presentacion_id=inv_prod_pres_x_prod.presentacion_id AND inv_pre.borrado_logico=false) "
             +"WHERE  inv_prod.empresa_id = "+id_empresa+" AND inv_prod.sku ILIKE '"+sku+"' AND inv_prod.borrado_logico=false;";
         
@@ -1275,6 +1286,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("id_impto_prod",String.valueOf(rs.getInt("id_impto_prod")));
                     row.put("valor_impto_prod",StringHelper.roundDouble(rs.getString("valor_impto_prod"),2));
+                    row.put("ieps_id",String.valueOf(rs.getInt("ieps_id")));
+                    row.put("ieps_tasa",StringHelper.roundDouble(rs.getString("ieps_tasa"),2));
+                    
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("descripcion_larga",rs.getString("descripcion_larga"));
@@ -1850,6 +1864,8 @@ public class PocSpringDao implements PocInterfaceDao{
             rowmap.put("exis_prod_lp",map.get("exis_prod_lp"));
             rowmap.put("id_moneda", map.get("id_moneda"));
             rowmap.put("tc", map.get("tc"));
+            rowmap.put("ieps_id", map.get("ieps_id"));
+            rowmap.put("ieps_tasa", map.get("ieps_tasa"));
             
             //System.out.println("id:"+rowmap.get("id")+"|sku:"+rowmap.get("sku")+"|titulo:"+rowmap.get("titulo")+"|unidad:"+rowmap.get("unidad")+"|idPres:"+rowmap.get("id_presentacion")+"|Pres:"+rowmap.get("presentacion")+"|noDec:"+rowmap.get("decimales")+"|precio:"+rowmap.get("precio")+"|exisLp:"+rowmap.get("exis_prod_lp")+"|idMon:"+rowmap.get("id_moneda")+"|tc:"+rowmap.get("tc")+"|idImpto:"+rowmap.get("id_impto")+"|valImpto:"+rowmap.get("valor_impto"));
             
@@ -3189,7 +3205,34 @@ public class PocSpringDao implements PocInterfaceDao{
     
     
     
-    
+    //Obtiene todos los impuestos del ieps(Impuesto Especial sobre Productos y Servicios)
+    @Override
+    public ArrayList<HashMap<String, String>> getIeps(Integer idEmp, Integer idSuc) {
+        String sql_to_query="";
+        if(idSuc>0){
+            //Filtrar por sucursal
+            sql_to_query = "SELECT id, titulo, tasa FROM gral_ieps  WHERE borrado_logico=false AND gral_emp_id="+idEmp+" AND gral_suc_id="+idSuc+";";
+        }else{
+            //No filtrar por sucursal
+            sql_to_query = "SELECT id, titulo, tasa FROM gral_ieps  WHERE borrado_logico=false AND gral_emp_id="+idEmp+";";
+        }
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_ieps = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    return row;
+                }
+            }
+        );
+        return hm_ieps;
+    }
     
     
     

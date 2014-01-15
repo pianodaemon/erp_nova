@@ -113,6 +113,39 @@ public class InvSpringDao implements InvInterfaceDao{
     }
 
     
+    
+    
+    //Obtiene todos los impuestos del ieps(Impuesto Especial sobre Productos y Servicios)
+    @Override
+    public ArrayList<HashMap<String, String>> getIeps(Integer idEmp, Integer idSuc) {
+        String sql_to_query="";
+        if(idSuc>0){
+            //Filtrar por sucursal
+            sql_to_query = "SELECT id, titulo, tasa FROM gral_ieps  WHERE borrado_logico=false AND gral_emp_id="+idEmp+" AND gral_suc_id="+idSuc+";";
+        }else{
+            //No filtrar por sucursal
+            sql_to_query = "SELECT id, titulo, tasa FROM gral_ieps  WHERE borrado_logico=false AND gral_emp_id="+idEmp+";";
+        }
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_ieps = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    return row;
+                }
+            }
+        );
+        return hm_ieps;
+    }
+
+    
+    
 
     //llamada al Procedimiento de Reportes de Inventario
     //éste trabaja utilizando el numero de Aplicativo.
@@ -1241,25 +1274,28 @@ public class InvSpringDao implements InvInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, String>> getEntradas_DatosGrid(Integer id) {
-                String sql_to_query = "SELECT "
-                                        +"com_fac_detalle.producto_id, "
-                                        +"inv_prod.sku, "
-                                        +"inv_prod.descripcion as titulo, "
-                                        +"inv_prod_unidades.titulo as unidad, "
-                                        +"inv_prod_presentaciones.id as id_presentacion, "
-                                        +"inv_prod_presentaciones.titulo as presentacion, "
-                                        +"com_fac_detalle.costo_unitario as costo, "
-                                        +"com_fac_detalle.cantidad, "
-                                        +"(com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) as importe, "
-                                        +"com_fac_detalle.tipo_de_impuesto_sobre_partida as tipo_impuesto, "
-                                        +"com_fac_detalle.valor_imp, "
-                                        + "inv_prod_unidades.decimales "
-                                +"FROM com_fac_detalle "
-                                +"LEFT JOIN inv_prod on inv_prod.id = com_fac_detalle.producto_id "
-                                +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
-                                +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_fac_detalle.presentacion_id "
-                                +"WHERE com_fac_detalle.com_fac_id="+ id + ";";
-
+        String sql_to_query = ""
+        + "SELECT "
+                + "com_fac_detalle.producto_id, "
+                + "inv_prod.sku, "
+                + "inv_prod.descripcion as titulo, "
+                + "inv_prod_unidades.titulo as unidad, "
+                + "inv_prod_presentaciones.id as id_presentacion, "
+                + "inv_prod_presentaciones.titulo as presentacion, "
+                + "com_fac_detalle.costo_unitario as costo, "
+                + "com_fac_detalle.cantidad, "
+                + "(com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) as importe, "
+                + "com_fac_detalle.tipo_de_impuesto_sobre_partida as tipo_impuesto, "
+                + "com_fac_detalle.valor_imp, "
+                + "inv_prod_unidades.decimales,"
+                + "com_fac_detalle.gral_ieps_id,"
+                + "com_fac_detalle.valor_ieps "
+        + "FROM com_fac_detalle "
+        + "LEFT JOIN inv_prod on inv_prod.id = com_fac_detalle.producto_id "
+        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
+        + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_fac_detalle.presentacion_id "
+        + "WHERE com_fac_detalle.com_fac_id="+ id + ";";
+        
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1279,6 +1315,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("tipo_impuesto",rs.getString("tipo_impuesto"));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getString("valor_imp"),2));
                     row.put("decimales",rs.getString("decimales"));
+                    row.put("ieps_id",rs.getString("gral_ieps_id"));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
                     return row;
                 }
             }
@@ -1769,6 +1807,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                 +"inv_prod.id,"
                                 +"inv_prod.sku,"
                                 +"inv_prod.descripcion as titulo,"
+                                +"(CASE WHEN inv_prod.ieps IS NULL THEN 0 ELSE inv_prod.ieps END) AS id_ieps, "
                                 +"inv_prod_unidades.titulo as unidad,"
                                 +"inv_prod_presentaciones.id as id_presentacion,"
                                 +"inv_prod_presentaciones.titulo as presentacion "
@@ -1794,6 +1833,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("id_presentacion",rs.getString("id_presentacion"));
                     row.put("presentacion",rs.getString("presentacion"));
+                    row.put("id_ieps",rs.getString("id_ieps"));
                     return row;
                 }
             }
