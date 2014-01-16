@@ -190,45 +190,7 @@ $(function() {
 	//TriggerClickVisualizaDescargaXml = 0;
 	TriggerClickVisualizaGeneradorInforme = 0;
 	TriggerClickVisializaBuscador = 0;
-	
-	/*
-	//visualizar descarga de xml
-	$descargar_xml.click(function(event){
-		event.preventDefault();
-		var alto=0;
-		$('#barra_genera_informe').find('.tabla_genera_informe').css({'display':'none'});
-		$('#barra_buscador').find('.tabla_buscador').css({'display':'none'});
-			
-		if(parseInt(TriggerClickVisualizaGeneradorInforme)==1){
-			$generar_informe.trigger('click');
-		}
-		if(parseInt(TriggerClickVisializaBuscador)==1){
-			$visualiza_buscador.trigger('click');
-		}
-		
-		if(TriggerClickVisualizaDescargaXml==0){
-			 TriggerClickVisualizaDescargaXml=1;
-			 var height2 = $('#cuerpo').css('height');
-			 
-			 alto = parseInt(height2)-220;
-			 var pix_alto=alto+'px';
-			 
-			 $('#barra_descarga_xml').find('.tabla_decarga_xml').css({'display':'block'});
-			 $('#barra_descarga_xml').animate({height: '80px'}, 500);
-			 $('#cuerpo').css({'height': pix_alto});
-		}else{
-			 TriggerClickVisualizaDescargaXml=0;
-			 var height2 = $('#cuerpo').css('height');
-			 alto = parseInt(height2)+220;
-			 var pix_alto=alto+'px';
-			 
-			 $('#barra_descarga_xml').animate({height:'0px'}, 500);
-			 $('#cuerpo').css({'height': pix_alto});
-		};
-	});
-	*/
-	
-	
+
 	
 	
 	//visualizar generador de informe mensual
