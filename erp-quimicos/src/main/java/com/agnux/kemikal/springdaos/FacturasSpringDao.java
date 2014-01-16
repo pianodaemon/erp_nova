@@ -326,7 +326,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 +"(fac_docs_detalles.cantidad * fac_docs_detalles.precio_unitario) AS importe,"
                 + "fac_docs_detalles.gral_imptos_id, "
                 + "fac_docs_detalles.valor_imp, "
-                + "fac_docs_detalles.cantidad_devolucion "
+                + "fac_docs_detalles.cantidad_devolucion, "
+                + "fac_docs_detalles.gral_ieps_id AS id_ieps,"
+                + "(fac_docs_detalles.valor_ieps * 100::double precision) AS tasa_ieps, "
+                + "((fac_docs_detalles.cantidad * fac_docs_detalles.precio_unitario) * fac_docs_detalles.valor_ieps) AS importe_ieps "
         +"FROM fac_docs_detalles "
         +"LEFT JOIN inv_prod on inv_prod.id = fac_docs_detalles.inv_prod_id  "
         +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_docs_detalles.inv_prod_unidad_id  "
@@ -353,6 +356,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("id_impto",rs.getString("gral_imptos_id"));
                     row.put("tasa_iva",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
                     row.put("cant_dev",StringHelper.roundDouble(rs.getDouble("cantidad_devolucion"),2) );
+                    row.put("id_ieps",String.valueOf(rs.getInt("id_ieps")));
+                    row.put("tasa_ieps",StringHelper.roundDouble(rs.getDouble("tasa_ieps"),2) );
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),4) );
                     return row;
                 }
             }
