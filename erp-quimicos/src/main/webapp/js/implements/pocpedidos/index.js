@@ -1840,7 +1840,8 @@ $(function() {
 		var sumaImpuesto = 0;
 		//Monto del iva retenido de acuerdo a la tasa de retencion immex
 		var impuestoRetenido = 0;
-		var sumaTotal = 0; //suma del subtotal + totalImpuesto
+		//Suma del subtotal + totalImpuesto + sumaIeps - impuestoRetenido
+		var sumaTotal = 0;
 		
 		/*
 		//si valor del impuesto es null o vacio, se le asigna un 0
@@ -1897,6 +1898,17 @@ $(function() {
 			$('#forma-pocpedidos-window').find('#tr_retencion').show();
 		}
 		
+		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
+			$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'560px'});
+		}
+		
+		if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)>0){
+			$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'560px'});
+		}
+		
+		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
+			$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
+		}
 	}//termina calcular totales
 	
 	
@@ -2031,13 +2043,12 @@ $(function() {
 				
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
 					trr += '<input type="hidden" name="idIeps"     value="'+ id_ieps +'" id="idIeps">';
-					trr += '<input type="text" name="tasaIeps" value="'+ tasa_ieps +'" class="borde_oculto" id="tasaIeps" style="width:56px; text-align:right;">';
+					trr += '<input type="text" name="tasaIeps" value="'+ tasa_ieps +'" class="borde_oculto" id="tasaIeps" style="width:56px; text-align:right;" readOnly="true">';
 				trr += '</td>';
 				
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-					trr += '<input type="text" name="importeIeps" value="'+parseFloat(0).toFixed(4)+'" class="borde_oculto" id="importeIeps" style="width:76px; text-align:right;">';
+					trr += '<input type="text" name="importeIeps" value="'+parseFloat(0).toFixed(4)+'" class="borde_oculto" id="importeIeps" style="width:76px; text-align:right;" readOnly="true">';
 				trr += '</td>';
-				
 				
 				trr += '<td class="grid2" id="td_oculto'+ tr +'" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 					trr += '<input type="text" 		name="produccion" 	value="" 	 class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
@@ -2136,7 +2147,7 @@ $(function() {
 					$campoCantidad.val(' ');
 				}
 				
-				if( ($campoCantidad.val() != ' ') && ($campoPrecioU.val() != ' ') ){	
+				if( ($campoCantidad.val().trim() != '') && ($campoPrecioU.val().trim() != '') ){
 					//Calcular y redondear el importe
 					$campoImporte.val( parseFloat( parseFloat($campoCantidad.val()) * parseFloat($campoPrecioU.val()) ).toFixed(4));
 					
@@ -2405,9 +2416,10 @@ $(function() {
 		
 		//var $flete = $('#forma-pocpedidos-window').find('input[name=flete]');
 		var $subtotal = $('#forma-pocpedidos-window').find('input[name=subtotal]');
+		var $ieps = $('#forma-pocpedidos-window').find('input[name=ieps]');
 		var $impuesto = $('#forma-pocpedidos-window').find('input[name=impuesto]');
+		var $impuesto_retenido = $('#forma-pocpedidos-window').find('input[name=impuesto_retenido]');
 		var $total = $('#forma-pocpedidos-window').find('input[name=total]');
-		
 		
 		var $pestana_transportista = $('#forma-pocpedidos-window').find('ul.pestanas').find('a[href=#tabx-2]');
 		
@@ -2507,7 +2519,20 @@ $(function() {
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				//$('#forma-pocpedidos-window').find('.div_one').css({'height':'545px'});//sin errores
-				$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'578px'});//con errores
+				$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});//con errores
+				
+				if(parseFloat($ieps.val())>0 && parseFloat($impuesto_retenido.val())<=0){
+					$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
+				}
+				
+				if(parseFloat($ieps.val())<=0 && parseFloat($impuesto_retenido.val())>0){
+					$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
+				}
+				
+				if(parseFloat($ieps.val())>0 && parseFloat($impuesto_retenido.val())>0){
+					$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'600px'});
+				}
+				
 				$('#forma-pocpedidos-window').find('div.interrogacion').css({'display':'none'});
 				
 				$grid_productos.find('#cant').css({'background' : '#ffffff'});
@@ -2611,10 +2636,10 @@ $(function() {
 				$('#forma-pocpedidos-window').find('.contenedor_grid').css({'width':'1145px'});
 				$('#forma-pocpedidos-window').find('#div_botones').css({'width':'1153px'});
 				$('#forma-pocpedidos-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'1053px'});
-				$('#forma-pocpedidos-window').find('#div_warning_grid').css({'width':'860px'});
-				$('#forma-pocpedidos-window').find('#div_warning_grid').find('.td_head').css({'width':'520px'});
-				$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').css({'width':'850px'});
-				$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').find('#grid_warning').css({'width':'830px'});
+				$('#forma-pocpedidos-window').find('#div_warning_grid').css({'width':'810px'});
+				$('#forma-pocpedidos-window').find('#div_warning_grid').find('.td_head').css({'width':'470px'});
+				$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').css({'width':'800px'});
+				$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').find('#grid_warning').css({'width':'780px'});
 			}else{
 				//ocultar td porque la empresa no incluye Produccion
 				$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').hide();
@@ -3304,6 +3329,9 @@ $(function() {
 			}
 		});
 		
+		
+		$calcula_totales();
+		
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() {$(this).remove();};
@@ -3434,6 +3462,7 @@ $(function() {
 			
 			//var $flete = $('#forma-pocpedidos-window').find('input[name=flete]');
 			var $subtotal = $('#forma-pocpedidos-window').find('input[name=subtotal]');
+			var $ieps = $('#forma-pocpedidos-window').find('input[name=ieps]');
 			var $impuesto = $('#forma-pocpedidos-window').find('input[name=impuesto]');
 			var $campo_impuesto_retenido = $('#forma-pocpedidos-window').find('input[name=impuesto_retenido]');
 			var $total = $('#forma-pocpedidos-window').find('input[name=total]');
@@ -3547,7 +3576,18 @@ $(function() {
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						//$('#forma-pocpedidos-window').find('.div_one').css({'height':'545px'});//sin errores
-						$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'578px'});//con errores
+						$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'588px'});//con errores
+						if(parseFloat($ieps.val())>0 && parseFloat($campo_impuesto_retenido.val())<=0){
+							$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
+						}
+						
+						if(parseFloat($ieps.val())<=0 && parseFloat($campo_impuesto_retenido.val())>0){
+							$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'580px'});
+						}
+						
+						if(parseFloat($ieps.val())>0 && parseFloat($campo_impuesto_retenido.val())>0){
+							$('#forma-pocpedidos-window').find('.pocpedidos_div_one').css({'height':'600px'});
+						}
 						$('#forma-pocpedidos-window').find('div.interrogacion').css({'display':'none'});
 						
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
@@ -3650,10 +3690,10 @@ $(function() {
 						$('#forma-pocpedidos-window').find('.contenedor_grid').css({'width':'1145px'});
 						$('#forma-pocpedidos-window').find('#div_botones').css({'width':'1153px'});
 						$('#forma-pocpedidos-window').find('#div_botones').find('.tabla_botones').find('.td_left').css({'width':'1053px'});
-						$('#forma-pocpedidos-window').find('#div_warning_grid').css({'width':'860px'});
-						$('#forma-pocpedidos-window').find('#div_warning_grid').find('.td_head').css({'width':'520px'});
-						$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').css({'width':'850px'});
-						$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').find('#grid_warning').css({'width':'830px'});
+						$('#forma-pocpedidos-window').find('#div_warning_grid').css({'width':'810px'});
+						$('#forma-pocpedidos-window').find('#div_warning_grid').find('.td_head').css({'width':'470px'});
+						$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').css({'width':'800px'});
+						$('#forma-pocpedidos-window').find('#div_warning_grid').find('.div_cont_grid_warning').find('#grid_warning').css({'width':'780px'});
 					}else{
 						//ocultar td porque la empresa no incluye Produccion
 						$('#forma-pocpedidos-window').find('.tabla_header_grid').find('#td_oculto').hide();
@@ -3906,11 +3946,11 @@ $(function() {
 							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="60">';
 								trr += '<input type="hidden" name="idIeps"     value="'+ prod['ieps_id'] +'" id="idIeps">';
-								trr += '<input type="text" name="tasaIeps" value="'+ prod['valor_ieps'] +'" class="borde_oculto" id="tasaIeps" style="width:56px; text-align:right;">';
+								trr += '<input type="text" name="tasaIeps" value="'+ prod['valor_ieps'] +'" class="borde_oculto" id="tasaIeps" style="width:56px; text-align:right;" readOnly="true">';
 							trr += '</td>';
 							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<input type="text" name="importeIeps" value="'+ importeIeps +'" class="borde_oculto" id="importeIeps" style="width:76px; text-align:right;">';
+								trr += '<input type="text" name="importeIeps" value="'+ importeIeps +'" class="borde_oculto" id="importeIeps" style="width:76px; text-align:right;" readOnly="true">';
 							trr += '</td>';
 							
 							

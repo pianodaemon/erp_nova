@@ -188,7 +188,7 @@
                                 <div class="fixed column" class="content_x" >
 									
                                     <div id="tabx-1" class="contenidoPes" >
-                                        <table border="1" style="margin:0; padding:0;">
+                                        <table border="0" style="margin:0; padding:0;">
                                                 <tr>
                                                     <td width="625"></td>
                                                     <td width="10"></td>
@@ -439,7 +439,7 @@
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Importe</td>
 																	
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;%&nbsp;IEPS</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Monto IEPS</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Monto&nbsp;IEPS</td>
 																	
 																	<td class="grid" id="td_oculto" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Producci&oacute;n</td>
 																	<td class="grid" id="td_oculto" style="background-color: rgb(180, 180, 180);" width="40">&nbsp;</td>
@@ -458,11 +458,11 @@
                                                 </tr>
 												
                                                 <tr>
-                                                    <td colspan="3" width="775"  align="left" valign="top">
+                                                    <td colspan="3" width="600"  align="left" valign="top">
 														
                                                         <div id="div_warning_grid" style="display:none;">
 															
-                                                            <table border ="1">
+                                                            <table border ="0">
                                                                 <tr>
                                                                     <td width="10"></td>
                                                                     <td  colspan="4"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos</div></td>
@@ -491,8 +491,8 @@
                                                             </table>
                                                         </div>
                                                     </td>
-                                                    <td  width="325" align="right" valign="top" style="font-weight: bold;">
-                                                        <table border ="0" width="320" class="gral">
+                                                    <td  width="325" align="right" valign="top" style="font-weight:bold;">
+                                                        <table border ="0" width="325" class="gral">
                                                             <!--<tr><td colspan="3" height="2"></td></tr>-->
                                                             <tr>
                                                                 <td width="80"></td>
@@ -529,8 +529,10 @@
 										<table border="0" style="margin:0px; padding:0px;">
                                                 <tr>
 													<td width="10"></td>
-                                                    <td width="870"></td>
+                                                    <td width="1000"></td>
                                                 </tr>
+                                                
+                                                
                                                 <tr>
 													<td width="10"></td>
                                                     <td>

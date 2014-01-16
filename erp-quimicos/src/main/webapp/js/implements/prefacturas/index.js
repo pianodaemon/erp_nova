@@ -1312,6 +1312,7 @@ $(function() {
 	//calcula totales(subtotal, impuesto, total)
 	$calcula_totales = function(){
 		var $campo_subtotal = $('#forma-prefacturas-window').find('input[name=subtotal]');
+		var $campo_ieps = $('#forma-prefacturas-window').find('input[name=ieps]');
 		var $campo_impuesto = $('#forma-prefacturas-window').find('input[name=impuesto]');
 		var $campo_impuesto_retenido = $('#forma-prefacturas-window').find('input[name=impuesto_retenido]');
 		var $campo_total = $('#forma-prefacturas-window').find('input[name=total]');
@@ -1319,20 +1320,26 @@ $(function() {
 		var $tasa_ret_immex = $('#forma-prefacturas-window').find('input[name=tasa_ret_immex]');
 		
 		var $grid_productos = $('#forma-prefacturas-window').find('#grid_productos');
-		
-		var sumaSubTotal = 0; //es la suma de todos los importes
-		var sumaImpuesto = 0; //suma del iva
-		var impuestoRetenido = 0; //monto del iva retenido de acuerdo a la tasa de retencion immex
-		var sumaTotal = 0; //suma del subtotal + totalImpuesto
+		 //Suma de todos los importes sin IVA, sin IEPS
+		var sumaSubTotal = 0;
+		//Suma de todos los importes del IEPS
+		var sumaIeps = 0;
+		//Suma de todos los importes del IVA
+		var sumaImpuesto = 0;
+		//Monto del iva retenido de acuerdo a la tasa de retencion immex
+		var impuestoRetenido = 0;
+		//suma del subtotal + totalImpuesto + sumaIeps - impuestoRetenido
+		var sumaTotal = 0;
 		
 		$grid_productos.find('tr').each(function (index){
-			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
-				//alert($(this).find('#cost').val());
-				//acumula los importes en la variable subtotal
+			if(( $(this).find('#cost').val().trim() != '') && ( $(this).find('#cant').val().trim() != '' )){
+				//Acumula los importes en la variable subtotal
 				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
-				//alert($(this).find('#import').val());
+				
+				//Acumula los importes del IEPS
+				sumaIeps =  parseFloat(sumaIeps) + parseFloat($(this).find('#importeIeps').val());
+				
 				if($(this).find('#totimp').val() != ''){
-					//alert($(this).find('#totimp').val());
 					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
 				}
 			}
@@ -1341,19 +1348,54 @@ $(function() {
 		//calcular  la tasa de retencion IMMEX
 		impuestoRetenido = parseFloat(sumaSubTotal) * parseFloat(parseFloat($tasa_ret_immex.val()));
 		
-		//calcula el total sumando el subtotal y el impuesto
-		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
+		//Calcula el total sumando el sumaSubTotal + sumaIeps + sumaImpuesto - impuestoRetenido
+		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaIeps) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
 		
 		
-		//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
+		//Redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
 		$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
-		//redondea a dos digitos el impuesto y lo asigna al campo impuesto
+		
+		//Redondea a dos digitos el IEPS y lo asigna  al campo ieps
+		$campo_ieps.val($(this).agregar_comas(  parseFloat(sumaIeps).toFixed(2)  ));
+		
+		//Redondea a dos digitos el impuesto y lo asigna al campo impuesto
 		$campo_impuesto.val($(this).agregar_comas(  parseFloat(sumaImpuesto).toFixed(2)  ));
-		//redondea a dos digitos el impuesto y lo asigna al campo retencion
+		
+		//Redondea a dos digitos el impuesto y lo asigna al campo retencion
 		$campo_impuesto_retenido.val($(this).agregar_comas(  parseFloat(impuestoRetenido).toFixed(2)  ));
-		//redondea a dos digitos la suma  total y se asigna al campo total
+		
+		//Redondea a dos digitos la suma  total y se asigna al campo total
 		$campo_total.val($(this).agregar_comas(  parseFloat(sumaTotal).toFixed(2)  ));
 		
+		
+		
+		//Ocultar campos si tienen valor menor o igual a cero
+		if(parseFloat(sumaIeps)<=0){
+			$('#forma-prefacturas-window').find('#tr_ieps').hide();
+		}else{
+			$('#forma-prefacturas-window').find('#tr_ieps').show();
+		}
+		if(parseFloat(impuestoRetenido)<=0){
+			$('#forma-prefacturas-window').find('#tr_retencion').hide();
+		}else{
+			$('#forma-prefacturas-window').find('#tr_retencion').show();
+		}
+		
+		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
+			$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'560px'});
+		}
+		
+		if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)>0){
+			$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'560px'});
+		}
+		
+		if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)<=0){
+			$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'540px'});
+		}
+		
+		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
+			$('#forma-prefacturas-window').find('.prefacturas_div_one').css({'height':'580px'});
+		}
 		
 	}//termina calcular totales
 	
@@ -2275,7 +2317,7 @@ $(function() {
 			
 			$(this).modalPanel_prefacturas();
 			
-			$('#forma-prefacturas-window').css({"margin-left": -400, 	"margin-top": -235});
+			$('#forma-prefacturas-window').css({"margin-left": -465, 	"margin-top": -235});
 			
 			$forma_selected.prependTo('#forma-prefacturas-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -2778,6 +2820,7 @@ $(function() {
 						$.each(entry['datosGrid'],function(entryIndex,prod){
 							var importePartida = 0;
 							var importeImpuesto = 0;
+							var importeIeps = 0;
 							
 							//Verificar si esta en proceso de 2=Facturacion
 							if(parseInt(flujo_proceso)==2 || parseInt(flujo_proceso)==7 || parseInt(flujo_proceso)==8){
@@ -2785,9 +2828,14 @@ $(function() {
 							}else{
 								importePartida = prod['importe'];
 							}
-							importeImpuesto = parseFloat(importePartida) * parseFloat(prod['valor_imp']);
-							
+							//Redondear a 4 digitos el importe de la partida
 							importePartida = parseFloat(importePartida).toFixed(4);
+							
+							//Calcular y redondear el Importe del IEPS
+							importeIeps = parseFloat(parseFloat(importePartida) * (parseFloat(prod['valor_ieps'])/100)).toFixed(4);
+							
+							importeImpuesto = parseFloat(parseFloat(importePartida) + parseFloat(importeIeps)) * parseFloat(prod['valor_imp']);
+							
 							importeImpuesto = parseFloat(importeImpuesto).toFixed(4);
 							
 							
@@ -2839,12 +2887,27 @@ $(function() {
 								trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" class="borde_oculto" style="width:76px; text-align:right;">';
 								trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 							trr += '</td>';
+							
+							
+							
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 								trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+ importePartida +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+ importeImpuesto +'">';
 								trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['tipo_impuesto_id'] +'" id="idimppord">';
 								trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
 							trr += '</td>';
+							
+							
+							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
+								trr += '<input type="hidden" name="idIeps"     value="'+ prod['ieps_id'] +'" id="idIeps">';
+								trr += '<input type="text" name="tasaIeps" value="'+ prod['valor_ieps'] +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
+							trr += '</td>';
+							
+							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="62">';
+								trr += '<input type="text" name="importeIeps" value="'+ importeIeps +'" class="borde_oculto" id="importeIeps" style="width:58px; text-align:right;" readOnly="true">';
+							trr += '</td>';
+							
+							
 							trr += '</tr>';
 							$grid_productos.append(trr);
                             
@@ -2890,6 +2953,9 @@ $(function() {
 									var $importe_impuesto = $grid_productos.find('input[name=totimpuesto'+ tr +']');
 									var $tasa_impuesto = $(this).parent().parent().find('input[name=valor_imp]');
 									
+									var $campoTasaIeps = $(this).parent().parent().find('#tasaIeps');
+									var $importeIeps = $(this).parent().parent().find('#importeIeps');
+									
 									if($facturar.val().trim() == ''){
 										$facturar.val(0);
 									}
@@ -2900,11 +2966,14 @@ $(function() {
 									if(parseFloat($facturar.val()) > parseFloat($disponible.val())){
 										jAlert('La cantidad a '+$boton_facturar.val()+' para &eacute;sta partida no debe ser mayor a la cantidad pendiente.\nPendiente='+$disponible.val()+'\n'+$boton_facturar.val()+'='+$facturar.val(), 'Atencion!', function(r) { 
 											$facturar.val($disponible.val());
-											$importe.val(parseFloat($facturar.val()) * parseFloat($costo_unitario.val()));
-											$importe.val(parseFloat($importe.val()).toFixed(4));
-											$importe_impuesto.val(parseFloat($importe.val()) * parseFloat($tasa_impuesto.val()));
-											$importe_impuesto.val(parseFloat($importe_impuesto.val()).toFixed(4));
-											$calcula_totales();//llamada a la funcion que calcula totales
+											$importe.val(parseFloat(parseFloat($facturar.val()) * parseFloat($costo_unitario.val())).toFixed(4));
+											
+											$importeIeps.val(parseFloat(parseFloat($importe.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+											
+											$importe_impuesto.val(parseFloat((parseFloat($importe.val()) + parseFloat($importeIeps.val())) * parseFloat($tasa_impuesto.val())).toFixed(4));
+											
+											//Llamada a la funcion que calcula totales
+											$calcula_totales();
 											$facturar.focus();
 										});
 									}else{
@@ -2912,20 +2981,26 @@ $(function() {
 										if(parseFloat($facturar.val()) < 0){
 											jAlert('La cantidad a '+$boton_facturar.val()+' para &eacute;sta partida no debe ser igual a cero.\nPendiente='+$disponible.val()+'\n'+$boton_facturar.val()+'='+$facturar.val(), 'Atencion!', function(r) { 
 												$facturar.val($disponible.val());
-												$importe.val(parseFloat($facturar.val()) * parseFloat($costo_unitario.val()));
-												$importe.val(parseFloat($importe.val()).toFixed(4));
-												$importe_impuesto.val(parseFloat($importe.val()) * parseFloat($tasa_impuesto.val()));
-												$importe_impuesto.val(parseFloat($importe_impuesto.val()).toFixed(4));
-												$calcula_totales();//llamada a la funcion que calcula totales
+												$importe.val(parseFloat(parseFloat($facturar.val()) * parseFloat($costo_unitario.val())).toFixed(4));
+												
+												$importeIeps.val(parseFloat(parseFloat($importe.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+												
+												$importe_impuesto.val(parseFloat((parseFloat($importe.val()) + parseFloat($importeIeps.val())) * parseFloat($tasa_impuesto.val())).toFixed(4));
+												
+												//Llamada a la funcion que calcula totales
+												$calcula_totales();
 												
 												$facturar.focus();
 											});
 										}else{
-											$importe.val(parseFloat($facturar.val()) * parseFloat($costo_unitario.val()));
-											$importe.val(parseFloat($importe.val()).toFixed(4));
-											$importe_impuesto.val(parseFloat($importe.val()) * parseFloat($tasa_impuesto.val()));
-											$importe_impuesto.val(parseFloat($importe_impuesto.val()).toFixed(4));
-											$calcula_totales();//llamada a la funcion que calcula totales
+											$importe.val(parseFloat(parseFloat($facturar.val()) * parseFloat($costo_unitario.val())).toFixed(4));
+											
+											$importeIeps.val(parseFloat(parseFloat($importe.val()) * (parseFloat($campoTasaIeps.val())/100)).toFixed(4));
+											
+											$importe_impuesto.val(parseFloat((parseFloat($importe.val()) + parseFloat($importeIeps.val())) * parseFloat($tasa_impuesto.val())).toFixed(4));
+											
+											//Llamada a la funcion que calcula totales
+											$calcula_totales();
 										}
 									}
 								});

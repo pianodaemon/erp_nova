@@ -148,7 +148,7 @@
 					
                     <div id="div_two" title="" class="prefacturas_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:1033px; padding-left:6px;"><strong>Facturaci&oacute;n</strong></div>
+                            <div class="fixed column" style="width:1153px; padding-left:6px;"><strong>Facturaci&oacute;n</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -172,18 +172,18 @@
 										
                                         <table border="0" style="margin:0; padding:0;">
 											<tr>
-												<td width="600"></td>
+												<td width="650"></td>
 												<td width="10"></td>
-												<td width="130"></td>
-												<td width="300"></td>
+												<td width="170"></td>
+												<td width="340"></td>
 											</tr>
 											<tr>
-												<td valign="top" width="600"  > 
+												<td valign="top" width="650"  > 
 													<table border="0" class="gral">
 														
 														<tr>
 															<td width="10"></td>
-															<td width="80">Tipo Documento</td>
+															<td width="80">Tipo&nbsp;Documento</td>
 															<td width="120">
 																<select name="select_tipo_documento" style="width:120px;" title="Seleccionar el tipo de documento: Factura o Remision."></select>
 															</td>
@@ -360,7 +360,7 @@
 															<td width="30"></td>
 															<td width="95"><a  href="agregar_remision">(Agregar&nbsp;Remisi&oacute;n)</a></td>
 															<td width="197"></td>
-															<td width="76"><span class="adenda">Incluye Adenda</span></td>
+															<td width="76"><span class="adenda">Incluye&nbsp;Adenda</span></td>
 															<td width="18">
 																<input type="checkbox" class="adenda" name="check_incluye_adenda">
 																<!--Aqui agrego campos hidden para datos de la adenda-->
@@ -401,15 +401,17 @@
 																<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="202">&nbsp;Descripci&oacute;n</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Unidad</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Presentaci&oacute;n</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cant. Pedido</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cant. Facturado</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cant. Pendiente</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cant.&nbsp;Pedido</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cant.&nbsp;Facturado</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cant.&nbsp;Pendiente</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Precio&nbsp;unitario</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Importe</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Importe</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="50">&nbsp;%&nbsp;IEPS</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Monto IEPS</td>
 															</tr>
 														</thead>
 													</table>
-													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1030; height: 115px; border:1px solid #C1DAD7 !important;">	
+													<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:1168px; height: 115px; border:1px solid #C1DAD7 !important;">	
 														<table class="tabla_facturas">
 															<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
 																
@@ -421,8 +423,8 @@
 											</tr>
 											
 											<tr>
-												<td colspan="3" width="660"  align="left" valign="top">
-
+												<td colspan="3" width="830"  align="left" valign="top">
+													
 													<div id="div_warning_grid" style="display:none;">
 														
 														<table border ="0">
@@ -455,21 +457,26 @@
 													</div>
 													
 												</td>
-												<td  width="300" align="right" valign="top" style="font-weight: bold;">
+												<td  width="340" align="right" valign="top" style="font-weight: bold;">
 													<table border ="0" width="300">
 														<tr>
 															<td width="80"></td>
 															<td width="60">Subtotal</td>
 															<td width="120"><input type="text" name="subtotal" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
 														</tr>
-														<tr>
+														<tr id="tr_ieps">
 															<td width="80"></td>
-															<td width="60">Impuesto</td>
-															<td width="120"><input type="text" name="impuesto" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+															<td width="60">IEPS</td>
+															<td width="120"><input type="text" name="ieps" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
 														</tr>
 														<tr>
 															<td width="80"></td>
-															<td width="60">Retenido</td>
+															<td width="60">IVA</td>
+															<td width="120"><input type="text" name="impuesto" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
+														</tr>
+														<tr id="tr_retencion">
+															<td width="80"></td>
+															<td width="60">Retenci&oacute;n</td>
 															<td width="120"><input type="text" name="impuesto_retenido" value="0" style="width:120px; text-align:right;" readOnly="true"></td>
 														</tr>
 														<tr>
@@ -487,10 +494,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:1046px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
+                            <div class="fixed column" style="width:1166px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="946"></td>
+										<td width="1066"></td>
 										<td>
 											<!--<input  id="submit" style="width:77px; height:24px; background-image:url('../../img/modalbox/btn1.png'); background-repeat:no-repeat;">-->
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
