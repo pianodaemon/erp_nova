@@ -977,7 +977,7 @@ public class PocSpringDao implements PocInterfaceDao{
                                     //+" WHERE empresa_id ="+id_empresa+"  AND sucursal_id="+id_sucursal
                                     +" WHERE empresa_id ="+id_empresa+" "
                                     + " AND cxc_clie.borrado_logico=false "
-                                    + " AND cxc_clie.numero_control='"+no_control.toUpperCase()+"'"
+                                    + " AND cxc_clie.numero_control='"+no_control.toUpperCase().trim()+"'"
                             +") AS sbt "
                             +"LEFT JOIN gral_mon on gral_mon.id = sbt.moneda_id LIMIT 1;";
 
@@ -1120,7 +1120,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "JOIN gral_edo ON gral_edo.id=crm_prospectos.estado_id "
                 + "JOIN gral_mun ON gral_mun.id=crm_prospectos.municipio_id  "
                 + "WHERE crm_prospectos.gral_emp_id="+id_empresa+" "
-                + "AND crm_prospectos.borrado_logico=false AND crm_prospectos.numero_control='"+no_control.toUpperCase()+"';";
+                + "AND crm_prospectos.borrado_logico=false AND crm_prospectos.numero_control='"+no_control.toUpperCase().trim()+"';";
 
         //System.out.println("getDatosProspecto: "+sql_query);
 
@@ -1348,7 +1348,7 @@ public class PocSpringDao implements PocInterfaceDao{
             where +=" AND gral_suc_id="+id_sucursal;
         }
         
-        String sql_query = "SELECT id,numero_economico,marca FROM log_vehiculos WHERE upper(numero_economico)='"+no_eco.toUpperCase()+"' AND gral_emp_id="+id_empresa+" AND borrado_logico=false "+where+" LIMIT 1;";
+        String sql_query = "SELECT id,numero_economico,marca FROM log_vehiculos WHERE upper(numero_economico)='"+no_eco.toUpperCase().trim()+"' AND gral_emp_id="+id_empresa+" AND borrado_logico=false "+where+" LIMIT 1;";
         //System.out.println("getDatosVehiculo: "+sql_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1414,7 +1414,7 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "SELECT  id, clave, (CASE WHEN nombre IS NULL THEN '' ELSE nombre END)||' '||(CASE WHEN apellido_paterno IS NULL THEN '' ELSE apellido_paterno END)||' '||(CASE WHEN apellido_materno IS NULL THEN '' ELSE apellido_materno END) AS nombre, gral_emp_id, gral_suc_id, borrado_logico "
                     + "FROM log_choferes"
                 + ") AS sbt "
-                + "WHERE upper(sbt.clave)='"+no_operador.toUpperCase()+"' AND sbt.gral_emp_id="+id_empresa+" AND sbt.borrado_logico=false "+where+" LIMIT 1;";
+                + "WHERE upper(sbt.clave)='"+no_operador.toUpperCase().trim()+"' AND sbt.gral_emp_id="+id_empresa+" AND sbt.borrado_logico=false "+where+" LIMIT 1;";
         
         //System.out.println("getBuscadorUnidades: "+sql_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1498,7 +1498,7 @@ public class PocSpringDao implements PocInterfaceDao{
         +"FROM cxc_agentes_aduanales "
         +" WHERE cxc_agentes_aduanales.gral_emp_id ="+id_empresa+"  "
         +" AND cxc_agentes_aduanales.borrado_logico=false  "+where+" "
-        + "AND cxc_agentes_aduanales.folio='"+no_control.toUpperCase()+"'"
+        + "AND cxc_agentes_aduanales.folio='"+no_control.toUpperCase().trim()+"'"
         + "ORDER BY id limit 1;";
         
         System.out.println("getDatosAgenA: "+sql_query);
@@ -1620,7 +1620,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "LEFT JOIN gral_mun ON gral_mun.id = cxc_remitentes.gral_mun_id "
                 +" WHERE cxc_remitentes.gral_emp_id ="+id_empresa+"  "
                 +" AND cxc_remitentes.borrado_logico=false  "+where+" "
-                + "AND cxc_remitentes.folio='"+no_control.toUpperCase()+"'"
+                + "AND cxc_remitentes.folio='"+no_control.toUpperCase().trim()+"'"
         + ") AS rem ORDER BY id limit 1;";
         
         
@@ -1746,7 +1746,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "LEFT JOIN gral_mun ON gral_mun.id = cxc_destinatarios.gral_mun_id  "
                 +" WHERE cxc_destinatarios.gral_emp_id ="+id_empresa+"  "
                 +" AND cxc_destinatarios.borrado_logico=false  "+where+" "
-                + "AND cxc_destinatarios.folio='"+no_control.toUpperCase()+"'"
+                + "AND cxc_destinatarios.folio='"+no_control.toUpperCase().trim()+"'"
         + ") AS dest ORDER BY id limit 1;";
         
         //System.out.println("getDatosDest: "+sql_query);

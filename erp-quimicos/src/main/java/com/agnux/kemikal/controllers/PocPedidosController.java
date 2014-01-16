@@ -482,7 +482,7 @@ public class PocPedidosController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        ArrayPres = this.getPocDao().getPresentacionesProducto(sku,lista_precio,id_empresa);
+        ArrayPres = this.getPocDao().getPresentacionesProducto(sku.trim(),lista_precio,id_empresa);
         ArrayPresProcesado = this.getPocDao().getVerificarImpuesto(id_sucursal, Integer.parseInt(idClient), ArrayPres);
         
         jsonretorno.put("Presentaciones", ArrayPresProcesado);

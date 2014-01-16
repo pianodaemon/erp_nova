@@ -576,6 +576,9 @@ public class PrefacturasController {
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="costo_promedio", required=false) String[] costo_promedio,
             @RequestParam(value="costo", required=false) String[] costo,
+            @RequestParam(value="idIeps", required=false) String[] idIeps,
+            @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
+            
             @RequestParam(value="id_remision", required=false) String[] id_remision,
             @RequestParam(value="id_df", required=false) String id_df,
             @ModelAttribute("user") UserSessionData user
@@ -629,7 +632,7 @@ public class PrefacturasController {
         arreglo = new String[eliminado.length];
         
         for(int i=0; i<eliminado.length; i++) {
-            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"___"+idUnidad[i]+"'";
+            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"___"+idUnidad[i] + "___" + idIeps[i] + "___" + tasaIeps[i] +"'";
             //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
             //System.out.println(arreglo[i]);
         }

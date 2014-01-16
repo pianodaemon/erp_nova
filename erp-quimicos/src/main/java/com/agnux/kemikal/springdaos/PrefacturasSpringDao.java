@@ -284,31 +284,34 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getPrefactura_DatosGrid(Integer id_prefactura) {
         
-        String sql_query = "SELECT erp_prefacturas_detalles.id as id_detalle,"
-                                +"erp_prefacturas_detalles.producto_id,"
-                                +"inv_prod.sku,"
-                                +"inv_prod.descripcion as titulo,"
-                                +"(CASE WHEN inv_prod_unidades.id IS NULL THEN 0 ELSE inv_prod_unidades.id END) AS unidad_id,"
-                                +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
-                                +"(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
-                                +"(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
-                                +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
-                                +"erp_prefacturas_detalles.cantidad AS cant_pedido,"
-                                +"erp_prefacturas_detalles.cant_facturado AS cant_facturado,"
-                                +"(erp_prefacturas_detalles.cantidad::double precision - erp_prefacturas_detalles.cant_facturado::double precision) AS cant_pendiente,"
-                                +"erp_prefacturas_detalles.facturado,"
-                                +"erp_prefacturas_detalles.precio_unitario,"
-                                +"(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
-                                +"erp_prefacturas_detalles.tipo_impuesto_id,"
-                                +"erp_prefacturas_detalles.valor_imp, "
-                                +"gral_mon.descripcion as moneda "
-                        + "FROM erp_prefacturas "
-                        + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
-                        + "LEFT JOIN gral_mon on gral_mon.id = erp_prefacturas.moneda_id "
-                        + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
-                        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = erp_prefacturas_detalles.inv_prod_unidad_id "
-                        + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_prefacturas_detalles.presentacion_id "
-                        + "WHERE erp_prefacturas.id="+id_prefactura;
+        String sql_query = ""
+        + "SELECT erp_prefacturas_detalles.id as id_detalle,"
+                + "erp_prefacturas_detalles.producto_id,"
+                + "inv_prod.sku,"
+                + "inv_prod.descripcion as titulo,"
+                + "(CASE WHEN inv_prod_unidades.id IS NULL THEN 0 ELSE inv_prod_unidades.id END) AS unidad_id,"
+                + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
+                + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
+                + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) as id_presentacion,"
+                + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
+                + "erp_prefacturas_detalles.cantidad AS cant_pedido,"
+                + "erp_prefacturas_detalles.cant_facturado AS cant_facturado,"
+                + "(erp_prefacturas_detalles.cantidad::double precision - erp_prefacturas_detalles.cant_facturado::double precision) AS cant_pendiente,"
+                + "erp_prefacturas_detalles.facturado,"
+                + "erp_prefacturas_detalles.precio_unitario,"
+                + "(erp_prefacturas_detalles.cantidad * erp_prefacturas_detalles.precio_unitario) AS importe, "
+                + "erp_prefacturas_detalles.tipo_impuesto_id,"
+                + "erp_prefacturas_detalles.valor_imp, "
+                + "erp_prefacturas_detalles.gral_ieps_id,"
+                + "(erp_prefacturas_detalles.valor_ieps * 100) AS valor_ieps, "
+                + "gral_mon.descripcion as moneda "
+        + "FROM erp_prefacturas "
+        + "JOIN erp_prefacturas_detalles on erp_prefacturas_detalles.prefacturas_id=erp_prefacturas.id "
+        + "LEFT JOIN gral_mon on gral_mon.id = erp_prefacturas.moneda_id "
+        + "LEFT JOIN inv_prod on inv_prod.id = erp_prefacturas_detalles.producto_id "
+        + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = erp_prefacturas_detalles.inv_prod_unidad_id "
+        + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = erp_prefacturas_detalles.presentacion_id "
+        + "WHERE erp_prefacturas.id="+id_prefactura;
                         
         //System.out.println("Obtiene datos grid prefactura: "+sql_query);
         ArrayList<HashMap<String, Object>> hm_grid = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -336,6 +339,9 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("tipo_impuesto_id",rs.getInt("tipo_impuesto_id"));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
                     row.put("costo_prom","0" );
+                    row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
+                    
                     return row;
                 }
             }
