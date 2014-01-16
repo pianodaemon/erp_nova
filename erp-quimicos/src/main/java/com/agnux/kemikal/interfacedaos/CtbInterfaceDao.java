@@ -47,4 +47,43 @@ public interface CtbInterfaceDao {
     
     //Obtiene las sucursales de la empresa
     public ArrayList<HashMap<String, Object>> getCtb_Sucursales(Integer idEmp);
+    
+    
+    
+    
+    //Métodos para reporte de Auxiliar de Movimientos de Cuentas
+    public ArrayList<HashMap<String, Object>> getCtbRepAuxMovCtas_Anios();
+    public ArrayList<HashMap<String, Object>> getCtbRepAuxMovCtas_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCtbRepAuxMovCtas_Datos(String data_string);
+    
+    //Métodos para reporte de Balance General
+    public ArrayList<HashMap<String, Object>> getCtbRepBalanceGral_Anios();
+    public ArrayList<HashMap<String, Object>> getCtbRepBalanceGral_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCtbRepBalanceGral_Datos(String data_string);
+    
+    
+    //Metodos para reporte de Balanza de Comprobación
+    public ArrayList<HashMap<String, Object>> getCtbRepBalanzaComp_Anios();
+    public ArrayList<HashMap<String, Object>> getCtbRepBalanzaComp_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCtbRepBalanzaComp_Datos(String data_string);
+    
+    //Metodos para reporte de Estado de Resultados
+    public ArrayList<HashMap<String, Object>> getCtbRepEstadoResult_Anios();
+    public ArrayList<HashMap<String, Object>> getCtbRepEstadoResult_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCtbRepEstadoResult_Datos(String data_string);
+    
+    //Metodos para reporte de Polizas Contables
+    public ArrayList<HashMap<String, Object>> getCtbRepPolizasCont_Anios();
+    public ArrayList<HashMap<String, Object>> getCtbRepPolizasCont_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCtbRepPolizasCont_Datos(String data_string);
+    
+     //Metodos para reporte de Estado de Resultados Anual
+    public ArrayList<HashMap<String, Object>> getCtbRepEstadoResultAnual_Anios();
+    public ArrayList<HashMap<String, Object>> getCtbRepEstadoResultAnual_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCtbRepEstadoResultAnual_Datos(String data_string);
+    
+    //Metodos para Reporte de Libro Mayor
+    public ArrayList<HashMap<String, Object>> getCtbRepLibroMayor_Anios();
+    public ArrayList<HashMap<String, Object>> getCtbRepLibroMayor_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa);
+    public ArrayList<HashMap<String, String>> getCtbRepLibroMayor_Datos(String data_string);
 }

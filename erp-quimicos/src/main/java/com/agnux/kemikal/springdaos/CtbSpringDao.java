@@ -597,4 +597,613 @@ public class CtbSpringDao implements CtbInterfaceDao{
         return hm_facturas;
     }
     
+    
+    
+  //Medotdos para reporte de Auxiliar de Movimientos de Cuentas------------------------------------------------------------------------------
+    //Calcular años a mostrar en el reporte de Auxiliar de Movimientos de Cuentas
+    @Override 
+    public ArrayList<HashMap<String, Object>>  getCtbRepAuxMovCtas_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    //Obtener las Subcuentas del Nivel que se le indique
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbRepAuxMovCtas_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa) {
+        String sql_query="";
+        
+       switch(nivel) {
+            case 1: 
+                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                break;
+            case 2: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 3: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssubcta AS cta, (CASE WHEN sssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND borrado_logico=FALSE AND estatus=1 ORDER BY ssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 4: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT sssubcta AS cta, (CASE WHEN ssssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY sssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 5: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssssubcta AS cta, descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+" AND sssubcta="+ssscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY ssssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+        }
+        
+        System.out.println("getCtasNivel "+nivel+": "+sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cta",rs.getString("cta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCtbRepAuxMovCtas_Datos(String data_string) {
+        String sql_to_query="";
+        ArrayList<HashMap<String, String>>datos = new ArrayList<HashMap<String, String>>();
+        
+        System.out.println("data_string: "+data_string);
+          HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("suc", "11");
+                    row.put("nombrepol", "11-02-0001-0002");
+                    row.put("nombrech", "HSBC México 4021408133");
+                    row.put("saldoinicial", "1744006.48");
+                    row.put("sucursal", "9898");
+                    row.put("poliza", "5504");
+                    row.put("origen", "Ban");
+                    row.put("tipopoliza", "Egreso");
+                    row.put("fechas", "28/12/2013");
+                    row.put("cheque", "38200");
+                    row.put("cc", "pruebas1");
+                    row.put("descripcion", "Ch. 38200 Traspaso A Hsbc 4021408133");
+                    row.put("debe", "2002000.00");
+                    row.put("debe2", "2002000.00");
+                    row.put("haber", "0.00");
+                    row.put("saldo", "3748006.00");
+                    datos.add(row);
+                    
+        
+        return datos;
+        
+    }
+    
+    
+    
+    
+    
+    //Métodos para reporte de Balance General------------------------------------------------------------------------------
+    //Calcular años a mostrar en el reporte de Balance General
+    @Override
+    public ArrayList<HashMap<String, Object>>  getCtbRepBalanceGral_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    //Obtener las Subcuentas del Nivel que se le indique
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbRepBalanceGral_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa) {
+        String sql_query="";
+        
+        switch(nivel) {
+            case 1: 
+                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                break;
+            case 2: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 3: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssubcta AS cta, (CASE WHEN sssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND borrado_logico=FALSE AND estatus=1 ORDER BY ssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 4: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT sssubcta AS cta, (CASE WHEN ssssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY sssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 5: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssssubcta AS cta, descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+" AND sssubcta="+ssscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY ssssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+        }
+        
+        System.out.println("getCtasNivel "+nivel+": "+sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cta",rs.getString("cta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCtbRepBalanceGral_Datos(String data_string) {
+        
+        String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("saldo_inicial",rs.getString("saldo_inicial"));
+                    row.put("debe",rs.getString("debe"));
+                    row.put("haber",rs.getString("haber"));
+                    row.put("saldo_final",rs.getString("saldo_final"));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+    
+    
+    
+    //Métodos para reporte de Balanza de Comprobacion------------------------------------------------------------------------------
+    //Calcular años a mostrar en el reporte de Balanza de Comprobacion
+    @Override
+    public ArrayList<HashMap<String, Object>>  getCtbRepBalanzaComp_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    //Obtener las Subcuentas del Nivel que se le indique
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbRepBalanzaComp_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa) {
+        String sql_query="";
+        
+        switch(nivel) {
+            case 1: 
+                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                break;
+            case 2: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 3: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssubcta AS cta, (CASE WHEN sssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND borrado_logico=FALSE AND estatus=1 ORDER BY ssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 4: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT sssubcta AS cta, (CASE WHEN ssssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY sssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 5: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssssubcta AS cta, descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+" AND sssubcta="+ssscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY ssssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+        }
+        
+        System.out.println("getCtasNivel "+nivel+": "+sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cta",rs.getString("cta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCtbRepBalanzaComp_Datos(String data_string) {
+        
+        String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("saldo_inicial",rs.getString("saldo_inicial"));
+                    row.put("debe",rs.getString("debe"));
+                    row.put("haber",rs.getString("haber"));
+                    row.put("saldo_final",rs.getString("saldo_final"));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+   
+    
+    
+    //Métodos para reporte de Estado de Resultados------------------------------------------------------------------------------
+    //Calcular años a mostrar en el reporte de Estado de Resultados
+    @Override
+    public ArrayList<HashMap<String, Object>>  getCtbRepEstadoResult_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    //Obtener las Subcuentas del Nivel que se le indique
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbRepEstadoResult_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa) {
+        String sql_query="";
+        
+        switch(nivel) {
+            case 1: 
+                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                break;
+            case 2: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 3: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssubcta AS cta, (CASE WHEN sssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND borrado_logico=FALSE AND estatus=1 ORDER BY ssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 4: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT sssubcta AS cta, (CASE WHEN ssssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY sssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 5: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssssubcta AS cta, descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+" AND sssubcta="+ssscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY ssssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+        }
+        
+        System.out.println("getCtasNivel "+nivel+": "+sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cta",rs.getString("cta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCtbRepEstadoResult_Datos(String data_string) {
+        
+        String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("saldo_inicial",rs.getString("saldo_inicial"));
+                    row.put("debe",rs.getString("debe"));
+                    row.put("haber",rs.getString("haber"));
+                    row.put("saldo_final",rs.getString("saldo_final"));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+   
+    
+    //Métodos para reporte de Pólizas Contables------------------------------------------------------------------------------
+    //Calcular años a mostrar en el Reporte de Pólizas Contables
+    @Override
+    public ArrayList<HashMap<String, Object>>  getCtbRepPolizasCont_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    //Obtener las Subcuentas del Nivel que se le indique
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbRepPolizasCont_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa) {
+        String sql_query="";
+        
+        switch(nivel) {
+            case 1: 
+                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                break;
+            case 2: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 3: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssubcta AS cta, (CASE WHEN sssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND borrado_logico=FALSE AND estatus=1 ORDER BY ssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 4: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT sssubcta AS cta, (CASE WHEN ssssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY sssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 5: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssssubcta AS cta, descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+" AND sssubcta="+ssscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY ssssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+        }
+        
+        System.out.println("getCtasNivel "+nivel+": "+sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cta",rs.getString("cta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCtbRepPolizasCont_Datos(String data_string) {
+        
+        String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("saldo_inicial",rs.getString("saldo_inicial"));
+                    row.put("debe",rs.getString("debe"));
+                    row.put("haber",rs.getString("haber"));
+                    row.put("saldo_final",rs.getString("saldo_final"));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+    
+    
+    
+     //Métodos para reporte de Estado de Resultados Anual------------------------------------------------------------------------------
+    //Calcular años a mostrar en el reporte de Estado de Resultados Anual
+    @Override
+    public ArrayList<HashMap<String, Object>>  getCtbRepEstadoResultAnual_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    //Obtener las Subcuentas del Nivel que se le indique
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbRepEstadoResultAnual_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa) {
+        String sql_query="";
+        
+        switch(nivel) {
+            case 1: 
+                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                break;
+            case 2: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 3: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssubcta AS cta, (CASE WHEN sssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND borrado_logico=FALSE AND estatus=1 ORDER BY ssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 4: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT sssubcta AS cta, (CASE WHEN ssssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY sssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 5: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssssubcta AS cta, descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+" AND sssubcta="+ssscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY ssssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+        }
+        
+        System.out.println("getCtasNivel "+nivel+": "+sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cta",rs.getString("cta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCtbRepEstadoResultAnual_Datos(String data_string) {
+        
+        String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("saldo_inicial",rs.getString("saldo_inicial"));
+                    row.put("debe",rs.getString("debe"));
+                    row.put("haber",rs.getString("haber"));
+                    row.put("saldo_final",rs.getString("saldo_final"));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+    
+    
+    
+       //Métodos para reporte de Libro Mayor------------------------------------------------------------------------------
+    //Calcular años a mostrar en el reporte de Libro Mayor
+    @Override
+    public ArrayList<HashMap<String, Object>>  getCtbRepLibroMayor_Anios() {
+        ArrayList<HashMap<String, Object>> anios = new ArrayList<HashMap<String, Object>>();
+        
+        Calendar c1 = Calendar.getInstance();
+        Integer annio = c1.get(Calendar.YEAR);//obtiene el año actual
+        
+        for(int i=0; i<5; i++) {
+            HashMap<String, Object> row = new HashMap<String, Object>();
+            row.put("valor",(annio-i));
+            anios.add(i, row);
+        }
+        return anios;
+    }
+    
+    
+    //Obtener las Subcuentas del Nivel que se le indique
+    @Override
+    public ArrayList<HashMap<String, Object>> getCtbRepLibroMayor_Ctas(Integer nivel, String cta, String scta, String sscta, String ssscta, Integer id_empresa) {
+        String sql_query="";
+        
+        switch(nivel) {
+            case 1: 
+                sql_query = "SELECT rpad(cta::character varying, 4, '0') AS cta,descripcion FROM ( SELECT DISTINCT cta, (CASE WHEN subcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=?  AND borrado_logico=FALSE AND estatus=1 ORDER BY cta ) AS sbt WHERE trim(descripcion)<>'' ORDER BY cta;";
+                break;
+            case 2: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT subcta AS cta, (CASE WHEN ssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY subcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 3: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssubcta AS cta, (CASE WHEN sssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND borrado_logico=FALSE AND estatus=1 ORDER BY ssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 4: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT sssubcta AS cta, (CASE WHEN ssssubcta=0 THEN descripcion ELSE '' END) AS descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY sssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+            case 5: 
+                sql_query = "SELECT lpad(cta::character varying, 4, '0') AS cta, descripcion FROM (SELECT DISTINCT ssssubcta AS cta, descripcion FROM ctb_cta WHERE gral_emp_id=? AND cta="+cta+" AND subcta="+scta+" AND ssubcta="+sscta+" AND sssubcta="+ssscta+"  AND borrado_logico=FALSE AND estatus=1 ORDER BY ssssubcta ) AS sbt WHERE descripcion<>'' ORDER BY cta;";
+                break;
+        }
+        
+        System.out.println("getCtasNivel "+nivel+": "+sql_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("cta",rs.getString("cta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    @Override
+    public ArrayList<HashMap<String, String>> getCtbRepLibroMayor_Datos(String data_string) {
+        
+        String sql_to_query = "select * from ctb_reporte(?) as foo(cuenta character varying, descripcion character varying, saldo_inicial character varying, debe character varying, haber character varying, saldo_final character varying);"; 
+        System.out.println("data_string: "+data_string);
+        System.out.println("Ctb_DatosRepAuxCtas:: "+sql_to_query);
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("cuenta",rs.getString("cuenta"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("saldo_inicial",rs.getString("saldo_inicial"));
+                    row.put("debe",rs.getString("debe"));
+                    row.put("haber",rs.getString("haber"));
+                    row.put("saldo_final",rs.getString("saldo_final"));
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+    
+    
 }

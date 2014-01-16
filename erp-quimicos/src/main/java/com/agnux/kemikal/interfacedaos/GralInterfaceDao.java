@@ -202,4 +202,8 @@ public interface GralInterfaceDao {
     //Aplicativo de Cambio de Contraseña de Usuario
     public ArrayList<HashMap<String, Object>> GralUserEdit_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, String>> GralUserEdit_Datos(Integer id);  
+    
+    //Para el Cátalogo de Ieps
+    public ArrayList<HashMap<String, String>> getIeps_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getIeps_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
 }
