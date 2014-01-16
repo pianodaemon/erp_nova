@@ -596,7 +596,7 @@ public class PrefacturasController {
         ArrayList<LinkedHashMap<String,String>> impRetenidos = new ArrayList<LinkedHashMap<String,String>>();
         LinkedHashMap<String,String> datosExtrasXmlFactura = new LinkedHashMap<String,String>();
         LinkedHashMap<String,Object> dataAdenda = new LinkedHashMap<String,Object>();
-        
+        ArrayList<HashMap<String, String>> ieps = new ArrayList<HashMap<String, String>>();
         LinkedHashMap<String,String> datosExtrasCfdi = new LinkedHashMap<String,String>();
         ArrayList<LinkedHashMap<String,String>> listaConceptosCfdi = new ArrayList<LinkedHashMap<String,String>>();
         ArrayList<LinkedHashMap<String,String>> impTrasladadosCfdi = new ArrayList<LinkedHashMap<String,String>>();
@@ -706,9 +706,12 @@ public class PrefacturasController {
                     //tipo facturacion CFD
                     //**********************************************************
                     if(tipo_facturacion.equals("cfd")){
+                        //Obtener los valores del IEPS que se estan utilizando
+                        ieps = this.getFacdao().getIeps(id_empresa);
+
                         conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
                         impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
-                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos);
+                        impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos, ieps);//Lo del Ieps solo se le esta pasando para que no marque error(Ya no se ha desarrollado soporte para CFD)
                         dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                         leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
                         
@@ -827,9 +830,12 @@ public class PrefacturasController {
                             command_selected = "facturar_cfditf";
                             extra_data_array = "'sin datos'";
                             
+                            //Obtener los valores del IEPS que se estan utilizando
+                            ieps = this.getFacdao().getIeps(id_empresa);
+                            
                             conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura);
                             impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
-                            impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos);
+                            impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos, ieps);
                             dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                             leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
                             

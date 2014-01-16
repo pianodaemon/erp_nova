@@ -717,7 +717,7 @@ public class FacConsultasController {
                 String noCertSAT = pop2.getNoCertificadoSAT();
                 String rfcReceptor = pop2.getReceptor_rfc();
                 
-                conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
+                //conceptos = this.getFacdao().getListaConceptosFacturaXml(id_prefactura);
                 dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
                 
                 //conceptos para el pdfcfd

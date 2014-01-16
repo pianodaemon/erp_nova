@@ -43,7 +43,7 @@ public interface FacturasInterfaceDao {
     public String getFechaComprobante();
     public ArrayList<LinkedHashMap<String, String>> getListaConceptosFacturaXml(Integer id_prefactura);
     public ArrayList<LinkedHashMap<String, String>> getImpuestosRetenidosFacturaXml();
-    public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal, ArrayList<LinkedHashMap<String,String>> conceptos);
+    public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal, ArrayList<LinkedHashMap<String,String>> conceptos, ArrayList<HashMap<String, String>> ieps);
     public LinkedHashMap<String, String> getDatosExtrasFacturaXml(String id_prefactura, String tipo_cambio_vista, String id_usuario, String id_moneda, Integer id_empresa, Integer id_sucursal, String refacturar, Integer app_selected, String command_selected, String extra_data_array);
     
     public LinkedHashMap<String, String> getDatosExtrasCfdi(Integer id_factura);
@@ -156,4 +156,6 @@ public interface FacturasInterfaceDao {
     
     public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura, Integer identificador, String serieFolio, Integer id_emp);
     public int buscarAdendaFactura(Integer idNotaCredito);
+    
+    public ArrayList<HashMap<String, String>> getIeps(Integer idEmp);
 }

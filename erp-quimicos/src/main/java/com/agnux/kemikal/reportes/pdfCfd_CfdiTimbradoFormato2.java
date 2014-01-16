@@ -84,6 +84,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
     private String no_cuenta;
     private String subTotal;
     private String montoImpuesto;
+    private String montoIeps;
     private String montoRetencion;
     private String montoTotal;
     private String titulo_moneda;
@@ -171,6 +172,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
         }
         
         this.setSubTotal(extras.get("subtotal"));
+        this.setMontoIeps(extras.get("monto_ieps"));
         this.setMontoImpuesto(extras.get("impuesto"));
         this.setMontoRetencion(extras.get("monto_retencion"));
         this.setMontoTotal(extras.get("total"));
@@ -899,8 +901,11 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             
             //tabla contenedor
             PdfPCell cell;
+            float [] widths;
+            String[] columnas;
             
-            float [] widths = {
+            
+            float [] widths1 = {
                 1f, //CLAVE
                 2.3f, //DESCRIPCIÓN
                 1f, //UNIDAD
@@ -911,13 +916,26 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                 0.5f, //simbolo
                 1.2f //IMPORTE
             };
+            float [] widths2 = {1f, 2.3f, 1f, 1f, 0.5f, 1.2f, 0.5f, 1.2f, 0.5f, 1f};
+            
+            //String[] columnas = {"CLAVE","DESCRIPCIÓN","UNIDAD","PRESENTACIÓN","CANTIDAD"," ","PRECIO UNITARIO"," ","IMPORTE"};
+            String[] columnas1 = {"CLAVE","DESCRIPCIÓN","UNIDAD","CANTIDAD"," ","PRECIO UNITARIO"," ","IMPORTE"};
+            String[] columnas2 = {"CLAVE","DESCRIPCIÓN","UNIDAD","CANTIDAD"," ","PRECIO UNITARIO"," ","IMPORTE"," ","MONTO IEPS"};
+            
+            if(Double.parseDouble(getMontoIeps())>0){
+                //Aqui entra cuando incluye IEPS
+                widths=widths2;
+                columnas = columnas2;
+            }else{
+                //Aqui entra cuando NO INCLUYE IEPS
+                widths=widths1;
+                columnas = columnas1;
+            }
+            
             PdfPTable table = new PdfPTable(widths);
             table.setKeepTogether(false);
             table.setHeaderRows(1);
-            
-            //String[] columnas = {"CLAVE","DESCRIPCIÓN","UNIDAD","PRESENTACIÓN","CANTIDAD"," ","PRECIO UNITARIO"," ","IMPORTE"};
-            String[] columnas = {"CLAVE","DESCRIPCIÓN","UNIDAD","CANTIDAD"," ","PRECIO UNITARIO"," ","IMPORTE"};
-            
+           
             List<String>  lista_columnas = (List<String>) Arrays.asList(columnas);
             Integer contador = 0;
             PdfPCell cellX;
@@ -965,9 +983,20 @@ public class pdfCfd_CfdiTimbradoFormato2 {
            for (HashMap<String, String> registro : getRows()){
                 //Indices del HashMap que representa el row
                 //String[] wordList = {"sku","titulo","unidad","presentacion","cantidad","simbolo_moneda","precio_unitario","simbolo_moneda","importe"};
-               String[] wordList = {"sku","titulo","unidad","cantidad","simbolo_moneda","precio_unitario","simbolo_moneda","importe"};
+               String[] wordList;
+               String[] wordList1 = {"sku","titulo","unidad","cantidad","simbolo_moneda","precio_unitario","simbolo_moneda","importe"};
+               String[] wordList2 = {"sku","titulo","unidad","cantidad","simbolo_moneda","precio_unitario","simbolo_moneda","importe","simbolo_moneda_ieps","importe_ieps"};
+                if(Double.parseDouble(getMontoIeps())>0){
+                    //Aqui entra cuando incluye IEPS
+                    wordList=wordList2;
+                }else{
+                    //Aqui entra cuando NO INCLUYE IEPS
+                    wordList=wordList1;
+                }
+                
+               
                 List<String>  indices = (List<String>) Arrays.asList(wordList);
-
+                
                 for (String omega : indices){
                     PdfPCell celda;
                     
@@ -975,7 +1004,6 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
-                        //celda.setBorder(0);
                         celda.setBorderWidthBottom(0);
                         celda.setBorderWidthLeft(1);
                         celda.setBorderWidthRight(0.5f);
@@ -983,12 +1011,11 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         celda.setBorderColorRight(BaseColor.LIGHT_GRAY);
                         table.addCell(celda);
                     }
-
+                    
                     if (omega.equals("titulo")){
-                        celda = new PdfPCell(new Paragraph(registro.get(omega).toUpperCase(),smallFont));
+                        celda = new PdfPCell(new Paragraph(registro.get(omega).toUpperCase() + registro.get("etiqueta_ieps").toUpperCase(),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
-                        //celda.setBorder(0);
                         celda.setBorderWidthBottom(0);
                         celda.setBorderWidthLeft(0);
                         celda.setBorderWidthTop(0);
@@ -996,13 +1023,12 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         celda.setBorderColorRight(BaseColor.LIGHT_GRAY);
                         table.addCell(celda);
                     }
-
-
+                    
+                    
                     if (omega.equals("unidad")){
                         celda = new PdfPCell(new Paragraph(registro.get(omega).toUpperCase(),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
-                        //celda.setBorder(0);
                         celda.setBorderWidthBottom(0);
                         celda.setBorderWidthLeft(0);
                         celda.setBorderWidthTop(0);
@@ -1010,12 +1036,12 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         celda.setBorderColorRight(BaseColor.LIGHT_GRAY);
                         table.addCell(celda);
                     }
+                    
                     /*
                     if (omega.equals("presentacion")){
                         celda = new PdfPCell(new Paragraph(registro.get(omega).toUpperCase(),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
-                        //celda.setBorder(0);
                         celda.setBorderWidthBottom(0);
                         celda.setBorderWidthLeft(0);
                         celda.setBorderWidthTop(0);
@@ -1028,7 +1054,6 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
-                        //celda.setBorder(0);
                         celda.setBorderWidthBottom(0);
                         celda.setBorderWidthLeft(0);
                         celda.setBorderWidthTop(0);
@@ -1041,7 +1066,6 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         celda = new PdfPCell(new Paragraph( "$",smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
-                        //celda.setBorder(0);
                         celda.setBorderWidthBottom(0);
                         celda.setBorderWidthLeft(0);
                         celda.setBorderWidthRight(0);
@@ -1053,7 +1077,6 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
-                        //celda.setBorder(0);
                         celda.setBorderWidthBottom(0);
                         celda.setBorderWidthLeft(0);
                         celda.setBorderWidthTop(0);
@@ -1066,7 +1089,44 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
-                        //celda.setBorder(0);
+                        celda.setBorderWidthBottom(0);
+                        celda.setBorderWidthLeft(0);
+                        if(Double.parseDouble(getMontoIeps())>0){
+                            //Aqui entra cuando incluye IEPS
+                            celda.setBorderWidthRight(0.5f);
+                        }else{
+                            //Aqui entra cuando NO INCLUYE IEPS
+                            celda.setBorderWidthRight(1);
+                        }
+                        
+                        celda.setBorderWidthTop(0);
+                        table.addCell(celda);
+                    }
+                    
+                    
+                    if (omega.equals("simbolo_moneda_ieps")){
+                        if(Double.parseDouble(registro.get("importe_ieps"))>0){
+                            celda = new PdfPCell(new Paragraph( "$",smallFont));
+                        }else{
+                            celda = new PdfPCell(new Paragraph( "",smallFont));
+                        }
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorderWidthBottom(0);
+                        celda.setBorderWidthLeft(0);
+                        celda.setBorderWidthRight(0);
+                        celda.setBorderWidthTop(0);
+                        table.addCell(celda);
+                    }
+                    
+                    if (omega.equals("importe_ieps")){
+                        if(Double.parseDouble(registro.get(omega))>0){
+                            celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                        }else{
+                            celda= new PdfPCell(new Paragraph("",smallFont));
+                        }
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
                         celda.setBorderWidthBottom(0);
                         celda.setBorderWidthLeft(0);
                         celda.setBorderWidthRight(1);
@@ -1076,7 +1136,14 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                 }
                 contador++;
             }
+            
            
+           int colspan=5;
+           
+            if(Double.parseDouble(getMontoIeps())>0){
+                //Aqui entra cuando incluye IEPS
+                colspan=7;
+            }
            
            //fila SUBTOTAL
             cell = new PdfPCell(new Paragraph("", smallFont));
@@ -1087,7 +1154,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(1);
             cell.setBorderWidthTop(1);
-            cell.setColspan(5);
+            cell.setColspan(colspan);
             table.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("SUB-TOTAL",smallBoldFont6));
@@ -1121,6 +1188,51 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             table.addCell(cell);
             
             
+            //FILA IEPS
+            if(Double.parseDouble(getMontoIeps())>0){
+                cell = new PdfPCell(new Paragraph("", smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                //celda.setBorder(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                cell.setColspan(colspan);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("IEPS",smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                //cell.setBorder(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                //cell.setBorder(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoIeps(),2)),smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                //cell.setBorder(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+            }
+            
+            
             
             //fila IVA
             cell = new PdfPCell(new Paragraph("", smallBoldFont6));
@@ -1131,10 +1243,10 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(1);
             cell.setBorderWidthTop(0);
-            cell.setColspan(5);
+            cell.setColspan(colspan);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("I.V.A.",smallBoldFont6));
+            cell = new PdfPCell(new Paragraph("IVA",smallBoldFont6));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             //cell.setBorder(0);
@@ -1174,10 +1286,10 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(1);
             cell.setBorderWidthTop(0);
-            cell.setColspan(5);
+            cell.setColspan(colspan);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("I.V.A. RETENIDO",smallBoldFont6));
+            cell = new PdfPCell(new Paragraph("RETENCIÓN",smallBoldFont6));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             //cell.setBorder(0);
@@ -1210,7 +1322,6 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             
             
             
-            
             BigInteger num = new BigInteger(getMontoTotal().split("\\.")[0]);
             n2t cal = new n2t();
             String centavos = getMontoTotal().substring(getMontoTotal().indexOf(".")+1);
@@ -1237,10 +1348,10 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(1);
             cell.setBorderWidthTop(0);
-            cell.setColspan(5);
+            cell.setColspan(colspan);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("TOTAL A PAGAR",smallBoldFont6));
+            cell = new PdfPCell(new Paragraph("TOTAL",smallBoldFont6));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             //cell.setBorder(0);
@@ -1273,6 +1384,15 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             return table;
         }
     }//termina tabla conceptos
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -1991,6 +2111,14 @@ public class pdfCfd_CfdiTimbradoFormato2 {
 
     public void setMontoImpuesto(String montoImpuesto) {
         this.montoImpuesto = montoImpuesto;
+    }
+    
+    public String getMontoIeps() {
+        return montoIeps;
+    }
+
+    public void setMontoIeps(String montoIeps) {
+        this.montoIeps = montoIeps;
     }
 
     public String getMontoRetencion() {
