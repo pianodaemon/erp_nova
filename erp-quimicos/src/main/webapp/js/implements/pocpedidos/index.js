@@ -2198,7 +2198,7 @@ $(function() {
 			});
 			
 			
-			//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
+			//Al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
 			$grid_productos.find('#cost').focus(function(e){
 				if($(this).val() == ' '){
 					$(this).val('');
@@ -2248,7 +2248,7 @@ $(function() {
 				}
 			});
 			
-			//validar campo costo, solo acepte numeros y punto
+			//Validar campo costo, solo acepte numeros y punto
 			$permitir_solo_numeros( $grid_productos.find('#cost') );
 			$permitir_solo_numeros( $grid_productos.find('#cant') );
 			

@@ -407,7 +407,7 @@
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Precio&nbsp;unitario</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Importe</td>
 																<td class="grid" style="background-color: rgb(180, 180, 180);" width="50">&nbsp;%&nbsp;IEPS</td>
-																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Monto IEPS</td>
+																<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Monto&nbsp;IEPS</td>
 															</tr>
 														</thead>
 													</table>
