@@ -250,6 +250,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
                 + "END ) AS direccion,"
                 +"fac_docs.subtotal,"
+                +"fac_docs.monto_ieps,"
                 +"fac_docs.impuesto,"
                 +"fac_docs.total,"
                 +"fac_docs.monto_retencion,"
@@ -302,6 +303,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("no_cuenta",rs.getString("no_cuenta"));
                     row.put("tasa_ret_immex",StringHelper.roundDouble(rs.getDouble("tasa_ret_immex"),2));
                     row.put("saldo_fac",StringHelper.roundDouble(rs.getDouble("saldo_factura"),2));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
                     
                     return row;
                 }
@@ -1345,7 +1347,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_docs_detalles.inv_prod_id AS producto_id,"
             + "inv_prod.sku,"
             + "inv_prod.descripcion as titulo,"
-            + "(CASE WHEN fac_docs_detalles.gral_ieps_id>0 THEN '.   IEPS '||(round((fac_docs_detalles.valor_ieps * 100::double precision)::numeric,2)) ELSE '' END) AS etiqueta_ieps,"
+            + "(CASE WHEN fac_docs_detalles.gral_ieps_id>0 THEN ' - IEPS '||(round((fac_docs_detalles.valor_ieps * 100::double precision)::numeric,2))||'%' ELSE '' END) AS etiqueta_ieps,"
             + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
             + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS decimales,"
             + "(CASE WHEN inv_prod_presentaciones.id IS NULL THEN 0 ELSE inv_prod_presentaciones.id END) AS id_presentacion,"

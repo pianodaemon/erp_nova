@@ -1807,14 +1807,16 @@ public class InvSpringDao implements InvInterfaceDao{
                                 +"inv_prod.id,"
                                 +"inv_prod.sku,"
                                 +"inv_prod.descripcion as titulo,"
-                                +"(CASE WHEN inv_prod.ieps IS NULL THEN 0 ELSE inv_prod.ieps END) AS id_ieps, "
                                 +"inv_prod_unidades.titulo as unidad,"
                                 +"inv_prod_presentaciones.id as id_presentacion,"
-                                +"inv_prod_presentaciones.titulo as presentacion "
+                                +"inv_prod_presentaciones.titulo as presentacion, "
+                                +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.id END) AS ieps_id, "
+                                +"(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.tasa END) AS ieps_tasa "
                         +"FROM inv_prod "
                         +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
                         +"LEFT JOIN inv_prod_pres_x_prod on inv_prod_pres_x_prod.producto_id = inv_prod.id "
                         +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = inv_prod_pres_x_prod.presentacion_id "
+                        +"LEFT JOIN gral_ieps ON gral_ieps.id=inv_prod.ieps "
                         +"where inv_prod.sku ILIKE '"+sku+"' "
                         + "AND inv_prod.borrado_logico=false "
                         + "AND inv_prod.empresa_id="+id_empresa;
@@ -1833,7 +1835,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("id_presentacion",rs.getString("id_presentacion"));
                     row.put("presentacion",rs.getString("presentacion"));
-                    row.put("id_ieps",rs.getString("id_ieps"));
+                    row.put("ieps_id",rs.getString("ieps_id"));
+                    row.put("ieps_tasa",StringHelper.roundDouble(rs.getString("ieps_tasa"),2));
                     return row;
                 }
             }
