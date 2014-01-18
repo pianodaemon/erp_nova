@@ -1257,14 +1257,18 @@ $(function() {
 							var trCount = $("tr", $grid_productos).size();
 							trCount++;
 							
-							var id_ieps = 
-							var tasa_ieps = 
+							var id_ieps = Grid['ieps_id'];
+							var tasa_ieps = Grid['ieps_tasa'];
+							var importe_ieps=0;
 							
 							if(parseInt(entry['DatosOC'][0]['proveedortipo_id'])==2){
 								//Proveedor extranjero
 								id_ieps=0;
 								tasa_ieps=0;
+								importe_ieps=0;
 							}
+							
+							importe_ieps = parseFloat(parseFloat(Grid['importe']) * parseFloat(parseFloat(tasa_ieps)/100)).toFixed(4);
 							
 							var valor_pedimento=" ";
 							var tr_prod='';
@@ -1332,7 +1336,7 @@ $(function() {
 								tr_prod += '</td>';
 								
 								tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(0).toFixed(2)+'" style="width:61px; text-align:right;" readOnly="true">';
+									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(importe_ieps).toFixed(2)+'" style="width:61px; text-align:right;" readOnly="true">';
 								tr_prod += '</td>';
 								
 								
