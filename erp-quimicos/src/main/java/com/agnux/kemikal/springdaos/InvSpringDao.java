@@ -1393,11 +1393,14 @@ public class InvSpringDao implements InvInterfaceDao{
             + "(com_orden_compra_detalle.precio_unitario * com_orden_compra_detalle.cantidad) AS importe, "
             + "com_orden_compra_detalle.gral_imp_id AS tipo_impuesto, "
             + "com_orden_compra_detalle.valor_imp, "
-            + "inv_prod_unidades.decimales "
+            + "inv_prod_unidades.decimales, "
+            + "(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.id END) AS ieps_id, "
+            + "(CASE WHEN inv_prod.ieps=0 THEN 0 ELSE gral_ieps.tasa END) AS ieps_tasa "
         + "FROM com_orden_compra_detalle "
         + "LEFT JOIN inv_prod on inv_prod.id=com_orden_compra_detalle.inv_prod_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id=inv_prod.unidad_id "
         + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id=com_orden_compra_detalle.presentacion_id "
+        + "LEFT JOIN gral_ieps ON gral_ieps.id=inv_prod.ieps "
         + "WHERE com_orden_compra_detalle.com_orden_compra_id="+ id_orden_compra + ";";
 
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
@@ -1419,6 +1422,9 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("tipo_impuesto",String.valueOf(rs.getInt("tipo_impuesto")));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getString("valor_imp"),2));
                     row.put("decimales",rs.getString("decimales"));
+                    
+                    row.put("ieps_id",String.valueOf(rs.getInt("ieps_id")));
+                    row.put("ieps_tasa",StringHelper.roundDouble(rs.getString("ieps_tasa"),2));
                     return row;
                 }
             }

@@ -207,7 +207,7 @@ public class GralIepsController {
         }
         
         
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+ieps.toUpperCase()+"___"+descripcion+"___"+tasa;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+ieps.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+tasa;
         
         succes = this.getGralDao().selectFunctionValidateAaplicativo(data_string, app_selected, extra_data_array);
         log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
