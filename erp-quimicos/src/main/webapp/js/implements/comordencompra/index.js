@@ -1178,6 +1178,7 @@ $(function() {
 		var $select_condiciones = $('#forma-comordencompra-window').find('select[name=select_condiciones]');
 		var consigandoA= $('#forma-comordencompra-window').find('input[name=consigandoA]');
 		var $select_via_embarque = $('#forma-comordencompra-window').find('select[name=via_envarque]');
+		var $fecha_entrega = $('#forma-comordencompra-window').find('input[name=fecha_entrega]');
 		
 		var $sku_producto = $('#forma-comordencompra-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-comordencompra-window').find('input[name=nombre_producto]');
@@ -1399,6 +1400,42 @@ $(function() {
 		},"json");//termina llamada json
 		
 		
+		$fecha_entrega.click(function (s){
+			var a=$('div.datepicker');
+			a.css({'z-index':100});
+		});
+		
+		$fecha_entrega.DatePicker({
+			format:'Y-m-d',
+			date: $(this).val(),
+			current: $(this).val(),
+			starts: 1,
+			position: 'bottom',
+			locale: {
+				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+				weekMin: 'se'
+			},
+			onChange: function(formated, dates){
+				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+				$fecha_entrega.val(formated);
+				if (formated.match(patron) ){
+					var valida_fecha=mayor($fecha_entrega.val(),mostrarFecha());
+					
+					if (valida_fecha==true){
+						$fecha_entrega.DatePickerHide();	
+					}else{
+						jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+						$fecha_entrega.val(mostrarFecha());
+					}
+				}
+			}
+		});
+		
+		
 		$tipo_cambio.keypress(function(e){
 			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
@@ -1526,13 +1563,13 @@ $(function() {
 			var $nombre_producto = $('#forma-comordencompra-window').find('input[name=nombre_producto]');
 			var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 			var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
-
+			var $fecha_entrega = $('#forma-comordencompra-window').find('input[name=fecha_entrega]');
+			
 			//buscar producto
 			var $busca_sku = $('#forma-comordencompra-window').find('a[href*=busca_sku]');
 			//href para agregar producto al grid
 			var $agregar_producto = $('#forma-comordencompra-window').find('a[href*=agregar_producto]');
-
-
+			
 			var $descargarpdf = $('#forma-comordencompra-window').find('#descargarpdf');
 			var $cancelar_orden_compra = $('#forma-comordencompra-window').find('#cancelar_orden_compra');
 			var $cancelado = $('#forma-comordencompra-window').find('input[name=cancelado]');
@@ -1670,31 +1707,33 @@ $(function() {
 
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-					$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
-					$id_orden_compra.val(entry['datosOrdenCompra']['0']['id']);
-					$folio.val(entry['datosOrdenCompra']['0']['folio']);
-					$id_proveedor.val(entry['datosOrdenCompra']['0']['proveedor_id']);
-					$no_proveedor.val(entry['datosOrdenCompra']['0']['no_proveedor']);
-					$rfc_proveedor.val(entry['datosOrdenCompra']['0']['rfc']);
-					$razon_proveedor.val(entry['datosOrdenCompra']['0']['razon_social']);
-					$dir_proveedor.val(entry['datosOrdenCompra']['0']['direccion']);
-					$tipo_prov.val(entry['datosOrdenCompra']['0']['prov_tipo_id']);
-					$observaciones.text(entry['datosOrdenCompra']['0']['observaciones']);
-					$grupo.val(entry['datosOrdenCompra']['0']['grupo']);
-					consigandoA.val(entry['datosOrdenCompra']['0']['consignado_a']);
-					$orden_compra.val(entry['datosOrdenCompra']['0']['orden_compra']);
-					$tipo_cambio.val(entry['datosOrdenCompra']['0']['tipo_cambio']);
+					$id_impuesto.val(entry['iva'][0]['id_impuesto']);
+					$valor_impuesto.val(entry['iva'][0]['valor_impuesto']);
+					$id_orden_compra.val(entry['datosOrdenCompra'][0]['id']);
+					$folio.val(entry['datosOrdenCompra'][0]['folio']);
+					$id_proveedor.val(entry['datosOrdenCompra'][0]['proveedor_id']);
+					$no_proveedor.val(entry['datosOrdenCompra'][0]['no_proveedor']);
+					$rfc_proveedor.val(entry['datosOrdenCompra'][0]['rfc']);
+					$razon_proveedor.val(entry['datosOrdenCompra'][0]['razon_social']);
+					$dir_proveedor.val(entry['datosOrdenCompra'][0]['direccion']);
+					$tipo_prov.val(entry['datosOrdenCompra'][0]['prov_tipo_id']);
+					$observaciones.text(entry['datosOrdenCompra'][0]['observaciones']);
+					$grupo.val(entry['datosOrdenCompra'][0]['grupo']);
+					consigandoA.val(entry['datosOrdenCompra'][0]['consignado_a']);
+					$orden_compra.val(entry['datosOrdenCompra'][0]['orden_compra']);
+					$tipo_cambio.val(entry['datosOrdenCompra'][0]['tipo_cambio']);
+					$fecha_entrega.val(entry['datosOrdenCompra'][0]['fecha_entrega']);
+					
 					
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
 					var moneda_hmtl = '';
 					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(moneda['id'] == entry['datosOrdenCompra']['0']['moneda_id']){
+						if(moneda['id'] == entry['datosOrdenCompra'][0]['moneda_id']){
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 							//$select_moneda_original.val(moneda['id']);
 						}else{
-							if(parseInt(entry['datosOrdenCompra']['0']['status'])==0){
+							if(parseInt(entry['datosOrdenCompra'][0]['status'])==0){
 								moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
 							}
 						}
@@ -1706,11 +1745,11 @@ $(function() {
 					$select_condiciones.children().remove();
 					var terminos_html = '';
 					$.each(entry['Condiciones'],function(entryIndex,Condiciones){
-						if(Condiciones['id'] == entry['datosOrdenCompra']['0']['cxp_prov_credias_id']){
+						if(Condiciones['id'] == entry['datosOrdenCompra'][0]['cxp_prov_credias_id']){
 							terminos_html += '<option value="' + Condiciones['id'] + '"  selected="yes">' + Condiciones['descripcion'] + '</option>';
 							//$select_moneda_original.val(moneda['id']);
 						}else{
-							if(parseInt(entry['datosOrdenCompra']['0']['status'])==0){
+							if(parseInt(entry['datosOrdenCompra'][0]['status'])==0){
 								terminos_html += '<option value="' + Condiciones['id'] + '"  >' + Condiciones['descripcion'] + '</option>';
 							}
 						}
@@ -1878,7 +1917,8 @@ $(function() {
 						$tipo_cambio.attr('disabled','-1'); //deshabilitar
 						$orden_compra.attr('disabled','-1'); //deshabilitar
 						//$descargarpdf.attr('disabled','-1'); //deshabilitar
-
+						$fecha_entrega.attr('disabled','-1'); //deshabilitar
+						
 						consigandoA.attr('disabled','-1'); //deshabilitar
 						$select_moneda.attr('disabled','-1'); //deshabilitar
 						$select_via_embarque.attr('disabled','-1'); //deshabilitar
@@ -1899,6 +1939,45 @@ $(function() {
 						$('#forma-comordencompra-window').find('a[href*=busca_sku]').show();
 						$('#forma-comordencompra-window').find('a[href*=agregar_producto]').show();
 						$('#forma-comordencompra-window').find('#submit').show();
+						
+						$fecha_entrega.click(function (s){
+							var a=$('div.datepicker');
+							a.css({'z-index':100});
+						});
+						
+						$fecha_entrega.DatePicker({
+							format:'Y-m-d',
+							date: $fecha_entrega.val(),
+							current: $fecha_entrega.val(),
+							starts: 1,
+							position: 'bottom',
+							locale: {
+								days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+								daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+								daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+								months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+								monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+								weekMin: 'se'
+							},
+							onChange: function(formated, dates){
+								var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+								$fecha_entrega.val(formated);
+								if (formated.match(patron) ){
+									var valida_fecha=mayor($fecha_entrega.val(),mostrarFecha());
+									
+									if (valida_fecha==true){
+										$fecha_entrega.DatePickerHide();	
+									}else{
+										jAlert("Fecha no valida, debe ser mayor a la actual.",'! Atencion');
+										$fecha_entrega.val(mostrarFecha());
+									}
+								}
+							}
+						});
+					
+					
+						
+						
 					}
 					$calcula_totales();//llamada a la funcion que calcula totales
 				});//termina llamada json

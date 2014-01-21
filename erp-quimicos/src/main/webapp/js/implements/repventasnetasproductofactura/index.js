@@ -246,10 +246,21 @@ $(function() {
             'z-index':100
         });
     });
-
-    mostrarFecha($fecha_inicial.val());
-    //mostrarFecha.attr({ 'readOnly':true });
-
+	
+	//Mostrar la fecha actual
+    $fecha_inicial.val(mostrarFecha());
+    
+    
+	$fecha_inicial.val(mostrarFecha());
+	var fragmentoTexto1 = $fecha_inicial.val().split('-')[0];
+	var fragmentoTexto2 = $fecha_inicial.val().split('-')[1];
+	var fragmentoTexto4 = '01';
+	var fechain =  fragmentoTexto1+"-"+fragmentoTexto2+"-"+fragmentoTexto4;
+	
+	//alert(fechain);
+	$fecha_inicial.val(fechain);
+    
+    
     $fecha_final.DatePicker({
         format:'Y-m-d',
         date: $(this).val(),
@@ -313,15 +324,15 @@ $(function() {
     });
 	
 	
+	//Mostrar la fecha actual
+	$fecha_final.val(mostrarFecha());
+	
     $fecha_final.click(function (s){
         var a=$('div.datepicker');
         a.css({
             'z-index':100
         });
     });
-
-
-    mostrarFecha($fecha_final.val());
     
     //buscador de productos
     busca_productos = function($Nombre_Producto){

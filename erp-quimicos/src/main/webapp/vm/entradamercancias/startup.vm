@@ -148,7 +148,7 @@
 									
                                     <div id="tabx-1" class="contenidoPes" >
 											
-										<table border="1" style="margin:0; padding:0;">
+										<table border="0" style="margin:0; padding:0;">
 											<tr>
 												<td valign="top" colspan="3" > 
 													
@@ -353,8 +353,8 @@
 														<tr>
 															<td width="10" ></td>
 															<td width="650" colspan="5" rowspan="6">
-																<div id="div_warning_grid"  style="width:640px; height:90px; display:none;">
-																	<table border="1">
+																<div id="div_warning_grid"  style="width:640px; height:105px; display:none;">
+																	<table border="0">
 																		<tr>
 																			<td width="20"></td>
 																			<td width="310" colspan="2"><div style="color:#d41000;">&nbsp;&nbsp;Datos&nbsp;no&nbsp;validos&nbsp;del&nbsp;listado&nbsp;de&nbsp;productos</div></td>
@@ -368,7 +368,7 @@
 																		</tr>
 																		<tr>
 																			<td colspan="4" style="border: solid 1px #313E74;"> 
-																				<div align="left" style="width:640px; height:70px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
+																				<div align="left" style="width:640px; height:95px; overflow:scroll; overflow-x: auto; overflow-y: auto; color:#d41000;">
 																					<table id="grid_warning" border="0">
 																					<!--aqui va el listado de errores del grid-->
 																					</table>

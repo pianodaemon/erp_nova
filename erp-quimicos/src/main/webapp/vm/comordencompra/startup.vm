@@ -280,7 +280,7 @@
                                                             
                                                             <tr>
                                                                 <td width="10">&nbsp;</td>
-                                                                <td width="80">Consignado a</td>
+                                                                <td width="80">Consignado&nbsp;a</td>
                                                                 <td width="265" colspan="4">
 																	<input type="text" name="consigandoA" style="width:265px;">
                                                                 </td>
@@ -289,9 +289,9 @@
                                                                 <td width="45">Grupo</td>
                                                                 <td width="165" colspan="2"><input type="text" name="grupo" value=""   style="width:165px;"></td>
                                                                 <td width="25"><div class="interrogacion"><img SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_grupo"></div></td>
-                                                                <td width="90"></td>
-                                                                <td width="140"></td>
-                                                                <td width="25"></td>
+                                                                <td width="90">Fecha&nbsp;de&nbsp;entrega</td>
+                                                                <td width="140"><input type="text" name="fecha_entrega" style="width:80px;" readOnly="true"></td>
+                                                                <td width="25"><div class="interrogacion"><img SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fentrega"></div></td>
                                                             </tr>
                                                         </table>
                                                     </td>

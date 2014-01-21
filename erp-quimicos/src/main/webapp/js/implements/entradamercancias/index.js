@@ -801,7 +801,7 @@ $(function() {
 				tr_prod += '</td>';
 				
 				tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-					tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(0).toFixed(2)+'" style="width:61px; text-align:right;" readOnly="true">';
+					tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(0).toFixed(4)+'" style="width:61px; text-align:right;" readOnly="true">';
 				tr_prod += '</td>';
 				
 			tr_prod += '</tr>';
@@ -975,7 +975,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({ id : form_to_show + id_to_show });
 		
-		$('#forma-entradamercancias-window').css({ "margin-left": -375, "margin-top": -230 });
+		$('#forma-entradamercancias-window').css({ "margin-left": -430, "margin-top": -230 });
 		
 		$forma_selected.prependTo('#forma-entradamercancias-window');
 		$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1336,7 +1336,7 @@ $(function() {
 								tr_prod += '</td>';
 								
 								tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(importe_ieps).toFixed(2)+'" style="width:61px; text-align:right;" readOnly="true">';
+									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(importe_ieps).toFixed(4)+'" style="width:61px; text-align:right;" readOnly="true">';
 								tr_prod += '</td>';
 								
 								
@@ -1629,7 +1629,7 @@ $(function() {
 			
 			$(this).modalPanel_Entradamercancias();
 			
-			$('#forma-entradamercancias-window').css({ "margin-left": -375, 	"margin-top": -230 });
+			$('#forma-entradamercancias-window').css({ "margin-left": -430, 	"margin-top": -230 });
 			
 			$forma_selected.prependTo('#forma-entradamercancias-window');
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1875,6 +1875,16 @@ $(function() {
 							var trCount = $("tr", $grid_productos).size();
 							trCount++;
 							
+							var idIeps = prodGrid['ieps_id'];
+							var tasaIeps = prodGrid['valor_ieps'];
+							var importeIeps = prodGrid['importe_ieps'];
+							
+							if(parseInt($campo_tipo_proveedor.val())==2){
+								idIeps=0;
+								tasaIeps=0;
+								importeIeps=0;
+							}
+							
 							var valor_pedimento=" ";
 							var tr_prod='';
 							
@@ -1926,20 +1936,21 @@ $(function() {
 								
 								tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 									tr_prod += '<select name="select_ieps" id="selectIeps" style="width:76px;">';
-									if(parseInt(prodGrid['ieps_id'])<=0){
+									if(parseInt(idIeps)<=0){
 										tr_prod += '<option value="0">[-- --]</option>';
 									}
+									
 									$.each(arrayIeps,function(entryIndex,ieps){
-										if(ieps['id'] == prodGrid['ieps_id']){
+										if(ieps['id'] == idIeps){
 											tr_prod += '<option value="' + ieps['id'] + '"  selected="yes">' + ieps['titulo'] + '</option>';
 										}
 									});
 									tr_prod += '</select>';
-									tr_prod += '<input type="hidden" name="valorieps" id="tIeps" value="' + prodGrid['valor_ieps'] + '">';
+									tr_prod += '<input type="hidden" name="valorieps" id="tIeps" value="' + tasaIeps + '">';
 								tr_prod += '</td>';
 								
 								tr_prod += '<td width="65" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
-									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="0" style="width:61px; text-align:right;" readOnly="true">';
+									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+importeIeps+'" style="width:61px; text-align:right;" readOnly="true">';
 								tr_prod += '</td>';
 								
 								if(prodGrid['pedimento_aduanal']!='' && prodGrid['pedimento_aduanal']!=null){
