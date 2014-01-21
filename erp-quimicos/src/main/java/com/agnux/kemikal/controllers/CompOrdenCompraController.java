@@ -490,6 +490,7 @@ public class CompOrdenCompraController {
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
         HashMap<String, String> datosOrdenCompra = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> conceptosOrdenCompra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
         System.out.println("Generando PDF de Orden Compra");
         
         Integer app_selected = 90; //aplicativo Orden de compra
@@ -548,9 +549,22 @@ public class CompOrdenCompraController {
         //genera nombre del archivo
         String file_name = "ORDENCOM_"+ rfc +"_"+ datosOrdenCompra.get("folio") +".pdf";        
         //ruta de archivo de salida
-        String fileout = file_dir_tmp +"/"+  file_name;        
-        //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente  
-        PdfReporteComOrdenDeCompra x = new PdfReporteComOrdenDeCompra(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
+        String fileout = file_dir_tmp +"/"+  file_name;
+        
+        //Aqui se obtienen los parametros de Compras, nos intersa el tipo de formato para el pdf de la Orden de Compra
+        parametros = this.getComDao().getCom_Parametros(id_empresa, id_sucursal);
+        
+        
+        if (parametros.get("formato_oc").equals("1")){
+            ///nstancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente  
+            PdfReporteComOrdenDeCompra x = new PdfReporteComOrdenDeCompra(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
+        }else{
+            //Instancia a la clase que construye el pdf formato2 de la Orden de Compra
+            
+        }
+        
+        
+
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);

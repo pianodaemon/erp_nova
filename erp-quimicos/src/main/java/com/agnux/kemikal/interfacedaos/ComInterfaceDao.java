@@ -23,6 +23,8 @@ public interface ComInterfaceDao {
     public ArrayList<HashMap<String, String>> getImpuestos();
     public ArrayList<HashMap<String, String>> getMonedas();
     public ArrayList<HashMap<String, String>> getAlmacenes(Integer id_empresa);
+    public HashMap<String, String> getCom_Parametros(Integer id_emp, Integer id_suc);
+    
     
     public ArrayList<HashMap<String, String>> getComOrdenCompra_DatosGrid(Integer id_pedido);
     public ArrayList<HashMap<String, Object>> getComOrdenCompra_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
