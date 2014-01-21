@@ -574,7 +574,7 @@ public class pdfEntradas {
             
             
             //float [] widths = {2f, 5.5f, 3f, 2f, 1.5f, 2f,2f,2f,2f};
-            float [] widths = {2f, 5.5f, 2.5f,3f, 1.5f, 2f,2.5f};
+            float [] widths = {2f, 5.1f, 2.5f,3f, 1.8f, 2f,2.5f, 1.8f};
             PdfPTable table = new PdfPTable(widths);
             PdfPCell cell;
 
@@ -633,27 +633,15 @@ public class pdfEntradas {
             table.addCell(cell);
             
             
-
-            
-            
-            /*
-            cell = new PdfPCell(new Paragraph("SUBT.",smallBoldFont));
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBackgroundColor(BaseColor.BLACK);
-            table.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph("IMP.",smallBoldFont));
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBackgroundColor(BaseColor.BLACK);
-            table.addCell(cell);
-            */
             cell = new PdfPCell(new Paragraph("IMPORTE",smallBoldFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("IEPS",smallBoldFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -681,66 +669,21 @@ public class pdfEntradas {
                 if(map.get("titulo") !=null){
                     String descripcion = map.get("titulo");
                     descripcion =  StringEscapeUtils.unescapeHtml(descripcion);
-                    /*
-                    String[] valor = descripcion.split("::");
-                    if(valor.length > 1){
-                        descripcion = valor[0] + "\nSerie: " + valor[1];
-                    } 
-                     */
-                    //descripcion =  StringEscapeUtils.unescapeHtml(descripcion);
-                    cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(descripcion), smallFont));
-                    cell.setIndent(3);
-                    cell.setUseDescender(true);
-                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    cell.setBorderWidthBottom(a);
-                    cell.setBorderWidthTop(b);
-                    table.addCell(cell);
-                }/*else{
-                    
-                    String datos="";
-                    if(map.get("numero")!=null){
-                        if(map.get("incluye")!=null){
-                            datos = map.get("incluye") +"\n"+"PEDIMENTO: "+map.get("numero")+"\n"+"Fecha: "+map.get("fecha")+"\n"+"Aduana: "+map.get("aduana");
-                            if(map.get("extras")!=null){
-                                datos += "\n" + map.get("extras");}
-                        }
-                        else{
-                            datos = "PEDIMENTO: "+map.get("numero")+"\n"+"Fecha: "+map.get("fecha")+"\n"+"Aduana: "+map.get("aduana");
-                            if(map.get("extras")!=null){
-                                datos += "\n" + map.get("extras");
-                            }
-                        }
-                    }else{
-                        if(map.get("incluye")!=null){
-                           datos = map.get("incluye");
-                           if(map.get("extras")!=null){
-                               datos += "\n" + map.get("extras");
-                           }
-                        }else{
-                            datos = map.get("extras");
-                        }
+                    String etiqueta_ieps="";
+                    if(Integer.parseInt(map.get("ieps_id"))>0){
+                        etiqueta_ieps = map.get("etiqueta_ieps");
                     }
-                    datos = StringEscapeUtils.unescapeHtml(datos);
-                    cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(datos), smallFont));
+                    
+                    //descripcion =  StringEscapeUtils.unescapeHtml(descripcion);
+                    cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(descripcion)+etiqueta_ieps, smallFont));
                     cell.setIndent(3);
                     cell.setUseDescender(true);
                     cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     cell.setBorderWidthBottom(a);
                     cell.setBorderWidthTop(b);
-                    cell.setColspan(2);
                     table.addCell(cell);
                 }
-                */
-                /*
-                //PRESENTACION
-                cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(esteAtributoSeDejoNulo(map.get("presentacion"))), smallFont));
-                cell.setIndent(3);
-                cell.setUseDescender(true);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setBorderWidthBottom(a);
-                cell.setBorderWidthTop(b);
-                table.addCell(cell);
-                */
+                
                 //UNIDAD
                 cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(esteAtributoSeDejoNulo(map.get("unidad"))), smallFont));
                 cell.setIndent(3);
@@ -749,7 +692,7 @@ public class pdfEntradas {
                 cell.setBorderWidthBottom(a);
                 cell.setBorderWidthTop(b);
                 table.addCell(cell);
-
+                
                 //PRESENTACION
                 cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(esteAtributoSeDejoNulo(map.get("presentacion"))), smallFont));
                 cell.setIndent(3);
@@ -803,29 +746,7 @@ public class pdfEntradas {
                     cell.setBorderWidthTop(b);
                     table.addCell(cell);
                 }
-                /*
-                //MONEDA
-                cell = new PdfPCell(new Paragraph("$" +esteAtributoSeDejoNulo(map.get("subtotal")), smallFont));
-                cell.setRightIndent(3);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                cell.setUseDescender(true);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setBorderWidthBottom(a);
-                cell.setBorderWidthTop(b);
-                table.addCell(cell);
                 
-                //MONEDA
-                cell = new PdfPCell(new Paragraph("$" +esteAtributoSeDejoNulo(map.get("montoiva")), smallFont));
-                cell.setRightIndent(3);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                cell.setUseDescender(true);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setBorderWidthBottom(a);
-                cell.setBorderWidthTop(b);
-                table.addCell(cell);
-                */
                 if(map.get("importe")!=null){
                     if(!map.get("importe").equals("0.00")){
                         cell = new PdfPCell(new Paragraph(simbolo_moneda+" " + StringHelper.AgregaComas(map.get("importe")), smallFont));
@@ -859,6 +780,31 @@ public class pdfEntradas {
                     cell.setBorderWidthTop(b);
                     table.addCell(cell);
                 }
+                
+                
+                if(Double.parseDouble(map.get("importe_ieps"))>0){
+                    cell = new PdfPCell(new Paragraph(simbolo_moneda+" " + StringHelper.AgregaComas(StringHelper.roundDouble(map.get("importe_ieps"),2)), smallFont));
+                    cell.setRightIndent(3);
+                    cell.setUseAscender(true);
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setUseDescender(true);
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setBorderWidthBottom(a);
+                    cell.setBorderWidthTop(b);
+                    table.addCell(cell);
+                }else{
+                    cell = new PdfPCell(new Paragraph(" ", smallFont));
+                    cell.setRightIndent(3);
+                    cell.setUseAscender(true);
+                    cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell.setUseDescender(true);
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setBorderWidthBottom(a);
+                    cell.setBorderWidthTop(b);
+                    table.addCell(cell);
+                }
+                
+                
                 //System.out.println("precio_unitario: "+map.get("precio_unitario")+"--cantidad:"+map.get("cantidad")+"--importe:"+map.get("importe"));
                 
                 /*
@@ -877,19 +823,18 @@ public class pdfEntradas {
             //System.out.println("conceptos.size:"+conceptos.size());
             
             cell = new PdfPCell(new Paragraph(" ",largeFont));
-            cell.setColspan(7);
+            cell.setColspan(8);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthBottom((float) 0.5);
-            cell.setBorderWidthBottom(0);
             cell.setFixedHeight(20);
             table.addCell(cell);
             
-            
+            /*
             cell = new PdfPCell(new Paragraph("", smallBoldFontBlack));
-            cell.setColspan(7);
+            cell.setColspan(8);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthTop(0);
@@ -900,42 +845,8 @@ public class pdfEntradas {
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             cell.setBorderWidthTop((float) 0.5);
             table.addCell(cell);
+             */
             
-            
-            
-            /*
-            BigInteger num = new BigInteger(total.split("\\.")[0]);
-            n2t cal = new n2t();
-            String centavos = total.substring(total.indexOf(".")+1);
-            String numero = cal.convertirLetras(num);
-            String numeroMay = StringHelper.capitalizaString(numero);
-            
-            String denominacion = "";
-            String denom = "";
-            
-            if(moneda_id.equals("1")){
-                denominacion = "PESOS";
-                denom = "M.N.";
-            }
-            if(moneda_id.equals("2")){
-                denominacion = "DOLARES";
-                denom = "USCY";
-            }
-            cell = new PdfPCell(new Paragraph("TOTAL CON LETRA\n" + numeroMay + " " + denominacion + " " +centavos+"/100 "+ denom,largeFont));
-            cell.setRowspan(7);
-            cell.setColspan(5);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthTop((float) 0.5);
-            table.addCell(cell);
-            
-            /*
-            int f = 2;
-            if(descuento.equals("0.00")){
-                f=3;
-            }
-            */
             
             BigInteger num = new BigInteger(datos_entrada.get("total").split("\\.")[0]);
             n2t cal = new n2t();
@@ -946,7 +857,7 @@ public class pdfEntradas {
             //System.out.println("numero: "+numero);
             //convertir a mayuscula la primera letra de la cadena
             String numeroMay = numero.substring(0, 1).toUpperCase() + numero.substring(1, numero.length());
-
+            
             //System.out.append("num:"+num);
             //System.out.append("centavos:"+centavos);
             
@@ -957,7 +868,7 @@ public class pdfEntradas {
             
             if(Double.parseDouble(datos_entrada.get("flete")) > 0){
                 cell = new PdfPCell(new Paragraph("FLETE: "+simbolo_moneda, smallBoldFontBlack));
-                cell.setColspan(6);
+                cell.setColspan(7);
                 cell.setBorderWidthRight(0);
                 cell.setBorderWidthLeft(0);
                 cell.setBorderWidthTop(0);
@@ -982,8 +893,9 @@ public class pdfEntradas {
                 table.addCell(cell);
             }
             
+            
             cell = new PdfPCell(new Paragraph("SUB-TOTAL: "+simbolo_moneda, smallBoldFontBlack));
-            cell.setColspan(6);
+            cell.setColspan(7);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthTop(0);
@@ -994,6 +906,7 @@ public class pdfEntradas {
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             //cell.setBorderWidthTop((float) 0.5);
             table.addCell(cell);
+            
             
             cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("subtotal")), smallBoldFontBlack));
             cell.setBorderWidthRight(0);
@@ -1008,8 +921,42 @@ public class pdfEntradas {
             table.addCell(cell);
             
             
+            
+            
+            if(Double.parseDouble(datos_entrada.get("monto_ieps")) > 0){
+                cell = new PdfPCell(new Paragraph("IEPS: "+simbolo_moneda,smallBoldFontBlack));
+                cell.setColspan(7);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setMinimumHeight(17);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                //cell.setBackgroundColor(BaseColor.BLACK);
+                table.addCell(cell);
+
+
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("monto_ieps")), smallBoldFontBlack));
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setMinimumHeight(17);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);
+            }
+            
+            
+            
+            
+            
+            
             cell = new PdfPCell(new Paragraph("IVA: "+simbolo_moneda,smallBoldFontBlack));
-            cell.setColspan(6);
+            cell.setColspan(7);
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthTop(0);
@@ -1036,7 +983,7 @@ public class pdfEntradas {
             
             if(Double.parseDouble(datos_entrada.get("retencion")) > 0){
                 cell = new PdfPCell(new Paragraph("RETENCION: "+simbolo_moneda,smallBoldFontBlack));
-                cell.setColspan(6);
+                cell.setColspan(7);
                 cell.setBorderWidthRight(0);
                 cell.setBorderWidthLeft(0);
                 cell.setBorderWidthTop(0);
@@ -1063,7 +1010,7 @@ public class pdfEntradas {
             
             //agrega total con letras
             cell = new PdfPCell(new Paragraph(numeroMay.toUpperCase() + " " + denominacion.toUpperCase() + " " +centavos+"/100 "+ denom,smallFont));
-            cell.setColspan(4);
+            cell.setColspan(5);
             cell.setBorderWidthRight(1);
             cell.setBorderWidthLeft(1);
             cell.setBorderWidthTop(1);

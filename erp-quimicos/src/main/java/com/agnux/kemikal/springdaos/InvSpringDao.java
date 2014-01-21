@@ -1155,12 +1155,13 @@ public class InvSpringDao implements InvInterfaceDao{
                                     + "com_fac.subtotal, "
                                     + "com_fac.iva, "
                                     + "com_fac.retencion, "
-                                    + "com_fac.total "
+                                    + "com_fac.total, "
+                                    + "com_fac.monto_ieps "
                             +"FROM com_fac "
                             + "LEFT JOIN gral_mon ON gral_mon.id=com_fac.moneda_id "
                             +"where com_fac.id="+ id + ";";
 
-        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        //System.out.println("sql_to_query: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1191,6 +1192,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("iva",StringHelper.roundDouble(rs.getString("iva"),2));
                     row.put("retencion",StringHelper.roundDouble(rs.getString("retencion"),2));
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getString("monto_ieps"),2));
                     return row;
                 }
             }
@@ -1278,7 +1280,8 @@ public class InvSpringDao implements InvInterfaceDao{
         + "SELECT "
                 + "com_fac_detalle.producto_id, "
                 + "inv_prod.sku, "
-                + "inv_prod.descripcion as titulo, "
+                + "inv_prod.descripcion AS titulo, "
+                + "(CASE WHEN com_fac_detalle.gral_ieps_id>0 THEN ' - IEPS '||(round((com_fac_detalle.valor_ieps * 100::double precision)::numeric,2))||'%' ELSE '' END) AS etiqueta_ieps,"
                 + "inv_prod_unidades.titulo as unidad, "
                 + "inv_prod_presentaciones.id as id_presentacion, "
                 + "inv_prod_presentaciones.titulo as presentacion, "
@@ -1289,7 +1292,8 @@ public class InvSpringDao implements InvInterfaceDao{
                 + "com_fac_detalle.valor_imp, "
                 + "inv_prod_unidades.decimales,"
                 + "com_fac_detalle.gral_ieps_id,"
-                + "com_fac_detalle.valor_ieps "
+                + "com_fac_detalle.valor_ieps,"
+                + "(CASE WHEN com_fac_detalle.gral_ieps_id>0 THEN ((com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) * com_fac_detalle.valor_ieps) ELSE 0 END) AS importe_ieps "
         + "FROM com_fac_detalle "
         + "LEFT JOIN inv_prod on inv_prod.id = com_fac_detalle.producto_id "
         + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id "
@@ -1317,6 +1321,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("decimales",rs.getString("decimales"));
                     row.put("ieps_id",rs.getString("gral_ieps_id"));
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getString("importe_ieps"),4));
+                    row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
                     return row;
                 }
             }

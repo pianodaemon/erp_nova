@@ -397,6 +397,8 @@ public class CompOrdenCompraController {
             @RequestParam(value="subtotal", required=true) String subtotal,
             @RequestParam(value="impuesto", required=true) String impuesto,
             @RequestParam(value="total", required=true) String total,
+            @RequestParam(value="fecha_entrega", required=true) String fecha_entrega,
+            
             @RequestParam(value="accion_proceso", required=true) String accion_proceso,
             @RequestParam(value="eliminado", required=false) String[] eliminado,
             @RequestParam(value="iddetalle", required=false) String[] iddetalle,
@@ -451,8 +453,8 @@ public class CompOrdenCompraController {
                     grupo +"___"+
                     select_condiciones+"___"+
                     consigandoA+"___"+
-                    tipo_envarque_id;
-            
+                    tipo_envarque_id+"___"+
+                    fecha_entrega;
             
             //System.out.println("data_string: "+data_string);
             

@@ -447,6 +447,10 @@ public class EntradamercanciasController {
             @RequestParam(value="valorimp", required=true) String[] valor_imp,
             @RequestParam(value="id_pres", required=true) String[] id_pres,
             @RequestParam(value="eliminado", required=true) String[] eliminado,
+            
+            @RequestParam(value="select_ieps", required=true) String[] id_ieps,
+            @RequestParam(value="valorieps", required=true) String[] tasa_eps,
+            
             //@RequestParam(value="lote", required=true) String[] lote,
             //@RequestParam(value="pedimento", required=true) String[] pedimento,
             //@RequestParam(value="caducidad", required=true) String[] caducidad,
@@ -471,7 +475,7 @@ public class EntradamercanciasController {
                     if(Integer.parseInt(eliminado[i]) != 0){
                         no_partida++;//si no esta eliminado incrementa el contador de partidas
                     }
-                    arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+costo[i]+"___"+id_prod_grid[i]+"___"+impuesto[i]+"___"+valor_imp[i]+"___"+id_pres[i]+"___"+eliminado[i]+"'";
+                    arreglo[i]= "'"+no_partida+"___"+cantidad[i]+"___"+costo[i]+"___"+id_prod_grid[i]+"___"+impuesto[i]+"___"+valor_imp[i]+"___"+id_pres[i]+"___"+eliminado[i]+"___"+id_ieps[i]+"___"+tasa_eps[i]+"'";
                 }
                 //serializar el arreglo
                 extra_data_array = StringUtils.join(arreglo, ",");
@@ -603,6 +607,7 @@ public class EntradamercanciasController {
         datos_entrada.put("iva", datosEntrada.get(0).get("iva"));
         datos_entrada.put("retencion", datosEntrada.get(0).get("retencion"));
         datos_entrada.put("total", datosEntrada.get(0).get("total"));
+        datos_entrada.put("monto_ieps", datosEntrada.get(0).get("monto_ieps"));
         datos_entrada.put("moneda_id", datosEntrada.get(0).get("moneda_id"));
         datos_entrada.put("moneda", datosEntrada.get(0).get("moneda"));
         datos_entrada.put("moneda_abr", datosEntrada.get(0).get("moneda_abr"));

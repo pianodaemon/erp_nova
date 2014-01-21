@@ -306,7 +306,8 @@ public class ComSpringDao  implements ComInterfaceDao {
             + "com_orden_compra.status,"
             + "com_orden_compra.subtotal,"
             + "com_orden_compra.impuesto,"
-            + "com_orden_compra.total "
+            + "com_orden_compra.total,"
+            + "(CASE WHEN com_orden_compra.fecha_entrega IS NULL THEN '' ELSE to_char(com_orden_compra.fecha_entrega, 'yyyy-mm-dd') END) AS fecha_entrega "
         + "from com_orden_compra "
         + "join cxp_prov on cxp_prov.id=com_orden_compra.proveedor_id "
         + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
@@ -346,6 +347,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
+                    row.put("fecha_entrega",rs.getString("fecha_entrega"));
                     return row;
                 }
             }
