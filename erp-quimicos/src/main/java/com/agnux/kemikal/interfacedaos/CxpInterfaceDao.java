@@ -26,6 +26,7 @@ public interface CxpInterfaceDao {
     public ArrayList<HashMap<String, String>> getValoriva(Integer id_sucursal);
     public ArrayList<HashMap<String, String>> getTasaFletes();
     public ArrayList<HashMap<String, String>> getFleteras(Integer id_empresa, Integer id_sucursal);
+    public ArrayList<HashMap<String, String>> getIeps(Integer idEmp, Integer idSuc);
     
     //catalogo de proveedores
     public ArrayList<HashMap<String, Object>> getProveedor_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);

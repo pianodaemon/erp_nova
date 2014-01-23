@@ -1346,17 +1346,21 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     @Override
     public ArrayList<HashMap<String, String>> getProvFacturas_DatosGrid(Integer id) {
-                String sql_to_query = "SELECT codigo_producto, "
-                                            + "descripcion, "
-                                            + "unidad_medida, "
-                                            + "presentacion, "
-                                            + "cantidad, "
-                                            + "costo_unitario, "
-                                            + "(cantidad * costo_unitario) AS importe, "
-                                            + "gral_imp_id, "
-                                            + "valor_imp "
-                                    + "FROM cxp_facturas_detalle "
-                                    + "WHERE cxp_facturas_id="+ id + ";";
+        String sql_to_query = ""
+        + "SELECT codigo_producto, "
+            + "descripcion, "
+            + "unidad_medida, "
+            + "presentacion, "
+            + "cantidad, "
+            + "costo_unitario, "
+            + "(cantidad * costo_unitario) AS importe, "
+            + "gral_imp_id, "
+            + "valor_imp, "
+            + "gral_ieps_id,"
+            + "valor_ieps,"
+            + "(CASE WHEN gral_ieps_id>0 THEN ((costo_unitario * cantidad) * valor_ieps) ELSE 0 END) AS importe_ieps "
+        + "FROM cxp_facturas_detalle "
+        + "WHERE cxp_facturas_id="+ id + " ORDER BY id;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1374,6 +1378,9 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo_unitario"),2));
                     row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
                     row.put("valor_imp",StringHelper.roundDouble( rs.getString("valor_imp"),2));
+                    row.put("ieps_id",rs.getString("gral_ieps_id"));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),4));
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getString("importe_ieps"),4));
                     return row;
                 }
             }
@@ -1503,24 +1510,27 @@ public class CxpSpringDao implements CxpInterfaceDao{
     
     
     
-    //lista de productos de la remision
+    //Lista de productos de la remision
     @Override
     public ArrayList<HashMap<String, String>> getProvFacturas_DatosGridRemision(Integer id) {
-                String sql_to_query = ""
-                        + "SELECT inv_prod.sku AS codigo_producto, "
-                                + "inv_prod.descripcion, "
-                                + "inv_prod_unidades.titulo AS unidad_medida, "
-                                + "inv_prod_presentaciones.titulo AS presentacion, "
-                                + "com_fac_detalle.cantidad, "
-                                + "com_fac_detalle.costo_unitario, "
-                                + "(com_fac_detalle.cantidad * com_fac_detalle.costo_unitario) AS importe, "
-                                + "com_fac_detalle.tipo_de_impuesto_sobre_partida AS tipo_impuesto, "
-                                + "com_fac_detalle.valor_imp "
-                        + "FROM com_fac_detalle  "
-                        + "LEFT JOIN inv_prod ON inv_prod.id=com_fac_detalle.producto_id "
-                        + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
-                        + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=com_fac_detalle.presentacion_id "
-                        + "WHERE com_fac_detalle.com_fac_id="+ id + ";";
+        String sql_to_query = ""
+        + "SELECT inv_prod.sku AS codigo_producto, "
+                + "inv_prod.descripcion, "
+                + "inv_prod_unidades.titulo AS unidad_medida, "
+                + "inv_prod_presentaciones.titulo AS presentacion, "
+                + "com_fac_detalle.cantidad, "
+                + "com_fac_detalle.costo_unitario, "
+                + "(com_fac_detalle.cantidad * com_fac_detalle.costo_unitario) AS importe, "
+                + "com_fac_detalle.tipo_de_impuesto_sobre_partida AS tipo_impuesto, "
+                + "com_fac_detalle.valor_imp, "
+                + "com_fac_detalle.gral_ieps_id,"
+                + "com_fac_detalle.valor_ieps,"
+                + "(CASE WHEN com_fac_detalle.gral_ieps_id>0 THEN ((com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) * com_fac_detalle.valor_ieps) ELSE 0 END) AS importe_ieps "
+        + "FROM com_fac_detalle  "
+        + "LEFT JOIN inv_prod ON inv_prod.id=com_fac_detalle.producto_id "
+        + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+        + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=com_fac_detalle.presentacion_id "
+        + "WHERE com_fac_detalle.com_fac_id="+ id + " ORDER BY com_fac_detalle.id;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_entrada = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
@@ -1538,6 +1548,10 @@ public class CxpSpringDao implements CxpInterfaceDao{
                     row.put("costo_unitario",StringHelper.roundDouble(rs.getString("costo_unitario"),2));
                     row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getString("valor_imp"),2));
+                    
+                    row.put("ieps_id",rs.getString("gral_ieps_id"));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),4));
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getString("importe_ieps"),4));
                     
                     return row;
                 }
@@ -3130,5 +3144,35 @@ public class CxpSpringDao implements CxpInterfaceDao{
         return hm;
     }
     
+    
+
+    //Obtiene todos los impuestos del ieps(Impuesto Especial sobre Productos y Servicios)
+    @Override
+    public ArrayList<HashMap<String, String>> getIeps(Integer idEmp, Integer idSuc) {
+        String sql_to_query="";
+        if(idSuc>0){
+            //Filtrar por sucursal
+            sql_to_query = "SELECT id, titulo, tasa FROM gral_ieps  WHERE borrado_logico=false AND gral_emp_id="+idEmp+" AND gral_suc_id="+idSuc+";";
+        }else{
+            //No filtrar por sucursal
+            sql_to_query = "SELECT id, titulo, tasa FROM gral_ieps  WHERE borrado_logico=false AND gral_emp_id="+idEmp+";";
+        }
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_ieps = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    return row;
+                }
+            }
+        );
+        return hm_ieps;
+    }
     
 }

@@ -63,8 +63,8 @@ public class TesConController {
         
         infoConstruccionTabla.put("id", "Acciones:70");
         infoConstruccionTabla.put("titulo", "Concepto:160");
-        infoConstruccionTabla.put("descripcion", "Descripcion:200");
-        infoConstruccionTabla.put("tipo", "tipo:100");
+        infoConstruccionTabla.put("descripcion", "Descripci&oacute;n:200");
+        infoConstruccionTabla.put("tipo", "Tipo:100");
         
         ModelAndView x = new ModelAndView("tescon/startup", "title", "Cat&aacute;logo de Conceptos Bancarios");
         

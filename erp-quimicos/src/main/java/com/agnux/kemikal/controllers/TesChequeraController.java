@@ -71,10 +71,10 @@ public class TesChequeraController {
         
         infoConstruccionTabla.put("id", "Acciones:70");
         infoConstruccionTabla.put("chequera", "Chequera:160");
-        infoConstruccionTabla.put("moneda", "MOneda:50");
+        infoConstruccionTabla.put("moneda", "Moneda:60");
         infoConstruccionTabla.put("banco", "Banco:200");
-        infoConstruccionTabla.put("nombre_sucursal", "Nom.Sucursal:200");
-        infoConstruccionTabla.put("numero_sucursal", "Num.Sucursal:200");
+        infoConstruccionTabla.put("nombre_sucursal", "Nombre&nbsp;Sucursal:200");
+        infoConstruccionTabla.put("numero_sucursal", "Num.&nbsp;Sucursal:120");
         //infoConstruccionTabla.put("clabe", "CLABE:200");
         
         ModelAndView x = new ModelAndView("teschequera/startup", "title", "Cat&aacute;logo de chequera");

@@ -175,7 +175,7 @@ public class ProvFacturasController {
         ArrayList<HashMap<String, String>> datosGrid = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> fleteras = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> diasCredito = new ArrayList<HashMap<String, String>>();
-        
+        ArrayList<HashMap<String, String>> ieps = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         
         //decodificar id de usuario
@@ -197,6 +197,7 @@ public class ProvFacturasController {
         tasaFletes = this.getCxpDao().getTasaFletes();
         fleteras = this.getCxpDao().getFleteras(id_empresa,id_sucursal);
         diasCredito = this.getCxpDao().getProvFacturas_DiasCredito();
+        ieps = this.getCxpDao().getIeps(id_empresa, 0);
         
         jsonretorno.put("datosFactura", datosFactura);
         jsonretorno.put("datosGrid", datosGrid);
@@ -206,6 +207,7 @@ public class ProvFacturasController {
         jsonretorno.put("tasaFletes", tasaFletes);
         jsonretorno.put("Fleteras", fleteras);
         jsonretorno.put("DiasCredito", diasCredito);
+        jsonretorno.put("Ieps", ieps);
         
         return jsonretorno;
     }
@@ -366,6 +368,8 @@ public class ProvFacturasController {
             @RequestParam(value="impuesto", required=true) String[] impuesto_id,
             @RequestParam(value="eliminado", required=true) String[] eliminado,
             @RequestParam(value="valorimp", required=true) String[] valor_imp,
+            @RequestParam(value="select_ieps", required=true) String[] ieps_id,
+            @RequestParam(value="valorieps", required=true) String[] tasa_ieps,
             @ModelAttribute("user") UserSessionData user,
             Model model
             ) {
@@ -383,7 +387,7 @@ public class ProvFacturasController {
             
             if(codigo_producto.length > 0){
                 for(int i=0; i<codigo_producto.length; i++) { 
-                    arreglo[i]= "'"+codigo_producto[i].toUpperCase()+"___"+descripcion_producto[i].toUpperCase()+"___"+unidad[i].toUpperCase()+"___"+presentacion[i].toUpperCase()+"___"+cantidad[i]+"___"+costo[i]+"___"+impuesto_id[i]+"___"+valor_imp[i]+"___"+eliminado[i]+"'";
+                    arreglo[i]= "'"+codigo_producto[i].toUpperCase()+"___"+descripcion_producto[i].toUpperCase()+"___"+unidad[i].toUpperCase()+"___"+presentacion[i].toUpperCase()+"___"+cantidad[i]+"___"+costo[i]+"___"+impuesto_id[i]+"___"+valor_imp[i]+"___"+eliminado[i]+"___"+ieps_id[i]+"___"+tasa_ieps[i]+"'";
                 }
                 //serializar el arreglo
                 extra_data_array = StringUtils.join(arreglo, ",");
