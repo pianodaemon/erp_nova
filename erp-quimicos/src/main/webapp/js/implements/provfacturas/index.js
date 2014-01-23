@@ -38,6 +38,9 @@ $(function() {
 	
 	
 	var tiposIva = new Array(); //este arreglo carga los select del grid cada que se agrega un nuevo producto
+	//Este arreglo almacena los diferentes valores para el IEPS
+	var arrayIeps = new Array(); 
+	
 	
 	$buscar.mouseover(function(){
 		$(this).removeClass("onmouseOutBuscar").addClass("onmouseOverBuscar");
@@ -649,6 +652,10 @@ $(function() {
 						tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 							
 							tr_prod += '<SELECT name="impuesto" id="imp" style="width:80px;">';
+							if(parseInt(prodGrid['tipo_impuesto'])<=0){
+								tr_prod += '<option value="0" selected="yes">[-- --]</option>';
+							}
+							
 							//aqui se carga el select con los tipos de iva
 							$.each(tiposIva,function(entryIndex,tipos){
 								if(tipos['id'] == prodGrid['tipo_impuesto']){
@@ -662,6 +669,27 @@ $(function() {
 							tr_prod += '<input type="hidden" name="valorimp" id="v_imp" value="0">';
 							tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
 						tr_prod += '</td>';
+						
+						
+						tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+							tr_prod += '<select name="select_ieps" id="selectIeps" style="width:76px;">';
+							
+							if(parseInt(prodGrid['ieps_id'])<=0){
+								tr_prod += '<option value="0" selected="yes">[-- --]</option>';
+							}
+							$.each(arrayIeps,function(entryIndex,ieps){
+								if(parseInt(prodGrid['ieps_id'])==parseInt(ieps['id'])){
+									tr_prod += '<option value="' + ieps['id'] +'" selected="yes">' + ieps['titulo'] + '</option>';
+								}
+							});
+							tr_prod += '</select>';
+							tr_prod += '<input type="hidden" name="valorieps" id="tIeps" value="'+parseFloat(prodGrid['valor_ieps']).toFixed(4)+'">';
+						tr_prod += '</td>';
+						
+						tr_prod += '<td width="84" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+							tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(prodGrid['importe_ieps']).toFixed(4)+'" style="width:80px; text-align:right;" readOnly="true">';
+						tr_prod += '</td>';
+						
 					tr_prod += '</tr>';
 					$grid_productos.append(tr_prod);
 					
@@ -727,15 +755,16 @@ $(function() {
 					
 					//recalcula importe al perder enfoque el campo costo
 					$grid_productos.find('input[name=costo]').blur(function(){
-						if ($(this).val() == ''  || $(this).val() == null){
+						if ($(this).val().trim()==''  || $(this).val() == null){
 							$(this).val(' ');
 						}
 						
-						if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
-						{	//calcula el importe
-							$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val()));
-							//redondea el importe en dos decimales
-							$(this).parent().parent().find('#import').val(parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
+						if( $(this).val().trim()!='' && $(this).parent().parent().find('#cant').val().trim()!='' ){
+							//Calcular y redondear el Importe
+							$(this).parent().parent().find('#import').val( parseFloat(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val())).toFixed(4) );
+							
+							//Calcular y redondear el importe del IEPS
+							$(this).parent().parent().find('#import_ieps').val(parseFloat( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat($(this).parent().parent().find('#tIeps').val()) ).toFixed(4));
 						}else{
 							$(this).parent().parent().find('#import').val('');
 						}
@@ -754,11 +783,12 @@ $(function() {
 						if ($(this).val() == ''  || $(this).val() == null){
 							$(this).val(' ');
 						}
-						if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
-						{	//calcula el importe
-							$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
-							//redondea el importe en dos decimales
-							$(this).parent().parent().find('#import').val(parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
+						if( ($(this).val().trim()!='') && ($(this).parent().parent().find('#cost').val().trim()!='') ){	
+							//Calcular y redondear el Importe
+							$(this).parent().parent().find('#import').val(parseFloat(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val())).toFixed(4));
+							
+							//Calcular y redondear el importe del IEPS
+							$imprteIepsPartida.val(parseFloat( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat($(this).parent().parent().find('#tIeps').val()) ).toFixed(4));
 						}else{
 							$(this).parent().parent().find('#import').val('');
 						}
@@ -800,7 +830,6 @@ $(function() {
 					
 					//seleccionar tipo de  impuesto
 					$grid_productos.find('select[name=impuesto]').change(function(){
-						
 						var valorImpuesto=0;
 						var id_ivatipo = $(this).val();
 						$.each(tiposIva,function(entryIndex,tipos){
@@ -812,6 +841,28 @@ $(function() {
 								
 						$calcula_totales();//llamada a la funcion que calcula totales
 					});
+					
+					
+					//Seleccionar tipo de  impuesto IEPS
+					$grid_productos.find('select[name=select_ieps]').change(function(){
+						var valorIeps=0;
+						var id_ieps = $(this).val();
+						$.each(arrayIeps,function(entryIndex,ieps){
+							valorIeps=0;
+							if(parseInt(ieps['id'])==parseInt(id_ieps)){
+								if(parseFloat(ieps['tasa'])>0){
+									valorIeps = parseFloat(ieps['tasa'])/100;
+								}
+							}
+						});
+						$(this).parent().find('input[name=valorieps]').val(valorIeps);
+						
+						//Calcular y redondear el importe del IEPS
+						$(this).parent().parent().find('#import_ieps').val(parseFloat( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat($(this).parent().parent().find('#tIeps').val()) ).toFixed(4));
+						
+						$calcula_totales();//llamada a la funcion que calcula totales
+					});
+		
 					
 				});
 				$campo_flete.val(parseFloat( entry['datosRemision']['0']['flete']).toFixed(2));
@@ -869,6 +920,21 @@ $(function() {
 				tr_prod += '<input type="hidden" name="valorimp" id="v_imp" value="0">';
 				tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
 			tr_prod += '</td>';
+			
+			tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+				tr_prod += '<select name="select_ieps" id="selectIeps" style="width:76px;">';
+				tr_prod += '<option value="0" selected="yes">[-- --]</option>';
+				$.each(arrayIeps,function(entryIndex,ieps){
+					tr_prod += '<option value="' + ieps['id'] + '">' + ieps['titulo'] + '</option>';
+				});
+				tr_prod += '</select>';
+				tr_prod += '<input type="hidden" name="valorieps" id="tIeps" value="'+parseFloat(0).toFixed(2)+'">';
+			tr_prod += '</td>';
+			
+			tr_prod += '<td width="84" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+				tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(0).toFixed(4)+'" style="width:80px; text-align:right;" readOnly="true">';
+			tr_prod += '</td>';
+			
 		tr_prod += '</tr>';
 		$grid_productos.append(tr_prod);
 		
@@ -938,11 +1004,12 @@ $(function() {
 				$(this).val(' ');
 			}
 			
-			if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
-			{	//calcula el importe
-				$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val()));
-				//redondea el importe en dos decimales
-				$(this).parent().parent().find('#import').val(parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
+			if( $(this).val().trim()!='' && $(this).parent().parent().find('#cant').val().trim()!='' ){
+				//Calcular y redondear el importe
+				$(this).parent().parent().find('#import').val( parseFloat(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val())).toFixed(4) );
+				
+				//Calcular y redondear el importe del IEPS
+				$(this).parent().parent().find('#import_ieps').val(parseFloat( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat($(this).parent().parent().find('#tIeps').val()) ).toFixed(4));
 			}else{
 				$(this).parent().parent().find('#import').val('');
 			}
@@ -958,16 +1025,23 @@ $(function() {
 		
 		//recalcula importe al perder enfoque el campo cantidad
 		$grid_productos.find('input[name=cantidad]').blur(function(){
-			if ($(this).val() == ''  || $(this).val() == null){
+			var $costoUniarioPartida = $(this).parent().parent().find('#cost');
+			var $importePartida = $(this).parent().parent().find('#import');
+			var $imprteIepsPartida = $(this).parent().parent().find('#import_ieps');
+			var $tasaIepsPartida = $(this).parent().parent().find('#tIeps');
+			
+			if ($(this).val().trim() == ''  || $(this).val() == null){
 				$(this).val(' ');
 			}
-			if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
-			{	//calcula el importe
-				$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
-				//redondea el importe en dos decimales
-				$(this).parent().parent().find('#import').val(parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
+			if( ($(this).val().trim()!='') && ($(this).parent().parent().find('#cost').val().trim()!='') ){	
+				//Calcular y redondear el importe
+				$importePartida.val( parseFloat(parseFloat($(this).val()) * parseFloat($costoUniarioPartida.val())).toFixed(4) );
+				
+				//Calcular y redondear el importe del IEPS
+				$imprteIepsPartida.val(parseFloat( parseFloat($importePartida.val()) * parseFloat($tasaIepsPartida.val()) ).toFixed(4));
+				
 			}else{
-				$(this).parent().parent().find('#import').val('');
+				$importePartida.val('');
 			}
 			$calcula_totales();//llamada a la funcion que calcula totales
 		});
@@ -1005,7 +1079,7 @@ $(function() {
 			$calcula_totales();//llamada a la funcion que calcula totales
 		});
 		
-		//seleccionar tipo de  impuesto
+		//Seleccionar tipo de  impuesto IVA
 		$grid_productos.find('select[name=impuesto]').change(function(){
 			var valorImpuesto=0;
 			var id_ivatipo = $(this).val();
@@ -1015,7 +1089,28 @@ $(function() {
 				}
 			});
 			$(this).parent().find('input[name=valorimp]').val(valorImpuesto);
-						
+			
+			$calcula_totales();//llamada a la funcion que calcula totales
+		});
+		
+		
+		//Seleccionar tipo de  impuesto IEPS
+		$grid_productos.find('select[name=select_ieps]').change(function(){
+			var valorIeps=0;
+			var id_ieps = $(this).val();
+			$.each(arrayIeps,function(entryIndex,ieps){
+				valorIeps=0;
+				if(parseInt(ieps['id'])==parseInt(id_ieps)){
+					if(parseFloat(ieps['tasa'])>0){
+						valorIeps = parseFloat(ieps['tasa'])/100;
+					}
+				}
+			});
+			$(this).parent().find('input[name=valorieps]').val(valorIeps);
+			
+			//Calcular y redondear el importe del IEPS
+			$(this).parent().parent().find('#import_ieps').val(parseFloat( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat($(this).parent().parent().find('#tIeps').val()) ).toFixed(4));
+			
 			$calcula_totales();//llamada a la funcion que calcula totales
 		});
 		
@@ -1031,6 +1126,7 @@ $(function() {
 		var $monto_iva_flete = $('#forma-provfacturas-window').find('input[name=iva_flete]');
 		var $tasa_fletes = $('#forma-provfacturas-window').find('input[name=tasafletes]');
 		var $campo_subtotal = $('#forma-provfacturas-window').find('input[name=subtotal]');
+		var $campo_ieps = $('#forma-provfacturas-window').find('input[name=total_ieps]');
 		//var $campo_descuento = $('#forma-provfacturas-window').find('input[name=descuento]');
 		var $campo_impuesto = $('#forma-provfacturas-window').find('input[name=totimpuesto]');
 		var $retencion = $('#forma-provfacturas-window').find('input[name=retencion]');
@@ -1042,10 +1138,11 @@ $(function() {
 		var impuesto = 0.00;
 		var partida=0;
 		var retencionfletes=0;
+		var sumaImporteIeps=0;
 		
 		var $grid_productos = $('#forma-provfacturas-window').find('#grid_productos');
 		$grid_productos.find('tr').each(function (index){
-			if(($(this).find('#cost').val() != ' ') && ($(this).find('#cant').val() != ' ')){
+			if(($(this).find('#cost').val().trim()!='') && ($(this).find('#cant').val().trim()!='')){
 				var id_ivatipo = $(this).find('#imp').val();
 				var valorImpuesto = 0;
 				//alert(id_ivatipo);
@@ -1057,13 +1154,13 @@ $(function() {
 					}
 				});
 				
-				if($(this).find('#import').val()!=''){
+				if($(this).find('#import').val().trim()!=''){
 					//Calcula total impuesto del producto actual
-					$(this).find('#totimp').val(parseFloat($(this).find('#import').val()) * parseFloat(valorImpuesto));
-					//$(this).find('#spantotimp').text($(this).find('#totimp').val());
+					$(this).find('#totimp').val(parseFloat(parseFloat($(this).find('#import').val()) + parseFloat($(this).find('#import_ieps').val())) * parseFloat(valorImpuesto));
 				}
 				
 				sumaImporte = parseFloat(sumaImporte) + parseFloat($(this).find('#import').val());
+				sumaImporteIeps = parseFloat(sumaImporteIeps) + parseFloat($(this).find('#import_ieps').val());
 				sumaImpuesto = parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
 			}
 		});
@@ -1089,10 +1186,11 @@ $(function() {
 		
 		//se resta la retencion de fletes
 		//calcula el total
-		sumaTotal = parseFloat(sumaImporte) + parseFloat(sumaImpuesto) - parseFloat(retencionfletes);
+		sumaTotal = parseFloat(sumaImporte) + parseFloat(sumaImporteIeps) + parseFloat(sumaImpuesto) - parseFloat(retencionfletes);
 		
 		$campo_flete.val(parseFloat($campo_flete.val()).toFixed(2));
 		$campo_subtotal.val($(this).agregar_comas( parseFloat(sumaImporte).toFixed(2)));
+		$campo_ieps.val($(this).agregar_comas( parseFloat(sumaImporteIeps).toFixed(2)));
 		$campo_impuesto.val($(this).agregar_comas( parseFloat(sumaImpuesto).toFixed(2)));
 		$retencion.val(parseFloat(retencionfletes).toFixed(2));
 		$campo_total.val($(this).agregar_comas( parseFloat(sumaTotal).toFixed(2)));
@@ -1122,7 +1220,7 @@ $(function() {
 		var $forma_selected = $('#' + form_to_show).clone();
 		$forma_selected.attr({ id : form_to_show + id_to_show });
 		
-		$('#forma-provfacturas-window').css({ "margin-left": -375, "margin-top": -230 });
+		$('#forma-provfacturas-window').css({ "margin-left": -450, "margin-top": -230 });
 		
 		$forma_selected.prependTo('#forma-provfacturas-window');
 		$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1314,6 +1412,9 @@ $(function() {
 		
 		//$.getJSON(json_string,function(entry){
 		$.post(input_json,$arreglo,function(entry){
+			//Asignar los valores del IEPS al arreglo
+			arrayIeps=entry['Ieps'];
+			
 			$tasa_fletes.attr({ 'value' : entry['tasaFletes']['0']['valor'] });
 			//alert(entry['tasaFletes']['0']['valor']);
 			
@@ -1499,7 +1600,7 @@ $(function() {
 			
 			$(this).modalPanel_provfacturas();
 			
-			$('#forma-provfacturas-window').css({ "margin-left": -375, 	"margin-top": -230 });
+			$('#forma-provfacturas-window').css({ "margin-left": -450, 	"margin-top": -230 });
 			
 			$forma_selected.prependTo('#forma-provfacturas-window');
 			$forma_selected.find('.panelcito_modal').attr({ id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1657,6 +1758,9 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+					//Asignar los valores del IEPS al arreglo
+					arrayIeps=entry['Ieps'];
+					
 					$tasa_fletes.attr({ 'value' : entry['tasaFletes']['0']['valor'] });
 					$id_factura.attr({ 'value' : entry['datosFactura']['0']['id'] });
 					$campo_factura.attr({ 'value' : entry['datosFactura']['0']['factura'] });
@@ -1665,9 +1769,7 @@ $(function() {
 					$campo_expedicion.attr({ 'value' : entry['datosFactura']['0']['fecha_factura'] });
 					$campo_tc.attr({ 'value' : entry['datosFactura']['0']['tipo_cambio'] });
 					$campo_observaciones.text(entry['datosFactura']['0']['observaciones']);
-					
-					
-					
+										
 					//carga el select de dias de credito
 					$select_tipo_factura.children().remove();
 					var tipo_hmtl = '';
@@ -1776,7 +1878,9 @@ $(function() {
 								tr_prod += '</td>';
 								tr_prod += '<td width="82" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 									tr_prod += '<SELECT name="impuesto" id="imp" style="width:80px;">';
-									
+									if(parseInt(prodGrid['gral_imp_id'])<=0){
+										tr_prod += '<option value="0">[-- --]</option>';
+									}
 									//aqui se carga el select con los tipos de iva
 									$.each(tiposIva,function(entryIndex,tipos){
 										if(tipos['id'] == prodGrid['gral_imp_id']){
@@ -1789,6 +1893,28 @@ $(function() {
 									tr_prod += '</SELECT>';
 									tr_prod += '<input type="hidden" name="valorimp" id="v_imp" value="0">';
 									tr_prod += '<input type="hidden" name="totalimpuesto'+ trCount +'" id="totimp" value="0">';
+								tr_prod += '</td>';
+								
+								
+								
+								tr_prod += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+									
+									tr_prod += '<select name="select_ieps" id="selectIeps" style="width:76px;">';
+									if(parseInt(prodGrid['ieps_id'])<=0){
+										tr_prod += '<option value="0">[-- --]</option>';
+									}
+									
+									$.each(arrayIeps,function(entryIndex,ieps){
+										if(parseInt(prodGrid['ieps_id'])==parseInt(ieps['id'])){
+											tr_prod += '<option value="' + ieps['id'] + '"  selected="yes">' + ieps['titulo'] + '</option>';
+										}
+									});
+									tr_prod += '</select>';
+									tr_prod += '<input type="hidden" name="valorieps" id="tIeps" value="'+prodGrid['valor_ieps']+'">';
+								tr_prod += '</td>';
+								
+								tr_prod += '<td width="84" class="grid" style="font-size:11px;  border:1px solid #C1DAD7;">';
+									tr_prod += '<input type="text" name="importe_ieps'+ trCount +'" id="import_ieps" value="'+parseFloat(prodGrid['importe_ieps']).toFixed(4)+'" style="width:80px; text-align:right;" readOnly="true">';
 								tr_prod += '</td>';
 								
 							tr_prod += '</tr>';
@@ -1858,15 +1984,16 @@ $(function() {
 							
 							//recalcula importe al perder enfoque el campo costo
 							$grid_productos.find('input[name=costo]').blur(function(){
-								if ($(this).val() == ''  || $(this).val() == null){
+								if ($(this).val().trim()=='' || $(this).val()==null){
 									$(this).val(' ');
 								}
 								
-								if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') )
-								{	//calcula el importe
-									$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val()));
-									//redondea el importe en dos decimales
-									$(this).parent().parent().find('#import').val(parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
+								if( ($(this).val().trim()!='') && ($(this).parent().parent().find('#cant').val().trim()!='') ){	
+									//Calcular y redondear el importe
+									$(this).parent().parent().find('#import').val( parseFloat(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val())).toFixed(4) );
+									
+									//Calcular y redondear el importe del IEPS
+									$(this).parent().parent().find('#import_ieps').val(parseFloat( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat($(this).parent().parent().find('#tIeps').val()) ).toFixed(4));
 								}else{
 									$(this).parent().parent().find('#import').val('');
 								}
@@ -1882,14 +2009,19 @@ $(function() {
 							
 							//recalcula importe al perder enfoque el campo cantidad
 							$grid_productos.find('input[name=cantidad]').blur(function(){
+								var $importePartida = $(this).parent().parent().find('#import');
+								var $imprteIepsPartida = $(this).parent().parent().find('#import_ieps');
+								var $tasaIepsPartida = $(this).parent().parent().find('#tIeps');
+								
 								if ($(this).val() == ''  || $(this).val() == null){
 									$(this).val(' ');
 								}
-								if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') )
-								{	//calcula el importe
-									$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
-									//redondea el importe en dos decimales
-									$(this).parent().parent().find('#import').val(parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
+								if( $(this).val().trim()!='' && $(this).parent().parent().find('#cost').val().trim()!='' ){
+									//Calcular y redondear el importe
+									$importePartida.val( parseFloat(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val())).toFixed(4) );
+									
+									//Calcular y redondear el importe del IEPS
+									$imprteIepsPartida.val(parseFloat( parseFloat($importePartida.val()) * parseFloat($tasaIepsPartida.val()) ).toFixed(4));
 								}else{
 									$(this).parent().parent().find('#import').val('');
 								}
@@ -1929,12 +2061,47 @@ $(function() {
 								$calcula_totales();//llamada a la funcion que calcula totales
 							});
 							
-							//seleccionar tipo de  impuesto
+							
+							
+							//Seleccionar tipo de  impuesto IVA
 							$grid_productos.find('select[name=impuesto]').change(function(){
+								var valorImpuesto=0;
+								var id_ivatipo = $(this).val();
+								$.each(tiposIva,function(entryIndex,tipos){
+									if(parseInt(tipos['id'])==parseInt(id_ivatipo)){
+										valorImpuesto = tipos['iva_1'];
+									}
+								});
+								$(this).parent().find('input[name=valorimp]').val(valorImpuesto);
+								
 								$calcula_totales();//llamada a la funcion que calcula totales
 							});
 							
+							
+							//Seleccionar tipo de  impuesto IEPS
+							$grid_productos.find('select[name=select_ieps]').change(function(){
+								var valorIeps=0;
+								var id_ieps = $(this).val();
+								$.each(arrayIeps,function(entryIndex,ieps){
+									valorIeps=0;
+									if(parseInt(ieps['id'])==parseInt(id_ieps)){
+										if(parseFloat(ieps['tasa'])>0){
+											valorIeps = parseFloat(ieps['tasa'])/100;
+										}
+									}
+								});
+								$(this).parent().find('input[name=valorieps]').val(valorIeps);
+								
+								//Calcular y redondear el importe del IEPS
+								$(this).parent().parent().find('#import_ieps').val(parseFloat( parseFloat($(this).parent().parent().find('#import').val()) * parseFloat($(this).parent().parent().find('#tIeps').val()) ).toFixed(4));
+								
+								$calcula_totales();//llamada a la funcion que calcula totales
+							});
+							
+							
+							
 						});
+						
 						$campo_flete.val(parseFloat( entry['datosFactura']['0']['flete']).toFixed(2));
 						
 						$calcula_totales();//llamada a la funcion que calcula totales
@@ -1942,7 +2109,7 @@ $(function() {
 					
 					
 					
-					if(entry['datosFactura']['0']['estado'] == 'CANCELADO'){
+					if(entry['datosFactura'][0]['estado'] == 'CANCELADO'){
 						$buscar_proveedor.hide();
 						$busca_remision.hide();
 						$agregar_concepto.hide();
