@@ -116,7 +116,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
     @Override
     public String selectFunctionForCxpAdmProcesos(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from cxp_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
-        System.out.println("sql_procedimiento: "+sql_to_query);
+        //System.out.println("sql_procedimiento: "+sql_to_query);
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
         valor_retorno = update.get("cxp_adm_procesos").toString();
@@ -393,7 +393,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 + "LEFT JOIN ctb_cta AS tbl_cta_pc ON tbl_cta_pc.id=cxp_prov.ctb_cta_id_pasivo_comple "
                 + "WHERE cxp_prov.id=?;";
         
-        System.out.println("getProveedor_DatosContabilidad: "+ sql_query);
+        //System.out.println("getProveedor_DatosContabilidad: "+ sql_query);
         
         ArrayList<HashMap<String, String>> contab = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
                 sql_query,
@@ -828,7 +828,7 @@ public class CxpSpringDao implements CxpInterfaceDao{
                 + "ORDER BY ctb_cta.id;";
         
         
-        System.out.println("getProveedor_CuentasContables: "+sql_query);
+        //System.out.println("getProveedor_CuentasContables: "+sql_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,
