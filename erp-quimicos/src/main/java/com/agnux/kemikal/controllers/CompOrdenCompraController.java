@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -13,6 +14,7 @@ import com.agnux.kemikal.interfacedaos.ComInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.PdfReporteComOrdenDeCompra;
+import com.agnux.kemikal.reportes.PdfReporteComOrdenDeCompraFormatoDos;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -441,20 +443,7 @@ public class CompOrdenCompraController {
             }
             
             
-            String data_string = 
-                    app_selected+"___"+
-                    command_selected+"___"+
-                    id_usuario+"___"+
-                    id_orden_compra+"___"+
-                    id_proveedor+"___"+  
-                    observaciones.toUpperCase()+"___"+
-                    select_moneda+"___"+
-                    tipo_cambio+"___"+
-                    grupo +"___"+
-                    select_condiciones+"___"+
-                    consigandoA+"___"+
-                    tipo_envarque_id+"___"+
-                    fecha_entrega;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_orden_compra+"___"+id_proveedor+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+tipo_cambio+"___"+grupo +"___"+select_condiciones+"___"+consigandoA+"___"+tipo_envarque_id+"___"+fecha_entrega;
             
             //System.out.println("data_string: "+data_string);
             
@@ -477,14 +466,14 @@ public class CompOrdenCompraController {
     
     
     
-        //Genera pdf de ORDEN COMPRA
-        @RequestMapping(value = "/get_genera_pdf_orden_compra/{id_orden_compra}/{iu}/out.json", method = RequestMethod.GET ) 
-        public ModelAndView get_genera_pdf_orden_compraJson(
-                @PathVariable("id_orden_compra") Integer id_ordenCompra,
-                @PathVariable("iu") String id_user_cod,
-                HttpServletRequest request, 
-                HttpServletResponse response, 
-                Model model)throws ServletException, IOException, URISyntaxException, DocumentException {
+    //Genera pdf de ORDEN COMPRA
+    @RequestMapping(value = "/get_genera_pdf_orden_compra/{id_orden_compra}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView get_genera_pdf_orden_compraJson(
+            @PathVariable("id_orden_compra") Integer id_ordenCompra,
+            @PathVariable("iu") String id_user_cod,
+            HttpServletRequest request, 
+            HttpServletResponse response, 
+            Model model)throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
@@ -556,15 +545,14 @@ public class CompOrdenCompraController {
         
         
         if (parametros.get("formato_oc").equals("1")){
-            ///nstancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente  
+            //Instancia a la clase que construye el pdf formato1 de la Orden de Compra
             PdfReporteComOrdenDeCompra x = new PdfReporteComOrdenDeCompra(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
         }else{
-            //Instancia a la clase que construye el pdf formato2 de la Orden de Compra
-            
+            if (parametros.get("formato_oc").equals("2")){
+                //Instancia a la clase que construye el pdf formato2 de la Orden de Compra
+                PdfReporteComOrdenDeCompraFormatoDos x = new PdfReporteComOrdenDeCompraFormatoDos(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
+            }   
         }
-        
-        
-
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
@@ -577,9 +565,11 @@ public class CompOrdenCompraController {
         FileCopyUtils.copy(bis, response.getOutputStream());          
         response.flushBuffer();
         
+        if(file.exists()){
+            FileHelper.delete(fileout);
+        }
         return null;
-
-	}
+    }
 
     
         

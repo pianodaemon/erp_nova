@@ -220,20 +220,47 @@ public class PdfRemision {
             
             
             //--------INICIA TABLA CONCEPTOS---------------------------------------------------------------------------
+            
             double sumaimporte=0.0;
             double iva=0.0;
             double iva_retenido=0.0;
             String sumaTotal;
             String moneda = "";
             
-            //INICIO DE LA TABLA DE PEDIDO ENTREGADO
-            float [] anchocolumnas = {1.5f, 1f, 1.5f, 4f, 0.5f,1.3f, 0.5f,1.5f};
             
+            float [] anchocolumnas;
+            String[] columnas;
+            String[] wordList;
+            
+            //Valores cuando NO incliye IEPS
+            float [] anchocolumnas1 = {1.5f, 1f, 1.5f, 4f, 0.5f,1.3f, 0.5f,1.5f};
+            String[] columnas1 = {"CODIGO","CANTIDAD","UNIDAD","DESCRIPCION","","P.UNITARIO","","IMPORTE"};
+            String[] wordList1 = {"codigo","cantidad","unidad","descripcion","denominacion","precio_unitario","denominacion","importe"};
+            
+            //Ancho columnas con IEPS
+            float [] anchocolumnas2 = {1.5f, 1.1f, 1.5f, 3.1f, 0.5f,1.3f, 0.5f,1.4f,0.5f,1.3f};
+            String[] columnas2 = {"CODIGO","CANTIDAD","UNIDAD","DESCRIPCION","","P.UNITARIO","","IMPORTE","","MONTO IEPS"};
+            String[] wordList2 = {"codigo","cantidad","unidad","descripcion","denominacion","precio_unitario","denominacion","importe", "denominacion","importe_ieps"};
+            
+            
+            
+            if(Double.parseDouble(datos_remision.get("monto_ieps"))>0){
+                //Aqui entra cuando SI incluye IEPS
+                anchocolumnas=anchocolumnas2;
+                columnas = columnas2;
+                wordList = wordList2;
+            }else{
+                //Aqui entra cuando NO INCLUYE IEPS
+                anchocolumnas=anchocolumnas1;
+                columnas = columnas1;
+                wordList = wordList1;
+            }
+            
+            //Definir columnas para la tabla de conceptos
             tabla_conceptos = new PdfPTable(anchocolumnas);
             tabla_conceptos.setKeepTogether(true);
             tabla_conceptos.setHeaderRows(1);
             
-            String[] columnas = {"CODIGO","CANTIDAD","UNIDAD","DESCRIPCION","","P.UNITARIO","","IMPORTE"};
             List<String>  lista_columnas = (List<String>) Arrays.asList(columnas);
             contador = 0;
             
@@ -248,11 +275,11 @@ public class PdfRemision {
             
            for (HashMap<String, String> registro : this.getRows()){
                 //Indices del HashMap que representa el row
-                String[] wordList = {"codigo","cantidad","unidad","descripcion","denominacion","precio_unitario","denominacion","importe"};
+                //String[] wordList = {"codigo","cantidad","unidad","descripcion","denominacion","precio_unitario","denominacion","importe"};
                 List<String>  indices = (List<String>) Arrays.asList(wordList);
                 for (String omega : indices){
                     PdfPCell celda = null;
-
+                    
                     if (omega.equals("codigo")){
                         celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -279,7 +306,7 @@ public class PdfRemision {
                     }
 
                     if (omega.equals("descripcion")){
-                        celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                        celda = new PdfPCell(new Paragraph(registro.get(omega) + registro.get("etiqueta_ieps").toUpperCase(),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
                         celda.setBorder(0);
@@ -301,9 +328,20 @@ public class PdfRemision {
                         celda.setBorder(0);
                         tabla_conceptos.addCell(celda);
                     }
-
+                    
                     if (omega.equals("importe")){
-                        celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                        celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),4)),smallFont));
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
+                        tabla_conceptos.addCell(celda);
+                    }
+                    if (omega.equals("importe_ieps")){
+                        if(Double.parseDouble(registro.get(omega))>0){
+                            celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),4)),smallFont));
+                        }else{
+                            celda= new PdfPCell(new Paragraph("",smallFont));
+                        }
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
                         celda.setBorder(0);
@@ -330,8 +368,10 @@ public class PdfRemision {
             //--------TERMINA TABLA CONCEPTOS---------------------------------------------------------------------------
             
             
+           
             
-
+            
+            
             
             
             //--------INICIA TABLA DE TOTALES---------------------------------------------------------------------------
@@ -340,7 +380,7 @@ public class PdfRemision {
             tabla_totales = new PdfPTable(anchocolumnastotales);
             tabla_totales.setKeepTogether(true);
             
-           
+           //--FILA SUBTOTAL----------
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorderWidthTop(1);
             cell.setBorderWidthBottom(0);
@@ -353,7 +393,7 @@ public class PdfRemision {
             tabla_totales.addCell(cell);
             
             
-            cell = new PdfPCell(new Paragraph("Subtotal:",smallBoldFontBlack));
+            cell = new PdfPCell(new Paragraph("SUB-TOTAL",smallBoldFontBlack));
             cell.setColspan(2);
             cell.setUseAscender(true);
             cell.setBorderWidthTop(1);
@@ -386,6 +426,54 @@ public class PdfRemision {
             /////////////////////////////////////////////////////////////////////////////////////////////777777777
             
             
+            //--FILA IEPS----------
+            if(Double.parseDouble(datos_remision.get("monto_ieps"))>0){
+                //Aqui entra cuando SI incluye IEPS
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(1);
+                cell.setBorderWidthRight(0);
+                cell.setColspan(4);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                tabla_totales.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("IEPS",smallBoldFontBlack));
+                cell.setColspan(2);
+                cell.setUseAscender(true);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                tabla_totales.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(datos_remision.get("simbolo_moneda"),smallBoldFontBlack));
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(0);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                tabla_totales.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(datos_remision.get("monto_ieps"),2)),smallBoldFontBlack));
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                tabla_totales.addCell(cell);
+            }
+            
+            
+            //--FILA IVA----------
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorderWidthTop(0);
             cell.setBorderWidthBottom(0);
@@ -441,7 +529,7 @@ public class PdfRemision {
             tabla_totales.addCell(cell);
             
             
-            cell = new PdfPCell(new Paragraph("IVA Retenido:",smallBoldFontBlack));
+            cell = new PdfPCell(new Paragraph("RETENCIÓN",smallBoldFontBlack));
             cell.setBorder(0);
             cell.setColspan(2);
             cell.setUseAscender(true);
@@ -506,7 +594,7 @@ public class PdfRemision {
             tabla_totales.addCell(cell);
             //tablavacia.setSpacingAfter(25f);
             
-            cell = new PdfPCell(new Paragraph("Total a Pagar:",smallBoldFontBlack));
+            cell = new PdfPCell(new Paragraph("TOTAL",smallBoldFontBlack));
             cell.setBorder(0);
             cell.setColspan(2);
             cell.setUseAscender(true);

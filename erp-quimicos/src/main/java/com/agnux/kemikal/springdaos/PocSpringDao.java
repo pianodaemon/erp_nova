@@ -2037,7 +2037,10 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "fac_rems_detalles.precio_unitario,"
                         + "(fac_rems_detalles.cantidad * fac_rems_detalles.precio_unitario) AS importe, "
                         + "fac_rems_detalles.gral_imp_id,"
-                        + "fac_rems_detalles.valor_imp "
+                        + "fac_rems_detalles.valor_imp, "
+                        + "fac_rems_detalles.gral_ieps_id AS id_ieps,"
+                        + "(fac_rems_detalles.valor_ieps * 100::double precision) AS tasa_ieps, "
+                        + "((fac_rems_detalles.cantidad * fac_rems_detalles.precio_unitario) * fac_rems_detalles.valor_ieps) AS importe_ieps "
                 + "FROM fac_rems_detalles "
                 + "LEFT JOIN inv_prod on inv_prod.id = fac_rems_detalles.inv_prod_id "
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_rems_detalles.inv_prod_unidad_id "
@@ -2060,9 +2063,12 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), 2 ));
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
-                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
                     row.put("gral_imp_id",String.valueOf(rs.getInt("gral_imp_id")));
-                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
+                    row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),4) );
+                    row.put("id_ieps",String.valueOf(rs.getInt("id_ieps")));
+                    row.put("tasa_ieps",StringHelper.roundDouble(rs.getDouble("tasa_ieps"),2) );
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),4) );
                     return row;
                 }
             }
@@ -2105,7 +2111,8 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "(CASE WHEN fac_rems.cxc_clie_df_id > 1 THEN sbtdf.cp ELSE cxc_clie.cp END ) AS cliente_cp,"
                         + "cxc_clie.telefono1 AS cliente_telefono,"
                         + "cxc_agen.nombre AS vendedor, "
-                        + "(CASE WHEN fac_rems.cancelado=TRUE THEN 'REMISION CANCELADA' ELSE 'NO' END) AS cancelado "
+                        + "(CASE WHEN fac_rems.cancelado=TRUE THEN 'REMISION CANCELADA' ELSE 'NO' END) AS cancelado,"
+                        + "fac_rems.monto_ieps "
                 + "FROM fac_rems "
                 + "JOIN gral_mon ON gral_mon.id=fac_rems.moneda_id "
                 + "JOIN cxc_clie ON cxc_clie.id=fac_rems.cxc_clie_id "
@@ -2122,6 +2129,7 @@ public class PocSpringDao implements PocInterfaceDao{
         datos.put("id_remision", hm.get("id_remision").toString());
         datos.put("folio", hm.get("folio").toString());
         datos.put("subtotal", StringHelper.roundDouble(hm.get("subtotal").toString(),2));
+        datos.put("monto_ieps", StringHelper.roundDouble(hm.get("monto_ieps").toString(),2));
         datos.put("impuesto", StringHelper.roundDouble(hm.get("impuesto").toString(),2));
         datos.put("monto_retencion", StringHelper.roundDouble(hm.get("monto_retencion").toString(),2));
         datos.put("total", StringHelper.roundDouble(hm.get("total").toString(),2));
@@ -2158,11 +2166,13 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "SELECT "
                         + "inv_prod.sku AS codigo,"
                         + "inv_prod.descripcion,"
+                        + "(CASE WHEN fac_rems_detalles.gral_ieps_id>0 THEN ' - IEPS '||(round((fac_rems_detalles.valor_ieps * 100::double precision)::numeric,2))||'%' ELSE '' END) AS etiqueta_ieps,"
                         + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
                         + "(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion,"
                         + "fac_rems_detalles.cantidad,"
                         + "fac_rems_detalles.precio_unitario,"
-                        + "(fac_rems_detalles.cantidad * fac_rems_detalles.precio_unitario) AS importe "
+                        + "(fac_rems_detalles.cantidad * fac_rems_detalles.precio_unitario) AS importe, "
+                        + "(CASE WHEN fac_rems_detalles.gral_ieps_id>0 THEN ((fac_rems_detalles.cantidad * fac_rems_detalles.precio_unitario) * fac_rems_detalles.valor_ieps) ELSE 0 END) AS importe_ieps "
                 + "FROM fac_rems_detalles "
                 + "LEFT JOIN inv_prod on inv_prod.id = fac_rems_detalles.inv_prod_id "
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_rems_detalles.inv_prod_unidad_id "
@@ -2179,16 +2189,20 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     //row.put("unidad",rs.getString("unidad"));
                     //row.put("presentacion",rs.getString("presentacion"));
-
+                    
                     if( rfc.equals("PIS850531CS4") ){
                         row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("presentacion"))));
                     }else{
                         row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("unidad"))));
                     }
-
+                    
                     row.put("cantidad",StringHelper.roundDouble(String.valueOf(rs.getDouble("cantidad")),2));
                     row.put("precio_unitario",StringHelper.roundDouble(String.valueOf(rs.getDouble("precio_unitario")),2));
-                    row.put("importe",StringHelper.roundDouble(String.valueOf(rs.getDouble("importe")),2));
+                    row.put("importe",StringHelper.roundDouble(String.valueOf(rs.getDouble("importe")),4));
+                    
+                    row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),4) );
+                    
                     return row;
                 }
             }

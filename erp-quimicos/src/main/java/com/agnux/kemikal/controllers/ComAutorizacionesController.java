@@ -13,6 +13,7 @@ import com.agnux.kemikal.interfacedaos.ComInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import com.agnux.kemikal.reportes.PdfReporteComOrdenDeCompra;
+import com.agnux.kemikal.reportes.PdfReporteComOrdenDeCompraFormatoDos;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -253,7 +254,7 @@ public class ComAutorizacionesController {
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="costo", required=false) String[] costo,
             @ModelAttribute("user") UserSessionData user
-            ) {
+        ) {
 
              System.out.println("Guardar la Orden de Compra");
             HashMap<String, String> jsonretorno = new HashMap<String, String>();
@@ -269,47 +270,15 @@ public class ComAutorizacionesController {
             String arreglo[];
             arreglo = new String[eliminado.length];
             String extra_data_array = "'sin datos'";
-            /*for(int i=0; i<eliminado.length; i++) {
-                arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + costo[i] + "___"+valor_imp[i] +"'";
-            }*/
-
-            //serializar el arreglo
-           // String extra_data_array = StringUtils.join(arreglo, ",");
-
-           // if( id_orden_compra==0 ){
-            //    command_selected = "new";
-           // }else{
-                if(accion_proceso.equals("cancelar")){
-                    command_selected = accion_proceso;
-                }
-                if(accion_proceso.equals("autorizar")){
-                    command_selected =accion_proceso;
-
-                }//else{
-                 //   command_selected = "edit";
-               // }
-           // }
+            if(accion_proceso.equals("cancelar")){
+                command_selected = accion_proceso;
+            }
+            if(accion_proceso.equals("autorizar")){
+                command_selected =accion_proceso;
+            }
 
 
-            String data_string =
-                    app_selected+"___"+
-                    command_selected+"___"+
-                    id_usuario+"___"+
-                   id_orden_compra+"___"+
-                    id_proveedor;
-                /*    observaciones.toUpperCase()+"___"+
-                    select_moneda+"___"+
-                    tipo_cambio+"___"+
-                    grupo +"___"+
-                    select_condiciones+"___"+
-                    consigandoA+"___"+
-                    tipo_envarque_id+"___"+
-                    subtotal+"___"+
-                    impuesto+"___"+
-                    total;
-
-            System.out.println("data_string: "+data_string);*/
-            //Estos son para validar que entre el método solo cuando tenga un correo y si no que no entre al método.
+            String data_string =app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_orden_compra+"___"+id_proveedor;
 
             datosOrdenCompra          = this.getComDao().getDatosPDFOrdenCompra(id_orden_compra);
             String correo_prov        = datosOrdenCompra.get("correo_prov");
@@ -320,30 +289,19 @@ public class ComAutorizacionesController {
             //valido nomas para el retorno falso o verdadero(asegurandome de que se cargo la informacion que debe presentarse)
             succes = this.getComDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);//retorna una cadena de errores o true
 
-            //log.log(Level.INFO, "despues de validacion {0}", String.valueOf(succes.get("success")));
-           // String actualizo = "0";
-
-           // if( String.valueOf(succes.get("success")).equals("true") ){
-                //actualizo = this.getComDao().selectFunctionForThisApp(data_string, extra_data_array);
-                //jsonretorno.put("actualizo",String.valueOf(actualizo));
-
-              //   if( String.valueOf(succes.get("success")).equals("true") ){
-              //      actualizo = this.getComDao().selectFunctionForThisApp(data_string, extra_data_array);
-             //       jsonretorno.put("actualizo",String.valueOf(actualizo));
-                    if(!email_empresa.equals("")){
-                        System.out.println("e-mail del proveedor encontrado");
-                        if(!pass_email_empresa.equals("")){
-                            System.out.println("contraseña del email compras encontrada");
-                            if(!correo_prov.equals("")){
-                                System.out.println("emailcompras encontrado");
-                                CreaPDF(id_usuario,id_orden_compra, app_selected );
-                            }
-                        }else {System.out.println("Se requiere password del correo de la empresa, verificar la base de datos");}
-                    }else{
-                        System.out.println("se requiere el correo de la Empresa, Hay que verificar los datos en la BD");
+            if(!email_empresa.equals("")){
+                System.out.println("e-mail del proveedor encontrado");
+                if(!pass_email_empresa.equals("")){
+                    System.out.println("contraseña del email compras encontrada");
+                    if(!correo_prov.equals("")){
+                        System.out.println("emailcompras encontrado");
+                        CreaPDF(id_usuario,id_orden_compra, app_selected );
                     }
-              //  }
-            //}
+                }else {System.out.println("Se requiere password del correo de la empresa, verificar la base de datos");}
+            }else{
+                System.out.println("se requiere el correo de la Empresa, Hay que verificar los datos en la BD");
+            }
+                    
             String actualizo = "0";
             actualizo = this.getComDao().selectFunctionForThisApp(data_string, extra_data_array);
 
@@ -373,8 +331,10 @@ public class ComAutorizacionesController {
         HashMap<String, String> datosEncabezadoPie= new HashMap<String, String>();
         HashMap<String, String> datosOrdenCompra = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> conceptosOrdenCompra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
+        
         System.out.println("Generando PDF de Orden Compra");
-
+        
         Integer app_selected = 90; //aplicativo Orden de compra
 
         //decodificar id de usuario
@@ -432,15 +392,26 @@ public class ComAutorizacionesController {
         datosOrdenCompra.put("estado_sucursal", estado_sucursal);
         datosOrdenCompra.put("mun_edo", mun_edo);
 
-
+        //Aqui se obtienen los parametros de Compras, nos intersa el tipo de formato para el pdf de la Orden de Compra
+        parametros = this.getComDao().getCom_Parametros(id_empresa, id_sucursal);
+        
         //genera nombre del archivo
         String file_name = "ORDENCOM_"+ rfc +"_"+ datosOrdenCompra.get("folio") +".pdf";
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
-        System.out.println("Hola 1");
-        //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
-        PdfReporteComOrdenDeCompra x = new PdfReporteComOrdenDeCompra(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
-        System.out.println("Hola 2");
+        //System.out.println("Hola 1");
+        
+        if (parametros.get("formato_oc").equals("1")){
+            //Instancia a la clase que construye el pdf formato1 de la Orden de Compra
+            PdfReporteComOrdenDeCompra x = new PdfReporteComOrdenDeCompra(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
+        }else{
+            if (parametros.get("formato_oc").equals("2")){
+                //Instancia a la clase que construye el pdf formato2 de la Orden de Compra
+                PdfReporteComOrdenDeCompraFormatoDos x = new PdfReporteComOrdenDeCompraFormatoDos(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
+            }
+        }
+        
+        //System.out.println("Hola 2");
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);
         int size = (int) file.length(); // Tamaño del archivo
@@ -467,6 +438,7 @@ public class ComAutorizacionesController {
         HashMap<String, String> datosOrdenCompra = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> conceptosOrdenCompra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
         
         //decodificar id de usuario
         System.out.println("id_usuario: "+id_usuario);
@@ -523,13 +495,17 @@ public class ComAutorizacionesController {
         datosOrdenCompra.put("municipio_sucursal", municipio_sucursal);
         datosOrdenCompra.put("estado_sucursal", estado_sucursal);
         datosOrdenCompra.put("mun_edo", mun_edo);
-
+        
+        
+        //Aqui se obtienen los parametros de Compras, nos intersa el tipo de formato para el pdf de la Orden de Compra
+        parametros = this.getComDao().getCom_Parametros(id_empresa, id_sucursal);
+        datosOrdenCompra.put("formato_oc", parametros.get("formato_oc"));
+        
         //genera nombre del archivo
         String file_name = "ORDENCOM_"+ rfc +"_"+ datosOrdenCompra.get("folio") +".pdf";
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
-
-
+        
         //Aqui se abre una linea paralela de ejecucion
         System.out.println("Enviando correo electrónico desde el controller");
         MandarAutorizacionPorEmail senderHilo = new MandarAutorizacionPorEmail(datosEncabezadoPie, datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);

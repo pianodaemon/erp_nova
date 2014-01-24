@@ -6,6 +6,7 @@ package com.agnux.common.obj;
 
 import com.agnux.common.helpers.SendEmailWithFileHelper;
 import com.agnux.kemikal.reportes.PdfReporteComOrdenDeCompra;
+import com.agnux.kemikal.reportes.PdfReporteComOrdenDeCompraFormatoDos;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -61,14 +62,24 @@ public final class MandarAutorizacionPorEmail extends Thread{
             fileout = this.getFileout();
             ruta_imagen = this.getRuta_imagen();          
             
+            
+            if (datosOrdenCompra.get("formato_oc").equals("1")){
+                //Instancia a la clase que construye el pdf formato1 de la Orden de Compra
+                PdfReporteComOrdenDeCompra x1 = new PdfReporteComOrdenDeCompra(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
+            }else{
+                if (datosOrdenCompra.get("formato_oc").equals("2")){
+                    //Instancia a la clase que construye el pdf formato2 de la Orden de Compra
+                    PdfReporteComOrdenDeCompraFormatoDos x2 = new PdfReporteComOrdenDeCompraFormatoDos(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa,fileout,ruta_imagen);
+                }
+            }
+            
             PdfReporteComOrdenDeCompra u = new PdfReporteComOrdenDeCompra(datosEncabezadoPie,datosOrdenCompra,conceptosOrdenCompra,razon_social_empresa, fileout,ruta_imagen);
             String email_compras =  datosEncabezadoPie.get("email_compras");
             String password =  datosEncabezadoPie.get("pass_email_compras");
-
+            
             String[] correo2 = email_compras.split("@");
             String hostname = correo2[1];
             String username = correo2[0];
-            
             
             HashMap<String, String> conecta2 = new HashMap<String, String>();
             conecta2.put("hostname",hostname);
@@ -83,27 +94,22 @@ public final class MandarAutorizacionPorEmail extends Thread{
             System.out.println("Este es el corre del prov. "+correo_prov);
 			
             if (!"0".equals(correo_prov)){
-                
-                    if ( this.getConecta() != null ) {
-                        SendEmailWithFileHelper z = new SendEmailWithFileHelper(conecta2);
-                        z.setPuerto("10025");
-                        z.setMensaje("Este es un mensaje de autorización de Orden de compra por parte de: "+razon_social_empresa );
-                        z.setNombreUsuario(email_compras);
-                        z.setNombreArchivoAdjunto("Orden Compra # "+datosOrdenCompra.get("folio")+".pdf");
-                        z.setDestinatario(correo_prov);
-                        z.setAsunto("Orden Compra # "+datosOrdenCompra.get("folio") );
-                        z.setArchivoAdjunto(fileout);
-                        z.enviarEmail();
-                    }
-                    else {
-                        throw new Exception("No se ha enviado ningún e-mail!");
-                    }
-            }
-            
-            else {
-                        throw new Exception("No se ha enviado ningún e-mail 2!");
-            }
-                
+                if ( this.getConecta() != null ) {
+                    SendEmailWithFileHelper z = new SendEmailWithFileHelper(conecta2);
+                    z.setPuerto("10025");
+                    z.setMensaje("Este es un mensaje de autorización de Orden de compra por parte de: "+razon_social_empresa );
+                    z.setNombreUsuario(email_compras);
+                    z.setNombreArchivoAdjunto("Orden Compra # "+datosOrdenCompra.get("folio")+".pdf");
+                    z.setDestinatario(correo_prov);
+                    z.setAsunto("Orden Compra # "+datosOrdenCompra.get("folio") );
+                    z.setArchivoAdjunto(fileout);
+                    z.enviarEmail();
+                }else {
+                    throw new Exception("No se ha enviado ningún e-mail!");
+                }
+            }else {
+                throw new Exception("No se ha enviado ningún e-mail 2!");
+            }   
         } catch (Exception ex) {
             Logger.getLogger(MandarAutorizacionPorEmail.class.getName()).log(Level.SEVERE, null, ex);
         }

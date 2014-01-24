@@ -1245,7 +1245,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "SELECT "
                         + "inv_prod.sku,"
                         + "inv_prod.descripcion,"
-                        + "(CASE WHEN erp_prefacturas_detalles.gral_ieps_id>0 THEN '. IEPS '||(round((erp_prefacturas_detalles.valor_imp * 100::double precision)::numeric,2)::double precision) ELSE '' END) AS etiqueta_ieps,"
+                        + "(CASE WHEN erp_prefacturas_detalles.gral_ieps_id>0 THEN '. IEPS '||(round((erp_prefacturas_detalles.valor_ieps * 100::double precision)::numeric,2)::double precision) ELSE '' END) AS etiqueta_ieps,"
                         + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad,"
                         + "erp_prefacturas_detalles.cant_facturar AS cantidad,"
                         + "erp_prefacturas_detalles.precio_unitario,"

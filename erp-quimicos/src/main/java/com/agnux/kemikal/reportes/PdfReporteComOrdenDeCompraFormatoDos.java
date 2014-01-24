@@ -164,7 +164,7 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             tablaHead.addCell(celdaHead);
             
             //AQUI VA el contenido de la fecha de orden compra 
-            celdaHead = new PdfPCell(new Paragraph("\n"+datosOrdenCompra.get("fecha"),fuenteCont));
+            celdaHead = new PdfPCell(new Paragraph(datosOrdenCompra.get("fecha"),fuenteCont));
             celdaHead.setHorizontalAlignment(Element.ALIGN_CENTER);
             tablaHead.addCell(celdaHead);
             
@@ -175,13 +175,13 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             tablaHead.addCell(celdaHead);
             
             //AQUI VA el contenido de la fecha de orden compra 
-            celdaHead = new PdfPCell(new Paragraph("\n"+datosOrdenCompra.get("fecha_entrega"),fuenteCont));
+            celdaHead = new PdfPCell(new Paragraph(datosOrdenCompra.get("fecha_entrega"),fuenteCont));
             celdaHead.setHorizontalAlignment(Element.ALIGN_CENTER);
             tablaHead.addCell(celdaHead);
             
 
             //esto es un espacio en blanco PARA DESPEGAR LAS TABLAS
-            celdaHead = new PdfPCell(new Paragraph("\n \n",fuentenegrita));
+            celdaHead = new PdfPCell(new Paragraph("\n",fuentenegrita));
             celdaHead.setBorder(1);
             celdaHead.setColspan(4);
             tablaHead.addCell(celdaHead);
