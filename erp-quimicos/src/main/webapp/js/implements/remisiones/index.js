@@ -372,6 +372,7 @@ $(function() {
 	//calcula totales(subtotal, impuesto, total)
 	$calcula_totales = function(){
 		var $campo_subtotal = $('#forma-remisiones-window').find('input[name=subtotal]');
+		var $campo_ieps = $('#forma-remisiones-window').find('input[name=ieps]');
 		var $campo_impuesto = $('#forma-remisiones-window').find('input[name=impuesto]');
 		var $campo_impuesto_retenido = $('#forma-remisiones-window').find('input[name=impuesto_retenido]');
 		var $campo_total = $('#forma-remisiones-window').find('input[name=total]');
@@ -380,20 +381,29 @@ $(function() {
 		
 		var $grid_productos = $('#forma-remisiones-window').find('#grid_productos');
 		
-		var sumaSubTotal = 0; //es la suma de todos los importes
-		var sumaImpuesto = 0; //suma del iva
-		var impuestoRetenido = 0; //monto del iva retenido de acuerdo a la tasa de retencion immex
-		var sumaTotal = 0; //suma del subtotal + totalImpuesto
+		//Suma de todos los importes
+		var sumaSubTotal = 0;
+		//Suma del iva
+		var sumaImpuesto = 0;
+		//Monto del iva retenido de acuerdo a la tasa de retencion immex
+		var impuestoRetenido = 0;
+		//Suma del subtotal + totalImpuesto
+		var sumaTotal = 0;
+		//Suma de todos los importes del IEPS
+		var sumaIeps = 0;
 		
 		$grid_productos.find('tr').each(function (index){
-			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
-				//alert($(this).find('#cost').val());
-				//acumula los importes en la variable subtotal
+			if($(this).find('#cost').val().trim()!='' && $(this).find('#cant').val().trim()!=''){
+				//Acumula los importes en la variable subtotal
 				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
-				//alert($(this).find('#import').val());
-				if($(this).find('#totimp').val() != ''){
-					//alert($(this).find('#totimp').val());
-						sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
+				
+				if($(this).find('#importeIeps').val().trim()!=''){
+					//Acumula los importes del IEPS
+					sumaIeps = parseFloat(sumaIeps) + parseFloat($(this).find('#importeIeps').val());
+				}
+				
+				if($(this).find('#totimp').val().trim()!=''){
+					sumaImpuesto = parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
 				}
 			}
 		});
@@ -402,18 +412,50 @@ $(function() {
 		impuestoRetenido = parseFloat(sumaSubTotal) * parseFloat(parseFloat($tasa_ret_immex.val()));
 		
 		//calcula el total sumando el subtotal y el impuesto
-		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
-		
+		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaIeps) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
 		
 		//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
 		$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
+		
+		$campo_ieps.val($(this).agregar_comas(  parseFloat(sumaIeps).toFixed(2)  ));
+
 		//redondea a dos digitos el impuesto y lo asigna al campo impuesto
 		$campo_impuesto.val($(this).agregar_comas(  parseFloat(sumaImpuesto).toFixed(2)  ));
-		//redondea a dos digitos el impuesto y lo asigna al campo retencion
+		
+		//Redondea a dos digitos el impuesto y lo asigna al campo retencion
 		$campo_impuesto_retenido.val($(this).agregar_comas(  parseFloat(impuestoRetenido).toFixed(2)  ));
+		
 		//redondea a dos digitos la suma  total y se asigna al campo total
 		$campo_total.val($(this).agregar_comas(  parseFloat(sumaTotal).toFixed(2)  ));
 		
+		
+		//Ocultar campos si tienen valor menor o igual a cero
+		if(parseFloat(sumaIeps)<=0){
+			$('#forma-remisiones-window').find('#tr_ieps').hide();
+		}else{
+			$('#forma-remisiones-window').find('#tr_ieps').show();
+		}
+		if(parseFloat(impuestoRetenido)<=0){
+			$('#forma-remisiones-window').find('#tr_retencion').hide();
+		}else{
+			$('#forma-remisiones-window').find('#tr_retencion').show();
+		}
+		
+		if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)<=0){
+			$('#forma-remisiones-window').find('.remisiones_div_one').css({'height':'500px'});
+		}
+		
+		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
+			$('#forma-remisiones-window').find('.remisiones_div_one').css({'height':'525px'});
+		}
+		
+		if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)>0){
+			$('#forma-remisiones-window').find('.remisiones_div_one').css({'height':'525px'});
+		}
+		
+		if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
+			$('#forma-remisiones-window').find('.remisiones_div_one').css({'height':'555px'});
+		}
 		
 	}//termina calcular totales
 	
@@ -455,7 +497,7 @@ $(function() {
 			
 			$(this).modalPanel_remisiones();
 			
-			$('#forma-remisiones-window').css({"margin-left": -340, 	"margin-top": -220});
+			$('#forma-remisiones-window').css({"margin-left": -400, 	"margin-top": -220});
 			
 			$forma_selected.prependTo('#forma-remisiones-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -511,6 +553,8 @@ $(function() {
 				var $subtotal = $('#forma-remisiones-window').find('input[name=subtotal]');
 				var $impuesto = $('#forma-remisiones-window').find('input[name=impuesto]');
 				var $total = $('#forma-remisiones-window').find('input[name=total]');
+				var $campo_ieps = $('#forma-remisiones-window').find('input[name=ieps]');
+				var $campo_impuesto_retenido = $('#forma-remisiones-window').find('input[name=impuesto_retenido]');
 				
 				var $cerrar_plugin = $('#forma-remisiones-window').find('#close');
 				var $cancelar_plugin = $('#forma-remisiones-window').find('#boton_cancelar');
@@ -522,7 +566,8 @@ $(function() {
 				//$no_cuenta.hide();
 				//$digitos.attr('disabled','-1');
 				$etiqueta_digit.attr('disabled','-1');
-				
+				$('#forma-remisiones-window').find('#tr_ieps').hide();
+				$('#forma-remisiones-window').find('#tr_retencion').hide();
 				
 				
 				var respuestaProcesada = function(data){
@@ -748,13 +793,25 @@ $(function() {
 						}
 					}
 					
-					
+					var tasaIeps="";
+					var importeIeps="";
+					var valorImporteIeps=0;
 					if(entry['datosGrid'] != null){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
 							
 							//obtiene numero de trs
 							var tr = $("tr", $grid_productos).size();
 							tr++;
+							
+							tasaIeps="";
+							importeIeps="";
+							valorImporteIeps=0;
+							
+							if(parseInt(prod['id_ieps'])>0){
+								tasaIeps=prod['tasa_ieps'];
+								importeIeps=prod['importe_ieps'];
+								valorImporteIeps=prod['importe_ieps'];
+							}
 							
 							var trr = '';
 							trr = '<tr>';
@@ -764,7 +821,7 @@ $(function() {
 									trr += '<input type="hidden" name="iddetalle" id="idd" value="'+ prod['id_detalle'] +'">';//este es el id del registro que ocupa el producto en la tabla remisiones_detalles
 									//trr += '<span id="elimina">1</span>';
 							trr += '</td>';
-							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="114">';
+							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="116">';
 									trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['producto_id'] +'">';
 									trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['codigo'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
 							trr += '</td>';
@@ -779,18 +836,29 @@ $(function() {
 									trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
+								trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" class="borde_oculto" style="width:76px;">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
+								trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" class="borde_oculto" style="width:86px; text-align:right;">';
 								trr += '<INPUT type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
-								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['valor_imp'])+'">';
+								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
+								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(parseFloat(prod['importe']) + parseFloat(valorImporteIeps)) * parseFloat(prod['valor_imp'])+'">';
 								trr += '<INPUT type="hidden"    name="id_imp_prod"  value="'+  prod['tipo_impuesto_id'] +'" id="idimppord">';
 								trr += '<INPUT type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
 							trr += '</td>';
+							
+							
+							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
+								trr += '<input type="hidden" name="idIeps"     value="'+ prod['id_ieps'] +'" id="idIeps">';
+								trr += '<input type="text" name="tasaIeps" value="'+ tasaIeps +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
+							trr += '</td>';
+							
+							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
+								trr += '<input type="text" name="importeIeps" value="'+ importeIeps +'" class="borde_oculto" id="importeIeps" style="width:66px; text-align:right;" readOnly="true">';
+							trr += '</td>';
+							
 							trr += '</tr>';
 							$grid_productos.append(trr);
 							
