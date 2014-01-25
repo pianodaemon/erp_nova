@@ -307,7 +307,8 @@ public class ComSpringDao  implements ComInterfaceDao {
             + "com_orden_compra.subtotal,"
             + "com_orden_compra.impuesto,"
             + "com_orden_compra.total,"
-            + "(CASE WHEN com_orden_compra.fecha_entrega IS NULL THEN '' ELSE to_char(com_orden_compra.fecha_entrega, 'yyyy-mm-dd') END) AS fecha_entrega "
+            + "(CASE WHEN com_orden_compra.fecha_entrega IS NULL THEN '' ELSE to_char(com_orden_compra.fecha_entrega, 'yyyy-mm-dd') END) AS fecha_entrega, "
+            + "com_orden_compra.anexa_documentos "
         + "from com_orden_compra "
         + "join cxp_prov on cxp_prov.id=com_orden_compra.proveedor_id "
         + "join gral_mun on gral_mun.id=cxp_prov .municipio_id "
@@ -348,6 +349,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
                     row.put("fecha_entrega",rs.getString("fecha_entrega"));
+                    row.put("anexar_doc",String.valueOf(rs.getBoolean("anexa_documentos")));
                     return row;
                 }
             }
@@ -711,7 +713,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + " tblEmpCrea.nombre_pila||' '||tblEmpCrea.apellido_paterno||' '||tblEmpCrea.apellido_materno AS user_elabora, "
                     + " tblEmpAutoriza.nombre_pila||' '||tblEmpAutoriza.apellido_paterno||' '||tblEmpAutoriza.apellido_materno AS user_autoriza, "
                     + " com_orden_compra.observaciones, "
-                    + "(CASE WHEN com_orden_compra.fecha_entrega IS NULL THEN '' ELSE to_char(com_orden_compra.fecha_entrega, 'dd/mm/yyyy') END) AS fecha_entrega "
+                    + "(CASE WHEN com_orden_compra.fecha_entrega IS NULL THEN '' ELSE to_char(com_orden_compra.fecha_entrega, 'dd/mm/yyyy') END) AS fecha_entrega, "
+                    + "com_orden_compra.anexa_documentos "
                 + " FROM com_orden_compra "
                 + " JOIN cxp_prov ON cxp_prov.id=com_orden_compra.proveedor_id "
                 + " JOIN gral_mun ON gral_mun.id=cxp_prov.municipio_id "
@@ -753,6 +756,7 @@ public class ComSpringDao  implements ComInterfaceDao {
         mappdf.put("user_autoriza", mapdatosquery.get("user_autoriza").toString());
         mappdf.put("observaciones", mapdatosquery.get("observaciones").toString());
         mappdf.put("fecha_entrega", mapdatosquery.get("fecha_entrega").toString());
+        mappdf.put("anexar_doc", String.valueOf(mapdatosquery.get("anexa_documentos")));
         return mappdf;
     }
     

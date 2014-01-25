@@ -327,6 +327,11 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             //AQUI EMPIEZAN LOS TOTALES ETC. ETC. 
             String simbolo_mon ="";
             simbolo_mon = datosOrdenCompra.get("moneda_simbolo");
+            String anexa_docs = "";
+            
+            if(datosOrdenCompra.get("anexar_doc").equals("true")){
+                anexa_docs=" X";
+            }
             
             //TABLA PARA AGREGAR EL TEXTO "ANEXAR CERTIFICADOS DE CALIDAD Y HOJAS DE SEGURIDAD"
             float [] widths = {0.5f,0.5f,10}; 
@@ -351,7 +356,7 @@ public class PdfReporteComOrdenDeCompraFormatoDos {
             celdatxt.setBorder(0);
             table_texto.addCell(celdatxt);
             
-            celdatxt = new PdfPCell(new Paragraph("",fuentePie));
+            celdatxt = new PdfPCell(new Paragraph(anexa_docs,fuentenegrita));
             celdatxt.setHorizontalAlignment(Element.ALIGN_LEFT);
             celdatxt.setVerticalAlignment(Element.ALIGN_CENTER);
             celdatxt.setBorderWidthBottom(1);

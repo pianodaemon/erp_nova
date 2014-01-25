@@ -400,6 +400,7 @@ public class CompOrdenCompraController {
             @RequestParam(value="impuesto", required=true) String impuesto,
             @RequestParam(value="total", required=true) String total,
             @RequestParam(value="fecha_entrega", required=true) String fecha_entrega,
+            @RequestParam(value="check_anex_cert_hojas", required=false) String check_anex_cert_hojas,
             
             @RequestParam(value="accion_proceso", required=true) String accion_proceso,
             @RequestParam(value="eliminado", required=false) String[] eliminado,
@@ -442,8 +443,9 @@ public class CompOrdenCompraController {
                 }
             }
             
+            check_anex_cert_hojas = StringHelper.verificarCheckBox(check_anex_cert_hojas);
             
-            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_orden_compra+"___"+id_proveedor+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+tipo_cambio+"___"+grupo +"___"+select_condiciones+"___"+consigandoA+"___"+tipo_envarque_id+"___"+fecha_entrega;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_orden_compra+"___"+id_proveedor+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+tipo_cambio+"___"+grupo +"___"+select_condiciones+"___"+consigandoA+"___"+tipo_envarque_id+"___"+fecha_entrega+"___"+check_anex_cert_hojas;
             
             //System.out.println("data_string: "+data_string);
             

@@ -943,7 +943,9 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                 + "(fac_rems_detalles.cantidad * fac_rems_detalles.precio_unitario) AS importe, "
                 + "fac_rems_detalles.gral_imp_id,"
                 + "fac_rems_detalles.valor_imp,"
-                + "fac_rems_detalles.costo_promedio "
+                + "fac_rems_detalles.costo_promedio, "
+                + "fac_rems_detalles.gral_ieps_id,"
+                + "(fac_rems_detalles.valor_ieps * 100) AS valor_ieps "
          + "FROM fac_rems_detalles "
          + "LEFT JOIN inv_prod on inv_prod.id = fac_rems_detalles.inv_prod_id "
          + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_rems_detalles.inv_prod_unidad_id "
@@ -967,12 +969,14 @@ public class PrefacturasSpringDao implements PrefacturasInterfaceDao{
                     row.put("id_presentacion",rs.getString("id_presentacion"));
                     row.put("presentacion",rs.getString("presentacion"));
                     row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("decimales") ));
-                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),2) );
-                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
+                    row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
                     row.put("gral_imp_id",rs.getInt("gral_imp_id"));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2) );
                     row.put("costo_prom",StringHelper.roundDouble(rs.getDouble("costo_promedio"),2) );
                     
+                    row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
                     /*
                     System.out.println(rs.getString("moneda")+"  "
                             + ""+rs.getString("sku")+"  "
