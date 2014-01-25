@@ -908,8 +908,8 @@ $(function() {
 					$impuesto_retenido.val( $(this).agregar_comas(entry['datosFactura']['0']['monto_retencion']));
 					$total.val($(this).agregar_comas( entry['datosFactura']['0']['total']));
 					
-					var sumaIeps = entry['datosFactura']['0']['monto_ieps'];
-					var impuestoRetenido = entry['datosFactura']['0']['monto_retencion'];
+					var sumaIeps = entry['datosFactura'][0]['monto_ieps'];
+					var impuestoRetenido = entry['datosFactura'][0]['monto_retencion'];
 					
 					//Ocultar campos si tienen valor menor o igual a cero
 					if(parseFloat(sumaIeps)<=0){
@@ -1060,7 +1060,7 @@ $(function() {
 								trr += '<INPUT type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
+								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['tasa_iva'])+'">';
 							trr += '</td>';
 							

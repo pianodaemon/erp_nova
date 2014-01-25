@@ -829,11 +829,21 @@ $(function() {
 					$folio_pedido.val(entry['Datos']['0']['folio_pedido']);
 				}
 				
+				var importeIeps=0;
+				var tasaIeps=0;
+				
 				if(entry['Conceptos'] != null){
 					$.each(entry['Conceptos'],function(entryIndex,prod){
 						//obtiene numero de trs
 						var tr = $("tr", $grid_productos).size();
 						tr++;
+						importeIeps=0;
+						tasaIeps=0;
+						if(parseFloat(prod['valor_ieps'])>0){
+							tasaIeps = parseFloat(prod['valor_ieps'])/100;
+						}
+						
+						importeIeps=parseFloat(parseFloat(prod['importe']) * parseFloat(tasaIeps)).toFixed(4);
 						
 						var trr = '';
 						trr = '<tr>';
@@ -880,17 +890,32 @@ $(function() {
 							trr += '<input type="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" class="borde_oculto" style="width:76px; text-align:right;" readOnly="true">';
 							trr += '<input type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 						trr += '</td>';
+						
+						
 						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 							trr += '<input type="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" style="width:86px; text-align:right;" readOnly="true">';
-							trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['valor_imp'])+'">';
+							trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+(parseFloat(prod['importe']) + parseFloat(importeIeps)) * parseFloat(prod['valor_imp'])+'">';
 							trr += '<input type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" id="idimppord">';
 							trr += '<input type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 		id="ivalorimp">';
 						trr += '</td>';
+						
+						
+						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
+							trr += '<input type="hidden" name="idIeps"     value="'+ prod['ieps_id'] +'" id="idIeps">';
+							trr += '<input type="text" name="tasaIeps" value="'+ prod['valor_ieps'] +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
+						trr += '</td>';
+						
+						trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="62">';
+							trr += '<input type="text" name="importeIeps" value="'+ importeIeps +'" class="borde_oculto" id="importeIeps" style="width:58px; text-align:right;" readOnly="true">';
+						trr += '</td>';
+						
 						trr += '</tr>';
 						$grid_productos.append(trr);
 						$grid_productos.find('a').hide();//ocultar
 						
-												
+						
+						
+						
 						/*
 						//cargar select de presentaciones de cada producto
 						$grid_productos.find('select.selectPres'+ tr).children().remove();
@@ -1847,7 +1872,7 @@ $(function() {
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		//var accion = "getCotizacion";
 		
-		$('#forma-prefacturas-window').css({"margin-left": -400, 	"margin-top": -235});
+		$('#forma-prefacturas-window').css({"margin-left": -465, 	"margin-top": -235});
 		
 		$forma_selected.prependTo('#forma-prefacturas-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});

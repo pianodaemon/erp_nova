@@ -293,13 +293,13 @@
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330">Observaciones</td>
+                                                                <td width="380">Observaciones</td>
                                                                 <td width="10"></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="330">
-																	<textarea name="observaciones" rows="2" cols="60" style="width:330px; resize: none;"></textarea>
+                                                                <td width="380">
+																	<textarea name="observaciones" rows="2" cols="60" style="width:380px; resize: none;"></textarea>
 																	<textarea name="observaciones_original" rows="2" cols="60" style="display:none;"></textarea>
                                                                 </td>
                                                                 <td width="10"></td>
@@ -443,7 +443,7 @@
 																</tr>
 															</thead>
 														</table>
-														<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">	
+														<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:1002; height:115px; border:1px solid #C1DAD7 !important;">	
 															<table class="tabla_facturas">
 																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
 																	

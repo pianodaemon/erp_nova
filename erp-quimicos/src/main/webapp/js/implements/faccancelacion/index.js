@@ -757,7 +757,7 @@ $(function() {
 			
 			$(this).modalPanel_faccancelacion();
 			
-			$('#forma-faccancelacion-window').css({"margin-left": -340, 	"margin-top": -220});
+			$('#forma-faccancelacion-window').css({"margin-left": -390, 	"margin-top": -220});
 			
 			$forma_selected.prependTo('#forma-faccancelacion-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -827,6 +827,7 @@ $(function() {
 				
 				//var $flete = $('#forma-faccancelacion-window').find('input[name=flete]');
 				var $subtotal = $('#forma-faccancelacion-window').find('input[name=subtotal]');
+				var $campo_ieps = $('#forma-faccancelacion-window').find('input[name=ieps]');
 				var $impuesto = $('#forma-faccancelacion-window').find('input[name=impuesto]');
 				var $impuesto_retenido = $('#forma-faccancelacion-window').find('input[name=impuesto_retenido]');
 				var $total = $('#forma-faccancelacion-window').find('input[name=total]');
@@ -926,23 +927,52 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$id_factura.val(entry['datosFactura']['0']['id']);
-					$folio_pedido.val(entry['datosFactura']['0']['folio_pedido']);
-					$id_cliente.val(entry['datosFactura']['0']['cliente_id']);
-					$rfc_cliente.val(entry['datosFactura']['0']['rfc']);
-					$razon_cliente.val(entry['datosFactura']['0']['razon_social']);
-					$dir_cliente.val(entry['datosFactura']['0']['direccion']);
-					$serie_folio.val(entry['datosFactura']['0']['serie_folio']);
-					$observaciones.text(entry['datosFactura']['0']['observaciones']);
-					$observaciones_original.val(entry['datosFactura']['0']['observaciones']);
-                    $orden_compra.val(entry['datosFactura']['0']['orden_compra']);
-                    $orden_compra_original.val(entry['datosFactura']['0']['orden_compra']);
-					$digitos.val(entry['datosFactura']['0']['no_tarjeta']);
+					$id_factura.val(entry['datosFactura'][0]['id']);
+					$folio_pedido.val(entry['datosFactura'][0]['folio_pedido']);
+					$id_cliente.val(entry['datosFactura'][0]['cliente_id']);
+					$rfc_cliente.val(entry['datosFactura'][0]['rfc']);
+					$razon_cliente.val(entry['datosFactura'][0]['razon_social']);
+					$dir_cliente.val(entry['datosFactura'][0]['direccion']);
+					$serie_folio.val(entry['datosFactura'][0]['serie_folio']);
+					$observaciones.text(entry['datosFactura'][0]['observaciones']);
+					$observaciones_original.val(entry['datosFactura'][0]['observaciones']);
+                    $orden_compra.val(entry['datosFactura'][0]['orden_compra']);
+                    $orden_compra_original.val(entry['datosFactura'][0]['orden_compra']);
+					$digitos.val(entry['datosFactura'][0]['no_tarjeta']);
 					
-					$subtotal.val( $(this).agregar_comas(entry['datosFactura']['0']['subtotal']));
-					$impuesto.val( $(this).agregar_comas( entry['datosFactura']['0']['impuesto']) );
-					$impuesto_retenido.val( $(this).agregar_comas(entry['datosFactura']['0']['monto_retencion']));
-					$total.val($(this).agregar_comas( entry['datosFactura']['0']['total']));
+					$subtotal.val( $(this).agregar_comas(entry['datosFactura'][0]['subtotal']));
+					$campo_ieps.val( $(this).agregar_comas(entry['datosFactura'][0]['monto_ieps']));
+					$impuesto.val( $(this).agregar_comas( entry['datosFactura'][0]['impuesto']) );
+					$impuesto_retenido.val( $(this).agregar_comas(entry['datosFactura'][0]['monto_retencion']));
+					$total.val($(this).agregar_comas( entry['datosFactura'][0]['total']));
+					
+					
+					var sumaIeps = entry['datosFactura'][0]['monto_ieps'];
+					var impuestoRetenido = entry['datosFactura'][0]['monto_retencion'];
+					
+					//Ocultar campos si tienen valor menor o igual a cero
+					if(parseFloat(sumaIeps)<=0){
+						$('#forma-faccancelacion-window').find('#tr_ieps').hide();
+					}
+					if(parseFloat(impuestoRetenido)<=0){
+						$('#forma-faccancelacion-window').find('#tr_retencion').hide();
+					}
+					
+					if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)<=0){
+						$('#forma-faccancelacion-window').find('.faccancelacion_div_one').css({'height':'525px'});
+					}
+					
+					if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)>0){
+						$('#forma-faccancelacion-window').find('.faccancelacion_div_one').css({'height':'525px'});
+					}
+					
+					if(parseFloat(sumaIeps)<=0 && parseFloat(impuestoRetenido)<=0){
+						$('#forma-faccancelacion-window').find('.faccancelacion_div_one').css({'height':'500px'});
+					}
+					
+					if(parseFloat(sumaIeps)>0 && parseFloat(impuestoRetenido)>0){
+						$('#forma-faccancelacion-window').find('.faccancelacion_div_one').css({'height':'550px'});
+					}
 					
                     //form pago 2=Tarjeta Credito, 3=Tarjeta Debito
                     if(parseInt(entry['datosFactura']['0']['fac_metodos_pago_id'])==2 || parseInt(entry['datosFactura']['0']['fac_metodos_pago_id']==3)){
@@ -1048,8 +1078,8 @@ $(function() {
 									trr += '<input type="hidden" name="idproducto" id="idprod" value="'+ prod['inv_prod_id'] +'">';
 									trr += '<INPUT TYPE="text" name="sku'+ tr +'" value="'+ prod['codigo_producto'] +'" id="skuprod" class="borde_oculto" readOnly="true" style="width:110px;">';
 							trr += '</td>';
-							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="204">';
-								trr += '<INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:200px;">';
+							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="202">';
+								trr += '<INPUT TYPE="text" 	name="nombre'+ tr +'" 	value="'+ prod['titulo'] +'" 	id="nom" class="borde_oculto" readOnly="true" style="width:198px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
 								trr += '<INPUT TYPE="text" 	name="unidad'+ tr +'" 	value="'+ prod['unidad'] +'" 	id="uni" class="borde_oculto" readOnly="true" style="width:86px;">';
@@ -1061,14 +1091,32 @@ $(function() {
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
 								trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
 							trr += '</td>';
-							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:76px; text-align:right;">';
+							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+								trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
 								trr += '<INPUT type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
+								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 								trr += '<input type="hidden" name="totimpuesto'+ tr +'" id="totimp" value="'+parseFloat(prod['importe']) * parseFloat(prod['tasa_iva'])+'">';
 							trr += '</td>';
+							
+							var tasaIeps="";
+							var importeIeps="";
+							
+							if(parseInt(prod['id_ieps'])>0){
+								tasaIeps=prod['tasa_ieps'];
+								importeIeps=prod['importe_ieps'];
+							}
+							
+							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
+								trr += '<input type="hidden" name="idIeps"     value="'+ prod['id_ieps'] +'" id="idIeps">';
+								trr += '<input type="text" name="tasaIeps" value="'+ tasaIeps +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
+							trr += '</td>';
+							
+							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="64">';
+								trr += '<input type="text" name="importeIeps" value="'+ importeIeps +'" class="borde_oculto" id="importeIeps" style="width:60px; text-align:right;" readOnly="true">';
+							trr += '</td>';
+							
 							trr += '</tr>';
 							$grid_productos.append(trr);
                             

@@ -1179,6 +1179,7 @@ $(function() {
 		var consigandoA= $('#forma-comordencompra-window').find('input[name=consigandoA]');
 		var $select_via_embarque = $('#forma-comordencompra-window').find('select[name=via_envarque]');
 		var $fecha_entrega = $('#forma-comordencompra-window').find('input[name=fecha_entrega]');
+		var $check_anex_cert_hojas = $('#forma-comordencompra-window').find('input[name=check_anex_cert_hojas]');
 		
 		var $sku_producto = $('#forma-comordencompra-window').find('input[name=sku_producto]');
 		var $nombre_producto = $('#forma-comordencompra-window').find('input[name=nombre_producto]');
@@ -1272,7 +1273,7 @@ $(function() {
 							for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
 								if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
 									//alert(tmp.split(':')[0]);
-									$('#forma-comordencompra-window').find('.comordencompra_div_one').css({'height':'568px'});
+									$('#forma-comordencompra-window').find('.comordencompra_div_one').css({'height':'580px'});
 									//$('#forma-comordencompra-window').find('.div_three').css({'height':'910px'});
 
 									$('#forma-comordencompra-window').find('#div_warning_grid').css({'display':'block'});
@@ -1564,6 +1565,7 @@ $(function() {
 			var $id_impuesto = $('#forma-comordencompra-window').find('input[name=id_impuesto]');
 			var $valor_impuesto = $('#forma-comordencompra-window').find('input[name=valorimpuesto]');
 			var $fecha_entrega = $('#forma-comordencompra-window').find('input[name=fecha_entrega]');
+			var $check_anex_cert_hojas = $('#forma-comordencompra-window').find('input[name=check_anex_cert_hojas]');
 			
 			//buscar producto
 			var $busca_sku = $('#forma-comordencompra-window').find('a[href*=busca_sku]');
@@ -1641,7 +1643,7 @@ $(function() {
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						//$('#forma-comordencompra-window').find('.div_one').css({'height':'545px'});//sin errores
-						$('#forma-comordencompra-window').find('.pocpedidos_div_one').css({'height':'568px'});//con errores
+						$('#forma-comordencompra-window').find('.pocpedidos_div_one').css({'height':'580px'});//con errores
 						$('#forma-comordencompra-window').find('div.interrogacion').css({'display':'none'});
 
 						$grid_productos.find('#cant').css({'background' : '#ffffff'});
@@ -1667,7 +1669,7 @@ $(function() {
 								if(parseInt($("tr", $grid_productos).size())>0){
 									for (var i=1;i<=parseInt($("tr", $grid_productos).size());i++){
 										if((tmp.split(':')[0]=='cantidad'+i) || (tmp.split(':')[0]=='costo'+i)){
-											$('#forma-comordencompra-window').find('.pocpedidos_div_one').css({'height':'568px'});
+											$('#forma-comordencompra-window').find('.pocpedidos_div_one').css({'height':'580px'});
 											$('#forma-comordencompra-window').find('#div_warning_grid').css({'display':'block'});
 
 											if(tmp.split(':')[0].substring(0, 8) == 'cantidad'){
@@ -1723,7 +1725,7 @@ $(function() {
 					$orden_compra.val(entry['datosOrdenCompra'][0]['orden_compra']);
 					$tipo_cambio.val(entry['datosOrdenCompra'][0]['tipo_cambio']);
 					$fecha_entrega.val(entry['datosOrdenCompra'][0]['fecha_entrega']);
-					
+					$check_anex_cert_hojas.attr('checked',  (entry['datosOrdenCompra'][0]['anexar_doc'] == 'true')? true:false );
 					
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
