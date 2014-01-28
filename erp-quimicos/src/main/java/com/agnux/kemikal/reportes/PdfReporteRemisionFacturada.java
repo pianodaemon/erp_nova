@@ -41,13 +41,16 @@ public class PdfReporteRemisionFacturada {
     public PdfReporteRemisionFacturada(String fileout, String ruta_imagen, String razon_soc_empresa, String fechaInicial,String fechaFinal, ArrayList<HashMap<String, String>> listaRemisiones) throws DocumentException {
         String simbolo_moneda="";
         Double suma_pesos_subtotal = 0.0;
+        Double suma_pesos_monto_ieps = 0.0;
         Double suma_pesos_impuesto = 0.0;
         Double suma_pesos_total = 0.0;
         Double suma_dolares_subtotal = 0.0;
+        Double suma_dolares_monto_ieps = 0.0;
         Double suma_dolares_impuesto = 0.0;
         Double suma_dolares_total = 0.0;
         
         Double suma_subtotal_mn = 0.0;
+        Double suma_monto_ieps_mn = 0.0;
         Double suma_impuesto_mn = 0.0;
         Double suma_total_mn = 0.0;
         
@@ -73,7 +76,7 @@ public class PdfReporteRemisionFacturada {
             
             doc.open();
             //float [] widths = {3f, 3f, 3f, 3f, 3f, 3f, 4f};
-            float [] widths = {2.5f, 3f, 2f, 10f, 2f, 1f, 3f, 1f, 2.5f, 1f, 3f};
+            float [] widths = {2.5f, 3f, 2f, 7.5f, 2f, 1f, 3f,1f, 2.5f, 1f, 2.5f, 1f, 3f};
             PdfPTable table = new PdfPTable(widths);
             PdfPCell cell;
             
@@ -127,6 +130,16 @@ public class PdfReporteRemisionFacturada {
             table.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("MONTO",headerFont));
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBackgroundColor(BaseColor.BLACK);
+            cell.setFixedHeight(13);
+            cell.setColspan(2);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("IEPS",headerFont));
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
@@ -227,16 +240,19 @@ public class PdfReporteRemisionFacturada {
                     //sumar cantidades
                     if(registro.get("moneda_id").equals("1")){
                         suma_pesos_subtotal += Double.parseDouble(registro.get("monto"));
+                        suma_pesos_monto_ieps += Double.parseDouble(registro.get("monto_ieps"));
                         suma_pesos_impuesto += Double.parseDouble(registro.get("impuesto"));
                         suma_pesos_total += Double.parseDouble(registro.get("total"));
                     }
                     if(registro.get("moneda_id").equals("2")){
                         suma_dolares_subtotal += Double.parseDouble(registro.get("monto"));
+                        suma_dolares_monto_ieps += Double.parseDouble(registro.get("monto_ieps"));
                         suma_dolares_impuesto += Double.parseDouble(registro.get("impuesto"));
                         suma_dolares_total += Double.parseDouble(registro.get("total"));
                     }
                     
                     suma_subtotal_mn += Double.parseDouble(registro.get("monto_mn"));
+                    suma_monto_ieps_mn += Double.parseDouble(registro.get("monto_ieps_mn"));
                     suma_impuesto_mn += Double.parseDouble(registro.get("impuesto_mn"));
                     suma_total_mn += Double.parseDouble(registro.get("total_mn"));
                     
@@ -282,6 +298,18 @@ public class PdfReporteRemisionFacturada {
                     cell.setBorder(0);
                     table.addCell(cell);
                     
+                      //simbolo moneda
+                    cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
+                    //monto_ieps
+                    cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(registro.get("monto_ieps")),smallFont));
+                    cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                    cell.setBorder(0);
+                    table.addCell(cell);
+                    
                     //simbolo moneda
                     cell= new PdfPCell(new Paragraph(simbolo_moneda,smallFont));
                     cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
@@ -318,7 +346,7 @@ public class PdfReporteRemisionFacturada {
                 cell= new PdfPCell(new Paragraph("",smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(1);
-                cell.setColspan(6);
+                cell.setColspan(8);
                 cell.setFixedHeight(25);
                 table.addCell(cell);
                 
@@ -335,6 +363,16 @@ public class PdfReporteRemisionFacturada {
                 table.addCell(cell);
 
                 cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_pesos_subtotal,2)),smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(simbolo_moneda,smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_pesos_monto_ieps,2)),smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(0);
                 table.addCell(cell);
@@ -363,7 +401,7 @@ public class PdfReporteRemisionFacturada {
                 cell= new PdfPCell(new Paragraph("",smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(0);
-                cell.setColspan(11);
+                cell.setColspan(13);
                 cell.setFixedHeight(18);
                 table.addCell(cell);
                 
@@ -380,6 +418,16 @@ public class PdfReporteRemisionFacturada {
                 table.addCell(cell);
                 
                 cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_dolares_subtotal,2)),smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
+                 cell= new PdfPCell(new Paragraph(simbolo_moneda,smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_dolares_monto_ieps,2)),smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(0);
                 table.addCell(cell);
@@ -408,7 +456,7 @@ public class PdfReporteRemisionFacturada {
                 cell= new PdfPCell(new Paragraph("",smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(0);
-                cell.setColspan(11);
+                cell.setColspan(13);
                 cell.setFixedHeight(18);
                 table.addCell(cell);
                 
@@ -428,6 +476,17 @@ public class PdfReporteRemisionFacturada {
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(0);
                 table.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(simbolo_moneda,smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_monto_ieps_mn,2)),smallBoldFont));
+                cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
+                cell.setBorder(0);
+                table.addCell(cell);
+                
                 
                 cell= new PdfPCell(new Paragraph(simbolo_moneda,smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
