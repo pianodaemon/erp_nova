@@ -135,7 +135,7 @@
 				
                     <div id="div_two" title="" class="facdevoluciones_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:873px; padding-left:6px;"><strong>Devoluci&oacute;n de Mercanc&iacute;a</strong></div>
+                            <div class="fixed column" style="width:1003px; padding-left:6px;"><strong>Devoluci&oacute;n de Mercanc&iacute;a</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -160,13 +160,13 @@
 										
                                         <table border="0" style="margin:0; padding:0;" >
                                                 <tr>
-                                                    <td width="520"></td>
+                                                    <td width="600"></td>
                                                     <td width="10"></td>
-                                                    <td width="90"></td>
-                                                    <td width="260"></td>
+                                                    <td width="110"></td>
+                                                    <td width="300"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td valign="top" width="520"  > 
+                                                    <td valign="top" width="600"  > 
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
@@ -212,17 +212,17 @@
                                                     <td width="10"></td>
                                                     <!--<td width="60"></td>-->
 													
-                                                    <td width="350" colspan="2" valign="top" style="border: solid 1px #454442;">
+                                                    <td width="410" colspan="2" valign="top" style="border: solid 1px #454442;">
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="310">Concepto para la Nota de Cr&eacute;dito</td>
+                                                                <td width="360">Concepto&nbsp;para&nbsp;la&nbsp;Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
                                                                 <td width="30"></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="310">
-																	<textarea name="concepto" rows="2" cols="60" style="width:310px; resize: none;"></textarea>
+                                                                <td width="360">
+																	<textarea name="concepto" rows="2" cols="60" style="width:360px; resize: none;"></textarea>
                                                                 </td>
                                                                 <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_concepto"></div></td>
                                                             </tr>
@@ -332,11 +332,11 @@
 												
                                                 <tr>
                                                     
-													<td colspan="4" style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
+													<td colspan="4" style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
 														<table >
 															<thead>
 																<tr class="registros_pagos">
-																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="31"><div class="delete">&nbsp;#</div></td>
+																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="30"><div class="delete">&nbsp;#</div></td>
 																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="122">&nbsp;C&oacute;digo</td>
 																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="202">&nbsp;Descripci&oacute;n</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Unidad</td>
@@ -344,11 +344,16 @@
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Cantidad</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Precio&nbsp;unitario</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;Importe</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="124">&nbsp;Cantidad&nbsp;a&nbsp;devolver</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="50">&nbsp;%&nbsp;IEPS</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Monto&nbsp;IEPS</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="125">&nbsp;Cantidad&nbsp;a&nbsp;devolver</td>
+
+																	
+																	
 																</tr>
 															</thead>
 														</table>
-														<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:870; height: 115px; border:1px solid #C1DAD7 !important;">	
+														<div style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:1000; height:115px; border:1px solid #C1DAD7 !important;">	
 															<table class="tabla_facdevoluciones">
 																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
 																	
@@ -360,7 +365,7 @@
                                                 </tr>
 												
                                                 <tr>
-                                                    <td colspan="2" width="520"  align="left" valign="top">
+                                                    <td colspan="2" width="720"  align="left" valign="top">
 														
                                                         <div id="div_warning_grid" style="display:none;">
 															
@@ -415,9 +420,18 @@
                                                                 <td width="100"><INPUT TYPE="text" name="subtotal_nota" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
                                                                 <td width="20"></td>
                                                             </tr>
+															<tr id="tr_ieps">
+                                                                <td width="80"></td>
+                                                                <td width="60">IEPS</td>
+                                                                <td width="100"><INPUT TYPE="text" name="ieps" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
+                                                                <td width="10"></td>
+                                                                <td width="100"><INPUT TYPE="text" name="ieps_nota" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
+                                                                <td width="20"></td>
+															</tr>
+															
                                                             <tr>
                                                                 <td width="80"></td>
-                                                                <td width="60">Impuesto</td>
+                                                                <td width="60">IVA</td>
                                                                 <td width="100"><INPUT TYPE="text" name="impuesto" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
                                                                 <td width="10"></td>
                                                                 <td width="100"><INPUT TYPE="text" name="impuesto_nota" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
@@ -425,7 +439,7 @@
                                                             </tr>
 															<tr>
 																<td width="80"></td>
-																<td width="60">Retenido</td>
+																<td width="60">Retenci&oacute;n</td>
 																<td width="100"><INPUT TYPE="text" name="impuesto_retenido" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
 																<td width="10"></td>
 																<td width="100"><INPUT TYPE="text" name="impuesto_retenido_nota" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
@@ -434,15 +448,15 @@
                                                             <tr>
                                                                 <td width="80"></td>
                                                                 <td width="60">Total</td>
-                                                                <td width="100"><INPUT TYPE="text" name="total" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
+                                                                <td width="100"><INPUT TYPE="text" name="total" value="0" style="width:100px; text-align:right; font-weight:bold;" readOnly="true"></td>
                                                                 <td width="10"></td>
-                                                                <td width="100"><INPUT TYPE="text" name="total_nota" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
+                                                                <td width="100"><INPUT TYPE="text" name="total_nota" value="0" style="width:100px; text-align:right; font-weight:bold;" readOnly="true"></td>
                                                                 <td width="20"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_totalnota"></div></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="80"></td>
                                                                 <td width="60">Saldo</td>
-                                                                <td width="100"><INPUT TYPE="text" name="saldo_fac" value="0" style="width:100px; text-align:right;" readOnly="true"></td>
+                                                                <td width="100"><INPUT TYPE="text" name="saldo_fac" value="0" style="width:100px; text-align:right; font-weight:bold;" readOnly="true"></td>
                                                                 <td width="10"></td>
                                                                 <td width="100"></td>
                                                                 <td width="20"></td>
@@ -460,10 +474,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:886px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
+                            <div class="fixed column" style="width:1016px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="786"></td>
+										<td width="916"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>
