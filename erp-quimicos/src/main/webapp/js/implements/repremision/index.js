@@ -275,6 +275,8 @@ $(function() {
 					moneda_subtotal	:'',
 					subtotal  		:'Sub-Total',
 					moneda_iva    	:'',
+					iepscampo  		:'IEPS',
+					moneda_ieps    	:'',
 					impuesto  		:'IVA',
 					moneda_total    :'',
 					total    		:'Total'
@@ -315,6 +317,9 @@ $(function() {
 					if(attrValue == "Sub-Total"){
 						html_reporte +='<td width="80px" align="left" id="monto">'+attrValue+'</td>'; 
 					}
+					if(attrValue == "IEPS"){
+						html_reporte +='<td width="80px" align="left" id="monto">'+attrValue+'</td>'; 
+					}
 					if(attrValue == "IVA"){
 						html_reporte +='<td width="75px" align="left" id="monto">'+attrValue+'</td>'; 
 					}
@@ -343,6 +348,8 @@ $(function() {
 					html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>'; 
 					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tabla[i]["subtotal"]).toFixed(2))+'</td>'; 
 					html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>'; 
+					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tabla[i]["monto_ieps"]).toFixed(2))+'</td>'; 
+					html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>'; 
 					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tabla[i]["impuesto"]).toFixed(2))+'</td>'; 					
 					html_reporte +='<td align="right" id="simbolo_moneda">'+simbolo_moneda+'</td>'; 
 					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(body_tabla[i]["total"]).toFixed(2))+'</td>';
@@ -356,7 +363,9 @@ $(function() {
 					html_reporte +='<td align="left" id="sin_borde"></td>'; 
 					html_reporte +='<td align="right" id="sin_borde">Total M.N.</td>'; 
 					html_reporte +='<td align="right" id="simbolo_moneda">$</td>'; 
-					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_subtotal"]).toFixed(2))+'</td>'; 
+					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_subtotal"]).toFixed(2))+'</td>';
+					html_reporte +='<td align="right" id="simbolo_moneda">$</td>'; 
+					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_monto_ieps"]).toFixed(2))+'</td>'; 
 					html_reporte +='<td align="right" id="simbolo_moneda">$</td>'; 
 					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_pesos_impuesto"]).toFixed(2))+'</td>'; 					
 					html_reporte +='<td align="right" id="simbolo_moneda">$</td>'; 
@@ -371,6 +380,8 @@ $(function() {
 					html_reporte +='<td align="right" id="simbolo_moneda">USD</td>'; 
 					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_subtotal"]).toFixed(2))+'</td>'; 
 					html_reporte +='<td align="right" id="simbolo_moneda">USD</td>'; 
+					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_monto_ieps"]).toFixed(2))+'</td>';
+					html_reporte +='<td align="right" id="simbolo_moneda">USD</td>'; 
 					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_impuesto"]).toFixed(2))+'</td>'; 					
 					html_reporte +='<td align="right" id="simbolo_moneda">USD</td>'; 
 					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_dolares_total"]).toFixed(2))+'</td>';
@@ -382,7 +393,9 @@ $(function() {
 					html_reporte +='<td align="left" id="sin_borde"></td>'; 
 					html_reporte +='<td align="right" id="sin_borde">Total General en M.N.</td>'; 
 					html_reporte +='<td align="right" id="simbolo_moneda">$</td>'; 
-					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_subtotal_mn"]).toFixed(2))+'</td>'; 
+					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_subtotal_mn"]).toFixed(2))+'</td>';
+					html_reporte +='<td align="right" id="simbolo_moneda">$</td>'; 
+					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_monto_ieps_mn"]).toFixed(2))+'</td>';  
 					html_reporte +='<td align="right" id="simbolo_moneda">$</td>'; 
 					html_reporte +='<td align="right" id="monto">'+$(this).agregar_comas(parseFloat(footer_tabla[0]["suma_impuesto_mn"]).toFixed(2))+'</td>'; 					
 					html_reporte +='<td align="right" id="simbolo_moneda">$</td>'; 
