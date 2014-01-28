@@ -127,13 +127,16 @@ public class RepRemisionFacturadaController {
         LinkedHashMap<String,String> total = new LinkedHashMap<String,String>();        
         HashMap<String, String> userDat = new HashMap<String, String>();
         Double suma_pesos_subtotal = 0.0;
+        Double suma_pesos_monto_ieps = 0.0;
         Double suma_pesos_impuesto = 0.0;
         Double suma_pesos_total = 0.0;
         Double suma_dolares_subtotal = 0.0;
+        Double suma_dolares_monto_ieps = 0.0;
         Double suma_dolares_impuesto = 0.0;
         Double suma_dolares_total = 0.0;
         
         Double suma_subtotal_mn = 0.0;
+        Double suma_monto_ieps_mn = 0.0;
         Double suma_impuesto_mn = 0.0;
         Double suma_total_mn = 0.0;
         
@@ -154,28 +157,37 @@ public class RepRemisionFacturadaController {
             //sumar cantidades
             if(registro.get("moneda_id").equals("1")){
                 suma_pesos_subtotal += Double.parseDouble(registro.get("monto"));
+                suma_pesos_monto_ieps += Double.parseDouble(registro.get("monto_ieps"));
                 suma_pesos_impuesto += Double.parseDouble(registro.get("impuesto"));
                 suma_pesos_total += Double.parseDouble(registro.get("total"));
-            }
+           }
             if(registro.get("moneda_id").equals("2")){
                 suma_dolares_subtotal += Double.parseDouble(registro.get("monto"));
+                suma_dolares_monto_ieps += Double.parseDouble(registro.get("monto_ieps"));
                 suma_dolares_impuesto += Double.parseDouble(registro.get("impuesto"));
                 suma_dolares_total += Double.parseDouble(registro.get("total"));
             }
             suma_subtotal_mn += Double.parseDouble(registro.get("monto_mn"));
+            suma_monto_ieps_mn += Double.parseDouble(registro.get("monto_ieps"));
             suma_impuesto_mn += Double.parseDouble(registro.get("impuesto_mn"));
             suma_total_mn += Double.parseDouble(registro.get("total_mn"));
         }
         
         total.put("suma_pesos_subtotal", StringHelper.roundDouble(suma_pesos_subtotal,2));
+        total.put("suma_pesos_monto_ieps", StringHelper.roundDouble(suma_pesos_monto_ieps,2));
         total.put("suma_pesos_impuesto", StringHelper.roundDouble(suma_pesos_impuesto,2));
         total.put("suma_pesos_total", StringHelper.roundDouble(suma_pesos_total,2));
+        
         total.put("suma_dolares_subtotal", StringHelper.roundDouble(suma_dolares_subtotal,2));
+        total.put("suma_dolares_monto_ieps", StringHelper.roundDouble(suma_dolares_monto_ieps,2));
         total.put("suma_dolares_impuesto", StringHelper.roundDouble(suma_dolares_impuesto,2));
         total.put("suma_dolares_total", StringHelper.roundDouble(suma_dolares_total,2));
+        
         total.put("suma_subtotal_mn", StringHelper.roundDouble(suma_subtotal_mn,2));
+        total.put("suma_monto_ieps_mn", StringHelper.roundDouble(suma_monto_ieps_mn,2));
         total.put("suma_impuesto_mn", StringHelper.roundDouble(suma_impuesto_mn,2));
         total.put("suma_total_mn", StringHelper.roundDouble(suma_total_mn,2));
+        
         totales.add(total);
         jsonretorno.put("Remisiones", remisiones);
         jsonretorno.put("Totales", totales);
