@@ -1774,6 +1774,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                             + "gral_mon.simbolo AS simbolo_moneda, "
                             + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.subtotal ELSE 0.0 END) AS subtotal, "
                             + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.subtotal*tipo_cambio ELSE 0.0 END) AS subtotal_mn, "
+                            + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.monto_ieps ELSE 0.0 END) AS monto_ieps, "
+                            + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.monto_ieps*tipo_cambio ELSE 0.0 END) AS monto_ieps_mn, "
                             + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.impuesto ELSE 0.0 END) AS impuesto, "
                             + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.impuesto*tipo_cambio ELSE 0.0 END) AS impuesto_mn, "
                             + "(CASE WHEN fac_docs.cancelado=FALSE THEN fac_docs.total ELSE 0.0 END) AS total, "
@@ -1810,6 +1812,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("impuesto_mn",StringHelper.roundDouble(rs.getDouble("impuesto_mn"), 2));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"), 2));
                     row.put("total_mn",StringHelper.roundDouble(rs.getDouble("total_mn"), 2));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"), 2));
+                    row.put("monto_ieps_mn",StringHelper.roundDouble(rs.getDouble("monto_ieps_mn"), 2));
                     return row;
                 }
             }
@@ -1862,6 +1866,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                             + "gral_mon.descripcion_abr AS moneda_remision, "
                             + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.subtotal ELSE 0.0 END) AS subtotal, "
                             + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.subtotal*tipo_cambio ELSE 0.0 END) AS subtotal_mn, "
+                            + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.monto_ieps ELSE 0.0 END) AS monto_ieps, "
+                            + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.monto_ieps*tipo_cambio ELSE 0.0 END) AS monto_ieps_mn, "
                             + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.impuesto ELSE 0.0 END) AS impuesto, "
                             + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.impuesto*tipo_cambio ELSE 0.0 END) AS impuesto_mn, "
                             + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.total ELSE 0.0 END) AS total, "
@@ -1897,13 +1903,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("impuesto_mn",StringHelper.roundDouble(rs.getDouble("impuesto_mn"), 2));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"), 2));
                     row.put("total_mn",StringHelper.roundDouble(rs.getDouble("total_mn"), 2));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"), 2));
+                    row.put("monto_ieps_mn",StringHelper.roundDouble(rs.getDouble("monto_ieps_mn"), 2));
                     return row;
                 }
             }
         );
         return hm_remisiones;
-    }
-    
+    }    
     
     
     
@@ -1931,6 +1938,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "to_char (fac_rems.momento_creacion,'dd/mm/yyyy' ) as fecha_remision_facturada,  "
                     + "cxc_clie.razon_social as cliente, (CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.subtotal ELSE 0.0 END) AS monto, "
                     + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.subtotal*fac_rems.tipo_cambio ELSE 0.0 END) AS monto_mn, "
+                    + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.monto_ieps ELSE 0.0 END) AS monto_ieps, "
+                    + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.monto_ieps*tipo_cambio ELSE 0.0 END) AS monto_ieps_mn, "
                     + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.impuesto ELSE 0.0 END) AS iva, "
                     + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.impuesto*fac_rems.tipo_cambio ELSE 0.0 END) AS impuesto_mn, "
                     + "(CASE WHEN fac_rems.cancelado=FALSE THEN fac_rems.total ELSE 0.0 END) AS total, "
@@ -1972,12 +1981,16 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("moneda_id",String.valueOf(rs.getInt("moneda_id")));
                     row.put("moneda_abr",rs.getString("moneda_abr"));
                     row.put("moneda_simbolo",rs.getString("moneda_simbolo"));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"), 2));
+                    row.put("monto_ieps_mn",StringHelper.roundDouble(rs.getDouble("monto_ieps_mn"), 2));
                     return row;
                 }
             }
         );
         return hm_remisiones;
     }
+    
+    
     
     
     
@@ -2903,7 +2916,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "''::character varying AS numero_aduana, "
                     + "''::character varying AS fecha_aduana, "
                     + "''::character varying AS aduana_aduana "
-                    + "FROM fac_nota_credito "
+                + "FROM fac_nota_credito "
                 + "WHERE id="+id_nota_credito;
                 
                 
