@@ -850,12 +850,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     //Éste método se utiliza para CFD y CFDI con Timbre Fiscal
     @Override
-    public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal, ArrayList<LinkedHashMap<String,String>> conceptos, ArrayList<HashMap<String, String>> ieps) {
+    public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal, ArrayList<LinkedHashMap<String,String>> conceptos, ArrayList<HashMap<String, String>> ieps, ArrayList<HashMap<String, String>> ivas) {
         ArrayList<LinkedHashMap<String, String>>  impuestos = new ArrayList<LinkedHashMap<String, String>>();
         LinkedHashMap<String,String> impuesto;
         
-        
-        
+        /*
         Double sumaImpuesto1=0.0;//1;"IVA 16%";0.16
         Double sumaImpuesto2=0.0;//2;"IVA TASA 0";0
         Double sumaImpuesto3=0.0;//3;"IVA 11%";0.11
@@ -939,10 +938,43 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             impuestos.add(impuesto);
             //System.out.println("impuesto5:IVA | tasa:"+tasaImpuesto5+" | importe:"+sumaImpuesto5);
         }
+        */
+            
+        
+        //Sumar importes por TASA del IVA
+        for (int x=0; x<=ivas.size()-1;x++){
+            HashMap<String,String> item_iva = ivas.get(x);
+            Integer idIva = Integer.parseInt(item_iva.get("id"));
+            Integer idIvaConcepto=0;
+            Double sumaImporteIva=0.0;
+            String tasaIva="";
+            
+            for (int y=0; y<=conceptos.size()-1;y++){
+                LinkedHashMap<String,String> item_con = conceptos.get(y);
+                
+                if(Integer.parseInt(item_con.get("id_impto"))==idIva){
+                    idIvaConcepto = Integer.parseInt(item_con.get("id_impto"));
+                    tasaIva = item_con.get("tasa_impuesto");
+                    sumaImporteIva = sumaImporteIva + Double.parseDouble(StringHelper.roundDouble(item_con.get("importe_impuesto"),4));
+                    System.out.println(""+idIva+"="+idIvaConcepto+" | tasaIva:"+tasaIva+" | importeIva:"+StringHelper.roundDouble(item_con.get("importe_impuesto"),4));
+                }
+            }
+            
+            //Si el id del IEPS en el concepto mayor que cero, quere decir que si incluye IEPS
+            if(idIvaConcepto>0){
+                impuesto = new LinkedHashMap<String,String>();
+                impuesto.put("impuesto", "IVA");
+                impuesto.put("importe", StringHelper.roundDouble(sumaImporteIva,2));
+                impuesto.put("tasa", tasaIva);
+                impuestos.add(impuesto);
+                System.out.println("impuesto:IVA | tasa:"+tasaIva+" | importe:"+StringHelper.roundDouble(sumaImporteIva,2));
+            }
+        }
         
         
         
         
+        //Sumar importes por TASA del IEPS
         for (int x=0; x<=ieps.size()-1;x++){
             HashMap<String,String> item_ieps = ieps.get(x);
             Integer idIeps = Integer.parseInt(item_ieps.get("id"));
@@ -957,8 +989,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     idIepsConcepto = Integer.parseInt(item_con.get("id_ieps"));
                     tasaIeps = item_con.get("tasa_ieps");
                     sumaImporteIeps = sumaImporteIeps + Double.parseDouble(StringHelper.roundDouble(item_con.get("importe_ieps"),4));
-                    
-                    System.out.println(""+idIeps+"="+idIepsConcepto+" | tasaIeps:"+tasaIeps+" | importeIeps:"+StringHelper.roundDouble(item_con.get("importe_ieps"),4));
+                    //System.out.println(""+idIeps+"="+idIepsConcepto+" | tasaIeps:"+tasaIeps+" | importeIeps:"+StringHelper.roundDouble(item_con.get("importe_ieps"),4));
                 }
             }
             
@@ -969,13 +1000,16 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 impuesto.put("importe", StringHelper.roundDouble(sumaImporteIeps,2));
                 impuesto.put("tasa", tasaIeps);
                 impuestos.add(impuesto);
-                
-                System.out.println("impuesto:IEPS | tasa:"+tasaIeps+" | importe:"+StringHelper.roundDouble(sumaImporteIeps,2));
+                //System.out.println("impuesto:IEPS | tasa:"+tasaIeps+" | importe:"+StringHelper.roundDouble(sumaImporteIeps,2));
             }
         }
         
         return impuestos;
     }
+    
+    
+    
+    
     
     
     //obtiene datos extras para la factura
@@ -2874,7 +2908,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "impuesto AS impuesto_nota, "
                     + "monto_retencion AS monto_ret_nota, "
                     + "total AS total_nota, "
-                    + "tipo_cambio AS tc_nota "
+                    + "tipo_cambio AS tc_nota,"
+                    + "monto_ieps "
                 + "FROM fac_nota_credito "
                 + "WHERE serie_folio_factura='"+factura+"' "
                 + "AND gral_app_id_creacion=76;";
@@ -2887,6 +2922,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("folio_nota",rs.getString("folio_nota"));
                     row.put("subtotal_nota",StringHelper.roundDouble(rs.getString("subtotal_nota"),2));
+                    row.put("monto_ieps_nota",StringHelper.roundDouble(rs.getString("monto_ieps"),2));
                     row.put("impuesto_nota",StringHelper.roundDouble(rs.getString("impuesto_nota"),2));
                     row.put("monto_ret_nota",StringHelper.roundDouble(rs.getString("monto_ret_nota"),2));
                     row.put("total_nota",StringHelper.roundDouble(rs.getString("total_nota"),2));
@@ -2921,7 +2957,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 
                 
         
-        //System.out.println(sql_query);
+        System.out.println("NC: "+sql_query);
         //System.out.println("getListaConceptosXmlCfdiTimbreFiscal: "+sql_query);
         
         //System.out.println("noIdentificacion "+" | descripcion      "+" | cant"+" | precio_uni"+" | importe"+" | importe_imp"+" | valor_imp"+" | tasa_ret"  );
@@ -2956,6 +2992,71 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         return hm_conceptos;
     }
+    
+    
+    
+    
+    
+    //Metodo para obtener conceptos para Nota de credito por Devolución
+    @Override
+    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXmlDevolucion(Integer id_nota_credito) {
+        String sql_query = ""
+                + "SELECT "
+                    + "'1'::character varying AS no_identificacion,"
+                    + "1::double precision AS cantidad,"
+                    + "concepto AS descripcion, "
+                    + "'No aplica'::character varying AS unidad, "
+                    + "subtotal as valor_unitario,"
+                    + "subtotal as importe,"
+                    + "impuesto as importe_impuesto,"
+                    + "tasa_retencion_immex AS tasa_retencion, "
+                    + "''::character varying AS numero_aduana, "
+                    + "''::character varying AS fecha_aduana, "
+                    + "''::character varying AS aduana_aduana "
+                + "FROM fac_nota_credito "
+                + "WHERE id="+id_nota_credito;
+        
+        //System.out.println(sql_query);
+        
+        ArrayList<LinkedHashMap<String, String>> hm_conceptos = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("noIdentificacion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("no_identificacion"))));
+                    row.put("cantidad",rs.getString("cantidad"));
+                    row.put("descripcion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("descripcion"))));
+                    row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("unidad"))));
+                    row.put("valorUnitario",StringHelper.roundDouble(rs.getDouble("valor_unitario"),2) );
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
+                    row.put("importe_impuesto",StringHelper.roundDouble(rs.getDouble("importe_impuesto"),2) );
+                    row.put("tasa_retencion",StringHelper.roundDouble(rs.getDouble("tasa_retencion"),2) );
+                    row.put("numero_aduana","");
+                    row.put("fecha_aduana","");
+                    row.put("aduana_aduana","");
+                    return row;
+                }
+            }
+        );
+        
+        try {
+            calcula_Totales_e_Impuestos(hm_conceptos);
+        } catch (SQLException ex) {
+            Logger.getLogger(FacturasSpringDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return hm_conceptos;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -3139,4 +3240,26 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     
+    
+    //Obtiene todos los impuestos del IVA(Impuesto al Valor Agregado)
+    @Override
+    public ArrayList<HashMap<String, String>> getIvas() {
+        String sql_to_query = "SELECT id, descripcion AS titulo, iva_1 AS tasa FROM gral_imptos  WHERE borrado_logico=false;";
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, String>> hm_ieps = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"),2));
+                    return row;
+                }
+            }
+        );
+        return hm_ieps;
+    }
 }
