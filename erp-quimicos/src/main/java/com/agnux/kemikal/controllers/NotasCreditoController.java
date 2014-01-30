@@ -519,7 +519,7 @@ public class NotasCreditoController {
                         listaConceptosPdf = this.getFacdao().getNotaCreditoCfd_ListaConceptosPdf(serieFolio);
                         
                         //datos para el pdf
-                        datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
+                        datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal, id_empresa);
                         datosExtrasPdf.put("tipo_facturacion", tipo_facturacion);
                         datosExtrasPdf.put("sello_sat", sello_digital_sat);
                         datosExtrasPdf.put("uuid", uuid);
@@ -681,7 +681,7 @@ public class NotasCreditoController {
                                 listaConceptosPdf = this.getFacdao().getNotaCreditoCfd_ListaConceptosPdf(serieFolio);
 
                                 //datos para el pdf
-                                datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
+                                datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal, id_empresa);
                                 datosExtrasPdf.put("tipo_facturacion", tipo_facturacion);
                                 datosExtrasPdf.put("sello_sat", sello_digital_sat);
                                 datosExtrasPdf.put("uuid", uuid);

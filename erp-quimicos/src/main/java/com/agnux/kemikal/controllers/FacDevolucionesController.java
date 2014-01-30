@@ -254,7 +254,7 @@ public class FacDevolucionesController {
         if( !id_factura.equals("0")  ){
             datosFactura = this.getFacdao().getFactura_Datos(Integer.parseInt(id_factura));
             datosGrid = this.getFacdao().getFactura_DatosGrid(Integer.parseInt(id_factura));
-            datosNotaCredito = this.getFacdao().getFacDevoluciones_DatosNotaCredito( datosFactura.get(0).get("serie_folio").toString() );
+            datosNotaCredito = this.getFacdao().getFacDevoluciones_DatosNotaCredito( datosFactura.get(0).get("serie_folio").toString(),  datosFactura.get(0).get("cliente_id").toString());
         }
         
         valorIva= this.getFacdao().getValoriva(id_sucursal);
@@ -284,7 +284,7 @@ public class FacDevolucionesController {
     
     
     
-    //edicion y nuevo
+    //Edicion y nuevo
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
             @RequestParam(value="id_factura", required=true) Integer id_factura,
@@ -304,6 +304,10 @@ public class FacDevolucionesController {
             @RequestParam(value="cantidad", required=false) String[] cantidad,
             @RequestParam(value="costo", required=false) String[] costo,
             @RequestParam(value="cantidad_dev", required=false) String[] cantidad_dev,
+            
+            @RequestParam(value="idIeps", required=false) String[] idIeps,
+            @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
+            
             @ModelAttribute("user") UserSessionData user
         ) throws Exception {
             
@@ -317,6 +321,9 @@ public class FacDevolucionesController {
             //variables para xml de Nota de Credito CFD y CFDI
             HashMap<String,String> dataCliente = new HashMap<String,String>();
             ArrayList<LinkedHashMap<String,String>> listaConceptos = new ArrayList<LinkedHashMap<String,String>>();
+            ArrayList<LinkedHashMap<String,String>> conceptos = new ArrayList<LinkedHashMap<String,String>>();
+            ArrayList<HashMap<String, String>> arrayIvas = new ArrayList<HashMap<String, String>>();
+            ArrayList<HashMap<String, String>> arrayIeps = new ArrayList<HashMap<String, String>>();
             ArrayList<LinkedHashMap<String,String>> impTrasladados = new ArrayList<LinkedHashMap<String,String>>();
             ArrayList<LinkedHashMap<String,String>> impRetenidos = new ArrayList<LinkedHashMap<String,String>>();
             LinkedHashMap<String,String> datosExtras = new LinkedHashMap<String,String>();
@@ -329,9 +336,11 @@ public class FacDevolucionesController {
             ArrayList<HashMap<String, String>> listaConceptosPdf = new ArrayList<HashMap<String, String>>();
             HashMap<String, String> datosExtrasPdf= new HashMap<String, String>();
             
-            Integer app_selected = 76;//aplicativo Devolucion de Mercancia
+            //aplicativo Devolucion de Mercancia
+            Integer app_selected = 76;
             String command_selected = "new";
-            Integer id_usuario= user.getUserId();//variable para el id  del usuario
+            //Variable para el id  del usuario
+            Integer id_usuario= user.getUserId();
             String extra_data_array = "'sin datos'";
             String actualizo = "0";
             String serieFolio="";
@@ -339,18 +348,32 @@ public class FacDevolucionesController {
             String tipo_facturacion="";
             String observaciones="";
             String importe="";
+            String ieps="";
             String impuesto="";
             String retencion="";
             String total="";
             String generar="true";
+            //Variable que almacena valor true cuando la factura se saldará por completo con la NC
             String fac_saldado="false";
             Integer id_nota_credito=0;
+            //Importe antes de Impuestos de la partida
             Double importePartida=0.0;
+            //Tasa del IEPS de la Partida
+            Double tasaIepsPartida=0.0;
+            //Importe del IEPS de la Partida
+            Double importeIepsPartida=0.0;
+            //Importe del IVA de la Partida
             Double impuestoPartida=0.0;
-            Double sumaSubTotal = 0.0; //es la suma de todos los importes
-            Double sumaImpuesto = 0.0; //suma del iva
-            Double impuestoRetenido = 0.0; //monto del iva retenido de acuerdo a la tasa de retencion immex
-            Double sumaTotal = 0.0; //suma del subtotal + totalImpuesto
+            //Suma de los importes de las partidad
+            Double sumaSubTotal = 0.0;
+            //Suma de los importes del IEPS
+            Double sumaIeps = 0.0;
+            //Suma de los importes del iva
+            Double sumaImpuesto = 0.0;
+            //Monto del iva retenido de acuerdo a la tasa de retencion immex
+            Double impuestoRetenido = 0.0;
+            //Suma del sumaSubTotal + sumaIeps + sumaImpuesto - impuestoRetenido
+            Double sumaTotal = 0.0;
             String select_tipo_documento = "0";
             String refacturar = "false";
             String valorRespuesta="false";
@@ -366,28 +389,41 @@ public class FacDevolucionesController {
             arreglo = new String[seleccionado.length];
             
             for(int i=0; i<seleccionado.length; i++) { 
+                tasaIepsPartida=0.0;
+                importePartida = 0.0;
+                impuestoPartida = 0.0;
+                importeIepsPartida=0.0;
                 //calcular totales de los seleccionados
                 if(seleccionado[i].equals("1")){
-                    importePartida = 0.0;
-                    impuestoPartida = 0.0;
                     importePartida = Double.parseDouble(costo[i]) * Double.parseDouble(cantidad_dev[i]);
-                    impuestoPartida = importePartida * Double.parseDouble(valor_iva);
+                    
+                    if(!tasaIeps[i].trim().equals("")){
+                        tasaIepsPartida = Double.parseDouble(tasaIeps[i]);
+                        if (tasaIepsPartida>0){
+                            tasaIepsPartida = tasaIepsPartida/100;
+                            importeIepsPartida = importePartida * tasaIepsPartida;
+                        }
+                    }
+                    
+                    impuestoPartida = (importePartida + importeIepsPartida) * Double.parseDouble(valor_iva);
+                    
                     sumaSubTotal = sumaSubTotal + importePartida;
+                    sumaIeps = sumaIeps + importeIepsPartida;
                     sumaImpuesto = sumaImpuesto + impuestoPartida;
                     //System.out.println(costo[i]+"  "+ cantidad_dev[i] +"   "+ importePartida + "   "+impuestoPartida);
                 }
-                
-                arreglo[i]= "'"+seleccionado[i]+"___"+producto_id[i] +"___" + cantidad[i] +"___" + cantidad_dev[i] +"___"+id_impuesto+"___"+valor_iva+"___"+idpres[i]+"___"+costo[i]+"'";
+                arreglo[i]= "'"+seleccionado[i]+"___"+producto_id[i] +"___" + cantidad[i] +"___" + cantidad_dev[i] +"___"+id_impuesto+"___"+valor_iva+"___"+idpres[i]+"___"+costo[i]+"___"+idIeps[i]+"___"+tasaIepsPartida+"'";
                 //System.out.println(arreglo[i]);
             }
             
-            //calcular el total de la retencion
+            //Calcular el total de la retencion
             impuestoRetenido = sumaSubTotal * Double.parseDouble(tasa_retencion);
             
             //calcula el total sumando el subtotal y el impuesto
-            sumaTotal = sumaSubTotal + sumaImpuesto - impuestoRetenido;
+            sumaTotal = sumaSubTotal + sumaIeps + sumaImpuesto - impuestoRetenido;
             
             importe = StringHelper.roundDouble(sumaSubTotal,2);
+            ieps = StringHelper.roundDouble(sumaIeps,2);
             impuesto = StringHelper.roundDouble(sumaImpuesto,2);
             retencion = StringHelper.roundDouble(impuestoRetenido,2);
             total = StringHelper.roundDouble(sumaTotal,2);
@@ -401,7 +437,7 @@ public class FacDevolucionesController {
             //serializar el arreglo
             extra_data_array = StringUtils.join(arreglo, ",");
             
-            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_factura+"___"+id_cliente+"___"+id_impuesto+"___"+valor_iva+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+select_vendedor+"___"+concepto.toUpperCase()+"___"+tipo_cambio_nota+"___"+importe+"___"+impuesto+"___"+retencion+"___"+total+"___"+factura;
+            String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_factura+"___"+id_cliente+"___"+id_impuesto+"___"+valor_iva+"___"+observaciones.toUpperCase()+"___"+select_moneda+"___"+select_vendedor+"___"+concepto.toUpperCase()+"___"+tipo_cambio_nota+"___"+importe+"___"+impuesto+"___"+retencion+"___"+total+"___"+factura+"___"+ieps;
             
             //System.out.println("data_string: "+data_string);
             
@@ -438,12 +474,13 @@ public class FacDevolucionesController {
                     //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la Nota de Credito
                     parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
                     
-                    //tipo facturacion CFD
+                    //Tipo facturacion CFD
                     if(tipo_facturacion.equals("cfd")){
                         System.out.println("::::::::::::Tipo CFD:::::::::::::::::..");
                         listaConceptos = this.getFacdao().getNotaCreditoCfd_ListaConceptosXml(id_nota_credito);
                         dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
                         impRetenidos = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosRetenidosXml();
+                        
                         impTrasladados = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(id_sucursal);
                         
                         command_selected = "genera_nota_credito_cfd";
@@ -472,7 +509,7 @@ public class FacDevolucionesController {
                         listaConceptosPdf = this.getFacdao().getNotaCreditoCfd_ListaConceptosPdf(serieFolio);
                         
                         //datos para el pdf
-                        datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
+                        datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal, id_empresa);
                         datosExtrasPdf.put("fechaTimbre", fechaTimbre);
                         datosExtrasPdf.put("noCertificadoSAT", noCertSAT);
                         datosExtrasPdf.put("fecha_comprobante", this.getBfcfd().getFecha());
@@ -527,7 +564,7 @@ public class FacDevolucionesController {
                             
                             
                             //aqui se debe actializar el registro
-                            data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado;
+                            data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado+"___"+id_cliente;
                             
                             actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
                             
@@ -556,17 +593,26 @@ public class FacDevolucionesController {
                             data_string="";
                             extra_data_array = "'sin datos'";
                             command_selected="genera_nota_credito_cfditf";
-
+                            
+                            //Obtener los valores del IEPS e IVAque se estan utilizando
+                            arrayIeps = this.getFacdao().getIeps(id_empresa);
+                            arrayIvas = this.getFacdao().getIvas();
+                            
                             String Serie=this.getGralDao().getSerieNotaCredito(id_empresa, id_sucursal);
                             String Folio=this.getGralDao().getFolioNotaCredito(id_empresa, id_sucursal);
                             rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
 
-                            //lista de conceptos para la Nota de Credito cfditf
+                            //Obtener el concepto para la Nota de Credito cfditf
                             listaConceptos = this.getFacdao().getNotaCreditoCfdiTf_ListaConceptosXml(id_nota_credito);
                             impRetenidos = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosRetenidosXml();
-                            impTrasladados = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(id_sucursal);
+                            
+                            //Aqui solo se obtienen los productos de la Devolución para calcular impuestos
+                            conceptos = this.getFacdao().getNotaCreditoCfdiTf_ConceptosParaImpuestosXml(id_nota_credito);
+                            impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos, arrayIeps, arrayIvas);
+                            
+                            //impTrasladados = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(id_sucursal);
                             dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
-
+                            
                             //obtiene datos extras para el cfdi
                             datosExtras = this.getFacdao().getNotaCreditoCfdi_DatosExtras(id_nota_credito, Serie, Folio);
                             
@@ -601,7 +647,7 @@ public class FacDevolucionesController {
                             if(cadRes[0].equals("true")){
                                 
                                 //aqui se debe actializar el registro
-                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado;
+                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado+"___"+id_cliente;
 
                                 actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
 
@@ -629,9 +675,9 @@ public class FacDevolucionesController {
 
                                 //conceptos para el pdfcfd
                                 listaConceptosPdf = this.getFacdao().getNotaCreditoCfd_ListaConceptosPdf(serieFolio);
-
-                                //datos para el pdf
-                                datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
+                                
+                                //Datos para el pdf
+                                datosExtrasPdf = this.getFacdao().getNotaCreditoCfd_DatosExtrasPdf( serieFolio, proposito, cadena_original,sello_digital, id_sucursal, id_empresa);
                                 datosExtrasPdf.put("tipo_facturacion", tipo_facturacion);
                                 datosExtrasPdf.put("sello_sat", sello_digital_sat);
                                 datosExtrasPdf.put("uuid", uuid);

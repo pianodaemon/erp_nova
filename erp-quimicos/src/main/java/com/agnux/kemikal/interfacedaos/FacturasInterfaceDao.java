@@ -133,7 +133,7 @@ public interface FacturasInterfaceDao {
     public LinkedHashMap<String,String> getNotaCreditoCfd_DatosExtrasXml(Integer id_nota_credito, String tipo_cambio,String id_usuario,String moneda_id, Integer id_empresa, Integer id_sucursal, Integer app_selected, String command_selected, String extra_data_array, String fac_saldado);
     public String getSerieFolioNotaCredito(Integer id_nota_credito);
     public ArrayList<HashMap<String, String>> getNotaCreditoCfd_ListaConceptosPdf(String serieFolio);
-    public HashMap<String, String> getNotaCreditoCfd_DatosExtrasPdf(String serieFolio, String proposito, String cadena_original, String sello_digital, Integer id_sucursal);
+    public HashMap<String, String> getNotaCreditoCfd_DatosExtrasPdf(String serieFolio, String proposito, String cadena_original, String sello_digital, Integer id_sucursal, Integer id_empresa);
     
     
     //para txt de Nota de Credito cfdi
@@ -143,7 +143,7 @@ public interface FacturasInterfaceDao {
     public ArrayList<LinkedHashMap<String,String>> getNotaCreditoCfdi_ImpuestosRetenidos(Integer id_nota_credito);
     
     //este metodo es para buscar si la factura seleccionada ya tiene asociada una Nota de Credito que se haya generado desde Devoluciones
-    public ArrayList<HashMap<String, Object>> getFacDevoluciones_DatosNotaCredito(String factura);
+    public ArrayList<HashMap<String, Object>> getFacDevoluciones_DatosNotaCredito(String factura, String idCliente);
     
     
     //public ArrayList<HashMap<String, String>> get_buscador_clientes(String cadena, Integer filtro, Integer id_empresa, Integer id_sucursal);
@@ -151,8 +151,8 @@ public interface FacturasInterfaceDao {
     
     
     /*Add by jpakoery, for nota de credito tf*/
-    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXml(Integer id_nota_credito);
-    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXmlDevolucion(Integer id_nota_credito);
+    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXml(Integer idNotaCredito);
+    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ConceptosParaImpuestosXml(Integer idNotaCredito);
     
     
     public LinkedHashMap<String, Object> getDatosAdenda(Integer tipoDoc, Integer noAdenda, HashMap<String,String> dataFactura, Integer identificador, String serieFolio, Integer id_emp);

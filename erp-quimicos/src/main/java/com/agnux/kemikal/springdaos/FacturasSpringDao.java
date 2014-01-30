@@ -235,34 +235,35 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getFactura_Datos(Integer id_factura) {
         
-        String sql_query = "SELECT fac_docs.id, "
-                +"fac_docs.folio_pedido,  "
-                +"fac_docs.serie_folio,  "
-                +"fac_docs.moneda_id,  "
-                +"fac_docs.observaciones,  "
-                +"cxc_clie.id as cliente_id,  "
-                +"cxc_clie.rfc,  "
-                +"cxc_clie.razon_social,  "
-                + "fac_docs.cxc_clie_df_id, "
-                + "(CASE WHEN fac_docs.cxc_clie_df_id > 1 THEN "
-                    + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
-                + "ELSE "
-                    + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
-                + "END ) AS direccion,"
-                +"fac_docs.subtotal,"
-                +"fac_docs.monto_ieps,"
-                +"fac_docs.impuesto,"
-                +"fac_docs.total,"
-                +"fac_docs.monto_retencion,"
-                +"fac_docs.tipo_cambio,"
-                +"(CASE WHEN fac_docs.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) as estado,   "
-                +"fac_docs.cxc_agen_id,"
-                +"fac_docs.terminos_id,"
-                +"fac_docs.orden_compra, "
-                + "fac_docs.fac_metodos_pago_id,  "
-                + "fac_docs.no_cuenta, "
-                + "cxc_clie.tasa_ret_immex/100 AS tasa_ret_immex, "
-                + "erp_h_facturas.saldo_factura "
+        String sql_query = ""
+        + "SELECT fac_docs.id,"
+            +"fac_docs.folio_pedido,"
+            +"fac_docs.serie_folio,"
+            +"fac_docs.moneda_id,"
+            +"fac_docs.observaciones,"
+            +"cxc_clie.id AS cliente_id,"
+            +"cxc_clie.rfc,"
+            +"cxc_clie.razon_social,"
+            + "fac_docs.cxc_clie_df_id,"
+            + "(CASE WHEN fac_docs.cxc_clie_df_id > 1 THEN "
+                + "sbtdf.calle||' '||sbtdf.numero_interior||' '||sbtdf.numero_exterior||', '||sbtdf.colonia||', '||sbtdf.municipio||', '||sbtdf.estado||', '||sbtdf.pais||' C.P. '||sbtdf.cp "
+            + "ELSE "
+                + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
+            + "END ) AS direccion,"
+            +"fac_docs.subtotal,"
+            +"fac_docs.monto_ieps,"
+            +"fac_docs.impuesto,"
+            +"fac_docs.total,"
+            +"fac_docs.monto_retencion,"
+            +"fac_docs.tipo_cambio,"
+            +"(CASE WHEN fac_docs.cancelado=FALSE THEN '' ELSE 'CANCELADO' END) AS estado,"
+            +"fac_docs.cxc_agen_id,"
+            +"fac_docs.terminos_id,"
+            +"fac_docs.orden_compra,"
+            + "fac_docs.fac_metodos_pago_id,"
+            + "fac_docs.no_cuenta, "
+            + "cxc_clie.tasa_ret_immex/100 AS tasa_ret_immex,"
+            + "erp_h_facturas.saldo_factura "
         +"FROM fac_docs   "
         +"JOIN erp_h_facturas ON erp_h_facturas.serie_folio=fac_docs.serie_folio "
         +"LEFT JOIN cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
@@ -336,7 +337,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         +"LEFT JOIN inv_prod on inv_prod.id = fac_docs_detalles.inv_prod_id  "
         +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_docs_detalles.inv_prod_unidad_id  "
         +"LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = fac_docs_detalles.inv_prod_presentacion_id  "
-        +"WHERE fac_docs_detalles.fac_doc_id = ? ";
+        +"WHERE fac_docs_detalles.fac_doc_id = ? ORDER BY fac_docs_detalles.id;";
         
         //System.out.println("Obtiene datos grid FACTURA: "+sql_query);
         //System.out.println("id_factura: "+id_factura);
@@ -848,7 +849,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //Éste método se utiliza para CFD y CFDI con Timbre Fiscal
+    //Éste método se utiliza para CFD y CFDI con Timbre Fiscal, Devoluciones(Nota de Credito CFDI)
     @Override
     public ArrayList<LinkedHashMap<String, String>> getImpuestosTrasladadosFacturaXml(Integer id_sucursal, ArrayList<LinkedHashMap<String,String>> conceptos, ArrayList<HashMap<String, String>> ieps, ArrayList<HashMap<String, String>> ivas) {
         ArrayList<LinkedHashMap<String, String>>  impuestos = new ArrayList<LinkedHashMap<String, String>>();
@@ -989,7 +990,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     idIepsConcepto = Integer.parseInt(item_con.get("id_ieps"));
                     tasaIeps = item_con.get("tasa_ieps");
                     sumaImporteIeps = sumaImporteIeps + Double.parseDouble(StringHelper.roundDouble(item_con.get("importe_ieps"),4));
-                    //System.out.println(""+idIeps+"="+idIepsConcepto+" | tasaIeps:"+tasaIeps+" | importeIeps:"+StringHelper.roundDouble(item_con.get("importe_ieps"),4));
+                    System.out.println(""+idIeps+"="+idIepsConcepto+" | tasaIeps:"+tasaIeps+" | importeIeps:"+StringHelper.roundDouble(item_con.get("importe_ieps"),4));
                 }
             }
             
@@ -1000,7 +1001,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 impuesto.put("importe", StringHelper.roundDouble(sumaImporteIeps,2));
                 impuesto.put("tasa", tasaIeps);
                 impuestos.add(impuesto);
-                //System.out.println("impuesto:IEPS | tasa:"+tasaIeps+" | importe:"+StringHelper.roundDouble(sumaImporteIeps,2));
+                System.out.println("impuesto:IEPS | tasa:"+tasaIeps+" | importe:"+StringHelper.roundDouble(sumaImporteIeps,2));
             }
         }
         
@@ -2479,6 +2480,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
+    
     //este metodo se utiliza para Nota de Credito CFD y CFDI
     @Override
     public HashMap<String, String> getNotaCreditoCfd_Cfdi_Datos(Integer id_nota_credito) {
@@ -2583,7 +2585,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         //este solo se utiliza en el pdfcfd y cfdi
         data.put("numero_control",map.get("numero_control").toString());
         
-
+        
         
         if(Integer.parseInt(String.valueOf(map.get("adenda_id")))==1){
             //Este campo es utilizado para la adenda de Femsa-Quimiproductos
@@ -2642,7 +2644,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "''::character varying AS unidad, "
                     + "gral_mon.descripcion as moneda, "
                     + "fac_nota_credito.subtotal AS precio_unitario, "
-                    + "fac_nota_credito.subtotal AS importe "
+                    + "fac_nota_credito.subtotal AS importe,"
+                    + "''::character varying AS etiqueta_ieps "
+                + " "
                 + "FROM fac_nota_credito "
                 + "LEFT JOIN gral_mon ON gral_mon.id = fac_nota_credito.moneda_id "
                 + "WHERE fac_nota_credito.serie_folio='"+serieFolio+"';";
@@ -2663,7 +2667,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
                     row.put("moneda",rs.getString("moneda"));
                     row.put("denominacion","");
-                    
+                    row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
                     /*
                     System.out.println(rs.getString("moneda")+"  "
                             + ""+rs.getString("sku")+"  "
@@ -2683,30 +2687,34 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     @Override
-    public HashMap<String, String> getNotaCreditoCfd_DatosExtrasPdf(String serieFolio, String proposito, String cadena_original, String sello_digital, Integer id_sucursal) {
+    public HashMap<String, String> getNotaCreditoCfd_DatosExtrasPdf(String serieFolio, String proposito, String cadena_original, String sello_digital, Integer id_sucursal, Integer id_empresa) {
         HashMap<String, String> extras = new HashMap<String, String>();
         ArrayList<HashMap<String, Object>> valorIva = new ArrayList<HashMap<String, Object>>();
         
-        valorIva= getValoriva(id_sucursal);//obtiene el valor del iva
+        //Obtiene el valor del iva de la Sucursal
+        valorIva= getValoriva(id_sucursal);
         
         //obtener datos del vendedor y terminos de pago
         String sql_to_query = ""
-                + "SELECT fac_nota_credito.subtotal, "
-                    + "fac_nota_credito.impuesto, "
-                    + "fac_nota_credito.monto_retencion, "
-                    + "fac_nota_credito.total, "
-                    + "to_char(fac_nota_credito.momento_expedicion,'yyyy-mm-dd') AS fecha_comprobante, "
-                    + "fac_nota_credito.observaciones, "
-                    + "cxc_agen.nombre AS nombre_vendedor, "
-                    + "gral_mon.descripcion AS nombre_moneda,"
-                    + "gral_mon.descripcion_abr AS moneda_abr "
-                + "FROM fac_nota_credito  "
-                + "LEFT JOIN gral_mon on gral_mon.id = fac_nota_credito.moneda_id "
-                + "JOIN cxc_agen ON cxc_agen.id =  fac_nota_credito.cxc_agen_id  "
-                + "WHERE fac_nota_credito.serie_folio='"+serieFolio+"';";
+        + "SELECT "
+            + "fac_nota_credito.subtotal, "
+            + "fac_nota_credito.monto_ieps,"
+            + "fac_nota_credito.impuesto, "
+            + "fac_nota_credito.monto_retencion, "
+            + "fac_nota_credito.total, "
+            + "to_char(fac_nota_credito.momento_expedicion,'yyyy-mm-dd') AS fecha_comprobante, "
+            + "fac_nota_credito.observaciones, "
+            + "cxc_agen.nombre AS nombre_vendedor, "
+            + "gral_mon.descripcion AS nombre_moneda,"
+            + "gral_mon.descripcion_abr AS moneda_abr "
+        + "FROM fac_nota_credito  "
+        + "LEFT JOIN gral_mon on gral_mon.id = fac_nota_credito.moneda_id "
+        + "JOIN cxc_agen ON cxc_agen.id =  fac_nota_credito.cxc_agen_id  "
+        + "WHERE fac_nota_credito.serie_folio='"+serieFolio+"' AND fac_nota_credito.gral_emp_id="+id_empresa+";";
         
         Map<String, Object> mapVendedorCondiciones = this.getJdbcTemplate().queryForMap(sql_to_query);
         extras.put("subtotal", StringHelper.roundDouble(mapVendedorCondiciones.get("subtotal").toString(),2));
+        extras.put("monto_ieps", StringHelper.roundDouble(mapVendedorCondiciones.get("monto_ieps").toString(),2));
         extras.put("impuesto", StringHelper.roundDouble(mapVendedorCondiciones.get("impuesto").toString(),2));
         extras.put("monto_retencion", StringHelper.roundDouble(mapVendedorCondiciones.get("monto_retencion").toString(),2));
         extras.put("total", StringHelper.roundDouble(mapVendedorCondiciones.get("total").toString(),2));
@@ -2900,7 +2908,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     @Override
-    public ArrayList<HashMap<String, Object>> getFacDevoluciones_DatosNotaCredito(String factura) {
+    public ArrayList<HashMap<String, Object>> getFacDevoluciones_DatosNotaCredito(String factura, String idCliente) {
         String sql_to_query = ""
                 + "SELECT "
                     + "serie_folio AS folio_nota, "
@@ -2911,8 +2919,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "tipo_cambio AS tc_nota,"
                     + "monto_ieps "
                 + "FROM fac_nota_credito "
-                + "WHERE serie_folio_factura='"+factura+"' "
-                + "AND gral_app_id_creacion=76;";
+                + "WHERE serie_folio_factura='"+factura+"' AND cxc_clie_id="+idCliente+" AND gral_app_id_creacion=76;";
         
         ArrayList<HashMap<String, Object>> ret = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -2938,7 +2945,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     @Override
-    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXml(Integer id_nota_credito) {
+    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXml(Integer idNotaCredito) {
         String sql_query = ""
                 + "SELECT "
                     + "'1'::character varying AS no_identificacion,"
@@ -2948,12 +2955,13 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     + "subtotal as valor_unitario,"
                     + "subtotal as importe,"
                     + "impuesto as importe_impuesto,"
+                    + "monto_ieps AS importe_ieps,"
                     + "tasa_retencion_immex AS tasa_retencion, "
                     + "''::character varying AS numero_aduana, "
                     + "''::character varying AS fecha_aduana, "
                     + "''::character varying AS aduana_aduana "
                 + "FROM fac_nota_credito "
-                + "WHERE id="+id_nota_credito;
+                + "WHERE id="+idNotaCredito;
                 
                 
         
@@ -2975,6 +2983,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("valorUnitario",StringHelper.roundDouble(rs.getDouble("valor_unitario"),2) );
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
                     row.put("importe_impuesto",StringHelper.roundDouble(rs.getDouble("importe_impuesto"),2) );
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),2) );
                     row.put("tasa_retencion",StringHelper.roundDouble(rs.getDouble("tasa_retencion"),2) );
                     row.put("numero_aduana","");
                     row.put("fecha_aduana","");
@@ -2997,24 +3006,26 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //Metodo para obtener conceptos para Nota de credito por Devolución
+    /*
+     Este metodo obtiene datos de las partidas de la Devolucion.
+     Estos datos solo se utilizan para sacar Importes de IVAs y IEPS
+     */
     @Override
-    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ListaConceptosXmlDevolucion(Integer id_nota_credito) {
+    public ArrayList<LinkedHashMap<String, String>> getNotaCreditoCfdiTf_ConceptosParaImpuestosXml(Integer idNotaCredito) {
         String sql_query = ""
-                + "SELECT "
-                    + "'1'::character varying AS no_identificacion,"
-                    + "1::double precision AS cantidad,"
-                    + "concepto AS descripcion, "
-                    + "'No aplica'::character varying AS unidad, "
-                    + "subtotal as valor_unitario,"
-                    + "subtotal as importe,"
-                    + "impuesto as importe_impuesto,"
-                    + "tasa_retencion_immex AS tasa_retencion, "
-                    + "''::character varying AS numero_aduana, "
-                    + "''::character varying AS fecha_aduana, "
-                    + "''::character varying AS aduana_aduana "
-                + "FROM fac_nota_credito "
-                + "WHERE id="+id_nota_credito;
+        + "SELECT "
+            + "inv_prod_id,"
+            + "cantidad,"
+            + "precio_unitario,"
+            + "(cantidad * precio_unitario) AS importe,"
+            + "gral_ieps_id AS id_ieps,"
+            + "(valor_ieps::double precision * 100) AS tasa_ieps,"
+            + "(cantidad * precio_unitario) * valor_ieps AS importe_ieps,"
+            + "gral_imptos_id AS id_iva,"
+            + "(valor_imp::double precision * 100) AS tasa_iva,"
+            + "((cantidad * precio_unitario) + ((cantidad * precio_unitario) * valor_ieps)) * valor_imp::double precision  AS importe_iva "
+        + "FROM fac_nota_credito_det "
+        + "WHERE fac_nota_credito_id="+idNotaCredito;
         
         //System.out.println(sql_query);
         
@@ -3024,27 +3035,20 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
-                    row.put("noIdentificacion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("no_identificacion"))));
+                    row.put("inv_prod_id",String.valueOf(rs.getInt("inv_prod_id")));
                     row.put("cantidad",rs.getString("cantidad"));
-                    row.put("descripcion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("descripcion"))));
-                    row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("unidad"))));
-                    row.put("valorUnitario",StringHelper.roundDouble(rs.getDouble("valor_unitario"),2) );
+                    row.put("valorUnitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),2) );
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),2) );
-                    row.put("importe_impuesto",StringHelper.roundDouble(rs.getDouble("importe_impuesto"),2) );
-                    row.put("tasa_retencion",StringHelper.roundDouble(rs.getDouble("tasa_retencion"),2) );
-                    row.put("numero_aduana","");
-                    row.put("fecha_aduana","");
-                    row.put("aduana_aduana","");
+                    row.put("id_ieps",String.valueOf(rs.getInt("id_ieps")));
+                    row.put("tasa_ieps",StringHelper.roundDouble(rs.getDouble("tasa_ieps"),2) );
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),4) );
+                    row.put("id_impto",String.valueOf(rs.getInt("id_iva")));
+                    row.put("tasa_impuesto",StringHelper.roundDouble(rs.getDouble("tasa_iva"),2) );
+                    row.put("importe_impuesto",StringHelper.roundDouble(rs.getDouble("importe_iva"),4) );
                     return row;
                 }
             }
         );
-        
-        try {
-            calcula_Totales_e_Impuestos(hm_conceptos);
-        } catch (SQLException ex) {
-            Logger.getLogger(FacturasSpringDao.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         return hm_conceptos;
     }

@@ -923,9 +923,15 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             String[] columnas2 = {"CLAVE","DESCRIPCIÓN","UNIDAD","CANTIDAD"," ","PRECIO UNITARIO"," ","IMPORTE"," ","MONTO IEPS"};
             
             if(Double.parseDouble(getMontoIeps())>0){
-                //Aqui entra cuando incluye IEPS
-                widths=widths2;
-                columnas = columnas2;
+                //Aqui entra cuando incluye IEPS                
+                if (getProposito().equals("FACTURA")){
+                    widths=widths2;
+                    columnas = columnas2;
+                }else{
+                    //Nota de Credito
+                    widths=widths1;
+                    columnas = columnas1;
+                }
             }else{
                 //Aqui entra cuando NO INCLUYE IEPS
                 widths=widths1;
@@ -988,7 +994,12 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                String[] wordList2 = {"sku","titulo","unidad","cantidad","simbolo_moneda","precio_unitario","simbolo_moneda","importe","simbolo_moneda_ieps","importe_ieps"};
                 if(Double.parseDouble(getMontoIeps())>0){
                     //Aqui entra cuando incluye IEPS
-                    wordList=wordList2;
+                    if (getProposito().equals("FACTURA")){
+                        wordList=wordList2;
+                    }else{
+                        //Nota de Credito
+                        wordList=wordList1;
+                    }
                 }else{
                     //Aqui entra cuando NO INCLUYE IEPS
                     wordList=wordList1;
@@ -1093,7 +1104,12 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                         celda.setBorderWidthLeft(0);
                         if(Double.parseDouble(getMontoIeps())>0){
                             //Aqui entra cuando incluye IEPS
-                            celda.setBorderWidthRight(0.5f);
+                            if (getProposito().equals("FACTURA")){
+                                celda.setBorderWidthRight(0.5f);
+                            }else{
+                                //Nota de Credito
+                                celda.setBorderWidthRight(1);
+                            }
                         }else{
                             //Aqui entra cuando NO INCLUYE IEPS
                             celda.setBorderWidthRight(1);
@@ -1142,7 +1158,9 @@ public class pdfCfd_CfdiTimbradoFormato2 {
            
             if(Double.parseDouble(getMontoIeps())>0){
                 //Aqui entra cuando incluye IEPS
-                colspan=7;
+                if (getProposito().equals("FACTURA")){
+                    colspan=7;
+                }
             }
            
            //fila SUBTOTAL
