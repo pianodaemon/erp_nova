@@ -696,8 +696,9 @@ $(function() {
 	}
 	
 	
-	$limpiar_campos = function($importe,$impuesto,$retencion,$total,$factura, $fecha_factura, $monto_factura, $monto_factura, $aplicado, $saldo, $fac_saldado){
+	$limpiar_campos = function($importe,$ieps,$impuesto,$retencion,$total,$factura, $fecha_factura, $monto_factura, $monto_factura, $aplicado, $saldo, $fac_saldado){
 		$importe.val('');
+		$ieps.val('');
 		$impuesto.val('');
 		$retencion.val('');
 		$total.val('');
@@ -711,8 +712,9 @@ $(function() {
 	}
 	
 	
-	$calcula_total_nota_credito = function($importe, $impuesto, $retencion, $total, $valor_impuesto, $tasa_retencion, $saldo_factura,$empresa_immex,$chkbox_aplicar_saldo, $fac_saldado,evaluar ){
+	$calcula_total_nota_credito = function($importe, $ieps, $impuesto, $retencion, $total, $valor_impuesto, $tasa_retencion, $saldo_factura,$empresa_immex,$chkbox_aplicar_saldo, $fac_saldado,evaluar ){
 		var SubTotal = 0; //aqui va el valor del importe
+		var importeIeps=0;
 		var Impuesto = 0; //monto del iva calculado a partir del importe
 		var impuestoRetenido = 0; //monto del iva retenido de acuerdo a la tasa de retencion immex
 		var Total = 0; //suma del subtotal + totalImpuesto - impuestoRetenido
@@ -822,6 +824,7 @@ $(function() {
 		var $concepto = $('#forma-notascredito-window').find('textarea[name=concepto]');
 		
 		var $importe = $('#forma-notascredito-window').find('input[name=importe]');
+		var $ieps = $('#forma-notascredito-window').find('input[name=ieps]');
 		var $impuesto = $('#forma-notascredito-window').find('input[name=impuesto]');
 		var $retencion = $('#forma-notascredito-window').find('input[name=retencion]');
 		var $total = $('#forma-notascredito-window').find('input[name=total]');
@@ -940,7 +943,7 @@ $(function() {
 			$busca_cliente.click(function(event){
 				event.preventDefault();
 				$busca_clientes( $select_moneda,$select_vendedor, entry['Monedas'],entry['Vendedores'], $razon_cliente.val(), $no_cliente.val() );
-				$limpiar_campos($importe,$impuesto,$retencion,$total,$factura, $fecha_factura, $monto_factura, $monto_factura, $aplicado, $saldo, $fac_saldado);
+				$limpiar_campos($importe, $ieps, $impuesto,$retencion,$total,$factura, $fecha_factura, $monto_factura, $monto_factura, $aplicado, $saldo, $fac_saldado);
 			});
 			
 			//buscador de facturas del cliente
@@ -1083,7 +1086,7 @@ $(function() {
 				$importe.val(parseFloat(0.00).toFixed(2));//si el campo esta en blanco, pone cero
 			}
 			var evaluar="true";
-			$calcula_total_nota_credito($importe, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex,$chkbox_aplicar_saldo,$fac_saldado,evaluar );
+			$calcula_total_nota_credito($importe, $ieps, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex,$chkbox_aplicar_saldo,$fac_saldado,evaluar );
 		});
 		
 		
@@ -1105,7 +1108,7 @@ $(function() {
 					$importe.val(SubTotal);
 				}
 				var evaluar="true";//esta variable es para decidir  si va a evaluar que el monto de la nota de credito no sea mayor que en Saldo de la factura
-				$calcula_total_nota_credito($importe, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex, $chkbox_aplicar_saldo,$fac_saldado,evaluar );
+				$calcula_total_nota_credito($importe, $ieps, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex, $chkbox_aplicar_saldo,$fac_saldado,evaluar );
 			}else{
 				this.checked = false;
 			}
@@ -1236,6 +1239,7 @@ $(function() {
 				var $concepto = $('#forma-notascredito-window').find('textarea[name=concepto]');
 				
 				var $importe = $('#forma-notascredito-window').find('input[name=importe]');
+				var $ieps = $('#forma-notascredito-window').find('input[name=ieps]');
 				var $impuesto = $('#forma-notascredito-window').find('input[name=impuesto]');
 				var $retencion = $('#forma-notascredito-window').find('input[name=retencion]');
 				var $total = $('#forma-notascredito-window').find('input[name=total]');
@@ -1333,34 +1337,40 @@ $(function() {
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
 					
-					$identificador.val(entry['datosNota']['0']['id']);
-					$folio_nota_credito.val(entry['datosNota']['0']['serie_folio']);
-					$id_cliente.val(entry['datosNota']['0']['cxc_clie_id']);
-					$no_cliente.val(entry['datosNota']['0']['no_cliente']);
-					$razon_cliente.val(entry['datosNota']['0']['razon_social']);
-					$empresa_immex.val(entry['datosNota']['0']['empresa_immex']);
-					$tasa_ret_immex.val(entry['datosNota']['0']['tasa_retencion_immex']);
-					//$id_impuesto.val(entry['datosNota']['0']['']);
-					$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-					$valor_impuesto.val(entry['datosNota']['0']['valor_impuesto']);
-					$observaciones.text(entry['datosNota']['0']['observaciones']);
-					$tipo_cambio.val(entry['datosNota']['0']['tipo_cambio']);
-					$concepto.text(entry['datosNota']['0']['concepto']);
+					$identificador.val(entry['datosNota'][0]['id']);
+					$folio_nota_credito.val(entry['datosNota'][0]['serie_folio']);
+					$id_cliente.val(entry['datosNota'][0]['cxc_clie_id']);
+					$no_cliente.val(entry['datosNota'][0]['no_cliente']);
+					$razon_cliente.val(entry['datosNota'][0]['razon_social']);
+					$empresa_immex.val(entry['datosNota'][0]['empresa_immex']);
+					$tasa_ret_immex.val(entry['datosNota'][0]['tasa_retencion_immex']);
+					//$id_impuesto.val(entry['datosNota'][0]['']);
+					$id_impuesto.val(entry['iva'][0]['id_impuesto']);
+					$valor_impuesto.val(entry['datosNota'][0]['valor_impuesto']);
+					$observaciones.text(entry['datosNota'][0]['observaciones']);
+					$tipo_cambio.val(entry['datosNota'][0]['tipo_cambio']);
+					$concepto.text(entry['datosNota'][0]['concepto']);
 					
 					
-					$importe.val(entry['datosNota']['0']['importe']);
-					//$impuesto.val(entry['datosNota']['0']['']);
-					//$retencion.val(entry['datosNota']['0']['']);
-					//$total.val(entry['datosNota']['0']['']);
+					$importe.val(entry['datosNota'][0]['importe']);
 					
-					var monto_aplicado = parseFloat(entry['datosNota']['0']['monto_factura']) - parseFloat(entry['datosNota']['0']['saldo_factura']);
+					if($folio_nota_credito.val().trim()!=''){
+						$ieps.val(entry['datosNota'][0]['monto_ieps']);
+						$impuesto.val(entry['datosNota'][0]['importe_iva']);
+						$retencion.val(entry['datosNota'][0]['importe_retencion']);
+						$total.val(entry['datosNota'][0]['monto_total']);
+					}
 					
-					$factura.val(entry['datosNota']['0']['factura']);
-					$id_moneda_factura.val(entry['datosNota']['0']['id_moneda_factura']);
-					$fecha_factura.val(entry['datosNota']['0']['fecha_factura']);
-					$monto_factura.val(entry['datosNota']['0']['monto_factura']);
+					
+					
+					var monto_aplicado = parseFloat(entry['datosNota'][0]['monto_factura']) - parseFloat(entry['datosNota'][0]['saldo_factura']);
+					
+					$factura.val(entry['datosNota'][0]['factura']);
+					$id_moneda_factura.val(entry['datosNota'][0]['id_moneda_factura']);
+					$fecha_factura.val(entry['datosNota'][0]['fecha_factura']);
+					$monto_factura.val(entry['datosNota'][0]['monto_factura']);
 					$aplicado.val(parseFloat(monto_aplicado).toFixed(2));
-					$saldo.val(entry['datosNota']['0']['saldo_factura']);
+					$saldo.val(entry['datosNota'][0]['saldo_factura']);
 					
 					
 					
@@ -1368,7 +1378,7 @@ $(function() {
 					$select_moneda.children().remove();
 					var moneda_hmtl = '';
 					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(moneda['id'] == entry['datosNota']['0']['moneda_id']){
+						if(moneda['id'] == entry['datosNota'][0]['moneda_id']){
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 						}else{
 							//if(parseInt(flujo_proceso)==2){
@@ -1385,7 +1395,7 @@ $(function() {
 					$select_vendedor.children().remove();
 					var hmtl_vendedor;
 					$.each(entry['Vendedores'],function(entryIndex,vendedor){
-						if(entry['datosNota']['0']['cxc_agen_id'] == vendedor['id']){
+						if(entry['datosNota'][0]['cxc_agen_id'] == vendedor['id']){
 							hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes" >' + vendedor['nombre_vendedor'] + '</option>';
 						}else{
 							/*
@@ -1397,7 +1407,7 @@ $(function() {
 					});
 					$select_vendedor.append(hmtl_vendedor);
 					
-					var nota_nota_cancelada = entry['datosNota']['0']['cancelado'];
+					var nota_nota_cancelada = entry['datosNota'][0]['cancelado'];
 					
 					if ( nota_nota_cancelada == 'true'){
 						//aqui hay que desahabilitar campos
@@ -1412,6 +1422,7 @@ $(function() {
 						$concepto.attr('disabled','-1');
 						$importe.attr('disabled','-1');
 						$impuesto.attr('disabled','-1');
+						$ieps.attr('disabled','-1');
 						$retencion.attr('disabled','-1');
 						$total.attr('disabled','-1');
 						$factura.attr('disabled','-1');
@@ -1434,7 +1445,7 @@ $(function() {
 					}
 					
 					
-					if ( entry['datosNota']['0']['serie_folio'] != ''){
+					if ( entry['datosNota'][0]['serie_folio'] != ''){
 						//aqui hay que desahabilitar campos
 						if(!$generar_nota_credito.is(':disabled')) {
 							$generar_nota_credito.attr('disabled','-1');
@@ -1452,13 +1463,17 @@ $(function() {
 							//$submit_actualizar.hide();
 						}
 					}
-					var evaluar="false";//esta variable es para decidir  si va a evaluar que el monto de la nota de credito no sea mayor que en Saldo de la factura
-					if ( entry['datosNota']['0']['serie_folio'] == '' && nota_nota_cancelada != 'true'){
+					
+					//Esta variable es para decidir  si va a evaluar que el monto de la nota de credito no sea mayor que en Saldo de la factura
+					var evaluar="false";
+					if ( entry['datosNota'][0]['serie_folio'] == '' && nota_nota_cancelada != 'true'){
 						evaluar="true";
 					}
-					//llamada a la funcion que calcula el total
-					$calcula_total_nota_credito($importe, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex,$chkbox_aplicar_saldo, $fac_saldado,evaluar );
 					
+					if($folio_nota_credito.val().trim()==''){
+						//Llamada a la funcion que calcula el total
+						$calcula_total_nota_credito($importe, $ieps, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex,$chkbox_aplicar_saldo, $fac_saldado,evaluar );
+					}
 				});//termina llamada json
                 
 				
@@ -1482,7 +1497,7 @@ $(function() {
 						$importe.val(parseFloat(0.00).toFixed(2));//si el campo esta en blanco, pone cero
 					}
 					var evaluar="true";
-					$calcula_total_nota_credito($importe, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex,$chkbox_aplicar_saldo, $fac_saldado,evaluar );
+					$calcula_total_nota_credito($importe, $ieps, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex,$chkbox_aplicar_saldo, $fac_saldado,evaluar );
 				});
 				
 				
@@ -1504,7 +1519,7 @@ $(function() {
 							$importe.val(SubTotal);
 						}
 						var evaluar="true";
-						$calcula_total_nota_credito($importe, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex, $chkbox_aplicar_saldo, $fac_saldado,evaluar );
+						$calcula_total_nota_credito($importe, $ieps, $impuesto, $retencion, $total, $valor_impuesto, $tasa_ret_immex, $saldo,$empresa_immex, $chkbox_aplicar_saldo, $fac_saldado,evaluar );
 					}else{
 						this.checked = false;
 					}

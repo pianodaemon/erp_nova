@@ -54,7 +54,7 @@
 				<td width="100">Factura</td>
 				<td width="20">&nbsp;</td>
 				<td width="25"></td>
-				<td colspan="3">Fecha de Expedici&oacute;n</td>
+				<td colspan="3">Fecha&nbsp;de&nbsp;Expedici&oacute;n</td>
 				<td width="20">&nbsp;&nbsp;&nbsp;&nbsp;</td>
 				<td></td>
 				<td width="25"></td>
@@ -340,8 +340,8 @@
 															<td width="10"></td>
 															<td width="90"></td>
 															<td width="10"></td>
-															<td width="70"></td>
-															<td width="50"></td>
+															<td width="80"></td>
+															<td width="40"></td>
 															<td width="60"></td>
 															<td width="100"></td>
 															<td width="25"></td>
@@ -358,37 +358,11 @@
 															<td width="10"></td>
 															<td width="90" align="right">Tipo&nbsp;de&nbsp;cambio</td>
 															<td width="10"></td>
-															<td width="70">
-																<INPUT TYPE="text" name="tipo_cambio" style="width:70px;">
+															<td width="80">
+																<INPUT TYPE="text" name="tipo_cambio" style="width:80px;">
 															</td>
-															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tc"></div></td>
-															<td width="60"></td>
-															<td width="100"></td>
-															<td width="25"></td>
-														</tr>
-														
-														<tr>
-															<td width="10" height="7"></td>
-															<td width="70"></td>
-															<td width="90"></td>
-															<td width="10"></td>
-															<td width="90"></td>
-															<td width="10"></td>
-															<td width="70"></td>
-															<td width="50"></td>
-															<td width="60"></td>
-															<td width="100"></td>
-															<td width="25"></td>
-														</tr>
-														
-														<tr>
-															<td width="10"></td>
-															<td width="70">Vendedor</td>
-															<td width="90" colspan="5">
-																<SELECT NAME="select_vendedor" style="width:270px"></SELECT>
-															</td>
-															<td width="50"></div></td>
-															<td width="60"  style="font-weight: bold;">Importe</td>
+															<td width="40"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_tc"></div></td>
+															<td width="60" style="font-weight:bold;">Importe</td>
 															<td width="100"><INPUT TYPE="text" name="importe" value="0.00" style="width:100px; text-align:right;"></td>
 															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_importe"></div></td>
 														</tr>
@@ -400,8 +374,34 @@
 															<td width="10"></td>
 															<td width="90"></td>
 															<td width="10"></td>
+															<td width="80"></td>
+															<td width="40"></td>
+															<td width="60"></td>
+															<td width="100"></td>
+															<td width="25"></td>
+														</tr>
+														
+														<tr>
+															<td width="10"></td>
+															<td width="70">Vendedor</td>
+															<td width="280" colspan="5">
+																<SELECT NAME="select_vendedor" style="width:280px"></SELECT>
+															</td>
+															<td width="40"></div></td>
+															<td width="60"  style="font-weight: bold;">IEPS</td>
+															<td width="100"><INPUT TYPE="text" name="ieps" value="0.00" style="width:100px; text-align:right;" readOnly="true"></td>
+															<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ieps"></div></td>
+														</tr>
+														
+														<tr>
+															<td width="10" height="7"></td>
 															<td width="70"></td>
-															<td width="50"></td>
+															<td width="90"></td>
+															<td width="10"></td>
+															<td width="90"></td>
+															<td width="10"></td>
+															<td width="80"></td>
+															<td width="40"></td>
 															<td width="60"></td>
 															<td width="100"></td>
 															<td width="25"></td>
@@ -414,8 +414,8 @@
 															<td width="10"></td>
 															<td width="90"></td>
 															<td width="10"></td>
-															<td width="70"></td>
-															<td width="50"></td>
+															<td width="80"></td>
+															<td width="40"></td>
 															<td width="60"  style="font-weight: bold;">I.V.A.</td>
 															<td width="100"><INPUT TYPE="text" name="impuesto" value="0.00" style="width:100px; text-align:right;" readOnly="true"></td>
 															<td width="25"></td>
@@ -423,10 +423,10 @@
 														
 														<tr>
 															<td width="10" height="7"></td>
-															<td width="70" colspan="6" rowspan="4">
-																<textarea name="concepto" rows="2" cols="60" style="width:340px; resize: none;"></textarea>
+															<td width="350" colspan="6" rowspan="4">
+																<textarea name="concepto" rows="3" cols="60" style="width:350px; resize: none;"></textarea>
 															</td>
-															<td width="50"></td>
+															<td width="40"></td>
 															<td width="60"></td>
 															<td width="100"></td>
 															<td width="25"></td>
@@ -434,7 +434,7 @@
 														<tr>
 															<td width="10" height="18"></td>
 															<!--<td width="70" colspan="6" rowspan="3"></td>-->
-															<td width="50"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_concepto"></div></td>
+															<td width="40"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_concepto"></div></td>
 															<td width="60" style="font-weight: bold;">Retenido</td>
 															<td width="100"><INPUT TYPE="text" name="retencion" value="0.00"  style="width:100px; text-align:right;" readOnly="true"></td>
 															<td width="25"></td>
@@ -442,7 +442,7 @@
 														<tr>
 															<td width="10"></td>
 															<!--<td width="70" colspan="6" rowspan="3"></td>-->
-															<td width="50"></td>
+															<td width="40"></td>
 															<td width="60"></td>
 															<td width="100"></td>
 															<td width="25"></td>
@@ -450,9 +450,9 @@
 														<tr>
 															<td width="10" height="18"></td>
 															<!--<td width="70" colspan="6" rowspan="3"></td>-->
-															<td width="50"></td>
+															<td width="40"></td>
 															<td width="60" style="font-weight: bold;">Total</td>
-															<td width="100"><INPUT TYPE="text" name="total" value="0.00"  style="width:100px; text-align:right;" readOnly="true"></td>
+															<td width="100"><INPUT TYPE="text" name="total" value="0.00"  style="width:100px; text-align:right; font-weight:bold;" readOnly="true"></td>
 															<td width="25"></td>
 														</tr>
 													</table>

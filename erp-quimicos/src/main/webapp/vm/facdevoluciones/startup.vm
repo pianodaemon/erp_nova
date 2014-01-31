@@ -216,13 +216,13 @@
                                                         <table border="0" class="gral">
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="360">Concepto&nbsp;para&nbsp;la&nbsp;Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
+                                                                <td width="370">Concepto&nbsp;para&nbsp;la&nbsp;Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
                                                                 <td width="30"></td>
                                                             </tr>
                                                             <tr>
                                                                 <td width="10"></td>
-                                                                <td width="360">
-																	<textarea name="concepto" rows="2" cols="60" style="width:360px; resize: none;"></textarea>
+                                                                <td width="370">
+																	<textarea name="concepto" rows="2" cols="60" style="width:370px; resize: none;"></textarea>
                                                                 </td>
                                                                 <td width="30"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_concepto"></div></td>
                                                             </tr>
@@ -314,7 +314,7 @@
                                                             <tr>
                                                                 <td width="10"></td>
                                                                 <td width="80">Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
-                                                                <td width="90"><input type="text" name="nota_credito" style="width:90px;" readOnly="true"></td>
+                                                                <td width="90"><input type="text" name="nota_credito" style="width:90px; font-weight:bold;" readOnly="true"></td>
                                                                 <td width="30"></td>
                                                                 <td width="190">Tipo&nbsp;de&nbsp;cambio&nbsp;para&nbsp;la&nbsp;Nota&nbsp;de&nbsp;Cr&eacute;dito</td>
                                                                 <td width="70"><input type="text" name="tipo_cambio_nota" style="width:70px;"></td>
@@ -347,9 +347,6 @@
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="50">&nbsp;%&nbsp;IEPS</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Monto&nbsp;IEPS</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="125">&nbsp;Cantidad&nbsp;a&nbsp;devolver</td>
-
-																	
-																	
 																</tr>
 															</thead>
 														</table>

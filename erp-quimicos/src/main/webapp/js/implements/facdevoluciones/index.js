@@ -609,7 +609,7 @@ $(function() {
 			
 			$(this).modalPanel_facdevoluciones();
 			
-			$('#forma-facdevoluciones-window').css({"margin-left": -340, 	"margin-top": -220});
+			$('#forma-facdevoluciones-window').css({"margin-left": -395, 	"margin-top": -220});
 			
 			$forma_selected.prependTo('#forma-facdevoluciones-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -772,7 +772,6 @@ $(function() {
 					$id_df.val(entry['datosFactura'][0]['df_id']);
 					$dir_cliente.val(entry['datosFactura'][0]['direccion']);
 					$serie_folio.val(entry['datosFactura'][0]['serie_folio']);
-					//$concepto.text(entry['datosFactura'][0]['observaciones']);
                     $orden_compra.val(entry['datosFactura'][0]['orden_compra']);
 					$tasa_retencion.val(entry['datosFactura'][0]['tasa_ret_immex']);
 					
@@ -956,6 +955,7 @@ $(function() {
 						$impuesto_nota.val( entry['NCred'][0]['impuesto_nota'] );
 						$impuesto_retenido_nota.val( entry['NCred'][0]['monto_ret_nota'] );
 						$total_nota.val( entry['NCred'][0]['total_nota'] );
+						$concepto.text(entry['NCred'][0]['concepto_nota']);
 						$grid_productos.find('input[name=micheck]').hide();//ocultar
 						$grid_productos.find('input[name=cantidad_dev]').css({'background' : '#ffffff'});
 						$concepto.attr("readonly", true);
