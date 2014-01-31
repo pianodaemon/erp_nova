@@ -169,9 +169,9 @@ $(function() {
 			$(this).addClass("active");
 			
 			if(activeTab == '#tabx-1'){
-				if( parseInt($select_prod_tipo.val())==2 || parseInt($select_prod_tipo.val())==3){
+				if( parseInt($select_prod_tipo.val())==1 || parseInt($select_prod_tipo.val())==2 || parseInt($select_prod_tipo.val())==3 || parseInt($select_prod_tipo.val())==8){
 					if($incluye_produccion.val()=='false'){
-						if( parseInt($select_prod_tipo.val())==2){
+						if( parseInt($select_prod_tipo.val())==1 || parseInt($select_prod_tipo.val())==2 || parseInt($select_prod_tipo.val())==8){
 							$('#forma-product-window').find('.product_div_one').css({'height':'505px'});
 						}
 					}else{
@@ -464,8 +464,8 @@ $(function() {
 
 	
 	
-	//buscador de producto ingrediente
-	$buscador_producto_ingrediente = function(){
+	//Buscador de producto ingrediente
+	$buscador_producto_ingrediente = function(sku_prod, descripcion_prod){
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -512,7 +512,13 @@ $(function() {
 		
 		
 		//Aqui asigno al campo sku del buscador si el usuario ingresó un sku antes de hacer clic en buscar en la ventana principal
-		//$campo_sku.val(sku_buscar);
+		$campo_sku.val(sku_prod);
+		
+		//Asignamos la descripcion del producto, si el usuario capturo la descripcion antes de abrir el buscador
+		$campo_descripcion.val(descripcion_prod);
+		
+		$campo_sku.focus();
+		
 		
 		//click buscar productos
 		$buscar_plugin_producto.click(function(event){
@@ -569,6 +575,10 @@ $(function() {
 			$buscar_plugin_producto.trigger('click');
 		}
 		
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_sku, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($select_tipo_producto, $buscar_plugin_producto);
+		$(this).aplicarEventoKeypressEjecutaTrigger($campo_descripcion, $buscar_plugin_producto);
+		
 		$cancelar_plugin_busca_producto.click(function(event){
 			//event.preventDefault();
 			var remove = function() {$(this).remove();};
@@ -576,7 +586,9 @@ $(function() {
 		});
 	}
 	
-	//agrega producto al grid
+	
+	
+	//Agrega producto al grid
 	$agrega_producto_ingrediente = function(){
 			var $select_prodtipo = $('#forma-product-window').find('select[name=select_prodtipo]');
 			var $campo_sku_minigrid = $('#forma-product-window').find('input[name=sku_minigrid]');
@@ -679,7 +691,7 @@ $(function() {
 								*/
 								
 								
-								if( parseInt($select_prodtipo.val())==2 ){
+								if( parseInt($select_prodtipo.val())==1 || parseInt($select_prodtipo.val())==2 || parseInt($select_prodtipo.val())==8){
 									var total_inicial=0
 									$grid_productos_componentes.find('tbody > tr').each(function (index){
 										if(parseInt($(this).find('#delete').val())!=0){
@@ -910,6 +922,9 @@ $(function() {
 		var $total_porcentaje = $('#forma-product-window').find('input[name=total_porcentaje]');
 		var $total_tr = $('#forma-product-window').find('input[name=total_tr]');
 		
+		var $sku_minigrid = $('#forma-product-window').find('input[name=sku_minigrid]');
+		var $descr_prod_minigrid = $('#forma-product-window').find('input[name=descr_prod_minigrid]');
+			
 		//variables de los href
 		var $agregar_prod = $('#forma-product-window').find('a[href*=agregar_produ_minigrid]');
 		var $buscar_prod_ingrediente = $('#forma-product-window').find('a[href*=busca_producto_ingrediente]');
@@ -980,6 +995,20 @@ $(function() {
 				}
 			});
 		}
+		
+		//Quitar enter al input sku_minigrid
+		$sku_minigrid.keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
+		
+		//Quitar enter al input descr_prod_minigrid
+		$descr_prod_minigrid.keypress(function(e){
+			if(e.which==13 ) {
+				return false;
+			}
+		});
 		
 		$gas_cuenta.hide();
 		$gas_scuenta.hide();
@@ -1210,21 +1239,6 @@ $(function() {
 			var familia_hmtl = '<option value="0">[--Seleccionar Familia--]</option>';
 			$select_familia.append(familia_hmtl);
 			
-			$select_prod_tipo.change(function(){
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFamiliasByTipoProd.json';
-				$arreglo = {	'tipo_prod':$select_prod_tipo.val(),
-								'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
-							};
-	
-				$.post(input_json,$arreglo,function(data){
-					$select_familia.children().remove();
-					familia_hmtl = '<option value="0">[--Seleccionar Familia--]</option>';
-					$.each(data['Familias'],function(entryIndex,fam){
-						familia_hmtl += '<option value="' + fam['id'] + '"  >' + fam['titulo'] + '</option>';
-					});
-					$select_familia.append(familia_hmtl);
-				});
-			});
                         
 			$select_familia.change(function(){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getSubFamiliasByFamProd.json';
@@ -1296,6 +1310,8 @@ $(function() {
 			});
 			$select_pres_default.append(presentaciones_hmtl);
 			
+			
+			
 			$('.contenedor_grid_prod').css({'display':'none'});
 			//$('#forma-product-window').find('.product_div_one').css({'height':'250px'});
 			$select_prod_tipo.change(function(){
@@ -1305,15 +1321,15 @@ $(function() {
 					jAlert("Actualmente hay productos en el  listado de Materias primas, no puedes cambiar de tipo de producto",'! Atencion');
 					var tipo_anterior=$tipo_producto_anterior.val();
 					
-					//tipo=2 es SUBENSAMBLE
-					if( ( parseInt(tipo_anterior)!=3) ){
-						tipo_anterior=0;
-					}
-					
 					if($incluye_produccion.val()=='false'){
 						//aqui solo debe entrar cuando la empresa no incluya modulo de produccion
-						//tipo=2 es SUBENSAMBLE
-						if( parseInt(tipo_anterior)!=2 ){
+						//tipo 1=Terminado, 2=Intermedio, 8=Desarrollo, 3=Kit
+						if( parseInt(tipo_anterior)!=1 || parseInt(tipo_anterior)!=2 || parseInt(tipo_anterior)!=8 || parseInt(tipo_anterior)!=3){
+							tipo_anterior=0;
+						}
+					}else{
+						//tipo=3 es Kit
+						if( parseInt(tipo_anterior)!=3 ){
 							tipo_anterior=0;
 						}
 					}
@@ -1334,7 +1350,7 @@ $(function() {
 					$('div.contenedor_grid_prod').css({'display':'none'});
 					$('#forma-product-window').find('.product_div_one').css({'height':'350px'});
 					
-					//recargar select de unidades al cambiar de tipo de producto que no es subensamble
+					//Recargar select de unidades al cambiar de tipo de producto que no es subensamble
 					$select_unidad.children().remove();
 					var unidads_hmtl = '<option value="0">[--Seleccionar Unidad--]</option>';
 					$.each(entry['Unidades'],function(entryIndex,uni){
@@ -1342,16 +1358,17 @@ $(function() {
 					});
 					$select_unidad.append(unidads_hmtl);
 					
-					//tipo=1 es NORMAL, 5=REFACCIONES, 6=ACCESORIOS, 7=MATERIA PRIMA
-					if( parseInt(valor_tipo)==1 || parseInt(valor_tipo)==5 || parseInt(valor_tipo)==6 || parseInt(valor_tipo)==7){
+					
+					//Habilitar campos cuando sea diferente de 3=KIT, 4=SERVICIOS
+					if( parseInt(valor_tipo)!=3 || parseInt(valor_tipo)!=4){
 						$deshabilitar_campos("habilitar",$proveedor,$tiempos_de_entrega,$select_prod_tipo,$select_estatus,$select_seccion,$select_grupo,$select_linea,$select_marca,$select_clase,$select_familia,$select_subfamilia,$select_unidad,$select_clasifstock,$select_iva,$select_ieps,$check_noserie,$check_nom,$check_nolote,$check_pedimento,$check_stock,$check_ventaext,$check_compraext,$select_disponibles,$select_seleccionados,$agregar_pres,$remover_pres,$densidad, $valor_maximo, $valor_minimo, $punto_reorden);
 						$tipo_producto_anterior.val(valor_tipo);
 					}
 					
 					if($incluye_produccion.val()=='false'){
-						//aqui solo debe entrar cuando la empresa no incluya modulo de produccion
-						//tipo=2 es SUBENSAMBLE
-						if( parseInt(valor_tipo)==2 ){
+						//Aqui solo debe entrar cuando la empresa no incluya modulo de produccion
+						//tipo=1  PROD TERMINADO, 2=INTERMEDIO, DESARROLLO
+						if( parseInt(valor_tipo)==1 || parseInt(valor_tipo)==2 || parseInt(valor_tipo)==8){
 							$deshabilitar_campos("habilitar",$proveedor,$tiempos_de_entrega,$select_prod_tipo,$select_estatus,$select_seccion,$select_grupo,$select_linea,$select_marca,$select_clase,$select_familia,$select_subfamilia,$select_unidad,$select_clasifstock,$select_iva,$select_ieps,$check_noserie,$check_nom,$check_nolote,$check_pedimento,$check_stock,$check_ventaext,$check_compraext,$select_disponibles,$select_seleccionados,$agregar_pres,$remover_pres,$densidad, $valor_maximo, $valor_minimo, $punto_reorden);
 							$tipo_producto_anterior.val(valor_tipo);
 							//visualizar grid para agregar productos componentes
@@ -1377,13 +1394,29 @@ $(function() {
 						$tipo_producto_anterior.val(valor_tipo);
 					}
 				}//termina id que valida existencia de productos componentes en el grid
+				
+				
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getFamiliasByTipoProd.json';
+				$arreglo = {	'tipo_prod':$select_prod_tipo.val(),
+								'iu': $('#lienzo_recalculable').find('input[name=iu]').val()
+							};
+	
+				$.post(input_json,$arreglo,function(data){
+					$select_familia.children().remove();
+					familia_hmtl = '<option value="0">[--Seleccionar Familia--]</option>';
+					$.each(data['Familias'],function(entryIndex,fam){
+						familia_hmtl += '<option value="' + fam['id'] + '"  >' + fam['titulo'] + '</option>';
+					});
+					$select_familia.append(familia_hmtl);
+				});
 			});
+			
 			
 			$select_unidad.change(function(){
 				var id_unidad = $(this).val();
-				if(parseInt($select_prod_tipo.val()) == 2){
-					//si el tipo de producto es subensamble entra aqui
-					if(parseInt(id_unidad) == 1 || parseInt(id_unidad) == 2 ){
+				if(parseInt($select_prod_tipo.val())==1 || parseInt($select_prod_tipo.val())==2 || parseInt($select_prod_tipo.val())==8){
+					//si el tipo de producto es TERMINADO entra aqui
+					if(parseInt(id_unidad)==1 || parseInt(id_unidad)==2 ){
 						//si la unidad es Kilogramo y litro dejar seleccionado solo uno
 						$select_unidad.children().remove();
 						var unidads_hmtl = '';
@@ -1488,23 +1521,27 @@ $(function() {
 			}
 		});
 		
+		//Ejecutar click del href Agregar al pulsar Enter sobre el campo $sku_minigrid
+		$(this).aplicarEventoKeypressEjecutaTrigger($sku_minigrid, $agregar_prod);
+		
+		
 		$buscar_prod_ingrediente.click(function(event){
 			event.preventDefault();
 			if( parseInt($select_prod_tipo.val())!=3 ){
 				if(parseInt($select_unidad.val())==0){
 					jAlert("Es necesario seleccionar la Unidad de Medida.",'! Atencion');
 				}else{
-					$buscador_producto_ingrediente();
+					$buscador_producto_ingrediente($sku_minigrid.val(), $descr_prod_minigrid.val());
 				}
 			}else{
 				//cuando el producto es 3=kit, no se necesita validar unaidad
-				$buscador_producto_ingrediente();
+				$buscador_producto_ingrediente($sku_minigrid.val(), $descr_prod_minigrid.val());
 			}
 		});
 		
 		
 		
-		//validar campo tiempos de entrega, solo acepte numeros y punto
+		//Validar campo tiempos de entrega, solo acepte numeros y punto
 		$tiempos_de_entrega.keypress(function(e){
 			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 			if (e.which == 8 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
@@ -1514,21 +1551,21 @@ $(function() {
 			}
 		});
 		
-		//quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
+		//Quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
 		$tiempos_de_entrega.focus(function(e){
 			if(parseFloat($tiempos_de_entrega.val())<1){
 				$tiempos_de_entrega.val('');
 			}
 		});
 		
-		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+		//Pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$tiempos_de_entrega.blur(function(e){
 			if(parseFloat($tiempos_de_entrega.val())==0||$tiempos_de_entrega.val()==""){
 				$tiempos_de_entrega.val(0.0);
 			}
 		});	
 		
-		//validar campo tiempo de entrega, solo acepte numeros y punto
+		//Validar campo tiempo de entrega, solo acepte numeros y punto
 		$densidad.keypress(function(e){
 			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
@@ -1538,14 +1575,14 @@ $(function() {
 			}
 		});
 		
-		//quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
+		//Quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
 		$densidad.focus(function(e){
 			if(parseFloat($densidad.val())<1){
 				$densidad.val('');
 			}
 		});
 		
-		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+		//Pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$densidad.blur(function(e){
 			if(parseFloat($densidad.val())==1||$densidad.val()==""){
 				$densidad.val(1);
@@ -1561,21 +1598,21 @@ $(function() {
 			}
 		});
 		
-		//quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
+		//Quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
 		$valor_maximo.focus(function(e){
 			if(parseFloat($valor_maximo.val())<1){
 				$valor_maximo.val('');
 			}
 		});
 		
-		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+		//Pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$valor_maximo.blur(function(e){
 			if(parseFloat($valor_maximo.val())==0||$valor_maximo.val()==""){
 				$valor_maximo.val(0.0);
 			}
 		});
                 
-		//validar campo tiempos de entrega, solo acepte numeros y punto
+		//Validar campo tiempos de entrega, solo acepte numeros y punto
 		$valor_minimo.keypress(function(e){
 			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
@@ -1585,21 +1622,21 @@ $(function() {
 			}
 		});
 		
-		//quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
+		//Quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
 		$valor_minimo.focus(function(e){
 			if(parseFloat($valor_minimo.val())<1){
 				$valor_minimo.val('');
 			}
 		});
 		
-		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+		//Pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$valor_minimo.blur(function(e){
 			if(parseFloat($valor_minimo.val())==0||$valor_minimo.val()==""){
 				$valor_minimo.val(0.0);
 			}
 		});
                 
-		//validar campo tiempos de entrega, solo acepte numeros y punto
+		//Validar campo tiempos de entrega, solo acepte numeros y punto
 		$punto_reorden.keypress(function(e){
 			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
 			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
@@ -1609,14 +1646,14 @@ $(function() {
 			}
 		});
 		
-		//quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
+		//Quita cero al obtener el enfoque, si es mayor a 0 entonces no hace nada
 		$punto_reorden.focus(function(e){
 			if(parseFloat($punto_reorden.val())<1){
 				$punto_reorden.val('');
 			}
 		});
 		
-		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
+		//Pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$punto_reorden.blur(function(e){
 			if(parseFloat($punto_reorden.val())==0||$punto_reorden.val()==""){
 				$punto_reorden.val(0.0);
@@ -1629,9 +1666,9 @@ $(function() {
 			$total_tr.val(trCount);
 			
 			if($incluye_produccion.val()=='false'){
-				//aqui solo debe entrar cuando la empresa no incluya modulo de produccion
-				//SUBENSAMBLE O PRODUCTO INTERMEDIO
-				if(parseInt($select_prod_tipo.val())==2){
+				//Aqui solo debe entrar cuando la empresa no incluya modulo de produccion
+				//PRODUCTO TERMINADO, INTERMEDIO Y EN DESARROLLO
+				if(parseInt($select_prod_tipo.val())==1 || parseInt($select_prod_tipo.val())==2 || parseInt($select_prod_tipo.val())==8){
 					if(trCount > 0){
 						//alert($total_porcentaje.val());
 						if(parseFloat($total_porcentaje.val())<1){
@@ -1801,6 +1838,9 @@ $(function() {
 				var $total_porcentaje = $('#forma-product-window').find('input[name=total_porcentaje]');
 				var $total_tr = $('#forma-product-window').find('input[name=total_tr]');
 				
+				var $sku_minigrid = $('#forma-product-window').find('input[name=sku_minigrid]');
+				var $descr_prod_minigrid = $('#forma-product-window').find('input[name=descr_prod_minigrid]');
+				
 				//variables de los href
 				var $agregar_prod = $('#forma-product-window').find('a[href*=agregar_produ_minigrid]');
 				var $buscar_prod_ingrediente = $('#forma-product-window').find('a[href*=busca_producto_ingrediente]');
@@ -1861,6 +1901,20 @@ $(function() {
 						}
 					});
 				}
+				
+				//Quitar enter al input sku_minigrid
+				$sku_minigrid.keypress(function(e){
+					if(e.which==13 ) {
+						return false;
+					}
+				});
+				
+				//Quitar enter al input descr_prod_minigrid
+				$descr_prod_minigrid.keypress(function(e){
+					if(e.which==13 ) {
+						return false;
+					}
+				});
 				
 				
 				$gas_cuenta.hide();
@@ -2211,8 +2265,8 @@ $(function() {
 						if(parseInt(entry['Producto'][0]['tipo_de_producto_id'])==parseInt(pt['id'])){
 							prodtipos_hmtl += '<option value="' + pt['id'] + '" selected="yes">' + pt['titulo'] + '</option>';
 							
-							//tipo=2 SUBENSAMBLE O PROD. INTERMEDIO
-							if(parseInt(entry['Producto'][0]['tipo_de_producto_id'])==2 ){
+							//tipo=1 TERMINADO, 2=INTERMEDIO, 8=DESARROLLO
+							if(parseInt(entry['Producto'][0]['tipo_de_producto_id'])==1 || parseInt(entry['Producto'][0]['tipo_de_producto_id'])==2 || parseInt(entry['Producto'][0]['tipo_de_producto_id'])==8){
 								if($incluye_produccion.val()=='false'){
 									//aqui solo debe entrar cuando la empresa no incluya modulo de produccion
 									$('div.contenedor_grid_prod').css({'display':'block'});
@@ -2273,7 +2327,7 @@ $(function() {
 						});
 						$select_subfamilia.append(subfamilia_hmtl);
 					});
-
+					
 					
 					//Alimentando select de unidades
 					$select_unidad.children().remove();
@@ -2413,8 +2467,8 @@ $(function() {
 						});
 						
 						
-						if( parseInt($select_prod_tipo.val())==2 ){
-							//calcula porcentaje al perder enfoque 
+						if( parseInt($select_prod_tipo.val())==1 || parseInt($select_prod_tipo.val())==2 || parseInt($select_prod_tipo.val())==8){
+							//Calcula porcentaje al perder enfoque 
 							tabla.find('.porcentaje'+trCount).blur(function(){
 								if(parseFloat($(this).val()) ==0 || $(this).val()=='') {
 									$(this).val(1);
@@ -2466,11 +2520,11 @@ $(function() {
 				
 				
 				
-				//cambiar tipo de producto
+				//Cambiar tipo de producto
 				$select_prod_tipo.change(function(){
 					var valor_tipo = $(this).val();
-					if(parseInt(valor_tipo) == 2 || parseInt(valor_tipo) == 3){//COMENTADO POR PACO
-						if(parseInt(valor_tipo) == 2){
+					if(parseInt(valor_tipo)==1 || parseInt(valor_tipo)==2 || parseInt(valor_tipo)==8 || parseInt(valor_tipo)==3){
+						if(parseInt(valor_tipo)==1 || parseInt(valor_tipo)==2 || parseInt(valor_tipo)==8){
 							if($incluye_produccion.val()=='false'){
 								//aqui solo debe entrar cuando la empresa no incluya modulo de produccion
 								$('div.contenedor_grid_prod').css({'display':'block'});
@@ -2700,17 +2754,21 @@ $(function() {
 						$punto_reorden.val(0.0);
 					}
 				});
-
+				
 				
 				$agregar_prod.click(function(event){
 					event.preventDefault();
 					$agrega_producto_ingrediente();
 				});
-                                
+				
+				//Ejecutar click del href Agregar al pulsar Enter sobre el campo $sku_minigrid
+				$(this).aplicarEventoKeypressEjecutaTrigger($sku_minigrid, $agregar_prod);
+				
 				$buscar_prod_ingrediente.click(function(event){
 					event.preventDefault();
-					$buscador_producto_ingrediente();
+					$buscador_producto_ingrediente($sku_minigrid.val(), $descr_prod_minigrid.val());
 				});
+				
 				
 				$submit_actualizar.bind('click',function(){
 					var trCount = $("tbody > tr", $grid_productos_componentes).size();
@@ -2730,8 +2788,8 @@ $(function() {
 					});
 					$campo_pres_on.attr({'value' : valor_campo});
 					
-					//COMENTADO POR PACO, MODIFICACIONES DE TIPOS DE PRODUCTOS
-					if(parseInt($select_prod_tipo.val())==2){
+					
+					if(parseInt($select_prod_tipo.val())==1 || parseInt($select_prod_tipo.val())==2 || parseInt($select_prod_tipo.val())==8){
 						if($incluye_produccion.val()=='false'){
 							//aqui solo debe entrar cuando la empresa no incluya modulo de produccion
 							if(trCount > 0){

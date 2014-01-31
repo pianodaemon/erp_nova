@@ -297,12 +297,12 @@
 																	<td>Producto&nbsp;&nbsp;</td>
 																	<td><input type="text" name="sku_minigrid" style="width:100px;"></td>
 																	<td></td>
-																	<td>&nbsp;&nbsp;&nbsp;<a  href="busca_producto_ingrediente">(Buscar)</a></td>
+																	<td>&nbsp;&nbsp;&nbsp;<a href="agregar_produ_minigrid">(Agregar)</a></td>
 																	<td width=65px></td>
 																	<td>Descripcion&nbsp;&nbsp;</td>
 																	<td><input type="text" name="descr_prod_minigrid" style="width:250px;"></td>
 																	<td></td>
-																	<td>&nbsp;&nbsp;&nbsp;<a href="agregar_produ_minigrid">(Agregar)</a></td>
+																	<td>&nbsp;&nbsp;&nbsp;<a  href="busca_producto_ingrediente">(Buscar)</a></td>
 																	<td>&nbsp;&nbsp;</td>
 																</tr>
 																<tr>
@@ -669,54 +669,54 @@
                                     
                                     <div id="tabx-4" class="contenidoPes" >
                                         <table border="0" class="gral">
-                                                                                        <tr>
-                                                                                            <td width="5"></td>
-                                                                                            <td colspan="6">Descripcion Corta</td>
-                                                                                            <td width="10"></td>
-                                                                                            <td width="220">
-                                                                                                <INPUT TYPE="hidden" name="namepdf">
-                                                                                                <div class="wrapper">
-                                                                                                    <div id="upload_button_pdf" class="button">Subir pdf</div>
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td width="5"></td>
+											<tr>
+												<td width="5"></td>
+												<td colspan="6">Descripcion Corta</td>
+												<td width="10"></td>
+												<td width="220">
+													<INPUT TYPE="hidden" name="namepdf">
+													<div class="wrapper">
+														<div id="upload_button_pdf" class="button">Subir pdf</div>
+													</div>
+												</td>
+												<td width="5"></td>
 											</tr>
-                                                                                        <tr>
-                                                                                            <td width="5"></td>
-                                                                                            <td colspan="6"><textarea name="descripcion_corta" rows="2" cols="60" style="width:480px; resize:none;"></textarea></td>
-                                                                                            <td width="10"></td>
-                                                                                            <td width="220" >
-                                                                                                <div border="1" width="220" border="1" >
-                                                                                                    <DIV id="contenidofile_pdf" ALIGN="center" ></DIV>
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td width="5"></td>
+											<tr>
+												<td width="5"></td>
+												<td colspan="6"><textarea name="descripcion_corta" rows="2" cols="60" style="width:480px; resize:none;"></textarea></td>
+												<td width="10"></td>
+												<td width="220" >
+													<div border="1" width="220" border="1" >
+														<DIV id="contenidofile_pdf" ALIGN="center" ></DIV>
+													</div>
+												</td>
+												<td width="5"></td>
 											</tr>
-                                                                                        <tr>
-                                                                                            <td colspan="10">&nbsp;</td>
+											<tr>
+												<td colspan="10">&nbsp;</td>
 											</tr>
-                                                                                        <tr>
-                                                                                            <td width="5"></td>
-                                                                                            <td colspan="6">Descripcion Larga</td>
-                                                                                            <td width="10"></td>
-                                                                                            <td width="220">
-                                                                                                <INPUT TYPE="hidden" name="nameimg">
-                                                                                                <div class="wrapper">
-                                                                                                    <div id="upload_button_img" class="button">Subir Imagen</div>
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td width="5"></td>
+											<tr>
+												<td width="5"></td>
+												<td colspan="6">Descripcion Larga</td>
+												<td width="10"></td>
+												<td width="220">
+													<INPUT TYPE="hidden" name="nameimg">
+													<div class="wrapper">
+														<div id="upload_button_img" class="button">Subir Imagen</div>
+													</div>
+												</td>
+												<td width="5"></td>
 											</tr>
-                                                                                        <tr>
-                                                                                            <td width="5"></td>
-                                                                                            <td colspan="6"><textarea name="descripcion_larga" rows="15" cols="60" style="width:480px; resize:none;"></textarea></td>
-                                                                                            <td width="10"></td>
-                                                                                            <td WIDTH=220 HEIGHT=220 >
-                                                                                                <div ALIGN="center" WIDTH=220 HEIGHT=220 border="1" >
-                                                                                                    <IMG id="contenidofile_img" SRC="#" ALIGN="top" WIDTH=220 HEIGHT=220>
-                                                                                                </div>
-                                                                                            </td>
-                                                                                            <td width="5"></td>
+											<tr>
+												<td width="5"></td>
+												<td colspan="6"><textarea name="descripcion_larga" rows="15" cols="60" style="width:480px; resize:none;"></textarea></td>
+												<td width="10"></td>
+												<td WIDTH=220 HEIGHT=220 >
+													<div ALIGN="center" WIDTH=220 HEIGHT=220 border="1" >
+														<IMG id="contenidofile_img" SRC="#" ALIGN="top" WIDTH=220 HEIGHT=220>
+													</div>
+												</td>
+												<td width="5"></td>
 											</tr>
                                         </table>
                                         
