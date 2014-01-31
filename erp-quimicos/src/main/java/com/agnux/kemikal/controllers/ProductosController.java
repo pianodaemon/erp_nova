@@ -575,10 +575,10 @@ public class ProductosController {
             userDat = this.getHomeDao().getUserById(id_usuario);
             incluye_mod_prod = userDat.get("incluye_produccion");
             Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-            
+            Integer prodTipo=Integer.parseInt(select_prodtipo);
             //tipos 2=Subensamble, 3=Kit
             if(incluye_mod_prod.equals("true")){
-                if(Integer.parseInt(select_prodtipo)==3 ){
+                if(prodTipo==3 ){
                     arreglo = new String[id_prod_formula.length];
                     for(int i=0; i<id_prod_formula.length; i++) { 
                         arreglo[i]= "'"+id_prod_formula[i] +"___" + porcentaje[i] +"'";
@@ -589,7 +589,7 @@ public class ProductosController {
                     extra_data_array = "'sin datos'";
                 }
             }else{
-                if(Integer.parseInt(select_prodtipo)==2 || Integer.parseInt(select_prodtipo)==3){
+                if(prodTipo==1 || prodTipo==2 || prodTipo==3 || prodTipo==8){
                     arreglo = new String[id_prod_formula.length];
                     for(int i=0; i<id_prod_formula.length; i++) { 
                         arreglo[i]= "'"+id_prod_formula[i] +"___" + porcentaje[i] +"'";
@@ -601,12 +601,12 @@ public class ProductosController {
                 }
             }
             
-            //quitar las comillas simples de la cadena
+            //Quitar las comillas simples de la cadena
             descripcion = descripcion.replaceAll("'", "\"");
             descripcion_larga = descripcion_larga.replaceAll("'", "\"");
             descripcion_corta = descripcion_corta.replaceAll("'", "\"");
             
-            //si los campos select vienen null les asigna un 0(cero)
+            //Si los campos select vienen null les asigna un 0(cero)
             tentrega = StringHelper.verificarSelect(tentrega);
             select_clase = StringHelper.verificarSelect(select_clase);
             select_clasifstock = StringHelper.verificarSelect(select_clasifstock);
