@@ -944,7 +944,9 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "com_fac_detalle.cantidad, "
                     + "(com_fac_detalle.costo_unitario * com_fac_detalle.cantidad) AS importe, "
                     + "com_fac_detalle.tipo_de_impuesto_sobre_partida AS id_impuesto, "
-                    + "com_fac_detalle.cantidad_devolucion AS cantidad_devuelto "
+                    + "com_fac_detalle.cantidad_devolucion AS cantidad_devuelto, "
+                    + "com_fac_detalle.gral_ieps_id,"
+                    + "com_fac_detalle.valor_ieps "
                 + "FROM com_fac "
                 + "JOIN com_fac_detalle ON com_fac_detalle.com_fac_id=com_fac.id "
                 + "LEFT JOIN inv_prod on inv_prod.id = com_fac_detalle.producto_id  "
@@ -972,6 +974,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("importe",StringHelper.roundDouble(rs.getString("importe"),2));
                     row.put("id_impuesto",String.valueOf(rs.getInt("id_impuesto")));
                     row.put("cantidad_devuelto",StringHelper.roundDouble(rs.getString("cantidad_devuelto"),2));
+                    row.put("ieps_id",rs.getString("gral_ieps_id"));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
                     return row;
                 }
             }
@@ -1077,7 +1081,10 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "com_fac_detalle.tipo_de_impuesto_sobre_partida AS id_impuesto, "
                     + "com_fac_detalle.cantidad_devolucion AS cantidad_devuelto, "
                     + "com_fac_detalle_dev.cant_dev AS cantidad_devolucion, "
-                    + "com_fac_detalle_dev.tasa_imp "
+                    + "com_fac_detalle_dev.tasa_imp, "
+                    + "com_fac_detalle_dev.gral_ieps_id,"
+                    + "com_fac_detalle_dev.valor_ieps,"
+                    + "(CASE WHEN com_fac_detalle_dev.gral_ieps_id>0 THEN ((com_fac_detalle.costo_unitario * com_fac_detalle_dev.cant_dev) * com_fac_detalle_dev.valor_ieps) ELSE 0 END) AS importe_ieps "
                 + "FROM com_fac_detalle_dev "
                 + "JOIN com_fac_detalle ON com_fac_detalle.id=com_fac_detalle_dev.id_com_fac_detalle "
                 + "LEFT JOIN inv_prod on inv_prod.id = com_fac_detalle.producto_id   "
@@ -1106,6 +1113,8 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("cantidad_devuelto",StringHelper.roundDouble(rs.getString("cantidad_devuelto"),2));
                     row.put("cantidad_devolucion",StringHelper.roundDouble(rs.getString("cantidad_devolucion"),2));
                     row.put("tasa_imp",StringHelper.roundDouble(rs.getString("tasa_imp"),2));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),4));
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getString("importe_ieps"),4));
                     return row;
                 }
             }

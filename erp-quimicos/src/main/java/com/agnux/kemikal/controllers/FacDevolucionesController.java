@@ -346,7 +346,7 @@ public class FacDevolucionesController {
             String serieFolio="";
             String rfcEmisor="";
             String tipo_facturacion="";
-            String observaciones="";
+            String observaciones="NOTA DE CREDITO POR DEVOLUCION DE MERCANCIA";
             String importe="";
             String ieps="";
             String impuesto="";

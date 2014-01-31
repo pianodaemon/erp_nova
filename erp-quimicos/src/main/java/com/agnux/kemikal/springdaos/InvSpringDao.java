@@ -1320,7 +1320,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("valor_imp",StringHelper.roundDouble(rs.getString("valor_imp"),2));
                     row.put("decimales",rs.getString("decimales"));
                     row.put("ieps_id",rs.getString("gral_ieps_id"));
-                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),4));
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getString("importe_ieps"),4));
                     row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
                     return row;

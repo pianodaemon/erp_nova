@@ -198,4 +198,7 @@ public interface CxcInterfaceDao {
     //Calcular años a mostrar en el reporte de Saldo Por mes
     public ArrayList<HashMap<String, Object>> getCxc_AnioReporteSaldoMensual();
     public ArrayList<HashMap<String, String>> getCxc_DatosReporteSaldoMensual(Integer tipo_reporte, String cliente, String fecha_corte,Integer id_empresa);
+    
+    
+    public ArrayList<HashMap<String,String>> getComparativoVentas(String cliente, Integer anio_ini, Integer anio_fin, Integer id_emp);
 }

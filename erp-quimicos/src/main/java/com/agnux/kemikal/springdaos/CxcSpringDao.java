@@ -8,6 +8,7 @@
 package com.agnux.kemikal.springdaos;
 
 import com.agnux.common.helpers.StringHelper;
+import com.agnux.common.helpers.TimeHelper;
 import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -3075,6 +3076,103 @@ return subfamilias;
     }
 
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //Obtiene comparativo de Ventas
+    @Override
+    public ArrayList<HashMap<String,String>> getComparativoVentas(String cliente, Integer anio_inicial, Integer anio_final, Integer id_emp) {
+        final Integer anio_ini=anio_inicial;
+        final Integer anio_fin=anio_final;
+        String campos_sum_total="";
+        String campos_sum="";
+        String campos_case_mes="";
+        
+        //Este ciclo repite los 12 meses por cada año comprendido entre anio_ini y anio_fin
+        for(int mes=1; mes<=12; mes++){
+            String nombre_mes=TimeHelper.ConvertNumToMonth(mes);
+            for(int anio=anio_ini; anio<=anio_fin; anio++){
+                campos_case_mes = campos_case_mes +",(CASE WHEN (mes="+mes+" AND anio="+anio+") THEN subtotal ELSE 0 END) AS "+nombre_mes+""+anio+" ";
+                campos_sum = campos_sum +",sum("+nombre_mes+""+anio+") AS "+nombre_mes+""+anio+" ";
+                if(campos_sum_total.equals("")){
+                    //Aqui entra para que agregue coma al principio
+                    campos_sum_total = campos_sum_total + ",sum("+nombre_mes+""+anio+") ";
+                }else{
+                    //Aqui entra para que agregue + al principio
+                    campos_sum_total = campos_sum_total + "+ sum("+nombre_mes+""+anio+") ";
+                }
+                
+            }
+        }
+        
+        
+       String sql_to_query=""+""
+       + "SELECT "
+           + "razon_social "
+           + ""+campos_sum+""
+           + ""+campos_sum_total+" AS suma_total "
+        +"FROM( "
+            + "SELECT "
+               + "razon_social "
+               + ""+campos_case_mes+""
+            +"FROM ("
+               + "SELECT "
+                    + "cxc_clie.razon_social, "
+                    + "EXTRACT(MONTH FROM fac_docs.momento_creacion) AS mes, "
+                    + "EXTRACT(YEAR FROM fac_docs.momento_creacion) AS anio, "
+                    + "(CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END) AS subtotal "
+                + "FROM fac_docs "
+                + "join cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
+                + "JOIN erp_proceso ON erp_proceso.id=fac_docs.proceso_id "
+                + "WHERE erp_proceso.empresa_id ="+id_emp + " "
+                + "AND cxc_clie.razon_social ILIKE '%"+cliente+"%' "
+                + "AND fac_docs.cancelado=false "
+                + "AND EXTRACT(YEAR FROM fac_docs.momento_creacion) between "+anio_ini+ " and "+anio_fin+ " "
+            +") AS sbt "
+        +")as sbt2 "
+        +"GROUP BY razon_social ";
+        System.out.println("QueryComparativoVentas: "+sql_to_query+"");
+        
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("razon_social",rs.getString("razon_social"));
+                    //Este ciclo repite los 12 meses por cada año comprendido entre anio_ini y anio_fin
+                    for(int mes=1; mes<=12; mes++){
+                        String nombre_mes=TimeHelper.ConvertNumToMonth(mes);
+                        for(int anio=anio_ini; anio<=anio_fin; anio++){
+                            row.put(nombre_mes+""+anio,StringHelper.roundDouble(rs.getString(nombre_mes+""+anio),2));
+                        }
+                    }
+                    row.put("suma_total",StringHelper.roundDouble(rs.getDouble("suma_total"), 2));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
 // obtiene el SQL de estadisticas anuales de ventas

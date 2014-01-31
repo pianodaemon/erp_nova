@@ -556,22 +556,22 @@ public class NotasCreditoController {
                             String Serie=this.getGralDao().getSerieNotaCredito(id_empresa, id_sucursal);
                             String Folio=this.getGralDao().getFolioNotaCredito(id_empresa, id_sucursal);
                             rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-
+                            
                             //lista de conceptos para la Nota de Credito cfdi
-
+                            
                             listaConceptos = this.getFacdao().getNotaCreditoCfdi_ListaConceptos(id_nota_credito);
                             dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
-
+                            
                             //obtiene datos extras para el cfdi
                             datosExtras = this.getFacdao().getNotaCreditoCfdi_DatosExtras(id_nota_credito, Serie, Folio);
                             impTrasladados = this.getFacdao().getNotaCreditoCfdi_ImpuestosTrasladados(id_nota_credito);
                             impRetenidos = this.getFacdao().getNotaCreditoCfdi_ImpuestosRetenidos(id_nota_credito);
                             //leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
-
+                            
                             //generar archivo de texto para cfdi
                             this.getBfcfdi().init(dataCliente, listaConceptos,impRetenidos,impTrasladados, leyendas, proposito,datosExtras, id_empresa, id_sucursal);
                             this.getBfcfdi().start();
-
+                            
                             //aqui se debe actializar el registro
                             data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado;
                             
