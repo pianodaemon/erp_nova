@@ -946,7 +946,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "com_fac_detalle.tipo_de_impuesto_sobre_partida AS id_impuesto, "
                     + "com_fac_detalle.cantidad_devolucion AS cantidad_devuelto, "
                     + "com_fac_detalle.gral_ieps_id,"
-                    + "com_fac_detalle.valor_ieps "
+                    + "(com_fac_detalle.valor_ieps * 100 ) AS valor_ieps "
                 + "FROM com_fac "
                 + "JOIN com_fac_detalle ON com_fac_detalle.com_fac_id=com_fac.id "
                 + "LEFT JOIN inv_prod on inv_prod.id = com_fac_detalle.producto_id  "
@@ -1083,7 +1083,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "com_fac_detalle_dev.cant_dev AS cantidad_devolucion, "
                     + "com_fac_detalle_dev.tasa_imp, "
                     + "com_fac_detalle_dev.gral_ieps_id,"
-                    + "com_fac_detalle_dev.valor_ieps,"
+                    + "(com_fac_detalle_dev.valor_ieps * 100) AS valor_ieps,"
                     + "(CASE WHEN com_fac_detalle_dev.gral_ieps_id>0 THEN ((com_fac_detalle.costo_unitario * com_fac_detalle_dev.cant_dev) * com_fac_detalle_dev.valor_ieps) ELSE 0 END) AS importe_ieps "
                 + "FROM com_fac_detalle_dev "
                 + "JOIN com_fac_detalle ON com_fac_detalle.id=com_fac_detalle_dev.id_com_fac_detalle "
@@ -1091,7 +1091,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                 + "LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = inv_prod.unidad_id  "
                 + "LEFT JOIN inv_prod_presentaciones on inv_prod_presentaciones.id = com_fac_detalle_dev.presentacion_id "
                 + "WHERE com_fac_detalle_dev.id_cxp_nota_credito=?;";
-                                
+        
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -1113,6 +1113,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("cantidad_devuelto",StringHelper.roundDouble(rs.getString("cantidad_devuelto"),2));
                     row.put("cantidad_devolucion",StringHelper.roundDouble(rs.getString("cantidad_devolucion"),2));
                     row.put("tasa_imp",StringHelper.roundDouble(rs.getString("tasa_imp"),2));
+                    row.put("id_ieps",String.valueOf(rs.getInt("gral_ieps_id")));
                     row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),4));
                     row.put("importe_ieps",StringHelper.roundDouble(rs.getString("importe_ieps"),4));
                     return row;

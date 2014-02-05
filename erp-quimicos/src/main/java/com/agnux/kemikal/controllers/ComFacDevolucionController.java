@@ -410,6 +410,8 @@ public class ComFacDevolucionController {
             @RequestParam(value="cant_dev", required=false) String[] cant_dev,
             @RequestParam(value="select_imp_partida", required=false) String[] select_imp_partida,
             @RequestParam(value="tasa_imp", required=false) String[] tasa_imp,
+            @RequestParam(value="idIeps", required=false) String[] idIeps,
+            @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
             
             @ModelAttribute("user") UserSessionData user
             ) {
@@ -431,11 +433,14 @@ public class ComFacDevolucionController {
             String observaciones="";
             String fac_saldado="false";
             String importe="";
+            String ieps="";
             String impuesto="";
             String total="";
             Double importePartida=0.0;
+            Double importeIepsPartida=0.0;
             Double impuestoPartida=0.0;
             Double sumaSubTotal = 0.0; //es la suma de todos los importes
+            Double sumaIeps = 0.0;
             Double sumaImpuesto = 0.0; //suma del iva
             Double sumaTotal = 0.0; //suma del subtotal + totalImpuesto
             String arreglo[];
@@ -464,20 +469,30 @@ public class ComFacDevolucionController {
                 if(seleccionado[i].equals("1")){
                     importePartida = 0.0;
                     impuestoPartida = 0.0;
+                    importeIepsPartida=0.0;
                     importePartida = Double.parseDouble(costo[i]) * Double.parseDouble(StringHelper.removerComas(cant_dev[i]));
-                    impuestoPartida = importePartida * Double.parseDouble(tasa_imp[i]);
+                    
+                    if(Double.parseDouble(tasaIeps[i])>0){
+                        importeIepsPartida = importePartida * (Double.parseDouble(tasaIeps[i])/100);
+                    }
+                    
+                    impuestoPartida = (importePartida + importeIepsPartida)* Double.parseDouble(tasa_imp[i]);
+                    
+                    
                     sumaSubTotal = sumaSubTotal + importePartida;
+                    sumaIeps = sumaIeps + importeIepsPartida;
                     sumaImpuesto = sumaImpuesto + impuestoPartida;
                     
-                    arreglo[contador]= "'"+idproducto[i] +"___" + StringHelper.removerComas(cantidad[i]) +"___" + StringHelper.removerComas(cant_devuelto[i]) +"___" + StringHelper.removerComas(cant_dev[i])+"___"+notr[i]+"___"+iddetalle[i]+"___"+tasa_imp[i]+"'";
+                    arreglo[contador]= "'"+idproducto[i] +"___" + StringHelper.removerComas(cantidad[i]) +"___" + StringHelper.removerComas(cant_devuelto[i]) +"___" + StringHelper.removerComas(cant_dev[i])+"___"+notr[i]+"___"+iddetalle[i]+"___"+tasa_imp[i]+"___"+idIeps[i]+"___"+tasaIeps[i]+"'";
                     System.out.println(arreglo[contador]);
                     contador++;
                 }
             }
             
-            sumaTotal = sumaSubTotal + sumaImpuesto;
+            sumaTotal = sumaSubTotal + sumaIeps + sumaImpuesto;
             
             importe = StringHelper.roundDouble(sumaSubTotal,2);
+            ieps = StringHelper.roundDouble(sumaIeps,2);
             impuesto = StringHelper.roundDouble(sumaImpuesto,2);
             total = StringHelper.roundDouble(sumaTotal,2);
             
@@ -513,7 +528,8 @@ public class ComFacDevolucionController {
                 fecha_expedicion+"___"+
                 select_tipo_movimiento+"___"+
                 select_tipo_nota+"___"+
-                select_almacen;
+                select_almacen+"___"+
+                ieps;
             
             succes = this.getComDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
             
