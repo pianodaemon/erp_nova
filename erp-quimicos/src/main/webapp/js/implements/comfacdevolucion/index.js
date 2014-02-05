@@ -689,7 +689,11 @@ $(function() {
 						var cant_devolucion = '0.00';
 						id_almacen_salida = partida['id_almacen'];
 						
-						var nuevo_tr = crear_tr(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion, pres_id, pres);
+						var id_ieps = partida['ieps_id'];
+						var tasa_ieps = partida['valor_ieps'];
+						var importe_ieps = 0;
+						
+						var nuevo_tr = crear_tr(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion, pres_id, pres, id_ieps, tasa_ieps, importe_ieps);
 						
 						$grid_productos.append(nuevo_tr);
 						
@@ -700,6 +704,7 @@ $(function() {
 								$(this).parent().find('input[name=seleccionado]').val("1");
 								$(this).parent().parent().find('input[name=cant_dev]').css({'background' : '#ffffff'});
 								$(this).parent().parent().find('input[name=cant_dev]').attr("readonly", false);//habilitar campo
+								$(this).parent().parent().find('input[name=cant_dev]').focus();
 							}else{
 								$(this).parent().find('input[name=seleccionado]').val("0");
 								$(this).parent().parent().find('input[name=importe_dev]').val(0);
@@ -725,16 +730,26 @@ $(function() {
 							var cant_devuelto = quitar_comas($(this).parent().parent().find('input[name=cant_devuelto]').val());
 							var costo_unitario = quitar_comas($(this).parent().parent().find('input[name=costo]').val());
 							var $concepto = $('#forma-comfacdevolucion-window').find('textarea[name=concepto]');
-							
-							//disponible para devolucion
+							var $id_ieps = $(this).parent().parent().find('input[name=idIeps]');
+							var $tasa_ieps = $(this).parent().parent().find('input[name=tasaIeps]');
+							var $importe_ieps = $(this).parent().parent().find('input[name=importeIeps]');
+							var tasaIeps=0;
+							//Disponible para devolucion
 							var disponible = parseFloat(cant_fac) - parseFloat(cant_devuelto);
 							
 							if(cant_devolucion=="" || parseFloat(cant_devolucion)==0){
 								$(this).val(parseFloat(0.00).toFixed(2));//si el campo esta en blanco, pone cero
 								$importe_devolucion.val(0);
 								$importe_iva.val(0);
+								if(parseInt($id_ieps.val())<=0){
+									$tasa_ieps.val(' ');
+									$importe_ieps.val('');
+								}else{
+									$tasa_ieps.val(0);
+									$importe_ieps.val(0);
+								}
 							}else{
-								//valida  que la cantidad a devolver no sea mayor a la cantidad vendida en la partida
+								//Valida  que la cantidad a devolver no sea mayor a la cantidad vendida en la partida
 								if( parseFloat(cant_devolucion) > parseFloat(disponible)  ){
 									jAlert("La Cantidad a devolver No debe ser mayor a la cantidad Disponible.\n\nCantidad disponible: "+disponible+"\nCantidad devoluci&oacute;n: "+cant_devolucion+"\n\nSe ha asignado por default la cantidad disponible.", 'Atencion!');
 									$(this).val(parseFloat( disponible ).toFixed(2));
@@ -742,11 +757,19 @@ $(function() {
 									$(this).val(parseFloat( quitar_comas($(this).val()) ).toFixed(2));
 								}
 								
-								//calcula el importe de la devolucion
-								$importe_devolucion.val( parseFloat(quitar_comas($(this).val())) * parseFloat(costo_unitario));
+								if($tasa_ieps.val().trim()!=''){
+									if(parseFloat($tasa_ieps.val().trim())>0){
+										tasaIeps = parseFloat($tasa_ieps.val().trim()) / 100;
+									}
+								}
 								
-								//calcula el iva de la partida
-								$importe_iva.val( parseFloat($importe_devolucion.val()) * parseFloat($tasa_iva.val()) );
+								//Calcula el importe de la devolucion
+								$importe_devolucion.val( parseFloat(parseFloat(quitar_comas($(this).val())) * parseFloat(costo_unitario)).toFixed(4));
+								
+								$importe_ieps.val(parseFloat(parseFloat($importe_devolucion.val()) * parseFloat(tasaIeps)).toFixed(4));
+								
+								//Calcula el iva de la partida
+								$importe_iva.val( parseFloat(parseFloat(parseFloat($importe_devolucion.val()) + parseFloat($importe_ieps.val())) * parseFloat($tasa_iva.val())).toFixed(4));
 							}
 							$calcula_totales_nota_credito();
 							$concepto.text(crear_cadena_concepto($(this).parent().parent().parent()));
@@ -779,10 +802,10 @@ $(function() {
 	
 	
 	//metodo  que carga el grid con las partidas de la Factura de compra
-	crear_tr = function(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion, pres_id, pres){
+	crear_tr = function(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion, pres_id, pres, id_ieps, tasa_ieps, importe_ieps){
 		var tr='';
 		tr += '<tr>';
-			tr += '<td width="25" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+			tr += '<td width="30" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 				tr += '<input type="checkbox" name="micheck" id="micheck'+ notr +'" value="true" '+check+' '+desactivado+'>';
 				tr += '<input type="hidden" name="seleccionado" value="'+valor_seleccionado+'">';//el 1 significa que el checkbox está seleccionado
 				tr += '<input type="hidden" name="notr" value="'+notr+'">';
@@ -843,13 +866,34 @@ $(function() {
 					}
 					tr += '</select>';
 			tr += '</td>';
+			
+			
+			var tasaIeps=" ";
+			var importeIeps="";
+			
+			if(parseInt(id_ieps)>0){
+				tasaIeps=tasa_ieps;
+				importeIeps=importe_ieps;
+			}
+			
+			tr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="50">';
+				tr += '<input type="hidden" name="idIeps"     value="'+ id_ieps +'" id="idIeps">';
+				tr += '<input type="text" name="tasaIeps" value="'+ tasaIeps +'" class="borde_oculto" id="tasaIeps" style="width:46px; text-align:right;" readOnly="true">';
+			tr += '</td>';
+			
+			
+			tr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="70">';
+				tr += '<input type="text" name="importeIeps" value="'+ importeIeps +'" class="borde_oculto" id="importeIeps" style="width:66px; text-align:right;" readOnly="true">';
+			tr += '</td>';
+			
+			
 			tr += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 				tr += '<input type="text" 		name="cant_devuelto" 	value="'+ $(this).agregar_comas(cant_devuelto) +'" 	class="borde_oculto" readOnly="true" style="width:76px; text-align:right;">';
 			tr += '</td>';
-			tr += '<td width="85" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
+			tr += '<td width="80" class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;">';
 				var color_fondo='';
 				if(parseFloat(cant_devolucion)==0){	color_fondo='background:#dddddd;';	}
-				tr += '<input type="text" 		name="cant_dev" value="'+$(this).agregar_comas(cant_devolucion)+'" id="cant_dev'+ notr +'"	readOnly="true" style="width:83px; '+color_fondo+' text-align:right;">';
+				tr += '<input type="text" 		name="cant_dev" value="'+$(this).agregar_comas(cant_devolucion)+'" id="cant_dev'+ notr +'"	readOnly="true" style="width:76px; '+color_fondo+' text-align:right;">';
 				tr += '<input type="hidden"    	name="tasa_imp"     	value="'+  tasa_impuesto +'">';
 				tr += '<input type="hidden" 	name="importe_dev" 		value="0">';
 				tr += '<input type="hidden" 	name="importe_imp_dev" 	value="0">';
@@ -865,34 +909,46 @@ $(function() {
 	
 	
 	
-	//calcula totales de la Nota de Credito(subtotal, impuesto, retencion, total)
+	//Calcula totales de la Nota de Credito(subtotal, IEPS, IVA, retencion, total)
 	$calcula_totales_nota_credito = function(){
 		var $subtotal_nota = $('#forma-comfacdevolucion-window').find('input[name=subtotal]');
+		var $ieps_nota = $('#forma-comfacdevolucion-window').find('input[name=ieps_nota]');
 		var $impuesto_nota = $('#forma-comfacdevolucion-window').find('input[name=impuesto]');
 		var $total_nota = $('#forma-comfacdevolucion-window').find('input[name=total]');
 		var $grid_productos = $('#forma-comfacdevolucion-window').find('#grid_productos');
 		
-		var sumaSubTotal = 0; //es la suma de todos los importes
-		var sumaImpuesto = 0; //suma del iva
-		var sumaTotal = 0; //suma del subtotal + totalImpuesto
+		 //Suma de todos los importes antes de impuestos
+		var sumaSubTotal = 0;
+		//Suma de todos los importes del IEPS
+		var sumaImporteIeps=0;
+		//Suma de todos los importes del IVA
+		var sumaImpuesto = 0;
+		//sumaSubTotal + sumaImporteIeps + sumaImpuesto
+		var sumaTotal = 0;
 		
 		$grid_productos.find('tr').each(function (index){
 			sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat( $(this).find('input[name=importe_dev]').val() );
 			sumaImpuesto = parseFloat(sumaImpuesto) + parseFloat( $(this).find('input[name=importe_imp_dev]').val() );
+			if($(this).find('input[name=importeIeps]').val().trim()!=''){
+				sumaImporteIeps = parseFloat(sumaImporteIeps) + parseFloat( $(this).find('input[name=importeIeps]').val() );
+			}
 		});
 		
-		//calcula el total sumando el subtotal y el impuesto
-		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto);
+		//Calcula el total sumando el subtotal y el impuesto
+		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImporteIeps) + parseFloat(sumaImpuesto);
 		
-		//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
+		//Redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
 		$subtotal_nota.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
-		//redondea a dos digitos el impuesto y lo asigna al campo impuesto
+		
+		//Redondear la suma del IEPS
+		$ieps_nota.val($(this).agregar_comas( parseFloat(sumaImporteIeps).toFixed(2) ));
+		
+		//Redondea a dos digitos el impuesto y lo asigna al campo impuesto
 		$impuesto_nota.val($(this).agregar_comas(  parseFloat(sumaImpuesto).toFixed(2)  ));
-		//redondea a dos digitos la suma  total y se asigna al campo total
-		$total_nota.val($(this).agregar_comas(  parseFloat(sumaTotal).toFixed(2)  ));
-		
-		
-	}//termina calcular totales
+		//Redondea a dos digitos la suma  total y se asigna al campo total
+		$total_nota.val($(this).agregar_comas(  parseFloat(sumaTotal).toFixed(2) ));
+	}
+	//Termina calcular totales
 	
 	
 	
@@ -929,7 +985,7 @@ $(function() {
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		//var accion = "getCotizacion";
 		
-		$('#forma-comfacdevolucion-window').css({"margin-left": -350, 	"margin-top": -220});
+		$('#forma-comfacdevolucion-window').css({"margin-left": -435, 	"margin-top": -220});
 		
 		$forma_selected.prependTo('#forma-comfacdevolucion-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1308,7 +1364,7 @@ $(function() {
 			
 			$(this).modalPanel_comfacdevolucion();
 			
-			$('#forma-comfacdevolucion-window').css({"margin-left": -350, 	"margin-top": -220});
+			$('#forma-comfacdevolucion-window').css({"margin-left": -435, 	"margin-top": -220});
 			
 			$forma_selected.prependTo('#forma-comfacdevolucion-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -1566,7 +1622,11 @@ $(function() {
 						var id_impuesto_partida = partida['id_impuesto'];
 						var cant_devolucion = partida['cantidad_devolucion'];
 						
-						var nuevo_tr = crear_tr(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion, pres_id, pres);
+						var id_ieps = partida['id_ieps'];
+						var tasa_ieps = partida['valor_ieps'];
+						var importe_ieps = partida['importe_ieps'];
+						
+						var nuevo_tr = crear_tr(tipo_proveedor, notr, id_detalle, check,desactivado,valor_seleccionado, id_producto, codigo_producto, titulo_producto, unidad_medida, cantidad_fac, costo_unitario, importe, cant_devuelto, id_impuesto_partida, cant_devolucion, pres_id, pres, id_ieps, tasa_ieps, importe_ieps);
 						
 						$grid_productos.append(nuevo_tr);
 					});
