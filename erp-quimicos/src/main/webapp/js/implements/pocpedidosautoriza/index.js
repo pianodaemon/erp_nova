@@ -355,62 +355,6 @@ $(function() {
 		$campo_select.append(select_html);
 	}
 	
-
-    
-	
-	//calcula totales(subtotal, impuesto, total)
-	$calcula_totales = function(){
-		var $campo_subtotal = $('#forma-pocpedidosautoriza-window').find('input[name=subtotal]');
-		var $campo_impuesto = $('#forma-pocpedidosautoriza-window').find('input[name=impuesto]');
-		var $campo_impuesto_retenido = $('#forma-pocpedidosautoriza-window').find('input[name=impuesto_retenido]');
-		var $campo_total = $('#forma-pocpedidosautoriza-window').find('input[name=total]');
-		//var $campo_tc = $('#forma-pocpedidosautoriza-window').find('input[name=tc]');
-		var $valor_impuesto = $('#forma-pocpedidosautoriza-window').find('input[name=valorimpuesto]');
-		var $grid_productos = $('#forma-pocpedidosautoriza-window').find('#grid_productos');
-		var $empresa_immex = $('#forma-pocpedidosautoriza-window').find('input[name=empresa_immex]');
-		var $tasa_ret_immex = $('#forma-pocpedidosautoriza-window').find('input[name=tasa_ret_immex]');
-		
-		var sumaSubTotal = 0; //es la suma de todos los importes
-		var sumaImpuesto = 0; //valor del iva
-		var impuestoRetenido = 0; //monto del iva retenido de acuerdo a la tasa de retencion immex
-		var sumaTotal = 0; //suma del subtotal + totalImpuesto
-		
-		//si valor del impuesto es null o vacio, se le asigna un 0
-		if( $valor_impuesto.val()== null || $valor_impuesto.val()== ''){
-			$valor_impuesto.val(0);
-		}
-		
-		$grid_productos.find('tr').each(function (index){
-			if(( $(this).find('#cost').val() != ' ') && ( $(this).find('#cant').val() != ' ' )){
-				//alert($(this).find('#cost').val());
-				//acumula los importes en la variable subtotal
-				sumaSubTotal = parseFloat(sumaSubTotal) + parseFloat(quitar_comas($(this).find('#import').val()));
-				//alert($(this).find('#import').val());
-				if($(this).find('#totimp').val() != ''){
-					//alert($(this).find('#totimp').val());
-					sumaImpuesto =  parseFloat(sumaImpuesto) + parseFloat($(this).find('#totimp').val());
-				}
-			}
-		});
-		
-		//calcular  la tasa de retencion IMMEX
-		impuestoRetenido = parseFloat(sumaSubTotal) * parseFloat(parseFloat($tasa_ret_immex.val()));
-		
-		//calcula el total sumando el subtotal y el impuesto menos la retencion
-		sumaTotal = parseFloat(sumaSubTotal) + parseFloat(sumaImpuesto) - parseFloat(impuestoRetenido);
-		
-		//redondea a dos digitos el  subtotal y lo asigna  al campo subtotal
-		$campo_subtotal.val($(this).agregar_comas(  parseFloat(sumaSubTotal).toFixed(2)  ));
-		//redondea a dos digitos el impuesto y lo asigna al campo impuesto
-		$campo_impuesto.val($(this).agregar_comas(  parseFloat(sumaImpuesto).toFixed(2)  ));
-		//redondea a dos digitos el impuesto y lo asigna al campo retencion
-		$campo_impuesto_retenido.val($(this).agregar_comas(  parseFloat(impuestoRetenido).toFixed(2)  ));
-		//redondea a dos digitos la suma  total y se asigna al campo total
-		$campo_total.val($(this).agregar_comas(  parseFloat(sumaTotal).toFixed(2)  ));
-		
-	}//termina calcular totales
-	
-	
 	
 	
 	var carga_formapocpedidosautoriza00_for_datagrid00 = function(id_to_show, accion_mode){
@@ -503,6 +447,7 @@ $(function() {
 			
 			//var $flete = $('#forma-pocpedidosautoriza-window').find('input[name=flete]');
 			var $subtotal = $('#forma-pocpedidosautoriza-window').find('input[name=subtotal]');
+			var $ieps = $('#forma-pocpedidosautoriza-window').find('input[name=ieps]');
 			var $impuesto = $('#forma-pocpedidosautoriza-window').find('input[name=impuesto]');
 			var $campo_impuesto_retenido = $('#forma-pocpedidosautoriza-window').find('input[name=impuesto_retenido]');
 			var $total = $('#forma-pocpedidosautoriza-window').find('input[name=total]');
@@ -511,9 +456,8 @@ $(function() {
 			var $cancelar_plugin = $('#forma-pocpedidosautoriza-window').find('#boton_cancelar');
 			var $submit_actualizar = $('#forma-pocpedidosautoriza-window').find('#submit');
 			
-			//ocultar boton descargar y facturar. Despues de facturar debe mostrarse
-			//$boton_descargarpdf.hide();
-			//$boton_cancelarfactura.hide();
+			$('#forma-pocpedidosautoriza-window').find('#tr_ieps').hide();
+			$('#forma-pocpedidosautoriza-window').find('#tr_retencion').hide();
 			$busca_cliente.hide();
 			$empresa_immex.val('false');
 			$tasa_ret_immex.val('0');
@@ -622,25 +566,54 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$tasa_ret_immex.val(entry['datosPedido']['0']['tasa_retencion_immex']);
-					$id_pedido.val(entry['datosPedido']['0']['id']);
-					$folio.val(entry['datosPedido']['0']['folio']);
-					$id_cliente.val(entry['datosPedido']['0']['cliente_id']);
-					$nocliente.val(entry['datosPedido']['0']['numero_control']);
-					$razon_cliente.val(entry['datosPedido']['0']['razon_social']);
+					$tasa_ret_immex.val(entry['datosPedido'][0]['tasa_retencion_immex']);
+					$id_pedido.val(entry['datosPedido'][0]['id']);
+					$folio.val(entry['datosPedido'][0]['folio']);
+					$id_cliente.val(entry['datosPedido'][0]['cliente_id']);
+					$nocliente.val(entry['datosPedido'][0]['numero_control']);
+					$razon_cliente.val(entry['datosPedido'][0]['razon_social']);
 					
-					$observaciones.text(entry['datosPedido']['0']['observaciones']);
-                    $orden_compra.val(entry['datosPedido']['0']['orden_compra']);
-					$transporte.val(entry['datosPedido']['0']['transporte']);
-					$lugar_entrega.val(entry['datosPedido']['0']['lugar_entrega']);
-					$fecha_compromiso.val(entry['datosPedido']['0']['fecha_compromiso']);
-					$tipo_cambio.val(entry['datosPedido']['0']['tipo_cambio']);
+					$observaciones.text(entry['datosPedido'][0]['observaciones']);
+                    $orden_compra.val(entry['datosPedido'][0]['orden_compra']);
+					$transporte.val(entry['datosPedido'][0]['transporte']);
+					$lugar_entrega.val(entry['datosPedido'][0]['lugar_entrega']);
+					$fecha_compromiso.val(entry['datosPedido'][0]['fecha_compromiso']);
+					$tipo_cambio.val(entry['datosPedido'][0]['tipo_cambio']);
+					
+					
+					$subtotal.val(entry['datosPedido'][0]['subtotal']);
+					$ieps.val(entry['datosPedido'][0]['monto_ieps']);
+					$impuesto.val(entry['datosPedido'][0]['impuesto']);
+					$campo_impuesto_retenido.val(entry['datosPedido'][0]['retencion']);
+					$total.val(entry['datosPedido'][0]['total']);
+					
+					
+					var countDisplay=0;
+					if(parseFloat(entry['datosPedido'][0]['monto_ieps'])>0){
+						$('#forma-pocpedidosautoriza-window').find('#tr_ieps').show();
+						countDisplay++;
+					}
+					if(parseFloat(entry['datosPedido'][0]['retencion'])>0){
+						$('#forma-pocpedidosautoriza-window').find('#tr_retencion').show();
+						countDisplay++;
+					}
+					
+					if(parseInt(countDisplay)==1){
+						$('#forma-pocpedidosautoriza-window').find('.pocpedidosautoriza_div_one').css({'height':'540px'});
+					}
+					
+					if(parseInt(countDisplay)==2){
+						$('#forma-pocpedidosautoriza-window').find('.pocpedidosautoriza_div_one').css({'height':'560px'});
+					}
+			
+					
+
 					
 					//carga select denominacion con todas las monedas
 					$select_moneda.children().remove();
 					var moneda_hmtl = '';
 					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(moneda['id'] == entry['datosPedido']['0']['moneda_id']){
+						if(moneda['id'] == entry['datosPedido'][0]['moneda_id']){
 							moneda_hmtl += '<option value="' + moneda['id'] + '"  selected="yes">' + moneda['descripcion'] + '</option>';
 						}else{
 							//if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])==4){
@@ -651,14 +624,14 @@ $(function() {
 					$select_moneda.append(moneda_hmtl);
                     
 					
-					$id_impuesto.val(entry['iva']['0']['id_impuesto']);
-					$valor_impuesto.val(entry['iva']['0']['valor_impuesto']);
+					$id_impuesto.val(entry['iva'][0]['id_impuesto']);
+					$valor_impuesto.val(entry['iva'][0]['valor_impuesto']);
 					
 					//carga select de vendedores
 					$select_vendedor.children().remove();
 					var hmtl_vendedor;
 					$.each(entry['Vendedores'],function(entryIndex,vendedor){
-						if(entry['datosPedido']['0']['cxc_agen_id'] == vendedor['id']){
+						if(entry['datosPedido'][0]['cxc_agen_id'] == vendedor['id']){
 							hmtl_vendedor += '<option value="' + vendedor['id'] + '" selected="yes" >' + vendedor['nombre_agente'] + '</option>';
 						}else{
 							//if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])==4){
@@ -672,7 +645,7 @@ $(function() {
 					$select_condiciones.children().remove();
 					var hmtl_condiciones;
 					$.each(entry['Condiciones'],function(entryIndex,condicion){
-						if(entry['datosPedido']['0']['cxp_prov_credias_id'] == condicion['id']){
+						if(entry['datosPedido'][0]['cxp_prov_credias_id'] == condicion['id']){
 							hmtl_condiciones += '<option value="' + condicion['id'] + '" selected="yes" >' + condicion['descripcion'] + '</option>';
 						}else{
 							//if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])==4){
@@ -688,7 +661,7 @@ $(function() {
 					$select_metodo_pago.children().remove();
 					var hmtl_metodo="";
 					$.each(entry['MetodosPago'],function(entryIndex,metodo){
-						if(entry['datosPedido']['0']['metodo_pago_id'] == metodo['id']){
+						if(entry['datosPedido'][0]['metodo_pago_id'] == metodo['id']){
 							hmtl_metodo += '<option value="' + metodo['id'] + '" selected="yes" >' + metodo['titulo'] + '</option>';
 						}else{
 							//if(parseInt(entry['datosPedido']['0']['proceso_flujo_id'])==4){
@@ -731,14 +704,14 @@ $(function() {
 									trr += '<INPUT TYPE="text" 		name="presentacion'+ tr +'" 	value="'+  prod['presentacion'] +'" 	id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 							trr += '</td>';
 							trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-								trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" 		id="cant" style="width:76px;">';
+								trr += '<INPUT TYPE="text" 	name="cantidad" value="'+  prod['cantidad'] +'" id="cant" class="borde_oculto" style="width:76px;">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" style="width:86px; text-align:right;">';
+								trr += '<INPUT TYPE="text" 	name="costo" 	value="'+  prod['precio_unitario'] +'" 	id="cost" class="borde_oculto" style="width:86px; text-align:right;">';
 								trr += '<INPUT type="hidden" value="'+  prod['precio_unitario'] +'" id="costor">';
 							trr += '</td>';
 							trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" readOnly="true" style="width:86px; text-align:right;">';
+								trr += '<INPUT TYPE="text" 	name="importe'+ tr +'" 	value="'+  prod['importe'] +'" 	id="import" class="borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 								
 								trr += '<INPUT type="hidden"    name="id_imp_prod"  value="'+  prod['gral_imp_id'] +'" 		id="idimppord">';
 								trr += '<INPUT type="hidden"    name="valor_imp" 	value="'+  prod['valor_imp'] +'" 	id="ivalorimp">';
@@ -748,88 +721,9 @@ $(function() {
 							trr += '</tr>';
 							$grid_productos.append(trr);
                             
-							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-							$grid_productos.find('#cant').focus(function(e){
-								if($(this).val() == ' '){
-									$(this).val('');
-								}
-							});
-							
-							//recalcula importe al perder enfoque el campo cantidad
-							$grid_productos.find('#cant').blur(function(){
-								if ($(this).val() == ''){
-									$(this).val(' ');
-								}
-								if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cost').val() != ' ') ){   
-									//calcula el importe
-									$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cost').val()));
-									//redondea el importe en dos decimales
-									//$(this).parent().parent().find('#import').val( Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100 );
-									$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2) );
-									
-									//calcula el impuesto para este producto multiplicando el importe por el valor del iva
-									$(this).parent().parent().find('#totimp').val(parseFloat($(this).parent().parent().find('#import').val()) * parseFloat(  $(this).parent().parent().find('#ivalorimp').val()  ));
-
-								}else{
-									$(this).parent().parent().find('#import').val('');
-									$(this).parent().parent().find('#totimp').val('');
-								}
-								$calcula_totales();//llamada a la funcion que calcula totales
-							});
-							
-							//al iniciar el campo tiene un  caracter en blanco, al obtener el foco se elimina el  espacio por comillas
-							$grid_productos.find('#cost').focus(function(e){
-								if($(this).val() == ' '){
-									$(this).val('');
-								}
-							});
-							
-							//recalcula importe al perder enfoque el campo costo
-							$grid_productos.find('#cost').blur(function(){
-								if ($(this).val() == ''){
-									$(this).val(' ');
-								}
-								if( ($(this).val() != ' ') && ($(this).parent().parent().find('#cant').val() != ' ') ){	
-									//calcula el importe
-									$(this).parent().parent().find('#import').val(parseFloat($(this).val()) * parseFloat($(this).parent().parent().find('#cant').val()));
-									//redondea el importe en dos decimales
-									//$(this).parent().parent().find('#import').val(Math.round(parseFloat($(this).parent().parent().find('#import').val())*100)/100);
-									$(this).parent().parent().find('#import').val( parseFloat($(this).parent().parent().find('#import').val()).toFixed(2));
-									
-									//calcula el impuesto para este producto multiplicando el importe por el valor del iva
-									$(this).parent().parent().find('#totimp').val(parseFloat($(this).parent().parent().find('#import').val()) * parseFloat( $(this).parent().parent().find('#ivalorimp').val()  ));
-								}else{
-									$(this).parent().parent().find('#import').val('');
-									$(this).parent().parent().find('#totimp').val('');
-								}
-								$calcula_totales();//llamada a la funcion que calcula totales
-							});
-							
-							//validar campo costo, solo acepte numeros y punto
-							$permitir_solo_numeros( $grid_productos.find('#cost') );
-							$permitir_solo_numeros( $grid_productos.find('#cant') );
-							
-							//elimina un producto del grid
-							$grid_productos.find('#delete'+ tr).bind('click',function(event){
-								event.preventDefault();
-								if(parseInt($(this).parent().find('#elim').val()) != 0){
-									var iddetalle = $(this).parent().find('#idd').val();
-									
-									//asigna espacios en blanco a todos los input de la fila eliminada
-									$(this).parent().parent().find('input').val('');
-
-									//asigna un 0 al input eliminado como bandera para saber que esta eliminado
-									$(this).parent().find('#elim').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
-									$(this).parent().find('#idd').val(iddetalle);
-									//oculta la fila eliminada
-									$(this).parent().parent().hide();
-									$calcula_totales();//llamada a la funcion que calcula totales
-								}
-							});
 						});
 					}
 					
-					$calcula_totales();//llamada a la funcion que calcula totales 
 					
 					var proceso_flujo = entry['datosPedido']['0']['proceso_flujo_id'];
 					
@@ -844,7 +738,7 @@ $(function() {
 					}
 					
 					//si es refacturacion, no se puede cambiar los datos del grid, solo el header de la factura
-					if(entry['datosPedido']['0']['cancelado']=="true"){
+					if(entry['datosPedido'][0]['cancelado']=="true"){
 						$cancelar_pedido.hide();
 						$submit_actualizar.hide();
 						$busca_sku.hide();
@@ -852,32 +746,33 @@ $(function() {
 						$cancelado.show();
 						$autorizar.hide();
 						
-						$folio.attr('disabled','-1'); //deshabilitar
-						$sku_producto.attr('disabled','-1'); //deshabilitar
-						$nombre_producto.attr('disabled','-1'); //deshabilitar
-						$nocliente.attr('disabled','-1'); //deshabilitar
-						$razon_cliente.attr('disabled','-1'); //deshabilitar
-						$observaciones.attr('disabled','-1'); //deshabilitar
-						$tipo_cambio.attr('disabled','-1'); //deshabilitar
-						$orden_compra.attr('disabled','-1'); //deshabilitar
-						$transporte.attr('disabled','-1'); //deshabilitar
-						$lugar_entrega.attr('disabled','-1'); //deshabilitar
-						$fecha_compromiso.attr('disabled','-1'); //deshabilitar
-						$select_moneda.attr('disabled','-1'); //deshabilitar
-						$select_condiciones.attr('disabled','-1'); //deshabilitar
-						$select_vendedor.attr('disabled','-1'); //deshabilitar
+						//Deshabilitar
+						$folio.attr('disabled','-1');
+						$sku_producto.attr('disabled','-1');
+						$nombre_producto.attr('disabled','-1');
+						$nocliente.attr('disabled','-1');
+						$razon_cliente.attr('disabled','-1');
+						$observaciones.attr('disabled','-1');
+						$tipo_cambio.attr('disabled','-1');
+						$orden_compra.attr('disabled','-1');
+						$transporte.attr('disabled','-1');
+						$lugar_entrega.attr('disabled','-1');
+						$fecha_compromiso.attr('disabled','-1');
+						$select_moneda.attr('disabled','-1');
+						$select_condiciones.attr('disabled','-1');
+						$select_vendedor.attr('disabled','-1');
 						
 						//$grid_productos.find('a[href*=elimina_producto]').hide();
-						$grid_productos.find('#cant').attr('disabled','-1'); //deshabilitar campos cantidad del grid
-						$grid_productos.find('#cost').attr('disabled','-1'); //deshabilitar campos costo del grid
-						$grid_productos.find('#import').attr('disabled','-1'); //deshabilitar campos importe del grid
+						$grid_productos.find('#cant').attr('disabled','-1');
+						$grid_productos.find('#cost').attr('disabled','-1');
+						$grid_productos.find('#import').attr('disabled','-1');
 						
-						$subtotal.attr('disabled','-1'); //deshabilitar
-						$impuesto.attr('disabled','-1'); //deshabilitar
-						$campo_impuesto_retenido.attr('disabled','-1'); //deshabilitar
-						$total.attr('disabled','-1'); //deshabilitar
+						$subtotal.attr('disabled','-1');
+						$ieps.attr('disabled','-1');
+						$impuesto.attr('disabled','-1');
+						$campo_impuesto_retenido.attr('disabled','-1');
+						$total.attr('disabled','-1');
 					}
-					
 					
 					$submit_actualizar.hide();
 					$busca_sku.hide();

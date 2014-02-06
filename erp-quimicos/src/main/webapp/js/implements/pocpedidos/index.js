@@ -2349,7 +2349,7 @@ $(function() {
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		//var accion = "getCotizacion";
 		
-		$('#forma-pocpedidos-window').css({"margin-left": -340, 	"margin-top": -235});
+		$('#forma-pocpedidos-window').css({"margin-left": -400, 	"margin-top": -235});
 		
 		$forma_selected.prependTo('#forma-pocpedidos-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -3381,7 +3381,7 @@ $(function() {
 			
 			$(this).modalPanel_pocpedidos();
 			
-			$('#forma-pocpedidos-window').css({"margin-left": -340, 	"margin-top": -235});
+			$('#forma-pocpedidos-window').css({"margin-left": -400, 	"margin-top": -235});
 			
 			$forma_selected.prependTo('#forma-pocpedidos-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});

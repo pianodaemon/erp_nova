@@ -624,8 +624,9 @@ $(function() {
 	}
 	
 	
-	$limpiar_campos = function($importe,$impuesto,$total,$factura, $fecha_factura, $monto_factura, $monto_factura, $pagos_aplicados, $saldo, $fac_saldado, $nc_aplicados, $fecha_expedicion, $folio_nota_credito){
+	$limpiar_campos = function($importe,$ieps,$impuesto,$total,$factura, $fecha_factura, $monto_factura, $monto_factura, $pagos_aplicados, $saldo, $fac_saldado, $nc_aplicados, $fecha_expedicion, $folio_nota_credito){
 		$importe.val('');
+		$ieps.val('');
 		$impuesto.val('');
 		$total.val('');
 		$factura.val('');
@@ -641,7 +642,7 @@ $(function() {
 	}
 	
 	
-	$calcula_total_nota_credito = function($importe, $impuesto, $total, $valor_impuesto, $saldo_factura,$chkbox_aplicar_saldo, $fac_saldado,evaluar ){
+	$calcula_total_nota_credito = function($importe, $ieps, $impuesto, $total, $valor_impuesto, $saldo_factura,$chkbox_aplicar_saldo, $fac_saldado,evaluar ){
 		var SubTotal = 0; //aqui va el valor del importe
 		var Impuesto = 0; //monto del iva calculado a partir del importe
 		var Total = 0; //suma del subtotal + totalImpuesto - impuestoRetenido
@@ -654,7 +655,7 @@ $(function() {
 		$importe.val(parseFloat(SubTotal).toFixed(2));
 		$impuesto.val(parseFloat(Impuesto).toFixed(2));
 		$total.val(parseFloat(Total).toFixed(2));
-		
+		$ieps.val(parseFloat(0).toFixed(2));
 		//si evaluar es igual a verdadero, se checa que el monto de la Nota de Credito no sea mayor que el saldo
 		//cuando es nueva Nota de Credito se evalua
 		//cuando solo es ver detalle de una Nota de Credito generada con anterioridad, ya no es necesario hacer esta evaluacion
@@ -735,6 +736,7 @@ $(function() {
 		var $concepto = $('#forma-provnotascredito-window').find('textarea[name=concepto]');
 		
 		var $importe = $('#forma-provnotascredito-window').find('input[name=importe]');
+		var $ieps = $('#forma-provnotascredito-window').find('input[name=ieps]');
 		var $impuesto = $('#forma-provnotascredito-window').find('input[name=impuesto]');
 		var $total = $('#forma-provnotascredito-window').find('input[name=total]');
 		var $generar_nota_credito = $('#forma-provnotascredito-window').find('#generar_nota_credito');
@@ -876,7 +878,7 @@ $(function() {
 			$busca_proveedor.click(function(event){
 				event.preventDefault();
 				$busca_proveedores( $select_moneda,entry['Monedas'], $id_impuesto, $valor_impuesto, $razon_proveedor.val() );
-				$limpiar_campos($importe,$impuesto,$total,$factura, $fecha_factura, $monto_factura, $monto_factura, $pagos_aplicados, $saldo, $fac_saldado, $nc_aplicados, $fecha_expedicion, $folio_nota_credito);
+				$limpiar_campos($importe,$ieps,$impuesto,$total,$factura, $fecha_factura, $monto_factura, $monto_factura, $pagos_aplicados, $saldo, $fac_saldado, $nc_aplicados, $fecha_expedicion, $folio_nota_credito);
 			});
 			
 			//asignar evento keypress al campo Razon Social del proveedor
@@ -903,7 +905,7 @@ $(function() {
 					$importe.val(SubTotal);
 				}
 				var evaluar="true";//esta variable es para decidir  si va a evaluar que el monto de la nota de credito no sea mayor que en Saldo de la factura
-				$calcula_total_nota_credito($importe, $impuesto, $total, $valor_impuesto, $saldo, $chkbox_aplicar_saldo,$fac_saldado,evaluar );
+				$calcula_total_nota_credito($importe, $ieps, $impuesto, $total, $valor_impuesto, $saldo, $chkbox_aplicar_saldo,$fac_saldado,evaluar );
 			}else{
 				this.checked = false;
 			}
@@ -935,7 +937,7 @@ $(function() {
 			$importe.val(SubTotal);
 			
 			var evaluar="true";
-			$calcula_total_nota_credito($importe, $impuesto, $total, $valor_impuesto, $saldo,$chkbox_aplicar_saldo,$fac_saldado, evaluar );
+			$calcula_total_nota_credito($importe, $ieps, $impuesto, $total, $valor_impuesto, $saldo,$chkbox_aplicar_saldo,$fac_saldado, evaluar );
 		});
 		
 		
@@ -961,7 +963,7 @@ $(function() {
 				$importe.val(parseFloat(0.00).toFixed(2));//si el campo esta en blanco, pone cero
 			}
 			var evaluar="true";
-			$calcula_total_nota_credito($importe, $impuesto, $total, $valor_impuesto, $saldo,$chkbox_aplicar_saldo,$fac_saldado,evaluar );
+			$calcula_total_nota_credito($importe, $ieps, $impuesto, $total, $valor_impuesto, $saldo,$chkbox_aplicar_saldo,$fac_saldado,evaluar );
 		});
 		
 		
@@ -1100,6 +1102,7 @@ $(function() {
 				var $concepto = $('#forma-provnotascredito-window').find('textarea[name=concepto]');
 				
 				var $importe = $('#forma-provnotascredito-window').find('input[name=importe]');
+				var $ieps = $('#forma-provnotascredito-window').find('input[name=ieps]');
 				var $impuesto = $('#forma-provnotascredito-window').find('input[name=impuesto]');
 				var $total = $('#forma-provnotascredito-window').find('input[name=total]');
 				
@@ -1193,6 +1196,7 @@ $(function() {
 					
 					
 					$importe.val(entry['datosNota']['0']['subtotal']);
+					$ieps.val(entry['datosNota']['0']['ieps_nota']);
 					$impuesto.val(entry['datosNota']['0']['impuesto']);
 					$total.val(entry['datosNota']['0']['total']);
 					
@@ -1252,6 +1256,7 @@ $(function() {
 						$tipo_cambio.attr('disabled','-1');
 						$concepto.attr('disabled','-1');
 						$importe.attr('disabled','-1');
+						$ieps.attr('disabled','-1');
 						$impuesto.attr('disabled','-1');
 						$total.attr('disabled','-1');
 						$factura.attr('disabled','-1');
@@ -1311,13 +1316,13 @@ $(function() {
 							//aqui el calculo se origina del total porque el total fue  ingresado
 							var SubTotal = parseFloat(quitar_comas($total.val())) / ( parseFloat($valor_impuesto.val()) + 1 );
 							$importe.val(SubTotal);
-							$calcula_total_nota_credito($importe, $impuesto, $total, $valor_impuesto, $saldo,$chkbox_aplicar_saldo, $fac_saldado,evaluar );
+							$calcula_total_nota_credito($importe,$ieps, $impuesto, $total, $valor_impuesto, $saldo,$chkbox_aplicar_saldo, $fac_saldado,evaluar );
 						});
 						//---------------------------------------------------------------------------------------------------------------------------------
 						
 					}
 					//llamada a la funcion que calcula el total
-					$calcula_total_nota_credito($importe, $impuesto, $total, $valor_impuesto, $saldo,$chkbox_aplicar_saldo, $fac_saldado,evaluar );
+					$calcula_total_nota_credito($importe,$ieps, $impuesto, $total, $valor_impuesto, $saldo,$chkbox_aplicar_saldo, $fac_saldado,evaluar );
 					*/
 				});//termina llamada json
                 

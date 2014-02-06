@@ -396,19 +396,39 @@
 														
 														<tr>
 															<td width="10" height="7"></td>
-															<td width="70" colspan="6" rowspan="4">
-																<textarea name="concepto" rows="2" cols="60" style="width:340px; resize: none;"></textarea>
+															<td width="70" colspan="6" rowspan="6">
+																<textarea name="concepto" rows="4" cols="60" style="width:340px; resize: none;"></textarea>
 															</td>
 															<td width="35"></td>
 															<td width="60"></td>
 															<td width="100"></td>
 															<td width="25"></td>
 														</tr>
+														
+														
+														<tr>
+															<td width="10" height="18"></td>
+															<!--<td width="70" colspan="6" rowspan="3"></td>-->
+															<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_ieps"></div></td>
+															<td width="60" style="font-weight: bold;">IEPS</td>
+															<td width="100"><INPUT TYPE="text" name="ieps" value="0.00" style="width:100px; text-align:right;" readOnly="true"></td>
+															<td width="25"></td>
+														</tr>
+														<tr>
+															<td width="10"></td>
+															<!--<td width="70" colspan="6" rowspan="3"></td>-->
+															<td width="35"></td>
+															<td width="60"></td>
+															<td width="100"></td>
+															<td width="25"></td>
+														</tr>
+														
+														
 														<tr>
 															<td width="10" height="18"></td>
 															<!--<td width="70" colspan="6" rowspan="3"></td>-->
 															<td width="35"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_concepto"></div></td>
-															<td width="60" style="font-weight: bold;">I.V.A.</td>
+															<td width="60" style="font-weight: bold;">IVA</td>
 															<td width="100"><INPUT TYPE="text" name="impuesto" value="0.00" style="width:100px; text-align:right;" readOnly="true"></td>
 															<td width="25"></td>
 														</tr>

@@ -1402,6 +1402,7 @@ $(function() {
 				var $concepto = $('#forma-comfacdevolucion-window').find('textarea[name=concepto]');
 				
 				var $subtotal = $('#forma-comfacdevolucion-window').find('input[name=subtotal]');
+				var $ieps_nota = $('#forma-comfacdevolucion-window').find('input[name=ieps_nota]');
 				var $impuesto = $('#forma-comfacdevolucion-window').find('input[name=impuesto]');
 				var $total = $('#forma-comfacdevolucion-window').find('input[name=total]');
 				var $descargar_pdf = $('#forma-comfacdevolucion-window').find('#descargar_pdf');
@@ -1521,6 +1522,7 @@ $(function() {
 					
 					
 					$subtotal.val($(this).agregar_comas(parseFloat(entry['datosNota']['0']['subtotal']).toFixed(2)));
+					$ieps_nota.val($(this).agregar_comas(parseFloat(entry['datosNota']['0']['ieps_nota']).toFixed(2)));
 					$impuesto.val($(this).agregar_comas(parseFloat(entry['datosNota']['0']['impuesto']).toFixed(2)));
 					$total.val($(this).agregar_comas(parseFloat(entry['datosNota']['0']['total']).toFixed(2)));
 					
