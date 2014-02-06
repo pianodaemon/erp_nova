@@ -81,21 +81,7 @@ public class PdfPocPedidoFormato2 {
            // this.setRows(Pedidos);
             Document document = new Document(PageSize.LETTER, -50, -50, 20, 20);
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileout));
-            /*
-            //datos para el encabezado
-            datos.put("empresa", datosEncabezadoPie.get("nombre_empresa_emisora"));
-            datos.put("titulo_reporte", datosEncabezadoPie.get("titulo_reporte"));
-            datos.put("periodo", "");
-
-            //datos para el pie de pagina
-            datos.put("codigo1", datosEncabezadoPie.get("codigo1"));
-            datos.put("codigo2", datosEncabezadoPie.get("codigo2"));
-            
-            HeaderFooter event = new HeaderFooter(datos);
-            writer.setPageEvent(event);
-            */
             document.open();
-            
             
             float [] widths1 = {1};
             tablaPrincipal = new PdfPTable(widths1);
@@ -169,27 +155,52 @@ public class PdfPocPedidoFormato2 {
             tablaPrincipal.addCell(cell);
             
             
-            //document.add(tablaPrincipal);
+            //Variable que cuenta si hay partidas con IEPS
+            int contIeps=0;
             
-            
-            
-            
-            
+            //Contar partidas con IEPS
+            for (HashMap<String, String> reg : this.getRows()){
+                if(Integer.parseInt(reg.get("ieps_id"))>0){
+                    contIeps++;
+                }
+            }
             
             //--Aqui comienza la tabla para los conceptos-------------------------------------
             String moneda = "";
+            float [] anchocolumnas;
+            String[] columnas;
+            String[] wordList;
             
-            //INICIO DE LA TABLA DE PEDIDO ENTREGADO ??
-            float [] anchocolumnas = {1f, 5f, 1f, 2f,1.5f, 0.5f,1.3f, 0.5f,1.5f};
+            //Valores SIN IEPS
+            float [] anchocolumnas1 = {1f, 4.5f, 1.2f, 2f, 1.5f, 0.5f, 1.3f, 0.5f, 1.5f};
+            String[] columnas1 = {"CODIGO","DESCRIPCION","UNIDAD","PRESENTACION","CANTIDAD", "","P.UNITARIO","","IMPORTE"};
+            String[] wordList1 = {"codigo","titulo","unidad","presentacion","cantidad","denominacion","precio_unitario","denominacion","importe"};
             
+            //Ancho columnas CON IEPS
+            float [] anchocolumnas2 = {1f, 4f, 1.2f, 1.7f, 1.2f, 0.5f, 1.3f, 0.5f, 1.3f, 0.5f, 1.1f};
+            String[] columnas2 = {"CODIGO","DESCRIPCION","UNIDAD","PRESENTACION","CANTIDAD", "","P.UNITARIO","","IMPORTE","","IEPS"};
+            String[] wordList2 = {"codigo","titulo","unidad","presentacion","cantidad","denominacion","precio_unitario","denominacion","importe", "denominacion_ieps","importe_ieps"};
+            
+            if(contIeps>0){
+                //Aqui entra cuando SI incluye IEPS
+                anchocolumnas=anchocolumnas2;
+                columnas = columnas2;
+                wordList = wordList2;
+            }else{
+                //Aqui entra cuando NO INCLUYE IEPS
+                anchocolumnas=anchocolumnas1;
+                columnas = columnas1;
+                wordList = wordList1;
+            }
+            
+            
+            //INICIO DE LA TABLA DE CONCEPTOS
             tabla_conceptos = new PdfPTable(anchocolumnas);
             tabla_conceptos.setKeepTogether(true);
             
-            String[] columnas = {"CODIGO","DESCRIPCION","UNIDAD","PRESENTACION","CANTIDAD", "","P.UNITARIO","","IMPORTE"};
+            //Convierte en Lista el Array de valores para las columnas
             java.util.List<String>  lista_columnas = (java.util.List<String>) Arrays.asList(columnas);
-            
             contador = 0;
-           
             for ( String columna_titulo : lista_columnas){
                 PdfPCell cellX = new PdfPCell(new Paragraph(columna_titulo,smallBoldFont));
                 cellX.setUseAscender(true);
@@ -200,8 +211,7 @@ public class PdfPocPedidoFormato2 {
             }
             
            for (HashMap<String, String> registro : this.getRows()){
-                String[] wordList = {"codigo","titulo","unidad","presentacion","cantidad","denominacion","precio_unitario","denominacion","importe"};
-                java.util.List<String>  indices = (java.util.List<String>) Arrays.asList(wordList);
+                java.util.List<String>  indices = (java.util.List<String>) Arrays.asList(wordList);                
                 
                 for (String omega : indices){
                     PdfPCell celda = null;
@@ -215,7 +225,7 @@ public class PdfPocPedidoFormato2 {
                     }
                     
                     if (omega.equals("titulo")){
-                        celda = new PdfPCell(new Paragraph(registro.get(omega),smallFont));
+                        celda = new PdfPCell(new Paragraph(registro.get(omega)+registro.get("etiqueta_ieps"),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
                         celda.setBorder(0);
@@ -270,11 +280,35 @@ public class PdfPocPedidoFormato2 {
                         celda.setBorder(0);
                         tabla_conceptos.addCell(celda);
                     }
+                    
+                    if (omega.equals("denominacion_ieps")){
+                        if(Integer.parseInt(registro.get("ieps_id"))>0){
+                            celda = new PdfPCell(new Paragraph(Datos_Pedido.get("simbolo_moneda"),smallFont));   
+                        }else{
+                            celda = new PdfPCell(new Paragraph("",smallFont));
+                        }
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
+                        tabla_conceptos.addCell(celda);
+                    }
+                    
+                    if (omega.equals("importe_ieps")){
+                        if(Integer.parseInt(registro.get("ieps_id"))>0){
+                            celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),4)),smallFont));
+                        }else{
+                            celda= new PdfPCell(new Paragraph("",smallFont));
+                        }
+                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorder(0);
+                        tabla_conceptos.addCell(celda);
+                    }
                 }
             }
            
            
-            //aqui agregamos la tabla de conceptos a la tabla principal
+            //Aqui agregamos la tabla de conceptos a la tabla principal
             cell = new PdfPCell(tabla_conceptos);
             cell.setBorder(0);
             cell.setFixedHeight(113);
@@ -284,13 +318,19 @@ public class PdfPocPedidoFormato2 {
             tablaPrincipal.addCell(cell);
            
            
-            //INICIO DE LA TABLA DE PEDIDO ENTREGADO ??
-            float [] anchocolumnas2 = {1f, 5f, 1f, 2f,1.5f, 0.5f,1.3f, 0.5f,1.5f};
+            //INICIO DE LA TABLA DE TOTALES
+            float [] anchocolumnas3 = {1f, 5f, 1f, 2f, 1.5f, 0.5f, 1.3f, 0.5f, 1.5f};
             
-            tablaTotales = new PdfPTable(anchocolumnas2);
+            tablaTotales = new PdfPTable(anchocolumnas3);
             tablaTotales.setKeepTogether(true);
             
+            int rowspan=4;
            
+            if(contIeps>0){
+                //Cuando incluye IEPS se hace un RowsPan de 5
+                rowspan=5;
+            }
+            
             String observaciones="";
             if (!Datos_Pedido.get("observaciones").isEmpty()){
                 observaciones = Datos_Pedido.get("observaciones");
@@ -302,13 +342,13 @@ public class PdfPocPedidoFormato2 {
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthRight(0);
             cell.setColspan(5);
-            cell.setRowspan(5);
+            cell.setRowspan(rowspan);
             cell.setUseAscender(true);
             cell.setUseDescender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             tablaTotales.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("Subtotal:",smallFont));
+            cell = new PdfPCell(new Paragraph("SUBTOTAL",smallFont));
             cell.setBorderWidthTop(1);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(1);
@@ -338,7 +378,50 @@ public class PdfPocPedidoFormato2 {
             cell.setUseDescender(true);
             tablaTotales.addCell(cell);
             
-            /////////////////////////////////////////////////////////////////////////////////////////////777777777
+            /////////////////////////////////////////////////////////////////////////////////////////////
+            if(contIeps>0){
+                //FILA IEPS
+                /*
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setBorder(0);
+                cell.setColspan(5);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                tabla_conceptos.addCell(cell);
+                */
+                cell = new PdfPCell(new Paragraph("IEPS",smallFont));
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(1);
+                cell.setBorderWidthRight(0);
+                cell.setColspan(2);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                tablaTotales.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(Datos_Pedido.get("simbolo_moneda"),smallFont));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(1);
+                cell.setBorderWidthRight(0);
+                tablaTotales.addCell(cell);
+                
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(Datos_Pedido.get("monto_ieps"),2)),smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                tablaTotales.addCell(cell);
+            }
+            
+            /////////////////////////////////////////////////////////////////////////////////////////////
             /*
             cell = new PdfPCell(new Paragraph("",smallFont));
             cell.setBorder(0);
@@ -359,7 +442,7 @@ public class PdfPocPedidoFormato2 {
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setUseDescender(true);
             tablaTotales.addCell(cell);
-           
+            
             cell = new PdfPCell(new Paragraph(Datos_Pedido.get("simbolo_moneda"),smallFont));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -390,7 +473,7 @@ public class PdfPocPedidoFormato2 {
             tabla_conceptos.addCell(cell);
             */
             
-            cell = new PdfPCell(new Paragraph("IVA Retenido:",smallFont));
+            cell = new PdfPCell(new Paragraph("RETENCIÓN",smallFont));
             cell.setBorderWidthTop(0);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthLeft(1);
@@ -431,7 +514,7 @@ public class PdfPocPedidoFormato2 {
             tabla_conceptos.addCell(cell);
             */
             
-            cell = new PdfPCell(new Paragraph("Total a Pagar:",smallFont));
+            cell = new PdfPCell(new Paragraph("TOTAL",smallFont));
             cell.setBorderWidthTop(0);
             cell.setBorderWidthBottom(1);
             cell.setBorderWidthLeft(1);
@@ -465,27 +548,31 @@ public class PdfPocPedidoFormato2 {
             
             
             
+            if(contIeps<=0){
+                //Agregar fila vacia si el pedido no incluye el IEPS
+                /*
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setBorder(0);
+                cell.setColspan(5);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                tabla_conceptos.addCell(cell);
+                */
+
+                cell = new PdfPCell(new Paragraph("",smallFont));
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(0);
+                cell.setColspan(4);
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setUseDescender(true);
+                tablaTotales.addCell(cell);
+            }
             
-            /*
-            cell = new PdfPCell(new Paragraph("",smallFont));
-            cell.setBorder(0);
-            cell.setColspan(5);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setUseDescender(true);
-            tabla_conceptos.addCell(cell);
-            */
             
-            cell = new PdfPCell(new Paragraph("",smallFont));
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(0);
-            cell.setColspan(4);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setUseDescender(true);
-            tablaTotales.addCell(cell);
             
             //aqui agregamos la tabla de Totales a la tabla principal
             cell = new PdfPCell(tablaTotales);
@@ -639,7 +726,6 @@ public class PdfPocPedidoFormato2 {
             cell.setBorderWidthRight(0);
             tablaDatosExtras.addCell(cell);
             
-            //document.add(tabla_conceptos);
             
             //aqui agregamos la tablaDatosExtras a la tabla principal
             cell = new PdfPCell(tablaDatosExtras);
@@ -659,7 +745,12 @@ public class PdfPocPedidoFormato2 {
             cell = new PdfPCell(new Paragraph("", smallFont));
             cell.setBorder(0);
             cell.setColspan(8);
-            cell.setFixedHeight(10);
+            if(contIeps<=0){
+                cell.setFixedHeight(10);
+            }else{
+                cell.setFixedHeight(3);
+            }
+            
             tabla_conceptos.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("Nombre y Firma de Autorización por credito y cobranza:", smallFont));
@@ -750,7 +841,7 @@ public class PdfPocPedidoFormato2 {
             
             document.add(new Paragraph("\n\n"));
             
-            //aqui se vuelve a agregar para repetir la cotizacion en la misma hoja
+            //Aqui se vuelve a agregar para repetir la cotizacion en la misma hoja
             document.add(tablaPrincipal);
             
             

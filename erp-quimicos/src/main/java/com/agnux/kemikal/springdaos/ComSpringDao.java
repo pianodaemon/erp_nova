@@ -1004,6 +1004,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                         + "cxp_nota_credito.tipo_cambio,"
                         + "cxp_nota_credito.concepto,"
                         + "cxp_nota_credito.subtotal,"
+                        + "cxp_nota_credito.monto_ieps,"
                         + "cxp_nota_credito.impuesto,"
                         + "cxp_nota_credito.total,"
                         + "cxp_nota_credito.cancelado,"
@@ -1042,6 +1043,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
                     row.put("concepto",rs.getString("concepto"));
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
+                    row.put("ieps_nota",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
                     row.put("cancelado",String.valueOf(rs.getBoolean("cancelado")));
@@ -1146,6 +1148,7 @@ public class ComSpringDao  implements ComInterfaceDao {
                     + "cxp_nota_credito.observaciones,"
                     + "cxp_nota_credito.tipo_cambio,"
                     + "cxp_nota_credito.subtotal,"
+                    + "cxp_nota_credito.monto_ieps,"
                     + "cxp_nota_credito.impuesto,"
                     + "cxp_nota_credito.total, "
                     + "cxp_prov.folio AS numero_proveedor,"
@@ -1180,6 +1183,7 @@ public class ComSpringDao  implements ComInterfaceDao {
         data.put("nota_observaciones",map.get("observaciones").toString());
         data.put("nota_tipo_cambio",StringHelper.roundDouble(map.get("tipo_cambio").toString(),2));
         data.put("nota_subtotal",StringHelper.roundDouble(map.get("subtotal").toString(),2));
+        data.put("monto_ieps",StringHelper.roundDouble(map.get("monto_ieps").toString(),2));
         data.put("nota_impuesto",StringHelper.roundDouble(map.get("impuesto").toString(),2));
         data.put("nota_total",StringHelper.roundDouble(map.get("total").toString(),2));
         data.put("prov_folio",map.get("numero_proveedor").toString());

@@ -145,7 +145,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     + "cxc_clie.calle||' '||cxc_clie.numero||', '||cxc_clie.colonia||', '||gral_mun.titulo||', '||gral_edo.titulo||', '||gral_pais.titulo||' C.P. '||cxc_clie.cp "
                 + "END ) AS direccion,"
                 + "poc_pedidos.subtotal,"
+                + "poc_pedidos.monto_ieps,"
                 + "poc_pedidos.impuesto,"
+                + "poc_pedidos.monto_retencion,"
                 + "poc_pedidos.total,"
                 + "poc_pedidos.tipo_cambio,"
                 + "poc_pedidos.cxc_agen_id,"
@@ -194,7 +196,9 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("df_id",String.valueOf(rs.getInt("cxc_clie_df_id")));
                     row.put("direccion",rs.getString("direccion"));
                     row.put("subtotal",StringHelper.roundDouble(rs.getDouble("subtotal"),2));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getDouble("monto_ieps"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getDouble("impuesto"),2));
+                    row.put("retencion",StringHelper.roundDouble(rs.getDouble("monto_retencion"),2));
                     row.put("total",StringHelper.roundDouble(rs.getDouble("total"),2));
                     row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
                     row.put("cxc_agen_id",rs.getString("cxc_agen_id"));
@@ -229,6 +233,7 @@ public class PocSpringDao implements PocInterfaceDao{
             + "poc_pedidos_detalle.inv_prod_id,"
             + "inv_prod.sku AS codigo,"
             + "inv_prod.descripcion AS titulo,"
+            + "(CASE WHEN poc_pedidos_detalle.gral_ieps_id>0 THEN ' - IEPS '||(round((poc_pedidos_detalle.valor_ieps * 100::double precision)::numeric,2))||'%' ELSE '' END) AS etiqueta_ieps,"
             + "poc_pedidos_detalle.inv_prod_unidad_id, "
             + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
             + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec,"
@@ -237,6 +242,7 @@ public class PocSpringDao implements PocInterfaceDao{
             + "poc_pedidos_detalle.cantidad,"
             + "poc_pedidos_detalle.precio_unitario,"
             + "(poc_pedidos_detalle.cantidad * poc_pedidos_detalle.precio_unitario) AS importe, "
+            + "(CASE WHEN poc_pedidos_detalle.gral_ieps_id>0 THEN ((poc_pedidos_detalle.cantidad * poc_pedidos_detalle.precio_unitario) * poc_pedidos_detalle.valor_ieps) ELSE 0 END) AS importe_ieps,"
             + "poc_pedidos_detalle.gral_imp_id,"
             + "poc_pedidos_detalle.valor_imp,"
             + "poc_pedidos_detalle.gral_ieps_id,"
@@ -266,20 +272,23 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("unidad",rs.getString("unidad"));
                     row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
                     row.put("id_presentacion",String.valueOf(rs.getInt("id_presentacion")));
-                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("presentacion",rs.getString("presentacion").toUpperCase());
                     row.put("cantidad",StringHelper.roundDouble( rs.getString("cantidad"), rs.getInt("no_dec") ));
                     row.put("precio_unitario",StringHelper.roundDouble(rs.getDouble("precio_unitario"),4) );
                     row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"),4) );
                     row.put("gral_imp_id",String.valueOf(rs.getInt("gral_imp_id")));
                     row.put("valor_imp",StringHelper.roundDouble(rs.getDouble("valor_imp"),2));
                     
-                    row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
-                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
-                    
                     row.put("valor_check",rs.getString("valor_check"));
                     row.put("valor_selecionado",String.valueOf(rs.getInt("valor_selecionado")));
                     row.put("cant_produccion",StringHelper.roundDouble(rs.getDouble("cant_produccion"), rs.getInt("no_dec") ) );
                     
+                    row.put("ieps_id",String.valueOf(rs.getInt("gral_ieps_id")));
+                    row.put("valor_ieps",StringHelper.roundDouble(rs.getString("valor_ieps"),2));
+                    
+                    //Valores para el PDF
+                    row.put("etiqueta_ieps",rs.getString("etiqueta_ieps"));
+                    row.put("importe_ieps",StringHelper.roundDouble(rs.getDouble("importe_ieps"),2) );
                     return row;
                 }
             }
@@ -314,6 +323,7 @@ public class PocSpringDao implements PocInterfaceDao{
                 + "cxc_clie.rfc AS rfc,"
                 + "cxc_clie.telefono1 AS telefono, "
                 + "poc_pedidos.subtotal, "
+                + "poc_pedidos.monto_ieps, "
                 + "poc_pedidos.impuesto, "
                 + "poc_pedidos.total,"
                 + "poc_pedidos.tipo_cambio, "
@@ -359,7 +369,7 @@ public class PocSpringDao implements PocInterfaceDao{
         mappdf.put("cliente_id", mapdatosquery.get("cliente_id").toString() );
         mappdf.put("numero_control", mapdatosquery.get("numero_control").toString() );
         mappdf.put("razon_social", mapdatosquery.get("razon_social").toString() );
-
+        
         mappdf.put("calle", mapdatosquery.get("calle").toString() );
         mappdf.put("numero", mapdatosquery.get("numero").toString() );
         mappdf.put("colonia", mapdatosquery.get("colonia").toString() );
@@ -374,9 +384,10 @@ public class PocSpringDao implements PocInterfaceDao{
         mappdf.put("monto_retencion", mapdatosquery.get("monto_retencion").toString() );
         mappdf.put("nombre_autorizo_pedido", mapdatosquery.get("nombre_autorizo_pedido").toString() );
         mappdf.put("nombre_agente", mapdatosquery.get("nombre_agente").toString() );
-
+        
         //mappdf.put("direccion", mapdatosquery.get("direccion").toString() );
         mappdf.put("subtotal", StringHelper.roundDouble(mapdatosquery.get("subtotal").toString(),2) );
+        mappdf.put("monto_ieps", StringHelper.roundDouble(mapdatosquery.get("monto_ieps").toString(),2) );
         mappdf.put("impuesto", StringHelper.roundDouble(mapdatosquery.get("impuesto").toString(),2) );
         mappdf.put("total", StringHelper.roundDouble(mapdatosquery.get("total").toString(),2) );
         mappdf.put("tipo_cambio", StringHelper.roundDouble(mapdatosquery.get("tipo_cambio").toString(),2) );

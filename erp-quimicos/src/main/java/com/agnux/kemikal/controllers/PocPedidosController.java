@@ -982,7 +982,7 @@ public class PocPedidosController {
         
         File file_dir_tmp = new File(dir_tmp);
         
-        //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf del pedido
+        //Aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf del pedido
         parametros = this.getPocDao().getPocPedido_Parametros(id_empresa, id_sucursal);
         
         datospedido_pdf = this.getPocDao().getDatosPDF(id_pedido);
@@ -1018,17 +1018,13 @@ public class PocPedidosController {
         //ruta de archivo de salida
         String fileout = file_dir_tmp +"/"+  file_name;
         
-        
         if (parametros.get("formato_pedido").equals("1")){
-            //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
+            //Formato 1 del Pedido. El Pedido abarca toda la hoja.
             PdfPocPedidoFormato1 x = new PdfPocPedidoFormato1(datosEncabezadoPie,datospedido_pdf,conceptos_pedido,razon_social_empresa,fileout,ruta_imagen);
         }else{
-            //instancia a la clase que construye el pdf de la del reporte de estado de cuentas del cliente
-            PdfPocPedidoFormato2 x = new PdfPocPedidoFormato2(datosEncabezadoPie,datospedido_pdf,conceptos_pedido,razon_social_empresa,fileout,ruta_imagen);
+            //Formato 2 del Pedido. Solo abarca la mitad de la hoja y repite el mismo pedido en la segunda mitad.
+            PdfPocPedidoFormato2 x2 = new PdfPocPedidoFormato2(datosEncabezadoPie,datospedido_pdf,conceptos_pedido,razon_social_empresa,fileout,ruta_imagen);
         }
-        
-        
-
         
         System.out.println("Recuperando archivo: " + fileout);
         File file = new File(fileout);

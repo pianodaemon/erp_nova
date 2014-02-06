@@ -72,6 +72,7 @@ public final class PdfNotaCreditoProveedor {
     private String nota_observaciones;
     private String nota_tipo_cambio;
     private String nota_subtotal;
+    private String nota_ieps;
     private String nota_impuesto;
     private String nota_total;
     
@@ -243,6 +244,14 @@ public final class PdfNotaCreditoProveedor {
         this.nota_subtotal = nota_subtotal;
     }
     
+    public String getNota_ieps() {
+        return nota_ieps;
+    }
+
+    public void setNota_ieps(String nota_ieps) {
+        this.nota_ieps = nota_ieps;
+    }
+    
     public String getNota_tipo_cambio() {
         return nota_tipo_cambio;
     }
@@ -403,6 +412,7 @@ public final class PdfNotaCreditoProveedor {
         this.setNota_observaciones(datos_nota.get("nota_observaciones"));
         this.setNota_tipo_cambio(datos_nota.get("nota_tipo_cambio"));
         this.setNota_subtotal(datos_nota.get("nota_subtotal"));
+        this.setNota_ieps(datos_nota.get("monto_ieps"));
         this.setNota_impuesto(datos_nota.get("nota_impuesto"));
         this.setNota_total(datos_nota.get("nota_total"));
         
@@ -706,12 +716,16 @@ public final class PdfNotaCreditoProveedor {
             //aqui inicia construccion de tabla TOTALES
             float [] widths4 = {5,1,0.3F,1.5f};
             PdfPTable tablaTotales = new PdfPTable(widths4);
+            int colspan=4;
+            if(Double.parseDouble(this.getNota_ieps())>0){
+                colspan=5;
+            }
             
             //fila subtotal
             cell = new PdfPCell(new Paragraph(total_letras, smallFont));
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setRowspan(3);
+            cell.setRowspan(colspan);
             tablaTotales.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("SUBTOTAL", smallBoldFont));
@@ -735,6 +749,39 @@ public final class PdfNotaCreditoProveedor {
             tablaTotales.addCell(cell);
             
             
+            if(colspan==5){
+                //fila IEPS
+                /*
+                cell = new PdfPCell(new Paragraph("", smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                tablaTotales.addCell(cell);
+                */
+                cell = new PdfPCell(new Paragraph("IEPS", smallBoldFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthTop(0);
+                tablaTotales.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(this.getNota_simbolo_moneda()), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthRight(0);
+                tablaTotales.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(this.getNota_ieps()), smallFont));
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthLeft(0);
+                tablaTotales.addCell(cell);                
+            }
+
+            
             //fila impuesto
             /*
             cell = new PdfPCell(new Paragraph("", smallFont));
@@ -742,7 +789,7 @@ public final class PdfNotaCreditoProveedor {
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             tablaTotales.addCell(cell);
             */
-            cell = new PdfPCell(new Paragraph("I.V.A.", smallBoldFont));
+            cell = new PdfPCell(new Paragraph("IVA", smallBoldFont));
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setBorderWidthBottom(0);
