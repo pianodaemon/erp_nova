@@ -29,14 +29,17 @@ public class PdfReportedePedidos {
                 //variables para las sumatorias
                 //pesos
                 Double suma_pesos_subtotal = 0.0;
+                Double suma_pesos_monto_ieps = 0.0;
                 Double suma_pesos_impuesto = 0.0;
                 Double suma_pesos_total = 0.0;
                 //dolares
                 Double suma_dolares_subtotal = 0.0;
+                Double suma_dolares_monto_ieps = 0.0;
                 Double suma_dolares_impuesto = 0.0;
                 Double suma_dolares_total = 0.0;
                 //totales
                 Double suma_subtotal_mn = 0.0;
+                Double suma_monto_ieps_mn = 0.0;
                 Double suma_impuesto_mn = 0.0;
                 Double suma_total_mn = 0.0;
               
@@ -63,15 +66,16 @@ public class PdfReportedePedidos {
                     doc.addCreator("ez.eexe21@gmail.com");
                     PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(fileout));
                     writer.setPageEvent(event);
-     
+                    
                     doc.open();
-                    float [] widths = {0.8f,0.8f,0.8f,4,0.5f,1,0.5f,1,0.5f,1};//Tamaño de las Columnas.
+                    //float [] widths = {0.8f,0.8f,0.8f,4,0.5f,1,0.5f,1,0.5f,1};//Tamaño de las Columnas.
+                    float [] widths = {0.8f,0.8f,0.8f,4,0.5f,1,0.5f,1,0.5f,1,0.5f,1};//Tamaño de las Columnas.
                     PdfPTable tabla = new PdfPTable(widths);
                     PdfPCell cell;
                     tabla.setKeepTogether(false);
                     tabla.setHeaderRows(1);
                     
-                    String titulos[ ] ={"Pedido","O.Compra","Fecha","Cliente","","Subtotal","","IVA","","Total"};
+                    String titulos[ ] ={"Pedido","O.Compra","Fecha","Cliente","","Subtotal","","IEPS","","IVA","","Total"};
                     java.util.List<String>  lista_columnas = (java.util.List<String>) Arrays.asList(titulos); 
                     //añadiendo e arreglo a la lista
             
@@ -98,27 +102,32 @@ public class PdfReportedePedidos {
                  if (columna_titulo.equals("Cliente")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
+                 /*
                 if (columna_titulo.equals("")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
+                  */
                 if (columna_titulo.equals("Subtotal")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
+                /*
                 if (columna_titulo.equals("")){
+                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                }
+                 */
+                if (columna_titulo.equals("IEPS")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
                 if (columna_titulo.equals("IVA")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
+                if (columna_titulo.equals("Total")){
+                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                }
                 
                 if (columna_titulo.equals("")){
                    celda.setHorizontalAlignment(Element.ALIGN_CENTER);
                 }
-                
-                if (columna_titulo.equals("Total")){
-                   celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-                }
-               
                tabla.addCell(celda);
             }
             
@@ -129,17 +138,20 @@ public class PdfReportedePedidos {
                 //sumar cantidades
                 if(registro.get("moneda_factura").equals("M.N.")){
                     suma_pesos_subtotal += Double.parseDouble(registro.get("subtotal"));
+                    suma_pesos_monto_ieps += Double.parseDouble(registro.get("monto_ieps"));
                     suma_pesos_impuesto += Double.parseDouble(registro.get("impuesto"));
                     suma_pesos_total += Double.parseDouble(registro.get("total"));
                 }
 
                 if(registro.get("moneda_factura").equals("USD")){
                     suma_dolares_subtotal += Double.parseDouble(registro.get("subtotal"));
+                    suma_dolares_monto_ieps += Double.parseDouble(registro.get("monto_ieps"));
                     suma_dolares_impuesto += Double.parseDouble(registro.get("impuesto"));
                     suma_dolares_total += Double.parseDouble(registro.get("total"));
                 }
 
                 suma_subtotal_mn += Double.parseDouble(registro.get("subtotal_mn"));
+                suma_monto_ieps_mn += Double.parseDouble(registro.get("monto_ieps_mn"));
                 suma_impuesto_mn += Double.parseDouble(registro.get("impuesto_mn"));
                 suma_total_mn += Double.parseDouble(registro.get("total_mn"));
                 
@@ -191,7 +203,9 @@ public class PdfReportedePedidos {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
-                //7
+                
+                
+                //Columna simbolo Moneda IEPS
                 cell = new PdfPCell(new Paragraph(registro.get("simbolo_moneda"),smallFont));
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -199,7 +213,27 @@ public class PdfReportedePedidos {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
-                //8
+                
+                //Columna Monto IEPS
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("monto_ieps").toString(),2)),smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorder(0);
+                tabla.addCell(cell);
+                
+                
+                //Columna simbolo Moneda IVA
+                cell = new PdfPCell(new Paragraph(registro.get("simbolo_moneda"),smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorder(0);
+                tabla.addCell(cell);
+                
+                //Columna Monto IVA
                 cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get("impuesto").toString(),2)),smallFont));
                 cell.setUseAscender(true);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -243,6 +277,7 @@ public class PdfReportedePedidos {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(1);
                 tabla.addCell(cell);
+                
                 //6
                 cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_pesos_subtotal,2)),smallFont));
                 cell.setUseAscender(true);
@@ -251,6 +286,25 @@ public class PdfReportedePedidos {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(1);
                 tabla.addCell(cell);
+                
+                
+                //IEPS MN
+                cell = new PdfPCell(new Paragraph("$",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_pesos_monto_ieps,2)),smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorder(1);
+                tabla.addCell(cell);
+                
                 //7
                 cell = new PdfPCell(new Paragraph("$",smallFont));
                 cell.setUseAscender(true);
@@ -311,6 +365,24 @@ public class PdfReportedePedidos {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
+                
+                //IEPS USD
+                cell = new PdfPCell(new Paragraph("USD",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorder(0);
+                tabla.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_dolares_monto_ieps,2)),smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorder(0);
+                tabla.addCell(cell);
+                
                 //7
                 cell = new PdfPCell(new Paragraph("USD",smallFont));
                 cell.setUseAscender(true);
@@ -371,6 +443,25 @@ public class PdfReportedePedidos {
                 cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBorder(0);
                 tabla.addCell(cell);
+                
+                //Total IEPS MN
+                cell = new PdfPCell(new Paragraph("$",smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorder(0);
+                tabla.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(suma_monto_ieps_mn,2)),smallFont));
+                cell.setUseAscender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                cell.setBorder(0);
+                tabla.addCell(cell);
+                
+                
                 //7
                 cell = new PdfPCell(new Paragraph("$",smallFont));
                 cell.setUseAscender(true);

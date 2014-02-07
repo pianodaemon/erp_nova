@@ -2251,7 +2251,9 @@ public class PocSpringDao implements PocInterfaceDao{
                         + "moneda_factura,"
                         + "simbolo_moneda,"
                         + "subtotal,"
-                        + "subtotal*tipo_cambio AS subtotal_mn, "
+                        + "(subtotal*tipo_cambio) AS subtotal_mn, "
+                        + "monto_ieps,"
+                        + "(monto_ieps*tipo_cambio) AS monto_ieps_mn, "
                         + "impuesto,"
                         + "impuesto*tipo_cambio AS impuesto_mn, "
                         + "total,"
@@ -2267,6 +2269,7 @@ public class PocSpringDao implements PocInterfaceDao{
                                 + "gral_mon.descripcion_abr AS moneda_factura, "
                                 + "gral_mon.simbolo AS simbolo_moneda, "
                                 + "(CASE WHEN poc_pedidos.cancelado=FALSE THEN poc_pedidos.subtotal ELSE 0.0 END) AS subtotal,  "
+                                + "(CASE WHEN poc_pedidos.cancelado=FALSE THEN poc_pedidos.monto_ieps ELSE 0.0 END) AS monto_ieps,  "
                                 + "(CASE WHEN poc_pedidos.cancelado=FALSE THEN poc_pedidos.impuesto ELSE 0.0 END) AS impuesto, "
                                 + "(CASE WHEN poc_pedidos.cancelado=FALSE THEN poc_pedidos.total ELSE 0.0 END) AS total,  "
                                 + "(CASE WHEN poc_pedidos.moneda_id=1 THEN 1 ELSE poc_pedidos.tipo_cambio END) AS tipo_cambio   "
@@ -2294,6 +2297,8 @@ public class PocSpringDao implements PocInterfaceDao{
                     row.put("simbolo_moneda",rs.getString("simbolo_moneda"));
                     row.put("subtotal",StringHelper.roundDouble(rs.getString("subtotal"),2));
                     row.put("subtotal_mn",StringHelper.roundDouble(rs.getString("subtotal_mn"),2));
+                    row.put("monto_ieps",StringHelper.roundDouble(rs.getString("monto_ieps"),2));
+                    row.put("monto_ieps_mn",StringHelper.roundDouble(rs.getString("monto_ieps_mn"),2));
                     row.put("impuesto",StringHelper.roundDouble(rs.getString("impuesto"),2));
                     row.put("impuesto_mn",StringHelper.roundDouble(rs.getString("impuesto_mn"),2));
                     row.put("total",StringHelper.roundDouble(rs.getString("total"),2));

@@ -168,7 +168,7 @@ public class RepRemisionFacturadaController {
                 suma_dolares_total += Double.parseDouble(registro.get("total"));
             }
             suma_subtotal_mn += Double.parseDouble(registro.get("monto_mn"));
-            suma_monto_ieps_mn += Double.parseDouble(registro.get("monto_ieps"));
+            suma_monto_ieps_mn += Double.parseDouble(registro.get("monto_ieps_mn"));
             suma_impuesto_mn += Double.parseDouble(registro.get("impuesto_mn"));
             suma_total_mn += Double.parseDouble(registro.get("total_mn"));
         }

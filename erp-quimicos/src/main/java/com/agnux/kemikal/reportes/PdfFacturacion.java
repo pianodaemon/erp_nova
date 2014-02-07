@@ -183,7 +183,7 @@ public final class PdfFacturacion {
                 for (int x=0; x<=listaFacturas.size()-1;x++){
                     HashMap<String,String> registro = listaFacturas.get(x);
                     
-                    //sumar cantidades
+                    //Sumar cantidades
                     if(registro.get("moneda_factura").equals("M.N.")){
                         simbolo_moneda = "$";
                         suma_pesos_subtotal += Double.parseDouble(registro.get("subtotal"));
@@ -291,7 +291,7 @@ public final class PdfFacturacion {
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(0);
                 cell.setColspan(5);
-                cell.setFixedHeight(25);
+                cell.setFixedHeight(10);
                 table.addCell(cell);
                 
                 
@@ -351,13 +351,13 @@ public final class PdfFacturacion {
                 table.addCell(cell);
 
 
-
+                
                 //fila vacia para separar los MN de los USD
                 cell= new PdfPCell(new Paragraph("",smallBoldFont));
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(0);
                 cell.setColspan(13);
-                cell.setFixedHeight(18);
+                cell.setFixedHeight(5);
                 table.addCell(cell);
 
                 simbolo_moneda="USD";
@@ -419,7 +419,7 @@ public final class PdfFacturacion {
                 cell.setHorizontalAlignment (Element.ALIGN_RIGHT);
                 cell.setBorder(0);
                 cell.setColspan(13);
-                cell.setFixedHeight(18);
+                cell.setFixedHeight(5);
                 table.addCell(cell);
 
                 simbolo_moneda="MN";
