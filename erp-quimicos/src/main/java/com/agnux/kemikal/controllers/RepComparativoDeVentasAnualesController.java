@@ -5,7 +5,6 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
-import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
@@ -13,13 +12,7 @@ import com.agnux.kemikal.interfacedaos.CxcInterfaceDao;
 import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.reportes.PdfComparativoVentasAnualesXCliente;
-import com.itextpdf.text.DocumentException;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,13 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
- * @author agnux
+ * @author Federico Mtz
+ * 
  */
 @Controller
 @SessionAttributes({"user"})
@@ -94,7 +87,7 @@ public class RepComparativoDeVentasAnualesController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         
-        ModelAndView x = new ModelAndView("repcomparativoasventasanuales/startup", "title", "Reporte Comparativo de Ventas Anuales");
+        ModelAndView x = new ModelAndView("repcomparativoasventasanuales/startup", "title", "Reporte Comparativo de Ventas Anuales por Cliente");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -115,20 +108,6 @@ public class RepComparativoDeVentasAnualesController {
         return x;
     }
     
-    
-    /*
-    //cargar tipos de productos
-   @RequestMapping(method = RequestMethod.POST, value="/getMesActual.json")
-        public @ResponseBody HashMap<String, String> getMesActualJson(
-        @RequestParam(value="iu", required=true) String id_user,
-        Model model
-    ){
-        HashMap<String, String> jsonretorno = new HashMap<String, String>();
-        
-        jsonretorno.put("mesActual", TimeHelper.getMesActual());
-        return jsonretorno;
-    }
-    */
     
     //Cargar cargar datos iniciales para el buscador
    @RequestMapping(method = RequestMethod.POST, value="/getDatos.json")
@@ -180,17 +159,15 @@ public class RepComparativoDeVentasAnualesController {
     
     
 
-    //obtiene la estadistica de ventas en un periodo espesifico
+    //Obtiene datos para el reporte comparativo de Ventas por Cliente
     @RequestMapping(method = RequestMethod.POST, value="/getComparativo.json")
     public  @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getComparativoAnualVentasJson(
-           // @RequestParam("mes_in") Integer mes_in,
-            //@RequestParam("mes_fin") Integer mes_fin,
             @RequestParam("anio_in") Integer anio_inicial,
             @RequestParam("anio_fin") Integer anio_final,
             @RequestParam(value="razon_cli") String cliente,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
         
         log.log(Level.INFO, "Ejecutando getComparativoVentas de {0}", RepComparativoDeVentasAnualesController.class.getName());
         HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
@@ -210,7 +187,7 @@ public class RepComparativoDeVentasAnualesController {
         Double suma_impuesto_mn = 0.0;
         Double suma_total_mn = 0.0;
         
-        
+        //app=168 Reporte Comparativo de Ventas por Cliente(CXC)
                 
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));

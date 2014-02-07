@@ -3088,59 +3088,82 @@ return subfamilias;
     
     
     //Obtiene comparativo de Ventas
-    @Override
-    public ArrayList<HashMap<String,String>> getComparativoVentas(String cliente, Integer anio_inicial, Integer anio_final, Integer id_emp) {
-        final Integer anio_ini=anio_inicial;
-        final Integer anio_fin=anio_final;
-        String campos_sum_total="";
-        String campos_sum="";
-        String campos_case_mes="";
-        
-        //Este ciclo repite los 12 meses por cada año comprendido entre anio_ini y anio_fin
-        for(int mes=1; mes<=12; mes++){
-            String nombre_mes=TimeHelper.ConvertNumToMonth(mes);
-            for(int anio=anio_ini; anio<=anio_fin; anio++){
-                campos_case_mes = campos_case_mes +",(CASE WHEN (mes="+mes+" AND anio="+anio+") THEN subtotal ELSE 0 END) AS "+nombre_mes+""+anio+" ";
-                campos_sum = campos_sum +",sum("+nombre_mes+""+anio+") AS "+nombre_mes+""+anio+" ";
-                if(campos_sum_total.equals("")){
-                    //Aqui entra para que agregue coma al principio
-                    campos_sum_total = campos_sum_total + ",sum("+nombre_mes+""+anio+") ";
-                }else{
-                    //Aqui entra para que agregue + al principio
-                    campos_sum_total = campos_sum_total + "+ sum("+nombre_mes+""+anio+") ";
-                }
-                
-            }
-        }
-        
-        
-       String sql_to_query=""+""
-       + "SELECT "
-           + "razon_social "
-           + ""+campos_sum+""
-           + ""+campos_sum_total+" AS suma_total "
-        +"FROM( "
-            + "SELECT "
-               + "razon_social "
-               + ""+campos_case_mes+""
-            +"FROM ("
-               + "SELECT "
-                    + "cxc_clie.razon_social, "
-                    + "EXTRACT(MONTH FROM fac_docs.momento_creacion) AS mes, "
-                    + "EXTRACT(YEAR FROM fac_docs.momento_creacion) AS anio, "
-                    + "(CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END) AS subtotal "
-                + "FROM fac_docs "
-                + "join cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
-                + "JOIN erp_proceso ON erp_proceso.id=fac_docs.proceso_id "
-                + "WHERE erp_proceso.empresa_id ="+id_emp + " "
-                + "AND cxc_clie.razon_social ILIKE '%"+cliente+"%' "
-                + "AND fac_docs.cancelado=false "
-                + "AND EXTRACT(YEAR FROM fac_docs.momento_creacion) between "+anio_ini+ " and "+anio_fin+ " "
-            +") AS sbt "
-        +")as sbt2 "
-        +"GROUP BY razon_social ";
-        System.out.println("QueryComparativoVentas: "+sql_to_query+"");
-        
+ //Obtiene el SQL de /Reporte Comparativo de Ventas Anual por Cliente
+  @Override
+    public ArrayList<HashMap<String, String>> getComparativoVentas(String cliente, Integer anio_inicial, Integer anio_final, Integer id_empresa) {
+		
+        String where="";
+        Integer mes_uno =1;
+        Integer mes_dos =2;
+        Integer mes_tres =3;
+        Integer mes_cuatro =4;
+        Integer mes_cinco =5;
+        Integer mes_seis =6;
+        Integer mes_siete =7;
+        Integer mes_ocho =8;
+        Integer mes_nueve =9;
+        Integer mes_diez =10;
+        Integer mes_once =11;
+        Integer mes_doce =12;
+     
+      String sql_to_query=""+"SELECT razon_social, "
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_uno+""+anio_inicial+")))) as enero,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_uno+""+anio_final+")))) as enero2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_dos+""+anio_inicial+")))) as febrero,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_dos+""+anio_final+")))) as febrero2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_tres+""+anio_inicial+")))) as marzo,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_tres+""+anio_final+")))) as marzo2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_cuatro+""+anio_inicial+")))) as abril,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_cuatro+""+anio_final+")))) as abril2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_cinco+""+anio_inicial+")))) as mayo,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_cinco+""+anio_final+")))) as mayo2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_seis+""+anio_inicial+")))) as junio,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_seis+""+anio_final+")))) as junio2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_siete+""+anio_inicial+")))) as julio,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_siete+""+anio_final+")))) as julio2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_ocho+""+anio_inicial+")))) as agosto,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_ocho+""+anio_final+")))) as agosto2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_nueve+""+anio_inicial+")))) as septiembre,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_nueve+""+anio_final+")))) as septiembre2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_diez+""+anio_inicial+")))) as octubre,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_diez+""+anio_final+")))) as octubre2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_once+""+anio_inicial+")))) as noviembre,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_once+""+anio_final+")))) as noviembre2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_doce+""+anio_inicial+")))) as diciembre,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_doce+""+anio_final+")))) as diciembre2,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_uno+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_dos+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_tres+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_cuatro+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_cinco+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_seis+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_siete+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_ocho+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_nueve+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_diez+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_once+""+anio_inicial+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_doce+""+anio_inicial+")))) as aniouno,"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_uno+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_dos+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_tres+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_cuatro+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_cinco+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_seis+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_siete+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_ocho+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_nueve+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_diez+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_once+""+anio_final+"))))+"
+                            +"SUM((CASE WHEN fac_docs.moneda_id=1 THEN fac_docs.subtotal ELSE (fac_docs.tipo_cambio*fac_docs.subtotal) END)*(1-ABS(SIGN(to_char(fac_docs.momento_creacion,'mmyyyy')::integer-"+mes_doce+""+anio_final+")))) as aniodos " 
+                            +"FROM fac_docs "
+                            +"join cxc_clie on cxc_clie.id=fac_docs.cxc_clie_id "
+                            +"JOIN erp_proceso on erp_proceso.id=fac_docs.proceso_id "
+                            +"WHERE erp_proceso.empresa_id ="+id_empresa + " "
+                            + "AND cxc_clie.razon_social ILIKE '%"+cliente+"%' "
+                            +"AND fac_docs.cancelado=false "
+                            +"AND EXTRACT(YEAR  FROM fac_docs.momento_creacion) between "+anio_inicial+ " and "+anio_final+ " "
+                            +"GROUP BY razon_social ";
+        //System.out.println("Generando Consulta Comparacion:"+sql_to_query+"");
         ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -3148,21 +3171,40 @@ return subfamilias;
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
                     row.put("razon_social",rs.getString("razon_social"));
-                    //Este ciclo repite los 12 meses por cada año comprendido entre anio_ini y anio_fin
-                    for(int mes=1; mes<=12; mes++){
-                        String nombre_mes=TimeHelper.ConvertNumToMonth(mes);
-                        for(int anio=anio_ini; anio<=anio_fin; anio++){
-                            row.put(nombre_mes+""+anio,StringHelper.roundDouble(rs.getString(nombre_mes+""+anio),2));
-                        }
-                    }
-                    row.put("suma_total",StringHelper.roundDouble(rs.getDouble("suma_total"), 2));
-                    
+                    row.put("enero",StringHelper.roundDouble(rs.getString("enero"),2));
+                    row.put("febrero",StringHelper.roundDouble(rs.getString("febrero"),2));
+                    row.put("marzo",StringHelper.roundDouble(rs.getString("marzo"),2));
+                    row.put("abril",StringHelper.roundDouble(rs.getString("abril"),2));
+                    row.put("mayo",StringHelper.roundDouble(rs.getString("mayo"),2));
+                    row.put("junio",StringHelper.roundDouble(rs.getString("junio"),2));
+                    row.put("julio",StringHelper.roundDouble(rs.getString("julio"),2));
+                    row.put("agosto",StringHelper.roundDouble(rs.getString("agosto"),2));
+                    row.put("septiembre",StringHelper.roundDouble(rs.getString("septiembre"),2));
+                    row.put("octubre",StringHelper.roundDouble(rs.getString("octubre"),2));
+                    row.put("noviembre",StringHelper.roundDouble(rs.getString("noviembre"),2));
+                    row.put("diciembre",StringHelper.roundDouble(rs.getString("diciembre"),2));
+                    row.put("aniouno",StringHelper.roundDouble(rs.getDouble("aniouno"), 2));
+              
+                    row.put("enero2",StringHelper.roundDouble(rs.getString("enero2"),2));
+                    row.put("febrero2",StringHelper.roundDouble(rs.getString("febrero2"),2));
+                    row.put("marzo2",StringHelper.roundDouble(rs.getString("marzo2"),2));
+                    row.put("abril2",StringHelper.roundDouble(rs.getString("abril2"),2));
+                    row.put("mayo2",StringHelper.roundDouble(rs.getString("mayo2"),2));
+                    row.put("junio2",StringHelper.roundDouble(rs.getString("junio2"),2));
+                    row.put("julio2",StringHelper.roundDouble(rs.getString("julio2"),2));
+                    row.put("agosto2",StringHelper.roundDouble(rs.getString("agosto2"),2));
+                    row.put("septiembre2",StringHelper.roundDouble(rs.getString("septiembre2"),2));
+                    row.put("octubre2",StringHelper.roundDouble(rs.getString("octubre2"),2));
+                    row.put("noviembre2",StringHelper.roundDouble(rs.getString("noviembre2"),2));
+                    row.put("diciembre2",StringHelper.roundDouble(rs.getString("diciembre2"),2));
+                    row.put("aniodos",StringHelper.roundDouble(rs.getDouble("aniodos"), 2));
                     return row;
                 }
             }
         );
         return hm_facturas;
     }
+    //Términa Comparativo de Ventas Anual por Cliente
 
     
     
