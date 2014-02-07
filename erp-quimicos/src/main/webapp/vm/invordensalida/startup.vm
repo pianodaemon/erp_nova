@@ -313,7 +313,7 @@
 													<table border="0" width="100%" >
 														<tr>
 															<td width="10" ></td>
-															<td width="780" colspan="5" rowspan="4">
+															<td width="780" colspan="5" rowspan="5">
 																<div id="div_warning_grid"  style="width:770px; height:90px; display:none;">
 																	<table border="0">
 																		<tr>
@@ -344,12 +344,17 @@
 														</tr>
 														<tr>
 															<td width="10"></td>
+															<td width="100" align="right" style="font-weight: bold;"><span id="etiqueta_ieps">IEPS&nbsp;&nbsp;</span></td>
+															<td width="130"><input type="text" name="ieps" value="0" style="width:130px; text-align:right" readOnly="true"></td>
+														</tr>
+														<tr>
+															<td width="10"></td>
 															<td width="100" align="right" style="font-weight: bold;">IVA&nbsp;&nbsp;</td>
 															<td width="130"><input type="text" name="totimpuesto" value="0" style="width:130px; text-align:right" readOnly="true"></td>
 														</tr>
 														<tr>
 															<td width="10"></td>
-															<td width="100" align="right" style="font-weight: bold;">Retenci&oacute;n&nbsp;&nbsp;</td>
+															<td width="100" align="right" style="font-weight: bold;"><span id="etiqueta_ret">Retenci&oacute;n&nbsp;&nbsp;</span></td>
 															<td width="130"><input type="text" name="retencion" value="0" style="width:130px; text-align:right" readOnly="true"></td>
 														</tr>
 														<tr>

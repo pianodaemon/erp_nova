@@ -194,7 +194,7 @@ $(function() {
 				$('#forma-product-window').find('.product_div_one').css({'height':'220px'});
 			}
 			
-                        if(activeTab == '#tabx-4'){
+			if(activeTab == '#tabx-4'){
 				$('#forma-product-window').find('.product_div_one').css({'height':'470px'});
 			}
 			//$finction_redimensiona_divs($('#forma-product-window'));
@@ -2053,25 +2053,25 @@ $(function() {
 						$vent_sssscuenta.attr({ 'value' : entry['Contab'][0]['vent_ssssubcta'] });
 						$vent_descripcion.attr({ 'value' : entry['Contab'][0]['vent_descripcion'] });
 						
-						//busca Cuenta Gastos
+						//Busca Cuenta Gastos
 						$busca_gasto.click(function(event){
 							event.preventDefault();
 							$busca_cuentas_contables(1, entry['Extras'][0]['nivel_cta'], entry['CtaMay']);
 						});
 						
-						//busca Cuenta Costo de Venta
+						//Busca Cuenta Costo de Venta
 						$busca_costvent.click(function(event){
 							event.preventDefault();
 							$busca_cuentas_contables(2, entry['Extras'][0]['nivel_cta'], entry['CtaMay']);
 						});
 						
-						//busca Cuenta Venta
+						//Busca Cuenta Venta
 						$busca_vent.click(function(event){
 							event.preventDefault();
 							$busca_cuentas_contables(3, entry['Extras'][0]['nivel_cta'], entry['CtaMay']);
 						});
 						
-						//limpiar campos Cuenta Gastos
+						//Limpiar campos Cuenta Gastos
 						$limpiar_gasto.click(function(event){
 							event.preventDefault();
 							$id_cta_gas.val(0);

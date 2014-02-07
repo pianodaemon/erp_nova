@@ -100,11 +100,11 @@ $(function() {
 			 alto = parseInt(height2)-220;
 			 var pix_alto=alto+'px';
 			 //alert('pix_alto: '+pix_alto);
-
+			
 			 $('#barra_buscador').find('.tabla_buscador').css({'display':'block'});
 			 $('#barra_buscador').animate({height: '60px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
-
+			
 			 //alert($('#cuerpo').css('height'));
 		}else{
 			 TriggerClickVisializaBuscador=0;
@@ -148,7 +148,6 @@ $(function() {
 			$('#forma-invordpresuben-window').find('#close').css({backgroundImage:"url(../../img/modalbox/close.png)"});
 		});
 		
-		
 		$('#forma-invordpresuben-window').find(".contenidoPes").hide(); //Hide all content
 		$('#forma-invordpresuben-window').find("ul.pestanas li:first").addClass("active").show(); //Activate first tab
 		$('#forma-invordpresuben-window').find(".contenidoPes:first").show(); //Show first tab content
@@ -163,11 +162,11 @@ $(function() {
 			return false;
 		});
 	}
-
-
+	
+	
 	
 	//buscador de producto ingrediente
-	$busca_productos = function(sku_buscar, descripcion){
+	$busca_productos = function(sku_buscar, descripcion, arrayProdTipos){
 		$(this).modalPanel_Buscaproducto();
 		var $dialogoc =  $('#forma-buscaproducto-window');
 		//var $dialogoc.prependTo('#forma-buscaproduct-window');
@@ -178,7 +177,7 @@ $(function() {
 		var $tabla_resultados = $('#forma-buscaproducto-window').find('#tabla_resultado');
 	   
 		var $campo_sku = $('#forma-buscaproducto-window').find('input[name=campo_sku]');
-		//var $select_tipo_producto = $('#forma-buscaproducto-window').find('select[name=tipo_producto]');
+		var $select_tipo_producto = $('#forma-buscaproducto-window').find('select[name=tipo_producto]');
 		var $campo_descripcion = $('#forma-buscaproducto-window').find('input[name=campo_descripcion]');
 	   
 		var $buscar_plugin_producto = $('#forma-buscaproducto-window').find('#busca_producto_modalbox');
@@ -199,21 +198,19 @@ $(function() {
 			$(this).removeClass("onmouseOverCancelar").addClass("onmouseOutCancelar");
 		});
 	   
-	   /*
-		//buscar todos los tipos de productos
-		var input_json_tipos = document.location.protocol + '//' + document.location.host + '/'+controller+'/getProductoTipos.json';
-		$arreglo = {'iu':$('#lienzo_recalculable').find('input[name=iu]').val()}
-		$.post(input_json_tipos,$arreglo,function(data){
-			//Llena el select tipos de productos en el buscador
-			$select_tipo_producto.children().remove();
-			var prod_tipos_html = '<option value="0" selected="yes">[--Seleccionar Tipo--]</option>';
-			$.each(data['prodTipos'],function(entryIndex,pt){
-				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
-			});
-			$select_tipo_producto.append(prod_tipos_html);
-		});
-	   */
 	   
+		//Llena el select tipos de productos en el buscador  de productos formulados
+		$select_tipo_producto.children().remove();
+		var prod_tipos_html = '<option value="0">[--Seleccionar Tipo--]</option>';
+		$.each(arrayProdTipos,function(entryIndex,pt){
+			//Aqui solo hay que mostrar los 1=PROD TERMINADO, 2=PROD INTERMEDIO, 8=PROD DESARROLLO
+			if(parseInt(pt['id'])==1 || parseInt(pt['id'])==2 || parseInt(pt['id'])==1 || parseInt(pt['id'])==8 ){
+				prod_tipos_html += '<option value="' + pt['id'] + '"  >' + pt['titulo'] + '</option>';
+			}
+		});
+		$select_tipo_producto.append(prod_tipos_html);
+		
+		
 		//Aqui asigno al campo sku del buscador si el usuario ingresó un sku antes de hacer clic en buscar en la ventana principal
 		$campo_sku.val(sku_buscar);
 		
@@ -228,7 +225,7 @@ $(function() {
 			var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_buscador_productos.json';
 			$arreglo = {//'almacen':$select_almacen.val(),
 					'sku':$campo_sku.val(),
-					'tipo':2,
+					'tipo':$select_tipo_producto.val(),
 					'descripcion':$campo_descripcion.val(),
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 				}
@@ -273,8 +270,6 @@ $(function() {
 					//elimina la ventana de busqueda
 					var remove = function() {$(this).remove();};
 					$('#forma-buscaproducto-overlay').fadeOut(remove);
-					   
-				   
 				});
 			   
 			});//termina llamada json
@@ -439,16 +434,16 @@ $(function() {
                         $suma_cantidades();
                     });
                     
-                    //elimina un producto del grid
+                    //Elimina un producto del grid
                     $grid_productos.find('#eliminaprod'+ id_prod).bind('click',function(event){
                         event.preventDefault();
                         if(parseInt($(this).parent().find('#eliminado').val()) != 0){
                             $id_prod_tmp = $(this).parent().parent().find('#id_prod_grid').val();
                             $cantidad_tmp = $(this).parent().parent().find('input[name=cantidad]').val();
 
-                            //asigna un 0 al input eliminado como bandera para saber que esta eliminado
+                            //Asigna un 0 al input eliminado como bandera para saber que esta eliminado
                             $(this).parent().find('#eliminado').val(0);//cambiar valor del campo a 0 para indicar que se ha elimnado
-                            //oculta la fila eliminada
+                            //Oculta la fila eliminada
                             $(this).parent().parent().hide();
 
                             $grid_ids.find('tr').each(function (index){
@@ -675,9 +670,8 @@ $(function() {
 			}
 		});
 	}
-        
-        
-	//nuevo
+	
+	//Nuevo
 	$new_item.click(function(event){
 		event.preventDefault();
 		var id_to_show = 0;
@@ -831,13 +825,16 @@ $(function() {
 				}
 			});
 			$select_almacen.append(almacen_hmtl);
+			
+			//Link de Buscar
+			$buscar_producto.click(function(event){
+				event.preventDefault();
+				$busca_productos($productosku.val(), $producto_descripcion.val(), entry['ProdTipos']);
+			});
 		});//termina llamada json
 		
          
-		$buscar_producto.click(function(event){
-			event.preventDefault();
-			$busca_productos($productosku.val(), $producto_descripcion.val());
-		});
+
 		
 		//agregar producto al grid
 		$agregar_producto.click(function(event){
@@ -846,10 +843,10 @@ $(function() {
 			$obtener_datos_de_producto($productosku.val(), "1", 0,0);
 		});
 		
-		//desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
+		//Desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$(this).aplicarEventoKeypressEjecutaTrigger($productosku, $agregar_producto);
 		
-		//desencadena clic del href Buscar Producto al pulsar enter en el campo Nombre del producto
+		//Desencadena clic del href Buscar Producto al pulsar enter en el campo Nombre del producto
 		$(this).aplicarEventoKeypressEjecutaTrigger($producto_descripcion, $buscar_producto);
 		
 		
@@ -1070,7 +1067,7 @@ $(function() {
 						
 						$buscar_producto.click(function(event){
 							event.preventDefault();
-							$busca_productos($productosku.val(), $producto_descripcion.val());
+							$busca_productos($productosku.val(), $producto_descripcion.val(), entry['ProdTipos']);
 						});
 						
 						//agregar producto al grid

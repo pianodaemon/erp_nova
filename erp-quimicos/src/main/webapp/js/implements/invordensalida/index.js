@@ -665,9 +665,12 @@ $(function() {
 				
 				//campos de totales
 				var $campo_subtotal = $('#forma-invordensalida-window').find('input[name=subtotal]');
+				var $campo_ieps = $('#forma-invordensalida-window').find('input[name=ieps]');
 				var $campo_retencion = $('#forma-invordensalida-window').find('input[name=retencion]');
 				var $campo_impuesto = $('#forma-invordensalida-window').find('input[name=totimpuesto]');
 				var $campo_total = $('#forma-invordensalida-window').find('input[name=total]');
+				var $etiqueta_ieps = $('#forma-invordensalida-window').find('#etiqueta_ieps');
+				var $etiqueta_ret = $('#forma-invordensalida-window').find('#etiqueta_ret');
 				
 				var $confirmar = $('#forma-invordensalida-window').find('#confirmar');
 				var $descargar_pdf = $('#forma-invordensalida-window').find('#descargar_pdf');
@@ -692,8 +695,12 @@ $(function() {
 				//$observaciones.attr("readonly", true);
 				$accion.val('edit');
 				$submit_actualizar.hide();
-				$descargar_pdf.attr('disabled','-1'); //deshabilitar
-				$confirmar.attr('disabled','-1'); //deshabilitar
+				$descargar_pdf.attr('disabled','-1');
+				$confirmar.attr('disabled','-1');
+				$etiqueta_ieps.hide();
+				$campo_ieps.hide();
+				$etiqueta_ret.hide();
+				$campo_retencion.hide();
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -776,10 +783,33 @@ $(function() {
 					
 					//$campo_flete.attr({ 'value' : entry['Datos']['0'][''] });
 					$campo_subtotal.attr({ 'value' : $(this).agregar_comas( parseFloat(entry['Datos']['0']['subtotal']).toFixed(2) ) });
+					$campo_ieps.attr({ 'value' : $(this).agregar_comas( parseFloat(entry['Datos']['0']['ieps']).toFixed(2) ) });
 					$campo_retencion.attr({ 'value' : $(this).agregar_comas( parseFloat(entry['Datos']['0']['retencion']).toFixed(2) ) });
 					$campo_impuesto.attr({ 'value' : $(this).agregar_comas( parseFloat(entry['Datos']['0']['iva']).toFixed(2) ) });
 					$campo_total.attr({ 'value' : $(this).agregar_comas( parseFloat(entry['Datos']['0']['total']).toFixed(2) ) });
-
+					
+					var countDisplay=0;
+					if(parseFloat(entry['Datos']['0']['ieps'])>0){
+						$etiqueta_ieps.show();
+						$campo_ieps.show();
+						countDisplay++;
+					}
+					
+					if(parseFloat(entry['Datos']['0']['retencion'])>0){
+						$etiqueta_ret.show();
+						$campo_retencion.show();
+						countDisplay++;
+					}
+					
+					if(parseInt(countDisplay)==1){
+						$('#forma-invordensalida-window').find('.invordensalida_div_one').css({'height':'570px'});
+					}
+					
+					if(parseInt(countDisplay)==2){
+						$('#forma-invordensalida-window').find('.invordensalida_div_one').css({'height':'585px'});
+					}
+					
+					
 					
 					//$campo_flete.val(parseFloat( entry['Datos']['0']['flete']).toFixed(2));
 					//tiposIva = entry['Impuestos'];//asigna los tipos de impuestos al arreglo tiposIva
@@ -1054,29 +1084,30 @@ $(function() {
 					
 					
 					if(entry['Datos']['0']['cancelacion'] == 'true'){
-						$select_tipo_movimiento.attr('disabled','-1'); //deshabilitar
-						$confirmar.attr('disabled','-1'); //deshabilitar
-						$descargar_pdf.attr('disabled','-1'); //deshabilitar
-						$folio_salida.attr('disabled','-1'); //deshabilitar
-						$campo_razoncliente.attr('disabled','-1'); //deshabilitar
-						$folio_doc.attr('disabled','-1'); //deshabilitar
-						$fecha_doc.attr('disabled','-1'); //deshabilitar
-						$orden_compra.attr('disabled','-1'); //deshabilitar
-						$folio_pedido.attr('disabled','-1'); //deshabilitar
-						$campo_tc.attr('disabled','-1'); //deshabilitar
-						$observaciones.attr('disabled','-1'); //deshabilitar
+						$select_tipo_movimiento.attr('disabled','-1');
+						$confirmar.attr('disabled','-1');
+						$descargar_pdf.attr('disabled','-1');
+						$folio_salida.attr('disabled','-1');
+						$campo_razoncliente.attr('disabled','-1');
+						$folio_doc.attr('disabled','-1');
+						$fecha_doc.attr('disabled','-1');
+						$orden_compra.attr('disabled','-1');
+						$folio_pedido.attr('disabled','-1');
+						$campo_tc.attr('disabled','-1');
+						$observaciones.attr('disabled','-1');
 						
-						$campo_subtotal.attr('disabled','-1'); //deshabilitar
-						$campo_retencion.attr('disabled','-1'); //deshabilitar
-						$campo_impuesto.attr('disabled','-1'); //deshabilitar
-						$campo_total.attr('disabled','-1'); //deshabilitar
+						$campo_subtotal.attr('disabled','-1');
+						$campo_ieps.attr('disabled','-1');
+						$campo_retencion.attr('disabled','-1');
+						$campo_impuesto.attr('disabled','-1');
+						$campo_total.attr('disabled','-1');
 						
-						$select_tipo_doc.attr('disabled','-1'); //deshabilitar
-						$select_moneda.attr('disabled','-1'); //deshabilitar
-						$select_almacen_origen.attr('disabled','-1'); //deshabilitar
+						$select_tipo_doc.attr('disabled','-1');
+						$select_moneda.attr('disabled','-1');
+						$select_almacen_origen.attr('disabled','-1');
 						
 						$grid_productos.find('a').hide();
-						$grid_productos.find('input').attr('disabled','-1'); //deshabilitar
+						$grid_productos.find('input').attr('disabled','-1');
 						$submit_actualizar.hide();
 					}
 					

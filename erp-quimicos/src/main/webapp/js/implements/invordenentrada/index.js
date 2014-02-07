@@ -717,12 +717,18 @@ $(function() {
 				
 				//tabla contenedor del listado de productos
 				var $grid_productos = $('#forma-invordenentrada-window').find('#grid_productos');
-				//campos de totales
+				//Campos de totales
 				var $campo_flete = $('#forma-invordenentrada-window').find('input[name=flete]');
 				var $campo_subtotal = $('#forma-invordenentrada-window').find('input[name=subtotal]');
 				var $retencion = $('#forma-invordenentrada-window').find('input[name=retencion]');
 				var $campo_impuesto = $('#forma-invordenentrada-window').find('input[name=totimpuesto]');
 				var $campo_total = $('#forma-invordenentrada-window').find('input[name=total]');
+				var $campo_ieps = $('#forma-invordenentrada-window').find('input[name=ieps]');
+				
+				var $etiqueta_flete = $('#forma-invordenentrada-window').find('#etiqueta_flete');
+				var $etiqueta_ieps = $('#forma-invordenentrada-window').find('#etiqueta_ieps');
+				var $etiqueta_ret = $('#forma-invordenentrada-window').find('#etiqueta_ret');
+				
 				
 				//href para buscar producto
 				var $buscar_producto = $('#forma-invordenentrada-window').find('a[href*=busca_producto]');
@@ -754,6 +760,12 @@ $(function() {
 				//$campo_observaciones.attr("readonly", true);
 				$campo_flete.attr("readonly", true);
 				$accion.val('edit');
+				$campo_flete.hide();
+				$campo_ieps.hide();
+				$retencion.hide();
+				$etiqueta_flete.hide();
+				$etiqueta_ieps.hide();
+				$etiqueta_ret.hide();
 				
 				var respuestaProcesada = function(data){
 					if ( data['success'] == "true" ){
@@ -793,6 +805,7 @@ $(function() {
 								
 								var campo = tmp.split(':')[0];
 								
+								$('#forma-invordenentrada-window').find('.invordenentrada_div_one').css({'height':'585px'});
 								$('#forma-invordenentrada-window').find('#div_warning_grid').css({'display':'block'});
 								var $campo = $grid_productos.find('.'+campo).css({'background' : '#d41000'});
 								
@@ -820,37 +833,69 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$estatus.attr({ 'value' : entry['Datos']['0']['estatus'] });
-					$tasa_fletes.attr({ 'value' : entry['Datos']['0']['tasa_retencion'] });
-					$identificador.attr({ 'value' : entry['Datos']['0']['id'] });
-					$folio_entrada.attr({ 'value' : entry['Datos']['0']['folio'] });
-					$campo_factura.attr({ 'value' : entry['Datos']['0']['folio_doc'] });
-					$campo_ordencompra.attr({ 'value' : entry['Datos']['0']['orden_compra'] });
-					$campo_numeroguia.attr({ 'value' : entry['Datos']['0']['numero_guia'] });
-					$campo_expedicion.attr({ 'value' : entry['Datos']['0']['fecha_doc'] });
-					$campo_tc.attr({ 'value' : entry['Datos']['0']['tipo_cambio'] });
-					$campo_observaciones.text(entry['Datos']['0']['observaciones']);
+					$estatus.attr({ 'value' : entry['Datos'][0]['estatus'] });
+					$tasa_fletes.attr({ 'value' : entry['Datos'][0]['tasa_retencion'] });
+					$identificador.attr({ 'value' : entry['Datos'][0]['id'] });
+					$folio_entrada.attr({ 'value' : entry['Datos'][0]['folio'] });
+					$campo_factura.attr({ 'value' : entry['Datos'][0]['folio_doc'] });
+					$campo_ordencompra.attr({ 'value' : entry['Datos'][0]['orden_compra'] });
+					$campo_numeroguia.attr({ 'value' : entry['Datos'][0]['numero_guia'] });
+					$campo_expedicion.attr({ 'value' : entry['Datos'][0]['fecha_doc'] });
+					$campo_tc.attr({ 'value' : entry['Datos'][0]['tipo_cambio'] });
+					$campo_observaciones.text(entry['Datos'][0]['observaciones']);
 					
-					$hidden_id_proveedor.attr({ 'value' : entry['Datos']['0']['proveedor_id'] });
-					$campo_rfc_proveedor.attr({ 'value' : entry['Datos']['0']['rfc_proveedor'] });
-					$campo_razon_proveedor.attr({ 'value' : entry['Datos']['0']['nombre_proveedor'] });
-					$campo_tipo_proveedor.attr({ 'value' : entry['Datos']['0']['id_tipo_prov'] });
+					$hidden_id_proveedor.attr({ 'value' : entry['Datos'][0]['proveedor_id'] });
+					$campo_rfc_proveedor.attr({ 'value' : entry['Datos'][0]['rfc_proveedor'] });
+					$campo_razon_proveedor.attr({ 'value' : entry['Datos'][0]['nombre_proveedor'] });
+					$campo_tipo_proveedor.attr({ 'value' : entry['Datos'][0]['id_tipo_prov'] });
 					
-					$campo_flete.val(parseFloat( entry['Datos']['0']['flete']).toFixed(2));
+					$campo_flete.val(parseFloat( entry['Datos'][0]['flete']).toFixed(2));
 					tiposIva = entry['Impuestos'];//asigna los tipos de impuestos al arreglo tiposIva
 					
-					$campo_flete.attr({ 'value' : $(this).agregar_comas(entry['Datos']['0']['flete']) });
-					$campo_subtotal.attr({ 'value' : $(this).agregar_comas(entry['Datos']['0']['subtotal']) });
-					$retencion.attr({ 'value' : $(this).agregar_comas(entry['Datos']['0']['retencion']) });
-					$campo_impuesto.attr({ 'value' : $(this).agregar_comas(entry['Datos']['0']['iva']) });
-					$campo_total.attr({ 'value' : $(this).agregar_comas(entry['Datos']['0']['total']) });
-						
+					$campo_flete.attr({ 'value' : $(this).agregar_comas(entry['Datos'][0]['flete']) });
+					$campo_subtotal.attr({ 'value' : $(this).agregar_comas(entry['Datos'][0]['subtotal']) });
+					$campo_ieps.attr({ 'value' : $(this).agregar_comas(entry['Datos'][0]['ieps']) });
+					$retencion.attr({ 'value' : $(this).agregar_comas(entry['Datos'][0]['retencion']) });
+					$campo_impuesto.attr({ 'value' : $(this).agregar_comas(entry['Datos'][0]['iva']) });
+					$campo_total.attr({ 'value' : $(this).agregar_comas(entry['Datos'][0]['total']) });
 					
+					var countDisplay=0;
+					if(parseFloat(entry['Datos'][0]['flete'])>0){
+						$etiqueta_flete.show();
+						$campo_flete.show();
+						countDisplay++;
+					}
+					
+					if(parseFloat(entry['Datos'][0]['ieps'])>0){
+						$etiqueta_ieps.show();
+						$campo_ieps.show();
+						countDisplay++;
+					}
+					
+					if(parseFloat(entry['Datos'][0]['retencion'])>0){
+						$etiqueta_ret.show();
+						$retencion.show();
+						countDisplay++;
+					}
+					
+					if(parseInt(countDisplay)==1){
+						$('#forma-invordenentrada-window').find('.invordenentrada_div_one').css({'height':'555px'});
+					}
+					
+					if(parseInt(countDisplay)==2){
+						$('#forma-invordenentrada-window').find('.invordenentrada_div_one').css({'height':'570px'});
+					}
+					
+					if(parseInt(countDisplay)==3){
+						$('#forma-invordenentrada-window').find('.invordenentrada_div_one').css({'height':'585px'});
+					}
+					
+						
 					//carga select con tipo de documento
 					$select_tipo_doc.children().remove();
 					var select_html = '';
 					for(var i in arrayTiposDocumento){
-						if(parseInt(entry['Datos']['0']['tipo_doc'])==parseInt(i)){
+						if(parseInt(entry['Datos'][0]['tipo_doc'])==parseInt(i)){
 							select_html += '<option value="' + i + '" selected="yes">' + arrayTiposDocumento[i] + '</option>';
 						}else{
 							//select_html += '<option value="' + i + '">' + arrayTiposDocumento[i] + '</option>';
@@ -865,7 +910,7 @@ $(function() {
 					$select_tipo_movimiento.children().remove();
 					var tipo_mov_hmtl = '';
 					$.each(entry['TMovInv'],function(entryIndex,tmov){
-						if(parseInt(tmov['id']) == parseInt(entry['Datos']['0']['tipo_movimiento_id'])){
+						if(parseInt(tmov['id']) == parseInt(entry['Datos'][0]['tipo_movimiento_id'])){
 							tipo_mov_hmtl += '<option value="' + tmov['id'] + '" selected="yes">' + tmov['titulo'] + '</option>';
 						}else{
 							//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
@@ -881,7 +926,7 @@ $(function() {
 					//var moneda_hmtl = '<option value="0">[--   --]</option>';
 					var moneda_hmtl = '';
 					$.each(entry['Monedas'],function(entryIndex,moneda){
-						if(parseInt(moneda['id']) == parseInt(entry['Datos']['0']['id_moneda'])){
+						if(parseInt(moneda['id']) == parseInt(entry['Datos'][0]['id_moneda'])){
 							moneda_hmtl += '<option value="' + moneda['id'] + '" selected="yes">' + moneda['descripcion'] + '</option>';
 						}else{
 							//moneda_hmtl += '<option value="' + moneda['id'] + '"  >' + moneda['descripcion'] + '</option>';
@@ -1021,8 +1066,8 @@ $(function() {
 									tr_lote = $genera_tr_para_numero_de_lote(tipo_registro, id_detalle, id_producto,codigo,titulo, oent_detalle_id, id_almacen, lote_int, lote_prov,cant_lote, valor_pedimento, fecha_caducidad, trCount2);
 									$grid_productos.append(tr_lote);
 									
-									// esta funcion es para agregar un nuevo lote
-									//en esta funcion se le aplica evento click a los href Agregar Lote y Eliminar
+									//Esta funcion es para agregar un nuevo lote
+									//En esta funcion se le aplica evento click a los href Agregar Lote y Eliminar
 									agregar_lote_y_eliminar($grid_productos,tipo_registro, trCount2);
 									$aplicar_evento_keypress( $grid_productos.find('.cant_rec'+ trCount2 ) );
 									$aplicar_evento_blur( $grid_productos.find('.cant_rec'+ trCount2 ) );
@@ -1071,8 +1116,8 @@ $(function() {
 											tr_lote = $genera_tr_para_numero_de_lote(tipo_registro, id_detalle, id_producto,codigo,titulo, oent_detalle_id, id_almacen, lote_int, lote_prov, cant_lote, valor_pedimento, fecha_caducidad, trCount2);
 											$grid_productos.append(tr_lote);
 											
-											// esta funcion es para agregar un nuevo lote
-											//en esta funcion se le aplica evento click a los href Agregar Lote y Eliminar
+											//Esta funcion es para agregar un nuevo lote
+											//En esta funcion se le aplica evento click a los href Agregar Lote y Eliminar
 											agregar_lote_y_eliminar($grid_productos,tipo_registro, trCount2);
 											$aplicar_evento_keypress( $grid_productos.find('.cant_rec'+ trCount2 ) );
 											$aplicar_evento_blur( $grid_productos.find('.cant_rec'+ trCount2 ) );
@@ -1134,30 +1179,31 @@ $(function() {
 					
 					
 					if(entry['Datos']['0']['cancelado'] == 'CANCELADO'){
-						$select_tipo_movimiento.attr('disabled','-1'); //deshabilitar
-						$cancelar.attr('disabled','-1'); //deshabilitar
-						$descargar_pdf.attr('disabled','-1'); //deshabilitar
-						$folio_entrada.attr('disabled','-1'); //deshabilitar
-						$select_denominacion.attr('disabled','-1'); //deshabilitar
-						$campo_razon_proveedor.attr('disabled','-1'); //deshabilitar
-						$select_tipo_doc.attr('disabled','-1'); //deshabilitar
-						$select_almacen_destino.attr('disabled','-1'); //deshabilitar
+						$select_tipo_movimiento.attr('disabled','-1');
+						$cancelar.attr('disabled','-1');
+						$descargar_pdf.attr('disabled','-1');
+						$folio_entrada.attr('disabled','-1');
+						$select_denominacion.attr('disabled','-1');
+						$campo_razon_proveedor.attr('disabled','-1');
+						$select_tipo_doc.attr('disabled','-1');
+						$select_almacen_destino.attr('disabled','-1');
 						
-						$campo_flete.attr('disabled','-1'); //deshabilitar
-						$campo_factura.attr('disabled','-1'); //deshabilitar
-						$campo_ordencompra.attr('disabled','-1'); //deshabilitar
-						$campo_numeroguia.attr('disabled','-1'); //deshabilitar
-						$campo_expedicion.attr('disabled','-1'); //deshabilitar
-						$campo_tc.attr('disabled','-1'); //deshabilitar
-						$campo_observaciones.attr('disabled','-1'); //deshabilitar
-						$campo_flete.attr('disabled','-1'); //deshabilitar
-						$campo_subtotal.attr('disabled','-1'); //deshabilitar
-						$campo_descuento.attr('disabled','-1'); //deshabilitar
-						$campo_impuesto.attr('disabled','-1'); //deshabilitar
-						$campo_total.attr('disabled','-1'); //deshabilitar
+						$campo_flete.attr('disabled','-1');
+						$campo_factura.attr('disabled','-1');
+						$campo_ordencompra.attr('disabled','-1');
+						$campo_numeroguia.attr('disabled','-1');
+						$campo_expedicion.attr('disabled','-1');
+						$campo_tc.attr('disabled','-1');
+						$campo_observaciones.attr('disabled','-1');
+						$campo_flete.attr('disabled','-1');
+						$campo_subtotal.attr('disabled','-1');
+						$campo_ieps.attr('disabled','-1');
+						$retencion.attr('disabled','-1');
+						$campo_impuesto.attr('disabled','-1');
+						$campo_total.attr('disabled','-1');
 						
 						$grid_productos.find('a').hide();
-						$grid_productos.find('input').attr('disabled','-1'); //deshabilitar
+						$grid_productos.find('input').attr('disabled','-1');
 						$submit_actualizar.hide();
 					}
 					
