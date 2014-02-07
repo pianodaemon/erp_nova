@@ -639,9 +639,9 @@ $(function() {
 					cliente			:'Cliente',
 					moneda_subtotal	:'',
 					subtotal  		:'Sub-Total',
-					moneda_iva    	:'',
-					iepscampo  		:'IEPS',
 					moneda_ieps    	:'',
+					iepscampo  		:'IEPS',
+					moneda_iva    	:'',
 					impuesto  		:'IVA',
 					moneda_total    :'',
 					total    		:'Total'
