@@ -180,6 +180,8 @@
 													<li class="topline"><a href="../repantiguedadsaldocliente/startup.agnux">Antig&uuml;edad de Saldos</a></li>
 													<li class="topline"><a href="../repestadisticasanualesventas/startup.agnux">Estad&iacute;stico de Ventas Anuales Cliente</a></li>
 													<li class="topline"><a href="../repestadisticaanualventasproducto/startup.agnux">Estad&iacute;stico de Ventas Anuales Producto</a></li>
+													<li class="topline"><a href="../repcomparativoasventasanuales/startup.agnux">Comparativo de Ventas Anuales Cliente</a></li>
+													<!--<li class="topline"><a href="../repcomparativoasventasanualesproducto/startup.agnux">Comparativo de Ventas Anuales Producto</a></li>-->
 													<li class="topline"><a href="../repclientes/startup.agnux">Clientes</a></li>
 													<li class="topline"><a href="../cxcrepsaldomes/startup.agnux">Saldo Mensual</a></li>
 													
