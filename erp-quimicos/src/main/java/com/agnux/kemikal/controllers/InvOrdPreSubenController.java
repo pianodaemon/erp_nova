@@ -180,6 +180,7 @@ public class InvOrdPreSubenController {
         ArrayList<HashMap<String, String>> datosInvOrdSub = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> detalleOrden = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> almacenes = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> extra = new HashMap<String, String>();
@@ -190,7 +191,7 @@ public class InvOrdPreSubenController {
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        if(! id.equals("0")  ){
+        if(!id.equals("0")){
             datosInvOrdSub = this.getInvDao().getInvOrdPreSuben_Datos(id);
             detalleOrden = this.getInvDao().getInvDetalleOrdPreSuben(id);
         }
@@ -198,39 +199,17 @@ public class InvOrdPreSubenController {
         almacenes = this.getInvDao().getAlmacenes2(id_empresa);
         extra = this.getInvDao().getInvOrdPreSuben_IdAlmacenProd(id_empresa);
         arrayExtra.add(0,extra);
+        arrayTiposProducto=this.getInvDao().getProducto_Tipos();
         
         jsonretorno.put("InvOrdSub", datosInvOrdSub);
         jsonretorno.put("Detalle", detalleOrden);
         jsonretorno.put("Almacenes", almacenes);
         jsonretorno.put("Extras", arrayExtra);
+        jsonretorno.put("ProdTipos", arrayTiposProducto);
         
         return jsonretorno;
     }
     
-    //obtienetipos de productos
-    @RequestMapping(method = RequestMethod.POST, value="/getProductoTipos.json")
-    public @ResponseBody HashMap<String,ArrayList<HashMap<String, String>>> getDataLineasJson(
-            @RequestParam(value="iu", required=true) String id_user_cod,
-            Model model
-            ) {
-       
-        HashMap<String,ArrayList<HashMap<String, String>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, String>>>();
-        //ArrayList<HashMap<String, String>> arrayLineas = new ArrayList<HashMap<String, String>>();
-        ArrayList<HashMap<String, String>> arrayTiposProducto = new ArrayList<HashMap<String, String>>();
-        //HashMap<String, String> cadenaLineas = new HashMap<String, String>();
-        
-        //decodificar id de usuario
-        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
-        
-        arrayTiposProducto=this.getInvDao().getProducto_Tipos();
-        
-        //cadenaLineas.put("cad_lineas", genera_treeview( this.getInvDao().getProducto_Lineas() ));
-        //arrayLineas.add(cadenaLineas);
-        //jsonretorno.put("Lines",arrayLineas);
-        jsonretorno.put("prodTipos", arrayTiposProducto);
-        
-        return jsonretorno;
-    }
     
     //Buscador de de productos
     @RequestMapping(method = RequestMethod.POST, value="/get_buscador_productos.json")

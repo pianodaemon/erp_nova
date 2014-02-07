@@ -42,7 +42,7 @@ public class PdfOrdenSalida {
     private String telefono;
     //----------------------
     
-    public PdfOrdenSalida(HashMap<String, String> datos_empresa, HashMap<String, String> datos_entrada, HashMap<String, String> datos_cliente, ArrayList<HashMap<String, String>> lista_productos, ArrayList<HashMap<String, String>> lotesgrid,String fileout, String ruta_imagen) throws URISyntaxException {
+    public PdfOrdenSalida(HashMap<String, String> datos_empresa, HashMap<String, String> datos_salida, HashMap<String, String> datos_cliente, ArrayList<HashMap<String, String>> lista_productos, ArrayList<HashMap<String, String>> lotesgrid,String fileout, String ruta_imagen) throws URISyntaxException {
         HashMap<String, String> datos = new HashMap<String, String>();
         Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
@@ -107,9 +107,9 @@ public class PdfOrdenSalida {
             String tipo_documento = "ORDEN DE SALIDA";
             
             cadena = tipo_documento + "&" + //ORDEN DE SALIDA
-                    datos_entrada.get("folio") + "&" +  //2
-                    datos_entrada.get("fecha_expedicion")+ "&" + 
-                    datos_entrada.get("orden_compra");
+                    datos_salida.get("folio") + "&" +  //2
+                    datos_salida.get("fecha_expedicion")+ "&" + 
+                    datos_salida.get("orden_compra");
             
             cell = new PdfPCell(cepdf.addContent(cadena));
             cell.setBorder(0);
@@ -144,18 +144,18 @@ public class PdfOrdenSalida {
             PdfPTable tableHelper = new PdfPTable(1);
             
             //CLIENTE --> texto
-            cell = new PdfPCell(new Paragraph(datos_entrada.get("origen"),smallBoldFont));
+            cell = new PdfPCell(new Paragraph(datos_salida.get("origen"),smallBoldFont));
             cell.setBorder(0);
             cell.setRightIndent(10);
             tableHelper.addCell(cell);
             
             String datos_cadena="";
             
-            if(datos_entrada.get("origen").equals("CLIENTE")){
+            if(datos_salida.get("origen").equals("CLIENTE")){
                 datos_cadena  = StringHelper.capitalizaString(datos_cliente.get("clie_razon_social"));
                 datos_cadena+=" \n"+StringHelper.capitalizaString(datos_cliente.get("clie_calle")) +" "+ datos_cliente.get("clie_numero") + ", " + StringHelper.capitalizaString(datos_cliente.get("clie_colonia"))+ ", " + StringHelper.capitalizaString(datos_cliente.get("clie_municipio")) + ", " + StringHelper.capitalizaString(datos_cliente.get("clie_estado")) + ", " + StringHelper.capitalizaString(datos_cliente.get("clie_pais")) + " \nC.P. " + datos_cliente.get("clie_cp") + "     TEL. "+ datos_cliente.get("clie_telefono") +  "\nR.F.C.: " + StringHelper.capitalizaString(datos_cliente.get("clie_rfc"));
             }else{
-                datos_cadena=datos_entrada.get("proveedor_tipo_movimiento");
+                datos_cadena=datos_salida.get("proveedor_tipo_movimiento");
             }
             
             cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(datos_cadena), smallFont));
@@ -190,7 +190,7 @@ public class PdfOrdenSalida {
 ////////////////////////////////////////////////////////////////////////////////
             //metodo para agregar lista conceptos --> BeanFromCFD
             /*descomentar tambie ahorita*/
-            document.add(tpdf.addContent(datos_entrada, lista_productos,lotesgrid));   // ???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+            document.add(tpdf.addContent(datos_salida, lista_productos,lotesgrid));   // ???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
             //document.add(tpdf.addContent(daoEntradas.getListaConceptos(), daoEntradas.getSubtotal(), daoEntradas.getImpuesto(), daoEntradas.getTotal(), daoEntradas.getMoneda_id(), daoEntradas.getMoneda()));
             //(ArrayList<LinkedHashMap<String,String>> conceptos, String subTotal,String impuesto, String total, String moneda)
 ////////////////////////////////////////////////////////////////////////////////
@@ -199,7 +199,7 @@ public class PdfOrdenSalida {
             table2 = new PdfPTable(1);
             table2.setKeepTogether(true);
             
-            if (datos_entrada.get("observaciones").isEmpty()){
+            if (datos_salida.get("observaciones").isEmpty()){
                 cell = new PdfPCell(new Paragraph("",smallBoldFont));
                 cell.setBorder(0);
                 table2.addCell(cell);
@@ -216,7 +216,7 @@ public class PdfOrdenSalida {
                 
                 //CADENA ORIGINAL --> BeanFromCFD (getCadenaOriginal)
                 
-                cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(datos_entrada.get("observaciones")), smallFont));
+                cell = new PdfPCell(new Paragraph(StringHelper.capitalizaString(datos_salida.get("observaciones")), smallFont));
                 cell.setBorder(0);
                 table2.addCell(cell); 
             }
@@ -383,11 +383,11 @@ public class PdfOrdenSalida {
             Font smallFontCancelado = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.RED);
             
 //              0      cadena = tipo_documento + "&" + 
-//              1      datos_entrada.get("folio_Orden_Entrada") + "&" + 
+//              1      datos_salida.get("folio_Orden_Entrada") + "&" + 
 //              2      StringHelper.capitalizaString(datos_empresa.get("emp_municipio")) + ", " +
 //              3      StringHelper.capitalizaString(datos_empresa.get("emp_estado")) + "\n" +
-//              4      datos_entrada.get("fecha_ordenentrada")+ "&" + 
-//              5      StringHelper.capitalizaString(datos_entrada.get("orden_compra"));
+//              4      datos_salida.get("fecha_ordenentrada")+ "&" + 
+//              5      StringHelper.capitalizaString(datos_salida.get("orden_compra"));
             String [] temp = cadena.split("&");
             PdfPTable table = new PdfPTable(1);
             PdfPCell cell;
@@ -489,7 +489,7 @@ public class PdfOrdenSalida {
     
     
     private class TablaPDF {
-        public PdfPTable addContent(HashMap<String, String> datos_entrada,ArrayList<HashMap<String, String>> conceptos,ArrayList<HashMap<String, String>> lotes) {
+        public PdfPTable addContent(HashMap<String, String> datos_salida,ArrayList<HashMap<String, String>> conceptos,ArrayList<HashMap<String, String>> lotes) {
             
             String subTotal="0";
             String impuesto="0";
@@ -500,12 +500,12 @@ public class PdfOrdenSalida {
             String denominacion = "";
             String denom = "";
             String simbolo_moneda="";
-            if(datos_entrada.get("moneda_id").equals("1")){
+            if(datos_salida.get("moneda_id").equals("1")){
                 denominacion = "pesos";
                 denom = "M.N.";
                 simbolo_moneda="$";
             }
-            if(datos_entrada.get("moneda_id").equals("2")){
+            if(datos_salida.get("moneda_id").equals("2")){
                 denominacion = "dolares";
                 //denom = "USCY";
                 denom = "USD";
@@ -677,7 +677,7 @@ public class PdfOrdenSalida {
                 cell.setBorderWidthBottom(a);
                 cell.setBorderWidthTop(b);
                 table.addCell(cell);
-                System.out.println("precio_unitario::"+map.get("precio_unitario"));
+                
                 if(map.get("precio_unitario")!=null){
                     if(!map.get("precio_unitario").equals("0.00")){
                         cell = new PdfPCell(new Paragraph(simbolo_moneda+" " + map.get("precio_unitario"), smallFont));
@@ -866,7 +866,7 @@ public class PdfOrdenSalida {
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("subtotal")), smallBoldFontBlack));
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_salida.get("subtotal")), smallBoldFontBlack));
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthTop(0);
@@ -875,8 +875,34 @@ public class PdfOrdenSalida {
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             table.addCell(cell);
-
-
+            
+            
+            if(Double.parseDouble(datos_salida.get("monto_ieps"))>0){
+                //FILA IEPS
+                cell = new PdfPCell(new Paragraph("IEPS  "+simbolo_moneda,smallBoldFontBlack));
+                cell.setColspan(9);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_salida.get("monto_ieps")), smallBoldFontBlack));
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);    
+            }
+            
+            
+            //FILA IVA
             cell = new PdfPCell(new Paragraph("IVA  "+simbolo_moneda,smallBoldFontBlack));
             cell.setColspan(9);
             cell.setBorderWidthRight(0);
@@ -889,7 +915,7 @@ public class PdfOrdenSalida {
             table.addCell(cell);
 
 
-            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("iva")), smallBoldFontBlack));
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_salida.get("iva")), smallBoldFontBlack));
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthTop(0);
@@ -898,31 +924,32 @@ public class PdfOrdenSalida {
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             table.addCell(cell);
-
-
-            cell = new PdfPCell(new Paragraph("RETENCION  "+simbolo_moneda,smallBoldFontBlack));
-            cell.setColspan(9);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(0);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-            table.addCell(cell);
-
-
-            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("retencion")), smallBoldFontBlack));
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(0);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-            table.addCell(cell);
-
-
+            
+            
+            if(Double.parseDouble(datos_salida.get("retencion"))>0){
+                cell = new PdfPCell(new Paragraph("RETENCIÓN  "+simbolo_moneda,smallBoldFontBlack));
+                cell.setColspan(9);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_salida.get("retencion")), smallBoldFontBlack));
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);
+            }
+            
+            
             cell = new PdfPCell(new Paragraph("TOTAL  "+simbolo_moneda,smallBoldFontBlack));
             cell.setColspan(9);
             cell.setBorderWidthRight(0);
@@ -933,10 +960,8 @@ public class PdfOrdenSalida {
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             table.addCell(cell);
-
-
-
-            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("total")), smallBoldFontBlack));
+            
+            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_salida.get("total")), smallBoldFontBlack));
             cell.setBorderWidthRight(0);
             cell.setBorderWidthLeft(0);
             cell.setBorderWidthTop(0);

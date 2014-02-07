@@ -436,8 +436,7 @@ public class InvOrdenEntradaController {
             datos_proveedor.put("prov_contacto", proveedorContactos.get(0).get("contacto"));
         }
         
-        //obtiene el listado de productos para el pdf
-        System.out.println("id de orden de entrada"+id_OrdenEntrada);
+        //Obtiene el listado de productos para el pdf
         lista_productos = this.getInvDao().getInvOrdenEntrada_DatosGrid(id_OrdenEntrada);
         LotesGrid = this.getInvDao().getInvOrdenEntrada_DatosGridLotes(id_OrdenEntrada);
         

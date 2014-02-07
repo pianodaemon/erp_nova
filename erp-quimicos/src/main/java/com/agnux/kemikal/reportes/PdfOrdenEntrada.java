@@ -907,28 +907,31 @@ public class PdfOrdenEntrada {
             
             
             
-            
-            cell = new PdfPCell(new Paragraph("FLETE  "+simbolo_moneda, smallBoldFontBlack));
-            cell.setColspan(10);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(0);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-            table.addCell(cell);
+            if(Double.parseDouble(datos_entrada.get("flete"))>0){
+                cell = new PdfPCell(new Paragraph("FLETE  "+simbolo_moneda, smallBoldFontBlack));
+                cell.setColspan(10);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);
 
-            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("flete")), smallBoldFontBlack));
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(0);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-            table.addCell(cell); 
-                    
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("flete")), smallBoldFontBlack));
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell); 
+            }
+            
+            
+            
             cell = new PdfPCell(new Paragraph("SUB-TOTAL  "+simbolo_moneda, smallBoldFontBlack));
             cell.setColspan(10);
             cell.setBorderWidthRight(0);
@@ -949,6 +952,31 @@ public class PdfOrdenEntrada {
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             table.addCell(cell);
+            
+            if(Double.parseDouble(datos_entrada.get("monto_ieps"))>0){
+                cell = new PdfPCell(new Paragraph("IEPS  "+simbolo_moneda,smallBoldFontBlack));
+                cell.setColspan(10);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("monto_ieps")), smallBoldFontBlack));
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);
+            }
+            
+            
             
             cell = new PdfPCell(new Paragraph("IVA  "+simbolo_moneda,smallBoldFontBlack));
             cell.setColspan(10);
@@ -971,26 +999,29 @@ public class PdfOrdenEntrada {
             cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("RETENCION  "+simbolo_moneda,smallBoldFontBlack));
-            cell.setColspan(10);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(0);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-            table.addCell(cell);
+            if(Double.parseDouble(datos_entrada.get("retencion"))>0){
+                cell = new PdfPCell(new Paragraph("RETENCION  "+simbolo_moneda,smallBoldFontBlack));
+                cell.setColspan(10);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("retencion")), smallBoldFontBlack));
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setUseDescender(true);
+                cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+                table.addCell(cell);
+            }
             
-            cell = new PdfPCell(new Paragraph(StringHelper.AgregaComas(datos_entrada.get("retencion")), smallBoldFontBlack));
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthTop(0);
-            cell.setBorderWidthBottom(0);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-            table.addCell(cell);
             
             cell = new PdfPCell(new Paragraph("TOTAL  "+simbolo_moneda,smallBoldFontBlack));
             cell.setColspan(10);

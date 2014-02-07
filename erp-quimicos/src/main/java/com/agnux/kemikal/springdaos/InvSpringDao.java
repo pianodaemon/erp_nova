@@ -4861,7 +4861,8 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "inv_oent.inv_alm_id, "
                     + "inv_oent.tipo_documento,  "
                     + "inv_oent.monto_flete, "
-                    + "inv_oent.subtotal,  "
+                    + "inv_oent.subtotal,"
+                    + "inv_oent.monto_ieps,  "
                     + "inv_oent.monto_iva,  "
                     + "inv_oent.monto_retencion, "
                     + "inv_oent.monto_total, "
@@ -4900,6 +4901,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("tipo_doc",rs.getString("tipo_documento"));
                     row.put("flete",StringHelper.roundDouble(rs.getString("monto_flete"),2));
                     row.put("subtotal",StringHelper.roundDouble(rs.getString("subtotal"),2));
+                    row.put("ieps",StringHelper.roundDouble(rs.getString("monto_ieps"),2));
                     row.put("iva",StringHelper.roundDouble(rs.getString("monto_iva"),2));
                     row.put("retencion",StringHelper.roundDouble(rs.getString("monto_retencion"),2));
                     row.put("total",StringHelper.roundDouble(rs.getString("monto_total"),2));
@@ -5046,6 +5048,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                     + "ELSE '' END) AS proveedor_tipo_movimiento,"
                                     + "inv_oent.monto_flete, "
                                     + "inv_oent.subtotal,  "
+                                    + "inv_oent.monto_ieps, "
                                     + "inv_oent.monto_iva,  "
                                     + "inv_oent.monto_retencion, "
                                     + "inv_oent.monto_total,"
@@ -5074,6 +5077,7 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("proveedor_tipo_movimiento",map.get("proveedor_tipo_movimiento").toString());
         data.put("flete",StringHelper.roundDouble(map.get("monto_flete").toString(),2));
         data.put("subtotal",StringHelper.roundDouble(map.get("subtotal").toString(),2));
+        data.put("monto_ieps",StringHelper.roundDouble(map.get("monto_ieps").toString(),2));
         data.put("iva",StringHelper.roundDouble(map.get("monto_iva").toString(),2));
         data.put("retencion",StringHelper.roundDouble(map.get("monto_retencion").toString(),2));
         data.put("total",StringHelper.roundDouble(map.get("monto_total").toString(),2));
@@ -5159,6 +5163,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     + "(CASE WHEN inv_osal.cxp_prov_id > 0 THEN cxp_prov.razon_social ELSE (CASE WHEN cxc_clie.razon_social IS NULL THEN '' ELSE cxc_clie.razon_social END ) END) AS razon_cliente,"
                     + "inv_osal.inv_alm_id AS id_almacen,"
                     + "inv_osal.subtotal,"
+                    + "inv_osal.monto_ieps,"
                     + "inv_osal.monto_iva,"
                     + "inv_osal.monto_retencion,"
                     + "inv_osal.monto_total,"
@@ -5192,6 +5197,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("origen_salida",rs.getString("origen_salida"));
                     row.put("id_almacen",String.valueOf(rs.getInt("id_almacen")));
                     row.put("subtotal",StringHelper.roundDouble(rs.getString("subtotal"),2));
+                    row.put("ieps",StringHelper.roundDouble(rs.getString("monto_ieps"),2));
                     row.put("iva",StringHelper.roundDouble(rs.getString("monto_iva"),2));
                     row.put("retencion",StringHelper.roundDouble(rs.getString("monto_retencion"),2));
                     row.put("total",StringHelper.roundDouble(rs.getString("monto_total"),2));
@@ -5373,6 +5379,7 @@ public class InvSpringDao implements InvInterfaceDao{
                                       + "WHEN inv_osal.tipo_documento=5 THEN cxp_prov.razon_social||'\n\n'||inv_mov_tipos.descripcion "
                                 + "ELSE '' END) AS proveedor_tipo_movimiento,"
                                 + "inv_osal.subtotal,"
+                                + "inv_osal.monto_ieps,"
                                 + "inv_osal.monto_iva,"
                                 + "inv_osal.monto_retencion,"
                                 + "inv_osal.monto_total, "
@@ -5398,6 +5405,7 @@ public class InvSpringDao implements InvInterfaceDao{
         data.put("orden_compra",map.get("orden_compra").toString());
         data.put("cliente_id",map.get("cliente_id").toString());
         data.put("subtotal",StringHelper.roundDouble(map.get("subtotal").toString(),2));
+        data.put("monto_ieps",StringHelper.roundDouble(map.get("monto_ieps").toString(),2));
         data.put("iva",StringHelper.roundDouble(map.get("monto_iva").toString(),2));
         data.put("retencion",StringHelper.roundDouble(map.get("monto_retencion").toString(),2));
         data.put("total",StringHelper.roundDouble(map.get("monto_total").toString(),2));

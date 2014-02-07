@@ -5,6 +5,7 @@
 package com.agnux.kemikal.controllers;
 
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
@@ -352,7 +353,7 @@ public class InvOrdenSalidaController {
                 HttpServletRequest request, 
                 HttpServletResponse response, 
                 Model model)
-            throws ServletException, IOException, URISyntaxException, DocumentException {
+            throws ServletException, IOException, URISyntaxException, DocumentException, Exception {
         
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> datosEntrada = new ArrayList<HashMap<String, String>>();
@@ -445,8 +446,7 @@ public class InvOrdenSalidaController {
         */
         
         
-        //obtiene el listado de productos para el pdf
-        System.out.println("id de orden de Salida"+id_OrdenSalida);
+        //Obtiene el listado de productos para el pdf
         lista_productos = this.getInvDao().getInvOrdenSalida_DatosGrid(id_OrdenSalida);
         LotesGrid = this.getInvDao().getInvOrdenSalida_DatosGridLotes(id_OrdenSalida);
         datosOrdenSalida = this.getInvDao().getInvOrdenSalida_Datos(id_OrdenSalida);
@@ -464,6 +464,8 @@ public class InvOrdenSalidaController {
         response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
         FileCopyUtils.copy(bis, response.getOutputStream());  	
         response.flushBuffer();
+        
+        FileHelper.delete(fileout);
         
         return null;        
     }
