@@ -41,18 +41,18 @@ $(function() {
 	
 		var array_meses = {
 					0:"- Seleccionar -",  
-					1:"Enero",  
-					2:"Febrero", 
-					3:"Marzo", 
-					4:"Abirl", 
-					5:"Mayo", 
-					6:"Junio", 
-					7:"Julio", 
-					8:"Agosto", 
-					9:"Septiembre", 
-					10:"Octubre", 
-					11:"Noviembre", 
-					12:"Diciembre"
+					1:"Ene",  
+					2:"Feb", 
+					3:"Mar", 
+					4:"Abr", 
+					5:"May", 
+					6:"Jun", 
+					7:"Jul", 
+					8:"Ago", 
+					9:"Sep", 
+					10:"Oct", 
+					11:"Nov", 
+					12:"Dic"
 				};
 				
 	
@@ -244,30 +244,6 @@ $(function() {
 			
 			
 			
-			
-			
-			/*$select_ano.change(function(){
-				var valor_anio = $(this).val();
-				
-				//cargar select del Mes Final
-				var i=parseInt(valor_anio);
-				
-				//carga select de años
-				$select_anofin.children().remove();
-				var html_anio = '';
-				$.each(entry['Anios'],function(entryIndex,anio_fin){
-					if(parseInt(i) > parseInt(anio_fin['valor']) ){
-						html_anio += '<option value="' + anio_fin['valor'] + '"  >' + anio_fin['valor'] + '</option>';
-					}
-				});
-				$select_anofin.append(html_anio);
-			
-			
-			});*/
-			
-			
-			
-			
 			$select_ano.change(function(){
 				var valor_anio = $(this).val();
 				
@@ -292,8 +268,6 @@ $(function() {
 					}
 				});
 				$select_anofin.append(html_anio);
-			
-			
 			});
 	
 		});
@@ -349,35 +323,6 @@ $(function() {
                                         diciem  :'Diciembre',
                                         total   :'Total&nbsp;Anterior',
                                         totaldos   :'Total&nbsp;Actual'
-                                        /*enero  :'Enero',
-                                        enerodos  :'Eneromesdos',
-                                        febrero :'Febrero'
-                                        febrerodos :'Febreromesdos',
-                                        marzo   :'Marzo',
-                                        marzodos   :'Marzomesdos',
-                                        abril   :'Abril',
-                                        abrildos   :'Abrilmesdos',
-                                        mayo    :'Mayo',
-                                        mayodos   :'Mayomesdos'
-                                        junio   :'Junio',
-                                        juniodos   :'Juniomesdos',
-                                        julio   :'Julio',
-                                        juliodos   :'Juliomesdos',
-                                        agosto  :'Agosto',
-                                        agostodos  :'Agostomesdos',
-                                        septiem :'Septiembre',
-                                        septiemdos :'Septiembremesdos',
-                                        octubre :'Octubre',
-                                        octubredos :'Octubremesdos',
-                                        noviembr:'Noviembre',
-                                        noviembrdos:'Noviembremesdos',
-                                        diciem  :'Diciembre',
-                                        diciemdos  :'Diciembremesdos',
-                                        total   :'Total&nbsp;Anual',
-                                        totaldos   :'Total&nbsp;Anualmesdos'*/
-                                        
-                                        
-                                        
                                 };
 
 
@@ -403,24 +348,19 @@ $(function() {
                                 
                                 html_reporte +='<td width="120" align="left">Cliente</td>'; 
                                 
-                                
+                               var primerColumna1=0;
 							   for(var mes=1; mes<=12; mes++){
-									var nombre_mes=array_meses[mes].substring(0,3);
+									var nombre_mes=array_meses[mes];
+									if(parseInt(primerColumna1)>0){
+										html_reporte +='<td width="10">&nbsp;</td>';
+									}
 									html_reporte +='<td width="100" align="left">'+nombre_mes+""+'&nbsp;'+anio_ini+'</td>';
 									html_reporte +='<td width="100" align="left">'+nombre_mes+""+'&nbsp;'+anio_fin+'</td>';
+									primerColumna1++;
 								}
-								
-								
-								
-								/*for(var mes=1; mes<=12; mes++){
-									var nombre_mes=array_meses[mes];
-									for(var anio=anio_ini; anio<=anio_fin; anio++){
-										 html_reporte +='<td width="80" align="left">'"Anio"+anio+'</td>';
-									}
-								}*/
 								html_reporte +='<td width="180" align="left">Anual&nbsp'+anio_ini+'</td>'; 
 								html_reporte +='<td width="180" align="left">Anual&nbsp'+anio_fin+'</td>'; 
-                                html_reporte +='</tr> </thead>';
+                                html_reporte +='</tr></thead>';
 
 
                                 var totalmes=0.0;
@@ -450,118 +390,133 @@ $(function() {
                                 var totalmes100=0.0;
                                 var totalmes110=0.0;
                                 var totalmes120=0.0;
-                                
-                               
-
+                                var primerColumna2=0;
                                 for(var i=0; i<body_tabla.length; i++){
-								
-                                        totalano=parseFloat(totalano)+parseFloat(body_tabla[i]["aniouno"]);
-                                        totalano2=parseFloat(totalano2)+parseFloat(body_tabla[i]["aniodos"]);
-                                        html_reporte +='<tr>';
-                                        html_reporte +='<td width="120" align="left">'+body_tabla[i]["razon_social"]+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["enero"]).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["enero2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["febrero"]).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["febrero2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["marzo"]).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["marzo2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["abril"]).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["abril2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["mayo"]).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["mayo2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["junio"]).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["junio2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["julio"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["julio2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["agosto"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["agosto2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["septiembre"]).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["septiembre2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["octubre"]).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["octubre2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["noviembre"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["noviembre2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["diciembre"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["diciembre2"]).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["aniouno"]).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["aniodos"]).toFixed(2))+'</td>';
-                                        html_reporte +='</tr>';
+									totalano=parseFloat(totalano)+parseFloat(body_tabla[i]["aniouno"]);
+									totalano2=parseFloat(totalano2)+parseFloat(body_tabla[i]["aniodos"]);
+									html_reporte +='<tr>';
+									html_reporte +='<td width="120" align="left">'+body_tabla[i]["razon_social"]+'</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["enero"]).toFixed(2))+'</td>'; 
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["enero2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["febrero"]).toFixed(2))+'</td>'; 
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["febrero2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["marzo"]).toFixed(2))+'</td>'; 
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["marzo2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["abril"]).toFixed(2))+'</td>'; 
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["abril2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["mayo"]).toFixed(2))+'</td>'; 
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["mayo2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["junio"]).toFixed(2))+'</td>'; 
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["junio2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["julio"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["julio2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["agosto"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["agosto2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["septiembre"]).toFixed(2))+'</td>'; 
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["septiembre2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["octubre"]).toFixed(2))+'</td>'; 
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["octubre2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["noviembre"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["noviembre2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["diciembre"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["diciembre2"]).toFixed(2))+'</td>';
+									html_reporte +='<td width="10">&nbsp;</td>';
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["aniouno"]).toFixed(2))+'</td>'; 
+									html_reporte +='<td width="100" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["aniodos"]).toFixed(2))+'</td>';
+									html_reporte +='</tr>';
 
-                                totalmes=parseFloat(totalmes)+parseFloat(body_tabla[i]["enero"]);
-                                totalmes2=parseFloat(totalmes2)+parseFloat(body_tabla[i]["febrero"]);
-                                totalmes3=parseFloat(totalmes3)+parseFloat(body_tabla[i]["marzo"]);
-                                totalmes4=parseFloat(totalmes4)+parseFloat(body_tabla[i]["abril"]);
-                                totalmes5=parseFloat(totalmes5)+parseFloat(body_tabla[i]["mayo"]);
-                                totalmes6=parseFloat(totalmes6)+parseFloat(body_tabla[i]["junio"]);
-                                totalmes7=parseFloat(totalmes7)+parseFloat(body_tabla[i]["julio"]);
-                                totalmes8=parseFloat(totalmes8)+parseFloat(body_tabla[i]["agosto"]);
-                                totalmes9=parseFloat(totalmes9)+parseFloat(body_tabla[i]["septiembre"]);
-                                totalmes10=parseFloat(totalmes10)+parseFloat(body_tabla[i]["octubre"]);
-                                totalmes11=parseFloat(totalmes11)+parseFloat(body_tabla[i]["noviembre"]);
-                                totalmes12=parseFloat(totalmes12)+parseFloat(body_tabla[i]["diciembre"]);
-                                
-                                totalmes1=parseFloat(totalmes1)+parseFloat(body_tabla[i]["enero2"]);
-                                totalmes22=parseFloat(totalmes22)+parseFloat(body_tabla[i]["febrero2"]);
-                                totalmes33=parseFloat(totalmes33)+parseFloat(body_tabla[i]["marzo2"]);
-                                totalmes44=parseFloat(totalmes44)+parseFloat(body_tabla[i]["abril2"]);
-                                totalmes55=parseFloat(totalmes55)+parseFloat(body_tabla[i]["mayo2"]);
-                                totalmes66=parseFloat(totalmes66)+parseFloat(body_tabla[i]["junio2"]);
-                                totalmes77=parseFloat(totalmes77)+parseFloat(body_tabla[i]["julio2"]);
-                                totalmes88=parseFloat(totalmes88)+parseFloat(body_tabla[i]["agosto2"]);
-                                totalmes99=parseFloat(totalmes99)+parseFloat(body_tabla[i]["septiembre2"]);
-                                totalmes100=parseFloat(totalmes100)+parseFloat(body_tabla[i]["octubre2"]);
-                                totalmes110=parseFloat(totalmes110)+parseFloat(body_tabla[i]["noviembre2"]);
-                                totalmes120=parseFloat(totalmes120)+parseFloat(body_tabla[i]["diciembre2"]);
-
+									totalmes=parseFloat(totalmes)+parseFloat(body_tabla[i]["enero"]);
+									totalmes2=parseFloat(totalmes2)+parseFloat(body_tabla[i]["febrero"]);
+									totalmes3=parseFloat(totalmes3)+parseFloat(body_tabla[i]["marzo"]);
+									totalmes4=parseFloat(totalmes4)+parseFloat(body_tabla[i]["abril"]);
+									totalmes5=parseFloat(totalmes5)+parseFloat(body_tabla[i]["mayo"]);
+									totalmes6=parseFloat(totalmes6)+parseFloat(body_tabla[i]["junio"]);
+									totalmes7=parseFloat(totalmes7)+parseFloat(body_tabla[i]["julio"]);
+									totalmes8=parseFloat(totalmes8)+parseFloat(body_tabla[i]["agosto"]);
+									totalmes9=parseFloat(totalmes9)+parseFloat(body_tabla[i]["septiembre"]);
+									totalmes10=parseFloat(totalmes10)+parseFloat(body_tabla[i]["octubre"]);
+									totalmes11=parseFloat(totalmes11)+parseFloat(body_tabla[i]["noviembre"]);
+									totalmes12=parseFloat(totalmes12)+parseFloat(body_tabla[i]["diciembre"]);
+									
+									totalmes1=parseFloat(totalmes1)+parseFloat(body_tabla[i]["enero2"]);
+									totalmes22=parseFloat(totalmes22)+parseFloat(body_tabla[i]["febrero2"]);
+									totalmes33=parseFloat(totalmes33)+parseFloat(body_tabla[i]["marzo2"]);
+									totalmes44=parseFloat(totalmes44)+parseFloat(body_tabla[i]["abril2"]);
+									totalmes55=parseFloat(totalmes55)+parseFloat(body_tabla[i]["mayo2"]);
+									totalmes66=parseFloat(totalmes66)+parseFloat(body_tabla[i]["junio2"]);
+									totalmes77=parseFloat(totalmes77)+parseFloat(body_tabla[i]["julio2"]);
+									totalmes88=parseFloat(totalmes88)+parseFloat(body_tabla[i]["agosto2"]);
+									totalmes99=parseFloat(totalmes99)+parseFloat(body_tabla[i]["septiembre2"]);
+									totalmes100=parseFloat(totalmes100)+parseFloat(body_tabla[i]["octubre2"]);
+									totalmes110=parseFloat(totalmes110)+parseFloat(body_tabla[i]["noviembre2"]);
+									totalmes120=parseFloat(totalmes120)+parseFloat(body_tabla[i]["diciembre2"]);
                                 }
-
+								
                                 html_reporte +='<tfoot>';
-                                /*sumando los meses**/
+									/*sumando los meses**/
                                     html_reporte +='<tr>';
-                                        html_reporte +='<td width="120" align="right" id="sin_borde">Total Mensual</td>'
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes1).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes2).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes22).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes3).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes33).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes4).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes44).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes5).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes55).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes6).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes66).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes7).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes77).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes8).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes88).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes9).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes99).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes10).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes100).toFixed(2))+'</td>'; 
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes11).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes110).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes12).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="100" align="right" id="sin_borde">$'+$(this).agregar_comas(parseFloat(totalmes120).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="180" align="right" id="sin_borde">'+$(this).agregar_comas(parseFloat(totalano).toFixed(2))+'</td>';
-                                        html_reporte +='<td width="180" align="right" id="sin_borde">'+$(this).agregar_comas(parseFloat(totalano2).toFixed(2))+'</td>';
-                                      
-                                        
-
+                                        html_reporte +='<td width="120" align="right">Total Mensual</td>'
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes).toFixed(2))+'</td>'; 
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes1).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes2).toFixed(2))+'</td>'; 
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes22).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes3).toFixed(2))+'</td>'; 
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes33).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes4).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes44).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes5).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes55).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes6).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes66).toFixed(2))+'</td>'; 
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes7).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes77).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes8).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes88).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes9).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes99).toFixed(2))+'</td>'; 
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes10).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes100).toFixed(2))+'</td>'; 
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes11).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes110).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes12).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="100" align="right">$'+$(this).agregar_comas(parseFloat(totalmes120).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="10">&nbsp;</td>';
+                                        html_reporte +='<td width="180" align="right">'+$(this).agregar_comas(parseFloat(totalano).toFixed(2))+'</td>';
+                                        html_reporte +='<td width="180" align="right">'+$(this).agregar_comas(parseFloat(totalano2).toFixed(2))+'</td>';
                                     html_reporte +='</tr>';
                                 html_footer +='</tfoot>';
-
-
+                                
                                 html_reporte += '</table>';
-
-
+                                
                                 $div_reporte.append(html_reporte); 
                                 var height2 = $('#cuerpo').css('height');
                                 var alto = parseInt(height2)-300;
                                 var pix_alto=alto+'px';
                                 $('#ventas').tableScroll({height:parseInt(pix_alto)});
                                 
-                             var width2 = $('#cuerpo').css('width');
+								var width2 = $('#cuerpo').css('width');
                                 var ancho = parseInt(width2);
 								var pix_ancho=ancho+'px';
 								//alert(pix_ancho);
