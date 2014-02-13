@@ -166,7 +166,7 @@ public class TesSpringDao implements TesInterfaceDao{
     //obtiene datos de TesBan actual
     @Override
     public ArrayList<HashMap<String, String>> getTesBan_Datos(Integer id) {
-        String sql_query = "SELECT id, titulo, descripcion FROM tes_ban WHERE id = ? and borrado_logico=false";
+        String sql_query = "SELECT id, titulo, descripcion, clave FROM tes_ban WHERE id = ? and borrado_logico=false";
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_query,  
             new Object[]{new Integer(id)}, new RowMapper() {
@@ -176,6 +176,7 @@ public class TesSpringDao implements TesInterfaceDao{
                     row.put("id",String.valueOf(rs.getInt("id")));
                     row.put("titulo",rs.getString("titulo"));
                     row.put("descripcion",rs.getString("descripcion"));
+                    row.put("clave",rs.getString("clave"));
                     return row;
                 }
             }

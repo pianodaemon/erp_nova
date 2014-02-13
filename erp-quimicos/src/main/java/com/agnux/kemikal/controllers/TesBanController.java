@@ -167,6 +167,7 @@ public class TesBanController {
             @RequestParam(value="identificador", required=true) String id,
             @RequestParam(value="titulo", required=false) String titulo,
             @RequestParam(value="descripcion", required=false) String descripcion,
+            @RequestParam(value="clave", required=false) String clave,
             Model model,@ModelAttribute("user") UserSessionData user
             ) {
 
@@ -184,8 +185,8 @@ public class TesBanController {
         }else{
             command_selected = "edit";
         }
-        //                      1                   2                       3            4               5                      6                       
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo.toUpperCase()+"___"+descripcion.toUpperCase();
+        //                      1                   2                       3            4               5                      6                             7
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id+"___"+titulo.toUpperCase()+"___"+descripcion.toUpperCase()+"___"+clave;
         
         succes = this.getTesDao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         

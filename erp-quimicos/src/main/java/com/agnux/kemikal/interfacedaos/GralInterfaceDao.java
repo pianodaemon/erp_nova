@@ -145,6 +145,23 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String,Object>>getUsuario(Integer id_usuario);
     public ArrayList<HashMap<String,Object>>getRegion();
     
+    public ArrayList<HashMap<String,Object>>getEmpleados_RegimenContratacion();
+    public ArrayList<HashMap<String,Object>>getEmpleados_TiposContrato();
+    public ArrayList<HashMap<String,Object>>getEmpleados_TiposJornada();
+    public ArrayList<HashMap<String,Object>>getEmpleados_PeriodicidadPago();
+    public ArrayList<HashMap<String,Object>>getEmpleados_RiesgosPuesto();
+    public ArrayList<HashMap<String,Object>>getEmpleados_Bancos(Integer idEmp);
+    public ArrayList<HashMap<String,Object>>getEmpleados_Percepciones(Integer idEmp);
+    public ArrayList<HashMap<String,Object>>getEmpleados_Deducciones(Integer idEmp);
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     //esto es para cat de escolaridades
     public ArrayList<HashMap<String, String>> getEscolaridad_Datos(Integer id);                                                         

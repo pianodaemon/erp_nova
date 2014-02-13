@@ -160,7 +160,7 @@ public class EmpleadosController {
         log.log(Level.INFO, "Ejecutando get_empleadosJson de {0}", EmpleadosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-
+        
         ArrayList<HashMap<String, Object>> paises = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> entidades = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> localidades = new ArrayList<HashMap<String, Object>>();
@@ -176,26 +176,35 @@ public class EmpleadosController {
         ArrayList<HashMap<String,Object>>roles=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>>rols_edit=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>>region=new ArrayList<HashMap<String,Object>>();
-        //decodificar id de usuario
+        
+        ArrayList<HashMap<String,Object>> regimen_contratacion=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> tipo_contrato=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> tipo_jornada=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> periodicidad_pago=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> riesgo_puesto=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> bancos=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> percepciones=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> deducciones=new ArrayList<HashMap<String,Object>>();
+        
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
-
+        
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-
+        String incluye_nomina = userDat.get("incluye_nomina");
+        
         if( id != 0  ){
             datoscliente = this.getGralDao().getEmpleados_Datos(id);
-
             entidades = this.getGralDao().getEntidadesForThisPais(datoscliente.get(0).get("gral_pais_id").toString());
             localidades = this.getGralDao().getLocalidadesForThisEntidad(datoscliente.get(0).get("gral_pais_id").toString(), datoscliente.get(0).get("gral_edo_id").toString());
             categoria=this.getGralDao().getPuestoForCategoria(datoscliente.get(0).get("gral_puesto_id").toString());
             rols_edit=this.getGralDao().getRolsEdit(Integer.parseInt(datoscliente.get(0).get("id_usuario").toString()));
-
         }
 
         //valorIva= this.getCdao().getValoriva();
-
+        
         //monedas = this.getGralDao().getMonedas();
-
+        
         paises = this.getGralDao().getPaises();
         escolaridad=this.getGralDao().getEscolaridad(id_empresa);
         genero=this.getGralDao().getGeneroSexual();
@@ -206,7 +215,7 @@ public class EmpleadosController {
         sucursal=this.getGralDao().getSucursal(id_empresa);
         roles=this.getGralDao().getRoles();
         region=this.getGralDao().getRegion();
-
+        
         jsonretorno.put("Empleados", datoscliente);
         jsonretorno.put("Paises", paises);
         jsonretorno.put("Entidades", entidades);
@@ -222,8 +231,16 @@ public class EmpleadosController {
         jsonretorno.put("Sucursal",sucursal);
         jsonretorno.put("RolsEdit",rols_edit);
         jsonretorno.put("Region",region);
-
-
+        
+        jsonretorno.put("RegC",this.getGralDao().getEmpleados_RegimenContratacion());
+        jsonretorno.put("TipoC",this.getGralDao().getEmpleados_TiposContrato());
+        jsonretorno.put("TipoJ",this.getGralDao().getEmpleados_TiposJornada());
+        jsonretorno.put("PPago",this.getGralDao().getEmpleados_PeriodicidadPago());
+        jsonretorno.put("Riesgos",this.getGralDao().getEmpleados_RiesgosPuesto());
+        jsonretorno.put("Deduc",this.getGralDao().getEmpleados_Bancos(id_empresa));
+        jsonretorno.put("Percep",this.getGralDao().getEmpleados_Percepciones(id_empresa));
+        jsonretorno.put("Deduc",this.getGralDao().getEmpleados_Deducciones(id_empresa));
+        
         return jsonretorno;
     }
 
@@ -360,7 +377,7 @@ public class EmpleadosController {
             
             for (int i=0; i<seleccionado.length; i++){
                 if(seleccionado[i].equals("1")){
-                     contador++;
+                    contador++;
                 }
             }
             
@@ -369,14 +386,12 @@ public class EmpleadosController {
             for(int i=0;i<seleccionado.length;i++){
                 if(seleccionado[i].equals("1")){
                     arreglo[contador2]="'"+id_rols[i]+"'";
-
                     contador2++;
                 }
-
             }
             //serializar el arreglo
             extra_data_array = StringUtils.join(arreglo, ",");
-
+            
             if( id_empleado == 0 ){
                 command_selected = "new";
             }else{

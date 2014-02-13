@@ -1435,7 +1435,165 @@ public class GralSpringDao implements GralInterfaceDao{
     }
 
 
-
+    
+    
+    //Obtiene los regimenes de contratacion
+    @Override
+    public ArrayList<HashMap<String, Object>> getEmpleados_RegimenContratacion() {
+        String sql_to_query="SELECT id, (case when clave is null then '' else clave end)||' '||titulo AS titulo FROM nom_regimen_contratacion WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene los tipos de contrato
+    @Override
+    public ArrayList<HashMap<String, Object>> getEmpleados_TiposContrato() {
+        String sql_to_query="SELECT id, titulo FROM nom_tipo_contrato WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    //Obtiene los Tipos de Jornada Laboral
+    @Override
+    public ArrayList<HashMap<String, Object>> getEmpleados_TiposJornada() {
+        String sql_to_query="SELECT id, titulo FROM nom_tipo_jornada WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene la Periodicidad del Pago
+    @Override
+    public ArrayList<HashMap<String, Object>> getEmpleados_PeriodicidadPago() {
+        String sql_to_query="SELECT id, titulo FROM nom_periodicidad_pago WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene los tipos de Riesgos de Puestos
+    @Override
+    public ArrayList<HashMap<String, Object>> getEmpleados_RiesgosPuesto() {
+        String sql_to_query="SELECT id, titulo FROM nom_riesgo_puesto WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene los Bancos de la empresa
+    @Override
+    public ArrayList<HashMap<String, Object>> getEmpleados_Bancos(Integer idEmp) {
+        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM tes_ban WHERE gral_emp_id=? AND borrado_logico=false ORDER BY titulo;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer (idEmp)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene todas las Percepciones disponibles
+    @Override
+    public ArrayList<HashMap<String, Object>> getEmpleados_Percepciones(Integer idEmp) {
+        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM nom_percep WHERE gral_emp_id=? AND activo=true AND borrado_logico=false ORDER BY titulo;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer (idEmp)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene todas las Deducciones disponibles
+    @Override
+    public ArrayList<HashMap<String, Object>> getEmpleados_Deducciones(Integer idEmp) {
+        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM nom_deduc WHERE gral_emp_id=? AND activo=true AND borrado_logico=false ORDER BY titulo;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer (idEmp)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
     //TERMINA METODOS DE CATALOGO DE EMPLEADOS
 
 
