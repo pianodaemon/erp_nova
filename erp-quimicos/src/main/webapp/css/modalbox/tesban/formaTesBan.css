@@ -98,7 +98,7 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
     /*background-image:url('Imagen/ven1.png');
     background-repeat:no-repeat;*/
     width:570px;
-    height:200px;
+    height:250px;
     border-radius:10px;
     background-color:#e9e9e9;
     border:3px solid #454442;
@@ -125,7 +125,7 @@ html ul.pestanas li.active, html ul.pestanas li.active a:hover{
 	/*font-family:tahoma;*/
 	font-size:11px;
     width:559px;
-    height:100px;
+    /*height:100px;*/
     background-color:#e9e9e9;
     margin-top:5px;
 	margin-right:10px;

@@ -121,8 +121,13 @@ $(function() {
 			 $('#barra_buscador').animate({height:'0px'}, 500);
 			 $('#cuerpo').css({'height': pix_alto});
 		};
+		$busqueda_banco.focus();
 	});
 	
+	
+	//aplicar evento Keypress para que al pulsar enter ejecute la busqueda
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_banco, $buscar);
+	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_descripcion, $buscar);
 	
 	
 	$tabs_li_funxionalidad = function(){
@@ -187,9 +192,10 @@ $(function() {
 		$tabs_li_funxionalidad();
 		
 		var $campo_id = $('#forma-tesban-window').find('input[name=identificador]');
-                var $titulo = $('#forma-tesban-window').find('input[name=titulo]');
-                var $descripcion = $('#forma-tesban-window').find('input[name=descripcion]');
-
+		var $titulo = $('#forma-tesban-window').find('input[name=titulo]');
+		var $descripcion = $('#forma-tesban-window').find('input[name=descripcion]');
+		var $clave = $('#forma-tesban-window').find('input[name=clave]');
+		
 		var $cerrar_plugin = $('#forma-tesban-window').find('#close');
 		var $cancelar_plugin = $('#forma-tesban-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-tesban-window').find('#submit');
@@ -197,33 +203,33 @@ $(function() {
 		$campo_id.attr({ 'value' : 0 });
                 
 		var respuestaProcesada = function(data){
-                    if ( data['success'] == 'true' ){
-                        var remove = function() { $(this).remove(); };
-                        $('#forma-tesban-overlay').fadeOut(remove);
-                        jAlert("El banco se ha actualizado.", 'Atencion!');
-                        $get_datos_grid();
-                    }
-                    else{
-                        // Desaparece todas las interrogaciones si es que existen
-                        $('#forma-tesban-window').find('div.interrogacion').css({'display':'none'});
+			if ( data['success'] == 'true' ){
+				var remove = function() { $(this).remove(); };
+				$('#forma-tesban-overlay').fadeOut(remove);
+				jAlert("El banco se ha actualizado.", 'Atencion!');
+				$get_datos_grid();
+			}
+			else{
+				// Desaparece todas las interrogaciones si es que existen
+				$('#forma-tesban-window').find('div.interrogacion').css({'display':'none'});
 
-                        var valor = data['success'].split('___');
-                        //muestra las interrogaciones
-                        for (var element in valor){
-                            tmp = data['success'].split('___')[element];
-                            longitud = tmp.split(':');
-                            if( longitud.length > 1 ){
-                                    $('#forma-tesban-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-                                    .parent()
-                                    .css({'display':'block'})
-                                    .easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
-                            }
-                        }
-                    }
-                }
+				var valor = data['success'].split('___');
+				//muestra las interrogaciones
+				for (var element in valor){
+					tmp = data['success'].split('___')[element];
+					longitud = tmp.split(':');
+					if( longitud.length > 1 ){
+							$('#forma-tesban-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+							.parent()
+							.css({'display':'block'})
+							.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
+					}
+				}
+			}
+		}
 
-                var options = {dataType :  'json', success : respuestaProcesada};
-                $forma_selected.ajaxForm(options);
+		var options = {dataType :  'json', success : respuestaProcesada};
+		$forma_selected.ajaxForm(options);
 		/*
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getTesBanco.json';
 		$arreglo = {'id':id_to_show};
@@ -238,8 +244,24 @@ $(function() {
 			$select_grupo.append(grupo_hmtl);
                         
 		});//termina llamada json
-		
                 */
+                
+                
+                
+                
+		$clave.keypress(function(e){
+			// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+			if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+				return true;
+			}else {
+				return false;
+			}
+		});
+		
+		
+        $titulo.focus();
+        
+        
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() { $(this).remove(); };
 			$('#forma-tesban-overlay').fadeOut(remove);
@@ -296,10 +318,10 @@ $(function() {
 			
 			$tabs_li_funxionalidad();
 			
-                        var $campo_id = $('#forma-tesban-window').find('input[name=identificador]');
-                        var $titulo = $('#forma-tesban-window').find('input[name=titulo]');
-                        var $descripcion = $('#forma-tesban-window').find('input[name=descripcion]');
-                        
+			var $campo_id = $('#forma-tesban-window').find('input[name=identificador]');
+			var $titulo = $('#forma-tesban-window').find('input[name=titulo]');
+			var $descripcion = $('#forma-tesban-window').find('input[name=descripcion]');
+			var $clave = $('#forma-tesban-window').find('input[name=clave]');
                         
 			var $cerrar_plugin = $('#forma-tesban-window').find('#close');
 			var $cancelar_plugin = $('#forma-tesban-window').find('#boton_cancelar');
@@ -342,11 +364,21 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
-					$campo_id.attr({ 'value' : entry['TesBan']['0']['id'] });
-                                        $titulo.attr({ 'value' : entry['TesBan']['0']['titulo'] });
-                                        $descripcion.attr({ 'value' : entry['TesBan']['0']['descripcion'] });
-                                },"json");//termina llamada json
+					$campo_id.attr({ 'value' : entry['TesBan'][0]['id'] });
+					$titulo.attr({ 'value' : entry['TesBan'][0]['titulo'] });
+					$descripcion.attr({ 'value' : entry['TesBan'][0]['descripcion'] });
+					$clave.attr({ 'value' : entry['TesBan'][0]['clave'] });
+				},"json");//termina llamada json
 				
+				
+				$clave.keypress(function(e){
+					// Permitir  numeros, borrar, suprimir, TAB, puntos, comas
+					if (e.which == 8 || e.which == 46 || e.which==13 || e.which == 0 || (e.which >= 48 && e.which <= 57 )) {
+						return true;
+					}else {
+						return false;
+					}
+				});
 				
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
@@ -360,7 +392,7 @@ $(function() {
 					$buscar.trigger('click');
 				});
                                 
-				
+				$titulo.focus();
 			}
 		}
 	}

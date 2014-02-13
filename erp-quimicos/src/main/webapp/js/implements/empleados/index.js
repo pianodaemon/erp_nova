@@ -667,12 +667,9 @@ $(function() {
                         //carga los checks de roles
                         var arreglo_parametros = {
                             id:$identificador.val()
-
                         }
 
                         var input_json = document.location.protocol+'//' +document.location.host+'/'+controller+'/getRoles.json';
-
-
                         $.post(input_json,arreglo_parametros,function(entry){
                             var encuentra_chks="";
                             var $div_roles=$('#forma-empleados-window').find('#rol_empleado tr td').find('div#roles');//.find('table #rols');
@@ -685,9 +682,8 @@ $(function() {
                                         html+='<input type="checkbox" name="micheck">';
                                         html+='<input type="hidden" name="seleccionado" value="0">';
                                     html+='</td>';
-                                    html+='<td class="grid" style="font-size: 11px; width="20"><input type="hidden" name="id_rol" value="'+rol['id']+'">&nbsp;&nbsp;</td>';
+                                    html+='<td><input type="hidden" name="id_rol" value="'+rol['id']+'">&nbsp;&nbsp;</td>';
                                     html+='<td class="grid" style="font-size: 11px; width="350px">'+rol['titulo']+'</td>';
-
                                 html+='</tr>';
 
                              $total_tr=$total_tr+1;
@@ -702,113 +698,113 @@ $(function() {
 
                         //valida la fecha de nacimiento seleccionada
                         function mayor(fecha, fecha2){
-                                var xMes=fecha.substring(5, 7);
-                                var xDia=fecha.substring(8, 10);
-                                var xAnio=fecha.substring(0,4);
-                                var yMes=fecha2.substring(5, 7);
-                                var yDia=fecha2.substring(8, 10);
-                                var yAnio=fecha2.substring(0,4);
+							var xMes=fecha.substring(5, 7);
+							var xDia=fecha.substring(8, 10);
+							var xAnio=fecha.substring(0,4);
+							var yMes=fecha2.substring(5, 7);
+							var yDia=fecha2.substring(8, 10);
+							var yAnio=fecha2.substring(0,4);
 
-                                if (xAnio > yAnio){
-                                        return(true);
-                                }else{
-                                        if (xAnio == yAnio){
-                                                if (xMes > yMes){
-                                                        return(true);
-                                                }
-                                                if (xMes == yMes){
-                                                        if (xDia > yDia){
-                                                                return(true);
-                                                        }else{
-                                                                return(false);
-                                                        }
-                                                }else{
-                                                        return(false);
-                                                }
-                                        }else{
-                                                return(false);
-                                        }
-                                }
+							if (xAnio > yAnio){
+								return(true);
+							}else{
+								if (xAnio == yAnio){
+									if (xMes > yMes){
+										return(true);
+									}
+									if (xMes == yMes){
+										if (xDia > yDia){
+											return(true);
+										}else{
+											return(false);
+										}
+									}else{
+										return(false);
+									}
+								}else{
+									return(false);
+								}
+							}
                         }
                         //muestra la fecha actual
                         var mostrarFecha = function mostrarFecha(){
-                                var ahora = new Date();
-                                var anoActual = ahora.getFullYear();
-                                var mesActual = ahora.getMonth();
-                                mesActual = mesActual+1;
-                                mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
-                                var diaActual = ahora.getDate();
-                                diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-                                var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
-                                return Fecha;
+							var ahora = new Date();
+							var anoActual = ahora.getFullYear();
+							var mesActual = ahora.getMonth();
+							mesActual = mesActual+1;
+							mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+							var diaActual = ahora.getDate();
+							diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+							var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
+							return Fecha;
                         }
                     //----------------------------------------------------------------
 
 
                         $campo_fecha_nacimiento.click(function (s){
-                                var a=$('div.datepicker');
-                                a.css({'z-index':100});
+							var a=$('div.datepicker');
+							a.css({'z-index':100});
                         });
 
                         $campo_fecha_nacimiento.DatePicker({
-                                format:'Y-m-d',
-                                date: $campo_fecha_nacimiento.val(),
-                                current: $campo_fecha_nacimiento.val(),
-                                starts: 1,
-                                position: 'bottom',
-                                locale: {
-                                        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-                                        daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-                                        daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-                                        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-                                        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-                                        weekMin: 'se'
-                                },
-                                onChange: function(formated, dates){
-                                        var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-                                        $campo_fecha_nacimiento.val(formated);
-                                        if (formated.match(patron) ){
-                                                var valida_fecha=mayor($campo_fecha_nacimiento.val(),mostrarFecha());
+							format:'Y-m-d',
+							date: $campo_fecha_nacimiento.val(),
+							current: $campo_fecha_nacimiento.val(),
+							starts: 1,
+							position: 'bottom',
+							locale: {
+								days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+								daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+								daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+								months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+								monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+								weekMin: 'se'
+							},
+							onChange: function(formated, dates){
+								var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+								$campo_fecha_nacimiento.val(formated);
+								if (formated.match(patron) ){
+									var valida_fecha=mayor($campo_fecha_nacimiento.val(),mostrarFecha());
 
-                                                if (valida_fecha==true){
-                                                        jAlert("Fecha no valida",'! Atencion');
-                                                        $campo_fecha_nacimiento.val(mostrarFecha());
-                                                }else{
-                                                        $campo_fecha_nacimiento.DatePickerHide();
-                                                }
-                                        }
-                                }
+									if (valida_fecha==true){
+											jAlert("Fecha no valida",'! Atencion');
+											$campo_fecha_nacimiento.val(mostrarFecha());
+									}else{
+											$campo_fecha_nacimiento.DatePickerHide();
+									}
+								}
+							}
                         });
 
                         //valida la fecha de ingreso seleccionada
                         function mayor(fecha, fecha2){
-                                var xMes=fecha.substring(5, 7);
-                                var xDia=fecha.substring(8, 10);
-                                var xAnio=fecha.substring(0,4);
-                                var yMes=fecha2.substring(5, 7);
-                                var yDia=fecha2.substring(8, 10);
-                                var yAnio=fecha2.substring(0,4);
+							var xMes=fecha.substring(5, 7);
+							var xDia=fecha.substring(8, 10);
+							var xAnio=fecha.substring(0,4);
+							var yMes=fecha2.substring(5, 7);
+							var yDia=fecha2.substring(8, 10);
+							var yAnio=fecha2.substring(0,4);
 
-                                if (xAnio > yAnio){
-                                        return(true);
-                                }else{
-                                        if (xAnio == yAnio){
-                                                if (xMes > yMes){
-                                                        return(true);
-                                                }
-                                                if (xMes == yMes){
-                                                        if (xDia > yDia){
-                                                                return(true);
-                                                        }else{
-                                                                return(false);
-                                                        }
-                                                }else{
-                                                        return(false);
-                                                }
-                                        }else{
-                                                return(false);
-                                        }
-                                }
+							if (xAnio > yAnio){
+								return(true);
+							}else{
+								if (xAnio == yAnio){
+									if (xMes > yMes){
+										return(true);
+									}
+									if (xMes == yMes){
+										if (xDia > yDia){
+											return(true);
+										}else{
+											return(false);
+										}
+									}else{
+										return(false);
+									}
+								}else{
+									return(false);
+								}
+							}
                         }
                         //muestra la fecha actual
                         var mostrarFecha = function mostrarFecha(){
@@ -826,8 +822,8 @@ $(function() {
 
 
                         $campo_fecha_ingreso.click(function (s){
-                                var a=$('div.datepicker');
-                                a.css({'z-index':100});
+							var a=$('div.datepicker');
+							a.css({'z-index':100});
                         });
 
                         $campo_fecha_ingreso.DatePicker({
@@ -837,26 +833,25 @@ $(function() {
                                 starts: 1,
                                 position: 'bottom',
                                 locale: {
-                                        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-                                        daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-                                        daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-                                        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-                                        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-                                        weekMin: 'se'
+									days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+									daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+									daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+									months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+									monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+									weekMin: 'se'
                                 },
                                 onChange: function(formated, dates){
-                                        var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-                                        $campo_fecha_ingreso.val(formated);
-                                        if (formated.match(patron) ){
-                                                var valida_fecha=mayor($campo_fecha_ingreso.val(),mostrarFecha());
-
-                                                if (valida_fecha==true){
-                                                        jAlert("Fecha no valida",'! Atencion');
-                                                        $campo_fecha_ingreso.val(mostrarFecha());
-                                                }else{
-                                                        $campo_fecha_ingreso.DatePickerHide();
-                                                }
-                                        }
+									var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+									$campo_fecha_ingreso.val(formated);
+									if (formated.match(patron) ){
+										var valida_fecha=mayor($campo_fecha_ingreso.val(),mostrarFecha());
+										if (valida_fecha==true){
+											jAlert("Fecha no valida",'! Atencion');
+											$campo_fecha_ingreso.val(mostrarFecha());
+										}else{
+											$campo_fecha_ingreso.DatePickerHide();
+										}
+									}
                                 }
                         });
 
