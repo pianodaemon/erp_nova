@@ -130,6 +130,50 @@ $(function() {
 
 
 
+	//---------------------------------------------------------------
+	function mayor(fecha, fecha2){
+		var xMes=fecha.substring(5, 7);
+		var xDia=fecha.substring(8, 10);
+		var xAnio=fecha.substring(0,4);
+		var yMes=fecha2.substring(5, 7);
+		var yDia=fecha2.substring(8, 10);
+		var yAnio=fecha2.substring(0,4);
+
+		if (xAnio > yAnio){
+			return(true);
+		}else{
+			if (xAnio == yAnio){
+				if (xMes > yMes){
+					return(true);
+				}
+				if (xMes == yMes){
+					if (xDia > yDia){
+						return(true);
+					}else{
+						return(false);
+					}
+				}else{
+					return(false);
+				}
+			}else{
+				return(false);
+			}
+		}
+	}
+	//muestra la fecha actual
+	var mostrarFecha = function mostrarFecha(){
+		var ahora = new Date();
+		var anoActual = ahora.getFullYear();
+		var mesActual = ahora.getMonth();
+		mesActual = mesActual+1;
+		mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
+		var diaActual = ahora.getDate();
+		diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
+		var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
+		return Fecha;
+	}
+	//----------------------------------------------------------------
+
 
 	$tabs_li_funxionalidad = function(){
 		$('#forma-empleados-window').find('#submit').mouseover(function(){
@@ -172,23 +216,23 @@ $(function() {
 			$(this).addClass("active");
 
 			if(activeTab == '#tabx-1'){
-                            if($('#forma-empleados-window').find('input[name=consignacion]').is(':checked')){
-                                    $('#forma-empleados-window').find('#div_consignacion_grid').css({'display':'block'});
-                                    $('#forma-empleados-window').find('.empleados_div_one').css({'height':'165px'});
-                                    $('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
-                                    $('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
-                                    $('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
-                                    $('#forma-empleados-window').find('#cierra').css({'width':'765px'});
-                                    $('#forma-empleados-window').find('#botones').css({'width':'790px'});
-                            }else{
-                                    $('#forma-empleados-window').find('#div_consignacion_grid').css({'display':'none'});
-                                    $('#forma-empleados-window').find('.empleados_div_one').css({'height':'370px'});
-                                    $('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
-                                    $('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
-                                    $('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
-                                    $('#forma-empleados-window').find('#cierra').css({'width':'765px'});
-                                    $('#forma-empleados-window').find('#botones').css({'width':'790px'});
-                            }
+				if($('#forma-empleados-window').find('input[name=consignacion]').is(':checked')){
+					$('#forma-empleados-window').find('#div_consignacion_grid').css({'display':'block'});
+					$('#forma-empleados-window').find('.empleados_div_one').css({'height':'165px'});
+					$('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
+					$('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
+					$('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
+					$('#forma-empleados-window').find('#cierra').css({'width':'765px'});
+					$('#forma-empleados-window').find('#botones').css({'width':'790px'});
+				}else{
+					$('#forma-empleados-window').find('#div_consignacion_grid').css({'display':'none'});
+					$('#forma-empleados-window').find('.empleados_div_one').css({'height':'370px'});
+					$('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
+					$('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
+					$('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
+					$('#forma-empleados-window').find('#cierra').css({'width':'765px'});
+					$('#forma-empleados-window').find('#botones').css({'width':'790px'});
+				}
 
 			}
 			if(activeTab == '#tabx-2'){
@@ -240,15 +284,19 @@ $(function() {
 		});
 
 	}
-
-
-
-
-
-	//carga los campos select con los datos que recibe como parametro
+	
+	
+	
+	
+	
+	//Carga los campos select con los datos que recibe como parametro
 	$carga_campos_select = function($campo_select, arreglo_elementos, elemento_seleccionado, texto_elemento_cero){
 		$campo_select.children().remove();
-		var select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		var select_html = '';
+		
+		if(texto_elemento_cero.trim()!=''){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
 		for(var i in arreglo_elementos){
 			if( parseInt(i) == parseInt(elemento_seleccionado) ){
 				select_html += '<option value="' + i + '" selected="yes">' + arreglo_elementos[i] + '</option>';
@@ -258,6 +306,28 @@ $(function() {
 		}
 		$campo_select.append(select_html);
 	}
+	
+	
+	//Carga select con arreglo Indice=Valor
+	$carga_campos_select = function($campo_select, arreglo_elementos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor){
+		$campo_select.children().remove();
+		var select_html = '';
+		
+		if(texto_elemento_cero.trim()!=''){
+			select_html = '<option value="0">'+texto_elemento_cero+'</option>';
+		}
+		$.each(arreglo_elementos,function(entryIndex,data){
+			if(parseInt(elemento_seleccionado)==parseInt(data[campo_indice])){
+				select_html += '<option value="' + data[campo_indice] + '" selected="yes">' + data[campo_valor] + '</option>';
+			}else{
+				select_html += '<option value="' + data[campo_indice] + '" >' + data[campo_valor] + '</option>';
+			}
+		});
+		$campo_select.append(select_html);
+	}
+	
+
+
 
 
 	$permitir_solo_numeros = function($campo){
@@ -283,7 +353,7 @@ $(function() {
 			$valor_tmp = $(this).val().split(",").join("");
 			
 			if( ($valor_tmp != '') && ($valor_tmp != ' ') && ($valor_tmp != null) ){
-				if(parseFloat($valor_tmp)<1){
+				if(parseFloat($valor_tmp)<=0){
 					$(this).val('');
 				}else{
 					$(this).val($valor_tmp);
@@ -306,8 +376,69 @@ $(function() {
 			$(this).val( $(this).agregar_comas(parseFloat($(this).val()).toFixed(2)) );
 		});
 	}
+	
+	
+	
+	//Funcion a ejecutar al seleccionar un rol
+	var seleccionar_roles_check = function($tabla){
+		$tabla.find('input[name=micheck]').each(function(){
+			$(this).click(function(event){
+				if(this.checked){
+					$(this).parent().find('input[name=seleccionado]').val("1");
+				}else{
+					$(this).parent().find('input[name=seleccionado]').val("0");
+				}
+			});
+		});
+	}
+	
+	//Funcion a ejecutar al seleccionar una Percepcion
+	var seleccionar_percepciones_check = function($tabla){
+		$tabla.find('input[name=micheck]').each(function(){
+			$(this).click(function(event){
+				if(this.checked){
+					$(this).parent().find('input[name=selec_percep]').val($(this).parent().find('input[name=percep_id]').val());
+				}else{
+					$(this).parent().find('input[name=selec_percep]').val("0");
+				}
+			});
+		});
+	}
+	
+	//Funcion a ejecutar al seleccionar una Deduccion
+	var seleccionar_deducciones_check = function($tabla){
+		$tabla.find('input[name=micheck]').each(function(){
+			$(this).click(function(event){
+				if(this.checked){
+					$(this).parent().find('input[name=selec_deduc]').val($(this).parent().find('input[name=deduc_id]').val());
+				}else{
+					$(this).parent().find('input[name=selec_deduc]').val("0");
+				}
+			});
+		});
+	}
+	
+	
+	
+	
+	
+				
+	//Funcion para contar los roles seleccionados
+	var contar_seleccionados= function($tabla){
+		var seleccionados=0;
+		$tabla.find('input[name=micheck]').each(function(){
+			if(this.checked){
+				seleccionados = parseInt(seleccionados) + 1;
+			}
+		});
+		
+		//alert(seleccionados);
+		return seleccionados;
+	}
+	
 
-
+	
+	
 	//nuevo cliente
 	$new_cliente.click(function(event){
 		event.preventDefault();
@@ -359,7 +490,7 @@ $(function() {
 		var $select_entidad = $('#forma-empleados-window').find('select[name=estado]');
 		var $select_localidad = $('#forma-empleados-window').find('select[name=municipio]');
 		var $campo_comp_calle = $('#forma-empleados-window').find('input[name=calle]');
-		var $campo_comp_numcalle = $('#forma-empleados-window').find('input[name=numero]');
+		var $campo_comp_numero_ext = $('#forma-empleados-window').find('input[name=numero_ext]');
 		var $campo_comp_colonia = $('#forma-empleados-window').find('input[name=colonia]');
 		var $campo_comp_cp = $('#forma-empleados-window').find('input[name=cp]');
 		
@@ -407,6 +538,22 @@ $(function() {
 		var $cancelar_plugin = $('#forma-empleados-window').find('#boton_cancelar');
 		var $submit_actualizar = $('#forma-empleados-window').find('#submit');
 		var $txt_roles =$('#forma-empleados-windows').find('textarea[name=roles');
+		var $div_roles = $('#forma-empleados-window').find('#rol_empleado tr td').find('div#roles');
+		
+		var $numero_int=$('#forma-empleados-window').find('input[name=numero_int]');
+		var $select_reg_contratacion = $('#forma-empleados-window').find('select[name=select_reg_contratacion]');
+		var $select_tipo_contrato = $('#forma-empleados-window').find('select[name=select_tipo_contrato]');
+		var $select_tipo_jornada = $('#forma-empleados-window').find('select[name=select_tipo_jornada]');
+		var $select_preriodo_pago = $('#forma-empleados-window').find('select[name=select_preriodo_pago]');
+		var $clabe=$('#forma-empleados-window').find('input[name=clabe]');
+		var $select_banco = $('#forma-empleados-window').find('select[name=select_banco]');
+		var $select_riesgo_puesto = $('#forma-empleados-window').find('select[name=select_riesgo_puesto]');
+		var $salario_base=$('#forma-empleados-window').find('input[name=salario_base]');
+		var $salario_integrado=$('#forma-empleados-window').find('input[name=salario_integrado]');
+		var $reg_patronal=$('#forma-empleados-window').find('input[name=reg_patronal]');
+		var $div_percepciones = $('#forma-empleados-window').find('#div_percepciones');
+		var $div_deducciones = $('#forma-empleados-window').find('#div_deducciones');
+		
 		var $limpia_campos="";
 		
 		$campo_empleado_id.attr({ 'value' : 0 });
@@ -423,7 +570,6 @@ $(function() {
 				$dias_comision.show();
 				$monto_comision.hide();
 			}
-			
 			if(parseInt($select_tipo_comision.val()) == 2){
 				$dias_comision.hide();
 				$monto_comision.show();
@@ -440,6 +586,7 @@ $(function() {
 		$permitir_solo_numeros($campo_montocomision);
 		$permitir_solo_numeros($campo_montocomision2);
 		$permitir_solo_numeros($campo_montocomision3);
+
 		
 		$accio_blur($campo_comision);
 		$accio_blur($campo_comision2);
@@ -474,7 +621,14 @@ $(function() {
 		$add_ceros($campo_montocomision);
 		$add_ceros($campo_montocomision2);
 		$add_ceros($campo_montocomision3);
-
+		
+		$permitir_solo_numeros($salario_base);
+		$permitir_solo_numeros($salario_integrado);
+		$accion_focus($salario_base);
+		$accion_focus($salario_integrado);
+		$accio_blur($salario_base);
+		$accio_blur($salario_integrado);
+		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				jAlert("Empleado dado de alta", 'Atencion!');
@@ -482,22 +636,21 @@ $(function() {
 				$('#forma-empleados-overlay').fadeOut(remove);
 				//refresh_table();
 				$get_datos_grid();
-			}
-			else{
+			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-empleados-window').find('div.interrogacion').css({'display':'none'});
 
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
 				for (var element in valor){
-						tmp = data['success'].split('___')[element];
-						longitud = tmp.split(':');
-						if( longitud.length > 1 ){
-								$('#forma-empleados-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-								.parent()
-								.css({'display':'block'})
-								.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
-						}
+					tmp = data['success'].split('___')[element];
+					longitud = tmp.split(':');
+					if( longitud.length > 1 ){
+						$('#forma-empleados-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+						.parent()
+						.css({'display':'block'})
+						.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
+					}
 				}
 			}
 		}
@@ -620,14 +773,38 @@ $(function() {
 				puesto_hmtl += '<option value="' + puestos['id'] + '"  >' + puestos['titulo'] + '</option>';
 			});
 			$select_puesto.append(puesto_hmtl);
+			
+			
+			
+			
+			var encuentra_chks="";
+			var $div_roles=$('#forma-empleados-window').find('#rol_empleado tr td').find('div#roles');
+			var html="";
+			$total_tr=0;
+			html+='<table border="0" whidth="100%" id="rols">';
+			$.each(entry['Roles'],function(entryIndex,rol){
+				html+='<tr>';
+					html+='<td class="grid" style=font-size: 11px;  width="40">';
+						html+='<input type="checkbox" name="micheck">';
+						html+='<input type="hidden" name="seleccionado" value="0">';
+					html+='</td>';
+					html+='<td><input type="hidden" name="id_rol" value="'+rol['id']+'">&nbsp;&nbsp;</td>';
+					html+='<td class="grid" style="font-size: 11px; width="350px">'+rol['titulo']+'</td>';
+				html+='</tr>';
 
-
+			 $total_tr=$total_tr+1;
+			});
+			html+='</table>';
+			$div_roles.append(html);
+			seleccionar_roles_check($div_roles.find('#rols'));
+			
+			
+			
+			
 			var categoria_hmtl = '<option value="00" selected="yes" >[-Seleccionar Categoria--]</option>';
 			$select_categoria_puesto.children().remove();
 			$select_categoria_puesto.append(categoria_hmtl);
-
-
-
+			
 			//carga select categorias al cambiar el puesto
 			$select_puesto.change(function(){
 				var valor_puesto = $(this).val();
@@ -644,242 +821,190 @@ $(function() {
 
 				},"json");//termina llamada json
 			});
+			
+			//inhabilita y deshabilita los checks del div de roles
+			/*$rols_acceso.change(function(){
 
-                        //inhabilita y deshabilita los checks del div de roles
-                        /*$rols_acceso.change(function(){
+				if($rols_acceso.val()==0){
+					$div_roles.find('input[name=micheck]').removeAttr('disabled');
+				}else{
 
-                            if($rols_acceso.val()==0){
-                                $div_roles.find('input[name=micheck]').removeAttr('disabled');
-                            }else{
+				   $div_roles.find('input[name=micheck]').attr('disabled','-1');
+				}
+			});
 
-                               $div_roles.find('input[name=micheck]').attr('disabled','-1');
-                            }
-                        });
+			*/
+		   //carga select de permiso de sistema
+			var html = '';
+			$select_rols_acceso.children().remove();
+				html='<option value="true">SI</option>';
+				html+='<option value="false">NO</option>';
+			$select_rols_acceso.append(html);
+			
+			
+			$campo_fecha_nacimiento.click(function (s){
+				var a=$('div.datepicker');
+				a.css({'z-index':100});
+			});
 
-                        */
-                       //carga select de permiso de sistema
-                        var html = '';
-                        $select_rols_acceso.children().remove();
-                            html='<option value="true">SI</option>';
-                            html+='<option value="false">NO</option>';
-                        $select_rols_acceso.append(html);
+			$campo_fecha_nacimiento.DatePicker({
+				format:'Y-m-d',
+				date: $campo_fecha_nacimiento.val(),
+				current: $campo_fecha_nacimiento.val(),
+				starts: 1,
+				position: 'bottom',
+				locale: {
+					days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+					daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+					daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+					months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+					monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+					weekMin: 'se'
+				},
+				onChange: function(formated, dates){
+					var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+					$campo_fecha_nacimiento.val(formated);
+					if (formated.match(patron) ){
+						var valida_fecha=mayor($campo_fecha_nacimiento.val(),mostrarFecha());
 
-                        //carga los checks de roles
-                        var arreglo_parametros = {
-                            id:$identificador.val()
-                        }
+						if (valida_fecha==true){
+								jAlert("Fecha no valida",'! Atencion');
+								$campo_fecha_nacimiento.val(mostrarFecha());
+						}else{
+								$campo_fecha_nacimiento.DatePickerHide();
+						}
+					}
+				}
+			});
 
-                        var input_json = document.location.protocol+'//' +document.location.host+'/'+controller+'/getRoles.json';
-                        $.post(input_json,arreglo_parametros,function(entry){
-                            var encuentra_chks="";
-                            var $div_roles=$('#forma-empleados-window').find('#rol_empleado tr td').find('div#roles');//.find('table #rols');
-                            var html="";
-                            $total_tr=0;
-                            html+='<table border="0" whidth="100%" id="rols">';
-                            $.each(entry['Roles'],function(entryIndex,rol){
-                                html+='<tr>';
-                                    html+='<td class="grid" style=font-size: 11px;  width="40">';
-                                        html+='<input type="checkbox" name="micheck">';
-                                        html+='<input type="hidden" name="seleccionado" value="0">';
-                                    html+='</td>';
-                                    html+='<td><input type="hidden" name="id_rol" value="'+rol['id']+'">&nbsp;&nbsp;</td>';
-                                    html+='<td class="grid" style="font-size: 11px; width="350px">'+rol['titulo']+'</td>';
-                                html+='</tr>';
 
-                             $total_tr=$total_tr+1;
-                            });
-                            html+='</table>';
-                            $div_roles.append(html);
-                            seleccionar_roles_check($div_roles.find('#rols'));
+			$campo_fecha_ingreso.click(function (s){
+				var a=$('div.datepicker');
+				a.css({'z-index':100});
+			});
 
-                        });
-
-                        //---------------------------------------------------------------
-
-                        //valida la fecha de nacimiento seleccionada
-                        function mayor(fecha, fecha2){
-							var xMes=fecha.substring(5, 7);
-							var xDia=fecha.substring(8, 10);
-							var xAnio=fecha.substring(0,4);
-							var yMes=fecha2.substring(5, 7);
-							var yDia=fecha2.substring(8, 10);
-							var yAnio=fecha2.substring(0,4);
-
-							if (xAnio > yAnio){
-								return(true);
+			$campo_fecha_ingreso.DatePicker({
+					format:'Y-m-d',
+					date: $campo_fecha_ingreso.val(),
+					current: $campo_fecha_ingreso.val(),
+					starts: 1,
+					position: 'bottom',
+					locale: {
+						days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+						daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+						daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+						months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+						monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+						weekMin: 'se'
+					},
+					onChange: function(formated, dates){
+						var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+						$campo_fecha_ingreso.val(formated);
+						if (formated.match(patron) ){
+							var valida_fecha=mayor($campo_fecha_ingreso.val(),mostrarFecha());
+							if (valida_fecha==true){
+								jAlert("Fecha no valida",'! Atencion');
+								$campo_fecha_ingreso.val(mostrarFecha());
 							}else{
-								if (xAnio == yAnio){
-									if (xMes > yMes){
-										return(true);
-									}
-									if (xMes == yMes){
-										if (xDia > yDia){
-											return(true);
-										}else{
-											return(false);
-										}
-									}else{
-										return(false);
-									}
-								}else{
-									return(false);
-								}
+								$campo_fecha_ingreso.DatePickerHide();
 							}
-                        }
-                        //muestra la fecha actual
-                        var mostrarFecha = function mostrarFecha(){
-							var ahora = new Date();
-							var anoActual = ahora.getFullYear();
-							var mesActual = ahora.getMonth();
-							mesActual = mesActual+1;
-							mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
-							var diaActual = ahora.getDate();
-							diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-							var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
-							return Fecha;
-                        }
-                    //----------------------------------------------------------------
+						}
+					}
+			});
+			
+			
+			var elemento_seleccionado=0;
+			var texto_elemento_cero = '[-Seleccionar Region-]';
+			var campo_indice = 'id';
+			var campo_valor = 'titulo';
+			$carga_campos_select($select_region, entry['Region'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+			
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero = '[--Seleccionar--]';
+			campo_indice = 'id';
+			campo_valor = 'titulo';
+			$carga_campos_select($select_reg_contratacion, entry['RegC'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+			
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero = '[--Seleccionar--]';
+			campo_indice = 'id';
+			campo_valor = 'titulo';
+			$carga_campos_select($select_tipo_contrato, entry['TipoC'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+			
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero = '[--Seleccionar--]';
+			campo_indice = 'id';
+			campo_valor = 'titulo';
+			$carga_campos_select($select_tipo_jornada, entry['TipoJ'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+			
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero = '[--Seleccionar--]';
+			campo_indice = 'id';
+			campo_valor = 'titulo';
+			$carga_campos_select($select_preriodo_pago, entry['PPago'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+			
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero = '[--Seleccionar--]';
+			campo_indice = 'id';
+			campo_valor = 'titulo';
+			$carga_campos_select($select_banco, entry['Bancos'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+			
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero = '[--Seleccionar--]';
+			campo_indice = 'id';
+			campo_valor = 'titulo';
+			$carga_campos_select($select_riesgo_puesto, entry['Riesgos'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+			
+			$div_percepciones.children().remove();
+			var html_percep="";
+			html_percep+='<table border="0" whidth="100%">';
+			$.each(entry['Percep'],function(entryIndex,data){
+				html_percep+='<tr>';
+					html_percep+='<td class="grid" width="25"><input type="checkbox" name="check_percep" value="'+data['id']+'"></td>';
+					html_percep+='<td class="grid">'+data['titulo']+'</td>';
+				html_percep+='</tr>';
+			});
+			html_percep+='</table>';
+			$div_percepciones.append(html_percep);
+			
+			$div_deducciones.children().remove();
+			var html_deduc="";
+			html_deduc+='<table border="0" whidth="100%">';
+			$.each(entry['Deduc'],function(entryIndex,data){
+				html_deduc+='<tr>';
+					html_deduc+='<td class="grid" width="25"><input type="checkbox" name="check_deduc" value="'+data['id']+'"></td>';
+					html_deduc+='<td class="grid">'+data['titulo']+'</td>';
+				html_deduc+='</tr>';
+			});
+			html_deduc+='</table>';
+			$div_deducciones.append(html_deduc);
+			
+		});
+		
 
-
-                        $campo_fecha_nacimiento.click(function (s){
-							var a=$('div.datepicker');
-							a.css({'z-index':100});
-                        });
-
-                        $campo_fecha_nacimiento.DatePicker({
-							format:'Y-m-d',
-							date: $campo_fecha_nacimiento.val(),
-							current: $campo_fecha_nacimiento.val(),
-							starts: 1,
-							position: 'bottom',
-							locale: {
-								days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-								daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-								daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-								months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-								monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-								weekMin: 'se'
-							},
-							onChange: function(formated, dates){
-								var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-								$campo_fecha_nacimiento.val(formated);
-								if (formated.match(patron) ){
-									var valida_fecha=mayor($campo_fecha_nacimiento.val(),mostrarFecha());
-
-									if (valida_fecha==true){
-											jAlert("Fecha no valida",'! Atencion');
-											$campo_fecha_nacimiento.val(mostrarFecha());
-									}else{
-											$campo_fecha_nacimiento.DatePickerHide();
-									}
-								}
-							}
-                        });
-
-                        //valida la fecha de ingreso seleccionada
-                        function mayor(fecha, fecha2){
-							var xMes=fecha.substring(5, 7);
-							var xDia=fecha.substring(8, 10);
-							var xAnio=fecha.substring(0,4);
-							var yMes=fecha2.substring(5, 7);
-							var yDia=fecha2.substring(8, 10);
-							var yAnio=fecha2.substring(0,4);
-
-							if (xAnio > yAnio){
-								return(true);
-							}else{
-								if (xAnio == yAnio){
-									if (xMes > yMes){
-										return(true);
-									}
-									if (xMes == yMes){
-										if (xDia > yDia){
-											return(true);
-										}else{
-											return(false);
-										}
-									}else{
-										return(false);
-									}
-								}else{
-									return(false);
-								}
-							}
-                        }
-                        //muestra la fecha actual
-                        var mostrarFecha = function mostrarFecha(){
-							var ahora = new Date();
-							var anoActual = ahora.getFullYear();
-							var mesActual = ahora.getMonth();
-							mesActual = mesActual+1;
-							mesActual = (mesActual <= 9)?"0" + mesActual : mesActual;
-							var diaActual = ahora.getDate();
-							diaActual = (diaActual <= 9)?"0" + diaActual : diaActual;
-							var Fecha = anoActual + "-" + mesActual + "-" + diaActual;
-							return Fecha;
-                        }
-                    //----------------------------------------------------------------
-
-
-                        $campo_fecha_ingreso.click(function (s){
-							var a=$('div.datepicker');
-							a.css({'z-index':100});
-                        });
-
-                        $campo_fecha_ingreso.DatePicker({
-                                format:'Y-m-d',
-                                date: $campo_fecha_ingreso.val(),
-                                current: $campo_fecha_ingreso.val(),
-                                starts: 1,
-                                position: 'bottom',
-                                locale: {
-									days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-									daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-									daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-									months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-									monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-									weekMin: 'se'
-                                },
-                                onChange: function(formated, dates){
-									var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-									$campo_fecha_ingreso.val(formated);
-									if (formated.match(patron) ){
-										var valida_fecha=mayor($campo_fecha_ingreso.val(),mostrarFecha());
-										if (valida_fecha==true){
-											jAlert("Fecha no valida",'! Atencion');
-											$campo_fecha_ingreso.val(mostrarFecha());
-										}else{
-											$campo_fecha_ingreso.DatePickerHide();
-										}
-									}
-                                }
-                        });
-
-                        $select_region.children().remove();
-                        var region_hmtl = '<option value="0"  selected="yes">[-Seleccionar Region-]</option>'
-                        $.each(entry['Region'],function(entryIndex,region){
-                                region_hmtl += '<option value="' + region['id'] + '"  >' + region['titulo'] + '</option>';
-                        });
-                        $select_region.append(region_hmtl);
-
-                    });
-
-
-                $submit_actualizar.bind('click',function(){
-                    var $total_tr = $('#forma-empleados-window').find('input[name=total_tr]');
-                    var selec=0;
-                    //checa facturas a revision seleccionadas
-                    selec = contar_seleccionados($tabla_roles);
-
-                    $total_tr.val(selec);
-
-                    if(parseInt($total_tr.val()) > 0){
-                        return true;
-                    }else{
-                        jAlert("No hay roles seleccionadas para actualizar", 'Atencion!');
-                        return false;
-                    }
-                });
+		$submit_actualizar.bind('click',function(){
+			var $total_tr = $('#forma-empleados-window').find('input[name=total_tr]');
+			var selec=0;
+			if($select_rols_acceso.val().trim()=='true'){
+				//Verifica si hay roles seleccionados
+				selec = contar_seleccionados($tabla_roles);
+				$total_tr.val(selec);
+				if(parseInt(selec) > 0){
+					return true;
+				}else{
+					jAlert("No hay roles seleccionadas para actualizar", 'Atencion!');
+					return false;
+				}
+			}else{
+				return true;
+			}
+		});
 
 		$cerrar_plugin.bind('click',function(){
 			var remove = function() { $(this).remove(); };
@@ -894,35 +1019,7 @@ $(function() {
 
 	});
 
-        var seleccionar_roles_check = function($tabla){
-            $tabla.find('input[name=micheck]').each(function(){
-
-                $(this).click(function(event){
-
-                        if(this.checked){
-                                $(this).parent().find('input[name=seleccionado]').val("1");
-                                //alert("seleccionado");
-                        }else{
-                                //$(this).parent().find('input[name=micheck]').removeAttr('checked');
-                                $(this).parent().find('input[name=seleccionado]').val("0");
-                                //alert("no seleccionado");
-                        }
-                });
-            });
-        }
-
-	var contar_seleccionados= function($tabla_roles){
-            var seleccionados=0;
-
-            $tabla_roles.find('input[name=micheck]').each(function(){
-            if(this.checked){
-                seleccionados = parseInt(seleccionados) + 1;
-            }
-            });
-
-            return seleccionados;
-        }
-
+	
 
 
 	var carga_formaEmpleados00_for_datagrid00 = function(id_to_show, accion_mode){
@@ -1000,7 +1097,7 @@ $(function() {
 				var $select_entidad = $('#forma-empleados-window').find('select[name=estado]');
 				var $select_localidad = $('#forma-empleados-window').find('select[name=municipio]');
 				var $campo_comp_calle = $('#forma-empleados-window').find('input[name=calle]');
-				var $campo_comp_numcalle = $('#forma-empleados-window').find('input[name=numero]');
+				var $campo_comp_numero_ext = $('#forma-empleados-window').find('input[name=numero_ext]');
 				var $campo_comp_colonia = $('#forma-empleados-window').find('input[name=colonia]');
 				var $campo_comp_cp = $('#forma-empleados-window').find('input[name=cp]');
 				
@@ -1046,6 +1143,22 @@ $(function() {
 				var $submit_actualizar = $('#forma-empleados-window').find('#submit');
 				var $txt_roles =$('#forma-empleados-windows').find('textarea[name=roles');
 				
+				var $numero_int=$('#forma-empleados-window').find('input[name=numero_int]');
+				var $select_reg_contratacion = $('#forma-empleados-window').find('select[name=select_reg_contratacion]');
+				var $select_tipo_contrato = $('#forma-empleados-window').find('select[name=select_tipo_contrato]');
+				var $select_tipo_jornada = $('#forma-empleados-window').find('select[name=select_tipo_jornada]');
+				var $select_preriodo_pago = $('#forma-empleados-window').find('select[name=select_preriodo_pago]');
+				var $clabe=$('#forma-empleados-window').find('input[name=clabe]');
+				var $select_banco = $('#forma-empleados-window').find('select[name=select_banco]');
+				var $select_riesgo_puesto = $('#forma-empleados-window').find('select[name=select_riesgo_puesto]');
+				var $salario_base=$('#forma-empleados-window').find('input[name=salario_base]');
+				var $salario_integrado=$('#forma-empleados-window').find('input[name=salario_integrado]');
+				var $reg_patronal=$('#forma-empleados-window').find('input[name=reg_patronal]');
+				
+				var $div_percepciones = $('#forma-empleados-window').find('#div_percepciones');
+				var $div_deducciones = $('#forma-empleados-window').find('#div_deducciones');
+				
+				
 				$permitir_solo_numeros($campo_comision);
 				$permitir_solo_numeros($campo_comision2);
 				$permitir_solo_numeros($campo_comision3);
@@ -1078,6 +1191,13 @@ $(function() {
 				$accion_focus($campo_montocomision);
 				$accion_focus($campo_montocomision2);
 				$accion_focus($campo_montocomision3);
+				
+				$permitir_solo_numeros($salario_base);
+				$permitir_solo_numeros($salario_integrado);
+				$accion_focus($salario_base);
+				$accion_focus($salario_integrado);
+				$accio_blur($salario_base);
+				$accio_blur($salario_integrado);
 				
 				//$campo_titulo.attr({ 'readOnly':true });
 				$campo_num_empleado.attr('disabled','-1'); //deshabilitar
@@ -1130,7 +1250,7 @@ $(function() {
 					$campo_movil.attr({ 'value' : entry['Empleados']['0']['telefono_movil'] });
 					$campo_correo_personal.attr({ 'value' : entry['Empleados']['0']['correo_personal'] });
 					$campo_comp_calle.attr({ 'value' : entry['Empleados']['0']['calle'] });
-					$campo_comp_numcalle.attr({ 'value' : entry['Empleados']['0']['numero'] });
+					$campo_comp_numero_ext.attr({ 'value' : entry['Empleados']['0']['numero'] });
 					$campo_comp_colonia.attr({ 'value' : entry['Empleados']['0']['colonia'] });
 					$campo_comp_cp.attr({ 'value' : entry['Empleados']['0']['cp'] });
 					$campo_contacto.attr({ 'value' : entry['Empleados']['0']['contacto_emergencia'] });
@@ -1146,6 +1266,12 @@ $(function() {
 					$campo_comision3.attr({'value': $(this).agregar_comas(entry['Empleados']['0']['comision3_agen'])});
 					$campo_comision4.attr({'value': $(this).agregar_comas(entry['Empleados']['0']['comision4_agen'])});
 					$correo_institucional.attr({'value':entry['Empleados']['0']['correo_empresa']});
+					
+					$numero_int.attr({'value':entry['Empleados'][0]['no_int']});
+					$salario_base.attr({'value':entry['Empleados'][0]['salario_base']});
+					$salario_integrado.attr({'value':entry['Empleados'][0]['salario_int']});
+					$reg_patronal.attr({'value':entry['Empleados'][0]['reg_patronal']});
+					$clabe.attr({'value':entry['Empleados'][0]['clabe']});
 					
 					//Alimentando $select_tipo_comision
 					$select_tipo_comision.children().remove();
@@ -1458,76 +1584,117 @@ $(function() {
 						html+='</table>';
 						$div_roles.append(html);
 						seleccionar_roles_check($div_roles.find('#rols'));
-
-						//carga las regiones de los agentes
-						$select_region.children().remove();
-						var region_hmtl = "";
-						$.each(entry['Region'],function(entryIndex,region){
-							if(region['id']==entry['Empleados']['0']['region_id_agen']){
-								region_hmtl += '<option value="' + region['id'] + '"selected="yes"  >' + region['titulo'] + '</option>';
-							}else{
-								region_hmtl += '<option value="' + region['id'] + '"  >' + region['titulo'] + '</option>';
-							}
-
+						
+						
+						
+						var elemento_seleccionado=entry['Empleados'][0]['region_id_agen'];
+						var texto_elemento_cero = '[-Seleccionar Region-]';
+						var campo_indice = 'id';
+						var campo_valor = 'titulo';
+						$carga_campos_select($select_region, entry['Region'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						elemento_seleccionado=entry['Empleados'][0]['regimen_id'];
+						texto_elemento_cero = '[--Seleccionar--]';
+						campo_indice = 'id';
+						campo_valor = 'titulo';
+						$carga_campos_select($select_reg_contratacion, entry['RegC'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						elemento_seleccionado=entry['Empleados'][0]['tipo_contrato_id'];
+						texto_elemento_cero = '[--Seleccionar--]';
+						campo_indice = 'id';
+						campo_valor = 'titulo';
+						$carga_campos_select($select_tipo_contrato, entry['TipoC'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						elemento_seleccionado=entry['Empleados'][0]['tipo_jornada_id'];
+						texto_elemento_cero = '[--Seleccionar--]';
+						campo_indice = 'id';
+						campo_valor = 'titulo';
+						$carga_campos_select($select_tipo_jornada, entry['TipoJ'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						elemento_seleccionado=entry['Empleados'][0]['periodo_pago_id'];
+						texto_elemento_cero = '[--Seleccionar--]';
+						campo_indice = 'id';
+						campo_valor = 'titulo';
+						$carga_campos_select($select_preriodo_pago, entry['PPago'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						elemento_seleccionado=entry['Empleados'][0]['banco_id'];
+						texto_elemento_cero = '[--Seleccionar--]';
+						campo_indice = 'id';
+						campo_valor = 'titulo';
+						$carga_campos_select($select_banco, entry['Bancos'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						elemento_seleccionado=entry['Empleados'][0]['riesgo_id'];
+						texto_elemento_cero = '[--Seleccionar--]';
+						campo_indice = 'id';
+						campo_valor = 'titulo';
+						$carga_campos_select($select_riesgo_puesto, entry['Riesgos'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						
+						$div_percepciones.children().remove();
+						var html_percep="";
+						html_percep+='<table border="0" whidth="100%">';
+						$.each(entry['Percep'],function(entryIndex,data){
+							html_percep+='<tr>';
+								html_percep+='<td class="grid" width="25"><input type="checkbox" name="check_percep" value="'+data['id']+'"></td>';
+								html_percep+='<td class="grid">'+data['titulo']+'</td>';
+							html_percep+='</tr>';
 						});
-						$select_region.append(region_hmtl);
-
-						$submit_actualizar.bind('click',function(){
-							var $total_tr = $('#forma-empleados-window').find('input[name=total_tr]');
-							var selec=0;
-							//checa facturas a revision seleccionadas
-							selec = contar_seleccionados($tabla_roles);
-
-							$total_tr.val(selec);
-
-							if(parseInt($total_tr.val()) > 0){
-								return true;
-							}else{
-								jAlert("No hay roles seleccionadas para actualizar", 'Atencion!');
-								return false;
-							}
+						html_percep+='</table>';
+						$div_percepciones.append(html_percep);
+						
+						$div_deducciones.children().remove();
+						var html_deduc="";
+						html_deduc+='<table border="0" whidth="100%">';
+						$.each(entry['Deduc'],function(entryIndex,data){
+							html_deduc+='<tr>';
+								html_deduc+='<td class="grid" width="25"><input type="checkbox" name="check_deduc" value="'+data['id']+'"></td>';
+								html_deduc+='<td class="grid">'+data['titulo']+'</td>';
+							html_deduc+='</tr>';
 						});
-
-
-						//Ligamos el boton cancelar al evento click para eliminar la forma
-						$cancelar_plugin.bind('click',function(){
-								var remove = function() { $(this).remove(); };
-								$('#forma-empleados-overlay').fadeOut(remove);
-						});
-
-						$cerrar_plugin.bind('click',function(){
-								var remove = function() { $(this).remove(); };
-								$('#forma-empleados-overlay').fadeOut(remove);
-								$buscar.trigger('click');
-						});
+						html_deduc+='</table>';
+						$div_deducciones.append(html_deduc);
+					
+				});
+				
+				
+				$submit_actualizar.bind('click',function(){
+					var $total_tr = $('#forma-empleados-window').find('input[name=total_tr]');
+					var selec=0;
+					if($select_rols_acceso.val().trim()=='true'){
+						//Verifica si hay roles seleccionados
+						selec = contar_seleccionados($tabla_roles);
+						$total_tr.val(selec);
+						if(parseInt(selec) > 0){
+							return true;
+						}else{
+							jAlert("No hay roles seleccionadas para actualizar", 'Atencion!');
+							return false;
+						}
+					}else{
+						return true;
+					}
+				});
+				
+				
+				//Ligamos el boton cancelar al evento click para eliminar la forma
+				$cancelar_plugin.bind('click',function(){
+					var remove = function() { $(this).remove(); };
+					$('#forma-empleados-overlay').fadeOut(remove);
 				});
 
-				var seleccionar_roles_check = function($tabla){
-					$tabla.find('input[name=micheck]').each(function(){
-						$(this).click(function(event){
-							if(this.checked){
-								$(this).parent().find('input[name=seleccionado]').val("1");
-								//alert("seleccionado");
-							}else{
-								//$(this).parent().find('input[name=micheck]').removeAttr('checked');
-								$(this).parent().find('input[name=seleccionado]').val("0");
-								//alert("no seleccionado");
-							}
-						});
-					});
-				}
-
-				var contar_seleccionados= function($tabla_roles){
-					var seleccionados=0;
-					$tabla_roles.find('input[name=micheck]').each(function(){
-						if(this.checked){
-							seleccionados = parseInt(seleccionados) + 1;
-						}
-					});
-
-					return seleccionados;
-				}
-
+				$cerrar_plugin.bind('click',function(){
+					var remove = function() { $(this).remove(); };
+					$('#forma-empleados-overlay').fadeOut(remove);
+					$buscar.trigger('click');
+				});
+				
 			}
 		}
 	}
