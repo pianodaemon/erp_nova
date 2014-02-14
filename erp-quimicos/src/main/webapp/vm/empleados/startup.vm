@@ -399,8 +399,8 @@
 												<td width="25"></td>
 												<td width="75"></td>
 												<td width="25"></td>
-												<td width="85"></td>
-												<td width="150"></td>
+												<td width="85">Generar&nbsp;Nomina</td>
+												<td width="150"><input type="checkbox" name="check_genera_nomina" value="true"></td>
 												<td width="25"></td>
 											</tr>
 											

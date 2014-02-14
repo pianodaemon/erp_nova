@@ -226,7 +226,7 @@ $(function() {
 					$('#forma-empleados-window').find('#botones').css({'width':'790px'});
 				}else{
 					$('#forma-empleados-window').find('#div_consignacion_grid').css({'display':'none'});
-					$('#forma-empleados-window').find('.empleados_div_one').css({'height':'370px'});
+					$('#forma-empleados-window').find('.empleados_div_one').css({'height':'380px'});
 					$('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
 					$('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
 					$('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
@@ -236,8 +236,7 @@ $(function() {
 
 			}
 			if(activeTab == '#tabx-2'){
-				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'290px'});
-				$('#forma-empleados-window').find('.empleados_div_three').css({'height':'270px'});
+				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'350px'});
 				$('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
@@ -245,8 +244,7 @@ $(function() {
 				$('#forma-empleados-window').find('#botones').css({'width':'790px'});
 			}
 			if(activeTab == '#tabx-3'){
-				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'240px'});
-				$('#forma-empleados-window').find('.empleados_div_three').css({'height':'220px'});
+				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'480px'});
 				$('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
@@ -254,8 +252,8 @@ $(function() {
 				$('#forma-empleados-window').find('#botones').css({'width':'790px'});
 			}
 			if(activeTab == '#tabx-4'){
-				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'460px'});
-				//$('#forma-empleados-window').find('.empleados_div_three').css({'height':'320px'});
+				//Pestaña ROLES
+				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'430px'});
 				$('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
@@ -263,8 +261,8 @@ $(function() {
 				$('#forma-empleados-window').find('#botones').css({'width':'790px'});
 			}
 			if(activeTab == '#tabx-5'){
-				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'255px'});
-				//$('#forma-empleados-window').find('.empleados_div_three').css({'height':'270px'});
+				//Pestaña ORGANIZACION
+				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'258px'});
 				$('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
@@ -551,6 +549,7 @@ $(function() {
 		var $salario_base=$('#forma-empleados-window').find('input[name=salario_base]');
 		var $salario_integrado=$('#forma-empleados-window').find('input[name=salario_integrado]');
 		var $reg_patronal=$('#forma-empleados-window').find('input[name=reg_patronal]');
+		var $check_genera_nomina = $('#forma-empleados-window').find('input[name=check_genera_nomina]');
 		var $div_percepciones = $('#forma-empleados-window').find('#div_percepciones');
 		var $div_deducciones = $('#forma-empleados-window').find('#div_deducciones');
 		
@@ -1154,6 +1153,7 @@ $(function() {
 				var $salario_base=$('#forma-empleados-window').find('input[name=salario_base]');
 				var $salario_integrado=$('#forma-empleados-window').find('input[name=salario_integrado]');
 				var $reg_patronal=$('#forma-empleados-window').find('input[name=reg_patronal]');
+				var $check_genera_nomina = $('#forma-empleados-window').find('input[name=check_genera_nomina]');
 				
 				var $div_percepciones = $('#forma-empleados-window').find('#div_percepciones');
 				var $div_deducciones = $('#forma-empleados-window').find('#div_deducciones');
@@ -1272,6 +1272,7 @@ $(function() {
 					$salario_integrado.attr({'value':entry['Empleados'][0]['salario_int']});
 					$reg_patronal.attr({'value':entry['Empleados'][0]['reg_patronal']});
 					$clabe.attr({'value':entry['Empleados'][0]['clabe']});
+					$check_genera_nomina.attr('checked',  (entry['Empleados'][0]['genera_nomina'] == 'true')? true:false);
 					
 					//Alimentando $select_tipo_comision
 					$select_tipo_comision.children().remove();
@@ -1642,7 +1643,7 @@ $(function() {
 						html_percep+='<table border="0" whidth="100%">';
 						$.each(entry['Percep'],function(entryIndex,data){
 							html_percep+='<tr>';
-								html_percep+='<td class="grid" width="25"><input type="checkbox" name="check_percep" value="'+data['id']+'"></td>';
+								html_percep+='<td class="grid" width="25"><input type="checkbox" name="check_percep" value="'+data['id']+'" '+data['seleccionado']+'></td>';
 								html_percep+='<td class="grid">'+data['titulo']+'</td>';
 							html_percep+='</tr>';
 						});
@@ -1654,7 +1655,7 @@ $(function() {
 						html_deduc+='<table border="0" whidth="100%">';
 						$.each(entry['Deduc'],function(entryIndex,data){
 							html_deduc+='<tr>';
-								html_deduc+='<td class="grid" width="25"><input type="checkbox" name="check_deduc" value="'+data['id']+'"></td>';
+								html_deduc+='<td class="grid" width="25"><input type="checkbox" name="check_deduc" value="'+data['id']+'" '+data['seleccionado']+'></td>';
 								html_deduc+='<td class="grid">'+data['titulo']+'</td>';
 							html_deduc+='</tr>';
 						});
