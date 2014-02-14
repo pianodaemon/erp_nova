@@ -168,21 +168,7 @@
                                                     <td width="150"><INPUT TYPE="text" name="f_nacimiento" style="width:150px;"></td>
                                                     <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fechanacimiento"></div></td>
                                                 </tr>
-                                                <tr>
-                                                    <td width="5" height="7" colspan="10">&nbsp;</td>
-                                                </tr>
-                                                <tr>
-                                                    <td width="25">No.&nbsp;IMSS</td>
-                                                    <td width="150"><INPUT TYPE="text" name="imss" style="width:150px;"></td>
-                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_imss"></div></td>
-                                                    <td width="85">Infonavit</td>
-                                                    <td width="150" colspan="2"><INPUT TYPE="text" name="infonavit" style="width:150px;"></td>
-                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_infonavit"></div></td>
-                                                    <td width="85">Fecha&nbsp;Ingreso</td>
-                                                    <td width="150"><INPUT TYPE="text" name="f_ingreso" style="width:150px;"></td>
-                                                    <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fechaingreso"></div></td>
-                                                </tr>
-                                                
+
                                                 
                                                 <tr>
                                                     <td width="5" height="7" colspan="10">&nbsp;</td>
@@ -331,12 +317,12 @@
                                     
                                     <!--NOMINA -->
                                     <div id="tabx-3" class="contenidoPes" >
-										<table border="1">
+										<table border="0">
 											<tr>
-												<td width="120" height="10">Regimen&nbsp;de&nbsp;contratacion</td>
+												<td width="120" height="10">Regimen&nbsp;de&nbsp;Contrataci&oacute;n</td>
 												<td width="150"><SELECT NAME="select_reg_contratacion" style="width:150px;"></SELECT></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_regimencontratacio"></div></td>
-												<td width="85" colspan="2">Tipo&nbsp;de&nbsp;contrato</td>
+												<td width="85" colspan="2">Tipo&nbsp;de&nbsp;Contrato</td>
 												<td width="100" colspan="2"><SELECT NAME="select_tipo_contrato" style="width:100px;"></SELECT></td>
 												<td width="25"></td>
 												<td width="85">Tipo&nbsp;de&nbsp;Jornada</td>
@@ -362,12 +348,12 @@
 												<td width="120" height="10">Periodicidad&nbsp;del&nbsp;Pago</td>
 												<td width="150"><SELECT NAME="select_preriodo_pago" style="width:150px;"></SELECT></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_periodicidadpago"></div></td>
-												<td width="85" colspan="2">CLAVE</td>
-												<td width="100" colspan="2"></td>
-												<td width="25"></td>
+												<td width="85" colspan="2">CLABE</td>
+												<td width="100" colspan="2"><INPUT TYPE="text" name="clabe" style="width:100px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_clabe"></div></td>
 												<td width="85">Banco</td>
 												<td width="150"><SELECT NAME="select_banco" style="width:150px;"></SELECT></td>
-												<td width="25"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_banco"></div></td>
 											</tr>
 											<tr>
 												<td height="10" colspan="11"></td>
@@ -375,14 +361,49 @@
 											<tr>
 												<td width="120" height="10">Riesgo&nbsp;de&nbsp;Puesto</td>
 												<td width="150"><SELECT NAME="select_riesgo_puesto" style="width:150px;"></SELECT></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_riesgopuesto"></div></td>
+												<td width="85" colspan="2">No.&nbsp;IMSS</td>
+												<td width="100" colspan="2"><INPUT TYPE="text" name="imss" style="width:100px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_imss"></div></td>
+												<td width="85">INFONAVIT</td>
+												<td width="150"><INPUT TYPE="text" name="infonavit" style="width:150px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_infonavit"></div></td>
+											</tr>
+											
+											<tr>
+												<td height="10" colspan="11"></td>
+											</tr>
+											
+											<tr>
+												<td width="120" height="10">Salario&nbsp;Base&nbsp;Cotizaci&oacute;n</td>
+												<td width="150"><INPUT TYPE="text" name="salario_base" style="width:150px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_salariobase"></div></td>
+												<td width="85" colspan="2">Fecha&nbsp;de&nbsp;Ingreso</td>
+												<td width="100" colspan="2"><INPUT TYPE="text" name="f_ingreso" style="width:100px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_fechaingreso"></div></td>
+												<td width="85">Registro&nbsp;Patronal</td>
+												<td width="150"><INPUT TYPE="text" name="reg_patronal" style="width:150px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_regpatronal"></div></td>
+											</tr>
+											<tr>
+												<td height="10" colspan="11"></td>
+											</tr>
+											
+											<tr>
+												<td width="120" height="10">Salario&nbsp;Diario&nbsp;Integrado</td>
+												<td width="150"><INPUT TYPE="text" name="salario_integrado" style="width:150px;"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_salariointegrado"></div></td>
+												<td width="60"></td>
+												
 												<td width="25"></td>
-												<td width="85" colspan="2"></td>
-												<td width="100" colspan="2"></td>
+												<td width="25"></td>
+												<td width="75"></td>
 												<td width="25"></td>
 												<td width="85"></td>
 												<td width="150"></td>
 												<td width="25"></td>
 											</tr>
+											
 											<tr>
 												<td width="120" height="10"></td>
 												<td width="150"></td>
@@ -400,21 +421,22 @@
 											</tr>
 											
 											<tr>
-												<td width="355" colspan="4"><strong>Asignar&nbsp;Percepciones</strong></td>
+												<td width="355" colspan="4"><strong>Seleccionar&nbsp;Percepciones</strong></td>
 												<td width="25"></td>
 												<td width="25"></td>
-												<td width="335" colspan="4"><strong>Asignar&nbsp;Deducciones</strong></td>
+												<td width="335" colspan="4"><strong>Seleccionar&nbsp;Deducciones</strong></td>
 												<td width="25"></td>
 											</tr>
+											
 											<tr>
 												<td width="355" colspan="4">
-													<div id="percepciones" style="border:1px solid #81BEF7; height:170px; overflow:scroll; overflow-x:auto; overflow-y:auto; width:355px; "></div>
+													<div id="div_percepciones" style="border:1px solid #81BEF7; height:170px; overflow:scroll; overflow-x:auto; overflow-y:auto; width:355px; "></div>
 												</td>
-												<td width="50" colspan="2"></td>
+												<td width="50" colspan="2"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_percep"></div></td>
 												<td width="335" colspan="4">
-													<div id="deducciones" style="border:1px solid #81BEF7; height:170px; overflow:scroll; overflow-x:auto; overflow-y:auto;width:335px; "></div>
+													<div id="div_deducciones" style="border:1px solid #81BEF7; height:170px; overflow:scroll; overflow-x:auto; overflow-y:auto;width:335px; "></div>
 												</td>
-												<td width="25"></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_deduc"></div></td>
 											</tr>
 										</table>
 										
@@ -427,11 +449,6 @@
                                     <!--LOGIN Y ROLES-->
                                     <div id="tabx-4" class="contenidoPes" >
                                             <table border="0">
-
-                                                    <tr>
-                                                        <td width="5" height="9" colspan="11">&nbsp;</td>
-                                                    </tr>
-
                                                     <tr>
                                                         <td width="5" height="9" colspan="11">&nbsp;</td>
                                                     </tr>
@@ -447,18 +464,16 @@
                                                         <td width="55"><INPUT TYPE="password" name="password" style="width:150px;"></td>
                                                         <td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_password"></div></td>
 
-                                                        <td width="100">Verifica Password</td>
+                                                        <td width="100">Verifica&nbsp;Password</td>
                                                         <td width="5"></td>
                                                         <td ><INPUT TYPE="password" name="verifica_pass" style="width:100px;"></td>
                                                         <td width="45"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_verificapass"></div></td>
                                                         <td width="5"></td>
                                                         <td ></td>
-
                                                     </tr>
                                                      <tr>
                                                         <td width="5" height="7" colspan="11">&nbsp;</td>
                                                     </tr>
-
                                                     <tr>
                                                         <td width="5"></td>
                                                         <td width="1"></td>
@@ -471,28 +486,7 @@
                                                         <td ></td>
                                                         <td ></td>
                                                         <td ></td>
-
                                                     </tr>
-                                                    <tr>
-                                                        <td width="5" height="7" colspan="11">&nbsp;</td>
-                                                    </tr>
-                                                    <tr>
-
-                                                    <tr>
-                                                        <td width="5"></td>
-                                                        <td width="1"></td>
-                                                        <td width="5"></td>
-                                                        <td ></td>
-                                                        <td width="45"></td>
-                                                        <td width="5"></td>
-                                                        <td ></td>
-                                                        <td></td>
-                                                        <td ></td>
-                                                        <td ></td>
-                                                        <td ></td>
-
-                                                    </tr>
-
                                                     <tr>
                                                         <td width="5" height="7" colspan="11">&nbsp;</td>
                                                     </tr>
@@ -500,23 +494,16 @@
                                                         <td width="5"></td>
                                                         <td width="2"></td>
                                                         <td width="5"></td>
-                                                        <td><h4>Roles Disponibles</h4></td>
+                                                        <td><strong>Roles&nbsp;Disponibles</strong></td>
                                                         <td width="45"></td>
                                                         <td width="5"></td>
                                                         <td width="55"></td>
                                                         <td width="5"></td>
                                                         <td width="55"></td>
                                                         <td width="25"></td>
-                                                        <td width="55" colspan="3" align="center"><h4>Permitir acceso al sistema</h4></td>
-                                                        <td><SELECT NAME="permite" style="width:50;">
-                                                            <!--<option value="0">SI</option>
-                                                            <option value="1">NO</option>-->
-                                                        </SELECT></td>
+                                                        <td width="55" colspan="3" align="center"><h4>Permitir&nbsp;acceso&nbsp;al&nbsp;sistema</h4></td>
+                                                        <td><SELECT NAME="permite" style="width:50;"></SELECT></td>
                                                         <td></td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="5" height="7" colspan="11">&nbsp;</td>
                                                     </tr>
                                                     <tr>
                                                         <td width="5"></td>
