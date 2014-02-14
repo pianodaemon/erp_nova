@@ -967,64 +967,76 @@ public class GralSpringDao implements GralInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getEmpleados_Datos(Integer id) {
 
-        String sql_query = "SELECT gral_empleados.id as empleado_id, "
-                            +"gral_empleados.clave, "
-                            +"gral_empleados.nombre_pila, "
-                            +"gral_empleados.apellido_paterno, "
-                            +"gral_empleados.apellido_materno, "
-                            +"gral_empleados.imss, "
-                            +"gral_empleados.infonavit, "
-                            +"gral_empleados.curp, "
-                            +"gral_empleados.rfc, "
-                            +"to_char(gral_empleados.fecha_nacimiento,'yyyy-mm-dd')as fecha_nacimiento, "
-                            +"to_char(gral_empleados.fecha_ingreso,'yyyy-mm-dd') as fecha_ingreso, "
-                            +"gral_empleados.gral_escolaridad_id, "
-                            +"gral_empleados.gral_sexo_id, "
-                            +"gral_empleados.gral_civil_id, "
-                            +"gral_empleados.gral_religion_id, "
-                            +"gral_empleados.gral_sangretipo_id, "
-                            +"gral_empleados.gral_puesto_id, "
-                            +"gral_empleados.gral_suc_id_empleado, "
-                            +"gral_empleados.gral_categ_id, "
-                            +"gral_empleados.telefono, "
-                            +"gral_empleados.telefono_movil, "
-                            +"gral_empleados.correo_personal, "
-                            +"gral_empleados.gral_pais_id, "
-                            +"gral_empleados.gral_edo_id, "
-                            +"gral_empleados.gral_mun_id, "
-                            +"gral_empleados.calle, "
-                            +"gral_empleados.numero, "
-                            +"gral_empleados.colonia, "
-                            +"gral_empleados.cp, "
-                            +"gral_empleados.contacto_emergencia, "
-                            +"gral_empleados.telefono_emergencia, "
-                            +"gral_empleados.enfermedades, "
-                            +"gral_empleados.alergias, "
-                            +"gral_empleados.comentarios, "
-                            +"(CASE WHEN gral_usr.username IS NULL THEN '' ELSE gral_usr.username END) AS username,"
-                            +"(CASE WHEN gral_usr.password IS NULL THEN '' ELSE gral_usr.password END) AS password,"
-                            +"gral_usr.enabled, "
-                            +"gral_usr.id as id_usuario, "
-                            +"gral_empleados.comision_agen, "
-                            +"gral_empleados.region_id_agen, "
-                            +"gral_empleados.comision2_agen, "
-                            +"gral_empleados.comision3_agen, "
-                            +"gral_empleados.comision4_agen, "
-                            +"gral_empleados.dias_tope_comision, "
-                            +"gral_empleados.dias_tope_comision2, "
-                            +"gral_empleados.dias_tope_comision3, "
-                            +"gral_empleados.monto_tope_comision, "
-                            +"gral_empleados.monto_tope_comision2, "
-                            +"gral_empleados.monto_tope_comision3, "
-                            +"gral_empleados.tipo_comision,"
-                            + "gral_empleados.correo_empresa "
-                            +"FROM gral_empleados "
-                            +"LEFT JOIN  gral_usr on gral_usr.gral_empleados_id=gral_empleados.id "
-                            +"WHERE gral_empleados.borrado_logico=false AND gral_empleados.id=?;";
-        
+        String sql_query = ""
+            + "SELECT gral_empleados.id as empleado_id, "
+                +"gral_empleados.clave, "
+                +"gral_empleados.nombre_pila, "
+                +"gral_empleados.apellido_paterno, "
+                +"gral_empleados.apellido_materno, "
+                +"gral_empleados.imss, "
+                +"gral_empleados.infonavit, "
+                +"gral_empleados.curp, "
+                +"gral_empleados.rfc, "
+                +"to_char(gral_empleados.fecha_nacimiento,'yyyy-mm-dd')as fecha_nacimiento, "
+                +"to_char(gral_empleados.fecha_ingreso,'yyyy-mm-dd') as fecha_ingreso, "
+                +"gral_empleados.gral_escolaridad_id, "
+                +"gral_empleados.gral_sexo_id, "
+                +"gral_empleados.gral_civil_id, "
+                +"gral_empleados.gral_religion_id, "
+                +"gral_empleados.gral_sangretipo_id, "
+                +"gral_empleados.gral_puesto_id, "
+                +"gral_empleados.gral_suc_id_empleado, "
+                +"gral_empleados.gral_categ_id, "
+                +"gral_empleados.telefono, "
+                +"gral_empleados.telefono_movil, "
+                +"gral_empleados.correo_personal, "
+                +"gral_empleados.gral_pais_id, "
+                +"gral_empleados.gral_edo_id, "
+                +"gral_empleados.gral_mun_id, "
+                +"gral_empleados.calle, "
+                +"gral_empleados.numero, "
+                +"gral_empleados.colonia, "
+                +"gral_empleados.cp, "
+                +"gral_empleados.contacto_emergencia, "
+                +"gral_empleados.telefono_emergencia, "
+                +"gral_empleados.enfermedades, "
+                +"gral_empleados.alergias, "
+                +"gral_empleados.comentarios, "
+                +"(CASE WHEN gral_usr.username IS NULL THEN '' ELSE gral_usr.username END) AS username,"
+                +"(CASE WHEN gral_usr.password IS NULL THEN '' ELSE gral_usr.password END) AS password,"
+                +"gral_usr.enabled, "
+                +"gral_usr.id as id_usuario, "
+                +"gral_empleados.comision_agen, "
+                +"gral_empleados.region_id_agen, "
+                +"gral_empleados.comision2_agen, "
+                +"gral_empleados.comision3_agen, "
+                +"gral_empleados.comision4_agen, "
+                +"gral_empleados.dias_tope_comision, "
+                +"gral_empleados.dias_tope_comision2, "
+                +"gral_empleados.dias_tope_comision3, "
+                +"gral_empleados.monto_tope_comision, "
+                +"gral_empleados.monto_tope_comision2, "
+                +"gral_empleados.monto_tope_comision3, "
+                +"gral_empleados.tipo_comision,"
+                +"gral_empleados.correo_empresa, "
+                +"gral_empleados.no_int, "
+                +"gral_empleados.nom_regimen_contratacion_id AS regimen_id, "
+                +"gral_empleados.nom_periodicidad_pago_id AS periodo_pago_id, "
+                +"gral_empleados.nom_riesgo_puesto_id AS riesgo_id, "
+                +"gral_empleados.nom_tipo_contrato_id AS tipo_contrato_id, "
+                +"gral_empleados.nom_tipo_jornada_id AS tipo_jornada_id, "
+                +"gral_empleados.tes_ban_id AS banco_id, "
+                +"gral_empleados.clabe,"
+                +"gral_empleados.salario_base,"
+                +"gral_empleados.salario_integrado AS salario_int, "
+                +"gral_empleados.registro_patronal AS reg_patronal "
+            +"FROM gral_empleados "
+            +"LEFT JOIN  gral_usr on gral_usr.gral_empleados_id=gral_empleados.id "
+            +"WHERE gral_empleados.borrado_logico=false AND gral_empleados.id=?;";
+          
         System.out.println("Ejecutando query getEmpleado:"+ sql_query);
         System.out.println("Obteniendo datos del empleado: "+id);
-
+        
         ArrayList<HashMap<String, Object>> empleado = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
             new Object[]{new Integer(id)}, new RowMapper() {
@@ -1082,6 +1094,19 @@ public class GralSpringDao implements GralInterfaceDao{
                     row.put("monto_tope_comision3",StringHelper.roundDouble(rs.getDouble("monto_tope_comision3"),2));
                     row.put("tipo_comision",rs.getInt("tipo_comision"));
                     row.put("correo_empresa",rs.getString("correo_empresa"));
+                    
+                    row.put("no_int",rs.getString("no_int"));
+                    row.put("regimen_id",String.valueOf(rs.getInt("regimen_id")));
+                    row.put("periodo_pago_id",String.valueOf(rs.getInt("periodo_pago_id")));
+                    row.put("riesgo_id",String.valueOf(rs.getInt("riesgo_id")));
+                    row.put("tipo_contrato_id",String.valueOf(rs.getInt("tipo_contrato_id")));
+                    row.put("tipo_jornada_id",String.valueOf(rs.getInt("tipo_jornada_id")));
+                    row.put("banco_id",String.valueOf(rs.getInt("banco_id")));
+                    row.put("clabe",rs.getString("clabe"));
+                    row.put("salario_base",StringHelper.roundDouble(rs.getDouble("salario_base"),2));
+                    row.put("salario_int",StringHelper.roundDouble(rs.getDouble("salario_int"),2));
+                    row.put("reg_patronal",rs.getString("reg_patronal"));
+                        
                     return row;
                 }
             }
@@ -1351,19 +1376,21 @@ public class GralSpringDao implements GralInterfaceDao{
         );
         return roles;
     }
-     //obtiene los roles de los empleados
+    
+    
+     //Obtiene los roles de los empleados
     @Override
     public ArrayList<HashMap<String, Object>> getRolsEdit(Integer id_usuario) {
-        String sql_to_query = "SELECT gral_rol.id, "
-                                        +"gral_rol.titulo, "
-                                        +"(CASE WHEN sbt.gral_rol_id IS NOT NULL THEN 'checked' ELSE '' END) AS checkeado, "
-                                        +"(CASE WHEN sbt.gral_rol_id IS NOT NULL THEN '1' ELSE '0' END) AS seleccionado "
-                                +"FROM gral_rol "
-                                +"LEFT JOIN (SELECT  DISTINCT gral_rol_id FROM gral_usr_rol WHERE gral_usr_id="+id_usuario+") AS sbt ON sbt.gral_rol_id=gral_rol.id "
-                                +"ORDER BY gral_rol.titulo ";
-
-
-
+        String sql_to_query = ""
+        + "SELECT gral_rol.id, "
+            +"gral_rol.titulo, "
+            +"(CASE WHEN sbt.gral_rol_id IS NOT NULL THEN 'checked' ELSE '' END) AS checkeado, "
+            +"(CASE WHEN sbt.gral_rol_id IS NOT NULL THEN '1' ELSE '0' END) AS seleccionado "
+        +"FROM gral_rol "
+        +"LEFT JOIN (SELECT  DISTINCT gral_rol_id FROM gral_usr_rol WHERE gral_usr_id="+id_usuario+") AS sbt ON sbt.gral_rol_id=gral_rol.id "
+        +"ORDER BY gral_rol.titulo ";
+        
+        
         ArrayList<HashMap<String, Object>> roles = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -1559,7 +1586,8 @@ public class GralSpringDao implements GralInterfaceDao{
     //Obtiene todas las Percepciones disponibles
     @Override
     public ArrayList<HashMap<String, Object>> getEmpleados_Percepciones(Integer idEmp) {
-        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM nom_percep WHERE gral_emp_id=? AND activo=true AND borrado_logico=false ORDER BY titulo;";
+        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM nom_percep WHERE gral_emp_id=? AND activo=true AND borrado_logico=false ORDER BY id;";
+        System.out.println("QueryPercepciones: "+sql_to_query);
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer (idEmp)},new RowMapper(){
@@ -1579,7 +1607,8 @@ public class GralSpringDao implements GralInterfaceDao{
     //Obtiene todas las Deducciones disponibles
     @Override
     public ArrayList<HashMap<String, Object>> getEmpleados_Deducciones(Integer idEmp) {
-        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM nom_deduc WHERE gral_emp_id=? AND activo=true AND borrado_logico=false ORDER BY titulo;";
+        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM nom_deduc WHERE gral_emp_id=? AND activo=true AND borrado_logico=false ORDER BY id;";
+        System.out.println("QueryDeducciones: "+sql_to_query);
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer (idEmp)},new RowMapper(){

@@ -164,7 +164,7 @@ public class EmpleadosController {
         ArrayList<HashMap<String, Object>> paises = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> entidades = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> localidades = new ArrayList<HashMap<String, Object>>();
-        ArrayList<HashMap<String, Object>> datoscliente = new ArrayList<HashMap<String, Object>>();
+        ArrayList<HashMap<String, Object>> datosEmpleado = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> escolaridad = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> genero = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> civil = new ArrayList<HashMap<String, Object>>();
@@ -194,11 +194,11 @@ public class EmpleadosController {
         String incluye_nomina = userDat.get("incluye_nomina");
         
         if( id != 0  ){
-            datoscliente = this.getGralDao().getEmpleados_Datos(id);
-            entidades = this.getGralDao().getEntidadesForThisPais(datoscliente.get(0).get("gral_pais_id").toString());
-            localidades = this.getGralDao().getLocalidadesForThisEntidad(datoscliente.get(0).get("gral_pais_id").toString(), datoscliente.get(0).get("gral_edo_id").toString());
-            categoria=this.getGralDao().getPuestoForCategoria(datoscliente.get(0).get("gral_puesto_id").toString());
-            rols_edit=this.getGralDao().getRolsEdit(Integer.parseInt(datoscliente.get(0).get("id_usuario").toString()));
+            datosEmpleado = this.getGralDao().getEmpleados_Datos(id);
+            entidades = this.getGralDao().getEntidadesForThisPais(datosEmpleado.get(0).get("gral_pais_id").toString());
+            localidades = this.getGralDao().getLocalidadesForThisEntidad(datosEmpleado.get(0).get("gral_pais_id").toString(), datosEmpleado.get(0).get("gral_edo_id").toString());
+            categoria=this.getGralDao().getPuestoForCategoria(datosEmpleado.get(0).get("gral_puesto_id").toString());
+            rols_edit=this.getGralDao().getRolsEdit(Integer.parseInt(datosEmpleado.get(0).get("id_usuario").toString()));
         }
 
         //valorIva= this.getCdao().getValoriva();
@@ -216,7 +216,7 @@ public class EmpleadosController {
         roles=this.getGralDao().getRoles();
         region=this.getGralDao().getRegion();
         
-        jsonretorno.put("Empleados", datoscliente);
+        jsonretorno.put("Empleados", datosEmpleado);
         jsonretorno.put("Paises", paises);
         jsonretorno.put("Entidades", entidades);
         jsonretorno.put("Localidades", localidades);
@@ -237,7 +237,7 @@ public class EmpleadosController {
         jsonretorno.put("TipoJ",this.getGralDao().getEmpleados_TiposJornada());
         jsonretorno.put("PPago",this.getGralDao().getEmpleados_PeriodicidadPago());
         jsonretorno.put("Riesgos",this.getGralDao().getEmpleados_RiesgosPuesto());
-        jsonretorno.put("Deduc",this.getGralDao().getEmpleados_Bancos(id_empresa));
+        jsonretorno.put("Bancos",this.getGralDao().getEmpleados_Bancos(id_empresa));
         jsonretorno.put("Percep",this.getGralDao().getEmpleados_Percepciones(id_empresa));
         jsonretorno.put("Deduc",this.getGralDao().getEmpleados_Deducciones(id_empresa));
         
@@ -289,7 +289,9 @@ public class EmpleadosController {
 
         return jsonretorno;
     }
-
+    
+    
+    /*
    //obtiene los roles de empleados
     @RequestMapping(method=RequestMethod.POST,value="/getRoles.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String,Object>>>getRolesJson(
@@ -301,10 +303,9 @@ public class EmpleadosController {
         //HashMap<String, String> userDat = new HashMap<String, String>();
        // Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         jsonretorno.put("Roles",this.getGralDao().getRoles());
-
         return jsonretorno;
     }
-
+     */
 
 
     //crear y editar un cliente
@@ -332,7 +333,7 @@ public class EmpleadosController {
             @RequestParam(value="estado", required=true) String estado,
             @RequestParam(value="municipio", required=true) String municipio,
             @RequestParam(value="calle", required=true) String calle,
-            @RequestParam(value="numero", required=true) String numero,
+            @RequestParam(value="numero_ext", required=true) String numero,
             @RequestParam(value="colonia", required=true) String colonia,
             @RequestParam(value="cp", required=true) String cp,
             @RequestParam(value="contacto", required=true) String contacto,
@@ -363,6 +364,22 @@ public class EmpleadosController {
             @RequestParam(value="monto_comision3",required=true)String monto_comision_agen3,
             @RequestParam(value="region",required=true)String region_agen,
             @RequestParam(value="correo_institucional",required=true)String correo_institucional,
+            
+            @RequestParam(value="numero_int",required=true)String numero_int,
+            @RequestParam(value="select_reg_contratacion",required=true)String select_reg_contratacion,
+            @RequestParam(value="select_tipo_contrato",required=true)String select_tipo_contrato,
+            @RequestParam(value="select_tipo_jornada",required=true)String select_tipo_jornada,
+            @RequestParam(value="select_preriodo_pago",required=true)String select_preriodo_pago,
+            @RequestParam(value="clabe",required=true)String clabe,
+            @RequestParam(value="select_banco",required=true)String select_banco,
+            @RequestParam(value="select_riesgo_puesto",required=true)String select_riesgo_puesto,
+            @RequestParam(value="salario_base",required=true)String salario_base,
+            @RequestParam(value="salario_integrado",required=true)String salario_integrado,
+            @RequestParam(value="reg_patronal",required=true)String reg_patronal,
+            
+            @RequestParam(value="check_percep",required=false)String[] check_percep,
+            @RequestParam(value="check_deduc",required=false)String[] check_deduc,
+            
             Model model,@ModelAttribute("user") UserSessionData user
         ) {
             HashMap<String, String> jsonretorno = new HashMap<String, String>();
@@ -374,6 +391,8 @@ public class EmpleadosController {
             String extra_data_array ="";
             String actualizo = "0";
             int contador=0;
+            String percepciones="";
+            String deducciones="";
             
             for (int i=0; i<seleccionado.length; i++){
                 if(seleccionado[i].equals("1")){
@@ -381,16 +400,49 @@ public class EmpleadosController {
                 }
             }
             
-            arreglo = new String[contador];
-            int contador2=0;
-            for(int i=0;i<seleccionado.length;i++){
-                if(seleccionado[i].equals("1")){
-                    arreglo[contador2]="'"+id_rols[i]+"'";
-                    contador2++;
+            if(contador>0){
+                arreglo = new String[contador];
+                int contador2=0;
+                for(int i=0;i<seleccionado.length;i++){
+                    if(seleccionado[i].equals("1")){
+                        arreglo[contador2]="'"+id_rols[i]+"'";
+                        contador2++;
+                    }
+                }
+                //Serializar el arreglo
+                extra_data_array = StringUtils.join(arreglo, ",");
+            }else{
+                extra_data_array = "'sin_datos'";
+            }
+            
+            
+            //System.out.println("select_incoterms: "+select_incoterms);
+            int primerPercep = 0;
+            if(check_percep != null){
+                for(int i=0; i<check_percep.length; i++) { 
+                    if(primerPercep==0){
+                        percepciones = check_percep[i];
+                    }else{
+                        percepciones += ","+check_percep[i];
+                    }
+                    primerPercep++;
                 }
             }
-            //serializar el arreglo
-            extra_data_array = StringUtils.join(arreglo, ",");
+            
+            
+            int primerDeduc = 0;
+            if(check_percep != null){
+                for(int i=0; i<check_deduc.length; i++) { 
+                    if(primerDeduc==0){
+                        deducciones = check_deduc[i];
+                    }else{
+                        deducciones += ","+check_deduc[i];
+                    }
+                    primerDeduc++;
+                }
+            }
+            
+            
             
             if( id_empleado == 0 ){
                 command_selected = "new";
@@ -462,7 +514,20 @@ public class EmpleadosController {
             +"___"+monto_comision_agen//50
             +"___"+monto_comision_agen2//51
             +"___"+monto_comision_agen3//52
-            +"___"+correo_institucional;//53
+            +"___"+correo_institucional//53
+            +"___"+numero_int//54
+            +"___"+select_reg_contratacion//55
+            +"___"+select_tipo_contrato//56
+            +"___"+select_tipo_jornada //57
+            +"___"+select_preriodo_pago //58
+            +"___"+select_banco//59
+            +"___"+select_riesgo_puesto//60
+            +"___"+salario_base//61
+            +"___"+salario_integrado//62
+            +"___"+reg_patronal//63
+            +"___"+clabe//64
+            +"___"+percepciones//65
+            +"___"+deducciones;//66
             
             System.out.println("data_string: "+data_string);
 
