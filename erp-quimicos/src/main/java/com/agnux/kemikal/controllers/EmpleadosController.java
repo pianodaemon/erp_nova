@@ -200,10 +200,18 @@ public class EmpleadosController {
             categoria=this.getGralDao().getPuestoForCategoria(datosEmpleado.get(0).get("gral_puesto_id").toString());
             rols_edit=this.getGralDao().getRolsEdit(Integer.parseInt(datosEmpleado.get(0).get("id_usuario").toString()));
         }
-
-        //valorIva= this.getCdao().getValoriva();
         
-        //monedas = this.getGralDao().getMonedas();
+        if(incluye_nomina.toLowerCase().equals("true")){
+            regimen_contratacion=this.getGralDao().getEmpleados_RegimenContratacion();
+            tipo_contrato=this.getGralDao().getEmpleados_TiposContrato();
+            tipo_jornada=this.getGralDao().getEmpleados_TiposJornada();
+            periodicidad_pago=this.getGralDao().getEmpleados_PeriodicidadPago();
+            riesgo_puesto=this.getGralDao().getEmpleados_RiesgosPuesto();
+            bancos=this.getGralDao().getEmpleados_Bancos(id_empresa);
+            percepciones=this.getGralDao().getEmpleados_Percepciones(id, id_empresa);
+            deducciones=this.getGralDao().getEmpleados_Deducciones(id, id_empresa);
+        }
+        
         
         paises = this.getGralDao().getPaises();
         escolaridad=this.getGralDao().getEscolaridad(id_empresa);
@@ -230,16 +238,15 @@ public class EmpleadosController {
         jsonretorno.put("Roles",roles);
         jsonretorno.put("Sucursal",sucursal);
         jsonretorno.put("RolsEdit",rols_edit);
-        jsonretorno.put("Region",region);
-        
-        jsonretorno.put("RegC",this.getGralDao().getEmpleados_RegimenContratacion());
-        jsonretorno.put("TipoC",this.getGralDao().getEmpleados_TiposContrato());
-        jsonretorno.put("TipoJ",this.getGralDao().getEmpleados_TiposJornada());
-        jsonretorno.put("PPago",this.getGralDao().getEmpleados_PeriodicidadPago());
-        jsonretorno.put("Riesgos",this.getGralDao().getEmpleados_RiesgosPuesto());
-        jsonretorno.put("Bancos",this.getGralDao().getEmpleados_Bancos(id_empresa));
-        jsonretorno.put("Percep",this.getGralDao().getEmpleados_Percepciones(id_empresa));
-        jsonretorno.put("Deduc",this.getGralDao().getEmpleados_Deducciones(id_empresa));
+        jsonretorno.put("Region",region);        
+        jsonretorno.put("RegC",regimen_contratacion);
+        jsonretorno.put("TipoC",tipo_contrato);
+        jsonretorno.put("TipoJ",tipo_jornada);
+        jsonretorno.put("PPago",periodicidad_pago);
+        jsonretorno.put("Riesgos",riesgo_puesto);
+        jsonretorno.put("Bancos",bancos);
+        jsonretorno.put("Percep",percepciones);
+        jsonretorno.put("Deduc",deducciones);
         
         return jsonretorno;
     }
@@ -376,6 +383,7 @@ public class EmpleadosController {
             @RequestParam(value="salario_base",required=true)String salario_base,
             @RequestParam(value="salario_integrado",required=true)String salario_integrado,
             @RequestParam(value="reg_patronal",required=true)String reg_patronal,
+            @RequestParam(value="check_genera_nomina",required=false)String check_genera_nomina,
             
             @RequestParam(value="check_percep",required=false)String[] check_percep,
             @RequestParam(value="check_deduc",required=false)String[] check_deduc,
@@ -461,6 +469,11 @@ public class EmpleadosController {
             monto_comision_agen2 = StringHelper.removerComas(monto_comision_agen2);
             monto_comision_agen3 = StringHelper.removerComas(monto_comision_agen3);
             
+            if(check_genera_nomina == null || !check_genera_nomina.equals("true")){
+                check_genera_nomina = "false";
+            }
+            
+            
             String data_string =
             app_selected //1
             +"___"+command_selected//2
@@ -527,7 +540,8 @@ public class EmpleadosController {
             +"___"+reg_patronal//63
             +"___"+clabe//64
             +"___"+percepciones//65
-            +"___"+deducciones;//66
+            +"___"+deducciones//66
+            +"___"+check_genera_nomina;//67
             
             System.out.println("data_string: "+data_string);
 

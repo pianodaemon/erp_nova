@@ -151,8 +151,8 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String,Object>>getEmpleados_PeriodicidadPago();
     public ArrayList<HashMap<String,Object>>getEmpleados_RiesgosPuesto();
     public ArrayList<HashMap<String,Object>>getEmpleados_Bancos(Integer idEmp);
-    public ArrayList<HashMap<String,Object>>getEmpleados_Percepciones(Integer idEmp);
-    public ArrayList<HashMap<String,Object>>getEmpleados_Deducciones(Integer idEmp);
+    public ArrayList<HashMap<String,Object>>getEmpleados_Percepciones(Integer IdEmpleado, Integer idEmpresa);
+    public ArrayList<HashMap<String,Object>>getEmpleados_Deducciones(Integer IdEmpleado, Integer idEmpresa);
     
     
     

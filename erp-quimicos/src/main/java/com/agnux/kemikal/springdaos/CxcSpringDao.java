@@ -2015,7 +2015,7 @@ public class CxcSpringDao implements CxcInterfaceDao{
                 + "  order by nombre_agente asc,moneda_factura, numero_dias_pago asc "//order by nombre_agente asc,moneda_factura, serie_folio asc
               +")AS sbt order by sbt.numero_agente asc, sbt.moneda_factura asc";
 
-
+        
 	 System.out.println("DatosReporteCobranzaAgente:: "+sql_to_query);
         ArrayList<HashMap<String, String>> hm_cobranza_agente = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,

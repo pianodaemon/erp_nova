@@ -1029,7 +1029,8 @@ public class GralSpringDao implements GralInterfaceDao{
                 +"gral_empleados.clabe,"
                 +"gral_empleados.salario_base,"
                 +"gral_empleados.salario_integrado AS salario_int, "
-                +"gral_empleados.registro_patronal AS reg_patronal "
+                +"gral_empleados.registro_patronal AS reg_patronal,"
+                +"gral_empleados.genera_nomina "
             +"FROM gral_empleados "
             +"LEFT JOIN  gral_usr on gral_usr.gral_empleados_id=gral_empleados.id "
             +"WHERE gral_empleados.borrado_logico=false AND gral_empleados.id=?;";
@@ -1106,7 +1107,8 @@ public class GralSpringDao implements GralInterfaceDao{
                     row.put("salario_base",StringHelper.roundDouble(rs.getDouble("salario_base"),2));
                     row.put("salario_int",StringHelper.roundDouble(rs.getDouble("salario_int"),2));
                     row.put("reg_patronal",rs.getString("reg_patronal"));
-                        
+                    row.put("genera_nomina",String.valueOf(rs.getBoolean("genera_nomina")));
+                    
                     return row;
                 }
             }
@@ -1585,17 +1587,23 @@ public class GralSpringDao implements GralInterfaceDao{
     
     //Obtiene todas las Percepciones disponibles
     @Override
-    public ArrayList<HashMap<String, Object>> getEmpleados_Percepciones(Integer idEmp) {
-        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM nom_percep WHERE gral_emp_id=? AND activo=true AND borrado_logico=false ORDER BY id;";
+    public ArrayList<HashMap<String, Object>> getEmpleados_Percepciones(Integer IdEmpleado, Integer idEmpresa) {
+        String sql_to_query=""
+        + "SELECT nom_percep.id, (case when nom_percep.clave is null then '' else (case when nom_percep.clave<>'' then nom_percep.clave||' ' else '' end) end)||nom_percep.titulo AS titulo, (CASE WHEN gral_empleado_percep.nom_percep_id IS NULL THEN '' ELSE 'checked' END) as seleccionado "
+        + "FROM nom_percep "
+        + "LEFT JOIN gral_empleado_percep ON (gral_empleado_percep.nom_percep_id=nom_percep.id AND gral_empleado_percep.gral_empleado_id=?) "
+        + "WHERE nom_percep.gral_emp_id=? AND nom_percep.activo=true AND nom_percep.borrado_logico=false ORDER BY nom_percep.id;";
+        
         System.out.println("QueryPercepciones: "+sql_to_query);
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new Integer (idEmp)},new RowMapper(){
+            new Object[]{new Integer (IdEmpleado), new Integer (idEmpresa)},new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
                  HashMap<String,Object>row=new HashMap<String,Object>();
                  row.put("id",rs.getString("id"));
                  row.put("titulo",rs.getString("titulo"));
+                 row.put("seleccionado",rs.getString("seleccionado"));
                  return row;
                 }
             }
@@ -1606,17 +1614,23 @@ public class GralSpringDao implements GralInterfaceDao{
     
     //Obtiene todas las Deducciones disponibles
     @Override
-    public ArrayList<HashMap<String, Object>> getEmpleados_Deducciones(Integer idEmp) {
-        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM nom_deduc WHERE gral_emp_id=? AND activo=true AND borrado_logico=false ORDER BY id;";
+    public ArrayList<HashMap<String, Object>> getEmpleados_Deducciones(Integer IdEmpleado, Integer idEmpresa) {
+        String sql_to_query=""
+        + "SELECT nom_deduc.id, (case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||nom_deduc.titulo AS titulo, (CASE WHEN gral_empleado_deduc.nom_deduc_id IS NULL THEN '' ELSE 'checked' END) as seleccionado "
+        + "FROM nom_deduc "
+        + "LEFT JOIN gral_empleado_deduc ON (gral_empleado_deduc.nom_deduc_id=nom_deduc.id AND gral_empleado_deduc.gral_empleado_id=?)"
+        + "WHERE nom_deduc.gral_emp_id=? AND nom_deduc.activo=true AND nom_deduc.borrado_logico=false ORDER BY nom_deduc.id;";
+        
         System.out.println("QueryDeducciones: "+sql_to_query);
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new Integer (idEmp)},new RowMapper(){
+            new Object[]{new Integer (IdEmpleado), new Integer (idEmpresa)},new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
                  HashMap<String,Object>row=new HashMap<String,Object>();
                  row.put("id",rs.getString("id"));
                  row.put("titulo",rs.getString("titulo"));
+                 row.put("seleccionado",rs.getString("seleccionado"));
                  return row;
                 }
             }
