@@ -631,9 +631,9 @@
 											</li>
 										</ul>
 									</li>
-
-
-
+									
+									
+									
 									
 									<li class="accessible" >
 										<a href="http://jdsharp.us" class="accessible">Envasado &raquo;</a>
@@ -677,6 +677,9 @@
 													<li><a href="../graldeptos/startup.agnux">Departamentos</a></li>
 													<li><a href="../graldeptosturnos/startup.agnux">Turnos</a></li>
 													<li><a href="../gralieps/startup.agnux">IEPS</a></li>
+													
+													<li><a href="../gralpercepciones/startup.agnux">Percepciones</a></li>
+													<li><a href="../graldeducciones/startup.agnux">Deduciones</a></li>
 												</ul>
 											</li>
 
