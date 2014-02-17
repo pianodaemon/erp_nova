@@ -2534,4 +2534,163 @@ public class GralSpringDao implements GralInterfaceDao{
     }
     
     
+    
+    //Métodos para el Catalogo de Percepciones
+    @Override
+    public ArrayList<HashMap<String, Object>> getPercepciones_Datos(Integer id) {
+
+
+        String sql_to_query = "SELECT id,clave, titulo as percepcion, activo as estado,nom_percep_tipo_id as tipo_percep FROM nom_percep WHERE id="+id;
+            ArrayList<HashMap<String, Object>> dato_puesto = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+          
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("clave",rs.getString("clave"));
+                    row.put("percepcion",rs.getString("percepcion"));
+                    row.put("estado",String.valueOf(rs.getBoolean("estado")));
+                    row.put("tipo_percep",String.valueOf(rs.getInt("tipo_percep")));
+                    
+                    return row;
+                }
+            }
+        );
+        return dato_puesto;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getPercepciones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "SELECT "
+            +"nom_percep.id, "
+            +"nom_percep.clave as clave, "
+            +"nom_percep.titulo as percepcion, "
+            +"(CASE WHEN nom_percep.activo=TRUE THEN  'ACTIVO' ELSE 'INACTIVO' END) AS estado "
+        +"FROM nom_percep "
+        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = nom_percep.id "
+        +"WHERE nom_percep.borrado_logico=false "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        
+        System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("clave",rs.getString("clave"));
+                    row.put("percepcion",rs.getString("percepcion"));
+                    row.put("estado",rs.getString("estado"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+
+    //Alimenta select de tipo de Tipo Percepciones
+    @Override
+    public ArrayList<HashMap<String, Object>> getPercepciones_Tipos(Integer id_empresa) {
+        String sql_to_query = "select id,titulo from nom_percep_tipo order by titulo";
+        ArrayList<HashMap<String, Object>> percepciones = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return percepciones;
+    }
+    
+    //Métodos para el Catalogo de Deducciones
+    //Guarda los datos de los Deducciones
+    @Override
+    public ArrayList<HashMap<String, Object>> getDeducciones_Datos(Integer id) {
+        String sql_to_query = "SELECT id,clave,titulo as deduccion, activo as estado, nom_deduc_tipo_id as tipo_deduc FROM nom_deduc WHERE id="+id;
+            ArrayList<HashMap<String, Object>> dato_puesto = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("clave",rs.getString("clave"));
+                    row.put("deduccion",rs.getString("deduccion"));
+                    row.put("estado",String.valueOf(rs.getBoolean("estado")));
+                    row.put("tipo_deduc",String.valueOf(rs.getInt("tipo_deduc")));    
+                    return row;
+                }
+            }
+        );
+        return dato_puesto;
+    }
+    
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getDeducciones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "SELECT "
+            +"nom_deduc.id, "
+            +"nom_deduc.clave as clave, "
+            +"nom_deduc.titulo as deduccion, "
+            +"(CASE WHEN nom_deduc.activo=TRUE THEN  'ACTIVO' ELSE 'INACTIVO' END) AS estado "
+        +"FROM nom_deduc "
+        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = nom_deduc.id "
+        +"WHERE nom_deduc.borrado_logico=false "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+
+        System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("clave",rs.getString("clave"));
+                    row.put("deduccion",rs.getString("deduccion"));
+                    row.put("estado",rs.getString("estado"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    //Alimenta select de tipo de Tipo Deducciones
+    @Override
+    public ArrayList<HashMap<String, Object>> getDeducciones_Tipos(Integer id_empresa) {
+
+        String sql_to_query = "select id,titulo from nom_deduc_tipo order by titulo";
+        ArrayList<HashMap<String, Object>> percepciones = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return percepciones;
+    }
+    
 }

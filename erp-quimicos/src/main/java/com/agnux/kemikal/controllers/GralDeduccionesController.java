@@ -121,7 +121,7 @@ public class GralDeduccionesController {
           
         }
         
-        deducciones=this.getGralDao().getDeducciones(id_empresa);
+        deducciones=this.getGralDao().getDeducciones_Tipos(id_empresa);
         
        //datos percepcioness es lo que me trajo de la consulta y los pone en el json
        jsonretorno.put("Deducciones", datosDeducciones);

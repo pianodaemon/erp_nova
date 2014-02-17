@@ -115,16 +115,14 @@ public class GralPercepcionesController {
         userDat = this.getHomeDao().getUserById(id_usuario);
      
         
-       // Integer id = Integer.parseInt(userDat.get("id"));
+        // Integer id = Integer.parseInt(userDat.get("id"));
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
        
-        
         if( id != 0 ){
             datosPercepciones = this.getGralDao().getPercepciones_Datos(id);
-          
         }
         
-        percepciones=this.getGralDao().getPercepciones(id_empresa);
+        percepciones=this.getGralDao().getPercepciones_Tipos(id_empresa);
         
        //datos percepcioness es lo que me trajo de la consulta y los pone en el json
        jsonretorno.put("Percepciones", datosPercepciones);

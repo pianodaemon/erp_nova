@@ -167,14 +167,13 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String, String>> getEscolaridad_Datos(Integer id);                                                         
     public ArrayList<HashMap<String, Object>> getEscolaridad_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     
-    //esto es para cat de religiones
+    //Esto es para cat de religiones
     public ArrayList<HashMap<String, String>> getReligion_Datos(Integer id);                                                         
     public ArrayList<HashMap<String, Object>> getReligion_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     
-    //esto es para cat sangre Tipos
+    //Esto es para cat sangre Tipos
     public ArrayList<HashMap<String, String>> getTipoSangre_Datos(Integer id);                                                         
     public ArrayList<HashMap<String, Object>> getTipoSangre_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-    
     
     //esto es para cat categoras
     public ArrayList<HashMap<String, String>> getCateg_Datos(Integer id);
@@ -186,7 +185,7 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String, String>> getGralDeptos_Datos(Integer id_unidad);
     
     
-    //esto es para cat de turnos por departamento
+    //Esto es para cat de turnos por departamento
     public ArrayList<HashMap<String, String>> getTurnos(Integer id);
     public ArrayList<HashMap<String, Object>> getTurnos_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String, String>> getDeptos(); 
@@ -223,4 +222,15 @@ public interface GralInterfaceDao {
     //Para el Cátalogo de Ieps
     public ArrayList<HashMap<String, String>> getIeps_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getIeps_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    
+    //Para el Cátalogo de Percepciones
+    public ArrayList<HashMap<String, Object>> getPercepciones_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getPercepciones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String,Object>>getPercepciones_Tipos(Integer id_empresa);
+    
+     //Para el Cátalogo de Deducciones
+    public ArrayList<HashMap<String, Object>> getDeducciones_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getDeducciones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String,Object>>getDeducciones_Tipos(Integer id_empresa);
+    
 }
