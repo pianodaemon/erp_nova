@@ -136,7 +136,9 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_CXP_REP_PROVEEDORES,
         ROLE_GRAL_IEPS,
         ROLE_CXC_REP_COMP_VENTAS_CLIENTE,
-        ROLE_CXC_REP_COMP_VENTAS_PROD" />
+        ROLE_CXC_REP_COMP_VENTAS_PROD,
+        ROLE_GRAL_CATALOGO_PRECEP,
+        ROLE_GRAL_CATALOGO_DEDUC" />
         
         <intercept-url pattern="/controllers/productos/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PRODUCTO" />
         <intercept-url pattern="/controllers/proveedores/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PROVEEDOR" />
@@ -329,8 +331,10 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/gralieps/startup.agnux" access="ROLE_ADMIN,ROLE_GRAL_IEPS" /><!--Federico-->
         <intercept-url pattern="/controllers/repcomparativoasventasanuales/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_REP_COMP_VENTAS_CLIENTE" /><!--Federico-->
         <intercept-url pattern="/controllers/repcomparativoasventasanualesproducto/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_REP_COMP_VENTAS_PROD" /><!--Federico-->
+        <intercept-url pattern="/controllers/gralpercepciones/startup.agnux" access="ROLE_ADMIN,ROLE_GRAL_CATALOGO_PRECEP" /><!--Federico-->
+        <intercept-url pattern="/controllers/graldeducciones/startup.agnux" access="ROLE_ADMIN,ROLE_GRAL_CATALOGO_DEDUC" /><!--Federico-->
         
-        <form-login 
+        
             login-page="/index.jsp" 
             default-target-url="/controllers/home/startup.agnux"
             authentication-failure-url="/loginerror.jsp"
