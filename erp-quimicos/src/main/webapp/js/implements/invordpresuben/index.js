@@ -420,7 +420,7 @@ $(function() {
                             $grid_productos.find('#cantidad'+id_prod).val(0);
                         }
                         //Redondear de acuerdo al numero de decimales de la unidad de medida.
-                        $grid_productos.find('#cantidad'+id_prod).val(parseFloat($grid_productos.find('#cantidad'+id_prod).val()).toFixed(4));
+                        $grid_productos.find('#cantidad'+id_prod).val(parseFloat($grid_productos.find('#cantidad'+id_prod).val()).toFixed(noDec));
                         $suma_cantidades();
                     });
                     
@@ -430,7 +430,7 @@ $(function() {
                             $grid_productos.find('#cantidad'+id_prod).val(0);
                         }
                         //Redondear de acuerdo al numero de decimales de la unidad de medida.
-                        $grid_productos.find('#cantidad'+id_prod).val(parseFloat($grid_productos.find('#cantidad'+id_prod).val()).toFixed(4));
+                        $grid_productos.find('#cantidad'+id_prod).val(parseFloat($grid_productos.find('#cantidad'+id_prod).val()).toFixed(noDec));
                         $suma_cantidades();
                     });
                     
@@ -458,7 +458,7 @@ $(function() {
                                             if($cantidad_total < 0){
                                                 $cantidad_total = 0;
                                             }
-                                            $(this).find('#cantidadcomp').val(parseFloat($cantidad_total).toFixed(4));
+                                            $(this).find('#cantidadcomp').val(parseFloat($cantidad_total).toFixed(2));
                                         }
                                     });
                                     $(this).find('#eliminadogridid').val(0);
@@ -507,8 +507,8 @@ $(function() {
 								tr_complemento += '</td>';
 								
 								tr_complemento += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="85">';
-                                    tr_complemento += '<INPUT TYPE="text" name="cantidadcomp" id="cantidadcomp" value="'+parseFloat(parseFloat(componentes[i]['cantidad'])*parseFloat(cantidad)).toFixed(4)+'" style="width:80px;">';
-                                    tr_complemento += '<INPUT TYPE="hidden" name="cantidunitaria" id="cantidunitaria" value="'+parseFloat(componentes[i]['cantidad']).toFixed(4)+'" >';
+                                    tr_complemento += '<INPUT TYPE="text" name="cantidadcomp" id="cantidadcomp" value="'+parseFloat(parseFloat(componentes[i]['cantidad'])*parseFloat(cantidad)).toFixed(componentes[i]['no_dec'])+'" style="width:80px;">';
+                                    tr_complemento += '<INPUT TYPE="hidden" name="cantidunitaria" id="cantidunitaria" value="'+parseFloat(componentes[i]['cantidad']).toFixed(componentes[i]['no_dec'])+'" >';
 								tr_complemento += '</td>';
 							tr_complemento += '</tr>';
                             $grid_componentes.append(tr_complemento);
@@ -516,7 +516,7 @@ $(function() {
                             $grid_componentes.find('tr').each(function (index){
                                 if($(this).find('#skucomp').val() == componentes[i]['sku']){
                                     $tmp_cantidad = $(this).find('#cantidadcomp').val();
-                                    $(this).find('#cantidadcomp').val((parseFloat(parseFloat($tmp_cantidad) + parseFloat(componentes[i]['cantidad']))).toFixed(4));
+                                    $(this).find('#cantidadcomp').val((parseFloat(parseFloat($tmp_cantidad) + parseFloat(componentes[i]['cantidad']))).toFixed(2));
                                 }
                             });
                         }
@@ -580,7 +580,7 @@ $(function() {
 								
 								if(parseInt($(this).find('#eliminado').val()) != 0){
 									if( parseInt(ids_id_subensamble) == parseInt(id_subensamble) ){
-										suma_componente+= parseFloat(ids_cantidad_comp) * parseFloat(parseFloat(cantidad_subensamble).toFixed(4));
+										suma_componente+= parseFloat(ids_cantidad_comp) * parseFloat(cantidad_subensamble);
 										$suma_cantidad_comp.val(suma_componente);
 									}
 								}
