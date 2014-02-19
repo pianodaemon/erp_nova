@@ -1796,8 +1796,13 @@ public class PocSpringDao implements PocInterfaceDao{
     //obtener el tipo de Cliente
     @Override
     public int getTipoClient(Integer idClient) {
-        String sql_to_query = "SELECT (CASE WHEN clienttipo_id IS NULL THEN 0 ELSE clienttipo_id END) AS tipo_cliente FROM cxc_clie WHERE id="+idClient+";";
-        int rowType = this.getJdbcTemplate().queryForInt(sql_to_query);
+        int rowType = 0;
+        int exis = this.getJdbcTemplate().queryForInt("SELECT count(id) AS exis FROM cxc_clie WHERE id="+idClient+";");
+        
+        if(exis>0){
+            rowType = this.getJdbcTemplate().queryForInt("SELECT (CASE WHEN clienttipo_id IS NULL THEN 0 ELSE clienttipo_id END) AS tipo_cliente FROM cxc_clie WHERE id="+idClient+";");
+        }
+        
         return rowType;
     }
     
