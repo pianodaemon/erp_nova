@@ -334,7 +334,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/gralpercepciones/startup.agnux" access="ROLE_ADMIN,ROLE_GRAL_CATALOGO_PRECEP" /><!--Federico-->
         <intercept-url pattern="/controllers/graldeducciones/startup.agnux" access="ROLE_ADMIN,ROLE_GRAL_CATALOGO_DEDUC" /><!--Federico-->
         
-        
+        <form-login 
             login-page="/index.jsp" 
             default-target-url="/controllers/home/startup.agnux"
             authentication-failure-url="/loginerror.jsp"

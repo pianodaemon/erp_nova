@@ -657,7 +657,7 @@ $(function() {
 									var total_porcentaje=0;
 									if(parseInt($(this).parent().find('#delete').val()) != 0){
 										//alert("Alert1: "+total_porcentaje+"  Campo total:"+$total_porcentaje.val());
-										total_porcentaje = parseFloat($total_porcentaje.val())-parseFloat($(this).parent().parent().find('#porcentaje').val());
+										total_porcentaje = parseFloat($total_porcentaje.val())-parseFloat(parseFloat($(this).parent().parent().find('#porcentaje').val()).toFixed(4));
 										$total_porcentaje.val(total_porcentaje);
 										//alert("Alert2: "+total_porcentaje+"  Campo total:"+$total_porcentaje.val());
 										$(this).parent().find('#delete').val(0);
@@ -695,27 +695,30 @@ $(function() {
 									var total_inicial=0
 									$grid_productos_componentes.find('tbody > tr').each(function (index){
 										if(parseInt($(this).find('#delete').val())!=0){
-											total_inicial = parseFloat(total_inicial) + parseFloat($(this).find('#porcentaje').val());
+											total_inicial = parseFloat(total_inicial) + parseFloat(parseFloat($(this).find('#porcentaje').val()).toFixed(4));
 										}
 										$total_porcentaje.val(total_inicial);
 									});
 									
+									
+									
 									//calcula porcentaje al perder enfoque 
 									tabla.find('.porcentaje'+trCount).blur(function(){
-										if(parseFloat($(this).val())==0 || $(this).val()=='') {
-											$(this).val(1);
+										if($(this).val().trim()=='') {
+											$(this).val(0);
 										}
+										$(this).val(parseFloat($(this).val()).toFixed(4));
 										
 										var total=0
 										var patron=/^([0-9]){1,12}[.]?[0-9]*$/
 										if(patron.test($(this).val())){
 											$grid_productos_componentes.find('tbody > tr').each(function (index){
 												if(parseInt($(this).find('#delete').val())!=0){
-													total = parseFloat(total) + parseFloat($(this).find('#porcentaje').val());
+													total = parseFloat(total) + parseFloat(parseFloat($(this).find('#porcentaje').val()).toFixed(4));
 												}
 												$total_porcentaje.val(total);
 											});
-											if(parseFloat($total_porcentaje.val())>1){
+											if(parseFloat(parseFloat($total_porcentaje.val()).toFixed(4))>1){
 												jAlert("Has excedido la Unidad del producto",'! Atencion');
 											}
 										}else{
@@ -736,7 +739,7 @@ $(function() {
 										$total_porcentaje.val(total_inicial);
 									});
 									
-									//calcula porcentaje al perder enfoque 
+									//Calcula porcentaje al perder enfoque 
 									tabla.find('.porcentaje'+trCount).blur(function(){
 										if(parseFloat($(this).val()) < 1 || $(this).val()=='') {
 											$(this).val(1);
@@ -745,7 +748,7 @@ $(function() {
 										var total=0
 										$grid_productos_componentes.find('tbody > tr').each(function (index){
 											if(parseInt($(this).find('#delete').val())!=0){
-												total = parseFloat(total) + parseFloat($(this).find('#porcentaje').val());
+												total = parseFloat(parseFloat(total).toFixed(4)) + parseFloat(parseFloat($(this).find('#porcentaje').val()));
 											}
 											$total_porcentaje.val(total);
 										});
@@ -1671,12 +1674,12 @@ $(function() {
 				if(parseInt($select_prod_tipo.val())==1 || parseInt($select_prod_tipo.val())==2 || parseInt($select_prod_tipo.val())==8){
 					if(trCount > 0){
 						//alert($total_porcentaje.val());
-						if(parseFloat($total_porcentaje.val())<1){
+						if(parseFloat(parseFloat($total_porcentaje.val()).toFixed(4))<1){
 							jAlert("La suma total de las cantidades debe ser igual a la Unidad(1).", 'Atencion!');
 							//alert($total_porcentaje.val());
 							return false;
 						}else{
-							if(parseFloat($total_porcentaje.val())>1){
+							if(parseFloat(parseFloat($total_porcentaje.val()).toFixed(4))>1){
 								jAlert("Has excedido la Unidad(1). Verifique los datos ingresados en la lista de productos.", 'Atencion!');
 								return false;
 							}else{
@@ -2458,7 +2461,7 @@ $(function() {
 							var total_porcentaje=0;
 							if(parseInt($(this).parent().find('#delete').val()) != 0){
 								//alert("Alert1: "+total_porcentaje+"  Campo total:"+$total_porcentaje.val());
-								total_porcentaje = parseFloat($total_porcentaje.val())-parseFloat($(this).parent().parent().find('#porcentaje').val());
+								total_porcentaje = parseFloat($total_porcentaje.val())-parseFloat(parseFloat($(this).parent().parent().find('#porcentaje').val()).toFixed(4));
 								$total_porcentaje.val(total_porcentaje);
 								//alert("Alert2: "+total_porcentaje+"  Campo total:"+$total_porcentaje.val());
 								$(this).parent().find('#delete').val(0);
@@ -2470,16 +2473,18 @@ $(function() {
 						if( parseInt($select_prod_tipo.val())==1 || parseInt($select_prod_tipo.val())==2 || parseInt($select_prod_tipo.val())==8){
 							//Calcula porcentaje al perder enfoque 
 							tabla.find('.porcentaje'+trCount).blur(function(){
-								if(parseFloat($(this).val()) ==0 || $(this).val()=='') {
-									$(this).val(1);
+								if($(this).val().trim()=='') {
+									$(this).val(0);
 								}
+								
+								$(this).val(parseFloat($(this).val()).toFixed(4));
 								
 								var total=0
 								var patron=/^([0-9]){1,12}[.]?[0-9]*$/
 								if(patron.test($(this).val())){
 									$grid_productos_componentes.find('tbody > tr').each(function (index){
 										if(parseInt($(this).find('#delete').val())!=0){
-											total = parseFloat(total) + parseFloat($(this).find('#porcentaje').val());
+											total = parseFloat(total) + parseFloat(parseFloat($(this).find('#porcentaje').val()).toFixed(4));
 										}
 										$total_porcentaje.val(total);
 									});
@@ -2794,12 +2799,12 @@ $(function() {
 							//aqui solo debe entrar cuando la empresa no incluya modulo de produccion
 							if(trCount > 0){
 								//alert($total_porcentaje.val());
-								if(parseFloat($total_porcentaje.val())<1){
+								if(parseFloat(parseFloat($total_porcentaje.val()).toFixed(4))<1){
 									jAlert("La suma total de las cantidades debe ser igual a la Unidad(1).", 'Atencion!');
 									//alert($total_porcentaje.val());
 									return false;
 								}else{
-									if(parseFloat($total_porcentaje.val())>1){
+									if(parseFloat(parseFloat($total_porcentaje.val()).toFixed(4))>1){
 											jAlert("Has excedido la Unidad(1). Verifique los datos ingresados en la lista de productos.", 'Atencion!');
 											return false;
 									}else{
