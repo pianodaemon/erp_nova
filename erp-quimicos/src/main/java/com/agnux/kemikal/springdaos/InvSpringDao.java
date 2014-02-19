@@ -844,7 +844,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("producto_ingrediente_id",rs.getString("producto_ingrediente_id"));
                     row.put("sku",rs.getString("sku"));
                     row.put("titulo",rs.getString("titulo"));
-                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),4));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),rs.getInt("decimales")));
                     row.put("decimales",String.valueOf(rs.getInt("decimales")));
                     return row;
                 }
@@ -3915,7 +3915,7 @@ public class InvSpringDao implements InvInterfaceDao{
                 + ") as tmp ON tmp.producto_elemento_id=inv_prod.id "
                 + "JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
                 + "LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=inv_prod.inv_prod_presentacion_id;";
-        
+
         //System.out.println(sql_to_query);
         ArrayList<HashMap<String, String>> hm_datos_productos = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -3928,7 +3928,7 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("utitulo",rs.getString("utitulo"));
                     row.put("presentacion",rs.getString("presentacion"));
-                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),4));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getDouble("cantidad"),rs.getInt("no_dec")));
                     row.put("id_pres_def_comp",String.valueOf(rs.getInt("id_pres_def")));
                     row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
                     return row;
@@ -3937,7 +3937,7 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_productos;
     }
-
+    
 
 
     @Override
