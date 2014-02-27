@@ -811,7 +811,7 @@ $(function() {
 		var $select_tipo_cotizacion=  $('#forma-cotizacions-window').find('select[name=select_tipo_cotizacion]');
 		
 		//verifica si el campo rfc proveedor no esta vacio
-		if(rfc_cliente != ''){
+		if(id_cliente.trim()!='' && id_cliente.trim()!='0'){
 			//verifica si el campo sku no esta vacio para realizar busqueda
 			if(sku_producto != ''){
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPresentacionesProducto.json';

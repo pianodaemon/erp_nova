@@ -3894,7 +3894,7 @@ $(function() {
 					if(entry['datosGrid'] != null){
 						$.each(entry['datosGrid'],function(entryIndex,prod){
 							
-							//obtiene numero de trs
+							//Obtiene numero de trs
 							var tr = $("tr", $grid_productos).size();
 							tr++;
 							

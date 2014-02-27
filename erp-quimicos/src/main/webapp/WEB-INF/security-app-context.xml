@@ -138,7 +138,8 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         ROLE_CXC_REP_COMP_VENTAS_CLIENTE,
         ROLE_CXC_REP_COMP_VENTAS_PROD,
         ROLE_GRAL_CATALOGO_PRECEP,
-        ROLE_GRAL_CATALOGO_DEDUC" />
+        ROLE_GRAL_CATALOGO_DEDUC,
+        ROLE_FAC_NOMINA" />
         
         <intercept-url pattern="/controllers/productos/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PRODUCTO" />
         <intercept-url pattern="/controllers/proveedores/startup.agnux" access="ROLE_ADMIN,ROLE_ALTA_PROVEEDOR" />
@@ -155,6 +156,7 @@ xmlns:beans="http://www.springframework.org/schema/beans"
         <intercept-url pattern="/controllers/faccancelacionv2/startup.agnux" access="ROLE_ADMIN" />
         <intercept-url pattern="/controllers/facconsultas/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_CONSULTAS" />
         <intercept-url pattern="/controllers/facdevoluciones/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_DEVOLUCIONES" />
+        <intercept-url pattern="/controllers/facnomina/startup.agnux" access="ROLE_ADMIN,ROLE_FAC_NOMINA" />
         
         <intercept-url pattern="/controllers/carteras/startup.agnux" access="ROLE_ADMIN,ROLE_COBRANZA" />
         <intercept-url pattern="/controllers/clientsantcancel/startup.agnux" access="ROLE_ADMIN,ROLE_CXC_CANCELA_ANTICIPO" />
