@@ -160,4 +160,20 @@ public interface FacturasInterfaceDao {
     
     public ArrayList<HashMap<String, String>> getIeps(Integer idEmp);
     public ArrayList<HashMap<String, String>> getIvas();
+    
+    
+    
+    
+    
+    //METODOS PARA FACTURACION DE NOMINA
+    public ArrayList<HashMap<String, Object>> getFacNomina_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
+    public ArrayList<HashMap<String, Object>> getFacNomina_Datos(Integer id_factura);
+    public ArrayList<HashMap<String, Object>> getFacNomina_Grid(Integer id_factura);
+    public HashMap<String, Object> getFacNomina_DatosEmisor(Integer id_emp);
+    public ArrayList<HashMap<String,Object>>getFacNomina_PeriodicidadPago();
+    public ArrayList<HashMap<String,Object>>getFacNomina_Parametros(Integer idEmp,Integer idSuc);
+    public ArrayList<HashMap<String, Object>> getFacNomina_Empleados(Integer id_emp, Integer periodicidad_id);
+    //Obtiene la siguiente secuencia para el id de la tabla fac_nomina
+    public int getIdSeqFacNomina();
+    
 }

@@ -3275,4 +3275,137 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         );
         return hm_ieps;
     }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Datos(Integer id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Grid(Integer id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public HashMap<String, Object> getFacNomina_DatosEmisor(Integer id_emp) {
+        HashMap<String, Object> mapDatos = new HashMap<String, Object>();
+        
+        String sql_to_query = ""
+        + "SELECT "
+            + "gral_emp.titulo,"
+            + "gral_emp.rfc,"
+            + "(CASE WHEN gral_emp.calle IS NULL THEN '' ELSE gral_emp.calle END) AS calle, "
+            + "(CASE WHEN gral_emp.colonia IS NULL THEN '' ELSE gral_emp.colonia END) AS colonia, "
+            + "(CASE WHEN gral_emp.numero_interior IS NULL THEN '' ELSE gral_emp.numero_interior END) AS numero_interior,  "
+            + "(CASE WHEN gral_emp.numero_exterior IS NULL THEN '' ELSE gral_emp.numero_exterior END) AS numero_exterior, "
+            + "(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END) AS pais, "
+            + "(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END) AS estado, "
+            + "(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END) AS municipio, "
+            + "gral_emp.cp,"
+            + "gral_emp.telefono,"
+            + "(CASE WHEN gral_emp.regimen_fiscal IS NULL THEN '' ELSE gral_emp.regimen_fiscal END) AS regimen_fiscal, "
+            + "(CASE WHEN gral_emp.pagina_web IS NULL THEN '' ELSE gral_emp.pagina_web END) AS pagina_web,"
+            + "gral_emp.calle||' '||(CASE WHEN gral_emp.numero_exterior IS NULL THEN '' ELSE (CASE WHEN gral_emp.numero_exterior='' THEN '' ELSE 'NO. EXT. '||gral_emp.numero_exterior END) END) ||' '||(CASE WHEN gral_emp.numero_interior IS NULL THEN '' ELSE (CASE WHEN gral_emp.numero_interior='' THEN '' ELSE 'NO. INT. '||gral_emp.numero_interior END) END) ||', '||gral_emp.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END)||' C.P. '||gral_emp.cp AS direccion  "
+        + "FROM gral_emp "
+        + "JOIN gral_pais ON gral_pais.id=gral_emp.pais_id "
+        + "JOIN gral_edo ON gral_edo.id=gral_emp.estado_id "
+        + "JOIN gral_mun ON gral_mun.id=gral_emp.municipio_id "
+        + "WHERE gral_emp.id="+id_emp+";";
+        
+        System.out.println("getDatosEmp: "+sql_to_query);
+        
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        mapDatos.put("emp_razon_social", String.valueOf(map.get("titulo")));
+        mapDatos.put("emp_rfc", String.valueOf(map.get("rfc")));
+        mapDatos.put("emp_calle", String.valueOf(map.get("calle")));
+        mapDatos.put("emp_no_interior", String.valueOf(map.get("numero_interior")));
+        mapDatos.put("emp_no_exterior", String.valueOf(map.get("numero_exterior")));
+        mapDatos.put("emp_colonia", String.valueOf(map.get("colonia")));
+        mapDatos.put("emp_pais", String.valueOf(map.get("pais")));
+        mapDatos.put("emp_estado", String.valueOf(map.get("estado")));
+        mapDatos.put("emp_municipio", String.valueOf(map.get("municipio")));
+        mapDatos.put("emp_cp", String.valueOf(map.get("cp")));
+        mapDatos.put("emp_tel", String.valueOf(map.get("telefono")));
+        mapDatos.put("emp_regimen_fiscal", String.valueOf(map.get("regimen_fiscal")));
+        mapDatos.put("emp_pagina_web", String.valueOf(map.get("pagina_web")));
+        mapDatos.put("emp_direccion", String.valueOf(map.get("direccion")));
+        
+        return mapDatos;
+    }
+    
+    
+    //Obtiene la Periodicidad del Pago
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodicidadPago() {
+        String sql_to_query="SELECT id, titulo FROM nom_periodicidad_pago WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    //Obtiene los parametros default para la nomina 
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Parametros(Integer idEmp,Integer idSuc) {
+        String sql_to_query="SELECT tipo_comprobante, forma_pago, no_cuenta_pago,gral_mon_id, (CASE WHEN gral_mon_id=0 THEN 0 ELSE (CASE WHEN gral_mon_id=1 THEN 1 ELSE (SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id=gral_mon_id ORDER BY momento_creacion DESC LIMIT 1) END) END) AS tc FROM fac_nomina_par WHERE gral_emp_id=? AND gral_suc_id=?;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(idEmp), new Integer(idSuc)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("tipo_comprobante",rs.getString("tipo_comprobante"));
+                 row.put("forma_pago",rs.getString("forma_pago"));
+                 row.put("no_cuenta_pago",rs.getString("no_cuenta_pago"));
+                 row.put("mon_id",rs.getString("gral_mon_id"));
+                 row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    //Obtiene obtiene la lista de empleados
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Empleados(Integer idEmp, Integer periodicidad_id) {
+        String sql_to_query="SELECT id,(CASE WHEN clave IS NULL THEN lpad('',4,' ') ELSE lpad(clave,4,'0') END)||' '||(CASE WHEN nombre_pila IS NULL THEN '' ELSE nombre_pila END)||' '||(CASE WHEN apellido_paterno IS NULL THEN '' ELSE apellido_paterno END)||' '||(CASE WHEN apellido_materno IS NULL THEN '' ELSE apellido_materno END) AS nombre FROM gral_empleados WHERE gral_emp_id=? AND nom_periodicidad_pago_id=? AND genera_nomina=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(idEmp), new Integer(periodicidad_id)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("nombre",rs.getString("nombre"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene la siguiente secuencia para el id de la tabla fac_nomina
+    @Override
+    public int getIdSeqFacNomina() {
+        int idSeq = this.getJdbcTemplate().queryForInt("select nextval('fac_nomina_id_seq');");
+        return idSeq;
+    }
+    
+    
 }
