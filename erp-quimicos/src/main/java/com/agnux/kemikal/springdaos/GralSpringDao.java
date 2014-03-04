@@ -2693,4 +2693,67 @@ public class GralSpringDao implements GralInterfaceDao{
         return percepciones;
     }
     
+    
+    
+    
+    
+    
+    //Métodos para el Catalogo de Periodicidad de Pago
+    @Override
+    public ArrayList<HashMap<String, Object>> getPeriodicidadPago_Datos(Integer id) {
+
+
+        String sql_to_query = "SELECT id,titulo as periodo_pago, no_periodos as numero_periodo,activo as estado FROM nom_periodicidad_pago WHERE id="+id;
+            ArrayList<HashMap<String, Object>> dato_periodicidadpago = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+          
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("periodo_pago",rs.getString("periodo_pago"));
+                    row.put("numero_periodo",rs.getString("numero_periodo"));
+                    row.put("estado",String.valueOf(rs.getBoolean("estado")));
+                    return row;
+                }
+            }
+        );
+        return dato_periodicidadpago;
+    }
+
+    @Override
+    public ArrayList<HashMap<String, Object>> getPeriodicidadPago_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+        
+	String sql_to_query = ""
+        + "SELECT "
+            +"nom_periodicidad_pago.id, "
+            +"nom_periodicidad_pago.titulo as periodo_pago, "
+            +"nom_periodicidad_pago.no_periodos as numero_periodo, "
+            +"(CASE WHEN nom_periodicidad_pago.activo=TRUE THEN  'ACTIVO' ELSE 'INACTIVO' END) AS estado "
+        +"FROM nom_periodicidad_pago "
+        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = nom_periodicidad_pago.id "
+        +"WHERE nom_periodicidad_pago.borrado_logico=false "
+        +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+        
+        System.out.println("Busqueda GetPage: "+sql_to_query+" "+data_string+" "+ offset +" "+ pageSize);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",String.valueOf(rs.getInt("id")));
+                    row.put("periodo_pago",rs.getString("periodo_pago"));
+                    row.put("numero_periodo",rs.getString("numero_periodo"));
+                    row.put("estado",rs.getString("estado"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    //Termina Metodos del catalogo de Periodicidad de Pago
+    
 }

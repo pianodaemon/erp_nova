@@ -233,4 +233,7 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String, Object>> getDeducciones_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
     public ArrayList<HashMap<String,Object>>getDeducciones_Tipos(Integer id_empresa);
     
+    //Para el Cátalogo de Periodicidad de Pago
+    public ArrayList<HashMap<String, Object>> getPeriodicidadPago_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getPeriodicidadPago_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
 }
