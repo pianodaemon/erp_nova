@@ -149,6 +149,8 @@ public class FacNominaController {
         ArrayList<HashMap<String, Object>> periodicidad_pago = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> parametros = new ArrayList<HashMap<String, Object>>();
         
+        ArrayList<HashMap<String,Object>>puestos=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>>departamentos=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>> regimen_contratacion=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>> tipo_contrato=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>> tipo_jornada=new ArrayList<HashMap<String,Object>>();
@@ -156,8 +158,6 @@ public class FacNominaController {
         ArrayList<HashMap<String,Object>> bancos=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>> percepciones=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>> deducciones=new ArrayList<HashMap<String,Object>>();
-        
-            
         
         ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> extra = new HashMap<String, Object>();
@@ -203,15 +203,7 @@ public class FacNominaController {
             parametros = this.getFacdao().getFacNomina_Parametros(id_empresa, id_sucursal);
         }
         
-        monedas = this.getFacdao().getFactura_Monedas();
-        metodos_pago = this.getFacdao().getMetodosPago();
-        periodicidad_pago = this.getFacdao().getFacNomina_PeriodicidadPago();
         
-        regimen_contratacion = this.getFacdao().getFacNomina_RegimenContratacion();
-        tipo_contrato = this.getFacdao().getFacNomina_TiposContrato();
-        tipo_jornada = this.getFacdao().getFacNomina_TiposJornada();
-        riesgo_puesto = this.getFacdao().getFacNomina_RiesgosPuesto();
-        bancos = this.getFacdao().getFacNomina_Bancos(id_empresa);
         
         percepciones=this.getFacdao().getFacNomina_Percepciones(0, id_empresa);
         /*
@@ -222,14 +214,18 @@ public class FacNominaController {
         
         jsonretorno.put("Datos", datos);
         jsonretorno.put("datosGrid", datosGrid);
-        jsonretorno.put("Monedas", monedas);
-        jsonretorno.put("MetodosPago", metodos_pago);
-        jsonretorno.put("Periodicidad", periodicidad_pago);
-        jsonretorno.put("RegimenContrato",regimen_contratacion);
-        jsonretorno.put("TipoContrato",tipo_contrato);
-        jsonretorno.put("TipoJornada",tipo_jornada);
-        jsonretorno.put("Riesgos",riesgo_puesto);
-        jsonretorno.put("Bancos",bancos);
+        jsonretorno.put("Monedas", this.getFacdao().getFactura_Monedas());
+        jsonretorno.put("MetodosPago", this.getFacdao().getMetodosPago());
+        jsonretorno.put("Periodicidad", this.getFacdao().getFacNomina_PeriodicidadPago(id_empresa));
+        jsonretorno.put("Puestos", this.getFacdao().getFacNomina_Puestos(id_empresa));
+        jsonretorno.put("Deptos", this.getFacdao().getFacNomina_Departamentos(id_empresa));
+        jsonretorno.put("RegimenContrato", this.getFacdao().getFacNomina_RegimenContratacion());
+        jsonretorno.put("TipoContrato",this.getFacdao().getFacNomina_TiposContrato());
+        jsonretorno.put("TipoJornada",this.getFacdao().getFacNomina_TiposJornada());
+        jsonretorno.put("Riesgos",this.getFacdao().getFacNomina_RiesgosPuesto());
+        jsonretorno.put("Bancos",this.getFacdao().getFacNomina_Bancos(id_empresa));
+        jsonretorno.put("ImpuestoRet",this.getFacdao().getFacNomina_ISR(id_empresa));
+        
         jsonretorno.put("Percepciones",percepciones);
         jsonretorno.put("Deducciones",deducciones);
         
@@ -270,6 +266,61 @@ public class FacNominaController {
         
         return jsonretorno;
     }
+    
+    
+    //Obtiene todos los periodos de un Tipo de Periodicidad
+    @RequestMapping(method = RequestMethod.POST, value="/getPeriodosPorTipoPeridicidad.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getPeriodosPorTipoPeridicidadJson(
+            @RequestParam(value="id", required=true) Integer periodicidad_id,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        jsonretorno.put("Periodos", this.getFacdao().getFacNomina_PeriodosPorTipo(periodicidad_id, id_empresa));
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //Obtiene datos de la Nomina de un Empleado
+    @RequestMapping(method = RequestMethod.POST, value="/getDataNominaEmpleado.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataNominaEmpleadoJson(
+            @RequestParam(value="id_reg", required=true) Integer id_reg,
+            @RequestParam(value="id_empleado", required=true) Integer id_empleado,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        if(id_reg!=0){
+            //Editar. Obtener datos de tabla de Nomina
+            //jsonretorno.put("Data", this.getFacdao().getFacNomina_DataNomina(id_reg, id_empleado));
+        }else{
+            //Nuevo. Obtener datos de tabla de empleados
+            //jsonretorno.put("Data", this.getFacdao().getFacNomina_DataEmpleado(id_empleado));
+        }
+        
+        
+        
+        return jsonretorno;
+    }
+    
     
     
     

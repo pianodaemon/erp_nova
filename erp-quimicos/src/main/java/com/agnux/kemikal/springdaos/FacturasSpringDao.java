@@ -3341,11 +3341,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     //Obtiene la Periodicidad del Pago
     @Override
-    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodicidadPago() {
-        String sql_to_query="SELECT id, titulo FROM nom_periodicidad_pago WHERE activo=true ORDER BY id;";
+    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodicidadPago(Integer idEmp) {
+        String sql_to_query="SELECT id, titulo FROM nom_periodicidad_pago WHERE activo=true AND gral_emp_id=? AND borrado_logico=false ORDER BY id;";
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{},new RowMapper(){
+            new Object[]{new Integer(idEmp)},new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
                  HashMap<String,Object>row=new HashMap<String,Object>();
@@ -3358,10 +3358,42 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         return hm;
     }
     
+    
+    
+    //Obtiene los Periodos de Pago Configurados por Tipo de Periodicidad
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodosPorTipo(Integer tipo, Integer idEmp) {
+        String sql_to_query=""
+        + "SELECT "
+            + "nom_periodos_conf_det.id,"
+            + "(CASE WHEN nom_periodos_conf.prefijo IS NULL THEN '' ELSE (CASE WHEN nom_periodos_conf.prefijo='' THEN '' ELSE nom_periodos_conf.prefijo||'-' END) END)||nom_periodos_conf_det.folio||' '||nom_periodos_conf_det.titulo AS periodo,"
+            + "(CASE WHEN nom_periodos_conf_det.fecha_ini IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_ini::character varying END) AS fecha_ini,"
+            + "(CASE WHEN nom_periodos_conf_det.fecha_fin IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_fin::character varying END) AS fecha_fin "
+        + "FROM nom_periodos_conf "
+        + "JOIN nom_periodos_conf_det ON nom_periodos_conf_det.nom_periodos_conf_id=nom_periodos_conf.id "
+        + "WHERE nom_periodos_conf.borrado_logico=false AND nom_periodos_conf.gral_emp_id=? AND nom_periodos_conf.nom_periodicidad_pago_id=? AND nom_periodos_conf_det.estatus=false ORDER BY nom_periodos_conf_det.id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(idEmp), new Integer(tipo)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("periodo",rs.getString("periodo"));
+                 row.put("fecha_ini",rs.getString("fecha_ini"));
+                 row.put("fecha_fin",rs.getString("fecha_fin"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
     //Obtiene los parametros default para la nomina 
     @Override
     public ArrayList<HashMap<String, Object>> getFacNomina_Parametros(Integer idEmp,Integer idSuc) {
-        String sql_to_query="SELECT tipo_comprobante, forma_pago, no_cuenta_pago,gral_mon_id, (CASE WHEN gral_mon_id=0 THEN 0 ELSE (CASE WHEN gral_mon_id=1 THEN 1 ELSE (SELECT valor FROM erp_monedavers WHERE momento_creacion<=now() AND moneda_id=gral_mon_id ORDER BY momento_creacion DESC LIMIT 1) END) END) AS tc FROM fac_nomina_par WHERE gral_emp_id=? AND gral_suc_id=?;";
+        String sql_to_query="SELECT tipo_comprobante, forma_pago, no_cuenta_pago,gral_mon_id, (CASE WHEN gral_mon_id=0 THEN 0 ELSE (CASE WHEN gral_mon_id=1 THEN 1 ELSE (SELECT erp_monedavers.valor FROM erp_monedavers WHERE erp_monedavers.momento_creacion<=now() AND erp_monedavers.moneda_id=gral_mon_id ORDER BY erp_monedavers.momento_creacion DESC LIMIT 1) END) END) AS tc, gral_isr_id, (CASE WHEN motivo_descuento IS NULL THEN '' ELSE motivo_descuento END) AS motivo_descuento FROM fac_nomina_par WHERE gral_emp_id=? AND gral_suc_id=?;";
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(idEmp), new Integer(idSuc)},new RowMapper(){
@@ -3373,6 +3405,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                  row.put("no_cuenta_pago",rs.getString("no_cuenta_pago"));
                  row.put("mon_id",rs.getString("gral_mon_id"));
                  row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
+                 row.put("isr_id",rs.getString("gral_isr_id"));
+                 row.put("motivo_descuento",rs.getString("motivo_descuento"));
                  return row;
                 }
             }
@@ -3506,7 +3540,66 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         return hm;
     }
     
+    //Obtiene la lista de puestos
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Puestos(Integer id_empresa) {
+        String sql_to_query = "select id,titulo from gral_puestos  where gral_emp_id="+id_empresa+" order by titulo";
+        ArrayList<HashMap<String, Object>> religion = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return religion;
+    }
     
+    
+    //Obtiene la lista de puestos
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_ISR(Integer id_empresa) {
+        String sql_to_query = "select id,titulo, tasa from gral_isr  where borrado_logico=false AND gral_emp_id=? order by titulo";
+        ArrayList<HashMap<String, Object>> religion = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    row.put("tasa",StringHelper.roundDouble(rs.getString("tasa"), 2));
+                    return row;
+                }
+            }
+        );
+        return religion;
+    }
+    
+    
+    //Obtiene todos los departamentos de la empresa
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Departamentos(Integer id_empresa) {
+        String sql_to_query = "SELECT id, titulo FROM gral_deptos WHERE borrado_logico=false AND vigente=true AND gral_emp_id=? order by titulo";
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
     
     
     //Obtiene todas las Percepciones disponibles

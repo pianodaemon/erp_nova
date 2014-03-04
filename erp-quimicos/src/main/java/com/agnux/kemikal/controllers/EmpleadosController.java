@@ -155,7 +155,7 @@ public class EmpleadosController {
             @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
-            ) {
+        ) {
 
         log.log(Level.INFO, "Ejecutando get_empleadosJson de {0}", EmpleadosController.class.getName());
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
@@ -171,6 +171,7 @@ public class EmpleadosController {
         ArrayList<HashMap<String, Object>> religion = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String,Object>>tipo_sangre=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>>puesto=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>>departamentos=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>>sucursal=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>>categoria= new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>>roles=new ArrayList<HashMap<String,Object>>();
@@ -186,12 +187,16 @@ public class EmpleadosController {
         ArrayList<HashMap<String,Object>> percepciones=new ArrayList<HashMap<String,Object>>();
         ArrayList<HashMap<String,Object>> deducciones=new ArrayList<HashMap<String,Object>>();
         
+        ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
+        HashMap<String, Object> extra = new HashMap<String, Object>();
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         String incluye_nomina = userDat.get("incluye_nomina");
+        extra.put("nomina", incluye_nomina);
+        arrayExtra.add(extra);
         
         if( id != 0  ){
             datosEmpleado = this.getGralDao().getEmpleados_Datos(id);
@@ -205,7 +210,7 @@ public class EmpleadosController {
             regimen_contratacion=this.getGralDao().getEmpleados_RegimenContratacion();
             tipo_contrato=this.getGralDao().getEmpleados_TiposContrato();
             tipo_jornada=this.getGralDao().getEmpleados_TiposJornada();
-            periodicidad_pago=this.getGralDao().getEmpleados_PeriodicidadPago();
+            periodicidad_pago=this.getGralDao().getEmpleados_PeriodicidadPago(id_empresa);
             riesgo_puesto=this.getGralDao().getEmpleados_RiesgosPuesto();
             bancos=this.getGralDao().getEmpleados_Bancos(id_empresa);
             percepciones=this.getGralDao().getEmpleados_Percepciones(id, id_empresa);
@@ -220,6 +225,7 @@ public class EmpleadosController {
         religion=this.getGralDao().getReligion(id_usuario);
         tipo_sangre=this.getGralDao().getTiposangre(id_empresa);
         puesto=this.getGralDao().getPuesto(id_empresa);
+        departamentos=this.getGralDao().getDepartamentos(id_empresa);
         sucursal=this.getGralDao().getSucursal(id_empresa);
         roles=this.getGralDao().getRoles();
         region=this.getGralDao().getRegion();
@@ -234,6 +240,7 @@ public class EmpleadosController {
         jsonretorno.put("Religion", religion);
         jsonretorno.put("Sangre",tipo_sangre);
         jsonretorno.put("Puesto",puesto);
+        jsonretorno.put("Deptos",departamentos);
         jsonretorno.put("Categoria",categoria);
         jsonretorno.put("Roles",roles);
         jsonretorno.put("Sucursal",sucursal);
@@ -247,6 +254,7 @@ public class EmpleadosController {
         jsonretorno.put("Bancos",bancos);
         jsonretorno.put("Percep",percepciones);
         jsonretorno.put("Deduc",deducciones);
+        jsonretorno.put("Extra",arrayExtra);
         
         return jsonretorno;
     }
@@ -352,6 +360,7 @@ public class EmpleadosController {
             @RequestParam(value="sucursal", required=true) String sucursal,
             @RequestParam(value="categoria", required=true) String categoria,
             @RequestParam(value="comentarios", required=true) String comentarios,
+            @RequestParam(value="select_depto", required=true) String select_depto,
             @RequestParam(value="email_usr", required=true) String email_usr,
             @RequestParam(value="password",required=true)String password,
             @RequestParam(value="verifica_pass",required=true)String verifica_pass,
@@ -541,7 +550,8 @@ public class EmpleadosController {
             +"___"+clabe//64
             +"___"+percepciones//65
             +"___"+deducciones//66
-            +"___"+check_genera_nomina;//67
+            +"___"+check_genera_nomina//67
+            +"___"+select_depto;//68
             
             System.out.println("data_string: "+data_string);
 

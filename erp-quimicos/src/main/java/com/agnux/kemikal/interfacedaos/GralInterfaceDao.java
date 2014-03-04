@@ -140,6 +140,7 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String,Object>>getPuestoForCategoria(String id_puesto);
     public ArrayList<HashMap<String,Object>>getSucursal(Integer id_empresa);
     public ArrayList<HashMap<String,Object>>getPuesto(Integer id_empresa);
+    public ArrayList<HashMap<String,Object>> getDepartamentos(Integer id_empresa);
     public ArrayList<HashMap<String,Object>>getRoles();
     public ArrayList<HashMap<String,Object>>getRolsEdit(Integer id_usuario);
     public ArrayList<HashMap<String,Object>>getUsuario(Integer id_usuario);
@@ -148,7 +149,7 @@ public interface GralInterfaceDao {
     public ArrayList<HashMap<String,Object>>getEmpleados_RegimenContratacion();
     public ArrayList<HashMap<String,Object>>getEmpleados_TiposContrato();
     public ArrayList<HashMap<String,Object>>getEmpleados_TiposJornada();
-    public ArrayList<HashMap<String,Object>>getEmpleados_PeriodicidadPago();
+    public ArrayList<HashMap<String,Object>>getEmpleados_PeriodicidadPago(Integer idEmpresa);
     public ArrayList<HashMap<String,Object>>getEmpleados_RiesgosPuesto();
     public ArrayList<HashMap<String,Object>>getEmpleados_Bancos(Integer idEmp);
     public ArrayList<HashMap<String,Object>>getEmpleados_Percepciones(Integer IdEmpleado, Integer idEmpresa);

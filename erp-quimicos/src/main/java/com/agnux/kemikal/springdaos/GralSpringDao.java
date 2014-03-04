@@ -1030,7 +1030,8 @@ public class GralSpringDao implements GralInterfaceDao{
                 +"gral_empleados.salario_base,"
                 +"gral_empleados.salario_integrado AS salario_int, "
                 +"gral_empleados.registro_patronal AS reg_patronal,"
-                +"gral_empleados.genera_nomina "
+                +"gral_empleados.genera_nomina,"
+                +"gral_empleados.gral_depto_id AS depto_id "
             +"FROM gral_empleados "
             +"LEFT JOIN  gral_usr on gral_usr.gral_empleados_id=gral_empleados.id "
             +"WHERE gral_empleados.borrado_logico=false AND gral_empleados.id=?;";
@@ -1095,6 +1096,7 @@ public class GralSpringDao implements GralInterfaceDao{
                     row.put("monto_tope_comision3",StringHelper.roundDouble(rs.getDouble("monto_tope_comision3"),2));
                     row.put("tipo_comision",rs.getInt("tipo_comision"));
                     row.put("correo_empresa",rs.getString("correo_empresa"));
+                    row.put("depto_id",String.valueOf(rs.getInt("depto_id")));
                     
                     row.put("no_int",rs.getString("no_int"));
                     row.put("regimen_id",String.valueOf(rs.getInt("regimen_id")));
@@ -1273,11 +1275,11 @@ public class GralSpringDao implements GralInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, Object>> getTiposangre(Integer id_empresa) {
-        String sql_to_query = "select id,titulo from gral_sangretipos where gral_emp_id="+id_empresa+" order by titulo";
+        String sql_to_query = "select id,titulo from gral_sangretipos where gral_emp_id=? order by titulo";
 
         ArrayList<HashMap<String, Object>> religion = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{}, new RowMapper(){
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1292,11 +1294,11 @@ public class GralSpringDao implements GralInterfaceDao{
 
     @Override
     public ArrayList<HashMap<String, Object>> getPuesto(Integer id_empresa) {
-        String sql_to_query = "select id,titulo from gral_puestos  where gral_emp_id="+id_empresa+" order by titulo";
+        String sql_to_query = "select id,titulo from gral_puestos  where gral_emp_id=? order by titulo";
 
         ArrayList<HashMap<String, Object>> religion = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{}, new RowMapper(){
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1308,14 +1310,36 @@ public class GralSpringDao implements GralInterfaceDao{
         );
         return religion;
     }
-
+    
+    
+    //Obtiene todos los departamentos de la empresa
+    @Override
+    public ArrayList<HashMap<String, Object>> getDepartamentos(Integer id_empresa) {
+        String sql_to_query = "SELECT id, titulo FROM gral_deptos WHERE borrado_logico=false AND vigente=true AND gral_emp_id=? order by titulo";
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getString("id"));
+                    row.put("titulo",rs.getString("titulo"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
     @Override
     public ArrayList<HashMap<String, Object>> getSucursal(Integer id_empresa) {
-        String sql_to_query = "select id,titulo from gral_suc  where empresa_id="+id_empresa+" order by titulo";
+        String sql_to_query = "select id,titulo from gral_suc  where empresa_id=? order by titulo";
 
         ArrayList<HashMap<String, Object>> religion = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{}, new RowMapper(){
+            new Object[]{new Integer(id_empresa)}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, Object> row = new HashMap<String, Object>();
@@ -1527,11 +1551,11 @@ public class GralSpringDao implements GralInterfaceDao{
     
     //Obtiene la Periodicidad del Pago
     @Override
-    public ArrayList<HashMap<String, Object>> getEmpleados_PeriodicidadPago() {
-        String sql_to_query="SELECT id, titulo FROM nom_periodicidad_pago WHERE activo=true ORDER BY id;";
+    public ArrayList<HashMap<String, Object>> getEmpleados_PeriodicidadPago(Integer id_empresa) {
+        String sql_to_query="SELECT id, titulo FROM nom_periodicidad_pago WHERE activo=true AND gral_emp_id=? AND borrado_logico=false ORDER BY id;";
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{},new RowMapper(){
+            new Object[]{new Integer(id_empresa)},new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
                  HashMap<String,Object>row=new HashMap<String,Object>();
@@ -2696,17 +2720,12 @@ public class GralSpringDao implements GralInterfaceDao{
     
     
     
-    
-    
     //Métodos para el Catalogo de Periodicidad de Pago
     @Override
     public ArrayList<HashMap<String, Object>> getPeriodicidadPago_Datos(Integer id) {
-
-
         String sql_to_query = "SELECT id,titulo as periodo_pago, no_periodos as numero_periodo,activo as estado FROM nom_periodicidad_pago WHERE id="+id;
             ArrayList<HashMap<String, Object>> dato_periodicidadpago = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
-          
             new Object[]{}, new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
