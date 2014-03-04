@@ -113,7 +113,7 @@
                                 <ul class="pestanas">
                                     <li><a href="#tabx-1"><strong>Datos</strong></a></li>
                                     <li><a href="#tabx-2"><strong>Direcci&oacute;n&nbsp;y&nbsp;Contacto</strong></a></li>
-                                    <li><a href="#tabx-3"><strong>N&oacute;mina</strong></a></li>
+                                    <li><a href="#tabx-3" id="pestana_nomina"><strong>N&oacute;mina</strong></a></li>
                                      <li><a href="#tabx-5"><strong>Organizaci&oacute;n</strong></a></li>
                                     <li><a href="#tabx-4"><strong>Usuario/Roles</strong></a></li>
                                     <li><a href="#tabx-6"><strong>Agentes</strong></a></li>
@@ -592,12 +592,12 @@
 											</tr>
 											<tr>
 												<td width="5"></td>
-												<td width="50">Puesto</td>
-												<td width="210"><select name="puesto" style="width:210px;"></select></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_puesto"></div></td>
+												<td width="50">Departamento</td>
+												<td width="210"><select name="select_depto" style="width:210px;"></select></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_depto"></div></td>
 												<td width="55"></td>
 												<td width="100">Comentarios</td>
-												<td width="250" rowspan="3"><textarea name="comentarios" rows="2" cols="60" style="width:250px; resize: none;"></textarea></td>
+												<td width="250" rowspan="3"><textarea name="comentarios" rows="2" cols="60" style="width:250px; resize:none;"></textarea></td>
 												<td width="25"></td>
 											</tr>
 											<tr>
@@ -612,9 +612,9 @@
 											</tr>
 											<tr>
 												<td width="5"></td>
-												<td width="50">Categoria</td>
-												<td width="210"><select name="categoria" style="width:210px;"></select></td>
-												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_categoria"></div></td>
+												<td width="50">Puesto</td>
+												<td width="210"><select name="puesto" style="width:210px;"></select></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_puesto"></div></td>
 												<td width="55"></td>
 												<td width="100"></td>
 												<!--<td width="250"></td>-->
@@ -628,6 +628,16 @@
 												<td width="55"></td>
 												<td width="100"></td>
 												<td width="250"></td>
+												<td width="25"></td>
+											</tr>
+											<tr>
+												<td width="5"></td>
+												<td width="50">Categoria</td>
+												<td width="210"><select name="categoria" style="width:210px;"></select></td>
+												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_categoria"></div></td>
+												<td width="55"></td>
+												<td width="100"></td>
+												<!--<td width="250"></td>-->
 												<td width="25"></td>
 											</tr>
 										</table>

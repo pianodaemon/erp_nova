@@ -302,9 +302,12 @@
 																<input type="hidden" name="periodicidad_selec" value="0">
 															</td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_compperiodicidad"></div></td>
-															<td width="80"></td>
-															<td width="40"></td>
-															<td width="80"></td>
+															<td width="80">No.&nbsp;de&nbsp;Periodo</td>
+															<td width="120" colspan="2">
+																<select name="select_no_periodo" style="width:100px;" title="Numero de Periodo segun la Periodicidad de Pago"></select>
+																<input type="hidden" name="no_periodo_selec" value="0">
+															</td>
+															<!--<td width="80"></td>-->
 															<td width="150"></td>
 															<td width="40"></td>
 														</tr>

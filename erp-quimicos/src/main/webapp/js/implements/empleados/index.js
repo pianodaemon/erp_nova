@@ -262,7 +262,7 @@ $(function() {
 			}
 			if(activeTab == '#tabx-5'){
 				//Pestaña ORGANIZACION
-				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'258px'});
+				$('#forma-empleados-window').find('.empleados_div_one').css({'height':'272px'});
 				$('#forma-empleados-window').find('.empleados_div_one').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_two').css({'width':'810px'});
 				$('#forma-empleados-window').find('.empleados_div_three').css({'width':'800px'});
@@ -505,6 +505,7 @@ $(function() {
 		var $select_categoria_puesto = $('#forma-empleados-window').find('select[name=categoria]');
 		var $correo_institucional = $('#forma-empleados-window').find('input[name=correo_institucional]');
 		var $campo_comentarios =$('#forma-empleados-window').find('textarea[name=cometarios]');
+		var $select_depto = $('#forma-empleados-window').find('select[name=select_depto]');
 		
 		//tab5 Roles
 		var $campo_nom_usuario = $('#forma-empleados-window').find('input[name=email_usr]');
@@ -558,6 +559,7 @@ $(function() {
 		$campo_empleado_id.attr({ 'value' : 0 });
 		$campo_num_empleado.css({'background' : '#DDDDDD'});
 		$campo_num_empleado.attr('disabled','-1');
+		$('#forma-empleados-window').find('ul.pestanas').find('a[href*=#tabx-3]').parent().hide();
 		
 		var tipo_comision_hmtl="";
 		tipo_comision_hmtl += '<option value="1"  selected="yes">Comision por Dias</option>';
@@ -657,6 +659,10 @@ $(function() {
 		$forma_selected.ajaxForm(options);
 		
 		$.post(input_json,$arreglo,function(entry){
+			if(entry['Extra'][0]['nomina'].trim()=='true'){
+				$('#forma-empleados-window').find('ul.pestanas').find('a[href*=#tabx-3]').parent().show();
+			}
+			
 			//Alimentando los campos select de las pais
 			$select_pais.children().remove();
 			var pais_hmtl = '<option value="0" selected="yes">[-Seleccionar pais-]</option>';
@@ -772,7 +778,6 @@ $(function() {
 				puesto_hmtl += '<option value="' + puestos['id'] + '"  >' + puestos['titulo'] + '</option>';
 			});
 			$select_puesto.append(puesto_hmtl);
-			
 			
 			
 			
@@ -913,9 +918,16 @@ $(function() {
 			
 			
 			var elemento_seleccionado=0;
-			var texto_elemento_cero = '[-Seleccionar Region-]';
+			var texto_elemento_cero = '[-Seleccionar Departamento-]';
 			var campo_indice = 'id';
 			var campo_valor = 'titulo';
+			$carga_campos_select($select_depto, entry['Deptos'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+			
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero = '[-Seleccionar Region-]';
+			campo_indice = 'id';
+			campo_valor = 'titulo';
 			$carga_campos_select($select_region, entry['Region'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
 			
 			
@@ -1113,8 +1125,9 @@ $(function() {
 				var $select_categoria_puesto = $('#forma-empleados-window').find('select[name=categoria]');
 				var $correo_institucional = $('#forma-empleados-window').find('input[name=correo_institucional]');
 				var $campo_comentarios =$('#forma-empleados-window').find('textarea[name=cometarios]');
-				//tab5 Roles
+				var $select_depto = $('#forma-empleados-window').find('select[name=select_depto]');
 				
+				//tab5 Roles
 				var $campo_nom_usuario = $('#forma-empleados-window').find('input[name=email_usr]');
 				var $campo_password = $('#forma-empleados-window').find('input[name=password]');
 				var $campo_verifica_password = $('#forma-empleados-window').find('input[name=verifica_pass]');
@@ -1158,6 +1171,8 @@ $(function() {
 				var $div_percepciones = $('#forma-empleados-window').find('#div_percepciones');
 				var $div_deducciones = $('#forma-empleados-window').find('#div_deducciones');
 				
+				//Por default se oculta la pestaña de nomina 
+				$('#forma-empleados-window').find('ul.pestanas').find('a[href*=#tabx-3]').parent().hide();
 				
 				$permitir_solo_numeros($campo_comision);
 				$permitir_solo_numeros($campo_comision2);
@@ -1235,6 +1250,10 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+					if(entry['Extra'][0]['nomina'].trim()=='true'){
+						$('#forma-empleados-window').find('ul.pestanas').find('a[href*=#tabx-3]').parent().show();
+					}
+					
 					$campo_empleado_id.attr({ 'value' : entry['Empleados']['0']['empleado_id'] });
 					$campo_num_empleado.attr({ 'value' : entry['Empleados']['0']['clave'] });
 					$campo_nombre.attr({ 'value' : entry['Empleados']['0']['nombre_pila'] });
@@ -1421,35 +1440,29 @@ $(function() {
 
 						var escolaridad_hmtl ="";
 						// '<option value="0"  selected="yes">[-Seleccionar Escolaridad-]</option>'
-
 						$.each(entry['Escolaridad'],function(entryIndex,escolaridad){
-								if(escolaridad['id']== entry['Empleados']['0']['gral_escolaridad_id']){
-									escolaridad_hmtl += '<option value="' + escolaridad['id'] + '"selected="yes" >' + escolaridad['titulo'] + '</option>';
-								}else{
-									escolaridad_hmtl += '<option value="' + escolaridad['id'] + '"  >' + escolaridad['titulo'] + '</option>';
-
-								}
+							if(escolaridad['id']== entry['Empleados']['0']['gral_escolaridad_id']){
+								escolaridad_hmtl += '<option value="' + escolaridad['id'] + '"selected="yes" >' + escolaridad['titulo'] + '</option>';
+							}else{
+								escolaridad_hmtl += '<option value="' + escolaridad['id'] + '"  >' + escolaridad['titulo'] + '</option>';
+							}
 						});
 						$select_escolaridad.append(escolaridad_hmtl);
 
 
 						//alimenta el select de genero sexual
 						$select_genero_sexo.children().remove();
-
 						var genero_hmtl = "";//'<option value="0"  selected="yes">[-Seleccionar Genero-]</option>'
 						$.each(entry['Genero'],function(entryIndex,genero){
 							if(genero['id']==entry['Empleados']['0']['gral_sexo_id']){
 								genero_hmtl += '<option value="' + genero['id'] + '"selected="yes">' + genero['titulo'] + '</option>';
-
 							}else{
 							   genero_hmtl += '<option value="' + genero['id'] + '"  >' + genero['titulo'] + '</option>';
-
 							}
 						});
 						$select_genero_sexo.append(genero_hmtl);
 
 						//alimenta el select de edocivil
-
 						$select_edo_civil.children().remove();
 						var civils_hmtl ="";
 						$.each(entry['EdoCivil'],function(entryIndex,civil){
@@ -1458,13 +1471,11 @@ $(function() {
 							}else{
 								 civils_hmtl += '<option value="' + civil['id'] + '"  >' + civil['titulo'] + '</option>';
 							}
-
 						});
 						$select_edo_civil.append(civils_hmtl);
 
 
-					//alimenta select de religion
-
+						//alimenta select de religion
 						$select_religion.children().remove();
 						var religion_hmtl ="";
 						$.each(entry['Religion'],function(entryIndex,religion){
@@ -1472,7 +1483,6 @@ $(function() {
 								religion_hmtl += '<option value="' + religion['id'] + '"selected="yes">' + religion['titulo'] + '</option>';
 							}else{
 								 religion_hmtl += '<option value="' + religion['id'] + '"  >' + religion['titulo'] + '</option>';
-
 							}
 						});
 						$select_religion.append(religion_hmtl);
@@ -1484,42 +1494,15 @@ $(function() {
 						$.each(entry['Sangre'],function(entryIndex,sangre){
 							if(sangre['id']==entry['Empleados']['0']['gral_sangretipo_id']){
 								tipo_sangre_hmtl += '<option value="' + sangre['id'] + '"selected="yes">' + sangre['titulo'] + '</option>';
-
 							}else{
 								tipo_sangre_hmtl += '<option value="' + sangre['id'] + '"  >' + sangre['titulo'] + '</option>';
-
 							}
 						});
 						$select_tipo_sangre.append(tipo_sangre_hmtl);
 
-						//alimenta select de puestos
 
-						$select_puesto.children().remove();
-						var puesto_hmtl ="";
-						$.each(entry['Puesto'],function(entryIndex,puestos){
-							if(puestos['id']==entry['Empleados']['0']['gral_puesto_id']){
-								puesto_hmtl += '<option value="' + puestos['id'] + '"selected="yes">' + puestos['titulo'] + '</option>';
+						
 
-							}else{
-								puesto_hmtl += '<option value="' + puestos['id'] + '"  >' + puestos['titulo'] + '</option>';
-
-							}
-						});
-						$select_puesto.append(puesto_hmtl);
-
-						$select_categoria_puesto.children().remove();
-						var categoria_hmtl ="";
-						$.each(entry['Categoria'],function(entryIndex,categoria){
-							if(categoria['id']==entry['Empleados']['0']['gral_categ_id']){
-								categoria_hmtl += '<option value="' + categoria['id'] + '"selected="yes">' + categoria['titulo'] + '</option>';
-
-							}else{
-								categoria_hmtl += '<option value="' + categoria['id'] + '"  >' + categoria['titulo'] + '</option>';
-
-							}
-						});
-
-						$select_categoria_puesto.append(categoria_hmtl);
 
 						//carga select categorias al cambiar el puesto
 						$select_puesto.change(function(){
@@ -1527,14 +1510,12 @@ $(function() {
 							var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCategorias.json';
 							$arreglo = {'id_puesto':valor_puesto};
 							$.post(input_json,$arreglo,function(entry){
-									$select_categoria_puesto.children().remove();
-									var categoria_hmtl = '<option value="0"  selected="yes">[-Seleccionar Categoria-]</option>'
-									$.each(entry['Categoria'],function(entryIndex,categoria){
-											categoria_hmtl += '<option value="' + categoria['id'] + '"  >' + categoria['titulo'] + '</option>';
-									});
-									$select_categoria_puesto.append(categoria_hmtl);
-
-
+								$select_categoria_puesto.children().remove();
+								var categoria_hmtl = '<option value="0"  selected="yes">[-Seleccionar Categoria-]</option>'
+								$.each(entry['Categoria'],function(entryIndex,categoria){
+										categoria_hmtl += '<option value="' + categoria['id'] + '"  >' + categoria['titulo'] + '</option>';
+								});
+								$select_categoria_puesto.append(categoria_hmtl);
 							},"json");//termina llamada json
 						});
 
@@ -1586,12 +1567,32 @@ $(function() {
 						$div_roles.append(html);
 						seleccionar_roles_check($div_roles.find('#rols'));
 						
-						
-						
-						var elemento_seleccionado=entry['Empleados'][0]['region_id_agen'];
-						var texto_elemento_cero = '[-Seleccionar Region-]';
+						//alimenta select de puestos
+						var elemento_seleccionado=entry['Empleados'][0]['gral_puesto_id'];
+						var texto_elemento_cero = '[-Seleccionar Puesto-]';
 						var campo_indice = 'id';
 						var campo_valor = 'titulo';
+						$carga_campos_select($select_puesto, entry['Puesto'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						elemento_seleccionado=entry['Empleados'][0]['gral_categ_id'];
+						texto_elemento_cero = '[-Seleccionar Categoria-]';
+						campo_indice = 'id';
+						campo_valor = 'titulo';
+						$carga_campos_select($select_categoria_puesto, entry['Categoria'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						elemento_seleccionado=entry['Empleados'][0]['depto_id'];
+						texto_elemento_cero = '[-Seleccionar Departamento-]';
+						campo_indice = 'id';
+						campo_valor = 'titulo';
+						$carga_campos_select($select_depto, entry['Deptos'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
+						
+						
+						elemento_seleccionado=entry['Empleados'][0]['region_id_agen'];
+						texto_elemento_cero = '[-Seleccionar Region-]';
+						campo_indice = 'id';
+						campo_valor = 'titulo';
 						$carga_campos_select($select_region, entry['Region'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor);
 						
 						
@@ -1661,7 +1662,6 @@ $(function() {
 						});
 						html_deduc+='</table>';
 						$div_deducciones.append(html_deduc);
-					
 				});
 				
 				

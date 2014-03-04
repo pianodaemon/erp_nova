@@ -1083,7 +1083,7 @@ $(function() {
 
 	
 	//Ventana para la Nomina de cada Empleado
-	$forma_nomina_empleado = function(id_empleado, id_reg, $total_percep, $total_deduc, $neto_pagar){
+	$forma_nomina_empleado = function(id_empleado, id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc){
 		$('#forma-nominaempleado-window').remove();
 		$('#forma-nominaempleado-overlay').remove();
 		$(this).modalPanel_nominaempleado();
@@ -1160,9 +1160,25 @@ $(function() {
 		
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataNominaEmpleado.json';
-		$arreglo = {"id":id_reg, "id_empleado":id_empleado };
+		$arreglo = {"id_reg":id_reg, "id_empleado":id_empleado, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
+			//arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc
+			var elemento_seleccionado=0;
+			var texto_elemento_cero = '[--Seleccionar Departamento--]';
+			var campo_indice = 'id';
+			var campo_valor = 'titulo';
+			$carga_campos_select($select_departamento, arrayDeptos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+			
+			
+			elemento_seleccionado=0;
+			texto_elemento_cero = '[--Seleccionar Puesto--]';
+			campo_indice = 'id';
+			campo_valor = 'titulo';
+			$carga_campos_select($select_puesto, arrayPuestos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+			
+			
+			
 			
 		},"json");
 		
@@ -1254,7 +1270,7 @@ $(function() {
 	
 	
 	
-	$agrega_empleado_grid = function($grid_empleados, id_reg, id_empleado, nombre_empleado){
+	$agrega_empleado_grid = function($grid_empleados, id_reg, id_empleado, nombre_empleado, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc){
 		//Obtiene numero de trs
 		var tr = $("tr", $grid_empleados).size();
 		tr++;
@@ -1302,12 +1318,13 @@ $(function() {
 			var $neto_pagar = $fila.find('#neto_pagar').val();
 			
 			//Llamada a la función que crea la ventana para la nomina del empleado
-			$forma_nomina_empleado(idEmpleado, id_reg, $total_percep, $total_deduc, $neto_pagar);
+			$forma_nomina_empleado(idEmpleado, id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc);
 		});
 	}
 	
+	//arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc
 	
-	$get_empleados = function(id_periodicidad_pago, $grid_empleados, $select_comp_periodicidad){
+	$get_empleados = function(id_periodicidad_pago, $grid_empleados, $select_comp_periodicidad, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc){
 		$grid_empleados.children().remove();
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getEmpleados.json';
 		$arreglo = {'id':id_periodicidad_pago, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
@@ -1317,7 +1334,7 @@ $(function() {
 					var id_reg = data['id_reg'];
 					var id_empleado = data['id'];
 					var nombre_empleado = data['nombre'];
-					$agrega_empleado_grid($grid_empleados, id_reg, id_empleado, nombre_empleado);
+					$agrega_empleado_grid($grid_empleados, id_reg, id_empleado, nombre_empleado, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc);
 				});
 			}else{
 				jAlert('No hay empleados que se le pague con la Periodicidad seleccionada.', 'Atencion!', function(r) { 
@@ -1326,6 +1343,29 @@ $(function() {
 			}
 		},"json");
 	}
+	
+	
+	
+	$get_periodos_por_tipo_periodicidad = function(id_periodicidad_pago, id_periodo_selec, $select_no_periodo){
+		$select_no_periodo.children().remove();
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPeriodosPorTipoPeridicidad.json';
+		$arreglo = {'id':id_periodicidad_pago, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
+		$.post(input_json,$arreglo,function(entry){
+			elemento_seleccionado = id_periodo_selec;
+			texto_elemento_cero = '[-Seleccionar-]';
+			campo_indice = 'id';
+			campo_valor = 'periodo';
+			$carga_campos_select($select_no_periodo, entry['Periodos'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+			
+			if (entry['Periodos'].length <= 0){
+				jAlert('No hay periodos configurados para la Periodicidad seleccionada.', 'Atencion!', function(r) { 
+					$select_no_periodo.focus();
+				});
+			}
+		},"json");
+	}
+	
+	
 	
 	
 	
@@ -1373,7 +1413,8 @@ $(function() {
 		var $select_comp_moneda = $('#forma-facnomina-window').find('select[name=select_comp_moneda]');
 		var $select_comp_periodicidad = $('#forma-facnomina-window').find('select[name=select_comp_periodicidad]');
 		var $periodicidad_selec = $('#forma-facnomina-window').find('input[name=periodicidad_selec]');
-		
+		var $select_no_periodo = $('#forma-facnomina-window').find('select[name=select_no_periodo]');
+		var $no_periodo_selec = $('#forma-facnomina-window').find('input[name=no_periodo_selec]');
 		
 		//Grid de productos
 		var $grid_empleados = $('#forma-facnomina-window').find('#grid_empleados');
@@ -1513,8 +1554,6 @@ $(function() {
 		
 		$.post(input_json,$arreglo,function(entry){
 			
-			
-			
 			//alert(entry['Extra'][0]['identificador']);
 			$identificador.val(entry['Extra'][0]['identificador']);
 			$emisor_rfc.val(entry['Extra'][0]['emp_rfc']);
@@ -1556,18 +1595,24 @@ $(function() {
 			campo_valor = 'titulo';
 			$carga_campos_select($select_comp_periodicidad, entry['Periodicidad'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
 			
+			//entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones']
 			
 			
-			//Carga lista de empleados con el Periodo de Pago Seleccionado
+			
+			//Cambiar la periodicidad
 			$select_comp_periodicidad.change(function(){
 				var valor = $(this).val();
+				var id_periodicidad_pago=0;
 				if(parseInt(valor)>0){
 					if(parseInt($periodicidad_selec.val())>0){
 						if(parseInt($("tr", $grid_empleados).size())>0){
 							jConfirm('Hay empleados en la Lista. Al cambiar la Periodicidad de Pago, se sustituir&aacute; el listado actual por una nueva lista.\nEst&aacute; seguro que desea cambiar los empleados del listado actual?', 'Dialogo de Confirmacion', function(r) {
 								if (r){
-									$get_empleados(valor, $grid_empleados, $select_comp_periodicidad);
+									id_periodicidad_pago=0;
+									$get_empleados(valor, $grid_empleados, $select_comp_periodicidad, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones']);
+									$get_periodos_por_tipo_periodicidad(valor, id_periodicidad_pago, $select_no_periodo);
 									$periodicidad_selec.val(valor);
+									$no_periodo_selec.val(id_periodicidad_pago);
 								}else{
 									//Volvemos a cargar el select para dejar seleccionado la Periodicidad anterior
 									elemento_seleccionado=$periodicidad_selec.val();
@@ -1575,30 +1620,43 @@ $(function() {
 									campo_indice = 'id';
 									campo_valor = 'titulo';
 									$carga_campos_select($select_comp_periodicidad, entry['Periodicidad'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+									$get_periodos_por_tipo_periodicidad($periodicidad_selec.val(), $no_periodo_selec.val(), $select_no_periodo);
 								}
 							});
 						}else{
-							$get_empleados(valor, $grid_empleados, $select_comp_periodicidad);
+							id_periodicidad_pago=0;
+							$get_empleados(valor, $grid_empleados, $select_comp_periodicidad, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones']);
+							$get_periodos_por_tipo_periodicidad(valor, id_periodicidad_pago, $select_no_periodo);
 							$periodicidad_selec.val(valor);
+							$no_periodo_selec.val(id_periodicidad_pago);
 						}
 					}else{
-						$get_empleados(valor, $grid_empleados, $select_comp_periodicidad);
+						id_periodicidad_pago=0;
+						$get_empleados(valor, $grid_empleados, $select_comp_periodicidad, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones']);
+						$get_periodos_por_tipo_periodicidad(valor, id_periodicidad_pago, $select_no_periodo);
 						$periodicidad_selec.val(valor);
+						$no_periodo_selec.val(id_periodicidad_pago);
 					}
 				}else{
-					jAlert('Opcion no valido.', 'Atencion!', function(r) { 
+					jAlert('Opcion no valido.', 'Atencion!', function(r) {
 						//Volvemos a cargar el select para dejar seleccionado la Periodicidad anterior
-						elemento_seleccionado=$periodicidad_selec.val();
+						elemento_seleccionado = $periodicidad_selec.val();
 						texto_elemento_cero = '[-Seleccionar-]';
 						campo_indice = 'id';
 						campo_valor = 'titulo';
 						$carga_campos_select($select_comp_periodicidad, entry['Periodicidad'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+						$get_periodos_por_tipo_periodicidad($periodicidad_selec.val(), $no_periodo_selec.val(), $select_no_periodo);
 						$select_comp_periodicidad.focus();
 					});
 				}
 			});
 			
 			
+			//Cambiar el periodo
+			$select_no_periodo.change(function(){
+				var valor = $(this).val();
+				$no_periodo_selec.val(valor);
+			});
 			
 		},"json");//termina llamada json
 		
