@@ -330,9 +330,14 @@ public interface InvInterfaceDao {
     
     
     //Aplicativo de Captura de Costos
+    //Obtiene solo costos ultimos
     public ArrayList<HashMap<String, Object>> getInvCapturaCosto_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc);
-    public ArrayList<HashMap<String, String>> getInvCapturaCosto_DatosProducto(String sku, Integer idEmp, Integer mesActual, Integer anoActual);
-    public ArrayList<HashMap<String, String>> getInvCapturaCosto_CostoProducto(Integer id, Integer ano_actual, Integer mes_actual);
+    //Obtiene Costos de Referencia
+    public ArrayList<HashMap<String, Object>> getInvCapturaCosto_PaginaGrid2(String data_string, int offset, int pageSize, String orderBy, String asc);
+    public ArrayList<HashMap<String, String>> getInvCapturaCosto_DatosProducto(String sku, Integer idEmp, Integer mesActual, Integer anoActual, String captura_costo_ref);
+    public ArrayList<HashMap<String, String>> getInvCapturaCosto_CostoProducto(Integer id, Integer ano_actual, Integer mes_actual, String captura_costo_ref);
+    public HashMap<String, String> getCom_Par(Integer idEmp, Integer idSuc);
+    
     
     //Metodo para verificar si un usuario es Administrador
     public HashMap<String, String> getUserRolAdmin(Integer id_user);

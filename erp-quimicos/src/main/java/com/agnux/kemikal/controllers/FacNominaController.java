@@ -149,8 +149,22 @@ public class FacNominaController {
         ArrayList<HashMap<String, Object>> periodicidad_pago = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> parametros = new ArrayList<HashMap<String, Object>>();
         
-        HashMap<String, Object> extra = new HashMap<String, Object>();
+        ArrayList<HashMap<String,Object>> regimen_contratacion=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> tipo_contrato=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> tipo_jornada=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> riesgo_puesto=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> bancos=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> percepciones=new ArrayList<HashMap<String,Object>>();
+        ArrayList<HashMap<String,Object>> deducciones=new ArrayList<HashMap<String,Object>>();
+        
+            
+        
         ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
+        HashMap<String, Object> extra = new HashMap<String, Object>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        
+        
         
         
         ArrayList<HashMap<String, Object>> datosAdenda = new ArrayList<HashMap<String, Object>>();
@@ -159,7 +173,6 @@ public class FacNominaController {
         ArrayList<HashMap<String, Object>> condiciones = new ArrayList<HashMap<String, Object>>();
         ArrayList<HashMap<String, Object>> almacenes = new ArrayList<HashMap<String, Object>>();
         
-        HashMap<String, String> userDat = new HashMap<String, String>();
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -188,41 +201,45 @@ public class FacNominaController {
             
             //Obtiene parametros
             parametros = this.getFacdao().getFacNomina_Parametros(id_empresa, id_sucursal);
-            
         }
         
         monedas = this.getFacdao().getFactura_Monedas();
         metodos_pago = this.getFacdao().getMetodosPago();
         periodicidad_pago = this.getFacdao().getFacNomina_PeriodicidadPago();
         
+        regimen_contratacion = this.getFacdao().getFacNomina_RegimenContratacion();
+        tipo_contrato = this.getFacdao().getFacNomina_TiposContrato();
+        tipo_jornada = this.getFacdao().getFacNomina_TiposJornada();
+        riesgo_puesto = this.getFacdao().getFacNomina_RiesgosPuesto();
+        bancos = this.getFacdao().getFacNomina_Bancos(id_empresa);
         
+        percepciones=this.getFacdao().getFacNomina_Percepciones(0, id_empresa);
         /*
-        valorIva= this.getFacdao().getValoriva(id_sucursal);
-        extra.put("tipo_cambio", StringHelper.roundDouble(this.getFacdao().getTipoCambioActual(), 4)) ;
-        extra.put("controlExiPres", userDat.get("control_exi_pres"));
-        extra.put("validaPresPedido", parametros.get(0).get("validaPresPedido"));
-        extra.put("adenda", String.valueOf(incluirAdenda));
-        arrayExtras.add(0,extra);
+        deducciones=this.getFacdao().getFacNomina_Deducciones(id, id_empresa);
+        */
         
         
-        monedas = this.getFacdao().getMonedas();
-        vendedores = this.getFacdao().getVendedores(id_empresa, id_sucursal);
-        condiciones = this.getFacdao().getCondiciones();
-        almacenes = this.getFacdao().getAlmacenes(id_empresa);
-         */
         
         jsonretorno.put("Datos", datos);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("MetodosPago", metodos_pago);
         jsonretorno.put("Periodicidad", periodicidad_pago);
+        jsonretorno.put("RegimenContrato",regimen_contratacion);
+        jsonretorno.put("TipoContrato",tipo_contrato);
+        jsonretorno.put("TipoJornada",tipo_jornada);
+        jsonretorno.put("Riesgos",riesgo_puesto);
+        jsonretorno.put("Bancos",bancos);
+        jsonretorno.put("Percepciones",percepciones);
+        jsonretorno.put("Deducciones",deducciones);
+        
         jsonretorno.put("Par", parametros);
         jsonretorno.put("Extra", arrayExtra);
         
         
+        
         jsonretorno.put("datosAdenda", datosAdenda);
         jsonretorno.put("iva", valorIva);
-        
         jsonretorno.put("Vendedores", vendedores);
         jsonretorno.put("Condiciones", condiciones);
         jsonretorno.put("Almacenes", almacenes);

@@ -79,16 +79,40 @@ public class InvCapturaCostosController {
         
         log.log(Level.INFO, "Ejecutando starUp de {0}", InvCapturaCostosController.class.getName());
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> comPar = new HashMap<String, String>();
         
-        //infoConstruccionTabla.put("id", "Acciones:90");
-        infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("codigo", "C&oacute;digo:120");
-        infoConstruccionTabla.put("descripcion","Descripci&oacute;n:300");
-        infoConstruccionTabla.put("moneda", "Moneda:120");
-        infoConstruccionTabla.put("tc", "Tipo Cambio:100");
-        infoConstruccionTabla.put("costo","Costo:100");
-        infoConstruccionTabla.put("fecha", "Fecha Actualizaci&oacute;n:130");
+        String userId = String.valueOf(user.getUserId());
+        userDat = this.getHomeDao().getUserById(Integer.parseInt(userId));
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        comPar = this.getInvDao().getCom_Par(id_empresa, id_sucursal);
         
+        if(comPar.get("captura_costo_ref").equals("false")){
+            infoConstruccionTabla.put("id", "Acciones:70");
+            infoConstruccionTabla.put("codigo", "C&oacute;digo:120");
+            infoConstruccionTabla.put("descripcion","Descripci&oacute;n:300");
+            infoConstruccionTabla.put("moneda", "Moneda:120");
+            infoConstruccionTabla.put("tc", "T.C.:80");
+            infoConstruccionTabla.put("costo","Costo:100");
+            infoConstruccionTabla.put("fecha", "Fecha Actualizaci&oacute;n:130");
+        }else{
+            infoConstruccionTabla.put("id", "Acciones:70");
+            infoConstruccionTabla.put("codigo", "C&oacute;digo:120");
+            infoConstruccionTabla.put("descripcion","Descripci&oacute;n:300");
+            infoConstruccionTabla.put("presentacion","Presentaci&oacute;n:120");
+            infoConstruccionTabla.put("moneda", "Moneda:60");
+            infoConstruccionTabla.put("tc", "T.C.:60");
+            infoConstruccionTabla.put("costo","Costo:70");
+            infoConstruccionTabla.put("igi","I.G.I.:65");
+            infoConstruccionTabla.put("gi","G.I.:65");
+            infoConstruccionTabla.put("ca","C.A.:65");
+            infoConstruccionTabla.put("cit","C.I.T.:80");
+            infoConstruccionTabla.put("pmin","P.MIN.:80");
+            infoConstruccionTabla.put("fecha", "Fecha Actualizaci&oacute;n:130");
+        }
+        
+                    
         ModelAndView x = new ModelAndView("invcapturacostos/startup", "title", "Captura de Costo");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
@@ -99,8 +123,6 @@ public class InvCapturaCostosController {
         x = x.addObject("username", user.getUserName());
         x = x.addObject("empresa", user.getRazonSocialEmpresa());
         x = x.addObject("sucursal", user.getSucursal());
-        
-        String userId = String.valueOf(user.getUserId());
         
         String codificado = Base64Coder.encodeString(userId);
         
@@ -129,12 +151,18 @@ public class InvCapturaCostosController {
         
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> comPar = new HashMap<String, String>();
         
         //Aplicativo para Captura de Costos(INV)
         Integer app_selected = 145;
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        comPar = this.getInvDao().getCom_Par(id_empresa, id_sucursal);
         
         //variables para el buscador
         String codigo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("codigo")))+"%";
@@ -158,8 +186,14 @@ public class InvCapturaCostosController {
         
         int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
         
-        //obtiene los registros para el grid, de acuerdo a los parametros de busqueda
-        jsonretorno.put("Data", this.getInvDao().getInvCapturaCosto_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        //Obtiene los registros para el grid, de acuerdo a los parametros de busqueda
+        if(comPar.get("captura_costo_ref").equals("false")){
+            //Obtiene solo costos ultimos
+            jsonretorno.put("Data", this.getInvDao().getInvCapturaCosto_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        }else{
+            //Obtiene con costos de Referencia
+            jsonretorno.put("Data", this.getInvDao().getInvCapturaCosto_PaginaGrid2(data_string, offset, items_por_pag, orderby, desc));
+        }
         
         //obtiene el hash para los datos que necesita el datagrid
         jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
@@ -203,13 +237,16 @@ public class InvCapturaCostosController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         ArrayList<HashMap<String, String>> costoProd = new ArrayList<HashMap<String, String>>(); 
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> arrayExtra = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> comPar = new HashMap<String, String>();
         
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
         userDat = this.getHomeDao().getUserById(id_usuario);
-        
-        //Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
-        //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        comPar = this.getInvDao().getCom_Par(id_empresa, id_sucursal);
+        arrayExtra.add(comPar);
         
         if( identificador != 0 ){
             //Aquí solo debe entrar cuando es EDITAR.
@@ -222,14 +259,14 @@ public class InvCapturaCostosController {
             //Tomar el mes actual
             Integer mes_actual=Integer.parseInt(f[1]);
             
-            costoProd = this.getInvDao().getInvCapturaCosto_CostoProducto(identificador, ano_actual, mes_actual);
+            costoProd = this.getInvDao().getInvCapturaCosto_CostoProducto(identificador, ano_actual, mes_actual, comPar.get("captura_costo_ref"));
         }
         
         monedas = this.getInvDao().getMonedas();
         
         jsonretorno.put("Monedas", monedas);
         jsonretorno.put("Costo", costoProd);
-        
+        jsonretorno.put("Extra", arrayExtra);
         return jsonretorno;
     }
     
@@ -282,11 +319,16 @@ public class InvCapturaCostosController {
         ArrayList<HashMap<String, String>> datos = new ArrayList<HashMap<String, String>>();
         ArrayList<HashMap<String, String>> monedas = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> comPar = new HashMap<String, String>();
+        
+        
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        comPar = this.getInvDao().getCom_Par(id_empresa, id_sucursal);
         
         //Convertir en arreglo la fecha actual
         String f [] = TimeHelper.getFechaActualYMD().split("-");
@@ -297,8 +339,8 @@ public class InvCapturaCostosController {
         //Tomar el mes actual
         Integer mes_actual=Integer.parseInt(f[1]);
         
-        datos = this.getInvDao().getInvCapturaCosto_DatosProducto(sku.toUpperCase(), id_empresa, mes_actual, ano_actual);
-        monedas = this.getInvDao().getMonedas();
+        datos = this.getInvDao().getInvCapturaCosto_DatosProducto(sku.toUpperCase(), id_empresa, mes_actual, ano_actual, comPar.get("captura_costo_ref"));
+        //monedas = this.getInvDao().getMonedas();
         
         jsonretorno.put("Producto", datos);
         //jsonretorno.put("Monedas", monedas);
@@ -319,6 +361,11 @@ public class InvCapturaCostosController {
             @RequestParam(value="selectMon", required=false) String[] selectMon,
             @RequestParam(value="tc", required=false) String[] tc,
             @RequestParam(value="notr", required=false) String[] notr,
+            @RequestParam(value="id_pres", required=false) String[] id_pres,
+            @RequestParam(value="igi", required=false) String[] igi,
+            @RequestParam(value="gi", required=false) String[] gi,
+            @RequestParam(value="ca", required=false) String[] ca,
+            @RequestParam(value="margen_pmin", required=false) String[] margen_pmin,
             @ModelAttribute("user") UserSessionData user
         ) {
         
@@ -338,7 +385,7 @@ public class InvCapturaCostosController {
         
         for(int i=0; i<idreg.length; i++) { 
             selectMon[i] = StringHelper.verificarSelect(selectMon[i]);
-            arreglo[i]= "'"+idreg[i] +"___" + idprod[i] +"___" + costo_ultimo[i] +"___" + selectMon[i] +"___" + tc[i] +"___" + notr[i] +"'";
+            arreglo[i]= "'"+idreg[i] +"___" + idprod[i] +"___" + costo_ultimo[i] +"___" + selectMon[i] +"___" + tc[i] +"___" + notr[i] +"___"+ id_pres[i] +"___" + igi[i] +"___" + gi[i] +"___" + ca[i] +"___" + margen_pmin[i] +"'";
             //System.out.println(arreglo[i]);
         }
         

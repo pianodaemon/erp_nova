@@ -7887,34 +7887,34 @@ public class InvSpringDao implements InvInterfaceDao{
         );
         return hm_datos_existencias;
     }
-
-
-
+    
+    
+    
     //**************************************************************************************************************************
     //INICIA METODOS DE APLICATIVO DE CAPTURA DE COSTOS
     //**************************************************************************************************************************
+    //Obtiene datos para el Grid solo costos Ultimos
     @Override
     public ArrayList<HashMap<String, Object>> getInvCapturaCosto_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
         String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
         String cad[] = data_string.split("___");
         String mesActual=cad[6];
         
-        
 	String sql_to_query = ""
-                + "SELECT "
-                    + "inv_prod_cost_prom.id, "
-                    + "inv_prod.sku AS codigo,"
-                    + "inv_prod.descripcion,"
-                    + "(CASE WHEN gral_mon.descripcion_abr IS NULL THEN '' ELSE gral_mon.descripcion_abr END) AS moneda,"
-                    + "inv_prod_cost_prom.tipo_cambio_"+mesActual+" AS tc,"
-                    + "inv_prod_cost_prom.costo_ultimo_"+mesActual+" AS costo,"
-                    + "(CASE WHEN inv_prod_cost_prom.actualizacion_"+mesActual+" IS NULL THEN '' ELSE to_char(inv_prod_cost_prom.actualizacion_"+mesActual+",'dd/mm/yyyy') END) AS fecha "
-                + "FROM inv_prod_cost_prom "
-                + "JOIN inv_prod ON inv_prod.id=inv_prod_cost_prom.inv_prod_id "
-                + "LEFT JOIN gral_mon ON gral_mon.id=inv_prod_cost_prom.gral_mon_id_"+mesActual+" "
-                +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_prod_cost_prom.id "
-                +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
-
+        + "SELECT "
+            + "inv_prod_cost_prom.id, "
+            + "inv_prod.sku AS codigo,"
+            + "inv_prod.descripcion,"
+            + "(CASE WHEN gral_mon.descripcion_abr IS NULL THEN '' ELSE gral_mon.descripcion_abr END) AS moneda,"
+            + "inv_prod_cost_prom.tipo_cambio_"+mesActual+" AS tc,"
+            + "inv_prod_cost_prom.costo_ultimo_"+mesActual+" AS costo,"
+            + "(CASE WHEN inv_prod_cost_prom.actualizacion_"+mesActual+" IS NULL THEN '' ELSE to_char(inv_prod_cost_prom.actualizacion_"+mesActual+",'dd/mm/yyyy') END) AS fecha "
+        + "FROM inv_prod_cost_prom "
+        + "JOIN inv_prod ON inv_prod.id=inv_prod_cost_prom.inv_prod_id "
+        + "LEFT JOIN gral_mon ON gral_mon.id=inv_prod_cost_prom.gral_mon_id_"+mesActual+" "
+        +"JOIN ("+sql_busqueda+") as subt on subt.id=inv_prod_cost_prom.id "
+        +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
+        
         //System.out.println("Busqueda GetPage: "+sql_to_query);
         //System.out.println("data_string: "+data_string);
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
@@ -7938,27 +7938,163 @@ public class InvSpringDao implements InvInterfaceDao{
     }
     
     
+    //Obtiene datos para el Grid con Costos de Refrencia
+    @Override
+    public ArrayList<HashMap<String, Object>> getInvCapturaCosto_PaginaGrid2(String data_string, int offset, int pageSize, String orderBy, String asc) {
+        String sql_busqueda = "SELECT id FROM gral_bus_catalogos(?) AS foo (id integer)";
+        String cad[] = data_string.split("___");
+        String mesActual=cad[6];
+        
+	String sql_to_query = ""
+        + "SELECT "
+            + "sbt.id, "
+            + "codigo,"
+            + "descripcion,"
+            + "moneda,"
+            + "presentacion,"
+            + "tc, "
+            + "costo,"
+            + "igi, "
+            + "gi,"
+            + "ca,"
+            + "(CASE WHEN sbt.costo > 0 THEN (sbt.costo + sbt.ca + (sbt.costo * sbt.igi) + (sbt.costo * sbt.gi)) ELSE 0 END) AS cit,"
+            + "(CASE WHEN sbt.costo > 0 THEN (sbt.costo + sbt.ca + (sbt.costo * sbt.igi) + (sbt.costo * sbt.gi))/(1 - sbt.pmin) ELSE 0 END) AS pmin,"
+            + "fecha "
+        + "FROM ("
+            + "SELECT inv_prod_cost_prom.id, "
+            + "inv_prod.sku AS codigo,"
+            + "inv_prod.descripcion,"
+            + "(CASE WHEN gral_mon.descripcion_abr IS NULL THEN '' ELSE gral_mon.descripcion_abr END) AS moneda,"
+            + "tbl_pres.titulo AS presentacion,"
+            + "inv_prod_cost_prom.tipo_cambio_"+mesActual+" AS tc,"
+            + "inv_prod_cost_prom.costo_ultimo_"+mesActual+" AS costo,"
+            + "(CASE WHEN sbt_costos.costo_imp_"+mesActual+" IS NULL THEN 0 ELSE (sbt_costos.costo_imp_"+mesActual+"/100)::double precision END ) AS igi,  "
+            + "(CASE WHEN sbt_costos.costo_dir_"+mesActual+" IS NULL THEN 0 ELSE (sbt_costos.costo_dir_"+mesActual+"/100)::double precision END ) AS gi, "
+            + "(CASE WHEN sbt_costos.costo_adic_"+mesActual+" IS NULL THEN 0 ELSE sbt_costos.costo_adic_"+mesActual+" END ) AS ca, "
+            + "(CASE WHEN sbt_costos.precio_min_"+mesActual+" IS NULL THEN 0 ELSE (sbt_costos.precio_min_"+mesActual+"/100)::double precision END ) AS pmin,"
+            + "(CASE WHEN inv_prod_cost_prom.actualizacion_"+mesActual+" IS NULL THEN '' ELSE to_char(inv_prod_cost_prom.actualizacion_"+mesActual+",'dd/mm/yyyy') END) AS fecha "
+            + "FROM inv_prod_cost_prom "
+            + "JOIN inv_prod ON inv_prod.id=inv_prod_cost_prom.inv_prod_id "
+            + "JOIN inv_prod_pres_x_prod ON inv_prod_pres_x_prod.producto_id=inv_prod.id "
+            + "JOIN inv_prod_presentaciones AS tbl_pres ON tbl_pres.id=inv_prod_pres_x_prod.presentacion_id "
+            + "LEFT JOIN ("
+                + "SELECT distinct ano,inv_prod_id,inv_prod_presentacion_id,costo_imp_1,costo_dir_1,precio_min_1,actualizacion_1,usr_id_actualiza_1,costo_imp_2,costo_dir_2,precio_min_2,actualizacion_2,usr_id_actualiza_2,costo_imp_3,costo_dir_3,precio_min_3,actualizacion_3,usr_id_actualiza_3,costo_imp_4,costo_dir_4,precio_min_4,actualizacion_4,usr_id_actualiza_4,costo_imp_5,costo_dir_5,precio_min_5,actualizacion_5,usr_id_actualiza_5,costo_imp_6,costo_dir_6,precio_min_6,actualizacion_6,usr_id_actualiza_6,costo_imp_7,costo_dir_7,precio_min_7,actualizacion_7,usr_id_actualiza_7,costo_imp_8,costo_dir_8,precio_min_8,actualizacion_8,usr_id_actualiza_8,costo_imp_9,costo_dir_9,precio_min_9,actualizacion_9,usr_id_actualiza_9,costo_imp_10,costo_dir_10,precio_min_10,actualizacion_10,usr_id_actualiza_10,costo_imp_11,costo_dir_11,precio_min_11,actualizacion_11,usr_id_actualiza_11,costo_imp_12,costo_dir_12,precio_min_12,actualizacion_12,usr_id_actualiza_12,gral_emp_id,costo_adic_1,costo_adic_2,costo_adic_3,costo_adic_4,costo_adic_5,costo_adic_6,costo_adic_7,costo_adic_8,costo_adic_9,costo_adic_10, costo_adic_11, costo_adic_12 FROM inv_prod_costos "
+            + ") AS sbt_costos ON (sbt_costos.inv_prod_id=inv_prod.id AND sbt_costos.inv_prod_presentacion_id=tbl_pres.id AND sbt_costos.ano=EXTRACT(YEAR FROM now())::integer ) "
+            + "LEFT JOIN gral_mon ON gral_mon.id=inv_prod_cost_prom.gral_mon_id_"+mesActual+" "
+        + ") AS sbt "
+        +"JOIN ("+sql_busqueda+") as subt on subt.id=sbt.id "
+        +"ORDER BY "+orderBy+" "+asc+" LIMIT ? OFFSET ?";
+        
+        System.out.println("Busqueda GetPage: "+sql_to_query);
+        System.out.println("data_string: "+data_string);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string),new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("codigo",rs.getString("codigo"));
+                    row.put("descripcion",rs.getString("descripcion"));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("moneda",rs.getString("moneda"));
+                    row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
+                    row.put("costo",StringHelper.roundDouble(rs.getString("costo"),2));
+                    row.put("igi",StringHelper.roundDouble(rs.getString("igi"),2));
+                    row.put("gi",StringHelper.roundDouble(rs.getString("gi"),2));
+                    row.put("ca",StringHelper.roundDouble(rs.getString("ca"),2));
+                    row.put("cit",StringHelper.roundDouble(rs.getString("cit"),2));
+                    row.put("pmin",StringHelper.roundDouble(rs.getString("pmin"),2));
+                    row.put("fecha",rs.getString("fecha"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
     
     //Obtiene el costo de un producto al seleccionar editar un registro del grid
     @Override
-    public ArrayList<HashMap<String, String>> getInvCapturaCosto_CostoProducto(Integer id, Integer anoActual, Integer mesActual) {
-        String sql_to_query = ""
-        + "SELECT "
-            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
-            + "inv_prod.id AS id_prod, "
-            + "inv_prod.sku AS codigo, "
-            + "inv_prod.descripcion,"
-            + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad, "
-            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
-            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo_ultimo, "
-            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
-            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc "
-        + "FROM inv_prod "
-        + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano="+anoActual+") "
-        + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
-        + "WHERE inv_prod_cost_prom.id="+id+" "
-        + "ORDER BY inv_prod.descripcion LIMIT 1;";
-        //System.out.println("costoProd: "+sql_to_query);
+    public ArrayList<HashMap<String, String>> getInvCapturaCosto_CostoProducto(Integer id, Integer anoActual, Integer mesActual, String captura_costo_ref) {
+        String sql_to_query = "";
+        if(captura_costo_ref.equals("false")){
+            sql_to_query = ""
+            + "SELECT "
+                + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
+                + "inv_prod.id AS id_prod, "
+                + "inv_prod.sku AS codigo, "
+                + "inv_prod.descripcion,"
+                + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad, "
+                + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
+                + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo, "
+                + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
+                + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc,"
+                + "0::integer AS id_pres,"
+                + "''::character varying AS presentacion,"
+                + "0::double precision AS igi,  "
+                + "0::double precision AS gi, "
+                + "0::double precision AS ca, "
+                + "0::double precision AS margen_pmin,"
+                + "0::double precision AS cit,"
+                + "0::double precision AS pmin "
+            + "FROM inv_prod "
+            + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano="+anoActual+") "
+            + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
+            + "WHERE inv_prod_cost_prom.id="+id+" "
+            + "ORDER BY inv_prod.descripcion LIMIT 1;";
+            
+        }else{
+            sql_to_query = ""
+            + "SELECT "
+                + "id_reg,"
+                + "id_prod, "
+                + "codigo, "
+                + "descripcion,"
+                + "unidad, "
+                + "no_dec, "
+                + "idMon,"
+                + "tc, "
+                + "costo, "
+                + "id_pres,"
+                + "presentacion,"
+                + "igi,  "
+                + "gi, "
+                + "ca, "
+                + "margen_pmin,"
+                + "(CASE WHEN sbt.costo > 0 THEN (sbt.costo + sbt.ca + (sbt.costo * (CASE WHEN sbt.igi=0 THEN 0 ELSE (sbt.igi/100)::double precision END)) + (sbt.costo * (CASE WHEN sbt.gi=0 THEN 0 ELSE (sbt.gi/100)::double precision END))) ELSE 0 END) AS cit,"
+                + "(CASE WHEN sbt.costo > 0 THEN (sbt.costo + sbt.ca + (sbt.costo * (CASE WHEN sbt.igi=0 THEN 0 ELSE (sbt.igi/100)::double precision END)) + (sbt.costo * (CASE WHEN sbt.gi=0 THEN 0 ELSE (sbt.gi/100)::double precision END)))/(1 - (CASE WHEN sbt.margen_pmin=0 THEN 0 ELSE (sbt.margen_pmin/100)::double precision END)) ELSE 0 END) AS pmin  "
+            + "FROM ("
+                + "SELECT "
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
+                    + "inv_prod.id AS id_prod, "
+                    + "inv_prod.sku AS codigo, "
+                    + "inv_prod.descripcion,"
+                    + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad, "
+                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo, "
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc, "
+                    + "tbl_pres.id AS id_pres,"
+                    + "tbl_pres.titulo AS presentacion,"
+                    + "(CASE WHEN sbt_costos.costo_imp_"+mesActual+" IS NULL THEN 0 ELSE sbt_costos.costo_imp_"+mesActual+" END ) AS igi,  "
+                    + "(CASE WHEN sbt_costos.costo_dir_"+mesActual+" IS NULL THEN 0 ELSE sbt_costos.costo_dir_"+mesActual+" END ) AS gi, "
+                    + "(CASE WHEN sbt_costos.costo_adic_"+mesActual+" IS NULL THEN 0 ELSE sbt_costos.costo_adic_"+mesActual+" END ) AS ca, "
+                    + "(CASE WHEN sbt_costos.precio_min_"+mesActual+" IS NULL THEN 0 ELSE sbt_costos.precio_min_"+mesActual+" END ) AS margen_pmin "
+                + "FROM inv_prod "
+                + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano="+anoActual+") "
+                + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
+                + "JOIN inv_prod_pres_x_prod ON inv_prod_pres_x_prod.producto_id=inv_prod.id "
+                + "JOIN inv_prod_presentaciones AS tbl_pres ON tbl_pres.id=inv_prod_pres_x_prod.presentacion_id "
+                + "LEFT JOIN ("
+                    + "SELECT distinct ano,inv_prod_id,inv_prod_presentacion_id,costo_imp_1,costo_dir_1,precio_min_1,actualizacion_1,usr_id_actualiza_1,costo_imp_2,costo_dir_2,precio_min_2,actualizacion_2,usr_id_actualiza_2,costo_imp_3,costo_dir_3,precio_min_3,actualizacion_3,usr_id_actualiza_3,costo_imp_4,costo_dir_4,precio_min_4,actualizacion_4,usr_id_actualiza_4,costo_imp_5,costo_dir_5,precio_min_5,actualizacion_5,usr_id_actualiza_5,costo_imp_6,costo_dir_6,precio_min_6,actualizacion_6,usr_id_actualiza_6,costo_imp_7,costo_dir_7,precio_min_7,actualizacion_7,usr_id_actualiza_7,costo_imp_8,costo_dir_8,precio_min_8,actualizacion_8,usr_id_actualiza_8,costo_imp_9,costo_dir_9,precio_min_9,actualizacion_9,usr_id_actualiza_9,costo_imp_10,costo_dir_10,precio_min_10,actualizacion_10,usr_id_actualiza_10,costo_imp_11,costo_dir_11,precio_min_11,actualizacion_11,usr_id_actualiza_11,costo_imp_12,costo_dir_12,precio_min_12,actualizacion_12,usr_id_actualiza_12,gral_emp_id,costo_adic_1,costo_adic_2,costo_adic_3,costo_adic_4,costo_adic_5,costo_adic_6,costo_adic_7,costo_adic_8,costo_adic_9,costo_adic_10, costo_adic_11, costo_adic_12 FROM inv_prod_costos "
+                + ") AS sbt_costos ON (sbt_costos.inv_prod_id=inv_prod.id AND sbt_costos.inv_prod_presentacion_id=tbl_pres.id AND sbt_costos.ano="+anoActual+") "
+                + "WHERE inv_prod_cost_prom.id="+id+" "
+            + ") AS sbt "
+            + "ORDER BY sbt.descripcion;";
+        }
+        
+        System.out.println("costoProd: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -7972,9 +8108,17 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
-                    row.put("costo_ultimo",StringHelper.roundDouble(rs.getString("costo_ultimo"),2));
+                    row.put("costo_ultimo",StringHelper.roundDouble(rs.getString("costo"),2));
                     row.put("idMon",String.valueOf(rs.getInt("idMon")));
                     row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
+                    row.put("id_pres",String.valueOf(rs.getInt("id_pres")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("igi",StringHelper.roundDouble(rs.getString("igi"),2));
+                    row.put("gi",StringHelper.roundDouble(rs.getString("gi"),2));
+                    row.put("ca",StringHelper.roundDouble(rs.getString("ca"),2));
+                    row.put("margen_pmin",StringHelper.roundDouble(rs.getString("margen_pmin"),2));
+                    row.put("cit",StringHelper.roundDouble(rs.getString("cit"),2));
+                    row.put("pmin",StringHelper.roundDouble(rs.getString("pmin"),2));
                     return row;
                 }
             }
@@ -7988,25 +8132,85 @@ public class InvSpringDao implements InvInterfaceDao{
     
     //Busca datos de un producto para agregar al grid de Captura de Costos
     @Override
-    public ArrayList<HashMap<String, String>> getInvCapturaCosto_DatosProducto(String sku, Integer idEmp, Integer mesActual, Integer anoActual) {
+    public ArrayList<HashMap<String, String>> getInvCapturaCosto_DatosProducto(String sku, Integer idEmp, Integer mesActual, Integer anoActual, String captura_costo_ref) {
+        String sql_to_query = "";
         
-        String sql_to_query = ""
-        + "SELECT "
-            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
-            + "inv_prod.id AS id_prod, "
-            + "inv_prod.sku AS codigo, "
-            + "inv_prod.descripcion,"
-            + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad, "
-            + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
-            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo_ultimo, "
-            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
-            + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc "
-        + "FROM inv_prod "
-        + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano="+anoActual+") "
-        + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
-        + "WHERE inv_prod.sku='"+sku+"' AND inv_prod.empresa_id="+idEmp+" AND inv_prod.borrado_logico=FALSE "
-        + "ORDER BY inv_prod.descripcion;";
-        //System.out.println("datosProd: "+sql_to_query);
+        if(captura_costo_ref.equals("false")){
+            sql_to_query = ""
+            + "SELECT "
+                + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
+                + "inv_prod.id AS id_prod, "
+                + "inv_prod.sku AS codigo, "
+                + "inv_prod.descripcion,"
+                + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad, "
+                + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
+                + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo, "
+                + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
+                + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc,"
+                + "0::integer AS id_pres,"
+                + "''::character varying AS presentacion,"
+                + "0::double precision AS igi,  "
+                + "0::double precision AS gi, "
+                + "0::double precision AS ca, "
+                + "0::double precision AS margen_pmin,"
+                + "0::double precision AS cit,"
+                + "0::double precision AS pmin  "
+            + "FROM inv_prod "
+            + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano="+anoActual+") "
+            + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id  "
+            + "WHERE inv_prod.sku='"+sku+"' AND inv_prod.empresa_id="+idEmp+" AND inv_prod.borrado_logico=FALSE "
+            + "ORDER BY inv_prod.descripcion;";
+        }else{
+            sql_to_query = ""
+            + "SELECT "
+                + "id_reg,"
+                + "id_prod, "
+                + "codigo, "
+                + "descripcion,"
+                + "unidad, "
+                + "no_dec, "
+                + "idMon,"
+                + "tc, "
+                + "costo, "
+                + "id_pres,"
+                + "presentacion,"
+                + "igi,  "
+                + "gi, "
+                + "ca, "
+                + "margen_pmin,"
+                + "(CASE WHEN sbt.costo > 0 THEN (sbt.costo + sbt.ca + (sbt.costo * (CASE WHEN sbt.igi=0 THEN 0 ELSE (sbt.igi/100)::double precision END)) + (sbt.costo * (CASE WHEN sbt.gi=0 THEN 0 ELSE (sbt.gi/100)::double precision END))) ELSE 0 END) AS cit,"
+                + "(CASE WHEN sbt.costo > 0 THEN (sbt.costo + sbt.ca + (sbt.costo * (CASE WHEN sbt.igi=0 THEN 0 ELSE (sbt.igi/100)::double precision END)) + (sbt.costo * (CASE WHEN sbt.gi=0 THEN 0 ELSE (sbt.gi/100)::double precision END)))/(1 - (CASE WHEN sbt.margen_pmin=0 THEN 0 ELSE (sbt.margen_pmin/100)::double precision END)) ELSE 0 END) AS pmin  "
+            + "FROM ("
+                + "SELECT "
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.id END) AS id_reg,"
+                    + "inv_prod.id AS id_prod, "
+                    + "inv_prod.sku AS codigo, "
+                    + "inv_prod.descripcion,"
+                    + "(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) AS unidad, "
+                    + "(CASE WHEN inv_prod_unidades.decimales IS NULL THEN 0 ELSE inv_prod_unidades.decimales END) AS no_dec, "
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.gral_mon_id_"+mesActual+" END) END) AS idMon,"
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 1 ELSE (CASE WHEN inv_prod_cost_prom.tipo_cambio_"+mesActual+"=0 THEN 1 ELSE inv_prod_cost_prom.tipo_cambio_"+mesActual+" END) END) AS tc, "
+                    + "(CASE WHEN inv_prod_cost_prom.id IS NULL THEN 0 ELSE inv_prod_cost_prom.costo_ultimo_"+mesActual+" END) AS costo, "
+                    + "tbl_pres.id AS id_pres,"
+                    + "tbl_pres.titulo AS presentacion,"
+                    + "(CASE WHEN sbt_costos.costo_imp_"+mesActual+" IS NULL THEN 0 ELSE sbt_costos.costo_imp_"+mesActual+" END ) AS igi,  "
+                    + "(CASE WHEN sbt_costos.costo_dir_"+mesActual+" IS NULL THEN 0 ELSE sbt_costos.costo_dir_"+mesActual+" END ) AS gi, "
+                    + "(CASE WHEN sbt_costos.costo_adic_"+mesActual+" IS NULL THEN 0 ELSE sbt_costos.costo_adic_"+mesActual+" END ) AS ca, "
+                    + "(CASE WHEN sbt_costos.precio_min_"+mesActual+" IS NULL THEN 0 ELSE sbt_costos.precio_min_"+mesActual+" END ) AS margen_pmin "
+                + "FROM inv_prod "
+                + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano="+anoActual+") "
+                + "LEFT JOIN inv_prod_unidades ON inv_prod_unidades.id=inv_prod.unidad_id "
+                + "JOIN inv_prod_pres_x_prod ON inv_prod_pres_x_prod.producto_id=inv_prod.id "
+                + "JOIN inv_prod_presentaciones AS tbl_pres ON tbl_pres.id=inv_prod_pres_x_prod.presentacion_id "
+                + "LEFT JOIN ("
+                    + "SELECT distinct ano,inv_prod_id,inv_prod_presentacion_id,costo_imp_1,costo_dir_1,precio_min_1,actualizacion_1,usr_id_actualiza_1,costo_imp_2,costo_dir_2,precio_min_2,actualizacion_2,usr_id_actualiza_2,costo_imp_3,costo_dir_3,precio_min_3,actualizacion_3,usr_id_actualiza_3,costo_imp_4,costo_dir_4,precio_min_4,actualizacion_4,usr_id_actualiza_4,costo_imp_5,costo_dir_5,precio_min_5,actualizacion_5,usr_id_actualiza_5,costo_imp_6,costo_dir_6,precio_min_6,actualizacion_6,usr_id_actualiza_6,costo_imp_7,costo_dir_7,precio_min_7,actualizacion_7,usr_id_actualiza_7,costo_imp_8,costo_dir_8,precio_min_8,actualizacion_8,usr_id_actualiza_8,costo_imp_9,costo_dir_9,precio_min_9,actualizacion_9,usr_id_actualiza_9,costo_imp_10,costo_dir_10,precio_min_10,actualizacion_10,usr_id_actualiza_10,costo_imp_11,costo_dir_11,precio_min_11,actualizacion_11,usr_id_actualiza_11,costo_imp_12,costo_dir_12,precio_min_12,actualizacion_12,usr_id_actualiza_12,gral_emp_id,costo_adic_1,costo_adic_2,costo_adic_3,costo_adic_4,costo_adic_5,costo_adic_6,costo_adic_7,costo_adic_8,costo_adic_9,costo_adic_10, costo_adic_11, costo_adic_12 FROM inv_prod_costos "
+                + ") AS sbt_costos ON (sbt_costos.inv_prod_id=inv_prod.id AND sbt_costos.inv_prod_presentacion_id=tbl_pres.id AND sbt_costos.ano="+anoActual+") "
+                + "WHERE inv_prod.sku='"+sku+"' AND inv_prod.empresa_id="+idEmp+" AND inv_prod.borrado_logico=FALSE "
+            + ") AS sbt "
+            + "ORDER BY sbt.descripcion;";
+        }
+
+        System.out.println("datosProd: "+sql_to_query);
         
         ArrayList<HashMap<String, String>> hm = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
@@ -8020,9 +8224,17 @@ public class InvSpringDao implements InvInterfaceDao{
                     row.put("descripcion",rs.getString("descripcion"));
                     row.put("unidad",rs.getString("unidad"));
                     row.put("no_dec",String.valueOf(rs.getInt("no_dec")));
-                    row.put("costo_ultimo",StringHelper.roundDouble(rs.getString("costo_ultimo"),2));
+                    row.put("costo_ultimo",StringHelper.roundDouble(rs.getString("costo"),2));
                     row.put("idMon",String.valueOf(rs.getInt("idMon")));
                     row.put("tc",StringHelper.roundDouble(rs.getString("tc"),4));
+                    row.put("id_pres",String.valueOf(rs.getInt("id_pres")));
+                    row.put("presentacion",rs.getString("presentacion"));
+                    row.put("igi",StringHelper.roundDouble(rs.getString("igi"),2));
+                    row.put("gi",StringHelper.roundDouble(rs.getString("gi"),2));
+                    row.put("ca",StringHelper.roundDouble(rs.getString("ca"),2));
+                    row.put("margen_pmin",StringHelper.roundDouble(rs.getString("margen_pmin"),2));
+                    row.put("cit",StringHelper.roundDouble(rs.getString("cit"),2));
+                    row.put("pmin",StringHelper.roundDouble(rs.getString("pmin"),2));
                     return row;
                 }
             }
@@ -8031,9 +8243,28 @@ public class InvSpringDao implements InvInterfaceDao{
     }
     
     
-    
-    
-    
+    //Obtiene Parametros de Compras
+    @Override
+    public HashMap<String, String> getCom_Par(Integer idEmp, Integer idSuc) {
+        String sql_to_query = "SELECT * FROM com_par WHERE gral_emp_id=? AND gral_suc_id=?;";
+        //System.out.println("Validacion:"+sql_to_query);
+        
+        HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
+            sql_to_query,
+            new Object[]{new Integer(idEmp), new Integer (idSuc)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("inv_alm_id",String.valueOf(rs.getInt("inv_alm_id")));
+                    row.put("formato_oc",String.valueOf(rs.getInt("formato_oc")));
+                    row.put("captura_costo_ref",String.valueOf(rs.getBoolean("captura_costo_ref")).toLowerCase().trim());
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
+    //Termina metodos de Captura de Costos
     
     
     

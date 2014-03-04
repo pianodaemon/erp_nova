@@ -3407,5 +3407,155 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         return idSeq;
     }
     
+    //Obtiene los regimenes de contratacion
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_RegimenContratacion() {
+        String sql_to_query="SELECT id, (case when clave is null then '' else clave end)||' '||titulo AS titulo FROM nom_regimen_contratacion WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene los tipos de contrato
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_TiposContrato() {
+        String sql_to_query="SELECT id, titulo FROM nom_tipo_contrato WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene los Tipos de Jornada Laboral
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_TiposJornada() {
+        String sql_to_query="SELECT id, titulo FROM nom_tipo_jornada WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene los tipos de Riesgos de Puestos
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_RiesgosPuesto() {
+        String sql_to_query="SELECT id, titulo FROM nom_riesgo_puesto WHERE activo=true ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene los Bancos de la empresa
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Bancos(Integer idEmpresa) {
+        String sql_to_query="SELECT id, (case when clave is null then '' else (case when clave<>'' then clave||' ' else '' end) end)||titulo AS titulo FROM tes_ban WHERE gral_emp_id=? AND borrado_logico=false ORDER BY titulo;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer (idEmpresa)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("titulo",rs.getString("titulo"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    //Obtiene todas las Percepciones disponibles
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Percepciones(Integer IdEmpleado, Integer idEmpresa) {
+        String sql_to_query="";
+        if(IdEmpleado>0){
+            //Query para obtener las percepciones asignadas a un empleado desde el Catalogo de Empleados
+            sql_to_query=""
+            + "SELECT "
+                + "nom_percep.id, "
+                + "(case when nom_percep_tipo.clave is null then '' else (case when nom_percep_tipo.clave<>'' then nom_percep_tipo.clave||' ' else '' end) end)||upper(nom_percep_tipo.titulo) AS tipo_percep,"
+                + "(case when nom_percep.clave is null then '' else (case when nom_percep.clave<>'' then nom_percep.clave||' ' else '' end) end)||upper(nom_percep.titulo) AS percepcion  "
+            + "FROM nom_percep "
+            + "JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id "
+            + "JOIN gral_empleado_percep ON (gral_empleado_percep.nom_percep_id=nom_percep.id AND gral_empleado_percep.gral_empleado_id="+IdEmpleado+") "
+            + "WHERE nom_percep.gral_emp_id=? AND nom_percep.activo=true AND nom_percep.borrado_logico=false ORDER BY nom_percep.id;";
+        }else{
+            //Query para obtener todas las percepciones de la Empresa
+            sql_to_query=""
+            + "SELECT "
+                + "nom_percep.id, "
+                + "(case when nom_percep_tipo.clave is null then '' else (case when nom_percep_tipo.clave<>'' then nom_percep_tipo.clave||' ' else '' end) end)||upper(nom_percep_tipo.titulo) AS tipo_percep,"
+                + "(case when nom_percep.clave is null then '' else (case when nom_percep.clave<>'' then nom_percep.clave||' ' else '' end) end)||upper(nom_percep.titulo) AS percepcion  "
+            + "FROM nom_percep "
+            + "JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id "
+            + "WHERE nom_percep.gral_emp_id=? AND nom_percep.activo=true AND nom_percep.borrado_logico=false ORDER BY nom_percep.id;";
+        }
+        
+        System.out.println("QueryPercepciones: "+sql_to_query);
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer (idEmpresa)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getString("id"));
+                 row.put("tipo_percep",rs.getString("tipo_percep"));
+                 row.put("percepcion",rs.getString("percepcion"));
+                 row.put("m_gravado","0.00");
+                 row.put("m_excento","0.00");
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
     
 }
