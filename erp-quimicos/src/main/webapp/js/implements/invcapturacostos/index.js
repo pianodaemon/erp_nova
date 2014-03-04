@@ -430,14 +430,24 @@ $(function() {
 	}
 	
 	
-	$aplicar_evento_blur = function( $campo_input ){
+	$aplicar_evento_blur = function( $campo_input, captura_costo_ref ){
 		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$campo_input.blur(function(e){
 			if($campo_input.val().trim()==''){
 				$campo_input.val(0);
 			}
 			$campo_input.val(parseFloat($campo_input.val()).toFixed(2));
-			$campo_input.val($(this).agregar_comas($campo_input.val()));
+			//$campo_input.val($(this).agregar_comas($campo_input.val()));
+			
+			if(captura_costo_ref=="true"){
+				//Calcular CIT y PMIN
+				$tr = $(this).parent().parent();
+				$tr.find('input[name=cit]').val( parseFloat($tr.find('input[name=costo_ultimo]').val()) + parseFloat($tr.find('input[name=ca]').val()) + (parseFloat($tr.find('input[name=costo_ultimo]').val())*(parseFloat($tr.find('input[name=igi]').val())/100)) + (parseFloat($tr.find('input[name=costo_ultimo]').val())*(parseFloat($tr.find('input[name=gi]').val())/100)) );
+				$tr.find('input[name=pmin]').val(parseFloat($tr.find('input[name=cit]').val())/(1 - (parseFloat($tr.find('input[name=margen_pmin]').val())/100)));
+				
+				$tr.find('input[name=cit]').val(parseFloat($tr.find('input[name=cit]').val()).toFixed(2));
+				$tr.find('input[name=pmin]').val(parseFloat($tr.find('input[name=pmin]').val()).toFixed(2));
+			}
 		});
 	}
 	
@@ -455,8 +465,8 @@ $(function() {
 	
 	
 	
-	//generar tr para agregar al grid
-	$genera_tr = function(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc){
+	//Generar tr para agregar al grid
+	$genera_tr = function(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc, id_pres, pres, igi, gi, ca, cit, margen_pmin, pmin){
 		
 		var trr = '';
 		trr = '<tr>';
@@ -466,30 +476,61 @@ $(function() {
 				trr += '<input type="hidden" 	name="notr" class="notr'+ noTr +'" value="'+ noTr +'">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="120">';
+			trr += '<td class="grid1" style="font-size:11px; border:1px solid #C1DAD7;" width="120">';
 				trr += '<input type="hidden" 	name="idprod" id="idprod" value="'+ idProd +'">';
 				trr += '<input type="text" 		name="codigo" value="'+ codigo +'" class="borde_oculto" readOnly="true" style="width:116px;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="200">';
+			trr += '<td class="grid1" style="font-size:11px; border:1px solid #C1DAD7;" width="200">';
 				trr += '<input type="text" 		name="nombre" 	value="'+ descripcion +'" class="borde_oculto" readOnly="true" style="width:196px;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
+			trr += '<td class="grid1" style="font-size:11px; border:1px solid #C1DAD7;" width="100">';
 				trr += '<input type="text" 		name="unidad" 	value="'+ unidad +'" class="borde_oculto" readOnly="true" style="width:96px;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="100">';
-				trr += '<input type="text" 		name="costo_ultimo" value="'+$(this).agregar_comas(costo_ultimo)+'" class="costo_ultimo'+ noTr +'" style="width:96px; text-align:right;">';
+			trr += '<td class="grid1" id="ocultar" style="font-size:11px; border:1px solid #C1DAD7;" width="100">';
+				trr += '<input type="hidden" 	name="id_pres" class="id_pres'+ noTr +'" value="'+ id_pres +'">';
+				trr += '<input type="text" 		name="presentacion" 	value="'+ pres +'" class="borde_oculto" readOnly="true" style="width:96px;">';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
-				trr += '<select name="selectMon" class="selectMon'+ noTr +'" style="width:76px;"></select>';
+			trr += '<td class="grid1" style="font-size: 11px; border:1px solid #C1DAD7;" width="60">';
+				trr += '<select name="selectMon" class="selectMon'+ noTr +'" style="width:56px;"></select>';
 			trr += '</td>';
 			
-			trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
-				trr += '<input type="text" 		name="tc" value="'+$(this).agregar_comas(tc)+'" class="tc'+noTr+'" style="width:86px; text-align:right;">';
+			trr += '<td class="grid1" style="font-size:11px; border:1px solid #C1DAD7;" width="60">';
+				trr += '<input type="text" 		name="tc" value="'+ tc +'" class="tc'+noTr+'" style="width:56px; text-align:right;">';
 			trr += '</td>';
+			
+			trr += '<td class="grid1" style="font-size:11px; border:1px solid #C1DAD7;" width="80">';
+				trr += '<input type="text" 		name="costo_ultimo" value="'+ costo_ultimo +'" class="costo_ultimo'+ noTr +'" style="width:76px; text-align:right;">';
+			trr += '</td>';
+			
+			
+			trr += '<td class="grid1" id="ocultar" style="font-size:11px; border:1px solid #C1DAD7;" width="60">';
+				trr += '<input type="text" 		name="igi" value="'+ igi +'" class="igi'+noTr+'" style="width:56px; text-align:right;">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" id="ocultar" style="font-size:11px; border:1px solid #C1DAD7;" width="60">';
+				trr += '<input type="text" 		name="gi" value="'+ gi +'" class="gi'+noTr+'" style="width:56px; text-align:right;">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" id="ocultar" style="font-size:11px; border:1px solid #C1DAD7;" width="60">';
+				trr += '<input type="text" 		name="ca" value="'+ ca +'" class="ca'+noTr+'" style="width:56px; text-align:right;">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" id="ocultar" style="font-size:11px; border:1px solid #C1DAD7;" width="70">';
+				trr += '<input type="text" 		name="cit" value="'+ cit +'" class="borde_oculto" readOnly="true" style="width:66px; text-align:right;">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" id="ocultar" style="font-size:11px; border:1px solid #C1DAD7;" width="60">';
+				trr += '<input type="text" 		name="margen_pmin" value="'+ margen_pmin +'" class="margen_pmin'+noTr+'" style="width:56px; text-align:right;">';
+			trr += '</td>';
+			
+			trr += '<td class="grid1" id="ocultar" style="font-size:11px; border:1px solid #C1DAD7;" width="70">';
+				trr += '<input type="text" 		name="pmin" value="'+ pmin +'" class="borde_oculto" readOnly="true" style="width:66px; text-align:right;">';
+			trr += '</td>';
+			
 		trr += '</tr>';
 		
 		return trr;
@@ -501,7 +542,7 @@ $(function() {
 	
 	
 	//buscador de presentaciones disponibles para un producto
-	$buscador_datos_producto = function($grid_productos, codigo_producto){
+	$buscador_datos_producto = function($grid_productos, codigo_producto, captura_costo_ref){
 		//verifica si el campo sku no esta vacio para realizar busqueda
 		if(codigo_producto != ''){
 			
@@ -527,51 +568,88 @@ $(function() {
 				$.post(input_json,$arreglo,function(entry){
 					//verifica si el arreglo retorno datos
 					if (entry['Producto'].length > 0){
-						var noTr = $("tr", $grid_productos).size();
-						noTr++;
-						
-						var id_reg = entry['Producto'][0]['id_reg'];
-						var idProd = entry['Producto'][0]['id_prod'];
-						var codigo = entry['Producto'][0]['codigo'];
-						var descripcion = entry['Producto'][0]['descripcion'];
-						var unidad = entry['Producto'][0]['unidad'];
-						var costo_ultimo = entry['Producto'][0]['costo_ultimo'];
-						var tc = entry['Producto'][0]['tc'];
-						var idMon = entry['Producto'][0]['idMon'];
-						
-						var cadena_tr = $genera_tr(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc);
-						$grid_productos.append(cadena_tr);
-						
-						$permitir_solo_numeros($grid_productos.find('.costo_ultimo'+noTr));
-						$aplicar_evento_keypress($grid_productos.find('.costo_ultimo'+noTr));
-						$aplicar_evento_focus($grid_productos.find('.costo_ultimo'+noTr));
-						$aplicar_evento_blur($grid_productos.find('.costo_ultimo'+noTr));
-						
-						$permitir_solo_numeros($grid_productos.find('.tc'+noTr));
-						$aplicar_evento_keypress($grid_productos.find('.tc'+noTr));
-						$aplicar_evento_focus($grid_productos.find('.tc'+noTr));
-						$aplicar_evento_blur_tc($grid_productos.find('.tc'+noTr));
-						$aplicar_evento_eliminar($grid_productos.find('.delete'+noTr));
-						
-						
-						$grid_productos.find('.selectMon'+noTr).children().remove();
-						var mon_hmtl='';
-						//mon_hmtl = '<option value="0">[-  -]</option>';
-						$.each(arrayMon,function(entryIndex,mon){
-							if(parseInt(mon['id'])==parseInt(idMon)){
-								mon_hmtl += '<option value="' + mon['id'] + '" selected="yes">' + mon['descripcion_abr'] + '</option>';
-							}else{
-								mon_hmtl += '<option value="' + mon['id'] + '">' + mon['descripcion_abr'] + '</option>';
-							}
-						});
-						$grid_productos.find('.selectMon'+noTr).append(mon_hmtl);
-						
-						//Quitar valor de los campos de la busqueda
-						$('#forma-invcapturacostos-window').find('input[name=sku_producto]').val('');
-						$('#forma-invcapturacostos-window').find('input[name=nombre_producto]').val('');
+						$.each(entry['Producto'],function(entryIndex,data){
+							var noTr = $("tr", $grid_productos).size();
+							noTr++;
 							
-						//Asignar el enfoque al campo costo ultimo
-						$grid_productos.find('.costo_ultimo'+noTr).focus();
+							var id_reg = data['id_reg'];
+							var idProd = data['id_prod'];
+							var codigo = data['codigo'];
+							var descripcion = data['descripcion'];
+							var unidad = data['unidad'];
+							var costo_ultimo = data['costo_ultimo'];
+							var tc = data['tc'];
+							var idMon = data['idMon'];
+							var id_pres = data['id_pres'];
+							var pres = data['presentacion'];
+							var igi = data['igi'];
+							var gi = data['gi'];
+							var ca = data['ca'];
+							var cit = data['cit'];
+							var margen_pmin = data['margen_pmin'];
+							var pmin = data['pmin'];
+							
+							//var cadena_tr = $genera_tr(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc);
+							var cadena_tr = $genera_tr(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc, id_pres, pres, igi, gi, ca, cit, margen_pmin, pmin);
+							
+							$grid_productos.append(cadena_tr);
+							if(captura_costo_ref=="false"){
+								//Ocultar cuando no se incluye costo de referencia
+								$grid_productos.find('#ocultar').hide();
+							}
+							
+							$permitir_solo_numeros($grid_productos.find('.costo_ultimo'+noTr));
+							$aplicar_evento_keypress($grid_productos.find('.costo_ultimo'+noTr));
+							$aplicar_evento_focus($grid_productos.find('.costo_ultimo'+noTr));
+							$aplicar_evento_blur($grid_productos.find('.costo_ultimo'+noTr), captura_costo_ref);
+							
+							$permitir_solo_numeros($grid_productos.find('.tc'+noTr));
+							$aplicar_evento_keypress($grid_productos.find('.tc'+noTr));
+							$aplicar_evento_focus($grid_productos.find('.tc'+noTr));
+							$aplicar_evento_blur_tc($grid_productos.find('.tc'+noTr), 'false');
+							$aplicar_evento_eliminar($grid_productos.find('.delete'+noTr));
+							
+							$permitir_solo_numeros($grid_productos.find('.igi'+noTr));
+							$aplicar_evento_keypress($grid_productos.find('.igi'+noTr));
+							$aplicar_evento_focus($grid_productos.find('.igi'+noTr));
+							$aplicar_evento_blur($grid_productos.find('.igi'+noTr), captura_costo_ref);
+							
+							$permitir_solo_numeros($grid_productos.find('.gi'+noTr));
+							$aplicar_evento_keypress($grid_productos.find('.gi'+noTr));
+							$aplicar_evento_focus($grid_productos.find('.gi'+noTr));
+							$aplicar_evento_blur($grid_productos.find('.gi'+noTr), captura_costo_ref);
+							
+							$permitir_solo_numeros($grid_productos.find('.ca'+noTr));
+							$aplicar_evento_keypress($grid_productos.find('.ca'+noTr));
+							$aplicar_evento_focus($grid_productos.find('.ca'+noTr));
+							$aplicar_evento_blur($grid_productos.find('.ca'+noTr), captura_costo_ref);
+							
+							$permitir_solo_numeros($grid_productos.find('.margen_pmin'+noTr));
+							$aplicar_evento_keypress($grid_productos.find('.margen_pmin'+noTr));
+							$aplicar_evento_focus($grid_productos.find('.margen_pmin'+noTr));
+							$aplicar_evento_blur($grid_productos.find('.margen_pmin'+noTr), captura_costo_ref);
+							
+							
+							
+							$grid_productos.find('.selectMon'+noTr).children().remove();
+							var mon_hmtl='';
+							//mon_hmtl = '<option value="0">[-  -]</option>';
+							$.each(arrayMon,function(entryIndex,mon){
+								if(parseInt(mon['id'])==parseInt(idMon)){
+									mon_hmtl += '<option value="' + mon['id'] + '" selected="yes">' + mon['descripcion_abr'] + '</option>';
+								}else{
+									mon_hmtl += '<option value="' + mon['id'] + '">' + mon['descripcion_abr'] + '</option>';
+								}
+							});
+							$grid_productos.find('.selectMon'+noTr).append(mon_hmtl);
+							
+							//Quitar valor de los campos de la busqueda
+							$('#forma-invcapturacostos-window').find('input[name=sku_producto]').val('');
+							$('#forma-invcapturacostos-window').find('input[name=nombre_producto]').val('');
+								
+							//Asignar el enfoque al campo costo ultimo
+							$grid_productos.find('.costo_ultimo'+noTr).focus();
+						});
 					}else{
 						jAlert('El producto que intenta agregar no existe, pruebe ingresando otro.\nHaga clic en Buscar.', 'Atencion!', function(r) { 
 							$('#forma-invcapturacostos-window').find('input[name=sku_producto]').val('');
@@ -619,7 +697,7 @@ $(function() {
 		$forma_selected.attr({id : form_to_show + id_to_show});
 		//var accion = "getCotizacion";
 		
-		$('#forma-invcapturacostos-window').css({"margin-left": -300, 	"margin-top": -220});
+		$('#forma-invcapturacostos-window').css({"margin-left": -260, 	"margin-top": -220});
 		
 		$forma_selected.prependTo('#forma-invcapturacostos-window');
 		$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -658,6 +736,10 @@ $(function() {
 		$identificador.val(0);//para nueva pedido el id es 0
 		
 		//$folio.css({'background' : '#F0F0F0'});
+		
+		
+		//Ocultar columnas del Grid
+		$('#forma-invcapturacostos-window').find('#ocultar').hide();
 		
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
@@ -719,28 +801,42 @@ $(function() {
 		
 		$.post(input_json,$arreglo,function(entry){
 			arrayMon = entry['Monedas'];
+			
+			if(entry['Extra'][0]['captura_costo_ref']=="true"){
+				$('#forma-invcapturacostos-window').css({"margin-left": -510, 	"margin-top": -220});
+				$('#forma-invcapturacostos-window').find('.invcapturacostos_div_one').css({'width':'1280px'});
+				$('#forma-invcapturacostos-window').find('.invcapturacostos_div_two').css({'width':'1280px'});
+				$('#forma-invcapturacostos-window').find('#width_content_grid').css({'width':'1240px'});
+				$('#forma-invcapturacostos-window').find('#div_botones_footer').css({'width':'1230px'});
+				$('#forma-invcapturacostos-window').find('#div_titulo').css({'width':'1240px'});
+				$('#forma-invcapturacostos-window').find('#ocultar').show();
+			}
+			
+			
+			//Buscador de productos
+			$busca_sku.click(function(event){
+				event.preventDefault();
+				$busca_productos($sku_producto.val(), $nombre_producto.val());
+			});
+			
+			
+			//Agregar producto al grid
+			$agregar_producto.click(function(event){
+				event.preventDefault();
+				$buscador_datos_producto($grid_productos, $sku_producto.val(), entry['Extra'][0]['captura_costo_ref']);
+			});
+			
+			
+			//Desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
+			$(this).aplicarEventoKeypressEjecutaTrigger($sku_producto, $agregar_producto);
+			
+			
 		},"json");//termina llamada json
 		
 		
 		
 		
-		//buscador de productos
-		$busca_sku.click(function(event){
-			event.preventDefault();
-			$busca_productos($sku_producto.val(), $nombre_producto.val());
-		});
-		
-		
-		//agregar producto al grid
-		$agregar_producto.click(function(event){
-			event.preventDefault();
-			$buscador_datos_producto($grid_productos, $sku_producto.val());
-		});
-		
-		
-		//Desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
-		$(this).aplicarEventoKeypressEjecutaTrigger($sku_producto, $agregar_producto);
-		
+
 		/*
 		//Desencadena clic del href Agregar producto al pulsar enter en el campo sku del producto
 		$sku_producto.keypress(function(e){
@@ -825,7 +921,7 @@ $(function() {
 			
 			$(this).modalPanel_invcapturacostos();
 			
-			$('#forma-invcapturacostos-window').css({"margin-left": -300, 	"margin-top": -220});
+			$('#forma-invcapturacostos-window').css({"margin-left": -260, 	"margin-top": -220});
 			
 			$forma_selected.prependTo('#forma-invcapturacostos-window');
 			$forma_selected.find('.panelcito_modal').attr({id : 'panelcito_modal' + id_to_show , style:'display:table'});
@@ -865,8 +961,9 @@ $(function() {
 			//$boton_descargarpdf.hide();
 			$identificador.val(0);//para nueva pedido el id es 0
 			
-			
-			
+			//Ocultar columnas del Grid
+			$('#forma-invcapturacostos-window').find('#ocultar').hide();
+				
 			var respuestaProcesada = function(data){
 				if ( data['success'] == "true" ){
 					jAlert("Los datos se guardaron con &eacute;xito", 'Atencion!');
@@ -926,58 +1023,105 @@ $(function() {
 				
 				//aqui se cargan los campos al editar
 				$.post(input_json,$arreglo,function(entry){
+					if(entry['Extra'][0]['captura_costo_ref']=="true"){
+						$('#forma-invcapturacostos-window').css({"margin-left": -510, 	"margin-top": -220});
+						$('#forma-invcapturacostos-window').find('.invcapturacostos_div_one').css({'width':'1280px'});
+						$('#forma-invcapturacostos-window').find('.invcapturacostos_div_two').css({'width':'1280px'});
+						$('#forma-invcapturacostos-window').find('#width_content_grid').css({'width':'1240px'});
+						$('#forma-invcapturacostos-window').find('#div_botones_footer').css({'width':'1230px'});
+						$('#forma-invcapturacostos-window').find('#div_titulo').css({'width':'1240px'});
+						$('#forma-invcapturacostos-window').find('#ocultar').show();
+					}
+					
 					$identificador.val(entry['Costo']['0']['id']);
 					arrayMon = entry['Monedas'];
 					
-					var noTr = $("tr", $grid_productos).size();
-					noTr++;
 					
-					var id_reg = entry['Costo'][0]['id_reg'];
-					var idProd = entry['Costo'][0]['id_prod'];
-					var codigo = entry['Costo'][0]['codigo'];
-					var descripcion = entry['Costo'][0]['descripcion'];
-					var unidad = entry['Costo'][0]['unidad'];
-					var costo_ultimo = entry['Costo'][0]['costo_ultimo'];
-					var tc = entry['Costo'][0]['tc'];
-					var idMon = entry['Costo'][0]['idMon'];
-					
-					var cadena_tr = $genera_tr(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc);
-					$grid_productos.append(cadena_tr);
-					
-					$permitir_solo_numeros($grid_productos.find('.costo_ultimo'+noTr));
-					$aplicar_evento_keypress($grid_productos.find('.costo_ultimo'+noTr));
-					$aplicar_evento_focus($grid_productos.find('.costo_ultimo'+noTr));
-					$aplicar_evento_blur($grid_productos.find('.costo_ultimo'+noTr));
-					
-					$permitir_solo_numeros($grid_productos.find('.tc'+noTr));
-					$aplicar_evento_keypress($grid_productos.find('.tc'+noTr));
-					$aplicar_evento_focus($grid_productos.find('.tc'+noTr));
-					$aplicar_evento_blur_tc($grid_productos.find('.tc'+noTr));
-					$aplicar_evento_eliminar($grid_productos.find('.delete'+noTr));
-					
-					
-					$grid_productos.find('.selectMon'+noTr).children().remove();
-					var mon_hmtl='';
-					if(parseInt(idMon)<=0){
-						mon_hmtl = '<option value="0">[-  -]</option>';
-					}
-					
-					$.each(entry['Monedas'],function(entryIndex,mon){
-						if(parseInt(mon['id'])==parseInt(idMon)){
-							mon_hmtl += '<option value="' + mon['id'] + '" selected="yes">' + mon['descripcion_abr'] + '</option>';
-						}else{
-							mon_hmtl += '<option value="' + mon['id'] + '">' + mon['descripcion_abr'] + '</option>';
-						}
-					});
-					$grid_productos.find('.selectMon'+noTr).append(mon_hmtl);
-					
-					//Quitar valor de los campos de la busqueda
-					$('#forma-invcapturacostos-window').find('input[name=sku_producto]').val('');
-					$('#forma-invcapturacostos-window').find('input[name=nombre_producto]').val('');
+					$.each(entry['Costo'],function(entryIndex,data){
+						var noTr = $("tr", $grid_productos).size();
+						noTr++;
 						
-					//Asignar el enfoque al campo costo ultimo
-					$grid_productos.find('.costo_ultimo'+noTr).focus();
-					
+						var id_reg = data['id_reg'];
+						var idProd = data['id_prod'];
+						var codigo = data['codigo'];
+						var descripcion = data['descripcion'];
+						var unidad = data['unidad'];
+						var costo_ultimo = data['costo_ultimo'];
+						var tc = data['tc'];
+						var idMon = data['idMon'];
+						var id_pres = data['id_pres'];
+						var pres = data['presentacion'];
+						var igi = data['igi'];
+						var gi = data['gi'];
+						var ca = data['ca'];
+						var cit = data['cit'];
+						var margen_pmin = data['margen_pmin'];
+						var pmin = data['pmin'];
+						
+						//var cadena_tr = $genera_tr(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc);
+						var cadena_tr = $genera_tr(noTr, id_reg, idProd, codigo, descripcion, unidad, costo_ultimo, tc, id_pres, pres, igi, gi, ca, cit, margen_pmin, pmin);
+						
+						//Agregar fila a la tabla
+						$grid_productos.append(cadena_tr);
+						
+						if(entry['Extra'][0]['captura_costo_ref']=="false"){
+							//Ocultar cuando no se incluye costo de referencia
+							$grid_productos.find('#ocultar').hide();
+						}
+						
+						$permitir_solo_numeros($grid_productos.find('.costo_ultimo'+noTr));
+						$aplicar_evento_keypress($grid_productos.find('.costo_ultimo'+noTr));
+						$aplicar_evento_focus($grid_productos.find('.costo_ultimo'+noTr));
+						$aplicar_evento_blur($grid_productos.find('.costo_ultimo'+noTr), entry['Extra'][0]['captura_costo_ref']);
+						
+						$permitir_solo_numeros($grid_productos.find('.tc'+noTr));
+						$aplicar_evento_keypress($grid_productos.find('.tc'+noTr));
+						$aplicar_evento_focus($grid_productos.find('.tc'+noTr));
+						$aplicar_evento_blur_tc($grid_productos.find('.tc'+noTr), 'false');
+						$aplicar_evento_eliminar($grid_productos.find('.delete'+noTr));
+						
+						$permitir_solo_numeros($grid_productos.find('.igi'+noTr));
+						$aplicar_evento_keypress($grid_productos.find('.igi'+noTr));
+						$aplicar_evento_focus($grid_productos.find('.igi'+noTr));
+						$aplicar_evento_blur($grid_productos.find('.igi'+noTr), entry['Extra'][0]['captura_costo_ref']);
+						
+						$permitir_solo_numeros($grid_productos.find('.gi'+noTr));
+						$aplicar_evento_keypress($grid_productos.find('.gi'+noTr));
+						$aplicar_evento_focus($grid_productos.find('.gi'+noTr));
+						$aplicar_evento_blur($grid_productos.find('.gi'+noTr), entry['Extra'][0]['captura_costo_ref']);
+						
+						$permitir_solo_numeros($grid_productos.find('.ca'+noTr));
+						$aplicar_evento_keypress($grid_productos.find('.ca'+noTr));
+						$aplicar_evento_focus($grid_productos.find('.ca'+noTr));
+						$aplicar_evento_blur($grid_productos.find('.ca'+noTr), entry['Extra'][0]['captura_costo_ref']);
+						
+						$permitir_solo_numeros($grid_productos.find('.margen_pmin'+noTr));
+						$aplicar_evento_keypress($grid_productos.find('.margen_pmin'+noTr));
+						$aplicar_evento_focus($grid_productos.find('.margen_pmin'+noTr));
+						$aplicar_evento_blur($grid_productos.find('.margen_pmin'+noTr), entry['Extra'][0]['captura_costo_ref']);
+						
+						$grid_productos.find('.selectMon'+noTr).children().remove();
+						var mon_hmtl='';
+						if(parseInt(idMon)<=0){
+							mon_hmtl = '<option value="0">[-  -]</option>';
+						}
+						
+						$.each(entry['Monedas'],function(entryIndex,mon){
+							if(parseInt(mon['id'])==parseInt(idMon)){
+								mon_hmtl += '<option value="' + mon['id'] + '" selected="yes">' + mon['descripcion_abr'] + '</option>';
+							}else{
+								mon_hmtl += '<option value="' + mon['id'] + '">' + mon['descripcion_abr'] + '</option>';
+							}
+						});
+						$grid_productos.find('.selectMon'+noTr).append(mon_hmtl);
+						
+						//Quitar valor de los campos de la busqueda
+						$('#forma-invcapturacostos-window').find('input[name=sku_producto]').val('');
+						$('#forma-invcapturacostos-window').find('input[name=nombre_producto]').val('');
+							
+						//Asignar el enfoque al campo costo ultimo
+						$grid_productos.find('.costo_ultimo'+noTr).focus();
+					});
 				});//termina llamada json
                 
                 

@@ -183,3 +183,37 @@ table tr td.grid2 {
 	text-align: right;
 	vertical-align: top;
 }
+
+
+
+table tr td.grid3 {
+	background: #fff;
+	/*border-right: 1px solid #ccc;*/
+	border:1px solid #C1DAD7;
+	font-size:11px; 
+	padding: 2px;
+	text-align: center;
+	vertical-align: top;
+}
+
+table tr td.grid_head {
+	background: #fff;
+	padding: 2px;
+	text-align: center;
+	vertical-align: top;
+	/*background-color:rgb(180, 180, 180);*/
+	background-color:#dddddd;
+	border:1px solid #C1DAD7 !important;
+	border-right: 1px solid #ccc !important;
+}
+
+table tr td.td_etiqueta_titulo{
+	border-top: 1px solid #C1DAD7; 
+	border-bottom:1px solid #C1DAD7; 
+	border-left:1px solid #FFFFFF; 
+	border-right:1px solid #FFFFFF; 
+	background-color: #808080;
+	font-weight: bold;
+	color:white;
+}
+

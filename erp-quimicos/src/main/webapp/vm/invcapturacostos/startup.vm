@@ -103,7 +103,7 @@
 					
                     <div id="div_two" title="" class="invcapturacostos_div_two">
                         <div class="columns on-2">
-                            <div class="fixed column" style="width:780px; padding-left:6px;"><strong>Captura de Costo de Reposici&oacute;n</strong></div>
+                            <div class="fixed column" id="div_titulo" style="width:730px; padding-left:6px;"><strong>Captura de Costo de Reposici&oacute;n</strong></div>
                             <div class="fixed column" style="width:20px; height:25px;">
                                 <div id="close" style="height:25px; background-image:url('../../img/modalbox/close.png'); background-color:; background-position:top; cursor:pointer; background-repeat:no-repeat;"></div>
                             </div>
@@ -127,7 +127,7 @@
 										
                                         <table border="0" style="margin:0; padding:0;">
                                                 <tr>
-                                                    <td width="800"></td>
+                                                    <td ></td>
                                                 </tr>
                                                 
                                                 <tr>
@@ -149,20 +149,28 @@
                                                 </tr>
 												
                                                 <tr>
-                                                    <td style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;">
+                                                    <td style="border-top:1px solid #C1DAD7; border-bottom:1px solid #C1DAD7; border-left:1px solid #FFFFFF; border-right:1px solid #FFFFFF;">
 														<table >
+															<thead>
 																<tr>
 																	<td class="grid" id="td_eliminar" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="60"><div class="delete">&nbsp;#</div></td>
 																	<td class="grid" id="td_sku" style="background-color: rgb(180, 180, 180); border-botton: 0px none;" width="120">&nbsp;C&oacute;digo</td>
 																	<td class="grid" id="td_nombre" style="background-color: rgb(180, 180, 180);"  width="200">&nbsp;Descripci&oacute;n</td>
 																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Unidad</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Costo&nbsp;</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Moneda</td>
-																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="90">&nbsp;T.C.</td>
+																	<td class="grid" id="ocultar" style="background-color: rgb(180, 180, 180);" width="100">&nbsp;Presentaci&oacute;n</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;Moneda</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;T.C.</td>
+																	<td class="grid" style="background-color: rgb(180, 180, 180);" width="80">&nbsp;Costo&nbsp;</td>
+																	<td class="grid" id="ocultar" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;%&nbsp;I.G.I.</td>
+																	<td class="grid" id="ocultar" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;%&nbsp;G.I.</td>
+																	<td class="grid" id="ocultar" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;C.A.</td>
+																	<td class="grid" id="ocultar" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;C.I.T.</td>
+																	<td class="grid" id="ocultar" style="background-color: rgb(180, 180, 180);" width="60">&nbsp;%&nbsp;P.MIN.</td>
+																	<td class="grid" id="ocultar" style="background-color: rgb(180, 180, 180);" width="70">&nbsp;P.&nbsp;MIN</td>
 																</tr>
 															</thead>
 														</table>
-														<div style="overflow:scroll; overflow-x: hidden; overflow-y: auto;  width:750; height: 150px; border:1px solid #C1DAD7 !important;">	
+														<div id="width_content_grid" style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:690; height:200px; border:1px solid #C1DAD7 !important;">	
 															<table>
 																<tbody style="background-color: #FFFFFF;" valign="top" id="grid_productos">
 																	
@@ -174,7 +182,7 @@
                                                 </tr>
 												
                                                 <tr>
-                                                    <td  width="800"  align="left" valign="top">
+                                                    <td  align="left" valign="top">
 														
                                                         <div id="div_warning_grid" style="display:none;">
 															
@@ -221,10 +229,10 @@
                             </div>
 
 
-                            <div class="fixed column" style="width:780px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
+                            <div class="fixed column" id="div_botones_footer" style="width:720px; background:; text-align:right; padding-left:; position:absolute; margin-top:4px;">
 								<table border="0">
 									<tr>
-										<td width="780"></td>
+										<td width="720" id="div_botones_footer"></td>
 										<td>
 											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
 										</td>

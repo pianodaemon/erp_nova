@@ -80,7 +80,7 @@
 										<ul>
 											<li id="4">
 												<a href="#" class="menulink">Procesos &raquo;</a>
-
+												
 												<ul>
 													<li class="topline"><a href="../prefacturas/startup.agnux">Facturaci&oacute;n</a></li>
 													<li class="topline"><a href="../facconsultas/startup.agnux">Consulta</a></li>
@@ -90,6 +90,8 @@
 													
 													<li class="topline"><a href="../facdevoluciones/startup.agnux">Devoluci&oacute;n</a></li>
 													<li class="topline"><a href="../remisiones/startup.agnux">Remisiones</a></li>
+													
+													<li class="topline"><a href="../facnomina/startup.agnux">N&oacute;mina</a></li>
 													<!--
 													<li class="topline"><a href="#">Factura Venta</a></li>
 													<li class="topline"><a href="#">Nota Cr&eacute;dito/Cargo</a></li>
@@ -680,6 +682,7 @@
 													
 													<li><a href="../gralpercepciones/startup.agnux">Percepciones</a></li>
 													<li><a href="../graldeducciones/startup.agnux">Deduciones</a></li>
+													<li><a href="../gralperiodicidadpago/startup.agnux">Periodicidad de Pago</a></li>
 												</ul>
 											</li>
 

@@ -42,7 +42,7 @@ $(function() {
 	});
 	
 	//aqui va el titulo del catalogo
-	$('#barra_titulo').find('#td_titulo').append('Pedidos de Clientes');
+	$('#barra_titulo').find('#td_titulo').append('Nomina');
 	
 	//barra para el buscador 
 	//$('#barra_buscador').css({'height':'0px'});
@@ -782,10 +782,10 @@ $(function() {
 					trr += '<input type="hidden"    name="numero_decimales"     value="'+  num_dec +'" id="numdec">';
 					trr += '<input type="text" 	name="presentacion'+ tr +'" value="'+  pres +'" id="pres" class="borde_oculto" readOnly="true" style="width:96px;">';
 				trr += '</td>';
-				trr += '<td class="grid1" style="font-size: 11px;  border:1px solid #C1DAD7;" width="80">';
+				trr += '<td class="grid1" style="font-size:11px; border:1px solid #C1DAD7;" width="80">';
 					trr += '<input type="text" name="cantidad" value=" " class="cantidad'+ tr +'" id="cant" style="width:76px;">';
 				trr += '</td>';
-				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
+				trr += '<td class="grid2" style="font-size: 11px; border:1px solid #C1DAD7;" width="90">';
 					trr += '<input type="text" name="costo" value="'+ precioCambiado +'" class="costo'+ tr +'" id="cost" style="width:86px; text-align:right;">';
 				trr += '</td>';
 				trr += '<td class="grid2" style="font-size: 11px;  border:1px solid #C1DAD7;" width="90">';
@@ -1083,42 +1083,92 @@ $(function() {
 
 	
 	//Ventana para la Nomina de cada Empleado
-	$forma_nomina_empleado = function(idEmpleado, $total_percep, $total_deduc, $neto_pagar){
+	$forma_nomina_empleado = function(id_empleado, id_reg, $total_percep, $total_deduc, $neto_pagar){
 		$('#forma-nominaempleado-window').remove();
 		$('#forma-nominaempleado-overlay').remove();
 		$(this).modalPanel_nominaempleado();
 		var $dialogoc =  $('#forma-nominaempleado-window');
 		$dialogoc.append($('div.nominaempleado').find('table.formaNominaEmpleado').clone());
 		
-		$('#forma-nominaempleado-window').css({ "margin-left": -280, 	"margin-top": -200  });
+		//$('#forma-nominaempleado-window').css({ "margin-left": -320, 	"margin-top": -235  });
+		$('#forma-nominaempleado-window').css({ "margin-left": -320, 	"margin-top": -280  });
 		$tabs_li_funxionalidad_nominaempleado();
 		
-		var $select_pais = $('#forma-nominaempleado-window').find('select[name=pais_nominaempleado]');
-		var $select_entidad = $('#forma-nominaempleado-window').find('select[name=entidad_nominaempleado]');
-		var $select_localidad = $('#forma-nominaempleado-window').find('select[name=localidad_nominaempleado]');
-		var $campo_calle = $('#forma-nominaempleado-window').find('input[name=calle_nominaempleado]');
-		var $campo_numero = $('#forma-nominaempleado-window').find('input[name=numero_nominaempleado]');
-		var $campo_colonia = $('#forma-nominaempleado-window').find('input[name=colonia_nominaempleado]');
-		var $campo_cp = $('#forma-nominaempleado-window').find('input[name=cp_nominaempleado]');
-		var $campo_telefono = $('#forma-nominaempleado-window').find('input[name=telefono_nominaempleado]');
-		var $textarea_localternativa = $('#forma-nominaempleado-window').find('textarea[name=localternativa_nominaempleado]');
-		var $campo_fax = $('#forma-nominaempleado-window').find('input[name=fax_nominaempleado]');
+		var $id_empleado = $('#forma-nominaempleado-window').find('input[name=id_empleado]');
+		var $no_empleado = $('#forma-nominaempleado-window').find('input[name=no_empleado]');
+		var $nombre_empleado = $('#forma-nominaempleado-window').find('input[name=nombre_empleado]');
+		var $fecha_contrato = $('#forma-nominaempleado-window').find('input[name=fecha_contrato]');
+		var $antiguedad = $('#forma-nominaempleado-window').find('input[name=antiguedad]');
+		var $curp = $('#forma-nominaempleado-window').find('input[name=curp]');
+		var $clabe = $('#forma-nominaempleado-window').find('input[name=clabe]');
+		var $imss = $('#forma-nominaempleado-window').find('input[name=imss]');
+		var $reg_patronal = $('#forma-nominaempleado-window').find('input[name=reg_patronal]');
+		var $salario_base = $('#forma-nominaempleado-window').find('input[name=salario_base]');
+		var $fecha_ini_pago = $('#forma-nominaempleado-window').find('input[name=fecha_ini_pago]');
+		var $fecha_fin_pago = $('#forma-nominaempleado-window').find('input[name=fecha_fin_pago]');
+		var $salario_integrado = $('#forma-nominaempleado-window').find('input[name=salario_integrado]');
+		var $no_dias_pago = $('#forma-nominaempleado-window').find('input[name=no_dias_pago]');
+		
+		var $concepto_descripcion = $('#forma-nominaempleado-window').find('input[name=concepto_descripcion]');
+		var $concepto_unidad = $('#forma-nominaempleado-window').find('input[name=concepto_unidad]');
+		var $concepto_cantidad = $('#forma-nominaempleado-window').find('input[name=concepto_cantidad]');
+		var $concepto_valor_unitario = $('#forma-nominaempleado-window').find('input[name=concepto_valor_unitario]');
+		var $concepto_importe = $('#forma-nominaempleado-window').find('input[name=concepto_importe]');
+		
+		var $descuento = $('#forma-nominaempleado-window').find('input[name=descuento]');
+		var $motivo_descuento = $('#forma-nominaempleado-window').find('input[name=motivo_descuento]');
+		
+		var $select_impuesto_retencion = $('#forma-nominaempleado-window').find('select[name=select_impuesto_retencion]');
+		var $importe_retencion = $('#forma-nominaempleado-window').find('input[name=importe_retencion]');
+		
+		var $comp_subtotal = $('#forma-nominaempleado-window').find('input[name=comp_subtotal]');
+		var $comp_descuento = $('#forma-nominaempleado-window').find('input[name=comp_descuento]');
+		var $comp_retencion = $('#forma-nominaempleado-window').find('input[name=comp_retencion]');
+		var $comp_total = $('#forma-nominaempleado-window').find('input[name=comp_total]');
+		
+		var $select_lista_percepciones = $('#forma-nominaempleado-window').find('select[name=select_lista_percepciones]');
+		var $agregar_percepcion = $('#forma-nominaempleado-window').find('#agregar_percepcion');
+		var $grid_percepciones = $('#forma-facnomina-window').find('#grid_percepciones');
+		var $percep_total_gravado = $('#forma-nominaempleado-window').find('input[name=percep_total_gravado]');
+		var $percep_total_excento = $('#forma-nominaempleado-window').find('input[name=percep_total_excento]');
+		
+		var $select_lista_deducciones = $('#forma-nominaempleado-window').find('select[name=select_lista_deducciones]');
+		var $agregar_deduccion = $('#forma-nominaempleado-window').find('#agregar_deduccion');
+		var $grid_deducciones = $('#forma-facnomina-window').find('#grid_deducciones');
+		var $deduc_total_gravado = $('#forma-nominaempleado-window').find('input[name=deduc_total_gravado]');
+		var $deduc_total_excento = $('#forma-nominaempleado-window').find('input[name=deduc_total_excento]');
+		
+		var $agregar_hora_extra = $('#forma-nominaempleado-window').find('#agregar_hora_extra');
+		var $grid_horas_extras = $('#forma-facnomina-window').find('#grid_horas_extras');
+		
+		var $agregar_incapacidad = $('#forma-nominaempleado-window').find('#agregar_incapacidad');
+		var $grid_incapacidades = $('#forma-facnomina-window').find('#grid_incapacidades');
+		
+		var $select_departamento = $('#forma-nominaempleado-window').find('select[name=select_departamento]');
+		var $select_puesto = $('#forma-nominaempleado-window').find('select[name=select_puesto]');
+		var $select_reg_contratacion = $('#forma-nominaempleado-window').find('select[name=select_reg_contratacion]');
+		var $select_tipo_contrato = $('#forma-nominaempleado-window').find('select[name=select_tipo_contrato]');
+		var $select_tipo_jornada = $('#forma-nominaempleado-window').find('select[name=select_tipo_jornada]');
+		var $select_preriodo_pago = $('#forma-nominaempleado-window').find('select[name=select_preriodo_pago]');
+		var $select_banco = $('#forma-nominaempleado-window').find('select[name=select_banco]');
+		var $select_riesgo_puesto = $('#forma-nominaempleado-window').find('select[name=select_riesgo_puesto]');
+		
 		
 		var $cierra_forma_nominaempleado = $('#forma-nominaempleado-window').find('#cierra_forma_nominaempleado');
 		var $boton_cancelar_forma_nominaempleado = $('#forma-nominaempleado-window').find('#boton_cancelar_forma_nominaempleado');
 		var $boton_actualizar_forma_nominaempleado = $('#forma-nominaempleado-window').find('#boton_actualizar_forma_nominaempleado');
 		
-		/*
-		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/get_datos_forma_nominaempleado.json';
-		$arreglo = {"numFila":numFila,'id_pais':pais, 'id_entidad': entidad  };
-
+		
+		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataNominaEmpleado.json';
+		$arreglo = {"id":id_reg, "id_empleado":id_empleado };
+		
 		$.post(input_json,$arreglo,function(entry){
 			
 		},"json");
-		*/
 		
 		
 		
+		/*
 		$boton_actualizar_forma_nominaempleado.bind('click',function(){
 			//Llamada a la funcion que valida los campos
 			var dir_loc_alt;
@@ -1179,6 +1229,7 @@ $(function() {
 				}
 			},"json");
 		});
+		*/
 		
 		$boton_cancelar_forma_nominaempleado.click(function(event){
 			event.preventDefault();
@@ -1203,7 +1254,7 @@ $(function() {
 	
 	
 	
-	$agrega_empleado_grid = function($grid_empleados, id_empleado, nombre_empleado){
+	$agrega_empleado_grid = function($grid_empleados, id_reg, id_empleado, nombre_empleado){
 		//Obtiene numero de trs
 		var tr = $("tr", $grid_empleados).size();
 		tr++;
@@ -1213,8 +1264,9 @@ $(function() {
 		trr += '<td class="grid" style="font-size: 11px;  border:1px solid #C1DAD7;" width="25">';
 			//trr += '<input type="checkbox" name="micheck" value="true" '+check+' '+desactivado+'>';
 			//trr += '<a href="elimina_producto" id="delete'+ tr +'">Eliminar</a>';
-			trr += '<input type="checkbox" name="micheck" value="'+id_empleado+'">';
-			trr += '<input type="hidden" name="id_emp" id="id_emp" value="'+id_empleado+'">';
+			trr += '<input type="checkbox" name="micheck" value="'+ id_empleado +'">';
+			trr += '<input type="hidden" name="id_reg" id="id_reg" value="'+ id_reg +'">';
+			trr += '<input type="hidden" name="id_emp" id="id_emp" value="'+ id_empleado +'">';
 			trr += '<input type="hidden" name="selec" id="selec" value="1">';
 			trr += '<input type="hidden" name="noTr" value="'+ tr +'">';
 		trr += '</td>';
@@ -1244,12 +1296,13 @@ $(function() {
 			//alert($fila.find('#id_emp').val());
 			
 			var idEmpleado = $fila.find('#id_emp').val();
+			var id_reg = $fila.find('#id_reg').val();
 			var $total_percep = $fila.find('#tpercep').val();
 			var $total_deduc = $fila.find('#tdeduc').val();
 			var $neto_pagar = $fila.find('#neto_pagar').val();
 			
 			//Llamada a la función que crea la ventana para la nomina del empleado
-			$forma_nomina_empleado(idEmpleado, $total_percep, $total_deduc, $neto_pagar);
+			$forma_nomina_empleado(idEmpleado, id_reg, $total_percep, $total_deduc, $neto_pagar);
 		});
 	}
 	
@@ -1261,9 +1314,10 @@ $(function() {
 		$.post(input_json,$arreglo,function(entry){
 			if (entry['Empleados'].length > 0){
 				$.each(entry['Empleados'],function(entryIndex,data){
+					var id_reg = data['id_reg'];
 					var id_empleado = data['id'];
 					var nombre_empleado = data['nombre'];
-					$agrega_empleado_grid($grid_empleados, id_empleado, nombre_empleado);
+					$agrega_empleado_grid($grid_empleados, id_reg, id_empleado, nombre_empleado);
 				});
 			}else{
 				jAlert('No hay empleados que se le pague con la Periodicidad seleccionada.', 'Atencion!', function(r) { 
@@ -1314,7 +1368,6 @@ $(function() {
 		var $comp_tc = $('#forma-facnomina-window').find('input[name=comp_tc]');
 		var $comp_no_cuenta = $('#forma-facnomina-window').find('input[name=comp_no_cuenta]');
 		var $fecha_pago = $('#forma-facnomina-window').find('input[name=fecha_pago]');
-		
 		
 		var $select_comp_metodo_pago = $('#forma-facnomina-window').find('select[name=select_comp_metodo_pago]');
 		var $select_comp_moneda = $('#forma-facnomina-window').find('select[name=select_comp_moneda]');
@@ -1459,7 +1512,10 @@ $(function() {
 		$forma_selected.ajaxForm(options);
 		
 		$.post(input_json,$arreglo,function(entry){
-			alert(entry['Extra'][0]['identificador']);
+			
+			
+			
+			//alert(entry['Extra'][0]['identificador']);
 			$identificador.val(entry['Extra'][0]['identificador']);
 			$emisor_rfc.val(entry['Extra'][0]['emp_rfc']);
 			$emisor_nombre.val(entry['Extra'][0]['emp_razon_social']);
@@ -1470,6 +1526,11 @@ $(function() {
 			$comp_forma_pago.val(entry['Par'][0]['forma_pago']);
 			$comp_no_cuenta.val(entry['Par'][0]['no_cuenta_pago']);
 			$comp_tc.val(entry['Par'][0]['tc']);
+			
+			var $total_percep="";
+			var $total_deduc="";
+			var $neto_pagar="";
+			//$forma_nomina_empleado($identificador.val(), $total_percep, $total_deduc, $neto_pagar);
 			
 			/*
 			$fecha_pago

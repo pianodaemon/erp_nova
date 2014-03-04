@@ -576,7 +576,7 @@
 												<td width="210"><SELECT NAME="sucursal" style="width:210px;"></SELECT></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_sucursal"></div></td>
 												<td width="55"></td>
-												<td width="100">Correo institucional</td>
+												<td width="100">Correo&nbsp;institucional</td>
 												<td width="250"><input type="text" name="correo_institucional" style="width:250px;" ></td>
 												<td width="25"><div class="interrogacion"><IMG SRC="../../img/help-16x16.png" ALIGN="top" rel="warning_correoinst"></div></td>
 											</tr>
@@ -749,14 +749,14 @@
 
                             <div class="fixed column" id="botones" style="width:790px; background:; text-align:right; padding-left:; position:absolute;margin-top:4px;">
                                 <table border="0">
-                                        <tr>
-                                                <td width="590"></td>
-                                                <td>
-                                                        <input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
-                                                </td>
-                                                <td width="30"></td>
-                                                <td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
-                                        </tr>
+									<tr>
+										<td width="590"></td>
+										<td>
+											<input type="image" src="../../img/modalbox/btn1.png" id="submit" style="width:77px; height:24px;"/>
+										</td>
+										<td width="30"></td>
+										<td><div id="boton_cancelar" style="width:77px; height:24px; float:right; cursor:pointer; background-image:url('../../img/modalbox/btn2.png'); background-repeat:no-repeat;"></div></td>
+									</tr>
                                 </table>
                             </div>
                         </div>
