@@ -669,22 +669,22 @@
 																							<tr>
 																								<td width="10"></td>
 																								<td width="140">Subtotal</td>
-																								<td width="100"><input type="text" name="comp_subtotal" value="" style="width:100px;"></td>
+																								<td width="100"><input type="text" name="comp_subtotal" value="" style="width:100px; text-align:right;"></td>
 																							</tr>
 																							<tr>
 																								<td width="10"></td>
 																								<td width="140">Descuento</td>
-																								<td width="100"><input type="text" name="comp_descuento" value="" style="width:100px;"></td>
+																								<td width="100"><input type="text" name="comp_descuento" value="" style="width:100px; text-align:right;"></td>
 																							</tr>
 																							<tr>
 																								<td width="10"></td>
 																								<td width="140">Total Impuesto Retenido</td>
-																								<td width="100"><input type="text" name="comp_retencion" value="" style="width:100px;"></td>
+																								<td width="100"><input type="text" name="comp_retencion" value="" style="width:100px; text-align:right;"></td>
 																							</tr>
 																							<tr>
 																								<td width="10"></td>
 																								<td width="140">Total</td>
-																								<td width="100"><input type="text" name="comp_total" value="" style="width:100px;"></td>
+																								<td width="100"><input type="text" name="comp_total" value="" style="width:100px; text-align:right;"></td>
 																							</tr>
 																						</table>
 																					</td>
@@ -725,21 +725,15 @@
 																								</tr>
 																							</thead>
 																							<tbody style="background-color:#FFFFFF;" valign="top" id="grid_percepciones">
-																								<tr>
-																									<td class="grid3" width="60">&nbsp;</td>
-																									<td class="grid3" width="200">hola1</td>
-																									<td class="grid3" width="300"></td>
-																									<td class="grid3" width="110"></td>
-																									<td class="grid3" width="120"></td>
-																								</tr>
+																								
 																							</tbody>
 																							<tfoot>
 																								<tr>
 																									<td width="60"></td>
 																									<td width="200"></td>
 																									<td width="300" align="right"><strong>Total&nbsp;</strong></td>
-																									<td class="grid3" width="110"><input type="text" name="percep_total_gravado" value="" style="width:106px;"></td>
-																									<td class="grid3" width="120"><input type="text" name="percep_total_excento" value="" style="width:116px;"></td>
+																									<td class="grid3" width="110"><input type="text" name="percep_total_gravado" value="" style="width:106px; text-align:right;"></td>
+																									<td class="grid3" width="120"><input type="text" name="percep_total_excento" value="" style="width:116px; text-align:right;"></td>
 																								</tr>
 																							</tfoot>
 																						</table>
@@ -785,23 +779,16 @@
 																								</tr>
 																							</thead>
 																							<tbody style="background-color:#FFFFFF;" valign="top" id="grid_deducciones">
-																								<tr>
-																									<td class="grid3" width="60">&nbsp;</td>
-																									<td class="grid3" width="200">hola1</td>
-																									<td class="grid3" width="300"></td>
-																									<td class="grid3" width="110"></td>
-																									<td class="grid3" width="120"></td>
-																								</tr>
+																								
 																							</tbody>
 																							<tfoot>
 																								<tr>
 																									<td width="60">&nbsp;</td>
 																									<td width="200"></td>
 																									<td width="300" align="right"><strong>Total&nbsp;</strong></td>
-																									<td class="grid3" width="110"><input type="text" name="deduc_total_gravado" value="" style="width:106px;"></td>
-																									<td class="grid3" width="120"><input type="text" name="deduc_total_excento" value="" style="width:116px;"></td>
+																									<td class="grid3" width="110"><input type="text" name="deduc_total_gravado" value="" style="width:106px; text-align:right;"></td>
+																									<td class="grid3" width="120"><input type="text" name="deduc_total_excento" value="" style="width:116px; text-align:right;"></td>
 																								</tr>
-																									
 																							</tfoot>
 																						</table>
 																					</td>
@@ -835,7 +822,7 @@
 																										<td class="grid3" width="150"></td>
 																										<td class="grid3" width="110"></td>
 																										<td class="grid3" width="110"></td>
-																										<td class="grid3" width="120"></td>
+																										<td class="grid3" width="110"></td>
 																										<td width="240"></td>
 																									</tr>
 																									-->
