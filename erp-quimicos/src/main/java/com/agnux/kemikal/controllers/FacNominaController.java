@@ -205,13 +205,6 @@ public class FacNominaController {
         
         
         
-        percepciones=this.getFacdao().getFacNomina_Percepciones(0, id_empresa);
-        /*
-        deducciones=this.getFacdao().getFacNomina_Deducciones(id, id_empresa);
-        */
-        
-        
-        
         jsonretorno.put("Datos", datos);
         jsonretorno.put("datosGrid", datosGrid);
         jsonretorno.put("Monedas", this.getFacdao().getFactura_Monedas());
@@ -225,9 +218,11 @@ public class FacNominaController {
         jsonretorno.put("Riesgos",this.getFacdao().getFacNomina_RiesgosPuesto());
         jsonretorno.put("Bancos",this.getFacdao().getFacNomina_Bancos(id_empresa));
         jsonretorno.put("ImpuestoRet",this.getFacdao().getFacNomina_ISR(id_empresa));
+        jsonretorno.put("TiposHrsExtra",this.getFacdao().getFacNomina_TiposHoraExtra());
+        jsonretorno.put("TiposIncapacidad",this.getFacdao().getFacNomina_TiposIncapacidad());
         
-        jsonretorno.put("Percepciones",percepciones);
-        jsonretorno.put("Deducciones",deducciones);
+        jsonretorno.put("Percepciones",this.getFacdao().getFacNomina_Percepciones(0, id_empresa));
+        jsonretorno.put("Deducciones",this.getFacdao().getFacNomina_Deducciones(0, id_empresa));
         
         jsonretorno.put("Par", parametros);
         jsonretorno.put("Extra", arrayExtra);
@@ -296,6 +291,7 @@ public class FacNominaController {
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataNominaEmpleadoJson(
             @RequestParam(value="id_reg", required=true) Integer id_reg,
             @RequestParam(value="id_empleado", required=true) Integer id_empleado,
+            @RequestParam(value="id_periodo", required=true) Integer id_periodo,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
@@ -311,9 +307,14 @@ public class FacNominaController {
         if(id_reg!=0){
             //Editar. Obtener datos de tabla de Nomina
             //jsonretorno.put("Data", this.getFacdao().getFacNomina_DataNomina(id_reg, id_empleado));
+            
         }else{
             //Nuevo. Obtener datos de tabla de empleados
-            //jsonretorno.put("Data", this.getFacdao().getFacNomina_DataEmpleado(id_empleado));
+            jsonretorno.put("Data", this.getFacdao().getFacNomina_DataEmpleado(id_empleado));
+            jsonretorno.put("Periodo", this.getFacdao().getFacNomina_DataPeriodo(id_periodo, id_empresa));
+            //Obtener las percepciones configuradas en el catalogo de empleados
+            jsonretorno.put("PercepEmpleado", this.getFacdao().getFacNomina_Percepciones(id_empleado, id_empresa));
+            jsonretorno.put("DeducEmpleado", this.getFacdao().getFacNomina_Deducciones(id_empleado, id_empresa));
         }
         
         

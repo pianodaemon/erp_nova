@@ -174,16 +174,24 @@ public interface FacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getFacNomina_Empleados(Integer id_emp, Integer periodicidad_id);
     //Obtiene la siguiente secuencia para el id de la tabla fac_nomina
     public int getIdSeqFacNomina();
-    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodicidadPago(Integer idEmp);
-    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodosPorTipo(Integer tipo, Integer idEmp);
+    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodicidadPago(Integer idEmpresa);
+    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodosPorTipo(Integer tipo, Integer idEmpresa);
     public ArrayList<HashMap<String, Object>> getFacNomina_RegimenContratacion();
     public ArrayList<HashMap<String, Object>> getFacNomina_TiposContrato();
     public ArrayList<HashMap<String, Object>> getFacNomina_TiposJornada();
     public ArrayList<HashMap<String, Object>> getFacNomina_RiesgosPuesto();
+    public ArrayList<HashMap<String, Object>> getFacNomina_TiposHoraExtra();
+    public ArrayList<HashMap<String, Object>> getFacNomina_TiposIncapacidad();
+    
     public ArrayList<HashMap<String, Object>> getFacNomina_Bancos(Integer idEmpresa);
     public ArrayList<HashMap<String, Object>> getFacNomina_ISR(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getFacNomina_Puestos(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getFacNomina_Departamentos(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getFacNomina_Percepciones(Integer IdEmpleado, Integer idEmpresa);
+    public ArrayList<HashMap<String, Object>> getFacNomina_Deducciones(Integer IdEmpleado, Integer idEmpresa);
+    
+    public ArrayList<HashMap<String, Object>> getFacNomina_DataEmpleado(Integer id_empleado);
+    public ArrayList<HashMap<String, Object>> getFacNomina_DataPeriodo(Integer id_periodo, Integer idEmpresa);
+    
     
 }
