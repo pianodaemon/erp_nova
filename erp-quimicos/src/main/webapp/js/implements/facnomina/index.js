@@ -188,9 +188,12 @@ $(function() {
 	$(this).aplicarEventoKeypressEjecutaTrigger($busqueda_select_agente, $buscar);
 	
 	
+	
+	
+	
 	//----------------------------------------------------------------
 	//valida la fecha seleccionada
-	function mayor(fecha, fecha2){
+	function fecha_mayor(fecha, fecha2){
 		var xMes=fecha.substring(5, 7);
 		var xDia=fecha.substring(8, 10);
 		var xAnio=fecha.substring(0,4);
@@ -219,7 +222,39 @@ $(function() {
 			}
 		}
 	}
-	//muestra la fecha actual
+        
+	//Valida la fecha seleccionada
+	function fecha_mayor_igual(fecha, fecha2){
+		var xMes=fecha.substring(5, 7);
+		var xDia=fecha.substring(8, 10);
+		var xAnio=fecha.substring(0,4);
+		var yMes=fecha2.substring(5, 7);
+		var yDia=fecha2.substring(8, 10);
+		var yAnio=fecha2.substring(0,4);
+		
+		if (xAnio > yAnio){
+			return(true);
+		}else{
+			if (xAnio == yAnio){
+				if (xMes > yMes){
+					return(true);
+				}
+				if (xMes == yMes){
+					if (xDia >= yDia){
+						return(true);
+					}else{
+						return(false);
+					}
+				}else{
+					return(false);
+				}
+			}else{
+				return(false);
+			}
+		}
+	}
+    
+	//Muestra la fecha actual
 	var mostrarFecha = function mostrarFecha(){
 		var ahora = new Date();
 		var anoActual = ahora.getFullYear();
@@ -231,77 +266,72 @@ $(function() {
 		var Fecha = anoActual + "-" + mesActual + "-" + diaActual;		
 		return Fecha;
 	}
+	//----------------------------------------------------------------
 	
 	
-	$busqueda_fecha_inicial.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100});
-	});
-        
-	$busqueda_fecha_inicial.DatePicker({
-		format:'Y-m-d',
-		date: $(this).val(),
-		current: $(this).val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$busqueda_fecha_inicial.val(formated);
-			if (formated.match(patron) ){
-				var valida_fecha=mayor($busqueda_fecha_inicial.val(),mostrarFecha());
-				
-				if (valida_fecha==true){
-					jAlert("Fecha no valida",'! Atencion');
-					$busqueda_fecha_inicial.val(mostrarFecha());
-				}else{
-					$busqueda_fecha_inicial.DatePickerHide();	
+	$add_calendar = function($campo, $fecha, $condicion){
+		$campo.click(function (s){
+			//$campo.val(null);
+			var a=$('div.datepicker');
+			a.css({'z-index':100});
+		});
+		
+		$campo.DatePicker({
+			format:'Y-m-d',
+			date: $campo.val(),
+			current: $campo.val(),
+			starts: 1,
+			position: 'bottom',
+			locale: {
+				days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
+				daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
+				daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
+				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
+				weekMin: 'se'
+			},
+			onChange: function(formated, dates){
+				var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
+				$campo.val(formated);
+				if (formated.match(patron) ){
+					switch($condicion){
+						case '>':
+							var valida_fecha=fecha_mayor($campo.val(),mostrarFecha());
+							if (valida_fecha==true){
+								$campo.DatePickerHide();
+							}else{
+								jAlert("Fecha no valida. Debe ser mayor a la actual",'! Atencion');
+								$campo.val($fecha);
+							}
+							break;
+						case '>=':
+							var valida_fecha=fecha_mayor_igual($campo.val(),mostrarFecha());
+							if (valida_fecha==true){
+								$campo.DatePickerHide();
+							}else{
+								jAlert("Fecha no valida. Debe ser mayor o igual a la actual",'! Atencion');
+								$campo.val($fecha);
+							}
+							break;
+						case '==':
+							//code;
+							break;
+						case '<':
+							//code;
+							break;
+						case '<=':
+							//code;
+							break;
+						default:
+							//para cunado no se le pasan parametros de condicion de fecha
+							var valida_fecha=fecha_mayor($campo.val(),mostrarFecha());
+							$campo.DatePickerHide();
+							break;
+					}
 				}
 			}
-		}
-	});
-	
-	$busqueda_fecha_final.click(function (s){
-		var a=$('div.datepicker');
-		a.css({'z-index':100});
-	});
-	
-	$busqueda_fecha_final.DatePicker({
-		format:'Y-m-d',
-		date: $(this).val(),
-		current: $(this).val(),
-		starts: 1,
-		position: 'bottom',
-		locale: {
-			days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado','Domingo'],
-			daysShort: ['Dom', 'Lun', 'Mar', 'Mir', 'Jue', 'Vir', 'Sab','Dom'],
-			daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa','Do'],
-			months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo','Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr','May', 'Jun', 'Jul', 'Ago','Sep', 'Oct', 'Nov', 'Dic'],
-			weekMin: 'se'
-		},
-		onChange: function(formated, dates){
-			var patron = new RegExp("^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$");
-			$busqueda_fecha_final.val(formated);
-			if (formated.match(patron) ){
-				var valida_fecha=mayor($busqueda_fecha_final.val(),mostrarFecha());
-				
-				if (valida_fecha==true){
-					jAlert("Fecha no valida",'! Atencion');
-					$busqueda_fecha_final.val(mostrarFecha());
-				}else{
-					$busqueda_fecha_final.DatePickerHide();	
-				}
-			}
-		}
-	});
+		});
+	}
 	
     
 	$busqueda_folio.focus();
@@ -1208,6 +1238,7 @@ $(function() {
 		trr += '</td>';
 		trr += '<td class="grid3" width="150">';
 			trr += '<select name="select_tipo_he" class="select_tipo_he'+ tr +'" style="width:146px;"></select>';
+			trr += '<input type="hidden" name="selected_he" class="selected_he'+ tr +'" value="0">';
 		trr += '</td>';
 		trr += '<td class="grid3" width="110">';
 			trr += '<input type="text" name="he_no_dias'+ tr +'" value="'+no_dias+'" id="he_no_dias" class="he_no_dias'+ tr +'" style="width:106px; text-align:right;">';
@@ -1227,7 +1258,7 @@ $(function() {
 		campo_indice = 'id';
 		campo_valor = 'titulo';
 		$carga_campos_select($grid_horas_extras.find('select.select_tipo_he'+ tr), arrayTiposHrsExtra, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
-		
+		$grid_horas_extras.find('input.selected_he'+ tr).val(id_tipo_hr);
 		
 		$permitir_solo_numeros($grid_horas_extras.find('input.he_no_dias'+ tr));
 		$permitir_solo_numeros($grid_horas_extras.find('input.he_no_horas'+ tr));
@@ -1247,6 +1278,43 @@ $(function() {
 			//Eliminar el tr
 			$fila.remove();
 		});
+		
+		//Cambiar el Tipo de Horas Extras
+		$grid_horas_extras.find('select.select_tipo_he'+ tr).change(function(){
+			var valor = $(this).val();
+			var noTrhe = $(this).parent().parent().find('input[name=noTrhe]').val();
+			var encontrado=0;
+			
+			if(parseInt(valor)>0){
+				$grid_horas_extras.find('tr').each(function (index){
+					if( parseInt($(this).find('select[name=select_tipo_he]').val()) == parseInt(valor) ){
+						if( parseInt($(this).find('input[name=noTrhe]').val()) != parseInt(noTrhe) ){
+							encontrado++;
+						}
+					}
+				});
+				
+				if(parseInt(encontrado)>0){
+					jAlert('Ya existe un registro con el tipo: '+$grid_horas_extras.find('select.select_tipo_he'+ tr).find('option:selected').text(), 'Atencion!', function(r) { 
+						$grid_horas_extras.find('select.select_tipo_he'+ tr).focus();
+					});
+					
+					var html_select='';
+					$grid_horas_extras.find('select.select_tipo_he'+ tr).find('option').each(function(){
+						if(parseInt($(this).val())==parseInt($grid_horas_extras.find('input.selected_he'+ tr).val())){
+							html_select += '<option value="'+ $(this).val() +'" selected="yes">'+ $(this).text() +'</option>';
+						}else{
+							html_select += '<option value="'+ $(this).val() +'">'+ $(this).text() +'</option>';
+						}
+					});
+					$grid_horas_extras.find('select.select_tipo_he'+ tr).children().remove();
+					$grid_horas_extras.find('select.select_tipo_he'+ tr).append(html_select);
+					$grid_horas_extras.find('select.select_tipo_he'+ tr).focus();
+				}else{
+					$grid_horas_extras.find('input.selected_he'+ tr).val(valor);
+				}
+			}
+		});
 	}
 	//Termina crear Tr Horas Extras
 	
@@ -1262,10 +1330,11 @@ $(function() {
 		trr += '<td class="grid3" width="60">';
 			trr += '<a href="#" class="delete_incapacidad'+ tr +'">Eliminar</a>';
 			trr += '<input type="hidden" name="id_incapacidad" id="id_incapacidad" value="'+ id_reg +'">';
-			trr += '<input type="hidden" name="noTrhe" value="'+ tr +'">';
+			trr += '<input type="hidden" name="noTrIncapacidad" value="'+ tr +'">';
 		trr += '</td>';
 		trr += '<td class="grid3" width="200">';
 			trr += '<select name="select_tipo_incapacidad" class="select_tipo_incapacidad'+ tr +'" style="width:196px;"></select>';
+			trr += '<input type="hidden" name="selected_incapacidad" class="selected_incapacidad'+ tr +'" value="0">';
 		trr += '</td>';
 		trr += '<td class="grid3" width="140">';
 			trr += '<input type="text" name="incapacidad_no_dias'+ tr +'" value="'+no_dias+'" id="incapacidad_no_dias" class="incapacidad_no_dias'+ tr +'" style="width:136px; text-align:right;">';
@@ -1282,6 +1351,7 @@ $(function() {
 		campo_indice = 'id';
 		campo_valor = 'titulo';
 		$carga_campos_select($grid_incapacidades.find('select.select_tipo_incapacidad'+ tr), arrayTiposIncapacidad, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+		$grid_incapacidades.find('input.selected_incapacidad'+ tr).val(id_tipo);
 		
 		$permitir_solo_numeros($grid_incapacidades.find('input.incapacidad_no_dias'+ tr));
 		$permitir_solo_numeros($grid_incapacidades.find('input.incapacidad_importe'+ tr));
@@ -1302,16 +1372,36 @@ $(function() {
 		//Cambiar el Tipo de Incapacidad
 		$grid_incapacidades.find('select.select_tipo_incapacidad'+ tr).change(function(){
 			var valor = $(this).val();
+			var noTrIncapacidad = $(this).parent().parent().find('input[name=noTrIncapacidad]').val();
 			var encontrado=0;
 			
 			if(parseInt(valor)>0){
 				$grid_incapacidades.find('tr').each(function (index){
 					if( parseInt($(this).find('select[name=select_tipo_incapacidad]').val()) == parseInt(valor) ){
-						encontrado++;
+						if( parseInt($(this).find('input[name=noTrIncapacidad]').val()) != parseInt(noTrIncapacidad) ){
+							encontrado++;
+						}
 					}
 				});
+				
 				if(parseInt(encontrado)>0){
-					alert(encontrado);
+					jAlert('Ya existe un registro con el tipo: '+$grid_incapacidades.find('select.select_tipo_incapacidad'+ tr).find('option:selected').text(), 'Atencion!', function(r) { 
+						$grid_incapacidades.find('select.select_tipo_incapacidad'+ tr).focus();
+					});
+					
+					var html_select='';
+					$grid_incapacidades.find('select.select_tipo_incapacidad'+ tr).find('option').each(function(){
+						if(parseInt($(this).val())==parseInt($grid_incapacidades.find('input.selected_incapacidad'+ tr).val())){
+							html_select += '<option value="'+ $(this).val() +'" selected="yes">'+ $(this).text() +'</option>';
+						}else{
+							html_select += '<option value="'+ $(this).val() +'">'+ $(this).text() +'</option>';
+						}
+					});
+					$grid_incapacidades.find('select.select_tipo_incapacidad'+ tr).children().remove();
+					$grid_incapacidades.find('select.select_tipo_incapacidad'+ tr).append(html_select);
+					$grid_incapacidades.find('select.select_tipo_incapacidad'+ tr).focus();
+				}else{
+					$grid_incapacidades.find('input.selected_incapacidad'+ tr).val(valor);
 				}
 			}
 		});
@@ -1396,6 +1486,7 @@ $(function() {
 		var $boton_cancelar_forma_nominaempleado = $('#forma-nominaempleado-window').find('#boton_cancelar_forma_nominaempleado');
 		var $boton_actualizar_forma_nominaempleado = $('#forma-nominaempleado-window').find('#boton_actualizar_forma_nominaempleado');
 		
+		
 		//Id del Periodo para obtener la fecha inicial y fecha final
 		var id_periodo = $('#forma-facnomina-window').find('input[name=no_periodo_selec]').val();
 		
@@ -1439,7 +1530,10 @@ $(function() {
 		$aplicar_readonly_input($deduc_total_gravado);
 		$aplicar_readonly_input($deduc_total_excento);
 		
+		$aplicar_readonly_input($fecha_ini_pago);
+		$aplicar_readonly_input($fecha_fin_pago);
 		
+		$add_calendar($fecha_ini_pago, " ", "");
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataNominaEmpleado.json';
 		$arreglo = {'id_reg':id_reg, 'id_empleado':id_empleado, 'id_periodo':id_periodo, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
@@ -1822,14 +1916,20 @@ $(function() {
 			$fila=$(this).parent().parent();
 			//alert($fila.find('#id_emp').val());
 			
-			var idEmpleado = $fila.find('#id_emp').val();
-			var id_reg = $fila.find('#id_reg').val();
-			var $total_percep = $fila.find('#tpercep').val();
-			var $total_deduc = $fila.find('#tdeduc').val();
-			var $neto_pagar = $fila.find('#neto_pagar').val();
-			
-			//Llamada a la función que crea la ventana para la nomina del empleado
-			$forma_nomina_empleado(idEmpleado, id_periodicidad_pago, id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad);
+			if(parseInt($('#forma-facnomina-window').find('select[name=select_no_periodo]').val())>0){
+				var idEmpleado = $fila.find('#id_emp').val();
+				var id_reg = $fila.find('#id_reg').val();
+				var $total_percep = $fila.find('#tpercep').val();
+				var $total_deduc = $fila.find('#tdeduc').val();
+				var $neto_pagar = $fila.find('#neto_pagar').val();
+				
+				//Llamada a la función que crea la ventana para la nomina del empleado
+				$forma_nomina_empleado(idEmpleado, id_periodicidad_pago, id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad);
+			}else{
+				jAlert('Es necesario seleccionar un periodo para la Nomina.', 'Atencion!', function(r) { 
+					$('#forma-facnomina-window').find('select[name=select_no_periodo]').focus();
+				});
+			}
 		});
 	}
 	
@@ -1950,8 +2050,9 @@ $(function() {
 		$aplicar_readonly_input($emisor_dir);
 		$aplicar_readonly_input($comp_tipo);
 		$aplicar_readonly_input($comp_forma_pago);
+		$aplicar_readonly_input($fecha_pago);
 		
-		//quitar enter a todos los campos input
+		//Quitar enter a todos los campos input
 		$('#forma-facnomina-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
 				return false;
@@ -2171,6 +2272,8 @@ $(function() {
 			
 		},"json");//termina llamada json
 		
+		$fecha_pago.val(mostrarFecha());
+		$add_calendar($fecha_pago, " ", "");
 		
 		
 		
