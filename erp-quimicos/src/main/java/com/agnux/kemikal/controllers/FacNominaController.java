@@ -325,4 +325,307 @@ public class FacNominaController {
     
     
     
+    //Edicion y nuevo
+    @RequestMapping(method = RequestMethod.POST, value="/edit.json")
+    public @ResponseBody HashMap<String, String> editJson(
+            @RequestParam(value="identificador", required=true) Integer identificador,
+            @RequestParam(value="accion", required=true) String accion,
+            @RequestParam(value="comp_tipo", required=true) String comp_tipo,
+            @RequestParam(value="comp_forma_pago", required=true) String comp_forma_pago,
+            @RequestParam(value="comp_tc", required=true) String comp_tc,
+            @RequestParam(value="comp_no_cuenta", required=true) String comp_no_cuenta,
+            @RequestParam(value="fecha_pago", required=true) String fecha_pago,
+            @RequestParam(value="select_comp_metodo_pago", required=true) String select_comp_metodo_pago,
+            @RequestParam(value="select_comp_moneda", required=true) String select_comp_moneda,
+            @RequestParam(value="select_comp_periodicidad", required=true) String select_comp_periodicidad,
+            @RequestParam(value="select_no_periodo", required=true) String select_no_periodo,
+            
+            
+            @RequestParam(value="orden_compra", required=true) String orden_compra,
+            @RequestParam(value="refacturar", required=true) String refacturar,
+            @RequestParam(value="select_metodo_pago", required=true) String id_metodo_pago,
+            @RequestParam(value="no_cuenta", required=false) String no_cuenta,
+            @RequestParam(value="folio_pedido", required=false) String folio_pedido,
+            @RequestParam(value="tasa_ret_immex", required=false) String tasa_ret_immex,
+            @RequestParam(value="select_almacen", required=false) String select_almacen,
+            
+            
+            @RequestParam(value="eliminado", required=false) String[] eliminado,
+            @RequestParam(value="iddetalle", required=false) String[] iddetalle,
+            @RequestParam(value="idproducto", required=false) String[] idproducto,
+            @RequestParam(value="idUnidad", required=false) String[] idUnidad,
+            @RequestParam(value="id_presentacion", required=false) String[] id_presentacion,
+            @RequestParam(value="id_imp_prod", required=false) String[] id_impuesto,
+            @RequestParam(value="valor_imp", required=false) String[] valor_imp,
+            @RequestParam(value="cantidad", required=false) String[] cantidad,
+            @RequestParam(value="costo_promedio", required=false) String[] costo_promedio,
+            @RequestParam(value="costo", required=false) String[] costo,
+            @RequestParam(value="idIeps", required=false) String[] idIeps,
+            @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
+            
+            @RequestParam(value="id_remision", required=false) String[] id_remision,
+            @RequestParam(value="id_df", required=false) String id_df,
+            @ModelAttribute("user") UserSessionData user
+        ) throws Exception {
+        
+        //System.out.println(TimeHelper.getFechaActualYMDH()+": INICIO------------------------------------");
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        HashMap<String, String> succes = new HashMap<String, String>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        HashMap<String,String> dataFacturaCliente = new HashMap<String,String>();
+        ArrayList<LinkedHashMap<String,String>> conceptos = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<LinkedHashMap<String,String>> impTrasladados = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<LinkedHashMap<String,String>> impRetenidos = new ArrayList<LinkedHashMap<String,String>>();
+        LinkedHashMap<String,String> datosExtrasXmlFactura = new LinkedHashMap<String,String>();
+        LinkedHashMap<String,Object> dataAdenda = new LinkedHashMap<String,Object>();
+        ArrayList<HashMap<String, String>> ieps = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> iva = new ArrayList<HashMap<String, String>>();
+        LinkedHashMap<String,String> datosExtrasCfdi = new LinkedHashMap<String,String>();
+        ArrayList<LinkedHashMap<String,String>> listaConceptosCfdi = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<LinkedHashMap<String,String>> impTrasladadosCfdi = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<LinkedHashMap<String,String>> impRetenidosCfdi = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<String> leyendas = new ArrayList<String>();
+        
+        HashMap<String,String> datos_emisor = new HashMap<String,String>();
+        ArrayList<HashMap<String, String>> listaConceptosPdfCfd = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> datosExtrasPdfCfd= new HashMap<String, String>();
+        
+        String valorRespuesta="false";
+        String msjRespuesta="";
+        Integer app_selected = 13;
+        String command_selected = "";
+        String actualizo = "0";
+        String retorno="";
+        String tipo_facturacion="";
+        String folio="";
+        String serieFolio="";
+        String rfcEmisor="";
+        Integer id_factura=0;
+        //Variable para el id  del usuario
+        Integer id_usuario= user.getUserId();
+        
+        //Variable que indica si terminó bien el proceso de agregar la Adenda, por default es verdadero, si ocurre algu problema en el proceso se le asigna un false.
+        boolean procesoAdendaCorrecto=true;
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        String arreglo[];
+        arreglo = new String[eliminado.length];
+        
+        for(int i=0; i<eliminado.length; i++) {
+            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"___"+idUnidad[i] + "___" + idIeps[i] + "___" + tasaIeps[i] +"'";
+            //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
+            //System.out.println(arreglo[i]);
+        }
+        
+        //serializar el arreglo
+        String extra_data_array = StringUtils.join(arreglo, ",");
+        
+        command_selected = accion;
+        
+        if (no_cuenta==null){
+            no_cuenta="";
+        }
+        
+        if(id_df.equals("0")){
+            id_df="1";
+        }
+        
+        
+        //System.out.println("data_string: "+data_string);
+        //String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra.toUpperCase()+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase();
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario;
+        //System.out.println("data_string: "+data_string);
+        
+        //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
+        succes = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        log.log(Level.INFO, TimeHelper.getFechaActualYMDH()+"Despues de validacion {0}", String.valueOf(succes.get("success")));
+        
+        //System.out.println(TimeHelper.getFechaActualYMDH()+": Inicia actualizacion de datos de la prefactura");
+        if( String.valueOf(succes.get("success")).equals("true")){
+            retorno = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+            
+            //retorna un 1, si se  actualizo correctamente
+            actualizo=retorno.split(":")[0];
+            
+            jsonretorno.put("actualizo",String.valueOf(actualizo));
+        }
+        
+        
+        //System.out.println(TimeHelper.getFechaActualYMDH()+"::Termina Actualizacion de la Prefactura:: "+actualizo);
+        /*
+        if(actualizo.equals("1")){
+            
+            if ( !accion.equals("new") ){
+                //select_tipo_documento 1=Factura, 3=Factura de Remision
+                if(select_tipo_documento==1 || select_tipo_documento==3){
+                    System.out.println(TimeHelper.getFechaActualYMDH()+"::::::::::::Iniciando Facturacion:::::::::::::::::..");
+                    String proposito = "FACTURA";
+                    
+                    //obtener tipo de facturacion
+                    tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
+                    tipo_facturacion = String.valueOf(tipo_facturacion);
+                    
+                    //Obtener el numero del PAC para el Timbrado de la Factura
+                    String noPac = this.getFacdao().getNoPacFacturacion(id_empresa);
+                    
+                    //Obtener el Ambiente de Facturacion PRUEBAS ó PRODUCCION, solo aplica para Facturacion por Timbre FIscal(cfditf)
+                    String ambienteFac = this.getFacdao().getAmbienteFacturacion(id_empresa);
+                    
+                    //System.out.println(TimeHelper.getFechaActualYMDH()+"::::::Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
+                    
+                    //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
+                    parametros = this.getFacdao().getFac_Parametros(id_empresa, id_sucursal);
+
+                    
+                    //**********************************************************
+                    //tipo facturacion CFDITF(CFDI TIMBRE FISCAL)
+                    //**********************************************************
+                    if(tipo_facturacion.equals("cfditf")){
+                        
+                        //Pac 0=Sin PAC, 1=Diverza, 2=ServiSim
+                        if(!noPac.equals("0")){
+                            //Solo se permite generar Factura para Timbrado con Diverza y ServiSim
+                            //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Obteniendo datos para CFDI:::::::::::::::::..");
+                            command_selected = "facturar_cfditf";
+                            extra_data_array = "'sin datos'";
+                            
+                            //Obtener los valores del IEPS e IVAque se estan utilizando
+                            ieps = this.getFacdao().getIeps(id_empresa);
+                            iva = this.getFacdao().getIvas();
+                            
+                            
+                            conceptos = this.getFacdao().getListaConceptosXmlCfdiTf(id_prefactura);
+                            impRetenidos = this.getFacdao().getImpuestosRetenidosFacturaXml();
+                            impTrasladados = this.getFacdao().getImpuestosTrasladadosFacturaXml(id_sucursal, conceptos, ieps, iva);
+                            dataFacturaCliente = this.getFacdao().getDataFacturaXml(id_prefactura);
+                            leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
+                            
+                            //estos son requeridos para cfditf
+                            datosExtrasXmlFactura.put("prefactura_id", String.valueOf(id_prefactura));
+                            datosExtrasXmlFactura.put("tipo_documento", String.valueOf(select_tipo_documento));
+                            datosExtrasXmlFactura.put("moneda_id", id_moneda);
+                            datosExtrasXmlFactura.put("usuario_id", String.valueOf(id_usuario));
+                            datosExtrasXmlFactura.put("empresa_id", String.valueOf(id_empresa));
+                            datosExtrasXmlFactura.put("sucursal_id", String.valueOf(id_sucursal));
+                            datosExtrasXmlFactura.put("refacturar", refacturar);
+                            datosExtrasXmlFactura.put("app_selected", String.valueOf(app_selected));
+                            datosExtrasXmlFactura.put("command_selected", command_selected);
+                            datosExtrasXmlFactura.put("extra_data_array", extra_data_array);
+                            datosExtrasXmlFactura.put("noPac", noPac);
+                            datosExtrasXmlFactura.put("ambienteFac", ambienteFac);
+                            
+                            
+                            //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia BeanFacturador:::::::::::::::::..");
+                            //genera xml factura
+                            this.getBfCfdiTf().init(dataFacturaCliente, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
+                            String timbrado_correcto = this.getBfCfdiTf().start();
+                            //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina BeanFacturador:::::::::::::::::..");
+                            String cadRes[] = timbrado_correcto.split("___");
+                            
+                            //aqui se checa si el xml fue validado correctamente
+                            //si fue correcto debe traer un valor "true", de otra manera trae un error y ppor lo tanto no se genera el pdf
+                            if(cadRes[0].equals("true")){
+                                //obtiene serie_folio de la factura que se acaba de guardar
+                                serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura, id_empresa);
+                                
+                                String cadena_original=this.getBfCfdiTf().getCadenaOriginalTimbre();
+                                //System.out.println("cadena_original:"+cadena_original);
+                                
+                                String sello_digital = this.getBfCfdiTf().getSelloDigital();
+                                //System.out.println("sello_digital:"+sello_digital);
+                                
+                                //este es el timbre fiscal, se debe extraer del xml que nos devuelve el web service del timbrado
+                                String sello_digital_sat = this.getBfCfdiTf().getSelloDigitalSat();
+                                
+                                //este es el folio fiscal del la factura timbrada, se obtiene   del xml
+                                String uuid = this.getBfCfdiTf().getUuid();
+                                String fechaTimbre = this.getBfCfdiTf().getFechaTimbrado();
+                                String noCertSAT = this.getBfCfdiTf().getNoCertificadoSAT();
+                                
+                                //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia construccion de PDF:::::::::::::::::..");
+                                
+                                //conceptos para el pdfcfd
+                                listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
+                                
+                                //datos para el pdf
+                                datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
+                                datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
+                                datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
+                                datosExtrasPdfCfd.put("uuid", uuid);
+                                datosExtrasPdfCfd.put("fechaTimbre", fechaTimbre);
+                                datosExtrasPdfCfd.put("noCertificadoSAT", noCertSAT);
+                                
+                                //pdf factura
+                                if (parametros.get("formato_factura").equals("2")){
+                                    pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, leyendas, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                                    pdfFactura.ViewPDF();
+                                }else{
+                                    pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
+                                }
+                                //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina construccion de PDF:::::::::::::::::..");
+                                
+                                
+                                
+                                jsonretorno.put("folio",serieFolio);
+                                valorRespuesta="true";
+                                //msjRespuesta=cadRes[1];
+                                msjRespuesta = "Se gener&oacute; la Factura: "+serieFolio;
+                                if (!procesoAdendaCorrecto){
+                                    msjRespuesta = msjRespuesta + ", pero no fue posible agregar la Adenda.\nContacte a Soporte.";
+                                }
+                            }else{
+                                valorRespuesta="false";
+                                msjRespuesta=cadRes[1];
+                            }
+                        }else{
+                            valorRespuesta="false";
+                            msjRespuesta="No se puede Timbrar la Factura con el PAC actual.\nVerifique la configuraci&oacute;n del tipo de Facturaci&oacute;n y del PAC.";
+                        }
+                    }
+                    
+                }else{
+                    valorRespuesta="true";
+                    msjRespuesta="Se gener&oacute; la Remisi&oacute;n con Folio: "+jsonretorno.get("folio");
+                }
+                
+            }else{
+                if (accion.equals("new") ){
+                    valorRespuesta="true";
+                    msjRespuesta="El registro se gener&oacute; con &eacute;xito, puede proceder a Facturar.";
+                }
+            }//termina if accion diferente de new
+            
+            System.out.println("Folio: "+ String.valueOf(jsonretorno.get("folio")));
+            
+        }else{
+            if(actualizo.equals("0")){
+                jsonretorno.put("actualizo",String.valueOf(actualizo));
+            }
+        }
+        */
+        jsonretorno.put("success",succes.get("success"));
+        jsonretorno.put("valor",valorRespuesta);
+        jsonretorno.put("msj",msjRespuesta);
+        
+        System.out.println("Validacion: "+ String.valueOf(jsonretorno.get("success")));
+        //System.out.println("Actualizo: "+String.valueOf(jsonretorno.get("actualizo")));
+        System.out.println("valorRespuesta: "+String.valueOf(valorRespuesta));
+        System.out.println("msjRespuesta: "+String.valueOf(msjRespuesta));
+        
+        //System.out.println(TimeHelper.getFechaActualYMDH()+": FIN------------------------------------");
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    
+    
+    
 }
