@@ -3275,22 +3275,153 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         );
         return hm_ieps;
     }
-
+    
+    
+    //Obtiene los datos para al Paginado y el Grid
     @Override
     public ArrayList<HashMap<String, Object>> getFacNomina_PaginaGrid(String data_string, int offset, int pageSize, String orderBy, String asc) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String sql_busqueda = "select id from gral_bus_catalogos(?) as foo (id integer)";
+
+	String sql_to_query = ""
+                + "SELECT "
+                    + "fac_nomina.id,"
+                    + "nom_periodos_conf.prefijo||nom_periodos_conf_det.folio AS no_periodo,"
+                    + "nom_periodos_conf_det.titulo AS periodo,"
+                    + "to_char(fac_nomina.fecha_pago::timestamp with time zone, 'dd/mm/yyyy') AS fecha_pago,"
+                    + "nom_periodicidad_pago.titulo AS tipo,"
+                    + "to_char(fac_nomina.momento_creacion::timestamp with time zone, 'dd/mm/yyyy') AS fecha_creacion "
+                + "FROM fac_nomina "
+                + "JOIN nom_periodicidad_pago ON nom_periodicidad_pago.id=fac_nomina.nom_periodicidad_pago_id "
+                + "JOIN nom_periodos_conf_det ON nom_periodos_conf_det.id=fac_nomina.nom_periodos_conf_det_id  "
+                + "JOIN nom_periodos_conf ON nom_periodos_conf.id=nom_periodos_conf_det.nom_periodos_conf_id  "
+                +"JOIN ("+sql_busqueda+") as subt on subt.id=fac_nomina.id "
+                +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
+
+        System.out.println("Busqueda GetPage: "+sql_to_query);
+        
+        //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new String(data_string), new Integer(pageSize),new Integer(offset)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("no_periodo",rs.getString("no_periodo"));
+                    row.put("periodo",rs.getString("periodo"));
+                    row.put("fecha_pago",rs.getString("fecha_pago"));
+                    row.put("tipo",rs.getString("tipo"));
+                    row.put("fecha_creacion",rs.getString("fecha_creacion"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm;
     }
     
     @Override
     public ArrayList<HashMap<String, Object>> getFacNomina_Datos(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String sql_query = ""
+        + "SELECT "
+            + "fac_nomina.id,"
+            + "gral_emp.titulo AS emisor_nombre,"
+            + "gral_emp.rfc AS emisor_rfc,"
+            + "(CASE WHEN gral_emp.regimen_fiscal IS NULL THEN '' ELSE gral_emp.regimen_fiscal END) AS emisor_reg_fis,"
+            + "gral_emp.calle||' '||(CASE WHEN gral_emp.numero_exterior IS NULL THEN '' ELSE (CASE WHEN gral_emp.numero_exterior='' THEN '' ELSE 'NO. EXT. '||gral_emp.numero_exterior END) END) ||' '||(CASE WHEN gral_emp.numero_interior IS NULL THEN '' ELSE (CASE WHEN gral_emp.numero_interior='' THEN '' ELSE 'NO. INT. '||gral_emp.numero_interior END) END) ||', '||gral_emp.colonia||', '||(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END)||', '||(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END)||', '||(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END)||' C.P. '||gral_emp.cp AS emisor_dir,"
+            + "fac_nomina.tipo_comprobante,"
+            + "fac_nomina.forma_pago,"
+            + "fac_nomina.tipo_cambio,"
+            + "fac_nomina.no_cuenta,"
+            + "fac_nomina.fecha_pago,"
+            + "fac_nomina.fac_metodos_pago_id AS metodo_pago_id,"
+            + "fac_nomina.gral_mon_id AS mon_id,"
+            + "fac_nomina.nom_periodicidad_pago_id AS periodicidad_pago_id,"
+            + "fac_nomina.nom_periodos_conf_det_id AS no_periodo_id "
+        + "FROM fac_nomina "
+        + "JOIN gral_emp ON gral_emp.id=fac_nomina.gral_emp_id "
+        + "JOIN gral_pais ON gral_pais.id=gral_emp.pais_id "
+        + "JOIN gral_edo ON gral_edo.id=gral_emp.estado_id "
+        + "JOIN gral_mun ON gral_mun.id=gral_emp.municipio_id "
+        + "WHERE fac_nomina.id=?;";
+        
+        System.out.println("Ejecutando query:"+ sql_query);
+        System.out.println("Identificador: "+id);
+        
+        ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("id",rs.getInt("id"));
+                    row.put("emisor_nombre",rs.getString("emisor_nombre"));
+                    row.put("emisor_rfc",rs.getString("emisor_rfc"));
+                    row.put("emisor_reg_fis",rs.getString("emisor_reg_fis"));
+                    row.put("emisor_dir",rs.getString("emisor_dir"));
+                    row.put("tipo_comprobante",rs.getString("tipo_comprobante"));
+                    row.put("forma_pago",rs.getString("forma_pago"));
+                    row.put("tipo_cambio",StringHelper.roundDouble(rs.getDouble("tipo_cambio"),4));
+                    row.put("no_cuenta",rs.getString("no_cuenta"));
+                    row.put("fecha_pago",rs.getString("fecha_pago"));
+                    row.put("metodo_pago_id",rs.getString("metodo_pago_id"));
+                    row.put("mon_id",rs.getString("mon_id"));
+                    row.put("periodicidad_pago_id",String.valueOf(rs.getInt("periodicidad_pago_id")));
+                    row.put("no_periodo_id",rs.getString("no_periodo_id"));
+                    
+                    return row;
+                }
+            }
+        );
+        return hm;
     }
     
+    //Obtiene la lista de empleados para editar Nomina
     @Override
     public ArrayList<HashMap<String, Object>> getFacNomina_Grid(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String sql_to_query=""
+        + "SELECT "
+            + "id_reg, "
+            + "empleado_id, "
+            + "nombre, "
+            + "sum_percep,"
+            + "sbt_deduc, "
+            + "(sum_percep - sbt_deduc) AS total_pago "
+        + "FROM ("
+            + "SELECT "
+                + "fac_nomina_det.id AS id_reg, "
+                + "fac_nomina_det.gral_empleado_id AS empleado_id, "
+                + "(CASE WHEN gral_empleados.clave IS NULL THEN lpad('',4,' ') ELSE lpad(gral_empleados.clave,4,'0') END)||' '||(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE gral_empleados.apellido_materno END) AS nombre, "
+                + "(CASE WHEN sbt_percep.fac_nomina_det_id IS NULL THEN 0 ELSE sbt_percep.sum_percep END) AS sum_percep,"
+                + "(CASE WHEN sbt_deduc.fac_nomina_det_id IS NULL THEN 0 ELSE sbt_deduc.sum_deduc END) AS sbt_deduc "
+            + "FROM fac_nomina_det "
+            + "LEFT JOIN (SELECT fac_nomina_det_id, sum(gravado + excento) AS sum_percep FROM fac_nomina_det_percep GROUP BY fac_nomina_det_id) AS sbt_percep ON sbt_percep.fac_nomina_det_id=fac_nomina_det.id "
+            + "LEFT JOIN (SELECT fac_nomina_det_id, sum(gravado + excento) AS sum_deduc FROM fac_nomina_det_deduc GROUP BY fac_nomina_det_id) AS sbt_deduc ON sbt_deduc.fac_nomina_det_id=fac_nomina_det.id "
+            + "JOIN gral_empleados ON gral_empleados.id=fac_nomina_det.gral_empleado_id "
+            + "WHERE fac_nomina_det.fac_nomina_id=? "
+        + ") AS sbt ORDER BY id_reg;";
+        
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id_reg",rs.getString("id_reg"));
+                 row.put("empleado_id",rs.getString("empleado_id"));
+                 row.put("nombre",rs.getString("nombre"));
+                 row.put("total_percep",StringHelper.roundDouble(rs.getDouble("sum_percep"),2));
+                 row.put("total_deduc",StringHelper.roundDouble(rs.getDouble("sbt_deduc"),2));
+                 row.put("total_pago",StringHelper.roundDouble(rs.getDouble("total_pago"),2));
+                 return row;
+                }
+            }
+        );
+        return hm;
     }
-
+    
+    
+    
     @Override
     public HashMap<String, Object> getFacNomina_DatosEmisor(Integer id_emp) {
         HashMap<String, Object> mapDatos = new HashMap<String, Object>();
@@ -3649,43 +3780,67 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     //Obtiene todas las Percepciones disponibles
     @Override
-    public ArrayList<HashMap<String, Object>> getFacNomina_Percepciones(Integer IdEmpleado, Integer idEmpresa) {
+    public ArrayList<HashMap<String, Object>> getFacNomina_Percepciones(Integer tipo, Integer id_reg, Integer IdEmpleado, Integer idEmpresa) {
         String sql_to_query="";
-        if(IdEmpleado>0){
-            //Query para obtener las percepciones asignadas a un empleado desde el Catalogo de Empleados
-            sql_to_query=""
-            + "SELECT "
-                + "nom_percep.id, "
-                + "(case when nom_percep_tipo.clave is null then '' else (case when nom_percep_tipo.clave<>'' then nom_percep_tipo.clave||' ' else '' end) end)||upper(nom_percep_tipo.titulo) AS tipo_percep,"
-                + "(case when nom_percep.clave is null then '' else (case when nom_percep.clave<>'' then nom_percep.clave||' ' else '' end) end)||upper(nom_percep.titulo) AS percepcion  "
-            + "FROM nom_percep "
-            + "JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id "
-            + "JOIN gral_empleado_percep ON (gral_empleado_percep.nom_percep_id=nom_percep.id AND gral_empleado_percep.gral_empleado_id="+IdEmpleado+") "
-            + "WHERE nom_percep.gral_emp_id=? AND nom_percep.activo=true AND nom_percep.borrado_logico=false ORDER BY nom_percep.id;";
-        }else{
+        
+        if(tipo==1){
             //Query para obtener todas las percepciones de la Empresa
             sql_to_query=""
             + "SELECT "
                 + "nom_percep.id, "
                 + "(case when nom_percep_tipo.clave is null then '' else (case when nom_percep_tipo.clave<>'' then nom_percep_tipo.clave||' ' else '' end) end)||upper(nom_percep_tipo.titulo) AS tipo_percep,"
-                + "(case when nom_percep.clave is null then '' else (case when nom_percep.clave<>'' then nom_percep.clave||' ' else '' end) end)||upper(nom_percep.titulo) AS percepcion  "
+                + "(case when nom_percep.clave is null then '' else (case when nom_percep.clave<>'' then nom_percep.clave||' ' else '' end) end)||upper(nom_percep.titulo) AS percepcion, "
+                + "0::double precision AS gravado,"
+                + "0::double precision excento  "
             + "FROM nom_percep "
             + "JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id "
-            + "WHERE nom_percep.gral_emp_id=? AND nom_percep.activo=true AND nom_percep.borrado_logico=false ORDER BY nom_percep.id;";
+            + "WHERE nom_percep.gral_emp_id="+idEmpresa+" AND nom_percep.activo=true AND nom_percep.borrado_logico=false ORDER BY nom_percep.id;";            
+        }
+        
+        if(tipo==2){
+            if(IdEmpleado>0){
+                //Query para obtener las percepciones asignadas a un empleado desde el Catalogo de Empleados
+                sql_to_query=""
+                + "SELECT "
+                    + "nom_percep.id, "
+                    + "(case when nom_percep_tipo.clave is null then '' else (case when nom_percep_tipo.clave<>'' then nom_percep_tipo.clave||' ' else '' end) end)||upper(nom_percep_tipo.titulo) AS tipo_percep,"
+                    + "(case when nom_percep.clave is null then '' else (case when nom_percep.clave<>'' then nom_percep.clave||' ' else '' end) end)||upper(nom_percep.titulo) AS percepcion, "
+                    + "0::double precision AS gravado,"
+                    + "0::double precision excento  "
+                + "FROM nom_percep "
+                + "JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id "
+                + "JOIN gral_empleado_percep ON (gral_empleado_percep.nom_percep_id=nom_percep.id AND gral_empleado_percep.gral_empleado_id="+IdEmpleado+") "
+                + "WHERE nom_percep.gral_emp_id="+idEmpresa+" AND nom_percep.activo=true AND nom_percep.borrado_logico=false ORDER BY nom_percep.id;";
+            }
+        }
+        
+        if(tipo==3){
+            //Obtener las Percepciones configuradas para la Nomina de Empleado de un periodo en especifico
+            sql_to_query=""
+            + "SELECT "
+                + "nom_percep.id, "
+                + "(case when nom_percep_tipo.clave is null then '' else (case when nom_percep_tipo.clave<>'' then nom_percep_tipo.clave||' ' else '' end) end)||upper(nom_percep_tipo.titulo) AS tipo_percep,"
+                + "(case when nom_percep.clave is null then '' else (case when nom_percep.clave<>'' then nom_percep.clave||' ' else '' end) end)||upper(nom_percep.titulo) AS percepcion,"
+                + "(CASE WHEN fac_nomina_det_percep.gravado IS NULL THEN 0 ELSE fac_nomina_det_percep.gravado END) AS gravado,"
+                + "(CASE WHEN fac_nomina_det_percep.excento IS NULL THEN 0 ELSE fac_nomina_det_percep.excento END) AS excento  "
+            + "FROM fac_nomina_det_percep "
+            + "JOIN nom_percep ON nom_percep.id=fac_nomina_det_percep.nom_percep_id "
+            + "JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id  "
+            + "WHERE fac_nomina_det_percep.fac_nomina_det_id="+id_reg+" ORDER BY fac_nomina_det_percep.id;";
         }
         
         System.out.println("QueryPercepciones: "+sql_to_query);
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new Integer (idEmpresa)},new RowMapper(){
+            new Object[]{},new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
                  HashMap<String,Object>row=new HashMap<String,Object>();
                  row.put("id",rs.getString("id"));
                  row.put("tipo_percep",rs.getString("tipo_percep"));
                  row.put("percepcion",rs.getString("percepcion"));
-                 row.put("m_gravado","0.00");
-                 row.put("m_excento","0.00");
+                 row.put("m_gravado",StringHelper.roundDouble(rs.getDouble("gravado"), 2));
+                 row.put("m_excento",StringHelper.roundDouble(rs.getDouble("excento"), 2));
                  return row;
                 }
             }
@@ -3696,43 +3851,66 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     //Obtiene todas las Percepciones disponibles
     @Override
-    public ArrayList<HashMap<String, Object>> getFacNomina_Deducciones(Integer IdEmpleado, Integer idEmpresa) {
+    public ArrayList<HashMap<String, Object>> getFacNomina_Deducciones(Integer tipo, Integer id_reg, Integer IdEmpleado, Integer idEmpresa) {
         String sql_to_query="";
-        if(IdEmpleado>0){
-            //Query para obtener las Deducciones asignadas a un empleado desde el Catalogo de Empleados
-            sql_to_query=""
-            + "SELECT "
-                + "nom_deduc.id, "
-                + "(case when nom_deduc_tipo.clave is null then '' else (case when nom_deduc_tipo.clave<>'' then nom_deduc_tipo.clave||' ' else '' end) end)||upper(nom_deduc_tipo.titulo) AS tipo_deduc,"
-                + "(case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||upper(nom_deduc.titulo) AS deduccion  "
-            + "FROM nom_deduc "
-            + "JOIN nom_deduc_tipo ON nom_deduc_tipo.id=nom_deduc.nom_deduc_tipo_id "
-            + "JOIN gral_empleado_deduc ON (gral_empleado_deduc.nom_deduc_id=nom_deduc.id AND gral_empleado_deduc.gral_empleado_id="+IdEmpleado+") "
-            + "WHERE nom_deduc.gral_emp_id=? AND nom_deduc.activo=true AND nom_deduc.borrado_logico=false ORDER BY nom_deduc.id;";
-        }else{
+        
+        if(tipo==1){
             //Query para obtener todas las Deducciones de la Empresa
             sql_to_query=""
             + "SELECT "
                 + "nom_deduc.id, "
                 + "(case when nom_deduc_tipo.clave is null then '' else (case when nom_deduc_tipo.clave<>'' then nom_deduc_tipo.clave||' ' else '' end) end)||upper(nom_deduc_tipo.titulo) AS tipo_deduc,"
-                + "(case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||upper(nom_deduc.titulo) AS deduccion  "
+                + "(case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||upper(nom_deduc.titulo) AS deduccion,  "
+                + "0::double precision AS gravado,"
+                + "0::double precision excento  "
             + "FROM nom_deduc "
             + "JOIN nom_deduc_tipo ON nom_deduc_tipo.id=nom_deduc.nom_deduc_tipo_id "
-            + "WHERE nom_deduc.gral_emp_id=? AND nom_deduc.activo=true AND nom_deduc.borrado_logico=false ORDER BY nom_deduc.id;";
+            + "WHERE nom_deduc.gral_emp_id="+idEmpresa+" AND nom_deduc.activo=true AND nom_deduc.borrado_logico=false ORDER BY nom_deduc.id;";
+        }
+        
+        if(tipo==2){
+            if(IdEmpleado>0){
+                //Query para obtener las Deducciones asignadas a un empleado desde el Catalogo de Empleados
+                sql_to_query=""
+                + "SELECT "
+                    + "nom_deduc.id, "
+                    + "(case when nom_deduc_tipo.clave is null then '' else (case when nom_deduc_tipo.clave<>'' then nom_deduc_tipo.clave||' ' else '' end) end)||upper(nom_deduc_tipo.titulo) AS tipo_deduc,"
+                    + "(case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||upper(nom_deduc.titulo) AS deduccion,"
+                    + "0::double precision AS gravado,"
+                    + "0::double precision excento  "
+                + "FROM nom_deduc "
+                + "JOIN nom_deduc_tipo ON nom_deduc_tipo.id=nom_deduc.nom_deduc_tipo_id "
+                + "JOIN gral_empleado_deduc ON (gral_empleado_deduc.nom_deduc_id=nom_deduc.id AND gral_empleado_deduc.gral_empleado_id="+IdEmpleado+") "
+                + "WHERE nom_deduc.gral_emp_id="+idEmpresa+" AND nom_deduc.activo=true AND nom_deduc.borrado_logico=false ORDER BY nom_deduc.id;";
+            }
+        }
+        
+        if(tipo==3){
+            sql_to_query=""
+            + "SELECT "
+                + "nom_deduc.id, "
+                + "(case when nom_deduc_tipo.clave is null then '' else (case when nom_deduc_tipo.clave<>'' then nom_deduc_tipo.clave||' ' else '' end) end)||upper(nom_deduc_tipo.titulo) AS tipo_deduc,"
+                + "(case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||upper(nom_deduc.titulo) AS deduccion, "
+                + "(CASE WHEN fac_nomina_det_deduc.gravado IS NULL THEN 0 ELSE fac_nomina_det_deduc.gravado END) AS gravado,"
+                + "(CASE WHEN fac_nomina_det_deduc.excento IS NULL THEN 0 ELSE fac_nomina_det_deduc.excento END) AS excento "
+            + "FROM fac_nomina_det_deduc "
+            + "JOIN nom_deduc ON nom_deduc.id=fac_nomina_det_deduc.nom_deduc_id "
+            + "JOIN nom_deduc_tipo ON nom_deduc_tipo.id=nom_deduc.nom_deduc_tipo_id "
+            + "WHERE fac_nomina_det_deduc.fac_nomina_det_id="+id_reg+" ORDER BY fac_nomina_det_deduc.id;";
         }
         
         System.out.println("QueryPercepciones: "+sql_to_query);
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{new Integer (idEmpresa)},new RowMapper(){
+            new Object[]{},new RowMapper(){
                 @Override 
                 public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
                  HashMap<String,Object>row=new HashMap<String,Object>();
                  row.put("id",rs.getString("id"));
                  row.put("tipo_deduc",rs.getString("tipo_deduc"));
                  row.put("deduccion",rs.getString("deduccion"));
-                 row.put("m_gravado","0.00");
-                 row.put("m_excento","0.00");
+                 row.put("m_gravado",StringHelper.roundDouble(rs.getDouble("gravado"), 2));
+                 row.put("m_excento",StringHelper.roundDouble(rs.getDouble("excento"), 2));
                  return row;
                 }
             }
@@ -3741,13 +3919,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     
-   //Obtiene datos del Empleado para la Nomina
+   //Obtiene datos del Empleado para la Nomina cuando es Nuevo
     @Override
     public ArrayList<HashMap<String, Object>> getFacNomina_DataEmpleado(Integer id_empleado) {
         String sql_query = ""
         + "SELECT "
             +"gral_empleados.id AS empleado_id, "
             +"gral_empleados.clave,"
+            +"gral_empleados.rfc,"
             +"(CASE WHEN nombre_pila IS NULL THEN '' ELSE nombre_pila END)||' '||(CASE WHEN apellido_paterno IS NULL THEN '' ELSE apellido_paterno END)||' '||(CASE WHEN apellido_materno IS NULL THEN '' ELSE apellido_materno END) AS empleado, "
             +"gral_empleados.imss, "
             +"gral_empleados.infonavit, "
@@ -3791,6 +3970,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     HashMap<String, Object> row = new HashMap<String, Object>();
                     row.put("empleado_id",rs.getInt("empleado_id"));
                     row.put("clave",rs.getString("clave"));
+                    row.put("rfc",rs.getString("rfc"));
                     row.put("empleado",rs.getString("empleado"));
                     row.put("imss",rs.getString("imss"));
                     row.put("infonavit",rs.getString("infonavit"));
@@ -3852,6 +4032,112 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                  row.put("periodo",rs.getString("periodo"));
                  row.put("fecha_ini",rs.getString("fecha_ini"));
                  row.put("fecha_fin",rs.getString("fecha_fin"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    //Obtiene los datos de la Nomina de un Empleado al Editar
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_DataNomina(Integer id_reg, Integer id_empleado) {
+        String sql_to_query=""
+        + "SELECT "
+            + "id,"
+            + "fac_nomina_id AS fac_nom_id,"
+            + "gral_empleado_id AS empleado_id,"
+            + "no_empleado,"
+            + "rfc,"
+            + "nombre,"
+            + "curp,"
+            + "gral_depto_id AS depto_id,"
+            + "gral_puesto_id AS puesto_id,"
+            + "(CASE WHEN fecha_contrato IS NULL THEN '' ELSE fecha_contrato::character varying END) AS fecha_contrato,"
+            + "antiguedad,"
+            + "nom_regimen_contratacion_id AS reg_contrato_id,"
+            + "nom_tipo_contrato_id AS tipo_contrato_id,"
+            + "nom_tipo_jornada_id AS tipo_contrato_id,"
+            + "nom_periodicidad_pago_id AS tipo_periodic_id,"
+            + "clabe,"
+            + "tes_ban_id AS banco_id,"
+            + "nom_riesgo_puesto_id AS riesgo_id,"
+            + "imss,"
+            + "reg_patronal,"
+            + "salario_base,"
+            + "salario_integrado,"
+            + "(CASE WHEN fecha_ini_pago IS NULL THEN '' ELSE fecha_ini_pago::character varying END) AS f_ini_pago,"
+            + "(CASE WHEN fecha_fin_pago IS NULL THEN '' ELSE fecha_fin_pago::character varying END) AS f_fin_pago,"
+            + "no_dias_pago,"
+            + "concepto_descripcion,"
+            + "concepto_unidad,"
+            + "concepto_cantidad,"
+            + "concepto_valor_unitario,"
+            + "concepto_importe,"
+            + "descuento,"
+            + "motivo_descuento,"
+            + "gral_isr_id AS isr_id,"
+            + "importe_retencion,"
+            + "comp_subtotal,"
+            + "comp_descuento,"
+            + "comp_retencion,"
+            + "comp_total,"
+            + "percep_total_gravado,"
+            + "percep_total_excento,"
+            + "deduc_total_gravado,"
+            + "deduc_total_excento "
+        + "FROM fac_nomina_det "
+        + "WHERE id=? AND gral_empleado_id=?;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_reg), new Integer(id_empleado)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                HashMap<String,Object>row=new HashMap<String,Object>();
+                row.put("id",rs.getInt("id"));
+                row.put("fac_nom_id",rs.getInt("fac_nom_id"));
+                row.put("empleado_id",rs.getInt("empleado_id"));
+                row.put("no_empleado",rs.getString("no_empleado"));
+                row.put("rfc",rs.getString("rfc"));
+                row.put("nombre",rs.getString("nombre"));
+                row.put("curp",rs.getString("curp"));
+                row.put("depto_id",rs.getInt("depto_id"));
+                row.put("puesto_id",rs.getInt("puesto_id"));
+                row.put("fecha_contrato",rs.getString("fecha_contrato"));
+                row.put("antiguedad",rs.getString("antiguedad"));
+                row.put("reg_contrato_id",rs.getInt("reg_contrato_id"));
+                row.put("tipo_contrato_id",rs.getInt("tipo_contrato_id"));
+                row.put("tipo_contrato_id",rs.getInt("tipo_contrato_id"));
+                row.put("tipo_periodic_id",rs.getInt("tipo_periodic_id"));
+                row.put("clabe",rs.getString("clabe"));
+                row.put("banco_id",rs.getInt("banco_id"));
+                row.put("riesgo_id",rs.getInt("riesgo_id"));
+                row.put("imss",rs.getString("imss"));
+                row.put("reg_patronal",rs.getString("reg_patronal"));
+                row.put("salario_base",StringHelper.roundDouble(rs.getString("salario_base"),2));
+                row.put("salario_integrado",StringHelper.roundDouble(rs.getString("salario_integrado"),2));
+                row.put("f_ini_pago",rs.getString("f_ini_pago"));
+                row.put("f_fin_pago",rs.getString("f_fin_pago"));
+                row.put("no_dias_pago",rs.getString("no_dias_pago"));
+                row.put("concepto_descripcion",rs.getString("concepto_descripcion"));
+                row.put("concepto_unidad",rs.getString("concepto_unidad"));
+                row.put("concepto_cantidad",StringHelper.roundDouble(rs.getString("concepto_cantidad"),2));
+                row.put("concepto_valor_unitario",StringHelper.roundDouble(rs.getString("concepto_valor_unitario"),2));
+                row.put("concepto_importe",StringHelper.roundDouble(rs.getString("concepto_importe"),2));
+                row.put("descuento",StringHelper.roundDouble(rs.getString("descuento"),2));
+                row.put("motivo_descuento",rs.getString("motivo_descuento"));
+                row.put("isr_id",rs.getInt("isr_id"));
+                row.put("importe_retencion",StringHelper.roundDouble(rs.getString("importe_retencion"),2));
+                row.put("comp_subtotal",StringHelper.roundDouble(rs.getString("comp_subtotal"),2));
+                row.put("comp_descuento",StringHelper.roundDouble(rs.getString("comp_descuento"),2));
+                row.put("comp_retencion",StringHelper.roundDouble(rs.getString("comp_retencion"),2));
+                row.put("comp_total",StringHelper.roundDouble(rs.getString("comp_total"),2));
+                row.put("percep_total_gravado",StringHelper.roundDouble(rs.getString("percep_total_gravado"),2));
+                row.put("percep_total_excento",StringHelper.roundDouble(rs.getString("percep_total_excento"),2));
+                row.put("deduc_total_gravado",StringHelper.roundDouble(rs.getString("deduc_total_gravado"),2));
+                row.put("deduc_total_excento",StringHelper.roundDouble(rs.getString("deduc_total_excento"),2));
                  return row;
                 }
             }

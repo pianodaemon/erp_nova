@@ -1250,10 +1250,13 @@ public class pdfCfd_CfdiTimbradoFormato2 {
                 table.addCell(cell);
             }
             
-            
+            String etiqueta_importe="";
+            if(Double.parseDouble(getMontoRetencion())<=0){
+                etiqueta_importe = "IMPORTE CON LETRA";
+            }
             
             //fila IVA
-            cell = new PdfPCell(new Paragraph("", smallBoldFont6));
+            cell = new PdfPCell(new Paragraph(etiqueta_importe, smallBoldFont6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             //celda.setBorder(0);
@@ -1264,7 +1267,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             cell.setColspan(colspan);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("IVA",smallBoldFont6));
+            cell = new PdfPCell(new Paragraph("IVA 16%",smallBoldFont6));
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             //cell.setBorder(0);
@@ -1296,47 +1299,48 @@ public class pdfCfd_CfdiTimbradoFormato2 {
             
             
             //FILA IVA RETENIDO
-            cell = new PdfPCell(new Paragraph("IMPORTE CON LETRA", smallBoldFont6));
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            //celda.setBorder(0);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(1);
-            cell.setBorderWidthTop(0);
-            cell.setColspan(colspan);
-            table.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph("RETENCIÓN",smallBoldFont6));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(1);
-            cell.setBorderWidthTop(0);
-            table.addCell(cell);
-            
-            cell= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallBoldFont6));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthTop(0);
-            table.addCell(cell);
-            
-            cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoRetencion(),2)),smallBoldFont6));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(1);
-            cell.setBorderWidthTop(0);
-            table.addCell(cell);
-            
+            if(Double.parseDouble(getMontoRetencion())>0){
+                cell = new PdfPCell(new Paragraph("IMPORTE CON LETRA", smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                //celda.setBorder(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                cell.setColspan(colspan);
+                table.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("RETENCIÓN",smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                //cell.setBorder(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                //cell.setBorder(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(0);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+
+                cell= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoRetencion(),2)),smallBoldFont6));
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                //cell.setBorder(0);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthTop(0);
+                table.addCell(cell);
+            }
             
             
             

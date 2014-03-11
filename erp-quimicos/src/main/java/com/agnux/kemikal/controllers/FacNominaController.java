@@ -90,8 +90,6 @@ public class FacNominaController {
     }
     
     
-    
-    
     @RequestMapping(value="/startup.agnux")
     public ModelAndView startUp(HttpServletRequest request, HttpServletResponse response, 
             @ModelAttribute("user") UserSessionData user
@@ -101,12 +99,13 @@ public class FacNominaController {
         LinkedHashMap<String,String> infoConstruccionTabla = new LinkedHashMap<String,String>();
         
         infoConstruccionTabla.put("id", "Acciones:70");
-        infoConstruccionTabla.put("Periodo", "periodo:320");
-        infoConstruccionTabla.put("total", "Monto:100");
-        infoConstruccionTabla.put("estado", "Estado:100");
-        infoConstruccionTabla.put("fecha_creacion","Fecha creacion:110");
+        infoConstruccionTabla.put("no_periodo", "No. Periodo:100");
+        infoConstruccionTabla.put("periodo", "Periodo:320");
+        infoConstruccionTabla.put("fecha_pago", "Fecha Pago:100");
+        infoConstruccionTabla.put("tipo", "Tipo:120");
+        infoConstruccionTabla.put("fecha_creacion","Fecha Creaci&oacute;n:110");
         
-        ModelAndView x = new ModelAndView("facnomina/startup", "title", "Nomina");
+        ModelAndView x = new ModelAndView("facnomina/startup", "title", "N&oacute;mina");
         
         x = x.addObject("layoutheader", resource.getLayoutheader());
         x = x.addObject("layoutmenu", resource.getLayoutmenu());
@@ -131,6 +130,78 @@ public class FacNominaController {
     
     
     
+    @RequestMapping(value="/getAllNominas.json", method = RequestMethod.POST)
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getAllNominasJson(
+           @RequestParam(value="orderby", required=true) String orderby,
+           @RequestParam(value="desc", required=true) String desc,
+           @RequestParam(value="items_por_pag", required=true) int items_por_pag,
+           @RequestParam(value="pag_start", required=true) int pag_start,
+           @RequestParam(value="display_pag", required=true) String display_pag,
+           @RequestParam(value="input_json", required=true) String input_json,
+           @RequestParam(value="cadena_busqueda", required=true) String cadena_busqueda,
+           @RequestParam(value="iu", required=true) String id_user_cod,
+           Model modcel) {
+
+
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String,String> has_busqueda = StringHelper.convert2hash(StringHelper.ascii2string(cadena_busqueda));
+
+        //Aplicativo de Nomina
+        Integer app_selected = 173;
+
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+
+        //Variables para el buscador
+        String no_periodo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("no_periodo")))+"%";
+        String titulo_periodo = "%"+StringHelper.isNullString(String.valueOf(has_busqueda.get("titulo_periodo")))+"%";
+        String tipo_periodo = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("tipo_periodo")))+"";
+        String fecha_inicial = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_inicial")))+"";
+        String fecha_final = ""+StringHelper.isNullString(String.valueOf(has_busqueda.get("fecha_final")))+"";
+        
+        String data_string = app_selected+"___"+id_usuario+"___"+no_periodo+"___"+titulo_periodo+"___"+tipo_periodo+"___"+fecha_inicial+"___"+fecha_final;
+        
+        //Obtiene total de registros en base de datos, con los parametros de busqueda
+        int total_items = this.getGralDao().countAll(data_string);
+        
+        //Calcula el total de paginas
+        int total_pags = resource.calculaTotalPag(total_items,items_por_pag);
+        
+        //Variables que necesita el datagrid, para no tener que hacer uno por cada aplicativo
+        DataPost dataforpos = new DataPost(orderby, desc, items_por_pag, pag_start, display_pag, input_json, cadena_busqueda,total_items,total_pags, id_user_cod);
+
+        int offset = resource.__get_inicio_offset(items_por_pag, pag_start);
+
+        //Obtiene los registros para el grid, de acuerdo a los parametros de busqueda
+        jsonretorno.put("Data", this.getFacdao().getFacNomina_PaginaGrid(data_string, offset, items_por_pag, orderby, desc));
+        
+        //Obtiene el hash para los datos que necesita el datagrid
+        jsonretorno.put("DataForGrid", dataforpos.formaHashForPos(dataforpos));
+        
+        return jsonretorno;
+    }
+
+    
+    
+    
+    //Obtiene los Tipos de Periodicidad para el Buscador
+    @RequestMapping(method = RequestMethod.POST, value="/getDatosParaBuscador.json")
+    public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDatosParaBuscadorJson(
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        jsonretorno.put("TiposPeriodicidadBusqueda", this.getFacdao().getFacNomina_PeriodicidadPago(id_empresa));
+        
+        return jsonretorno;
+    }
     
     
     
@@ -221,8 +292,14 @@ public class FacNominaController {
         jsonretorno.put("TiposHrsExtra",this.getFacdao().getFacNomina_TiposHoraExtra());
         jsonretorno.put("TiposIncapacidad",this.getFacdao().getFacNomina_TiposIncapacidad());
         
-        jsonretorno.put("Percepciones",this.getFacdao().getFacNomina_Percepciones(0, id_empresa));
-        jsonretorno.put("Deducciones",this.getFacdao().getFacNomina_Deducciones(0, id_empresa));
+        //Solo debe obtener percepciones y deducciones de la Empresa sin tomar en cuenta el empleado
+        Integer tipo=1;
+        
+        //Al enviar los primeros dos parametros en cero, solo obtiene las Dercepciones de la empresa sin filtrar por empleado
+        jsonretorno.put("Percepciones",this.getFacdao().getFacNomina_Percepciones(tipo, 0,0, id_empresa));
+        
+        //Al enviar los primeros dos parametros en cero, solo obtiene las Deducciones de la empresa sin filtrar por empleado
+        jsonretorno.put("Deducciones",this.getFacdao().getFacNomina_Deducciones(tipo,0,0, id_empresa));
         
         jsonretorno.put("Par", parametros);
         jsonretorno.put("Extra", arrayExtra);
@@ -303,20 +380,26 @@ public class FacNominaController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        Integer tipo=0;
         
         if(id_reg!=0){
             //Editar. Obtener datos de tabla de Nomina
-            //jsonretorno.put("Data", this.getFacdao().getFacNomina_DataNomina(id_reg, id_empleado));
+            jsonretorno.put("Data", this.getFacdao().getFacNomina_DataNomina(id_reg, id_empleado));
             
+            //Tipo=3, Obtener las Percepciones y Deducciones de la Nomina de un Periodo en especifico segun el id_reg
+            tipo=3;
         }else{
             //Nuevo. Obtener datos de tabla de empleados
             jsonretorno.put("Data", this.getFacdao().getFacNomina_DataEmpleado(id_empleado));
             jsonretorno.put("Periodo", this.getFacdao().getFacNomina_DataPeriodo(id_periodo, id_empresa));
-            //Obtener las percepciones configuradas en el catalogo de empleados
-            jsonretorno.put("PercepEmpleado", this.getFacdao().getFacNomina_Percepciones(id_empleado, id_empresa));
-            jsonretorno.put("DeducEmpleado", this.getFacdao().getFacNomina_Deducciones(id_empleado, id_empresa));
+            
+            //Tipo=2, Obtener las Percepciones y Deducciones configuradas en el catalogo de empleados
+            tipo=2;
         }
         
+        
+        jsonretorno.put("PercepEmpleado", this.getFacdao().getFacNomina_Percepciones(tipo, id_reg, id_empleado, id_empresa));
+        jsonretorno.put("DeducEmpleado", this.getFacdao().getFacNomina_Deducciones(tipo, id_reg, id_empleado, id_empresa));
         
         
         return jsonretorno;
@@ -328,8 +411,9 @@ public class FacNominaController {
     //Edicion y nuevo
     @RequestMapping(method = RequestMethod.POST, value="/edit.json")
     public @ResponseBody HashMap<String, String> editJson(
-            @RequestParam(value="identificador", required=true) Integer identificador,
             @RequestParam(value="accion", required=true) String accion,
+            @RequestParam(value="nivel_ejecucion", required=true) String nivel_ejecucion,
+            @RequestParam(value="identificador", required=true) Integer identificador,
             @RequestParam(value="comp_tipo", required=true) String comp_tipo,
             @RequestParam(value="comp_forma_pago", required=true) String comp_forma_pago,
             @RequestParam(value="comp_tc", required=true) String comp_tc,
@@ -339,32 +423,14 @@ public class FacNominaController {
             @RequestParam(value="select_comp_moneda", required=true) String select_comp_moneda,
             @RequestParam(value="select_comp_periodicidad", required=true) String select_comp_periodicidad,
             @RequestParam(value="select_no_periodo", required=true) String select_no_periodo,
+            @RequestParam(value="elim", required=false) String[] elim,
+            @RequestParam(value="id_reg", required=false) String[] id_reg,
+            @RequestParam(value="id_emp", required=false) String[] id_empleado,
+            @RequestParam(value="tpercep", required=false) String[] tpercep,
+            @RequestParam(value="tdeduc", required=false) String[] tdeduc,
+            @RequestParam(value="pago_neto", required=false) String[] pago_neto,
             
-            
-            @RequestParam(value="orden_compra", required=true) String orden_compra,
-            @RequestParam(value="refacturar", required=true) String refacturar,
-            @RequestParam(value="select_metodo_pago", required=true) String id_metodo_pago,
-            @RequestParam(value="no_cuenta", required=false) String no_cuenta,
-            @RequestParam(value="folio_pedido", required=false) String folio_pedido,
-            @RequestParam(value="tasa_ret_immex", required=false) String tasa_ret_immex,
-            @RequestParam(value="select_almacen", required=false) String select_almacen,
-            
-            
-            @RequestParam(value="eliminado", required=false) String[] eliminado,
-            @RequestParam(value="iddetalle", required=false) String[] iddetalle,
-            @RequestParam(value="idproducto", required=false) String[] idproducto,
-            @RequestParam(value="idUnidad", required=false) String[] idUnidad,
-            @RequestParam(value="id_presentacion", required=false) String[] id_presentacion,
-            @RequestParam(value="id_imp_prod", required=false) String[] id_impuesto,
-            @RequestParam(value="valor_imp", required=false) String[] valor_imp,
-            @RequestParam(value="cantidad", required=false) String[] cantidad,
-            @RequestParam(value="costo_promedio", required=false) String[] costo_promedio,
-            @RequestParam(value="costo", required=false) String[] costo,
-            @RequestParam(value="idIeps", required=false) String[] idIeps,
-            @RequestParam(value="tasaIeps", required=false) String[] tasaIeps,
-            
-            @RequestParam(value="id_remision", required=false) String[] id_remision,
-            @RequestParam(value="id_df", required=false) String id_df,
+            @RequestParam(value="noTr", required=false) String[] noTr,
             @ModelAttribute("user") UserSessionData user
         ) throws Exception {
         
@@ -392,70 +458,96 @@ public class FacNominaController {
         ArrayList<HashMap<String, String>> listaConceptosPdfCfd = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> datosExtrasPdfCfd= new HashMap<String, String>();
         
-        String valorRespuesta="false";
+        String codeRespuesta="false";
         String msjRespuesta="";
-        Integer app_selected = 13;
-        String command_selected = "";
-        String actualizo = "0";
+        
         String retorno="";
         String tipo_facturacion="";
         String folio="";
         String serieFolio="";
         String rfcEmisor="";
-        Integer id_factura=0;
+        
+        //Nomina
+        Integer app_selected = 173;
+        String command_selected = "";
+        String succes_validation="";
+        boolean actualizar_registro=true;
+        String actualizo = "0";
+        
         //Variable para el id  del usuario
         Integer id_usuario= user.getUserId();
-        
-        //Variable que indica si terminó bien el proceso de agregar la Adenda, por default es verdadero, si ocurre algu problema en el proceso se le asigna un false.
-        boolean procesoAdendaCorrecto=true;
-        
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
         String arreglo[];
-        arreglo = new String[eliminado.length];
+        arreglo = new String[elim.length];
         
-        for(int i=0; i<eliminado.length; i++) {
-            arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto[i] +"___" + cantidad[i] +"___" + StringHelper.removerComas(costo[i]) + "___"+valor_imp[i]+"___" + id_remision[i]+"___"+costo_promedio[i]+"___"+idUnidad[i] + "___" + idIeps[i] + "___" + tasaIeps[i] +"'";
-            //arreglo[i]= "'"+eliminado[i] +"___" + iddetalle[i] +"___" + idproducto[i] +"___" + id_presentacion[i] +"___" + id_impuesto +"___" + cantidad[i] +"___" + costo[i]+"'";
+        for(int i=0; i<elim.length; i++) {
+            arreglo[i]= "'"+elim[i] +"___" + noTr[i] +"___" + id_reg[i] +"___" + id_empleado[i] +"___"+ tpercep[i] +"___"+ tdeduc[i] +"___"+ pago_neto[i] +"'";
             //System.out.println(arreglo[i]);
         }
         
-        //serializar el arreglo
+        //Serializar el arreglo
         String extra_data_array = StringUtils.join(arreglo, ",");
         
-        command_selected = accion;
+        command_selected = accion.trim().toLowerCase();
         
-        if (no_cuenta==null){
-            no_cuenta="";
-        }
-        
-        if(id_df.equals("0")){
-            id_df="1";
-        }
-        
-        
-        //System.out.println("data_string: "+data_string);
-        //String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_prefactura+"___"+id_cliente+"___"+id_moneda+"___"+observaciones.toUpperCase()+"___"+tipo_cambio_vista+"___"+id_vendedor+"___"+id_condiciones+"___"+orden_compra.toUpperCase()+"___"+refacturar+"___"+id_metodo_pago+"___"+no_cuenta+"___"+select_tipo_documento+"___"+folio_pedido+"___"+select_almacen+"___"+id_moneda_original+"___"+id_df+"___"+campo_adenda1.toUpperCase()+"___"+campo_adenda2.toUpperCase()+"___"+campo_adenda3+"___"+campo_adenda4.toUpperCase()+"___"+campo_adenda5.toUpperCase()+"___"+campo_adenda6.toUpperCase()+"___"+campo_adenda7.toUpperCase()+"___"+campo_adenda8.toUpperCase();
-        String data_string = app_selected+"___"+command_selected+"___"+id_usuario;
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+identificador+"___"+comp_tipo.toUpperCase()+"___"+comp_forma_pago.toUpperCase()+"___"+comp_tc+"___"+comp_no_cuenta+"___"+fecha_pago+"___"+select_comp_metodo_pago+"___"+select_comp_moneda+"___"+select_comp_periodicidad+"___"+select_no_periodo;
         //System.out.println("data_string: "+data_string);
         
-        //System.out.println(TimeHelper.getFechaActualYMDH()+"::::Inicia Validacion de la Prefactura::::::::::::::::::");
-        succes = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
-        
-        log.log(Level.INFO, TimeHelper.getFechaActualYMDH()+"Despues de validacion {0}", String.valueOf(succes.get("success")));
-        
-        //System.out.println(TimeHelper.getFechaActualYMDH()+": Inicia actualizacion de datos de la prefactura");
-        if( String.valueOf(succes.get("success")).equals("true")){
-            retorno = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
-            
-            //retorna un 1, si se  actualizo correctamente
-            actualizo=retorno.split(":")[0];
-            
-            jsonretorno.put("actualizo",String.valueOf(actualizo));
+        if(nivel_ejecucion.equals("2") && accion.equals("edit")){
+            //Si el nivel de ejecucion es 2 y la accion es edit, no se tiene que actualizar el registro
+            actualizar_registro=false;
         }
         
+        if(actualizar_registro){
+            if(command_selected.equals("new")){
+                //Cuando es Nuevo, pasa sin validar
+                succes_validation = "true";
+            }else{
+                //Cuando es diferente de Nuevo, se tiene que validar
+                succes = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+                succes_validation = succes.get("success");
+                log.log(Level.INFO, TimeHelper.getFechaActualYMDH()+"Despues de validacion {0}", String.valueOf(succes.get("success")));
+            }
+            
+            
+            //System.out.println(TimeHelper.getFechaActualYMDH()+": Inicia actualizacion de datos de la prefactura");
+            if( String.valueOf(succes_validation).equals("true")){
+
+                retorno = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+
+                //retorna un 1, si se  actualizo correctamente
+                actualizo=retorno.split(":")[0];
+
+                jsonretorno.put("actualizo",String.valueOf(actualizo));
+                
+                
+                succes_validation="true";
+                codeRespuesta="0";
+                msjRespuesta="El registro se actualizo.";
+            }
+            
+            
+            
+            
+        }else{
+            succes_validation="true";
+            codeRespuesta="0";
+            msjRespuesta="No se actualizo el registro.";
+        }
+        
+        
+
+        
+
+        
+        
+        
+        
+
+
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+"::Termina Actualizacion de la Prefactura:: "+actualizo);
         /*
@@ -609,13 +701,13 @@ public class FacNominaController {
             }
         }
         */
-        jsonretorno.put("success",succes.get("success"));
-        jsonretorno.put("valor",valorRespuesta);
+        jsonretorno.put("success",succes_validation);
+        jsonretorno.put("valor",codeRespuesta);
         jsonretorno.put("msj",msjRespuesta);
         
         System.out.println("Validacion: "+ String.valueOf(jsonretorno.get("success")));
         //System.out.println("Actualizo: "+String.valueOf(jsonretorno.get("actualizo")));
-        System.out.println("valorRespuesta: "+String.valueOf(valorRespuesta));
+        System.out.println("codeRespuesta: "+String.valueOf(codeRespuesta));
         System.out.println("msjRespuesta: "+String.valueOf(msjRespuesta));
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+": FIN------------------------------------");
@@ -623,6 +715,176 @@ public class FacNominaController {
         return jsonretorno;
     }
     
+    
+    
+    
+    
+    //Edicion y nuevo de Nomina de Empleado
+    @RequestMapping(method = RequestMethod.POST, value="/edit_nomina_empleado.json")
+    public @ResponseBody HashMap<String, String> editNominaEmpleadoJson(
+            @RequestParam(value="identificador", required=true) String identificador,
+            @RequestParam(value="id_reg", required=true) String id_reg,
+            @RequestParam(value="id_empleado", required=true) String id_empleado,
+            @RequestParam(value="no_empleado", required=true) String no_empleado,
+            @RequestParam(value="rfc_empleado", required=true) String rfc_empleado,
+            @RequestParam(value="nombre_empleado", required=true) String nombre_empleado,
+            @RequestParam(value="select_departamento", required=true) String select_departamento,
+            @RequestParam(value="select_puesto", required=true) String select_puesto,
+            @RequestParam(value="fecha_contrato", required=true) String fecha_contrato,
+            @RequestParam(value="antiguedad", required=true) String antiguedad,
+            @RequestParam(value="curp", required=true) String curp,
+            @RequestParam(value="select_reg_contratacion", required=true) String select_reg_contratacion,
+            @RequestParam(value="select_tipo_contrato", required=true) String select_tipo_contrato,
+            @RequestParam(value="select_tipo_jornada", required=false) String select_tipo_jornada,
+            @RequestParam(value="select_preriodo_pago", required=false) String select_preriodo_pago,
+            @RequestParam(value="clabe", required=false) String clabe,
+            @RequestParam(value="select_banco", required=false) String select_banco,
+            @RequestParam(value="select_riesgo_puesto", required=false) String select_riesgo_puesto,
+            @RequestParam(value="imss", required=false) String imss,
+            @RequestParam(value="reg_patronal", required=false) String reg_patronal,
+            @RequestParam(value="salario_base", required=false) String salario_base,
+            @RequestParam(value="fecha_ini_pago", required=false) String fecha_ini_pago,
+            @RequestParam(value="fecha_fin_pago", required=false) String fecha_fin_pago,
+            @RequestParam(value="salario_integrado", required=false) String salario_integrado,
+            @RequestParam(value="no_dias_pago", required=false) String no_dias_pago,
+            @RequestParam(value="concepto_descripcion", required=false) String concepto_descripcion,
+            @RequestParam(value="concepto_unidad", required=false) String concepto_unidad,
+            @RequestParam(value="concepto_cantidad", required=false) String concepto_cantidad,
+            @RequestParam(value="concepto_valor_unitario", required=false) String concepto_valor_unitario,
+            @RequestParam(value="concepto_importe", required=false) String concepto_importe,
+            @RequestParam(value="descuento", required=false) String descuento,
+            @RequestParam(value="motivo_descuento", required=false) String motivo_descuento,
+            @RequestParam(value="select_impuesto_retencion", required=false) String select_impuesto_retencion,
+            @RequestParam(value="importe_retencion", required=false) String importe_retencion,
+            @RequestParam(value="comp_subtotal", required=false) String comp_subtotal,
+            @RequestParam(value="comp_descuento", required=false) String comp_descuento,
+            @RequestParam(value="comp_retencion", required=false) String comp_retencion,
+            @RequestParam(value="comp_total", required=false) String comp_total,
+            @RequestParam(value="percep_total_gravado", required=false) String percep_total_gravado,
+            @RequestParam(value="percep_total_excento", required=false) String percep_total_excento,
+            @RequestParam(value="deduc_total_gravado", required=false) String deduc_total_gravado,
+            @RequestParam(value="deduc_total_excento", required=false) String deduc_total_excento,
+            @RequestParam(value="percepciones", required=false) String percepciones,
+            @RequestParam(value="deducciones", required=false) String deducciones,
+            @RequestParam(value="hrs_extras", required=false) String hrs_extras,
+            @RequestParam(value="incapacidades", required=false) String incapacidades,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) throws Exception {
+        
+        System.out.println(TimeHelper.getFechaActualYMDH()+": INICIO-GUADAR NOMINA EMPLEADO------------------------------------");
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> succes = new HashMap<String, String>();
+        HashMap<String, String> parametros = new HashMap<String, String>();
+        
+
+        
+        String retorno="";
+        String tipo_facturacion="";
+        String folio="";
+        String serieFolio="";
+        String rfcEmisor="";
+        
+        //Nomina
+        Integer app_selected = 173;
+        String command_selected = "new_nomina";
+        String extra_data_array = "'sin datos'";
+        String succes_validation="";
+        String codeRespuesta="false";
+        String msjRespuesta="";
+        String actualizo = "0";
+        
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        
+        if(Integer.parseInt(id_reg)>0){
+            command_selected = "edit_nomina";
+        }
+        
+        String data_string = 
+                app_selected+"___"+
+                command_selected+"___"+
+                id_usuario+"___"+
+                identificador+"___"+
+                id_reg+"___"+
+                id_empleado+"___"+
+                no_empleado+"___"+
+                rfc_empleado+"___"+
+                nombre_empleado+"___"+
+                select_departamento+"___"+
+                select_puesto+"___"+
+                fecha_contrato+"___"+
+                antiguedad+"___"+
+                curp+"___"+
+                select_reg_contratacion+"___"+
+                select_tipo_contrato+"___"+
+                select_tipo_jornada+"___"+
+                select_preriodo_pago+"___"+
+                clabe+"___"+
+                select_banco+"___"+
+                select_riesgo_puesto+"___"+
+                imss+"___"+
+                reg_patronal+"___"+
+                salario_base+"___"+
+                fecha_ini_pago+"___"+
+                fecha_fin_pago+"___"+
+                salario_integrado+"___"+
+                no_dias_pago+"___"+
+                concepto_descripcion+"___"+
+                concepto_unidad+"___"+
+                concepto_cantidad+"___"+
+                concepto_valor_unitario+"___"+
+                concepto_importe+"___"+
+                descuento+"___"+
+                motivo_descuento+"___"+
+                select_impuesto_retencion+"___"+
+                importe_retencion+"___"+
+                comp_subtotal+"___"+
+                comp_descuento+"___"+
+                comp_retencion+"___"+
+                comp_total+"___"+
+                percep_total_gravado+"___"+
+                percep_total_excento+"___"+
+                deduc_total_gravado+"___"+
+                deduc_total_excento+"___"+
+                percepciones+"___"+
+                deducciones+"___"+
+                hrs_extras+"___"+
+                incapacidades;
+
+        System.out.println("data_string_nomina_empleado: "+data_string);
+
+        //Cuando es diferente de Nuevo, se tiene que validar
+        succes = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        succes_validation = succes.get("success");
+        
+        if( String.valueOf(succes_validation).equals("true")){
+            retorno = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+            
+            //retorna un 1, si se  actualizo correctamente
+            actualizo=retorno.split(":")[0];
+            
+            jsonretorno.put("actualizo",String.valueOf(actualizo));
+        }
+        
+        
+        jsonretorno.put("success",succes_validation);
+        jsonretorno.put("valor",codeRespuesta);
+        jsonretorno.put("msj",msjRespuesta);
+        
+        System.out.println("Validacion: "+ String.valueOf(jsonretorno.get("success")));
+        System.out.println("codeRespuesta: "+String.valueOf(codeRespuesta));
+        System.out.println("msjRespuesta: "+String.valueOf(msjRespuesta));
+        System.out.println(TimeHelper.getFechaActualYMDH()+": FIN-GUADAR NOMINA EMPLEADO------------------------------------");
+        
+        return jsonretorno;
+    }
     
     
     

@@ -167,8 +167,12 @@ public interface FacturasInterfaceDao {
     
     //METODOS PARA FACTURACION DE NOMINA
     public ArrayList<HashMap<String, Object>> getFacNomina_PaginaGrid(String data_string,int offset, int pageSize, String orderBy , String asc);
-    public ArrayList<HashMap<String, Object>> getFacNomina_Datos(Integer id_factura);
-    public ArrayList<HashMap<String, Object>> getFacNomina_Grid(Integer id_factura);
+    public ArrayList<HashMap<String, Object>> getFacNomina_Datos(Integer id);
+    public ArrayList<HashMap<String, Object>> getFacNomina_Grid(Integer id);
+    public ArrayList<HashMap<String, Object>> getFacNomina_DataNomina(Integer id_reg, Integer id_empleado);
+    
+    
+    
     public HashMap<String, Object> getFacNomina_DatosEmisor(Integer id_emp);
     public ArrayList<HashMap<String,Object>>getFacNomina_Parametros(Integer idEmp,Integer idSuc);
     public ArrayList<HashMap<String, Object>> getFacNomina_Empleados(Integer id_emp, Integer periodicidad_id);
@@ -187,8 +191,8 @@ public interface FacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getFacNomina_ISR(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getFacNomina_Puestos(Integer id_empresa);
     public ArrayList<HashMap<String, Object>> getFacNomina_Departamentos(Integer id_empresa);
-    public ArrayList<HashMap<String, Object>> getFacNomina_Percepciones(Integer IdEmpleado, Integer idEmpresa);
-    public ArrayList<HashMap<String, Object>> getFacNomina_Deducciones(Integer IdEmpleado, Integer idEmpresa);
+    public ArrayList<HashMap<String, Object>> getFacNomina_Percepciones(Integer tipo, Integer id_reg, Integer IdEmpleado, Integer idEmpresa);
+    public ArrayList<HashMap<String, Object>> getFacNomina_Deducciones(Integer tipo, Integer id_reg, Integer IdEmpleado, Integer idEmpresa);
     
     public ArrayList<HashMap<String, Object>> getFacNomina_DataEmpleado(Integer id_empleado);
     public ArrayList<HashMap<String, Object>> getFacNomina_DataPeriodo(Integer id_periodo, Integer idEmpresa);
