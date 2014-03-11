@@ -196,6 +196,16 @@ table tr td.grid3 {
 	vertical-align: top;
 }
 
+table tr td.grid4 {
+	background: #fff;
+	/*border-right: 1px solid #ccc;*/
+	border:1px solid #C1DAD7;
+	font-size:11px; 
+	padding: 2px;
+	text-align: left;
+	vertical-align: top;
+}
+
 table tr td.grid_head {
 	background: #fff;
 	padding: 2px;
