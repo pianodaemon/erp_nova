@@ -170,6 +170,8 @@ public interface FacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getFacNomina_Datos(Integer id);
     public ArrayList<HashMap<String, Object>> getFacNomina_Grid(Integer id);
     public ArrayList<HashMap<String, Object>> getFacNomina_DataNomina(Integer id_reg, Integer id_empleado);
+    public ArrayList<HashMap<String, Object>> getFacNomina_HorasExtras(Integer id_nom_det);
+    public ArrayList<HashMap<String, Object>> getFacNomina_Incapacidades(Integer id_nom_det);
     
     
     

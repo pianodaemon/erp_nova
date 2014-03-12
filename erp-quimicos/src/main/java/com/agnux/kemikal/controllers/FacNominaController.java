@@ -366,7 +366,7 @@ public class FacNominaController {
     //Obtiene datos de la Nomina de un Empleado
     @RequestMapping(method = RequestMethod.POST, value="/getDataNominaEmpleado.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getDataNominaEmpleadoJson(
-            @RequestParam(value="id_reg", required=true) Integer id_reg,
+            @RequestParam(value="id_reg", required=true) Integer id_nom_det,
             @RequestParam(value="id_empleado", required=true) Integer id_empleado,
             @RequestParam(value="id_periodo", required=true) Integer id_periodo,
             @RequestParam(value="iu", required=true) String id_user,
@@ -382,9 +382,11 @@ public class FacNominaController {
         //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         Integer tipo=0;
         
-        if(id_reg!=0){
+        if(id_nom_det!=0){
             //Editar. Obtener datos de tabla de Nomina
-            jsonretorno.put("Data", this.getFacdao().getFacNomina_DataNomina(id_reg, id_empleado));
+            jsonretorno.put("Data", this.getFacdao().getFacNomina_DataNomina(id_nom_det, id_empleado));
+            jsonretorno.put("HrsExtraEmpleado", this.getFacdao().getFacNomina_HorasExtras(id_nom_det));
+            jsonretorno.put("IncapaEmpleado", this.getFacdao().getFacNomina_Incapacidades(id_nom_det));
             
             //Tipo=3, Obtener las Percepciones y Deducciones de la Nomina de un Periodo en especifico segun el id_reg
             tipo=3;
@@ -398,8 +400,8 @@ public class FacNominaController {
         }
         
         
-        jsonretorno.put("PercepEmpleado", this.getFacdao().getFacNomina_Percepciones(tipo, id_reg, id_empleado, id_empresa));
-        jsonretorno.put("DeducEmpleado", this.getFacdao().getFacNomina_Deducciones(tipo, id_reg, id_empleado, id_empresa));
+        jsonretorno.put("PercepEmpleado", this.getFacdao().getFacNomina_Percepciones(tipo, id_nom_det, id_empleado, id_empresa));
+        jsonretorno.put("DeducEmpleado", this.getFacdao().getFacNomina_Deducciones(tipo, id_nom_det, id_empleado, id_empresa));
         
         
         return jsonretorno;
@@ -528,9 +530,6 @@ public class FacNominaController {
                 codeRespuesta="0";
                 msjRespuesta="El registro se actualizo.";
             }
-            
-            
-            
             
         }else{
             succes_validation="true";
@@ -768,6 +767,7 @@ public class FacNominaController {
             @RequestParam(value="deducciones", required=false) String deducciones,
             @RequestParam(value="hrs_extras", required=false) String hrs_extras,
             @RequestParam(value="incapacidades", required=false) String incapacidades,
+            @RequestParam(value="accion", required=false) String accion,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) throws Exception {
@@ -791,7 +791,7 @@ public class FacNominaController {
         String command_selected = "new_nomina";
         String extra_data_array = "'sin datos'";
         String succes_validation="";
-        String codeRespuesta="false";
+        String codeRespuesta="";
         String msjRespuesta="";
         String actualizo = "0";
         
@@ -805,6 +805,10 @@ public class FacNominaController {
         
         if(Integer.parseInt(id_reg)>0){
             command_selected = "edit_nomina";
+        }else{
+            if(accion.trim().toLowerCase().equals("edit")){
+                command_selected = "edit_nomina";
+            }
         }
         
         String data_string = 
@@ -857,9 +861,9 @@ public class FacNominaController {
                 deducciones+"___"+
                 hrs_extras+"___"+
                 incapacidades;
-
+        
         System.out.println("data_string_nomina_empleado: "+data_string);
-
+        
         //Cuando es diferente de Nuevo, se tiene que validar
         succes = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
         succes_validation = succes.get("success");
@@ -867,20 +871,29 @@ public class FacNominaController {
         if( String.valueOf(succes_validation).equals("true")){
             retorno = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
             
-            //retorna un 1, si se  actualizo correctamente
-            actualizo=retorno.split(":")[0];
+            System.out.println("StringRetorno: "+retorno);
             
-            jsonretorno.put("actualizo",String.valueOf(actualizo));
+            //Retorna un 1, si se  actualizo correctamente
+            actualizo = String.valueOf(retorno.split(":")[0]);
+            
+            //Retorna el id que se creó u actualizó
+            jsonretorno.put("id",String.valueOf(retorno.split(":")[1]));
+            
+            codeRespuesta = String.valueOf(retorno.split(":")[2]);
+            msjRespuesta = String.valueOf(retorno.split(":")[3]);
+        }else{
+            codeRespuesta="7001";
+            msjRespuesta ="Error al intentar validar los datos.";
         }
         
-        
         jsonretorno.put("success",succes_validation);
+        jsonretorno.put("actualizo",actualizo);
         jsonretorno.put("valor",codeRespuesta);
         jsonretorno.put("msj",msjRespuesta);
         
         System.out.println("Validacion: "+ String.valueOf(jsonretorno.get("success")));
-        System.out.println("codeRespuesta: "+String.valueOf(codeRespuesta));
-        System.out.println("msjRespuesta: "+String.valueOf(msjRespuesta));
+        System.out.println("codeRespuesta: "+String.valueOf(jsonretorno.get("valor")));
+        System.out.println("msjRespuesta: "+String.valueOf(jsonretorno.get("msjRespuesta")));
         System.out.println(TimeHelper.getFechaActualYMDH()+": FIN-GUADAR NOMINA EMPLEADO------------------------------------");
         
         return jsonretorno;

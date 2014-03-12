@@ -135,7 +135,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public String selectFunctionForFacAdmProcesos(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from fac_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         
-        //System.out.println("selectFunctionForFacAdmProcesos: "+sql_to_query);
+        System.out.println("selectFunctionForFacAdmProcesos: "+sql_to_query);
         
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -4057,10 +4057,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "gral_puesto_id AS puesto_id,"
             + "(CASE WHEN fecha_contrato IS NULL THEN '' ELSE fecha_contrato::character varying END) AS fecha_contrato,"
             + "antiguedad,"
-            + "nom_regimen_contratacion_id AS reg_contrato_id,"
+            + "nom_regimen_contratacion_id AS regimen_id,"
             + "nom_tipo_contrato_id AS tipo_contrato_id,"
-            + "nom_tipo_jornada_id AS tipo_contrato_id,"
-            + "nom_periodicidad_pago_id AS tipo_periodic_id,"
+            + "nom_tipo_jornada_id AS tipo_jornada_id,"
+            + "nom_periodicidad_pago_id AS periodicidad_id,"
             + "clabe,"
             + "tes_ban_id AS banco_id,"
             + "nom_riesgo_puesto_id AS riesgo_id,"
@@ -4107,10 +4107,10 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 row.put("puesto_id",rs.getInt("puesto_id"));
                 row.put("fecha_contrato",rs.getString("fecha_contrato"));
                 row.put("antiguedad",rs.getString("antiguedad"));
-                row.put("reg_contrato_id",rs.getInt("reg_contrato_id"));
+                row.put("regimen_id",rs.getInt("regimen_id"));
                 row.put("tipo_contrato_id",rs.getInt("tipo_contrato_id"));
-                row.put("tipo_contrato_id",rs.getInt("tipo_contrato_id"));
-                row.put("tipo_periodic_id",rs.getInt("tipo_periodic_id"));
+                row.put("tipo_jornada_id",rs.getInt("tipo_jornada_id"));
+                row.put("periodicidad_id",rs.getInt("periodicidad_id"));
                 row.put("clabe",rs.getString("clabe"));
                 row.put("banco_id",rs.getInt("banco_id"));
                 row.put("riesgo_id",rs.getInt("riesgo_id"));
@@ -4144,6 +4144,66 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         );
         return hm;
     }
+    
+    
+    
+    //Obtiene las Horas Extras de un empleado de un Periodo especifico
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_HorasExtras(Integer id_nom_det) {
+        String sql_to_query="";
+        
+        sql_to_query="SELECT id,nom_tipo_hrs_extra_id AS tipo_he_id, no_dias, no_hrs, importe FROM fac_nomina_det_hrs_extra WHERE fac_nomina_det_id=? ORDER BY id;";
+        
+        System.out.println("QueryHorasExtras: "+sql_to_query);
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_nom_det)},new RowMapper(){
+                @Override 
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getInt("id"));
+                 row.put("tipo_he_id",rs.getInt("tipo_he_id"));
+                 row.put("no_dias",StringHelper.roundDouble(rs.getDouble("no_dias"), 2));
+                 row.put("no_hrs",StringHelper.roundDouble(rs.getDouble("no_hrs"), 2));
+                 row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"), 2));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    //Obtiene las Horas Extras de un empleado de un Periodo especifico
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Incapacidades(Integer id_nom_det) {
+        String sql_to_query="";
+        
+        sql_to_query="SELECT id, nom_tipo_incapacidad_id AS tipo_incapa_id, no_dias, importe FROM fac_nomina_det_incapa WHERE fac_nomina_det_id=? ORDER BY id;";
+        
+        System.out.println("QueryIncapacidades: "+sql_to_query);
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id_nom_det)},new RowMapper(){
+                @Override 
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id",rs.getInt("id"));
+                 row.put("tipo_incapa_id",rs.getInt("tipo_incapa_id"));
+                 row.put("no_dias",StringHelper.roundDouble(rs.getDouble("no_dias"), 2));
+                 row.put("importe",StringHelper.roundDouble(rs.getDouble("importe"), 2));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+        
+    
+    
+    
     
     
     
