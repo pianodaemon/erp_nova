@@ -210,7 +210,7 @@
 														</tr>
 														<tr>
 															<td width="10"></td>
-															<td width="80">RFC</td>
+															<td width="80">*RFC</td>
 															<td width="120"><input type="text" name="emisor_rfc" value="" style="width:120px;" readOnly="true"></td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_emisorrfc"></div></td>
 															<td width="80">Raz&oacute;n&nbsp;social</td>
@@ -220,7 +220,7 @@
 														<tr><td colspan="8" height="5"></td></tr>
 														<tr>
 															<td width="10"></td>
-															<td width="80">R&oacute;gimen&nbsp;Fiscal</td>
+															<td width="80">*R&oacute;gimen&nbsp;Fiscal</td>
 															<td width="390" colspan="4"><input type="text" name="emisor_regimen" value="" style="width:390px;" readOnly="true"></td>
 															<td width="365"></td>
 															<td width="25"></td>
@@ -288,7 +288,7 @@
 														<tr><td colspan="12" height="5"></td></tr>
 														<tr>
 															<td width="10"></td>
-															<td width="80">Fecha de Pago</td>
+															<td width="80">*Fecha&nbsp;de&nbsp;Pago</td>
 															<td width="120"><input type="text" name="fecha_pago" value="" style="width:120px;" title="Fecha de Pago"></select></td>
 															<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_compfechapago"></div></td>
 															<td width="80">Periodicidad</td>
@@ -303,7 +303,22 @@
 																<input type="hidden" name="no_periodo_selec" value="0">
 															</td>
 															<!--<td width="80"></td>-->
-															<td width="150"></td>
+															<td width="150"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_compnoperiodo"></div></td>
+															<td width="40"></td>
+														</tr>
+														<tr><td colspan="12" height="5"></td></tr>
+														<tr>
+															<td width="10">&nbsp;</td>
+															<td width="80"></td>
+															<td width="120"></td>
+															<td width="40"></td>
+															<td width="80"></td>
+															<td width="100"></td>
+															<td width="40"></td>
+															<td width="80"></td>
+															<td width="40"></td>
+															<td width="80"></td>
+															<td width="150" align="right"><input type="button" id="genera_nomina" disabled value="Generar N&oacute;mina" style="width:120px; font-weight: bold;"></td>
 															<td width="40"></td>
 														</tr>
 													</table>
@@ -315,17 +330,17 @@
 													<table class="tabla_header_grid">
 														<thead>
 															<tr>
-																<td class="grid_head" width="50">&nbsp;</td>
 																<td class="grid_head" width="50">&nbsp;#</td>
-																<td class="grid_head" width="375">&nbsp;Nombre del Empleado</td>
-																<td class="grid_head" width="120">&nbsp;Total Percepciones</td>
-																<td class="grid_head" width="120">&nbsp;Total Deducciones</td>
-																<td class="grid_head" width="120">&nbsp;Neto a Pagar</td>
+																<td class="grid_head" width="50">&nbsp;#</td>
+																<td class="grid_head" width="375">&nbsp;Nombre&nbsp;del&nbsp;Empleado</td>
+																<td class="grid_head" width="120">&nbsp;Total&nbsp;Percepciones</td>
+																<td class="grid_head" width="120">&nbsp;Total&nbsp;Deducciones</td>
+																<td class="grid_head" width="120">&nbsp;Neto&nbsp;a&nbsp;Pagar</td>
 															</tr>
 														</thead>
 													</table>
 													
-													<div class="contenedor_grid" style="overflow:scroll; overflow-x: hidden; overflow-y: auto; width:870; height: 115px; border:1px solid #C1DAD7 !important;">	
+													<div class="contenedor_grid" style="overflow:scroll; overflow-x:hidden; overflow-y:auto; width:870; height:160px; border:1px solid #C1DAD7 !important;">	
 														<table>
 															<tbody style="background-color:#FFFFFF;" valign="top" id="grid_empleados">
 																
@@ -337,13 +352,10 @@
 											</tr>
 											
 											<tr>
-												<td width="520">&nbsp;</td>
-												<td width="10"></td>
-												<td width="90"></td>
-												<td width="250"></td>
+												<td colspan="4" style="color:red;">* Campos obligatorios</td>
 											</tr>
 											<tr>
-												<td width="520">&nbsp;</td>
+												<td width="520"></td>
 												<td width="10"></td>
 												<td width="90"></td>
 												<td width="250"></td>
@@ -429,13 +441,13 @@
 																	
 																	<table border="0" class="gral">
 																		<tr>
-																			<td width="140" height="10">No.&nbsp;de&nbsp;Empleado</td>
+																			<td width="140" height="10">*No.&nbsp;de&nbsp;Empleado</td>
 																			<td width="50">
 																				<input type="hidden" name="id_empleado" value="0">
 																				<input type="text" name="no_empleado" value="" style="width:50px;">
 																			</td>
 																			<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_noempleado"></div></td>
-																			<td width="40">RFC</td>
+																			<td width="40">*RFC</td>
 																			<td width="120"><input type="text" name="rfc_empleado" value="" style="width:120px;"></td>
 																			<td width="40"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_rfcempleado"></div></td>
 																			
@@ -485,9 +497,9 @@
 																								<td width="25"><input type="text" name="antiguedad" value="" style="width:25px;"></td>
 																								<td width="75">&nbsp;Semanas</td>
 																								<td width="25"></td>
-																								<td width="85">CURP</td>
+																								<td width="85">*CURP</td>
 																								<td width="150"><input type="text" name="curp" value="" style="width:150px;"></td>
-																								<td width="25"></td>
+																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_curp"></div></td>
 																							</tr>
 																							<tr>
 																								<td height="10" colspan="11"></td>
@@ -495,7 +507,7 @@
 																							
 																							
 																							<tr>
-																								<td width="120" height="10">Regimen&nbsp;de&nbsp;Contrataci&oacute;n&nbsp;</td>
+																								<td width="120" height="10">*Regimen&nbsp;de&nbsp;Contrataci&oacute;n&nbsp;</td>
 																								<td width="150"><select name="select_reg_contratacion" style="width:150px;"></select></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_regimencontratacio"></div></td>
 																								<td width="90" colspan="2">Tipo&nbsp;de&nbsp;Contrato&nbsp;</td>
@@ -519,7 +531,7 @@
 																								<td width="25"></td>
 																							</tr>
 																							<tr>
-																								<td width="120" height="10">Periodicidad&nbsp;del&nbsp;Pago</td>
+																								<td width="120" height="10">*Periodicidad&nbsp;del&nbsp;Pago</td>
 																								<td width="150"><select name="select_preriodo_pago" style="width:150px;"></select></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_periodicidadpago"></div></td>
 																								<td width="90" colspan="2">CLABE</td>
@@ -552,10 +564,10 @@
 																								<td width="120" height="10">Salario&nbsp;Base&nbsp;Cotizaci&oacute;n</td>
 																								<td width="150"><input type="text" name="salario_base" style="width:150px;"></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_salariobase"></div></td>
-																								<td width="115" colspan="3">Fecha&nbsp;Inicial&nbsp;Pago&nbsp;</td>
+																								<td width="115" colspan="3">*Fecha&nbsp;Inicial&nbsp;Pago&nbsp;</td>
 																								<td width="75"><input type="text" name="fecha_ini_pago" style="width:75px;"></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_fechainipago"></div></td>
-																								<td width="85">Fecha&nbsp;Final&nbsp;Pago&nbsp;</td>
+																								<td width="85">*Fecha&nbsp;Final&nbsp;Pago&nbsp;</td>
 																								<td width="150"><input type="text" name="fecha_fin_pago" style="width:150px;"></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_fechafinpago"></div></td>
 																							</tr>
@@ -567,7 +579,7 @@
 																								<td width="120" height="10">Salario&nbsp;Diario&nbsp;Integrado</td>
 																								<td width="150"><input type="text" name="salario_integrado" style="width:150px;"></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_salariointegrado"></div></td>
-																								<td width="115" colspan="3">No. de d&iacute;as pagados</td>
+																								<td width="115" colspan="3">*No. de d&iacute;as pagados</td>
 																								<td width="75"><input type="text" name="no_dias_pago" style="width:75px;"></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_nodiaspago"></div></td>
 																								<td width="85"></td>
@@ -599,11 +611,11 @@
 																									<table class="tabla_header_grid">
 																										<thead>
 																											<tr>
-																												<td class="grid_head" width="380">&nbsp;Concepto para el Comprobante</td>
-																												<td class="grid_head" width="110">&nbsp;Unidad</td>
-																												<td class="grid_head" width="90">&nbsp;Cantidad</td>
-																												<td class="grid_head" width="100">&nbsp;Valor&nbsp;Unitario</td>
-																												<td class="grid_head" width="110">&nbsp;Importe</td>
+																												<td class="grid_head" width="380">&nbsp;*Concepto para el Comprobante</td>
+																												<td class="grid_head" width="110">&nbsp;*Unidad</td>
+																												<td class="grid_head" width="90">&nbsp;*Cantidad</td>
+																												<td class="grid_head" width="100">&nbsp;*Valor&nbsp;Unitario</td>
+																												<td class="grid_head" width="110">&nbsp;*Importe</td>
 																											</tr>
 																										</thead>
 																										<tbody style="background-color: #FFFFFF;" valign="top" id="grid_conceptos">
@@ -651,10 +663,10 @@
 																										</tr>
 																										<tr>
 																											<td width="10"></td>
-																											<td width="60">Impuesto</td>
+																											<td width="60">*Impuesto</td>
 																											<td width="90"><select name="select_impuesto_retencion" style="width:90px;"></select></td>
 																											<td width="25"></td>
-																											<td width="65">Importe</td>
+																											<td width="65">*Importe</td>
 																											<td width="65"><input type="text" name="importe_retencion" value="" style="width:65px;"></td>
 																											<td width="200"></td>
 																										</tr>
@@ -719,10 +731,10 @@
 																										<thead>
 																											<tr>
 																												<td class="grid_head" width="60">&nbsp;#</td>
-																												<td class="grid_head" width="200">&nbsp;Tipo agrupador</td>
-																												<td class="grid_head" width="300">&nbsp;Concepto o Descripci&oacute;n</td>
-																												<td class="grid_head" width="110">&nbsp;Monto Gravado</td>
-																												<td class="grid_head" width="120">&nbsp;Monto Excento</td>
+																												<td class="grid_head" width="200">&nbsp;*Tipo agrupador</td>
+																												<td class="grid_head" width="300">&nbsp;*Concepto o Descripci&oacute;n</td>
+																												<td class="grid_head" width="110">&nbsp;*Monto Gravado</td>
+																												<td class="grid_head" width="120">&nbsp;*Monto Excento</td>
 																											</tr>
 																										</thead>
 																										<tbody style="background-color:#FFFFFF;" valign="top" id="grid_percepciones">
@@ -732,7 +744,7 @@
 																											<tr>
 																												<td width="60"></td>
 																												<td width="200"></td>
-																												<td width="300" align="right"><strong>Total&nbsp;</strong></td>
+																												<td width="300" align="right"><strong>*Total&nbsp;</strong></td>
 																												<td class="grid3" width="110"><input type="text" name="percep_total_gravado" value="0.00" style="width:106px; text-align:right; font-weight:bold;"></td>
 																												<td class="grid3" width="120"><input type="text" name="percep_total_excento" value="0.00" style="width:116px; text-align:right; font-weight:bold;"></td>
 																											</tr>
@@ -773,10 +785,10 @@
 																										<thead>
 																											<tr>
 																												<td class="grid_head" width="60">&nbsp;#</td>
-																												<td class="grid_head" width="200">&nbsp;Tipo&nbsp;Agrupador</td>
-																												<td class="grid_head" width="300">&nbsp;Concepto&nbsp;o&nbsp;Descripci&oacute;n</td>
-																												<td class="grid_head" width="110">&nbsp;Monto&nbsp;Gravado</td>
-																												<td class="grid_head" width="120">&nbsp;Monto&nbsp;Excento</td>
+																												<td class="grid_head" width="200">&nbsp;*Tipo&nbsp;Agrupador</td>
+																												<td class="grid_head" width="300">&nbsp;*Concepto&nbsp;o&nbsp;Descripci&oacute;n</td>
+																												<td class="grid_head" width="110">&nbsp;*Monto&nbsp;Gravado</td>
+																												<td class="grid_head" width="120">&nbsp;*Monto&nbsp;Excento</td>
 																											</tr>
 																										</thead>
 																										<tbody style="background-color:#FFFFFF;" valign="top" id="grid_deducciones">
@@ -786,7 +798,7 @@
 																											<tr>
 																												<td width="60">&nbsp;</td>
 																												<td width="200"></td>
-																												<td width="300" align="right"><strong>Total&nbsp;</strong></td>
+																												<td width="300" align="right"><strong>*Total&nbsp;</strong></td>
 																												<td class="grid3" width="110"><input type="text" name="deduc_total_gravado" value="0.00" style="width:106px; text-align:right; font-weight:bold;"></td>
 																												<td class="grid3" width="120"><input type="text" name="deduc_total_excento" value="0.00" style="width:116px; text-align:right; font-weight:bold;"></td>
 																											</tr>
@@ -873,8 +885,13 @@
 																				</div>
 																			</td>
 																		</tr>
+																		<!--
+																		<tr>
+																			<td colspan="9" height="15">* Campos obligatorios</td>
+																		</tr>
+																		-->
 																	</table>
-													
+																	
 																	
 																	
 																	
