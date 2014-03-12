@@ -415,16 +415,22 @@ $(function() {
 		});
 	}
 	
-	$aplicar_evento_focus = function( $campo_input ){
+	$aplicar_evento_focus_input_numeric = function( $campo_input ){
 		$campo_input.focus(function(e){
 			if($(this).val().trim()=='' || parseInt($(this).val())==0){
 				$(this).val('');
 			}
+			$campo_input.css({'background' : '#ffffff'});
 		});
 	}
 	
+	$aplicar_evento_focus_input_text = function( $campo_input ){
+		$campo_input.focus(function(e){
+			$campo_input.css({'background' : '#ffffff'});
+		});
+	}
 	
-	$aplicar_evento_blur = function($campo_input, ejecutar_calculo){
+	$aplicar_evento_blur_input_numeric = function($campo_input, ejecutar_calculo){
 		//pone cero al perder el enfoque, cuando no se ingresa un valor o cuando el valor es igual a cero, si hay un valor mayor que cero no hace nada
 		$campo_input.blur(function(e){
 			if($campo_input.val().trim()==''){
@@ -435,9 +441,22 @@ $(function() {
 			if(ejecutar_calculo){
 				$calcula_totales();
 			}
+			
+			if(parseFloat($campo_input.val())>0){
+				$campo_input.css({'background' : '#ffffff'});
+			}
+			
 		});
 	}
-
+	
+	$aplicar_evento_blur_input_text = function( $campo_input ){
+		$campo_input.blur(function(e){
+			if($campo_input.val().trim()!=''){
+				$campo_input.css({'background' : '#ffffff'});
+			}
+		});
+	}
+	
 
 
 	
@@ -786,11 +805,11 @@ $(function() {
 		$permitir_solo_numeros($grid_percepciones.find('input.percep_monto_gravado'+ tr));
 		$permitir_solo_numeros($grid_percepciones.find('input.percep_monto_excento'+ tr));
 		
-		$aplicar_evento_focus($grid_percepciones.find('input.percep_monto_gravado'+ tr));
-		$aplicar_evento_focus($grid_percepciones.find('input.percep_monto_excento'+ tr));
+		$aplicar_evento_focus_input_numeric($grid_percepciones.find('input.percep_monto_gravado'+ tr));
+		$aplicar_evento_focus_input_numeric($grid_percepciones.find('input.percep_monto_excento'+ tr));
 		
-		$aplicar_evento_blur($grid_percepciones.find('input.percep_monto_gravado'+ tr), true);
-		$aplicar_evento_blur($grid_percepciones.find('input.percep_monto_excento'+ tr), true);
+		$aplicar_evento_blur_input_numeric($grid_percepciones.find('input.percep_monto_gravado'+ tr), true);
+		$aplicar_evento_blur_input_numeric($grid_percepciones.find('input.percep_monto_excento'+ tr), true);
 		
 		
 		$grid_percepciones.find('a.delete_percep'+ tr).click(function(event){
@@ -838,11 +857,11 @@ $(function() {
 		$permitir_solo_numeros($grid_deducciones.find('input.deduc_monto_gravado'+ tr));
 		$permitir_solo_numeros($grid_deducciones.find('input.deduc_monto_excento'+ tr));
 		
-		$aplicar_evento_focus($grid_deducciones.find('input.deduc_monto_gravado'+ tr));
-		$aplicar_evento_focus($grid_deducciones.find('input.deduc_monto_excento'+ tr));
+		$aplicar_evento_focus_input_numeric($grid_deducciones.find('input.deduc_monto_gravado'+ tr));
+		$aplicar_evento_focus_input_numeric($grid_deducciones.find('input.deduc_monto_excento'+ tr));
 		
-		$aplicar_evento_blur($grid_deducciones.find('input.deduc_monto_gravado'+ tr), true);
-		$aplicar_evento_blur($grid_deducciones.find('input.deduc_monto_excento'+ tr), true);
+		$aplicar_evento_blur_input_numeric($grid_deducciones.find('input.deduc_monto_gravado'+ tr), true);
+		$aplicar_evento_blur_input_numeric($grid_deducciones.find('input.deduc_monto_excento'+ tr), true);
 		
 		$grid_deducciones.find('a.delete_deduc'+ tr).click(function(event){
 			event.preventDefault();
@@ -898,13 +917,13 @@ $(function() {
 		$permitir_solo_numeros($grid_horas_extras.find('input.he_no_horas'+ tr));
 		$permitir_solo_numeros($grid_horas_extras.find('input.he_importe'+ tr));
 		
-		$aplicar_evento_focus($grid_horas_extras.find('input.he_no_dias'+ tr));
-		$aplicar_evento_focus($grid_horas_extras.find('input.he_no_horas'+ tr));
-		$aplicar_evento_focus($grid_horas_extras.find('input.he_importe'+ tr));
+		$aplicar_evento_focus_input_numeric($grid_horas_extras.find('input.he_no_dias'+ tr));
+		$aplicar_evento_focus_input_numeric($grid_horas_extras.find('input.he_no_horas'+ tr));
+		$aplicar_evento_focus_input_numeric($grid_horas_extras.find('input.he_importe'+ tr));
 		
-		$aplicar_evento_blur($grid_horas_extras.find('input.he_no_dias'+ tr), false);
-		$aplicar_evento_blur($grid_horas_extras.find('input.he_no_horas'+ tr), false);
-		$aplicar_evento_blur($grid_horas_extras.find('input.he_importe'+ tr), false);
+		$aplicar_evento_blur_input_numeric($grid_horas_extras.find('input.he_no_dias'+ tr), false);
+		$aplicar_evento_blur_input_numeric($grid_horas_extras.find('input.he_no_horas'+ tr), false);
+		$aplicar_evento_blur_input_numeric($grid_horas_extras.find('input.he_importe'+ tr), false);
 		
 		$grid_horas_extras.find('a.delete_he'+ tr).click(function(event){
 			event.preventDefault();
@@ -990,11 +1009,11 @@ $(function() {
 		$permitir_solo_numeros($grid_incapacidades.find('input.incapacidad_no_dias'+ tr));
 		$permitir_solo_numeros($grid_incapacidades.find('input.incapacidad_importe'+ tr));
 		
-		$aplicar_evento_focus($grid_incapacidades.find('input.incapacidad_no_dias'+ tr));
-		$aplicar_evento_focus($grid_incapacidades.find('input.incapacidad_importe'+ tr));
+		$aplicar_evento_focus_input_numeric($grid_incapacidades.find('input.incapacidad_no_dias'+ tr));
+		$aplicar_evento_focus_input_numeric($grid_incapacidades.find('input.incapacidad_importe'+ tr));
 		
-		$aplicar_evento_blur($grid_incapacidades.find('input.incapacidad_no_dias'+ tr), false);
-		$aplicar_evento_blur($grid_incapacidades.find('input.incapacidad_importe'+ tr), false);
+		$aplicar_evento_blur_input_numeric($grid_incapacidades.find('input.incapacidad_no_dias'+ tr), false);
+		$aplicar_evento_blur_input_numeric($grid_incapacidades.find('input.incapacidad_importe'+ tr), false);
 		
 		$grid_incapacidades.find('a.delete_incapacidad'+ tr).click(function(event){
 			event.preventDefault();
@@ -1045,7 +1064,7 @@ $(function() {
 	
 	
 	//Ventana para la Nomina de cada Empleado
-	$forma_nomina_empleado = function(id_empleado, id_periodicidad_pago, id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad){
+	$forma_nomina_empleado = function(id_empleado, id_periodicidad_pago, $id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad){
 		$('#forma-nominaempleado-window').remove();
 		$('#forma-nominaempleado-overlay').remove();
 		$(this).modalPanel_nominaempleado();
@@ -1055,6 +1074,9 @@ $(function() {
 		//$('#forma-nominaempleado-window').css({ "margin-left": -320, 	"margin-top": -235  });
 		$('#forma-nominaempleado-window').css({ "margin-left": -320, 	"margin-top": -255  });
 		$tabs_li_funxionalidad_nominaempleado();
+		
+		//Esta variable es de la ventana principal
+		var $accion = $('#forma-facnomina-window').find('input[name=accion]');
 		
 		var $id_nom_det = $('#forma-nominaempleado-window').find('input[name=id_nom_det]');
 		var $id_empleado = $('#forma-nominaempleado-window').find('input[name=id_empleado]');
@@ -1140,21 +1162,21 @@ $(function() {
 		$permitir_solo_numeros($comp_retencion);
 		$permitir_solo_numeros($comp_total);
 		
-		$aplicar_evento_focus($salario_base);
-		$aplicar_evento_focus($salario_integrado);
-		$aplicar_evento_focus($concepto_cantidad);
-		$aplicar_evento_focus($concepto_valor_unitario);
-		$aplicar_evento_focus($concepto_importe);
-		$aplicar_evento_focus($descuento);
-		$aplicar_evento_focus($importe_retencion);
+		$aplicar_evento_focus_input_numeric($salario_base);
+		$aplicar_evento_focus_input_numeric($salario_integrado);
+		$aplicar_evento_focus_input_numeric($concepto_cantidad);
+		$aplicar_evento_focus_input_numeric($concepto_valor_unitario);
+		$aplicar_evento_focus_input_numeric($concepto_importe);
+		$aplicar_evento_focus_input_numeric($descuento);
+		$aplicar_evento_focus_input_numeric($importe_retencion);
 		
-		$aplicar_evento_blur($salario_base, false);
-		$aplicar_evento_blur($salario_integrado, false);
-		$aplicar_evento_blur($concepto_cantidad, true);
-		$aplicar_evento_blur($concepto_valor_unitario, false);
-		$aplicar_evento_blur($concepto_importe, false);
-		$aplicar_evento_blur($descuento, true);
-		$aplicar_evento_blur($importe_retencion, false);
+		$aplicar_evento_blur_input_numeric($salario_base, false);
+		$aplicar_evento_blur_input_numeric($salario_integrado, false);
+		$aplicar_evento_blur_input_numeric($concepto_cantidad, true);
+		$aplicar_evento_blur_input_numeric($concepto_valor_unitario, false);
+		$aplicar_evento_blur_input_numeric($concepto_importe, false);
+		$aplicar_evento_blur_input_numeric($descuento, true);
+		$aplicar_evento_blur_input_numeric($importe_retencion, false);
 		
 		$aplicar_readonly_input($comp_subtotal);
 		$aplicar_readonly_input($comp_descuento);
@@ -1174,16 +1196,31 @@ $(function() {
 		$aplicar_readonly_input($fecha_ini_pago);
 		$aplicar_readonly_input($fecha_fin_pago);
 		
+		
+		
+		$aplicar_evento_focus_input_text( $concepto_descripcion );
+		$aplicar_evento_focus_input_text( $concepto_unidad );
+		
+		$aplicar_evento_blur_input_text( $concepto_descripcion );
+		$aplicar_evento_blur_input_text( $concepto_unidad );
+		
+		
+		
 		$add_calendar($fecha_ini_pago, " ", "");
 		$add_calendar($fecha_fin_pago, " ", "");
 		
-		$id_nom_det.val(id_reg);
+		$id_nom_det.val($id_reg.val());
+		
+		var elemento_seleccionado = 0;
+		var texto_elemento_cero = '';
+		var campo_indice = '';
+		var campo_valor = '';
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataNominaEmpleado.json';
 		$arreglo = {'id_reg':$id_nom_det.val(), 'id_empleado':id_empleado, 'id_periodo':id_periodo, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
-			if(parseInt(id_reg)<=0){
+			if(parseInt($id_reg.val())<=0){
 				//NUEVO
 				
 				$id_empleado.val(entry['Data'][0]['empleado_id']);
@@ -1229,10 +1266,10 @@ $(function() {
 				$deduc_total_excento.val(parseFloat(0).toFixed(2));
 				
 				
-				var elemento_seleccionado = entry['Data'][0]['depto_id'];
-				var texto_elemento_cero = '[--Seleccionar Departamento--]';
-				var campo_indice = 'id';
-				var campo_valor = 'titulo';
+				elemento_seleccionado = entry['Data'][0]['depto_id'];
+				texto_elemento_cero = '[--Seleccionar Departamento--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
 				$carga_campos_select($select_departamento, arrayDeptos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
 				
 				elemento_seleccionado = entry['Data'][0]['puesto_id'];
@@ -1260,7 +1297,7 @@ $(function() {
 				$carga_campos_select($select_tipo_jornada, arrayTipoJornada, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
 				
 				
-				if(parseInt(id_reg)==0){
+				if(parseInt($id_reg.val())==0){
 					elemento_seleccionado = id_periodicidad_pago;
 				}else{
 					elemento_seleccionado = entry['Data'][0]['periodo_pago_id'];
@@ -1345,20 +1382,95 @@ $(function() {
 				$deduc_total_excento.val(entry['Data'][0]['deduc_total_excento']);
 				
 				
+				elemento_seleccionado = entry['Data'][0]['depto_id'];
+				texto_elemento_cero = '[--Seleccionar Departamento--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
+				$carga_campos_select($select_departamento, arrayDeptos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				
+				elemento_seleccionado = entry['Data'][0]['puesto_id'];
+				texto_elemento_cero = '[--Seleccionar Puesto--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
+				$carga_campos_select($select_puesto, arrayPuestos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				
+				elemento_seleccionado = entry['Data'][0]['regimen_id'];
+				texto_elemento_cero = '[--Seleccionar Regimen--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
+				$carga_campos_select($select_reg_contratacion, arrayRegimenContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				
+				elemento_seleccionado = entry['Data'][0]['tipo_contrato_id'];
+				texto_elemento_cero = '[--Seleccionar--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
+				$carga_campos_select($select_tipo_contrato, arrayTipoContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				
+				elemento_seleccionado = entry['Data'][0]['tipo_jornada_id'];
+				texto_elemento_cero = '[--Seleccionar--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
+				$carga_campos_select($select_tipo_jornada, arrayTipoJornada, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				
+				elemento_seleccionado = entry['Data'][0]['periodicidad_id'];
+				texto_elemento_cero = '[--Seleccionar--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
+				$carga_campos_select($select_preriodo_pago, arrayPeriodicidad, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				
+				elemento_seleccionado = entry['Data'][0]['banco_id'];
+				texto_elemento_cero = '[--Seleccionar--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
+				$carga_campos_select($select_banco, arrayBancos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				
+				elemento_seleccionado = entry['Data'][0]['riesgo_id'];
+				texto_elemento_cero = '[--Seleccionar--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
+				$carga_campos_select($select_riesgo_puesto, arrayRiesgos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
 				
 				
+				elemento_seleccionado = entry['Data'][0]['isr_id'];
+				texto_elemento_cero = '[--Seleccionar--]';
+				campo_indice = 'id';
+				campo_valor = 'titulo';
+				$carga_campos_select($select_impuesto_retencion, arrayImpuestoRet, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);			
+				
+				
+				elemento_seleccionado = 0;
+				texto_elemento_cero = '[--Seleccionar--]';
+				campo_indice = 'id';
+				campo_valor = 'percepcion';
+				$carga_campos_select($select_lista_percepciones, arrayPercep, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				
+				elemento_seleccionado = 0;
+				texto_elemento_cero = '[--Seleccionar--]';
+				campo_indice = 'id';
+				campo_valor = 'deduccion';
+				$carga_campos_select($select_lista_deducciones, arrayDeduc, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				
+				
+				
+				$.each(entry['HrsExtraEmpleado'],function(entryIndex,data){
+					var id_tipo_hr = data['tipo_he_id'];
+					var id_reg = data['id'];
+					var no_dias = data['no_dias'];
+					var no_hrs = data['no_hrs'];
+					var importe = data['importe'];
+					$agregar_tr_hora_extra($grid_horas_extras, id_reg, id_tipo_hr, arrayTiposHrsExtra, no_dias, no_hrs, importe);
+				});
+				
+				$.each(entry['IncapaEmpleado'],function(entryIndex,data){
+					var id_tipo = data['tipo_incapa_id'];
+					var id_reg = data['id'];
+					var no_dias = data['no_dias'];
+					var importe = data['importe'];
+					$agregar_tr_incapacidad($grid_incapacidades, id_reg, id_tipo, arrayTiposIncapacidad, no_dias, importe)
+				});
 				
 				/*
                 row.put("fac_nom_id",rs.getInt("fac_nom_id"));
-                row.put("depto_id",rs.getInt("depto_id"));
-                row.put("puesto_id",rs.getInt("puesto_id"));
-                row.put("reg_contrato_id",rs.getInt("reg_contrato_id"));
-                row.put("tipo_contrato_id",rs.getInt("tipo_contrato_id"));
-                row.put("tipo_contrato_id",rs.getInt("tipo_contrato_id"));
-                row.put("tipo_periodic_id",rs.getInt("tipo_periodic_id"));
-                row.put("banco_id",rs.getInt("banco_id"));
-                row.put("riesgo_id",rs.getInt("riesgo_id"));
-                row.put("isr_id",rs.getInt("isr_id"));
                 */
 				//TERMINA EDIT
 			}
@@ -1478,6 +1590,9 @@ $(function() {
 		
 		
 		$('#forma-facnomina-window').find( "#submit" ).bind('click',function(){
+			//Aqui se establece el nivel de ejecucion 2, porque se ejecita desde la ventana de nomina de Empleado
+			$('#forma-facnomina-window').find('input[name=nivel_ejecucion]').val(2);
+			
 			var trCount = $("tr", $('#forma-facnomina-window').find('#grid_empleados')).size();
 			if(parseInt(trCount) > 0){
 				return true;
@@ -1496,9 +1611,8 @@ $(function() {
 			
 			//Ejecutar submit del Formulario proncipal
 			$('#forma-facnomina-window').find( "#submit" ).trigger( "click" );
-			
-			
-			
+				
+				
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/edit_nomina_empleado.json';
 				$arreglo = {
 					'identificador':$('#forma-facnomina-window').find('input[name=identificador]').val(),
@@ -1547,19 +1661,32 @@ $(function() {
 					'deducciones':$crear_cadena($grid_deducciones, 'deducciones'),
 					'hrs_extras':$crear_cadena($grid_horas_extras, 'hrs_extras'),
 					'incapacidades':$crear_cadena($grid_incapacidades, 'incapacidades'),
+					'accion':$accion.val(),
 					'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 				};
 				
 				
 				$.post(input_json,$arreglo,function(entry){
-					//confirma = entry['success']['fn_validaciones_dir_nominaempleado_cliente'];
 					confirma = entry['success'];
+					
 					if ( confirma == "true" ){
-						//llamada a la funcion que agrega tr al grid de direcciones de nominaempleado
-						//$agrega_tr_grid_nominaempleado(numFila,$select_pais,$select_entidad,$select_localidad,$campo_calle,$campo_numero,$campo_colonia,$campo_cp,$campo_telefono,$textarea_localternativa,$campo_fax);
-
-						var remove = function() { $(this).remove(); };
-						$('#forma-nominaempleado-overlay').fadeOut(remove);
+						$id_reg.val(entry['id']);
+						var mensaje='';
+						if(parseInt(entry['valor'])>0){
+							//Aquí se toma el codigo del error
+							mensaje = ': '+entry['valor'];
+						}
+						mensaje = mensaje + '' + entry['msj'];
+						
+						jAlert(mensaje, 'Atencion!', function(r) { 
+							$select_no_periodo.focus();
+						});
+						
+						if(parseInt(entry['actualizo'])==1){
+							//Solo se debe cerrar la ventana cuando actualizo sea igual a 1
+							var remove = function() { $(this).remove(); };
+							$('#forma-nominaempleado-overlay').fadeOut(remove);
+						}
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-nominaempleado-window').find('div.interrogacion').css({'display':'none'});
@@ -1573,6 +1700,15 @@ $(function() {
 								.parent()
 								.css({'display':'block'})
 								.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
+								
+								
+								if(tmp.split(':')[0].split('__')[0]=='grid'){
+									var campo = tmp.split(':')[0].split('__')[1];
+									//alert(campo);
+									var $campo_input = $('#forma-nominaempleado-window').find('input[name='+campo+']');
+									$campo_input.css({'background' : '#d41000'});
+									$campo_input.attr({'title': tmp.split(':')[1] }); 
+								}
 							}
 						}
 					}
@@ -1685,13 +1821,13 @@ $(function() {
 			
 			if(parseInt($('#forma-facnomina-window').find('select[name=select_no_periodo]').val())>0){
 				var idEmpleado = $fila.find('#id_emp').val();
-				var id_reg = $fila.find('#id_reg').val();
+				var $id_reg = $fila.find('#id_reg');
 				var $total_percep = $fila.find('#tpercep');
 				var $total_deduc = $fila.find('#tdeduc');
 				var $neto_pagar = $fila.find('#pago_neto');
 				
 				//Llamada a la función que crea la ventana para la nomina del empleado
-				$forma_nomina_empleado(idEmpleado, id_periodicidad_pago, id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad);
+				$forma_nomina_empleado(idEmpleado, id_periodicidad_pago, $id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad);
 			}else{
 				jAlert('Es necesario seleccionar un periodo para la Nomina.', 'Atencion!', function(r) { 
 					$('#forma-facnomina-window').find('select[name=select_no_periodo]').focus();
@@ -1845,22 +1981,18 @@ $(function() {
 		var respuestaProcesada = function(data){
 			if ( data['success'] == "true" ){
 				$accion.val("edit");
-				jAlert("Los datos se guardaron con &eacute;xito", 'Atencion!');
-				var remove = function() {$(this).remove();};
-				$('#forma-facnomina-overlay').fadeOut(remove);
-				$get_datos_grid();
+				if(parseInt($nivel_ejecucion.val())==1){
+					//Solo se debe mostrar el alert cuando se actualiza desde la ventana principal
+					jAlert("Los datos se guardaron con &eacute;xito", 'Atencion!');
+					var remove = function() {$(this).remove();};
+					$('#forma-facnomina-overlay').fadeOut(remove);
+					$get_datos_grid();
+				}
 			}else{
 				// Desaparece todas las interrogaciones si es que existen
 				$('#forma-facnomina-window').find('.facnomina_div_one').css({'height':'580px'});//con errores
 				
 				$('#forma-facnomina-window').find('div.interrogacion').css({'display':'none'});
-				
-				$grid_empleados.find('#cant').css({'background' : '#ffffff'});
-				$grid_empleados.find('#cost').css({'background' : '#ffffff'});
-				$grid_empleados.find('#pres').css({'background' : '#ffffff'});
-				
-				$('#forma-facnomina-window').find('#div_warning_grid').css({'display':'none'});
-				$('#forma-facnomina-window').find('#div_warning_grid').find('#grid_warning').children().remove();
 				
 				var valor = data['success'].split('___');
 				//muestra las interrogaciones
@@ -1875,41 +2007,8 @@ $(function() {
 						.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 						
 						//alert(tmp.split(':')[0]);
-						
-						var campo = tmp.split(':')[0];
-						var $campo_input;
-						var cantidad_existencia=0;
-						var  width_td=0;
-						
-						if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 5) == 'costo') || (tmp.split(':')[0].substring(0, 12) == 'presentacion')){
-							
-							$('#forma-facnomina-window').find('#div_warning_grid').css({'display':'block'});
-							
-							if(tmp.split(':')[0].substring(0, 12) == 'presentacion'){
-								$campo_input = $grid_empleados.find('input[name='+campo+']');
-							}else{
-								$campo_input = $grid_empleados.find('.'+campo);
-							}
-							$campo_input.css({'background' : '#d41000'});
-							
-							var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();
-							var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
-							
-							
-							var tr_warning = '<tr>';
-									tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-									tr_warning += '<td width="90"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:88px; color:red"></td>';
-									tr_warning += '<td width="160"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:160px; color:red"></td>';
-									tr_warning += '<td width="'+width_td+'"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:255px; color:red"></td>';
-							tr_warning += '</tr>';
-							
-							$('#forma-facnomina-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
-						}
 					}
 				}
-				
-				$grid_warning.find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
-				$grid_warning.find('tr:even').find('td').css({'background-color' : '#e7e8ea'});
 			}
 		}
 		
@@ -2096,6 +2195,7 @@ $(function() {
 			
 			var $identificador = $('#forma-facnomina-window').find('input[name=identificador]');
 			var $accion = $('#forma-facnomina-window').find('input[name=accion]');
+			var $nivel_ejecucion = $('#forma-facnomina-window').find('input[name=nivel_ejecucion]');
 			
 			var $emisor_rfc = $('#forma-facnomina-window').find('input[name=emisor_rfc]');
 			var $emisor_nombre = $('#forma-facnomina-window').find('input[name=emisor_nombre]');
@@ -2154,79 +2254,43 @@ $(function() {
 				$arreglo = {'identificador':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var respuestaProcesada = function(data){
-					if ( data['success'] == "true" ){
-						$('#forma-facnomina-window').find('div.interrogacion').css({'display':'none'});
+					alert('Nivel: '+$nivel_ejecucion.val());
+					if(parseInt($nivel_ejecucion.val())==1){
+						//Solo se debe mostrar el alert cuando se actualiza desde la ventana principal
 						
-								jAlert(data['actualizo'], 'Atencion!');
-						
-						var remove = function() {$(this).remove();};
-						$('#forma-facnomina-overlay').fadeOut(remove);
-						
-						//ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
-						$submit_actualizar.hide();
-						$get_datos_grid();
-					}else{
-						// Desaparece todas las interrogaciones si es que existen
-						//$('#forma-facnomina-window').find('.div_one').css({'height':'545px'});//sin errores
-						$('#forma-facnomina-window').find('.facnomina_div_one').css({'height':'588px'});//con errores
-						
-						$grid_empleados.find('#cant').css({'background' : '#ffffff'});
-						$grid_empleados.find('#cost').css({'background' : '#ffffff'});
-						$grid_empleados.find('#pres').css({'background' : '#ffffff'});
-						
-						$('#forma-facnomina-window').find('#div_warning_grid').css({'display':'none'});
-						$('#forma-facnomina-window').find('#div_warning_grid').find('#grid_warning').children().remove();
-						
-						var valor = data['success'].split('___');
-						//muestra las interrogaciones
-						for (var element in valor){
-							tmp = data['success'].split('___')[element];
-							longitud = tmp.split(':');
+						if ( data['success'] == "true" ){
+							$('#forma-facnomina-window').find('div.interrogacion').css({'display':'none'});
 							
-							if( longitud.length > 1 ){
-								$('#forma-facnomina-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
-								.parent()
-								.css({'display':'block'})
-								.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
+							jAlert(data['msjRespuesta'], 'Atencion!');
+							
+							var remove = function() {$(this).remove();};
+							$('#forma-facnomina-overlay').fadeOut(remove);
+							
+							//Ocultar boton actualizar porque ya se actualizo, ya no se puede guardar cambios, hay que cerrar y volver a abrir
+							$submit_actualizar.hide();
+							$get_datos_grid();
+						}else{
+							// Desaparece todas las interrogaciones si es que existen
+							//$('#forma-facnomina-window').find('.div_one').css({'height':'545px'});//sin errores
+							
+							var valor = data['success'].split('___');
+							//muestra las interrogaciones
+							for (var element in valor){
+								tmp = data['success'].split('___')[element];
+								longitud = tmp.split(':');
 								
-								//alert(tmp.split(':')[0]);
-								
-								var campo = tmp.split(':')[0];
-								var $campo_input;
-								var cantidad_existencia=0;
-								var  width_td=0;
-								
-								if((tmp.split(':')[0].substring(0, 8) == 'cantidad') || (tmp.split(':')[0].substring(0, 5) == 'costo') || (tmp.split(':')[0].substring(0, 12) == 'presentacion')){
+								if( longitud.length > 1 ){
+									$('#forma-facnomina-window').find('img[rel=warning_' + tmp.split(':')[0] + ']')
+									.parent()
+									.css({'display':'block'})
+									.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 									
-									$('#forma-facnomina-window').find('#div_warning_grid').css({'display':'block'});
+									//alert(tmp.split(':')[0]);
+
 									
-									if(tmp.split(':')[0].substring(0, 12) == 'presentacion'){
-										$campo_input = $grid_empleados.find('input[name='+campo+']');
-									}else{
-										$campo_input = $grid_empleados.find('.'+campo);
-									}
-									
-									$campo_input.css({'background' : '#d41000'});
-									
-									var codigo_producto = $campo_input.parent().parent().find('input[name=sku]').val();
-									var titulo_producto = $campo_input.parent().parent().find('input[name=nombre]').val();
-									
-									
-									var tr_warning = '<tr>';
-											tr_warning += '<td width="20"><div><IMG SRC="../../img/icono_advertencia.png" ALIGN="top" rel="warning_sku"></td>';
-											tr_warning += '<td width="90"><INPUT TYPE="text" value="' + codigo_producto + '" class="borde_oculto" readOnly="true" style="width:88px; color:red"></td>';
-											tr_warning += '<td width="160"><INPUT TYPE="text" value="' + titulo_producto + '" class="borde_oculto" readOnly="true" style="width:160px; color:red"></td>';
-											tr_warning += '<td width="255"><INPUT TYPE="text" value="'+  tmp.split(':')[1] +'" class="borde_oculto" readOnly="true" style="width:255px; color:red"></td>';
-									tr_warning += '</tr>';
-									
-									$('#forma-facnomina-window').find('#div_warning_grid').find('#grid_warning').append(tr_warning);
 								}
-								
 							}
 						}
-						
-						$grid_warning.find('tr:odd').find('td').css({'background-color' : '#FFFFFF'});
-						$grid_warning.find('tr:even').find('td').css({'background-color' : '#e7e8ea'});
 					}
 				}
 				
@@ -2297,6 +2361,7 @@ $(function() {
 				
 				
 				$submit_actualizar.bind('click',function(){
+					$nivel_ejecucion.val(1);
 					var trCount = $("tr", $grid_empleados).size();
 					if(parseInt(trCount) > 0){
 						return true;
