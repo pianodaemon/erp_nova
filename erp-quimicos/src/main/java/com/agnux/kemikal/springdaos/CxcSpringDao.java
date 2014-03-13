@@ -4970,4 +4970,196 @@ return subfamilias;
         return hm_facturas;
     }
     //Termina Metodo para reporte de Saldo Mensual
+    
+    
+    
+    //Obtiene el SQL Consulta Reporte Ventas Anuales por Cliente
+    @Override
+    public ArrayList<HashMap<String, String>> getVentasAnualesCliente(Integer anio, Integer id_empresa) {
+
+        String where="";
+       String sql_to_query=""+"SELECT razon_social, "
+                                    +"sum(enero) as enero, "
+                                    +"sum(febrero) as febrero, "
+                                    +"sum(marzo) as marzo, "
+                                    +"sum(abril) as abril, "
+                                    +"sum(mayo) as mayo, "
+                                    +"sum(junio) as junio, "
+                                    +"sum(julio) as julio, "
+                                    +"sum(agosto) as agosto, "
+                                    +"sum(septiembre) as septiembre, "
+                                    +"sum(octubre) as octubre, "
+                                    +"sum(noviembre) as noviembre, "
+                                    +"sum(diciembre) as diciembre, "
+                                    +"sum(enero)+sum(febrero)+sum(marzo)+sum(abril)+sum(mayo)+sum(junio)+sum(julio)+sum(agosto)+sum(septiembre)+sum(octubre)+sum(noviembre)+sum(diciembre)  as suma_total, "
+                                    +"sum(enero1) as enero1, "
+                                    +"sum(febrero2) as febrero2, "
+                                    +"sum(marzo3) as marzo3, "
+                                    +"sum(abril4) as abril4, "
+                                    +"sum(mayo5) as mayo5, "
+                                    +"sum(junio6) as junio6, "
+                                    +"sum(julio7) as julio7, "
+                                    +"sum(agosto8) as agosto8, "
+                                    +"sum(septiembre9) as septiembre9, "
+                                    +"sum(octubre10) as octubre10, "
+                                    +"sum(noviembre11) as noviembre11, "
+                                    +"sum(diciembre12) as diciembre12, "
+                                    +"sum(enero1)+sum(febrero2)+sum(marzo3)+sum(abril4)+sum(mayo5)+sum(junio6)+sum(julio7)+sum(agosto8)+sum(septiembre9)+sum(octubre10)+sum(noviembre11)+sum(diciembre12)  as suma_total2, "
+                                    +"sum(enero11) as enero11, "
+                                    +"sum(febrero12) as febrero12, "
+                                    +"sum(marzo13) as marzo13, "
+                                    +"sum(abril14) as abril14, "
+                                    +"sum(mayo15) as mayo15, "
+                                    +"sum(junio16) as junio16, "
+                                    +"sum(julio17) as julio17, "
+                                    +"sum(agosto18) as agosto18, "
+                                    +"sum(septiembre19) as septiembre19, "
+                                    +"sum(octubre110) as octubre110, "
+                                    +"sum(noviembre111) as noviembre111, "
+                                    +"sum(diciembre112) as diciembre112, "
+                                    +"sum(enero11)+sum(febrero12)+sum(marzo13)+sum(abril14)+sum(mayo15)+sum(junio16)+sum(julio17)+sum(agosto18)+sum(septiembre19)+sum(octubre110)+sum(noviembre111)+sum(diciembre112)  as suma_total3 "
+                                    +"FROM( SELECT razon_social, "
+                                        +"(CASE WHEN mes=1 THEN importe_partida_mn ELSE 0 END) AS enero, "
+                                        +"(CASE WHEN mes=2 THEN importe_partida_mn ELSE 0 END) AS febrero, "
+                                        +"(CASE WHEN mes=3 THEN importe_partida_mn ELSE 0 END) AS marzo, "
+                                        +"(CASE WHEN mes=4 THEN importe_partida_mn ELSE 0 END) AS abril, "
+                                        +"(CASE WHEN mes=5 THEN importe_partida_mn ELSE 0 END) AS mayo, "
+                                        +"(CASE WHEN mes=6 THEN importe_partida_mn ELSE 0 END) AS junio, "
+                                        +"(CASE WHEN mes=7 THEN importe_partida_mn ELSE 0 END) AS julio, "
+                                        +"(CASE WHEN mes=8 THEN importe_partida_mn ELSE 0 END) AS agosto, "
+                                        +"(CASE WHEN mes=9 THEN importe_partida_mn ELSE 0 END) AS septiembre, "
+                                        +"(CASE WHEN mes=10 THEN importe_partida_mn ELSE 0 END) AS octubre, "
+                                        +"(CASE WHEN mes=11 THEN importe_partida_mn ELSE 0 END) AS noviembre, "
+                                        +"(CASE WHEN mes=12 THEN importe_partida_mn ELSE 0 END) AS diciembre, "
+                                        +"importe_partida_mn, "
+                                        +"(CASE WHEN mes=1 THEN cantidad_partida ELSE 0 END) AS enero1, "
+                                        +"(CASE WHEN mes=2 THEN cantidad_partida ELSE 0 END) AS febrero2, "
+                                        +"(CASE WHEN mes=3 THEN cantidad_partida ELSE 0 END) AS marzo3, "
+                                        +"(CASE WHEN mes=4 THEN cantidad_partida ELSE 0 END) AS abril4, "
+                                        +"(CASE WHEN mes=5 THEN cantidad_partida ELSE 0 END) AS mayo5, "
+                                        +"(CASE WHEN mes=6 THEN cantidad_partida ELSE 0 END) AS junio6, "
+                                        +"(CASE WHEN mes=7 THEN cantidad_partida ELSE 0 END) AS julio7, "
+                                        +"(CASE WHEN mes=8 THEN cantidad_partida ELSE 0 END) AS agosto8, "
+                                        +"(CASE WHEN mes=9 THEN cantidad_partida ELSE 0 END) AS septiembre9, "
+                                        +"(CASE WHEN mes=10 THEN cantidad_partida ELSE 0 END) AS octubre10, "
+                                        +"(CASE WHEN mes=11 THEN cantidad_partida ELSE 0 END) AS noviembre11, "
+                                        +"(CASE WHEN mes=12 THEN cantidad_partida ELSE 0 END) AS diciembre12, "
+                                        +"cantidad_partida, "
+                                        +"(CASE WHEN mes=1 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS enero11, "
+                                        +"(CASE WHEN mes=2 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS febrero12, "
+                                        +"(CASE WHEN mes=3 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS marzo13, "
+                                        +"(CASE WHEN mes=4 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS abril14, "
+                                        +"(CASE WHEN mes=5 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS mayo15, "
+                                        +"(CASE WHEN mes=6 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS junio16, "
+                                        +"(CASE WHEN mes=7 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS julio17, "
+                                        +"(CASE WHEN mes=8 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS agosto18, "
+                                        +"(CASE WHEN mes=9 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS septiembre19, "
+                                        +"(CASE WHEN mes=10 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS octubre110, "
+                                        +"(CASE WHEN mes=11 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS noviembre111, "
+                                        +"(CASE WHEN mes=12 THEN (1-costo_mn/precio_unitario_partida) ELSE 0 END) AS diciembre112, "
+                                        +"costo_mn "
+                                    +"FROM ("
+                                            +"SELECT EXTRACT(YEAR FROM fac_docs.momento_creacion) AS anio, "
+               + "EXTRACT(MONTH FROM fac_docs.momento_creacion) AS mes, "
+               + "cxc_clie.razon_social as razon_social, "
+               + "fac_docs.serie_folio AS factura, "
+               + "gral_mon.descripcion_abr AS moneda_factura, "
+               + "gral_mon.simbolo AS moneda_simbolo, "
+               + "fac_docs.tipo_cambio, "
+               + "fac_docs.momento_creacion AS momento_facturacion, "
+               + "fac_docs.subtotal AS subtotal_factura, "
+               + "(CASE WHEN gral_mon.id=1 THEN fac_docs.subtotal ELSE (fac_docs.subtotal * fac_docs.tipo_cambio) END) AS subtotal_mn, "
+               + "to_date(fac_docs.momento_creacion::text,'yyyy-mm-dd') AS momento_creacion, "
+               + "inv_prod.sku AS codigo_prod, "
+               + "inv_prod.descripcion AS descripcion_prod, "
+               + "fac_docs_detalles.cantidad AS cantidad_partida, "
+               + "(CASE WHEN gral_mon.id=1 THEN fac_docs_detalles.precio_unitario ELSE (fac_docs_detalles.precio_unitario * fac_docs.tipo_cambio) END) AS precio_unitario_partida, "
+               + "(CASE WHEN gral_mon.id=1 THEN (fac_docs_detalles.cantidad * fac_docs_detalles.precio_unitario) ELSE ((fac_docs_detalles.cantidad * fac_docs_detalles.precio_unitario) * fac_docs.tipo_cambio) END) AS importe_partida_mn, "
+               + "(CASE  "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=1 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_1 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_1=1 THEN inv_prod_cost_prom.costo_ultimo_1 ELSE inv_prod_cost_prom.costo_ultimo_1 * inv_prod_cost_prom.tipo_cambio_1 END) + (CASE WHEN sbt_costos.costo_adic_1 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_1=1 THEN sbt_costos.costo_adic_1 ELSE sbt_costos.costo_adic_1 * inv_prod_cost_prom.tipo_cambio_1 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_1=1 THEN inv_prod_cost_prom.costo_ultimo_1 ELSE inv_prod_cost_prom.costo_ultimo_1 * inv_prod_cost_prom.tipo_cambio_1 END) *  ((CASE WHEN sbt_costos.costo_imp_1 IS NULL THEN 0 ELSE sbt_costos.costo_imp_1 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_1=1 THEN inv_prod_cost_prom.costo_ultimo_1 ELSE inv_prod_cost_prom.costo_ultimo_1 * inv_prod_cost_prom.tipo_cambio_1 END) *  ((CASE WHEN sbt_costos.costo_dir_1 IS NULL THEN 0 ELSE sbt_costos.costo_dir_1 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=2 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_2 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_2=1 THEN inv_prod_cost_prom.costo_ultimo_2 ELSE inv_prod_cost_prom.costo_ultimo_2 * inv_prod_cost_prom.tipo_cambio_2 END) + (CASE WHEN sbt_costos.costo_adic_2 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_2=1 THEN sbt_costos.costo_adic_2 ELSE sbt_costos.costo_adic_2 * inv_prod_cost_prom.tipo_cambio_2 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_2=1 THEN inv_prod_cost_prom.costo_ultimo_2 ELSE inv_prod_cost_prom.costo_ultimo_2 * inv_prod_cost_prom.tipo_cambio_2 END) *  ((CASE WHEN sbt_costos.costo_imp_2 IS NULL THEN 0 ELSE sbt_costos.costo_imp_2 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_2=1 THEN inv_prod_cost_prom.costo_ultimo_2 ELSE inv_prod_cost_prom.costo_ultimo_2 * inv_prod_cost_prom.tipo_cambio_2 END) *  ((CASE WHEN sbt_costos.costo_dir_2 IS NULL THEN 0 ELSE sbt_costos.costo_dir_2 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=3 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_3 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_3=1 THEN inv_prod_cost_prom.costo_ultimo_3 ELSE inv_prod_cost_prom.costo_ultimo_3 * inv_prod_cost_prom.tipo_cambio_3 END) + (CASE WHEN sbt_costos.costo_adic_3 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_3=1 THEN sbt_costos.costo_adic_3 ELSE sbt_costos.costo_adic_3 * inv_prod_cost_prom.tipo_cambio_3 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_3=1 THEN inv_prod_cost_prom.costo_ultimo_3 ELSE inv_prod_cost_prom.costo_ultimo_3 * inv_prod_cost_prom.tipo_cambio_3 END) *  ((CASE WHEN sbt_costos.costo_imp_3 IS NULL THEN 0 ELSE sbt_costos.costo_imp_3 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_3=1 THEN inv_prod_cost_prom.costo_ultimo_3 ELSE inv_prod_cost_prom.costo_ultimo_3 * inv_prod_cost_prom.tipo_cambio_3 END) *  ((CASE WHEN sbt_costos.costo_dir_3 IS NULL THEN 0 ELSE sbt_costos.costo_dir_3 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=4 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_4 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_4=1 THEN inv_prod_cost_prom.costo_ultimo_4 ELSE inv_prod_cost_prom.costo_ultimo_4 * inv_prod_cost_prom.tipo_cambio_4 END) + (CASE WHEN sbt_costos.costo_adic_4 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_4=1 THEN sbt_costos.costo_adic_4 ELSE sbt_costos.costo_adic_4 * inv_prod_cost_prom.tipo_cambio_4 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_4=1 THEN inv_prod_cost_prom.costo_ultimo_4 ELSE inv_prod_cost_prom.costo_ultimo_4 * inv_prod_cost_prom.tipo_cambio_4 END) *  ((CASE WHEN sbt_costos.costo_imp_4 IS NULL THEN 0 ELSE sbt_costos.costo_imp_4 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_4=1 THEN inv_prod_cost_prom.costo_ultimo_4 ELSE inv_prod_cost_prom.costo_ultimo_4 * inv_prod_cost_prom.tipo_cambio_4 END) *  ((CASE WHEN sbt_costos.costo_dir_4 IS NULL THEN 0 ELSE sbt_costos.costo_dir_4 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=5 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_5 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_5=1 THEN inv_prod_cost_prom.costo_ultimo_5 ELSE inv_prod_cost_prom.costo_ultimo_5 * inv_prod_cost_prom.tipo_cambio_5 END) + (CASE WHEN sbt_costos.costo_adic_5 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_5=1 THEN sbt_costos.costo_adic_5 ELSE sbt_costos.costo_adic_5 * inv_prod_cost_prom.tipo_cambio_5 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_5=1 THEN inv_prod_cost_prom.costo_ultimo_5 ELSE inv_prod_cost_prom.costo_ultimo_5 * inv_prod_cost_prom.tipo_cambio_5 END) *  ((CASE WHEN sbt_costos.costo_imp_5 IS NULL THEN 0 ELSE sbt_costos.costo_imp_5 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_5=1 THEN inv_prod_cost_prom.costo_ultimo_5 ELSE inv_prod_cost_prom.costo_ultimo_5 * inv_prod_cost_prom.tipo_cambio_5 END) *  ((CASE WHEN sbt_costos.costo_dir_5 IS NULL THEN 0 ELSE sbt_costos.costo_dir_5 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=6 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_6 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_6=1 THEN inv_prod_cost_prom.costo_ultimo_6 ELSE inv_prod_cost_prom.costo_ultimo_6 * inv_prod_cost_prom.tipo_cambio_6 END) + (CASE WHEN sbt_costos.costo_adic_6 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_6=1 THEN sbt_costos.costo_adic_6 ELSE sbt_costos.costo_adic_6 * inv_prod_cost_prom.tipo_cambio_6 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_6=1 THEN inv_prod_cost_prom.costo_ultimo_6 ELSE inv_prod_cost_prom.costo_ultimo_6 * inv_prod_cost_prom.tipo_cambio_6 END) *  ((CASE WHEN sbt_costos.costo_imp_6 IS NULL THEN 0 ELSE sbt_costos.costo_imp_6 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_6=1 THEN inv_prod_cost_prom.costo_ultimo_6 ELSE inv_prod_cost_prom.costo_ultimo_6 * inv_prod_cost_prom.tipo_cambio_6 END) *  ((CASE WHEN sbt_costos.costo_dir_6 IS NULL THEN 0 ELSE sbt_costos.costo_dir_6 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=7 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_7 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_7=1 THEN inv_prod_cost_prom.costo_ultimo_7 ELSE inv_prod_cost_prom.costo_ultimo_7 * inv_prod_cost_prom.tipo_cambio_7 END) + (CASE WHEN sbt_costos.costo_adic_7 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_7=1 THEN sbt_costos.costo_adic_7 ELSE sbt_costos.costo_adic_7 * inv_prod_cost_prom.tipo_cambio_7 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_7=1 THEN inv_prod_cost_prom.costo_ultimo_7 ELSE inv_prod_cost_prom.costo_ultimo_7 * inv_prod_cost_prom.tipo_cambio_7 END) *  ((CASE WHEN sbt_costos.costo_imp_7 IS NULL THEN 0 ELSE sbt_costos.costo_imp_7 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_7=1 THEN inv_prod_cost_prom.costo_ultimo_7 ELSE inv_prod_cost_prom.costo_ultimo_7 * inv_prod_cost_prom.tipo_cambio_7 END) *  ((CASE WHEN sbt_costos.costo_dir_7 IS NULL THEN 0 ELSE sbt_costos.costo_dir_7 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=8 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_8 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_8=1 THEN inv_prod_cost_prom.costo_ultimo_8 ELSE inv_prod_cost_prom.costo_ultimo_8 * inv_prod_cost_prom.tipo_cambio_8 END) + (CASE WHEN sbt_costos.costo_adic_8 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_8=1 THEN sbt_costos.costo_adic_8 ELSE sbt_costos.costo_adic_8 * inv_prod_cost_prom.tipo_cambio_8 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_8=1 THEN inv_prod_cost_prom.costo_ultimo_8 ELSE inv_prod_cost_prom.costo_ultimo_8 * inv_prod_cost_prom.tipo_cambio_8 END) *  ((CASE WHEN sbt_costos.costo_imp_8 IS NULL THEN 0 ELSE sbt_costos.costo_imp_8 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_8=1 THEN inv_prod_cost_prom.costo_ultimo_8 ELSE inv_prod_cost_prom.costo_ultimo_8 * inv_prod_cost_prom.tipo_cambio_8 END) *  ((CASE WHEN sbt_costos.costo_dir_8 IS NULL THEN 0 ELSE sbt_costos.costo_dir_8 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=9 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_9 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_9=1 THEN inv_prod_cost_prom.costo_ultimo_9 ELSE inv_prod_cost_prom.costo_ultimo_9 * inv_prod_cost_prom.tipo_cambio_9 END) + (CASE WHEN sbt_costos.costo_adic_9 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_9=1 THEN sbt_costos.costo_adic_9 ELSE sbt_costos.costo_adic_9 * inv_prod_cost_prom.tipo_cambio_9 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_9=1 THEN inv_prod_cost_prom.costo_ultimo_9 ELSE inv_prod_cost_prom.costo_ultimo_9 * inv_prod_cost_prom.tipo_cambio_9 END) *  ((CASE WHEN sbt_costos.costo_imp_9 IS NULL THEN 0 ELSE sbt_costos.costo_imp_9 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_9=1 THEN inv_prod_cost_prom.costo_ultimo_9 ELSE inv_prod_cost_prom.costo_ultimo_9 * inv_prod_cost_prom.tipo_cambio_9 END) *  ((CASE WHEN sbt_costos.costo_dir_9 IS NULL THEN 0 ELSE sbt_costos.costo_dir_9 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=10 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_10 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_10=1 THEN inv_prod_cost_prom.costo_ultimo_10 ELSE inv_prod_cost_prom.costo_ultimo_10 * inv_prod_cost_prom.tipo_cambio_10 END) + (CASE WHEN sbt_costos.costo_adic_10 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_10=1 THEN sbt_costos.costo_adic_10 ELSE sbt_costos.costo_adic_10 * inv_prod_cost_prom.tipo_cambio_10 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_10=1 THEN inv_prod_cost_prom.costo_ultimo_10 ELSE inv_prod_cost_prom.costo_ultimo_10 * inv_prod_cost_prom.tipo_cambio_10 END) * ((CASE WHEN sbt_costos.costo_imp_10 IS NULL THEN 0 ELSE sbt_costos.costo_imp_10 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_10=1 THEN inv_prod_cost_prom.costo_ultimo_10 ELSE inv_prod_cost_prom.costo_ultimo_10 * inv_prod_cost_prom.tipo_cambio_10 END) *  ((CASE WHEN sbt_costos.costo_dir_10 IS NULL THEN 0 ELSE sbt_costos.costo_dir_10 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=11 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_11 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_11=1 THEN inv_prod_cost_prom.costo_ultimo_11 ELSE inv_prod_cost_prom.costo_ultimo_11 * inv_prod_cost_prom.tipo_cambio_11 END) + (CASE WHEN sbt_costos.costo_adic_11 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_11=1 THEN sbt_costos.costo_adic_11 ELSE sbt_costos.costo_adic_11 * inv_prod_cost_prom.tipo_cambio_11 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_11=1 THEN inv_prod_cost_prom.costo_ultimo_11 ELSE inv_prod_cost_prom.costo_ultimo_11 * inv_prod_cost_prom.tipo_cambio_11 END) * ((CASE WHEN sbt_costos.costo_imp_11 IS NULL THEN 0 ELSE sbt_costos.costo_imp_11 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_11=1 THEN inv_prod_cost_prom.costo_ultimo_11 ELSE inv_prod_cost_prom.costo_ultimo_11 * inv_prod_cost_prom.tipo_cambio_11 END) *  ((CASE WHEN sbt_costos.costo_dir_11 IS NULL THEN 0 ELSE sbt_costos.costo_dir_11 END) /100))) END) "
+               + "WHEN EXTRACT(MONTH FROM fac_docs.momento_creacion)::integer=12 THEN (CASE WHEN inv_prod_cost_prom.costo_ultimo_12 IS NULL THEN 0 ELSE ((CASE WHEN inv_prod_cost_prom.gral_mon_id_12=1 THEN inv_prod_cost_prom.costo_ultimo_12 ELSE inv_prod_cost_prom.costo_ultimo_12 * inv_prod_cost_prom.tipo_cambio_12 END) + (CASE WHEN sbt_costos.costo_adic_12 IS NULL THEN 0 ELSE (CASE WHEN inv_prod_cost_prom.gral_mon_id_12=1 THEN sbt_costos.costo_adic_12 ELSE sbt_costos.costo_adic_12 * inv_prod_cost_prom.tipo_cambio_12 END) END) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_12=1 THEN inv_prod_cost_prom.costo_ultimo_12 ELSE inv_prod_cost_prom.costo_ultimo_12 * inv_prod_cost_prom.tipo_cambio_12 END) * ((CASE WHEN sbt_costos.costo_imp_12 IS NULL THEN 0 ELSE sbt_costos.costo_imp_12 END) /100)) + ((CASE WHEN inv_prod_cost_prom.gral_mon_id_12=1 THEN inv_prod_cost_prom.costo_ultimo_12 ELSE inv_prod_cost_prom.costo_ultimo_12 * inv_prod_cost_prom.tipo_cambio_12 END) *  ((CASE WHEN sbt_costos.costo_dir_12 IS NULL THEN 0 ELSE sbt_costos.costo_dir_12 END) /100))) END) "
+               + "ELSE 0 END) * fac_docs_detalles.cantidad  AS costo_mn "
+               + "FROM fac_docs "
+               + "JOIN fac_docs_detalles ON fac_docs_detalles.fac_doc_id=fac_docs.id "
+               + "JOIN erp_proceso ON erp_proceso.id=fac_docs.proceso_id "
+    + "JOIN inv_prod ON inv_prod.id=fac_docs_detalles.inv_prod_id "
+    + "JOIN cxc_clie ON cxc_clie.id=fac_docs.cxc_clie_id "
+    + "JOIN gral_mon ON gral_mon.id=fac_docs.moneda_id "
+    + "LEFT JOIN ("
+    + "SELECT distinct ano,inv_prod_id,inv_prod_presentacion_id,costo_imp_1,costo_dir_1,precio_min_1,actualizacion_1,usr_id_actualiza_1,costo_imp_2,costo_dir_2,precio_min_2,actualizacion_2,usr_id_actualiza_2,costo_imp_3,costo_dir_3,precio_min_3,actualizacion_3,usr_id_actualiza_3,costo_imp_4,costo_dir_4,precio_min_4,actualizacion_4,usr_id_actualiza_4,costo_imp_5,costo_dir_5,precio_min_5,actualizacion_5,usr_id_actualiza_5,costo_imp_6,costo_dir_6,precio_min_6,actualizacion_6,usr_id_actualiza_6,costo_imp_7,costo_dir_7,precio_min_7,actualizacion_7,usr_id_actualiza_7,costo_imp_8,costo_dir_8,precio_min_8,actualizacion_8,usr_id_actualiza_8,costo_imp_9,costo_dir_9,precio_min_9,actualizacion_9,usr_id_actualiza_9,costo_imp_10,costo_dir_10,precio_min_10,actualizacion_10,usr_id_actualiza_10,costo_imp_11,costo_dir_11,precio_min_11,actualizacion_11,usr_id_actualiza_11,costo_imp_12,costo_dir_12,precio_min_12,actualizacion_12,usr_id_actualiza_12,gral_emp_id,costo_adic_1,costo_adic_2,costo_adic_3,costo_adic_4,costo_adic_5,costo_adic_6,costo_adic_7,costo_adic_8,costo_adic_9,costo_adic_10, costo_adic_11, costo_adic_12 FROM inv_prod_costos "
+    + " ) AS sbt_costos ON (sbt_costos.inv_prod_id=fac_docs_detalles.inv_prod_id AND sbt_costos.inv_prod_presentacion_id=fac_docs_detalles.inv_prod_presentacion_id AND sbt_costos.ano=EXTRACT(YEAR FROM fac_docs.momento_creacion)::integer ) "
+    + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano=EXTRACT(YEAR FROM fac_docs.momento_creacion)::integer) "
+    + "WHERE erp_proceso.empresa_id=1 "
+    + "AND fac_docs.cancelado=false "
+    + "AND EXTRACT(YEAR  FROM fac_docs.momento_creacion)="+anio+" "
+    + ") AS sbt "
+    +")as sbt2 "
+    +"GROUP BY razon_social ";
+        System.out.println("Generando Consulta Reporte Ventas Anuales por Cliente:"+sql_to_query+"");
+
+        ArrayList<HashMap<String, String>> hm_facturas = (ArrayList<HashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("razon_social",rs.getString("razon_social"));
+                    row.put("enero",StringHelper.roundDouble(rs.getString("enero"),2));
+                    row.put("febrero",StringHelper.roundDouble(rs.getString("febrero"),2));
+                    row.put("marzo",StringHelper.roundDouble(rs.getString("marzo"),2));
+                    row.put("abril",StringHelper.roundDouble(rs.getString("abril"),2));
+                    row.put("mayo",StringHelper.roundDouble(rs.getString("mayo"),2));
+                    row.put("junio",StringHelper.roundDouble(rs.getString("junio"),2));
+                    row.put("julio",StringHelper.roundDouble(rs.getString("julio"),2));
+                    row.put("agosto",StringHelper.roundDouble(rs.getString("agosto"),2));
+                    row.put("septiembre",StringHelper.roundDouble(rs.getString("septiembre"),2));
+                    row.put("octubre",StringHelper.roundDouble(rs.getString("octubre"),2));
+                    row.put("noviembre",StringHelper.roundDouble(rs.getString("noviembre"),2));
+                    row.put("diciembre",StringHelper.roundDouble(rs.getString("diciembre"),2));
+                    row.put("suma_total",StringHelper.roundDouble(rs.getDouble("suma_total"), 2));
+                    row.put("enero1",StringHelper.roundDouble(rs.getString("enero1"),2));
+                    row.put("febrero2",StringHelper.roundDouble(rs.getString("febrero2"),2));
+                    row.put("marzo3",StringHelper.roundDouble(rs.getString("marzo3"),2));
+                    row.put("abril4",StringHelper.roundDouble(rs.getString("abril4"),2));
+                    row.put("mayo5",StringHelper.roundDouble(rs.getString("mayo5"),2));
+                    row.put("junio6",StringHelper.roundDouble(rs.getString("junio6"),2));
+                    row.put("julio7",StringHelper.roundDouble(rs.getString("julio7"),2));
+                    row.put("agosto8",StringHelper.roundDouble(rs.getString("agosto8"),2));
+                    row.put("septiembre9",StringHelper.roundDouble(rs.getString("septiembre9"),2));
+                    row.put("octubre10",StringHelper.roundDouble(rs.getString("octubre10"),2));
+                    row.put("noviembre11",StringHelper.roundDouble(rs.getString("noviembre11"),2));
+                    row.put("diciembre12",StringHelper.roundDouble(rs.getString("diciembre12"),2));
+                    row.put("suma_total2",StringHelper.roundDouble(rs.getDouble("suma_total2"), 2));
+                    row.put("enero11",StringHelper.roundDouble(rs.getString("enero11"),2));
+                    row.put("febrero12",StringHelper.roundDouble(rs.getString("febrero12"),2));
+                    row.put("marzo13",StringHelper.roundDouble(rs.getString("marzo13"),2));
+                    row.put("abril14",StringHelper.roundDouble(rs.getString("abril14"),2));
+                    row.put("mayo15",StringHelper.roundDouble(rs.getString("mayo15"),2));
+                    row.put("junio16",StringHelper.roundDouble(rs.getString("junio16"),2));
+                    row.put("julio17",StringHelper.roundDouble(rs.getString("julio17"),2));
+                    row.put("agosto18",StringHelper.roundDouble(rs.getString("agosto18"),2));
+                    row.put("septiembre19",StringHelper.roundDouble(rs.getString("septiembre19"),2));
+                    row.put("octubre110",StringHelper.roundDouble(rs.getString("octubre110"),2));
+                    row.put("noviembre111",StringHelper.roundDouble(rs.getString("noviembre111"),2));
+                    row.put("diciembre112",StringHelper.roundDouble(rs.getString("diciembre112"),2));
+                    row.put("suma_total3",StringHelper.roundDouble(rs.getDouble("suma_total3"), 2));
+
+                    return row;
+                }
+            }
+        );
+        return hm_facturas;
+    }
+    
+    
 }

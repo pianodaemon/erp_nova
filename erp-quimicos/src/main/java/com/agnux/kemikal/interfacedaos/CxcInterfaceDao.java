@@ -202,4 +202,7 @@ public interface CxcInterfaceDao {
     
     public ArrayList<HashMap<String,String>> getComparativoVentas(String cliente, Integer anio_ini, Integer anio_fin, Integer id_emp);
     public ArrayList<HashMap<String, String>> getComparativoVentasProducto(String producto, Integer anio_inicial, Integer anio_final,Integer tipo_producto, Integer familia,Integer subfamilia,Integer id_empresa);
+    
+    //Reporte de Anual de ventas por cliente
+    public ArrayList<HashMap<String,String>> getVentasAnualesCliente(Integer anio, Integer id_empresa);
 }

@@ -221,7 +221,7 @@ public class RepVentasAnualesClienteController {
         //obtiene facturas en pesos. Moneda 1
         ventasanuales = this.getCxcDao().getVentasAnualesCliente(anio, id_empresa);
 
-    
+        
         //Instancia de la clase que construye el xls
         CxcRepVentasAnualesClientesXls excel = new CxcRepVentasAnualesClientesXls(fileout,tituloReporte,razon_social_empresa,periodo,ventasanuales);
 
