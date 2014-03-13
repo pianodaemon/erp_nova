@@ -185,6 +185,7 @@
 													
 													<li class="topline"><a href="../repcomparativoasventasanuales/startup.agnux">Comparativo de Ventas Anuales Cliente</a></li>
 													<li class="topline"><a href="../repcomparativoasventasanualesproducto/startup.agnux">Comparativo de Ventas Anuales Producto</a></li>
+													<li class="topline"><a href="../repventasanualescliente/startup.agnux">Ventas Netas Anuales por Cliente</a></li>
 													
 													<li class="topline"><a href="../repclientes/startup.agnux">Clientes</a></li>
 													<li class="topline"><a href="../cxcrepsaldomes/startup.agnux">Saldo Mensual</a></li>
