@@ -551,10 +551,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     //extrae los datos para crear el informe mensual
     @Override
     public ArrayList<HashMap<String, Object>> getComprobantesActividadPorMes(String year,String month,Integer id_empresa){       
-        String sql_to_query = "SELECT DISTINCT * FROM fac_cfds "
-                            + "WHERE 1=1 AND (momento_expedicion ILIKE '" + year + "-" + month + "%' OR momento_cancelacion::character varying ILIKE '" + year + "-" + month + "%')  "
-                            + "AND empresa_id="+ id_empresa
-                            + " ORDER BY id;";
+        String sql_to_query = "SELECT DISTINCT * FROM fac_cfds WHERE 1=1 AND (momento_expedicion ILIKE '" + year + "-" + month + "%' OR momento_cancelacion::character varying ILIKE '" + year + "-" + month + "%')  AND empresa_id="+ id_empresa+ " ORDER BY id;";
         
         //System.out.println("SQL comprobantes por mes: "+sql_to_query);
         
@@ -585,6 +582,32 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         );
         return mn;
     }
+    
+    
+    
+    
+    
+    @Override
+    public ArrayList<LinkedHashMap<String, String>> getDataXml_Namespaces(String tipo) {
+        //tipo='fac', tipo='fac_nomina'
+        String sql_to_query = "SELECT (CASE WHEN key_xmlns IS NULL THEN '' ELSE key_xmlns END) AS key_xmlns, (CASE WHEN xmlns IS NULL THEN '' ELSE xmlns END) AS xmlns, (CASE WHEN schemalocation IS NULL THEN '' ELSE schemalocation END) AS schemalocation FROM fac_namespaces WHERE derogado=false AND "+tipo+"=true;";
+        System.out.println("getNamesPaces: "+sql_to_query);
+        ArrayList<LinkedHashMap<String, String>> datos = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{}, new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("key_xmlns",rs.getString("key_xmlns"));
+                    row.put("xmlns",rs.getString("xmlns"));
+                    row.put("schemalocation",rs.getString("schemalocation"));
+                    return row;
+                }
+            }
+        );
+        return datos;
+    }
+    
     
     
     

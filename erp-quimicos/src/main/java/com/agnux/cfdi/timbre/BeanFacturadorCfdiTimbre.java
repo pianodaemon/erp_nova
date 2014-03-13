@@ -117,8 +117,7 @@ public class BeanFacturadorCfdiTimbre {
     private BigDecimal sumatoriaImportes = new BigDecimal("0");
     private Validacion valedor = null;
     
-    private ArrayList<LinkedHashMap<String, String>> xmlns;
-    private ArrayList<LinkedHashMap<String, String>> schemalocation;
+    private ArrayList<LinkedHashMap<String, String>> lista_namespaces;
     
     
     public void init(HashMap<String, String> data, ArrayList<LinkedHashMap<String, String>> conceptos, ArrayList<LinkedHashMap<String, String>> impuestos_retenidos, ArrayList<LinkedHashMap<String, String>> impuestos_trasladados, String propos, LinkedHashMap<String,String> extras, Integer id_empresa, Integer id_sucursal) {
@@ -208,8 +207,7 @@ public class BeanFacturadorCfdiTimbre {
         this.setListaTraslados(impuestos_trasladados);
         this.setDatosExtras(extras);
         
-        this.setXmlns(xmlns);;
-        this.setSchemalocation(schemalocation);
+        this.setLista_namespaces(lista_namespaces);;
         
         System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina Seters:::::::::::::::::..");
     }
@@ -520,8 +518,7 @@ public class BeanFacturadorCfdiTimbre {
         
         
         cfd.construyeNodoFactura(
-                this.getXmlns(),
-                this.getSchemalocation(),
+                this.getLista_namespaces(),
                 serie,
                 folio,
                 this.getTipoDeComprobante(),
@@ -1329,21 +1326,13 @@ public class BeanFacturadorCfdiTimbre {
     public final void setListaTraslados(ArrayList<LinkedHashMap<String, String>> listaTraslados) {
         this.listaTraslados = listaTraslados;
     }
-
-    public ArrayList<LinkedHashMap<String, String>> getSchemalocation() {
-        return schemalocation;
+    
+    public ArrayList<LinkedHashMap<String, String>> getLista_namespaces() {
+        return lista_namespaces;
     }
 
-    public void setSchemalocation(ArrayList<LinkedHashMap<String, String>> schemalocation) {
-        this.schemalocation = schemalocation;
-    }
-
-    public ArrayList<LinkedHashMap<String, String>> getXmlns() {
-        return xmlns;
-    }
-
-    public void setXmlns(ArrayList<LinkedHashMap<String, String>> xmlns) {
-        this.xmlns = xmlns;
+    public void setLista_namespaces(ArrayList<LinkedHashMap<String, String>> lista_namespaces) {
+        this.lista_namespaces = lista_namespaces;
     }
     
     public LinkedHashMap<String, String> getDatosExtras() {

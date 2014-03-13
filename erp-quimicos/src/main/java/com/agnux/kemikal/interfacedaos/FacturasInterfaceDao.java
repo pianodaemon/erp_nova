@@ -38,6 +38,10 @@ public interface FacturasInterfaceDao {
     public String getNoPacFacturacion(Integer idEmp);
     public String getAmbienteFacturacion(Integer idEmp);
     
+    
+    //Obtiene los namespaces para el xml de la Factura o Nomina
+    public ArrayList<LinkedHashMap<String,String>> getDataXml_Namespaces(String tipo);
+    
     //para bean facturador
     public HashMap<String,String> getDataFacturaXml(Integer id_prefactura);
     public String getFechaComprobante();

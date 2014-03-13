@@ -42,7 +42,7 @@ public class CfdiXmlBuilder {
             this.setDomImpl(this.getDb().getDOMImplementation());
 	}
         
-	public void construyeNodoFactura(ArrayList<LinkedHashMap<String,String>> xmlns, ArrayList<LinkedHashMap<String,String>> schemalocation, String serie, String folio, String tipoDeComprobante,String condicionesDePago,String formaDePago,String fecha,String subTotal,String total, String moneda, String tipo_cambio, String no_certificado_emisor,String certificado, String metodoDePago, String LugarExpedicion, String numTarjeta) {
+	public void construyeNodoFactura(ArrayList<LinkedHashMap<String,String>> namespaces, String serie, String folio, String tipoDeComprobante,String condicionesDePago,String formaDePago,String fecha,String subTotal,String total, String moneda, String tipo_cambio, String no_certificado_emisor,String certificado, String metodoDePago, String LugarExpedicion, String numTarjeta) {
             Document tmp = this.getDomImpl().createDocument("", "cfdi:Comprobante", null);
             tmp.getDocumentElement().setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
             
