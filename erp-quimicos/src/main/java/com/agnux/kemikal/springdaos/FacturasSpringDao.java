@@ -1576,6 +1576,20 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
+    @Override
+    public HashMap<String, String> getParametrosEmpresa(Integer idEmp) {
+        HashMap<String, String> data = new HashMap<String, String>();
+        
+        //Obtener configuraciones a nivel empresa
+        String sql_to_query = "SELECT tipo_facturacion, pac_facturacion, (CASE WHEN ambiente_facturacion=true THEN 'produccion' ELSE 'prueba' END) AS ambiente_facturacion FROM gral_emp WHERE id="+idEmp+";";
+        Map<String, Object> map = this.getJdbcTemplate().queryForMap(sql_to_query);
+        data.put("tipo_facturacion", String.valueOf(map.get("tipo_facturacion")));
+        data.put("pac_facturacion", String.valueOf(map.get("pac_facturacion")));
+        data.put("ambiente_facturacion", String.valueOf(map.get("ambiente_facturacion")));
+        
+        return data;
+    }
+    
     
     
     
@@ -3445,6 +3459,29 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
+    
+    //Obtener registros para generar Nomina CFDI
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_IdNomimaDet(Integer id, Integer id_empleado) {
+        String sql_to_query="SELECT id AS id_reg FROM fac_nomina_det WHERE fac_nomina_id=? AND gral_empleado_id=? ORDER BY id LIMIT 1;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id), new Integer(id_empleado)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id_reg",rs.getInt("id_reg"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
+    
+    
     @Override
     public HashMap<String, Object> getFacNomina_DatosEmisor(Integer id_emp) {
         HashMap<String, Object> mapDatos = new HashMap<String, Object>();
@@ -4223,11 +4260,226 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         return hm;
     }
     
+    
+    
+    
+    
+    //Obtener registros para generar Nomina CFDI
+    @Override
+    public ArrayList<HashMap<String, Object>> getFacNomina_Registros(Integer id) {
+        String sql_to_query="SELECT fac_nomina_det.id AS id_reg, fac_nomina_det.gral_empleado_id AS empleado_id FROM fac_nomina_det WHERE fac_nomina_det.fac_nomina_id=? AND validado=true AND facturado=false ORDER BY id;";
+        ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 HashMap<String,Object>row=new HashMap<String,Object>();
+                 row.put("id_reg",rs.getInt("id_reg"));
+                 row.put("empleado_id",rs.getInt("empleado_id"));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene la lista de conceptos para la CFDI de NOMINA
+    @Override
+    public ArrayList<LinkedHashMap<String, String>> getFacNomina_ConceptosXml(Integer id, Integer id_empleado) {
+        String sql_query = "SELECT ''::character varying AS no_identificacion, concepto_descripcion, concepto_unidad, concepto_cantidad, concepto_valor_unitario, concepto_importe FROM fac_nomina_det WHERE id=? AND gral_empleado_id=?;";
+        //System.out.println("ConceptosXml: "+sql_query);
         
+        ArrayList<LinkedHashMap<String, String>> hm_conceptos = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id), new Integer(id_empleado)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("noIdentificacion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("no_identificacion"))));
+                    row.put("descripcion",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("concepto_descripcion"))));
+                    row.put("unidad",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("concepto_unidad"))));
+                    row.put("cantidad",StringHelper.roundDouble(rs.getString("concepto_cantidad"),2));
+                    row.put("valorUnitario",StringHelper.roundDouble(rs.getDouble("concepto_valor_unitario"),4) );
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("concepto_importe"),4) ); 
+                    return row;
+                }
+            }
+        );
+        
+        return hm_conceptos;
+    }
+    
+    
+    //Obtiene los impuestos retenidos de la nomina
+    @Override
+    public ArrayList<LinkedHashMap<String, String>> getFacNomina_ImpuestosRetenidosXml(Integer id, Integer id_empleado) {
+        String sql_query = "SELECT gral_isr.titulo AS impuesto, fac_nomina_det.importe_retencion FROM fac_nomina_det JOIN gral_isr ON gral_isr.id=fac_nomina_det.gral_isr_id WHERE fac_nomina_det.id=? AND fac_nomina_det.gral_empleado_id=?;";
+        //System.out.println("ConceptosXml: "+sql_query);
+        ArrayList<LinkedHashMap<String, String>> hm = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
+            sql_query,
+            new Object[]{new Integer(id), new Integer(id_empleado)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("impuesto",StringHelper.normalizaString(StringHelper.remueve_tildes(rs.getString("impuesto"))));
+                    row.put("importe",StringHelper.roundDouble(rs.getDouble("importe_retencion"),2) );
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
     
     
     
     
+    @Override
+    public HashMap<String, String> getFacNomina_DataXml(Integer id, Integer id_empleado) {
+        HashMap<String, String> data = new HashMap<String, String>();
+        
+        //Obtener datos para el comprobante y Complemento de Nomina
+        String sql_to_query = ""
+        + "SELECT "
+            + "fac_nomina_det.gral_empleado_id, "
+            + "fac_metodos_pago.titulo AS metodo_pago, "
+            + "fac_nomina.forma_pago, "
+            + "gral_mon.iso_4217 AS moneda, "
+            + "gral_mon.iso_4217_anterior AS moneda2, "
+            + "gral_mon.simbolo AS simbolo_moneda, "
+            + "fac_nomina.tipo_cambio, "
+            + "fac_nomina_det.no_empleado, "
+            + "fac_nomina_det.nombre, "
+            + "fac_nomina_det.rfc, "
+            + "(CASE WHEN gral_empleados.calle IS NULL THEN '' ELSE gral_empleados.calle END ) AS calle,"
+            + "(CASE WHEN gral_empleados.numero IS NULL THEN '' ELSE gral_empleados.numero END ) AS numero_exterior,"
+            + "(CASE WHEN gral_empleados.no_int IS NULL THEN '' ELSE gral_empleados.no_int END ) AS numero_interior,"
+            + "(CASE WHEN gral_empleados.colonia IS NULL THEN '' ELSE gral_empleados.colonia END ) AS colonia,"
+            + "(CASE WHEN gral_empleados.calle IS NULL THEN '' ELSE gral_empleados.calle END ) AS calle,"
+            + "(CASE WHEN gral_empleados.cp IS NULL THEN '' ELSE gral_empleados.cp END ) AS cp,"
+            + "(CASE WHEN gral_mun.titulo IS NULL THEN '' ELSE gral_mun.titulo END ) AS municipio,"
+            + "(CASE WHEN gral_edo.titulo IS NULL THEN '' ELSE gral_edo.titulo END ) AS estado,"
+            + "(CASE WHEN gral_pais.titulo IS NULL THEN '' ELSE gral_pais.titulo END ) AS pais,"
+            + "(CASE WHEN gral_deptos.titulo IS NULL THEN '' ELSE gral_deptos.titulo END ) AS departamento, "
+            + "(CASE WHEN gral_puestos.titulo IS NULL THEN '' ELSE gral_puestos.titulo END ) AS puesto,"
+            + "(CASE WHEN fac_nomina_det.fecha_contrato IS NULL THEN '' ELSE fac_nomina_det.fecha_contrato::character varying END ) AS fecha_contrato,"
+            + "(CASE WHEN (fac_nomina_det.antiguedad IS NOT NULL AND fac_nomina_det.antiguedad <>0) THEN fac_nomina_det.antiguedad::character varying ELSE '' END ) AS antiguedad,"
+            + "(CASE WHEN nom_regimen_contratacion.clave IS NULL THEN '' ELSE nom_regimen_contratacion.clave END ) AS regimen_contratacion,"
+            + "(CASE WHEN nom_tipo_contrato.titulo IS NULL THEN '' ELSE nom_tipo_contrato.titulo END ) AS tipo_contrato,"
+            + "(CASE WHEN nom_tipo_jornada.titulo IS NULL THEN '' ELSE nom_tipo_jornada.titulo END ) AS tipo_jornada,"
+            + "(CASE WHEN nom_periodicidad_pago.titulo IS NULL THEN '' ELSE nom_periodicidad_pago.titulo END ) AS periodicidad_pago,"
+            + "(CASE WHEN fac_nomina_det.clabe IS NULL THEN '' ELSE fac_nomina_det.clabe::character varying END ) AS clabe,"
+            + "(CASE WHEN tes_ban.titulo IS NULL THEN '' ELSE tes_ban.titulo END ) AS banco,"
+            + "(CASE WHEN nom_riesgo_puesto.clave IS NULL THEN '' ELSE nom_riesgo_puesto.clave END ) AS riesgo_puesto,"
+            + "(CASE WHEN fac_nomina_det.imss IS NULL THEN '' ELSE fac_nomina_det.imss::character varying END ) AS imss,"
+            + "(CASE WHEN fac_nomina_det.reg_patronal IS NULL THEN '' ELSE fac_nomina_det.reg_patronal::character varying END ) AS reg_patronal,"
+            + "(CASE WHEN fac_nomina_det.salario_base IS NULL THEN '' ELSE fac_nomina_det.salario_base::character varying END ) AS salario_base,"
+            + "(CASE WHEN fac_nomina_det.salario_integrado IS NULL THEN '' ELSE fac_nomina_det.salario_integrado::character varying END ) AS salario_integrado,"
+            + "(CASE WHEN fac_nomina_det.fecha_ini_pago IS NULL THEN '' ELSE fac_nomina_det.fecha_ini_pago::character varying END ) AS fecha_ini_pago,"
+            + "(CASE WHEN fac_nomina_det.fecha_fin_pago IS NULL THEN '' ELSE fac_nomina_det.fecha_fin_pago::character varying END ) AS fecha_fin_pago,"
+            + "(CASE WHEN fac_nomina_det.no_dias_pago IS NULL THEN '' ELSE fac_nomina_det.no_dias_pago::character varying END ) AS no_dias_pago,"
+            + "(CASE WHEN fac_nomina_det.descuento IS NULL THEN '' ELSE fac_nomina_det.descuento::character varying END ) AS descuento,"
+            + "(CASE WHEN fac_nomina_det.motivo_descuento IS NULL THEN '' ELSE fac_nomina_det.motivo_descuento::character varying END ) AS motivo_descuento,"
+            + "(CASE WHEN fac_nomina_det.comp_subtotal IS NULL THEN '0' ELSE fac_nomina_det.comp_subtotal::character varying END ) AS comp_subtotal,"
+            + "(CASE WHEN fac_nomina_det.comp_descuento IS NULL THEN '0' ELSE fac_nomina_det.comp_descuento::character varying END ) AS comp_descuento,"
+            + "(CASE WHEN fac_nomina_det.comp_retencion IS NULL THEN '0' ELSE fac_nomina_det.comp_retencion::character varying END ) AS comp_retencion,"
+            + "(CASE WHEN fac_nomina_det.comp_total IS NULL THEN '0' ELSE fac_nomina_det.comp_total::character varying END ) AS comp_total,"
+            + "(CASE WHEN fac_nomina_det.percep_total_gravado IS NULL THEN '0' ELSE fac_nomina_det.percep_total_gravado::character varying END ) AS percep_total_gravado,"
+            + "(CASE WHEN fac_nomina_det.percep_total_excento IS NULL THEN '0' ELSE fac_nomina_det.percep_total_excento::character varying END ) AS percep_total_excento,"
+            + "(CASE WHEN fac_nomina_det.deduc_total_gravado IS NULL THEN '0' ELSE fac_nomina_det.deduc_total_gravado::character varying END ) AS deduc_total_gravado,"
+            + "(CASE WHEN fac_nomina_det.deduc_total_excento IS NULL THEN '0' ELSE fac_nomina_det.deduc_total_excento::character varying END ) AS deduc_total_excento "
+        + "FROM fac_nomina_det "
+        + "JOIN fac_nomina ON fac_nomina.id=fac_nomina_det.fac_nomina_id "
+        + "LEFT JOIN gral_empleados ON gral_empleados.id=fac_nomina_det.gral_empleado_id "
+        + "LEFT JOIN fac_metodos_pago ON fac_metodos_pago.id=fac_nomina.fac_metodos_pago_id "
+        + "LEFT JOIN gral_mon ON gral_mon.id=fac_nomina.gral_mon_id "
+        + "LEFT JOIN gral_pais ON gral_pais.id = gral_empleados.gral_pais_id "
+        + "LEFT JOIN gral_edo ON gral_edo.id = gral_empleados.gral_edo_id "
+        + "LEFT JOIN gral_mun ON gral_mun.id = gral_empleados.gral_mun_id "
+        + "LEFT JOIN gral_deptos ON gral_deptos.id = fac_nomina_det.gral_depto_id "
+        + "LEFT JOIN gral_puestos ON gral_puestos.id = fac_nomina_det.gral_puesto_id "
+        + "LEFT JOIN nom_regimen_contratacion ON nom_regimen_contratacion.id = fac_nomina_det.nom_regimen_contratacion_id "
+        + "LEFT JOIN nom_tipo_contrato ON nom_tipo_contrato.id = fac_nomina_det.nom_tipo_contrato_id "
+        + "LEFT JOIN nom_tipo_jornada ON nom_tipo_jornada.id = fac_nomina_det.nom_tipo_jornada_id "
+        + "LEFT JOIN nom_periodicidad_pago ON nom_periodicidad_pago.id = fac_nomina_det.nom_periodicidad_pago_id "
+        + "LEFT JOIN tes_ban ON tes_ban.id = fac_nomina_det.tes_ban_id "
+        + "LEFT JOIN nom_riesgo_puesto ON nom_riesgo_puesto.id = fac_nomina_det.nom_riesgo_puesto_id  "
+        + "WHERE fac_nomina_det.id=? AND fac_nomina_det.gral_empleado_id=?;";
+        
+        HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
+            sql_to_query, 
+            new Object[]{new Integer(id), new Integer(id_empleado)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("username",rs.getString("username"));
+                    
+                    row.put("comprobante_attr_condicionesdepago","");
+                    row.put("comprobante_attr_formadepago",rs.getString("forma_pago"));
+                    row.put("comprobante_attr_descuento",StringHelper.roundDouble(rs.getString("comp_descuento"),2));
+                    row.put("comprobante_attr_motivodescuento",rs.getString("motivo_descuento"));
+                    row.put("comprobante_attr_subtotal", StringHelper.roundDouble(rs.getString("comp_subtotal"),2));
+                    row.put("comprobante_attr_total",StringHelper.roundDouble(rs.getString("comp_total"),2));
+                    row.put("comprobante_attr_moneda",rs.getString("moneda"));
+                    
+                    row.put("comprobante_attr_simbolo_moneda",rs.getString("simbolo_moneda"));
+                    row.put("comprobante_attr_tc",StringHelper.roundDouble(rs.getString("tipo_cambio"), 4));
+                    row.put("comprobante_attr_metododepago",rs.getString("metodo_pago").toUpperCase());
+                    row.put("comprobante_attr_numerocuenta","");
+                    
+                    //Datos del Empleado
+                    row.put("numero_control",rs.getString("no_empleado"));
+                    row.put("comprobante_receptor_attr_nombre",rs.getString("nombre"));
+                    row.put("comprobante_receptor_attr_rfc",rs.getString("rfc"));
+                    row.put("comprobante_receptor_domicilio_attr_calle",rs.getString("calle"));
+                    row.put("comprobante_receptor_domicilio_attr_noexterior",rs.getString("numero_exterior"));
+                    row.put("comprobante_receptor_domicilio_attr_nointerior",rs.getString("numero_interior"));
+                    row.put("comprobante_receptor_domicilio_attr_colonia",rs.getString("colonia"));
+                    row.put("comprobante_receptor_domicilio_attr_localidad","");
+                    row.put("comprobante_receptor_domicilio_attr_referencia","");
+                    row.put("comprobante_receptor_domicilio_attr_municipio",rs.getString("municipio"));
+                    row.put("comprobante_receptor_domicilio_attr_estado",rs.getString("estado"));
+                    row.put("comprobante_receptor_domicilio_attr_pais",rs.getString("pais"));
+                    row.put("comprobante_receptor_domicilio_attr_codigopostal",rs.getString("cp"));
+                    
+                    
+                    row.put("comprobante_attr_depto",rs.getString("departamento"));
+                    row.put("comprobante_attr_puesto",rs.getString("puesto"));
+                    row.put("comprobante_attr_fecha_contrato",rs.getString("fecha_contrato"));
+                    row.put("comprobante_attr_regimen_contratacion",rs.getString("regimen_contratacion"));
+                    row.put("comprobante_attr_tipo_contrato",rs.getString("tipo_contrato"));
+                    row.put("comprobante_attr_tipo_jornada",rs.getString("tipo_jornada"));
+                    row.put("comprobante_attr_periodicidad_pago",rs.getString("periodicidad_pago"));
+                    row.put("comprobante_attr_clabe",rs.getString("clabe"));
+                    row.put("comprobante_attr_banco",rs.getString("banco"));
+                    row.put("comprobante_attr_riesgo_puesto",rs.getString("riesgo_puesto"));
+                    row.put("comprobante_attr_imss",rs.getString("imss"));
+                    row.put("comprobante_attr_reg_patronal",rs.getString("reg_patronal"));
+                    row.put("comprobante_attr_salario_base",rs.getString("salario_base"));
+                    row.put("comprobante_attr_salario_integrado",rs.getString("salario_integrado"));
+                    row.put("comprobante_attr_fecha_ini_pago",rs.getString("fecha_ini_pago"));
+                    row.put("comprobante_attr_fecha_fin_pago",rs.getString("fecha_fin_pago"));
+                    row.put("comprobante_attr_no_dias_pago",rs.getString("no_dias_pago"));
+                    row.put("comprobante_attr_",rs.getString("puesto"));
+                    row.put("comprobante_attr_descuento",StringHelper.roundDouble(rs.getString("comp_retencion"),2));
+                    row.put("comprobante_attr_percep_total_gravado",StringHelper.roundDouble(rs.getString("percep_total_gravado"),2));
+                    row.put("comprobante_attr_percep_total_excento",StringHelper.roundDouble(rs.getString("percep_total_excento"),2));
+                    row.put("comprobante_attr_deduc_total_gravado",StringHelper.roundDouble(rs.getString("deduc_total_gravado"),2));
+                    row.put("comprobante_attr_deduc_total_excento",StringHelper.roundDouble(rs.getString("deduc_total_excento"),2));
+                    
+                    row.put("adenda_id","0");
+                    //Este campo es utilizado para la adenda de Quimiproductos
+                    row.put("moneda2",rs.getString("moneda2"));
+                    row.put("orden_compra","");
+                    
+                    return row;
+                }
+            }
+        );
+        
+        return hm;
+    }
+
     
     
 }

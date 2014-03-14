@@ -46,7 +46,7 @@ public class BeanFacturadorCfdiTimbre {
     private FacturasInterfaceDao facdao;
     
     public static enum Proposito {
-        FACTURA, NOTA_CREDITO, NOTA_CARGO
+        FACTURA, NOTA_CREDITO, NOTA_CARGO, NOMINA
     };
     
     private Integer id_sucursal;
@@ -120,6 +120,12 @@ public class BeanFacturadorCfdiTimbre {
     private ArrayList<LinkedHashMap<String, String>> lista_namespaces;
     
     
+    
+    
+    
+    
+    
+    
     public void init(HashMap<String, String> data, ArrayList<LinkedHashMap<String, String>> conceptos, ArrayList<LinkedHashMap<String, String>> impuestos_retenidos, ArrayList<LinkedHashMap<String, String>> impuestos_trasladados, String propos, LinkedHashMap<String,String> extras, Integer id_empresa, Integer id_sucursal) {
         
         System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia Seters:::::::::::::::::..");
@@ -151,6 +157,13 @@ public class BeanFacturadorCfdiTimbre {
                 
             case NOTA_CARGO:
                 this.setTipoDeComprobante("ingreso");
+                break;
+                
+            case NOMINA:
+                this.setTipoDeComprobante("egreso");
+                
+                
+                
                 break;
         }
         
@@ -207,7 +220,8 @@ public class BeanFacturadorCfdiTimbre {
         this.setListaTraslados(impuestos_trasladados);
         this.setDatosExtras(extras);
         
-        this.setLista_namespaces(lista_namespaces);;
+        //Obtiene los namespaces que se debe agregar al xml cuando es Factura y Nota de Credito
+        this.setLista_namespaces(this.getFacdao().getDataXml_Namespaces("fac"));
         
         System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina Seters:::::::::::::::::..");
     }
@@ -408,7 +422,7 @@ public class BeanFacturadorCfdiTimbre {
                         String app_selected = this.getDatosExtras().get("app_selected");
                         String command_selected = this.getDatosExtras().get("command_selected");
                         String extra_data_array = this.getDatosExtras().get("extra_data_array");
-
+                        
                         String estado_comprobante="1";
                         String regimen_fiscal = pop.getRegimenFiscalEmisor();
                         String metodo_pago = pop.getMetodoDePago();

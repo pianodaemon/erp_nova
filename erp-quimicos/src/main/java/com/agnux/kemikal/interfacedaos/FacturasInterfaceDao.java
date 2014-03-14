@@ -37,7 +37,7 @@ public interface FacturasInterfaceDao {
     public String getTipoFacturacion(Integer idEmp);
     public String getNoPacFacturacion(Integer idEmp);
     public String getAmbienteFacturacion(Integer idEmp);
-    
+    public HashMap<String, String> getParametrosEmpresa(Integer idEmp);
     
     //Obtiene los namespaces para el xml de la Factura o Nomina
     public ArrayList<LinkedHashMap<String,String>> getDataXml_Namespaces(String tipo);
@@ -71,7 +71,6 @@ public interface FacturasInterfaceDao {
     
     
     
-    //public String FnCancelarFactura(Integer id_prefactura, Integer tipo_cancelacion, String motivo,Integer id_usuario);
     public ArrayList<HashMap<String, String>> getTiposCancelacion();
     
     public void fnSalvaDatosFacturas(String rfc_receptor,
@@ -176,7 +175,8 @@ public interface FacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getFacNomina_DataNomina(Integer id_reg, Integer id_empleado);
     public ArrayList<HashMap<String, Object>> getFacNomina_HorasExtras(Integer id_nom_det);
     public ArrayList<HashMap<String, Object>> getFacNomina_Incapacidades(Integer id_nom_det);
-    
+    //Obtener id de fac_nomina_det para permitir editar el registro cuando es nuevo, ya que los registros se crean con fac_nomina
+    public ArrayList<HashMap<String, Object>> getFacNomina_IdNomimaDet(Integer id, Integer id_empleado);
     
     
     public HashMap<String, Object> getFacNomina_DatosEmisor(Integer id_emp);
@@ -203,5 +203,10 @@ public interface FacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getFacNomina_DataEmpleado(Integer id_empleado);
     public ArrayList<HashMap<String, Object>> getFacNomina_DataPeriodo(Integer id_periodo, Integer idEmpresa);
     
+    //Obtener registros para generar CFDI de Nomina
+    public ArrayList<HashMap<String, Object>> getFacNomina_Registros(Integer id);
+    public ArrayList<LinkedHashMap<String, String>> getFacNomina_ConceptosXml(Integer id, Integer id_empleado);
+    public ArrayList<LinkedHashMap<String, String>> getFacNomina_ImpuestosRetenidosXml(Integer id, Integer id_empleado);
+    public HashMap<String, String> getFacNomina_DataXml(Integer id, Integer id_empleado);
     
 }

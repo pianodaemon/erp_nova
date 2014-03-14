@@ -43,59 +43,64 @@ public class CfdiXmlBuilder {
 	}
         
 	public void construyeNodoFactura(ArrayList<LinkedHashMap<String,String>> namespaces, String serie, String folio, String tipoDeComprobante,String condicionesDePago,String formaDePago,String fecha,String subTotal,String total, String moneda, String tipo_cambio, String no_certificado_emisor,String certificado, String metodoDePago, String LugarExpedicion, String numTarjeta) {
+            String schemaLocation = new String();
+            schemaLocation="";
+            
             Document tmp = this.getDomImpl().createDocument("", "cfdi:Comprobante", null);
+            
+            if(namespaces.size()>0){
+                for( LinkedHashMap<String,String> i : namespaces ){
+                    String key = i.get("key_xmlns");
+                    String value = i.get("xmlns");
+                    String location = i.get("schemalocation");
+                    if(!key.equals("") && !value.equals("")){ 
+                        tmp.getDocumentElement().setAttribute(key,value); 
+                    }
+                    if(!location.equals("")){
+                        if(!schemaLocation.equals("")){schemaLocation+=" ";}
+                        schemaLocation += location;
+                    }
+                }
+            }
+            
+            tmp.getDocumentElement().setAttribute("xsi:schemaLocation",schemaLocation);
+            
+            /*
             tmp.getDocumentElement().setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
-            
-            
-            tmp.getDocumentElement().setAttribute("xsi:schemaLocation",
-              "http://www.sat.gob.mx/cfd/3 "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd "
-            + "http://www.sat.gob.mx/detallista "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/detallista/detallista.xsd "
-            + "http://www.sat.gob.mx/ecc "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/ecc/ecc.xsd "
-            + "http://www.sat.gob.mx/terceros "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/terceros/terceros11.xsd "
-            + "http://www.sat.gob.mx/implocal "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/implocal/implocal.xsd "
-            + "http://www.buzonfiscal.com/ns/addenda/bf/2 "
-            + "http://www.buzonfiscal.com/schema/xsd/Addenda_BF_v2.2.xsd "
-            + "http://www.sat.gob.mx/TimbreFiscalDigital "
-            + "http://www.sat.gob.mx/sitio_internet/TimbreFiscalDigital/TimbreFiscalDigital.xsd "
-            + "http://www.sat.gob.mx/iedu "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/iedu/iedu.xsd "
-            + "http://www.sat.gob.mx/ventavehiculos "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/ventavehiculos/ventavehiculos.xsd "
-            + "http://www.sat.gob.mx/TuristaPasajeroExtranjero "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/TuristaPasajeroExtranjero/TuristaPasajeroExtranjero.xsd "
-            + "http://www.sat.gob.mx/pfic "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/pfic/pfic.xsd "
-            + "http://www.sat.gob.mx/leyendasFiscales "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/leyendasFiscales/leyendasFisc.xsd "
-            + "http://www.sat.gob.mx/donat "
-            + "http://www.sat.gob.mx/sitio_internet/cfd/donat/donat11.xsd "
-            //+ "http://www.sat.gob.mx/divisas "
-            //+ "http://www.sat.gob.mx/sitio_internet/cfd/divisas/Divisas.xsd "
-            + "http://www.buzonfiscal.com/ns/addenda/bf/3 "
-            + "http://www.buzonfiscal.com/schema/xsd/Addenda_BF_v3.xsd");
-            //http://www.sat.gob.mx/ecb http://www.sat.gob.mx/sitio_internet/cfd/ecb/ecb.xsd (Derogado a partir del 1 de julio 2013)
-            
-            //tmp.getDocumentElement().setAttribute("xmlns:ecb","http://www.sat.gob.mx/ecb");
-            tmp.getDocumentElement().setAttribute("xmlns:implocal","http://www.sat.gob.mx/implocal");
+            tmp.getDocumentElement().setAttribute("xmlns:cfdi","http://www.sat.gob.mx/cfd/3");
+            tmp.getDocumentElement().setAttribute("xmlns:tfd","http://www.sat.gob.mx/TimbreFiscalDigital");
             tmp.getDocumentElement().setAttribute("xmlns:bfa2","http://www.buzonfiscal.com/ns/addenda/bf/2");
+            tmp.getDocumentElement().setAttribute("xmlns:nomina","http://ww.sat.gob.mx/nomina");
             tmp.getDocumentElement().setAttribute("xmlns:detallista","http://www.sat.gob.mx/detallista");
             tmp.getDocumentElement().setAttribute("xmlns:leyendasFisc","http://www.sat.gob.mx/leyendasFiscales");
-            tmp.getDocumentElement().setAttribute("xmlns:tfd","http://www.sat.gob.mx/TimbreFiscalDigital");
+            tmp.getDocumentElement().setAttribute("xmlns:donat","http://www.sat.gob.mx/donat");
+            tmp.getDocumentElement().setAttribute("xmlns:ecc","http://www.sat.gob.mx/ecc");
+            tmp.getDocumentElement().setAttribute("xmlns:terceros","http://www.sat.gob.mx/terceros");
+            tmp.getDocumentElement().setAttribute("xmlns:iedu","http://www.sat.gob.mx/iedu");
+            tmp.getDocumentElement().setAttribute("xmlns:implocal","http://www.sat.gob.mx/implocal");
             tmp.getDocumentElement().setAttribute("xmlns:pfic","http://www.sat.gob.mx/pfic");
             tmp.getDocumentElement().setAttribute("xmlns:ventavehiculos","http://www.sat.gob.mx/ventavehiculos");
-            tmp.getDocumentElement().setAttribute("xmlns:iedu","http://www.sat.gob.mx/iedu");
-            tmp.getDocumentElement().setAttribute("xmlns:donat","http://www.sat.gob.mx/donat");
-            tmp.getDocumentElement().setAttribute("xmlns:terceros","http://www.sat.gob.mx/terceros");
-            //tmp.getDocumentElement().setAttribute("xmlns:divisas","http://www.sat.gob.mx/divisas");
+            tmp.getDocumentElement().setAttribute("xmlns:divisas","http://www.sat.gob.mx/divisas");
             tmp.getDocumentElement().setAttribute("xmlns:tpe","http://www.sat.gob.mx/TuristaPasajeroExtranjero");
-            tmp.getDocumentElement().setAttribute("xmlns:cfdi","http://www.sat.gob.mx/cfd/3");
-            tmp.getDocumentElement().setAttribute("xmlns:ecc","http://www.sat.gob.mx/ecc");
             
+            tmp.getDocumentElement().setAttribute("xsi:schemaLocation",
+              "http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd "
+            + "http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/TimbreFiscalDigital/TimbreFiscalDigital.xsd "
+            + "http://www.buzonfiscal.com/ns/addenda/bf/2 http://www.buzonfiscal.com/schema/xsd/Addenda_BF_v2.2.xsd "
+            + "http://sat.gob.mx/nomina http://sat.gob.mx/cfd/nomina/nomina11.xsd "
+            + "http://www.sat.gob.mx/detallista http://www.sat.gob.mx/sitio_internet/cfd/detallista/detallista.xsd "
+            + "http://www.sat.gob.mx/leyendasFiscales http://www.sat.gob.mx/sitio_internet/cfd/leyendasFiscales/leyendasFisc.xsd "
+            + "http://www.sat.gob.mx/donat http://www.sat.gob.mx/sitio_internet/cfd/donat/donat11.xsd "
+            + "http://www.sat.gob.mx/ecc http://www.sat.gob.mx/sitio_internet/cfd/ecc/ecc.xsd "
+            + "http://www.sat.gob.mx/terceros http://www.sat.gob.mx/sitio_internet/cfd/terceros/terceros11.xsd "
+            + "http://www.sat.gob.mx/iedu http://www.sat.gob.mx/sitio_internet/cfd/iedu/iedu.xsd "
+            + "http://www.sat.gob.mx/implocal http://www.sat.gob.mx/sitio_internet/cfd/implocal/implocal.xsd "
+            + "http://www.sat.gob.mx/pfic http://www.sat.gob.mx/sitio_internet/cfd/pfic/pfic.xsd "
+            + "http://www.sat.gob.mx/ventavehiculos http://www.sat.gob.mx/sitio_internet/cfd/ventavehiculos/ventavehiculos.xsd "
+            + "http://www.sat.gob.mx/divisas http://www.sat.gob.mx/sitio_internet/cfd/divisas/Divisas.xsd "
+            + "http://www.sat.gob.mx/TuristaPasajeroExtranjero http://www.sat.gob.mx/sitio_internet/cfd/TuristaPasajeroExtranjero/TuristaPasajeroExtranjero.xsd"
+            + "");
+            */
             
             tmp.getDocumentElement().setAttribute("version","3.2");
             tmp.getDocumentElement().setAttribute("certificado",certificado);
