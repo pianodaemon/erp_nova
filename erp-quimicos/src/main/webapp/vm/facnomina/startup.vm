@@ -319,7 +319,7 @@
 															<td width="40"></td>
 															<td width="80"></td>
 															<td width="150" align="right">
-																<input type="button" id="genera_nomina" disabled value="Generar N&oacute;mina" style="width:120px; font-weight: bold;">
+																<input type="button" id="genera_nomina" value="Generar N&oacute;mina" style="width:120px; font-weight: bold;">
 																<input type="hidden" name="generar">
 																<input type="hidden" name="id_generar">
 															</td>
