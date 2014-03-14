@@ -1947,6 +1947,9 @@ $(function() {
 		var $select_no_periodo = $('#forma-facnomina-window').find('select[name=select_no_periodo]');
 		var $no_periodo_selec = $('#forma-facnomina-window').find('input[name=no_periodo_selec]');
 		
+		var $genera_nomina = $('#forma-facnomina-window').find('#genera_nomina');
+		
+		
 		//Grid de productos
 		var $grid_empleados = $('#forma-facnomina-window').find('#grid_empleados');
 		
@@ -2122,6 +2125,10 @@ $(function() {
 		$add_calendar($fecha_pago, " ", "");
 		
 		
+		
+		
+		
+		
 		$submit_actualizar.bind('click',function(){
 			$nivel_ejecucion.val(1);
 			if(parseInt($("tr", $grid_empleados).size()) > 0){
@@ -2130,6 +2137,14 @@ $(function() {
 				jAlert('No hay datos para actualizar', 'Atencion!', function(r) { $select_comp_periodicidad.focus(); });
 				return false;
 			}
+		});
+		
+		$genera_nomina.bind('click',function(){
+			$generar.val("true");
+			$id_generar.val(0);
+			alert($generar.val());
+			//Ejecutar submit del Formulario proncipal
+			$submit_actualizar.trigger( "click" );
 		});
 		
 		/*
@@ -2220,6 +2235,10 @@ $(function() {
 			var $periodicidad_selec = $('#forma-facnomina-window').find('input[name=periodicidad_selec]');
 			var $select_no_periodo = $('#forma-facnomina-window').find('select[name=select_no_periodo]');
 			var $no_periodo_selec = $('#forma-facnomina-window').find('input[name=no_periodo_selec]');
+			
+			
+			var $genera_nomina = $('#forma-facnomina-window').find('#genera_nomina');
+			
 			
 			//Grid de productos
 			var $grid_empleados = $('#forma-facnomina-window').find('#grid_empleados');
@@ -2381,7 +2400,13 @@ $(function() {
 				});
 				
 				
-				
+		$genera_nomina.bind('click',function(){
+			$generar.val("true");
+			$id_generar.val(0);
+			//alert($generar.val());
+			//Ejecutar submit del Formulario proncipal
+			$submit_actualizar.trigger( "click" );
+		});
 		
                 
 				//Ligamos el boton cancelar al evento click para eliminar la forma
