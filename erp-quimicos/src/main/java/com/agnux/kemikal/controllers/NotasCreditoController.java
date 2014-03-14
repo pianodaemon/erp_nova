@@ -417,6 +417,12 @@ public class NotasCreditoController {
             ArrayList<HashMap<String, String>> listaConceptosPdf = new ArrayList<HashMap<String, String>>();
             HashMap<String, String> datosExtrasPdf= new HashMap<String, String>();
             
+            //::ESTAS VARIABLES SON SOLO PARA NOMINAS, AQUI SE DECLARA SOLO PARA RELLENAR PARAMETROS::::::::::::
+            ArrayList<LinkedHashMap<String,String>> percepciones = new ArrayList<LinkedHashMap<String,String>>();
+            ArrayList<LinkedHashMap<String,String>> deducciones = new ArrayList<LinkedHashMap<String,String>>();
+            ArrayList<LinkedHashMap<String,String>> incapacidades = new ArrayList<LinkedHashMap<String,String>>();
+            ArrayList<LinkedHashMap<String,String>> hrs_extras = new ArrayList<LinkedHashMap<String,String>>();
+            //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             
             Integer app_selected = 70;//aplicativo notas de credito
             String command_selected = "new";
@@ -637,7 +643,7 @@ public class NotasCreditoController {
                             
                             
                             //genera xml factura
-                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal);
+                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal, percepciones, deducciones, incapacidades, hrs_extras);
                             String timbrado_correcto = this.getBfcfditf().start();
                             
                             String cadRes[] = timbrado_correcto.split("___");

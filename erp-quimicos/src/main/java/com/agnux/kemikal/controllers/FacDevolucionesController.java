@@ -329,6 +329,13 @@ public class FacDevolucionesController {
             LinkedHashMap<String,String> datosExtras = new LinkedHashMap<String,String>();
             LinkedHashMap<String,Object> dataAdenda = new LinkedHashMap<String,Object>();
             
+            //::ESTAS VARIABLES SON SOLO PARA NOMINAS, AQUI SE DECLARA SOLO PARA RELLENAR PARAMETROS::::::::::::
+            ArrayList<LinkedHashMap<String,String>> percepciones = new ArrayList<LinkedHashMap<String,String>>();
+            ArrayList<LinkedHashMap<String,String>> deducciones = new ArrayList<LinkedHashMap<String,String>>();
+            ArrayList<LinkedHashMap<String,String>> incapacidades = new ArrayList<LinkedHashMap<String,String>>();
+            ArrayList<LinkedHashMap<String,String>> hrs_extras = new ArrayList<LinkedHashMap<String,String>>();
+            //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                                    
             //variables para Nota de Credito en CFDI
             ArrayList<String> leyendas = new ArrayList<String>();
             
@@ -635,7 +642,7 @@ public class FacDevolucionesController {
                             
                             
                             //genera xml factura
-                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal);
+                            this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal, percepciones, deducciones, incapacidades, hrs_extras);
                             String timbrado_correcto = this.getBfcfditf().start();
                             
                             String cadRes[] = timbrado_correcto.split("___");

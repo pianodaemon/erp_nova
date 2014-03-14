@@ -4336,14 +4336,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     @Override
     public HashMap<String, String> getFacNomina_DataXml(Integer id, Integer id_empleado) {
-        HashMap<String, String> data = new HashMap<String, String>();
         
         //Obtener datos para el comprobante y Complemento de Nomina
         String sql_to_query = ""
         + "SELECT "
             + "fac_nomina_det.gral_empleado_id, "
-            + "fac_metodos_pago.titulo AS metodo_pago, "
+            + "(CASE WHEN fac_metodos_pago.titulo IS NULL THEN '' ELSE fac_metodos_pago.titulo END) AS metodo_pago, "
             + "fac_nomina.forma_pago, "
+            + "fac_nomina.fecha_pago::character varying AS fecha_pago,"
             + "gral_mon.iso_4217 AS moneda, "
             + "gral_mon.iso_4217_anterior AS moneda2, "
             + "gral_mon.simbolo AS simbolo_moneda, "
@@ -4351,6 +4351,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_nomina_det.no_empleado, "
             + "fac_nomina_det.nombre, "
             + "fac_nomina_det.rfc, "
+            + "fac_nomina_det.curp, "
             + "(CASE WHEN gral_empleados.calle IS NULL THEN '' ELSE gral_empleados.calle END ) AS calle,"
             + "(CASE WHEN gral_empleados.numero IS NULL THEN '' ELSE gral_empleados.numero END ) AS numero_exterior,"
             + "(CASE WHEN gral_empleados.no_int IS NULL THEN '' ELSE gral_empleados.no_int END ) AS numero_interior,"
@@ -4412,8 +4413,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 @Override
                 public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
                     HashMap<String, String> row = new HashMap<String, String>();
-                    row.put("username",rs.getString("username"));
-                    
                     row.put("comprobante_attr_condicionesdepago","");
                     row.put("comprobante_attr_formadepago",rs.getString("forma_pago"));
                     row.put("comprobante_attr_descuento",StringHelper.roundDouble(rs.getString("comp_descuento"),2));
@@ -4443,9 +4442,11 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("comprobante_receptor_domicilio_attr_codigopostal",rs.getString("cp"));
                     
                     
+                    row.put("comprobante_receptor_attr_curp",rs.getString("curp"));
                     row.put("comprobante_attr_depto",rs.getString("departamento"));
                     row.put("comprobante_attr_puesto",rs.getString("puesto"));
                     row.put("comprobante_attr_fecha_contrato",rs.getString("fecha_contrato"));
+                    row.put("comprobante_attr_fecha_antiguedad",rs.getString("antiguedad"));
                     row.put("comprobante_attr_regimen_contratacion",rs.getString("regimen_contratacion"));
                     row.put("comprobante_attr_tipo_contrato",rs.getString("tipo_contrato"));
                     row.put("comprobante_attr_tipo_jornada",rs.getString("tipo_jornada"));
@@ -4457,15 +4458,15 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("comprobante_attr_reg_patronal",rs.getString("reg_patronal"));
                     row.put("comprobante_attr_salario_base",rs.getString("salario_base"));
                     row.put("comprobante_attr_salario_integrado",rs.getString("salario_integrado"));
+                    row.put("comprobante_attr_fecha_fecha_pago",rs.getString("fecha_pago"));
                     row.put("comprobante_attr_fecha_ini_pago",rs.getString("fecha_ini_pago"));
                     row.put("comprobante_attr_fecha_fin_pago",rs.getString("fecha_fin_pago"));
                     row.put("comprobante_attr_no_dias_pago",rs.getString("no_dias_pago"));
-                    row.put("comprobante_attr_",rs.getString("puesto"));
-                    row.put("comprobante_attr_descuento",StringHelper.roundDouble(rs.getString("comp_retencion"),2));
                     row.put("comprobante_attr_percep_total_gravado",StringHelper.roundDouble(rs.getString("percep_total_gravado"),2));
                     row.put("comprobante_attr_percep_total_excento",StringHelper.roundDouble(rs.getString("percep_total_excento"),2));
                     row.put("comprobante_attr_deduc_total_gravado",StringHelper.roundDouble(rs.getString("deduc_total_gravado"),2));
                     row.put("comprobante_attr_deduc_total_excento",StringHelper.roundDouble(rs.getString("deduc_total_excento"),2));
+                    
                     
                     row.put("adenda_id","0");
                     //Este campo es utilizado para la adenda de Quimiproductos
@@ -4480,6 +4481,49 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         return hm;
     }
 
+    
+    
+    
+    //Obtiene todas las Percepciones disponibles
+    @Override
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_PercepcionesXml(Integer id_reg) {
+        String sql_to_query="";
+        
+        //Obtener las Percepciones configuradas para la Nomina de Empleado de un periodo en especifico
+        sql_to_query=""
+        + "SELECT "
+            + "nom_percep.id, "
+            + "(case when nom_percep_tipo.clave is null then '' else nom_percep_tipo.clave end) tipo_percepcion,"
+            + "(case when nom_percep.clave is null then '' else nom_percep.clave end) AS clave,"
+            + "(case when nom_percep.titulo is null then '' else nom_percep.titulo end) AS percepcion,"
+            + "(CASE WHEN fac_nomina_det_percep.gravado IS NULL THEN 0 ELSE fac_nomina_det_percep.gravado END) AS gravado,"
+            + "(CASE WHEN fac_nomina_det_percep.excento IS NULL THEN 0 ELSE fac_nomina_det_percep.excento END) AS excento  "
+        + "FROM fac_nomina_det_percep "
+        + "JOIN nom_percep ON nom_percep.id=fac_nomina_det_percep.nom_percep_id "
+        + "JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id  "
+        + "WHERE fac_nomina_det_percep.fac_nomina_det_id="+id_reg+" ORDER BY fac_nomina_det_percep.id;";
+        
+        System.out.println("QueryPercepcionesXml: "+sql_to_query);
+        ArrayList<LinkedHashMap<String,String>>hm=(ArrayList<LinkedHashMap<String,String>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 LinkedHashMap<String,String>row=new LinkedHashMap<String,String>();
+                 row.put("TipoPercepcion",rs.getString("id"));
+                 row.put("Clave",rs.getString("tipo_percepcion"));
+                 row.put("Concepto",rs.getString("percepcion"));
+                 row.put("ImporteGravado",StringHelper.roundDouble(rs.getDouble("gravado"), 2));
+                 row.put("ImporteExento",StringHelper.roundDouble(rs.getDouble("excento"), 2));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    
     
     
 }

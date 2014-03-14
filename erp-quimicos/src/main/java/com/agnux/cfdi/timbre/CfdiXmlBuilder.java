@@ -42,7 +42,7 @@ public class CfdiXmlBuilder {
             this.setDomImpl(this.getDb().getDOMImplementation());
 	}
         
-	public void construyeNodoFactura(ArrayList<LinkedHashMap<String,String>> namespaces, String serie, String folio, String tipoDeComprobante,String condicionesDePago,String formaDePago,String fecha,String subTotal,String total, String moneda, String tipo_cambio, String no_certificado_emisor,String certificado, String metodoDePago, String LugarExpedicion, String numTarjeta) {
+	public void construyeNodoFactura(ArrayList<LinkedHashMap<String,String>> namespaces, String serie, String folio, String tipoDeComprobante,String condicionesDePago,String formaDePago,String fecha,String subTotal,String total, String moneda, String tipo_cambio, String no_certificado_emisor,String certificado, String metodoDePago, String LugarExpedicion, String numTarjeta, String descuento, String motivo_descuento) {
             String schemaLocation = new String();
             schemaLocation="";
             
@@ -120,6 +120,8 @@ public class CfdiXmlBuilder {
             if(!metodoDePago.equals("") && metodoDePago!=null){ tmp.getDocumentElement().setAttribute("metodoDePago",StringEscapeUtils.escapeHtml(metodoDePago)); }
             if(!numTarjeta.equals("") && numTarjeta!=null){ tmp.getDocumentElement().setAttribute("NumCtaPago",numTarjeta); }
             tmp.getDocumentElement().setAttribute("subTotal",subTotal);
+            if(!descuento.equals("") && !descuento.equals("0.00")){ tmp.getDocumentElement().setAttribute("descuento",descuento); }
+            if(!motivo_descuento.equals("") && motivo_descuento!=null){ tmp.getDocumentElement().setAttribute("motivoDescuento",motivo_descuento); }
             tmp.getDocumentElement().setAttribute("total",total);
             if(!moneda.equals("") && moneda!=null){ tmp.getDocumentElement().setAttribute("Moneda",moneda); }
             tmp.getDocumentElement().setAttribute("TipoCambio",tipo_cambio);
@@ -209,11 +211,15 @@ public class CfdiXmlBuilder {
             this.setDoc(tmp);
 	}
         
-        public void configurarImpuestos(ArrayList<LinkedHashMap<String,String>> lista_de_retenidos,ArrayList<LinkedHashMap<String,String>> lista_de_traslados){
+        public void configurarImpuestos(ArrayList<LinkedHashMap<String,String>> lista_de_retenidos,ArrayList<LinkedHashMap<String,String>> lista_de_traslados, String valor_nomina){
 		Document tmp = this.getDoc();
 		Element root = tmp.createElement("cfdi:Impuestos");
 		root.setAttribute("totalImpuestosRetenidos", "@SUMIMPUESTOS_RETENIDOS");
-		root.setAttribute("totalImpuestosTrasladados", "@SUMIMPUESTOS_TRASLADADOS" );
+                if(valor_nomina.equals("false")){
+                    //Solo se incluye cuando no es nomina
+                    root.setAttribute("totalImpuestosTrasladados", "@SUMIMPUESTOS_TRASLADADOS" );
+                }
+                
                 
 		Element child_1 = tmp.createElement("cfdi:Retenciones");
                 if (lista_de_retenidos.size() > 0){

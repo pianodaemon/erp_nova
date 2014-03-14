@@ -595,6 +595,12 @@ public class FacNominaController {
                             
                             if(registros.size()>0){
                                 for( HashMap<String,Object> i : registros ){
+                                    ArrayList<LinkedHashMap<String,String>> percepciones = new ArrayList<LinkedHashMap<String,String>>();
+                                    ArrayList<LinkedHashMap<String,String>> deducciones = new ArrayList<LinkedHashMap<String,String>>();
+                                    ArrayList<LinkedHashMap<String,String>> incapacidades = new ArrayList<LinkedHashMap<String,String>>();
+                                    ArrayList<LinkedHashMap<String,String>> hrs_extras = new ArrayList<LinkedHashMap<String,String>>();
+                                    
+                                    
                                     Integer id = Integer.parseInt(String.valueOf(i.get("id_reg")));
                                     Integer empleado_id = Integer.parseInt(String.valueOf(i.get("empleado_id")));
                                     
@@ -611,10 +617,6 @@ public class FacNominaController {
                                     //formato fecha: 2011-03-01T00:00:00
                                     dataFactura.put("comprobante_attr_fecha",fecha_hora[0]+"T"+fecha_hora[1]);
                                     
-                                    //leyendas = this.getFacdao().getLeyendasEspecialesCfdi(id_empresa);
-                                    
-                                    
-                                    
                                     //Estos son requeridos para cfditf
                                     datosExtrasXmlFactura.put("prefactura_id", "");
                                     datosExtrasXmlFactura.put("tipo_documento", String.valueOf(""));
@@ -629,10 +631,11 @@ public class FacNominaController {
                                     datosExtrasXmlFactura.put("noPac", noPac);
                                     datosExtrasXmlFactura.put("ambienteFac", ambienteFac);
 
-
+                                    percepciones = this.getFacdao().getFacNomina_PercepcionesXml(id);
+                                            
                                     //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia BeanFacturador:::::::::::::::::..");
                                     //Llamada a metodo que inicializa carga de datos para el xml
-                                    this.getBfCfdiTf().init(dataFactura, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal);
+                                    this.getBfCfdiTf().init(dataFactura, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal, percepciones, deducciones, incapacidades, hrs_extras);
                                     //Llamada a metodo que costruye, sella y timbra el xml
                                     String timbrado_correcto = this.getBfCfdiTf().start();
 

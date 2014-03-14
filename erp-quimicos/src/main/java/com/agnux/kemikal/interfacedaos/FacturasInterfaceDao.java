@@ -208,5 +208,8 @@ public interface FacturasInterfaceDao {
     public ArrayList<LinkedHashMap<String, String>> getFacNomina_ConceptosXml(Integer id, Integer id_empleado);
     public ArrayList<LinkedHashMap<String, String>> getFacNomina_ImpuestosRetenidosXml(Integer id, Integer id_empleado);
     public HashMap<String, String> getFacNomina_DataXml(Integer id, Integer id_empleado);
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_PercepcionesXml(Integer id_reg);
+    
+    
     
 }

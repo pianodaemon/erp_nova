@@ -118,16 +118,75 @@ public class BeanFacturadorCfdiTimbre {
     private Validacion valedor = null;
     
     private ArrayList<LinkedHashMap<String, String>> lista_namespaces;
+
+    //Estas variables son exclusivas para la Nomina CFDI
+    private String numero_empleado;
+    private String departamento;
+    private String puesto;
+    private String fecha_contrato;
+    private String regimen_contratacion;
+    private String tipo_contrato;
+    private String tipo_jornada;
+    private String periodicidad_pago;
+    private String clabe;
+    private String banco;
+    private String riesgo_puesto;
+    private String numero_seguro_social;
+    private String registro_patronal;
+    private String salario_base;
+    private String salario_integrado;
+    private String fecha_inicial_pago;
+    private String fecha_final_pago;
+    private String no_dias_pago;
+    private BigDecimal percep_total_gravado = new BigDecimal("0");
+    private BigDecimal percep_total_excento = new BigDecimal("0");
+    private BigDecimal deduc_total_gravado = new BigDecimal("0");
+    private BigDecimal deduc_total_excento = new BigDecimal("0");
+    private LinkedHashMap<String,Object> datosNomina;
+            
+    /*
+    //row.put("comprobante_attr_simbolo_moneda",rs.getString("simbolo_moneda"));
+    row.put("comprobante_receptor_attr_curp",rs.getString("curp"));
+    row.put("comprobante_attr_fecha_fecha_pago",rs.getString("fecha_pago"));
+    row.put("comprobante_attr_fecha_antiguedad",rs.getString("antiguedad"));
+    row.put("numero_control",rs.getString("no_empleado"));
+    row.put("comprobante_attr_depto",rs.getString("departamento"));
+    row.put("comprobante_attr_puesto",rs.getString("puesto"));
+    row.put("comprobante_attr_fecha_contrato",rs.getString("fecha_contrato"));
+    row.put("comprobante_attr_regimen_contratacion",rs.getString("regimen_contratacion"));
+    row.put("comprobante_attr_tipo_contrato",rs.getString("tipo_contrato"));
+    row.put("comprobante_attr_tipo_jornada",rs.getString("tipo_jornada"));
+    row.put("comprobante_attr_periodicidad_pago",rs.getString("periodicidad_pago"));
+    row.put("comprobante_attr_clabe",rs.getString("clabe"));
+    row.put("comprobante_attr_banco",rs.getString("banco"));
+    row.put("comprobante_attr_riesgo_puesto",rs.getString("riesgo_puesto"));
+    row.put("comprobante_attr_imss",rs.getString("imss"));
+    row.put("comprobante_attr_reg_patronal",rs.getString("reg_patronal"));
+    row.put("comprobante_attr_salario_base",rs.getString("salario_base"));
+    row.put("comprobante_attr_salario_integrado",rs.getString("salario_integrado"));
+    row.put("comprobante_attr_fecha_ini_pago",rs.getString("fecha_ini_pago"));
+    row.put("comprobante_attr_fecha_fin_pago",rs.getString("fecha_fin_pago"));
+    row.put("comprobante_attr_no_dias_pago",rs.getString("no_dias_pago"));
+    row.put("comprobante_attr_percep_total_gravado",StringHelper.roundDouble(rs.getString("percep_total_gravado"),2));
+    row.put("comprobante_attr_percep_total_excento",StringHelper.roundDouble(rs.getString("percep_total_excento"),2));
+    row.put("comprobante_attr_deduc_total_gravado",StringHelper.roundDouble(rs.getString("deduc_total_gravado"),2));
+    row.put("comprobante_attr_deduc_total_excento",StringHelper.roundDouble(rs.getString("deduc_total_excento"),2));
+     */
+
+    public LinkedHashMap<String, Object> getDatosNomina() {
+        return datosNomina;
+    }
+
+    public void setDatosNomina(LinkedHashMap<String, Object> datosNomina) {
+        this.datosNomina = datosNomina;
+    }
     
     
     
     
     
-    
-    
-    
-    public void init(HashMap<String, String> data, ArrayList<LinkedHashMap<String, String>> conceptos, ArrayList<LinkedHashMap<String, String>> impuestos_retenidos, ArrayList<LinkedHashMap<String, String>> impuestos_trasladados, String propos, LinkedHashMap<String,String> extras, Integer id_empresa, Integer id_sucursal) {
-        
+    public void init(HashMap<String, String> data, ArrayList<LinkedHashMap<String, String>> conceptos, ArrayList<LinkedHashMap<String, String>> impuestos_retenidos, ArrayList<LinkedHashMap<String, String>> impuestos_trasladados, String propos, LinkedHashMap<String,String> extras, Integer id_empresa, Integer id_sucursal, ArrayList<LinkedHashMap<String,String>> percepciones, ArrayList<LinkedHashMap<String,String>> deducciones, ArrayList<LinkedHashMap<String,String>> incapacidades, ArrayList<LinkedHashMap<String,String>> hrs_extras) {
+        LinkedHashMap<String,Object> dataNomina = new LinkedHashMap<String,Object>();
         System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia Seters:::::::::::::::::..");
         this.setId_empresa(id_empresa);
         this.setId_sucursal(id_sucursal);
@@ -149,21 +208,54 @@ public class BeanFacturadorCfdiTimbre {
         switch (Proposito.valueOf(this.getProposito())) {
             case FACTURA:
                 this.setTipoDeComprobante("ingreso");
+                dataNomina.put("valor", "false");
                 break;
                 
             case NOTA_CREDITO:
                 this.setTipoDeComprobante("egreso");
+                dataNomina.put("valor", "false");
                 break;
                 
             case NOTA_CARGO:
                 this.setTipoDeComprobante("ingreso");
+                dataNomina.put("valor", "false");
                 break;
                 
             case NOMINA:
                 this.setTipoDeComprobante("egreso");
+                dataNomina.put("valor", "true");
+                dataNomina.put("registro_patronal", data.get("comprobante_attr_reg_patronal"));
+                dataNomina.put("numero_empleado", data.get("numero_control"));
+                dataNomina.put("curp", data.get("comprobante_receptor_attr_curp"));
+                dataNomina.put("tipo_regimen", data.get("comprobante_attr_regimen_contratacion"));
+                dataNomina.put("no_seguridad_social", data.get("comprobante_attr_imss"));
+                dataNomina.put("fecha_pago", data.get("comprobante_attr_fecha_fecha_pago"));
+                dataNomina.put("fecha_inicial_pago", data.get("comprobante_attr_fecha_ini_pago"));
+                dataNomina.put("fecha_final_pago", data.get("comprobante_attr_fecha_fin_pago"));
+                dataNomina.put("no_dias_pagados", data.get("comprobante_attr_no_dias_pago"));
+                dataNomina.put("departamento", data.get("comprobante_attr_depto"));
+                dataNomina.put("clabe", data.get("comprobante_attr_clabe"));
+                dataNomina.put("banco", data.get("comprobante_attr_banco"));
+                dataNomina.put("fecha_contrato", data.get("comprobante_attr_fecha_contrato"));
+                dataNomina.put("antiguedad", data.get("comprobante_attr_fecha_antiguedad"));
+                dataNomina.put("puesto", data.get("comprobante_attr_puesto"));
+                dataNomina.put("tipo_contrato", data.get("comprobante_attr_tipo_contrato"));
+                dataNomina.put("tipo_jornada", data.get("comprobante_attr_tipo_jornada"));
+                dataNomina.put("PeriodicidadPago", data.get("comprobante_attr_periodicidad_pago"));
+                dataNomina.put("salario_base", data.get("comprobante_attr_salario_base"));
+                dataNomina.put("riesgo_puesto", data.get("comprobante_attr_riesgo_puesto"));
+                dataNomina.put("salario_integrado", data.get("comprobante_attr_salario_integrado"));
+                dataNomina.put("percep_total_gravado", data.get("comprobante_attr_percep_total_gravado"));
+                dataNomina.put("percep_total_excento", data.get("comprobante_attr_percep_total_excento"));
+                dataNomina.put("deduc_total_gravado", data.get("comprobante_attr_deduc_total_gravado"));
+                dataNomina.put("deduc_total_excento", data.get("comprobante_attr_deduc_total_excento"));
                 
+                dataNomina.put("percepciones", percepciones);
+                dataNomina.put("deducciones", deducciones);
+                dataNomina.put("incapacidades", incapacidades);
+                dataNomina.put("HorasExtras", hrs_extras);
                 
-                
+                this.setDatosNomina(dataNomina);
                 break;
         }
         
@@ -501,7 +593,7 @@ public class BeanFacturadorCfdiTimbre {
     
     
     private String generarComprobanteFirmado() throws Exception {
-        
+        boolean agregar_complemento=false;
         this.checkdata();
         
         String valor_retorno = new String();
@@ -516,8 +608,8 @@ public class BeanFacturadorCfdiTimbre {
             case FACTURA:
                 folio = this.getGralDao().getFolioFactura(this.getId_empresa(), this.getId_sucursal());
                 serie = this.getGralDao().getSerieFactura(this.getId_empresa(), this.getId_sucursal());
-                
                 break;
+                
             case NOTA_CREDITO:
                 folio = this.getGralDao().getFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
                 serie = this.getGralDao().getSerieNotaCredito(this.getId_empresa(), this.getId_sucursal());
@@ -526,6 +618,12 @@ public class BeanFacturadorCfdiTimbre {
             case NOTA_CARGO:
                 folio = this.getGralDao().getFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
                 serie = this.getGralDao().getSerieNotaCargo(this.getId_empresa(), this.getId_sucursal());
+                break;
+                
+            case NOMINA:
+                folio = this.getGralDao().getFolioFactura(this.getId_empresa(), this.getId_sucursal());
+                serie = this.getGralDao().getSerieFactura(this.getId_empresa(), this.getId_sucursal());
+                agregar_complemento=true;
                 break;
         }
         
@@ -547,7 +645,9 @@ public class BeanFacturadorCfdiTimbre {
                 this.getCertificado(),
                 this.getMetodoDePago(),
                 this.getLugar_expedicion(),
-                this.getNumero_cuenta() );
+                this.getNumero_cuenta(),
+                this.getDescuento(),
+                this.getMotivoDescuento());
         
         cfd.configurarNodoEmisor(
                 this.getRazon_social_emisor(),
@@ -575,18 +675,26 @@ public class BeanFacturadorCfdiTimbre {
         
         cfd.configurarNodoConceptos(this.getListaConceptos());
         
-        cfd.configurarImpuestos(this.getListaRetenciones(), this.getListaTraslados());
+        cfd.configurarImpuestos(this.getListaRetenciones(), this.getListaTraslados(), String.valueOf(this.getDatosNomina().get("valor")));
+        
+        
+        if(agregar_complemento){
+            //Solo se agrega este complemento cuando es nomina
+            cfd.configurarComplementos(this.getDatosNomina());
+        }
         
         
         String comprobante_sin_firmar = cfd.getOutXmlString();
-        
         //System.out.println("comprobante_sin_firmar: "+comprobante_sin_firmar);
         
-        comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_RETENIDOS", this.getTotalRetenciones().toString());
-        comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_TRASLADADOS", this.getTotalTraslados().toString());
+        //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_RETENIDOS", this.getTotalRetenciones().toString());
+        //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_TRASLADADOS", this.getTotalTraslados().toString());
         
         switch (Proposito.valueOf(this.getProposito())) {
             case FACTURA:
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_RETENIDOS", this.getTotalRetenciones().toString());
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_TRASLADADOS", this.getTotalTraslados().toString());
+
                 //String folio_factura = this.getGralDao().getFolioFactura(this.getId_empresa(), this.getId_sucursal());
                 //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_factura);
                 //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieFactura(this.getId_empresa(), this.getId_sucursal()));
@@ -597,6 +705,8 @@ public class BeanFacturadorCfdiTimbre {
                 break;
                 
             case NOTA_CREDITO:
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_RETENIDOS", this.getTotalRetenciones().toString());
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_TRASLADADOS", this.getTotalTraslados().toString());
                 //String folio_credito = this.getGralDao().getFolioNotaCredito(this.getId_empresa(), this.getId_sucursal());
                 //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@FOLIO", folio_credito);
                 //comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SERIE", this.getGralDao().getSerieNotaCredito(this.getId_empresa(), this.getId_sucursal()));
@@ -612,6 +722,10 @@ public class BeanFacturadorCfdiTimbre {
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@ANO_APROBACION", this.getGralDao().getAnoAprobacionNotaCargo(this.getId_empresa(), this.getId_sucursal()));
                 comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@NOAPROBACION", this.getGralDao().getNoAprobacionNotaCargo(this.getId_empresa(), this.getId_sucursal()));
                 //this.getGralDao().actualizarFolioNotaCargo(this.getId_empresa(), this.getId_sucursal());
+                break;
+                
+            case NOMINA:
+                comprobante_sin_firmar = comprobante_sin_firmar.replaceAll("@SUMIMPUESTOS_RETENIDOS", this.getTotalRetenciones().toString());
                 break;
         }
         
