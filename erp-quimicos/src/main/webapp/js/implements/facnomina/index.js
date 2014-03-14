@@ -1075,9 +1075,6 @@ $(function() {
 		$('#forma-nominaempleado-window').css({ "margin-left": -320, 	"margin-top": -255  });
 		$tabs_li_funxionalidad_nominaempleado();
 		
-		//Esta variable es de la ventana principal
-		var $accion = $('#forma-facnomina-window').find('input[name=accion]');
-		
 		var $id_nom_det = $('#forma-nominaempleado-window').find('input[name=id_nom_det]');
 		var $id_empleado = $('#forma-nominaempleado-window').find('input[name=id_empleado]');
 		var $no_empleado = $('#forma-nominaempleado-window').find('input[name=no_empleado]');
@@ -1144,9 +1141,13 @@ $(function() {
 		var $boton_actualizar_forma_nominaempleado = $('#forma-nominaempleado-window').find('#boton_actualizar_forma_nominaempleado');
 		
 		
+		//VARIABLES QUE SE TOMAN DE LA VENTANA PRINCIPAL
 		//Id del Periodo para obtener la fecha inicial y fecha final
 		var id_periodo = $('#forma-facnomina-window').find('input[name=no_periodo_selec]').val();
-		
+		var $accion = $('#forma-facnomina-window').find('input[name=accion]');
+		var $identificador = $('#forma-facnomina-window').find('input[name=identificador]');
+		//Id del empleado seleccionado desde donde se está  haciendo clic
+		var $id_generar = $('#forma-facnomina-window').find('input[name=id_generar]');
 		
 		$permitir_solo_numeros($antiguedad);
 		$permitir_solo_numeros($no_dias_pago);
@@ -1217,7 +1218,7 @@ $(function() {
 		var campo_valor = '';
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataNominaEmpleado.json';
-		$arreglo = {'id_reg':$id_nom_det.val(), 'id_empleado':id_empleado, 'id_periodo':id_periodo, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
+		$arreglo = {'identificador':$identificador.val(), 'accion':$accion.val(), 'id_reg':$id_nom_det.val(), 'id_empleado':id_empleado, 'id_periodo':id_periodo, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
 			if(parseInt($id_reg.val())<=0){
@@ -1678,9 +1679,8 @@ $(function() {
 						}
 						mensaje = mensaje + '' + entry['msj'];
 						
-						jAlert(mensaje, 'Atencion!', function(r) { 
-							$select_no_periodo.focus();
-						});
+						jAlert(mensaje, 'Atencion!');
+						
 						
 						if(parseInt(entry['actualizo'])==1){
 							//Solo se debe cerrar la ventana cuando actualizo sea igual a 1
@@ -1927,6 +1927,8 @@ $(function() {
 		var $identificador = $('#forma-facnomina-window').find('input[name=identificador]');
 		var $accion = $('#forma-facnomina-window').find('input[name=accion]');
 		var $nivel_ejecucion = $('#forma-facnomina-window').find('input[name=nivel_ejecucion]');
+		var $generar = $('#forma-facnomina-window').find('input[name=generar]');
+		var $id_generar = $('#forma-facnomina-window').find('input[name=id_generar]');
 		
 		var $emisor_rfc = $('#forma-facnomina-window').find('input[name=emisor_rfc]');
 		var $emisor_nombre = $('#forma-facnomina-window').find('input[name=emisor_nombre]');
@@ -1961,6 +1963,9 @@ $(function() {
 		$identificador.val(id_to_show);
 		$accion.val("new");
 		$nivel_ejecucion.val(1);
+		$generar.val("false");
+		$id_generar.val(0);
+		
 		$permitir_solo_numeros($comp_tc);
 		
 		$aplicar_readonly_input($emisor_rfc);
@@ -2196,6 +2201,8 @@ $(function() {
 			var $identificador = $('#forma-facnomina-window').find('input[name=identificador]');
 			var $accion = $('#forma-facnomina-window').find('input[name=accion]');
 			var $nivel_ejecucion = $('#forma-facnomina-window').find('input[name=nivel_ejecucion]');
+			var $generar = $('#forma-facnomina-window').find('input[name=generar]');
+			var $id_generar = $('#forma-facnomina-window').find('input[name=id_generar]');
 			
 			var $emisor_rfc = $('#forma-facnomina-window').find('input[name=emisor_rfc]');
 			var $emisor_nombre = $('#forma-facnomina-window').find('input[name=emisor_nombre]');
@@ -2229,6 +2236,8 @@ $(function() {
 			//Para nuevo el identificador siempre es 0
 			$identificador.val(id_to_show);
 			$accion.val("edit");
+			$generar.val("false");
+			$id_generar.val(0);
 			$permitir_solo_numeros($comp_tc);
 			
 			$aplicar_readonly_input($emisor_rfc);
