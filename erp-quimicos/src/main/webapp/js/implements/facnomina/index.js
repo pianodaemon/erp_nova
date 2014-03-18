@@ -680,9 +680,14 @@ $(function() {
 		
 		var suma_deduc_gravado=0;
 		var suma_deduc_excento=0;
+		var monto_isr=0;
 		$grid_deducciones.find('tr').each(function (index){
 			if($(this).find('input[name=deduc_monto_gravado]').val().trim()!=''){
-				suma_deduc_gravado = parseFloat(suma_deduc_gravado) + parseFloat($(this).find('input[name=deduc_monto_gravado]').val());
+				if(parseInt($(this).find('#tdeduc_id').val().trim())==2){
+					monto_isr = parseFloat(monto_isr) + parseFloat($(this).find('input[name=deduc_monto_gravado]').val());
+				}else{
+					suma_deduc_gravado = parseFloat(suma_deduc_gravado) + parseFloat($(this).find('input[name=deduc_monto_gravado]').val());
+				}
 			}
 			if($(this).find('input[name=deduc_monto_excento]').val().trim()!=''){
 				suma_deduc_excento = parseFloat(suma_deduc_excento) + parseFloat($(this).find('input[name=deduc_monto_excento]').val());
@@ -691,6 +696,8 @@ $(function() {
 		$deduc_total_gravado.val(parseFloat(suma_deduc_gravado).toFixed(2));
 		$deduc_total_excento.val(parseFloat(suma_deduc_excento).toFixed(2));
 		
+		$descuento.val(parseFloat(parseFloat($deduc_total_gravado.val()) + parseFloat($deduc_total_excento.val())).toFixed(2));
+		$importe_retencion.val(parseFloat(monto_isr).toFixed(2));
 		
 		/*
 		$grid_horas_extras.find('tr').each(function (index){
@@ -711,19 +718,17 @@ $(function() {
 		});
 		*/
 		
-		
 		$concepto_valor_unitario.val(parseFloat(parseFloat($percep_total_gravado.val()) + parseFloat($percep_total_excento.val())).toFixed(2));
 		if($concepto_cantidad.val().trim()==''){
 			$concepto_cantidad.val(parseFloat(1).toFixed(2));
 		}
 		$concepto_importe.val(parseFloat(parseFloat($concepto_cantidad.val()) * parseFloat($concepto_valor_unitario.val())).toFixed(2));
 		
-		
-		
-		
-		$descuento.val(parseFloat(parseFloat($deduc_total_gravado.val()) + parseFloat($deduc_total_excento.val())).toFixed(2));
-		
+		$comp_subtotal.val(parseFloat($concepto_importe.val()).toFixed(2));
 		$comp_descuento.val(parseFloat($descuento.val()).toFixed(2));
+		$comp_retencion.val(parseFloat($importe_retencion.val()).toFixed(2));
+		
+		$comp_total.val(parseFloat(parseFloat($comp_subtotal.val()) - parseFloat($comp_descuento.val()) -parseFloat($comp_retencion.val())).toFixed(2));
 	}
 	//Termina calcular totales
 	
@@ -824,9 +829,9 @@ $(function() {
 		});
 	}
 	
+	
 
-
-	$agregar_tr_deduccion = function($grid_deducciones, id_deduc, tipo_agrupador, deduccion, monto_gravado, monto_excento){
+	$agregar_tr_deduccion = function($grid_deducciones, id_deduc, tipo_deduc_id, tipo_agrupador, deduccion, monto_gravado, monto_excento){
 		//Obtiene numero de trs
 		var tr = $("tr", $grid_deducciones).size();
 		tr++;
@@ -836,6 +841,7 @@ $(function() {
 		trr += '<td class="grid3" width="60">';
 			trr += '<a href="#" class="delete_deduc'+ tr +'">Eliminar</a>';
 			trr += '<input type="hidden" name="id_deduc" id="id_deduc" value="'+ id_deduc +'">';
+			trr += '<input type="hidden" name="tdeduc_id" id="tdeduc_id" value="'+ tipo_deduc_id +'">';
 			trr += '<input type="hidden" name="noTrDeduc" value="'+ tr +'">';
 		trr += '</td>';
 		trr += '<td class="grid3" width="200">';
@@ -1064,7 +1070,7 @@ $(function() {
 	
 	
 	//Ventana para la Nomina de cada Empleado
-	$forma_nomina_empleado = function(id_empleado, id_periodicidad_pago, $id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad){
+	$forma_nomina_empleado = function(id_empleado, id_periodicidad_pago, $id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad, facturado){
 		$('#forma-nominaempleado-window').remove();
 		$('#forma-nominaempleado-overlay').remove();
 		$(this).modalPanel_nominaempleado();
@@ -1163,21 +1169,7 @@ $(function() {
 		$permitir_solo_numeros($comp_retencion);
 		$permitir_solo_numeros($comp_total);
 		
-		$aplicar_evento_focus_input_numeric($salario_base);
-		$aplicar_evento_focus_input_numeric($salario_integrado);
-		$aplicar_evento_focus_input_numeric($concepto_cantidad);
-		$aplicar_evento_focus_input_numeric($concepto_valor_unitario);
-		$aplicar_evento_focus_input_numeric($concepto_importe);
-		$aplicar_evento_focus_input_numeric($descuento);
-		$aplicar_evento_focus_input_numeric($importe_retencion);
-		
-		$aplicar_evento_blur_input_numeric($salario_base, false);
-		$aplicar_evento_blur_input_numeric($salario_integrado, false);
-		$aplicar_evento_blur_input_numeric($concepto_cantidad, true);
-		$aplicar_evento_blur_input_numeric($concepto_valor_unitario, false);
-		$aplicar_evento_blur_input_numeric($concepto_importe, false);
-		$aplicar_evento_blur_input_numeric($descuento, true);
-		$aplicar_evento_blur_input_numeric($importe_retencion, false);
+
 		
 		$aplicar_readonly_input($comp_subtotal);
 		$aplicar_readonly_input($comp_descuento);
@@ -1198,17 +1190,8 @@ $(function() {
 		$aplicar_readonly_input($fecha_fin_pago);
 		
 		
+
 		
-		$aplicar_evento_focus_input_text( $concepto_descripcion );
-		$aplicar_evento_focus_input_text( $concepto_unidad );
-		
-		$aplicar_evento_blur_input_text( $concepto_descripcion );
-		$aplicar_evento_blur_input_text( $concepto_unidad );
-		
-		
-		
-		$add_calendar($fecha_ini_pago, " ", "");
-		$add_calendar($fecha_fin_pago, " ", "");
 		
 		$id_nom_det.val($id_reg.val());
 		
@@ -1216,12 +1199,42 @@ $(function() {
 		var texto_elemento_cero = '';
 		var campo_indice = '';
 		var campo_valor = '';
+		var elemento_fijo=false;
+		
+		if(facturado=='true'){
+			//Ocultar boton Actualizar cuando ya fue facturado
+			$boton_actualizar_forma_nominaempleado.hide();
+		}else{
+			$add_calendar($fecha_ini_pago, " ", "");
+			$add_calendar($fecha_fin_pago, " ", "");
+			$aplicar_evento_focus_input_text( $concepto_descripcion );
+			$aplicar_evento_focus_input_text( $concepto_unidad );
+			
+			$aplicar_evento_blur_input_text( $concepto_descripcion );
+			$aplicar_evento_blur_input_text( $concepto_unidad );
+			
+			$aplicar_evento_focus_input_numeric($salario_base);
+			$aplicar_evento_focus_input_numeric($salario_integrado);
+			$aplicar_evento_focus_input_numeric($concepto_cantidad);
+			$aplicar_evento_focus_input_numeric($concepto_valor_unitario);
+			$aplicar_evento_focus_input_numeric($concepto_importe);
+			$aplicar_evento_focus_input_numeric($descuento);
+			$aplicar_evento_focus_input_numeric($importe_retencion);
+			
+			$aplicar_evento_blur_input_numeric($salario_base, false);
+			$aplicar_evento_blur_input_numeric($salario_integrado, false);
+			$aplicar_evento_blur_input_numeric($concepto_cantidad, true);
+			$aplicar_evento_blur_input_numeric($concepto_valor_unitario, false);
+			$aplicar_evento_blur_input_numeric($concepto_importe, false);
+			$aplicar_evento_blur_input_numeric($descuento, true);
+			$aplicar_evento_blur_input_numeric($importe_retencion, false);
+		}
 		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getDataNominaEmpleado.json';
 		$arreglo = {'identificador':$identificador.val(), 'accion':$accion.val(), 'id_reg':$id_nom_det.val(), 'id_empleado':id_empleado, 'id_periodo':id_periodo, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 		
 		$.post(input_json,$arreglo,function(entry){
-			if(parseInt($id_reg.val())<=0){
+			if(entry['Data'][0]['validado']=='false'){
 				//NUEVO
 				
 				$id_empleado.val(entry['Data'][0]['empleado_id']);
@@ -1267,35 +1280,65 @@ $(function() {
 				$deduc_total_excento.val(parseFloat(0).toFixed(2));
 				
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar Departamento--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['depto_id'];
-				texto_elemento_cero = '[--Seleccionar Departamento--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_departamento, arrayDeptos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_departamento, arrayDeptos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar Puesto--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['puesto_id'];
-				texto_elemento_cero = '[--Seleccionar Puesto--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_puesto, arrayPuestos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_puesto, arrayPuestos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar Regimen--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['regimen_id'];
-				texto_elemento_cero = '[--Seleccionar Regimen--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_reg_contratacion, arrayRegimenContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_reg_contratacion, arrayRegimenContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['tipo_contrato_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_tipo_contrato, arrayTipoContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_tipo_contrato, arrayTipoContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['tipo_jornada_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_tipo_jornada, arrayTipoJornada, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				$carga_campos_select($select_tipo_jornada, arrayTipoJornada, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
 				
 				if(parseInt($id_reg.val())==0){
@@ -1303,37 +1346,69 @@ $(function() {
 				}else{
 					elemento_seleccionado = entry['Data'][0]['periodo_pago_id'];
 				}
-				texto_elemento_cero = '[--Seleccionar--]';
+				if(facturado=='true'){
+					texto_elemento_cero = '';
+				}else{
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
+				elemento_fijo=true;
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_preriodo_pago, arrayPeriodicidad, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				$carga_campos_select($select_preriodo_pago, arrayPeriodicidad, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['banco_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_banco, arrayBancos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				$carga_campos_select($select_banco, arrayBancos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['riesgo_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_riesgo_puesto, arrayRiesgos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				$carga_campos_select($select_riesgo_puesto, arrayRiesgos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
-				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
 				elemento_seleccionado = arrayPar[0]['isr_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_impuesto_retencion, arrayImpuestoRet, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);			
+				$carga_campos_select($select_impuesto_retencion, arrayImpuestoRet, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);			
 				
-				
+				if(facturado=='true'){
+					elemento_fijo=true;
+				}else{
+					elemento_fijo=false;
+				}
 				elemento_seleccionado = 0;
 				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'percepcion';
-				$carga_campos_select($select_lista_percepciones, arrayPercep, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_lista_percepciones, arrayPercep, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				
+				if(facturado=='true'){
+					elemento_fijo=true;
+				}else{
+					elemento_fijo=false;
+				}
 				elemento_seleccionado = 0;
 				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
@@ -1382,74 +1457,132 @@ $(function() {
 				$deduc_total_gravado.val(entry['Data'][0]['deduc_total_gravado']);
 				$deduc_total_excento.val(entry['Data'][0]['deduc_total_excento']);
 				
-				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar Departamento--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['depto_id'];
-				texto_elemento_cero = '[--Seleccionar Departamento--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_departamento, arrayDeptos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_departamento, arrayDeptos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar Puesto--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['puesto_id'];
-				texto_elemento_cero = '[--Seleccionar Puesto--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_puesto, arrayPuestos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_puesto, arrayPuestos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar Regimen--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['regimen_id'];
-				texto_elemento_cero = '[--Seleccionar Regimen--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_reg_contratacion, arrayRegimenContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_reg_contratacion, arrayRegimenContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+					texto_elemento_cero = '';
+				}else{
+					elemento_fijo=false;
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
 				elemento_seleccionado = entry['Data'][0]['tipo_contrato_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_tipo_contrato, arrayTipoContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_tipo_contrato, arrayTipoContrato, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					texto_elemento_cero = '';
+				}else{
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
+				elemento_fijo=true;
 				elemento_seleccionado = entry['Data'][0]['tipo_jornada_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_tipo_jornada, arrayTipoJornada, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				$carga_campos_select($select_tipo_jornada, arrayTipoJornada, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					texto_elemento_cero = '';
+				}else{
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
+				elemento_fijo=true;
 				elemento_seleccionado = entry['Data'][0]['periodicidad_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_preriodo_pago, arrayPeriodicidad, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				$carga_campos_select($select_preriodo_pago, arrayPeriodicidad, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					texto_elemento_cero = '';
+					elemento_fijo=true;
+				}else{
+					texto_elemento_cero = '[--Seleccionar--]';
+					elemento_fijo=false;
+				}
 				elemento_seleccionado = entry['Data'][0]['banco_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_banco, arrayBancos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				$carga_campos_select($select_banco, arrayBancos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					texto_elemento_cero = '';
+					elemento_fijo=true;
+				}else{
+					texto_elemento_cero = '[--Seleccionar--]';
+					elemento_fijo=false;
+				}
 				elemento_seleccionado = entry['Data'][0]['riesgo_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_riesgo_puesto, arrayRiesgos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+				$carga_campos_select($select_riesgo_puesto, arrayRiesgos, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
-				
+				if(facturado=='true'){
+					texto_elemento_cero = '';
+				}else{
+					texto_elemento_cero = '[--Seleccionar--]';
+				}
+				elemento_fijo=true;
 				elemento_seleccionado = entry['Data'][0]['isr_id'];
-				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'titulo';
-				$carga_campos_select($select_impuesto_retencion, arrayImpuestoRet, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);			
+				$carga_campos_select($select_impuesto_retencion, arrayImpuestoRet, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);			
 				
-				
+				if(facturado=='true'){
+					elemento_fijo=true;
+				}else{
+					elemento_fijo=false;
+				}
 				elemento_seleccionado = 0;
 				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'percepcion';
-				$carga_campos_select($select_lista_percepciones, arrayPercep, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_lista_percepciones, arrayPercep, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
+				if(facturado=='true'){
+					elemento_fijo=true;
+				}else{
+					elemento_fijo=false;
+				}
 				elemento_seleccionado = 0;
 				texto_elemento_cero = '[--Seleccionar--]';
 				campo_indice = 'id';
 				campo_valor = 'deduccion';
-				$carga_campos_select($select_lista_deducciones, arrayDeduc, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+				$carga_campos_select($select_lista_deducciones, arrayDeduc, elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 				
 				
 				
@@ -1487,12 +1620,48 @@ $(function() {
 			
 			$.each(entry['DeducEmpleado'],function(entryIndex,data){
 				var id_deduc = data['id'];
+				var tipo_deduc_id = data['tipo_deduc_id'];
 				var tipo_agrupador = data['tipo_deduc'];
 				var deduccion = data['deduccion'];
 				var monto_gravado = data['m_gravado'];
 				var monto_excento = data['m_excento'];
-				$agregar_tr_deduccion($grid_deducciones, id_deduc, tipo_agrupador, deduccion, monto_gravado, monto_excento);
+				$agregar_tr_deduccion($grid_deducciones, id_deduc, tipo_deduc_id, tipo_agrupador, deduccion, monto_gravado, monto_excento);
 			});
+			
+			
+				
+			if(facturado=='true'){
+				$aplicar_readonly_input($antiguedad);
+				$aplicar_readonly_input($clabe);
+				$aplicar_readonly_input($imss);
+				$aplicar_readonly_input($reg_patronal);
+				$aplicar_readonly_input($salario_base);
+				$aplicar_readonly_input($salario_integrado);
+				$aplicar_readonly_input($fecha_ini_pago);
+				$aplicar_readonly_input($fecha_fin_pago);
+				$aplicar_readonly_input($no_dias_pago);
+				$aplicar_readonly_input($concepto_descripcion);
+				$aplicar_readonly_input($concepto_unidad);
+				$aplicar_readonly_input($concepto_cantidad);
+				$aplicar_readonly_input($concepto_valor_unitario);
+				$aplicar_readonly_input($concepto_importe);
+				$aplicar_readonly_input($descuento);
+				$aplicar_readonly_input($motivo_descuento);
+				$aplicar_readonly_input($importe_retencion);
+				
+				$agregar_percepcion.hide();
+				$agregar_deduccion.hide();
+				$agregar_hora_extra.hide();
+				$agregar_incapacidad.hide();
+				$aplicar_readonly_input($grid_percepciones.find('tr').find('input'));
+				$grid_percepciones.find('tr').find('a').hide();
+				$aplicar_readonly_input($grid_deducciones.find('tr').find('input'));
+				$grid_deducciones.find('tr').find('a').hide();
+				$aplicar_readonly_input($grid_horas_extras.find('tr').find('input'));
+				$grid_horas_extras.find('tr').find('a').hide();
+				$aplicar_readonly_input($grid_incapacidades.find('tr').find('input'));
+				$grid_incapacidades.find('tr').find('a').hide();
+			}
 			
 			
 			//Agregar un Nuevo Concepto de Percepcion
@@ -1545,11 +1714,12 @@ $(function() {
 						$.each(arrayDeduc,function(entryIndex,data){
 							if(parseInt($select_lista_deducciones.val())==parseInt(data['id'])){
 								var id_deduc = data['id'];
+								var tipo_deduc_id = data['tipo_deduc_id'];
 								var tipo_agrupador = data['tipo_deduc'];
 								var deduccion = data['deduccion'];
 								var monto_gravado = data['m_gravado'];
 								var monto_excento = data['m_excento'];
-								$agregar_tr_deduccion($grid_deducciones, id_deduc, tipo_agrupador, deduccion, monto_gravado, monto_excento);
+								$agregar_tr_deduccion($grid_deducciones, id_deduc, tipo_deduc_id, tipo_agrupador, deduccion, monto_gravado, monto_excento);
 							}
 						});
 					}else{
@@ -1590,21 +1760,21 @@ $(function() {
 		
 		
 		
-		$('#forma-facnomina-window').find( "#submit" ).bind('click',function(){
-			//Aqui se establece el nivel de ejecucion 2, porque se ejecita desde la ventana de nomina de Empleado
-			$('#forma-facnomina-window').find('input[name=nivel_ejecucion]').val(2);
-			
-			var trCount = $("tr", $('#forma-facnomina-window').find('#grid_empleados')).size();
-			if(parseInt(trCount) > 0){
-				return true;
-			}else{
-				alert('No hay datos para actualizar');
-				return false;
-			}
-		});
-		
 		$boton_actualizar_forma_nominaempleado.bind('click',function(){
 			var confirma = '';
+			
+			//Redefinir accion click del boton actualizar de la ventana principal
+			$('#forma-facnomina-window').find( "#submit" ).bind('click',function(){
+				//Aqui se establece el nivel de ejecucion 2, porque se ejecita desde la ventana de nomina de Empleado
+				$('#forma-facnomina-window').find('input[name=nivel_ejecucion]').val(2);
+				if(parseInt($('#forma-facnomina-window').find('#grid_empleados')).size()) > 0){
+					return true;
+				}else{
+					alert('No hay datos para actualizar');
+					return false;
+				}
+			});
+			
 			
 			//Aqui se establece el nivel de ejecucion 2, porque se ejecita desde la ventana de nomina de Empleado
 			$('#forma-facnomina-window').find('input[name=nivel_ejecucion]').val(2);
@@ -1612,8 +1782,7 @@ $(function() {
 			
 			//Ejecutar submit del Formulario proncipal
 			$('#forma-facnomina-window').find( "#submit" ).trigger( "click" );
-				
-				
+							
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/edit_nomina_empleado.json';
 				$arreglo = {
 					'identificador':$('#forma-facnomina-window').find('input[name=identificador]').val(),
@@ -1681,12 +1850,23 @@ $(function() {
 						
 						jAlert(mensaje, 'Atencion!');
 						
-						
 						if(parseInt(entry['actualizo'])==1){
 							//Solo se debe cerrar la ventana cuando actualizo sea igual a 1
 							var remove = function() { $(this).remove(); };
 							$('#forma-nominaempleado-overlay').fadeOut(remove);
 						}
+						
+						//Aqui se redefine el clic al boton submit
+						$('#forma-facnomina-window').find( "#submit" ).bind('click',function(){
+							//Aqui se establece el nivel de ejecucion 1, para regresar el control a la ventana principal
+							$('#forma-facnomina-window').find('input[name=nivel_ejecucion]').val(1);
+							if(parseInt($("tr", $('#forma-facnomina-window').find('#grid_empleados')).size()) > 0){
+								return true;
+							}else{
+								alert('No hay datos para actualizar');
+								return false;
+							}
+						});
 					}else{
 						// Desaparece todas las interrogaciones si es que existen
 						$('#forma-nominaempleado-window').find('div.interrogacion').css({'display':'none'});
@@ -1701,7 +1881,7 @@ $(function() {
 								.css({'display':'block'})
 								.easyTooltip({	tooltipId: "easyTooltip2",content: tmp.split(':')[1] });
 								
-								
+								//Para input name
 								if(tmp.split(':')[0].split('__')[0]=='grid'){
 									var campo = tmp.split(':')[0].split('__')[1];
 									//alert(campo);
@@ -1709,6 +1889,16 @@ $(function() {
 									$campo_input.css({'background' : '#d41000'});
 									$campo_input.attr({'title': tmp.split(':')[1] }); 
 								}
+								
+								//Para input class
+								if(tmp.split(':')[0].split('__')[0]=='grid2'){
+									var campo = tmp.split(':')[0].split('__')[1];
+									//alert(campo);
+									var $campo_input = $('#forma-nominaempleado-window').find('.'+campo+']');
+									$campo_input.css({'background' : '#d41000'});
+									$campo_input.attr({'title': tmp.split(':')[1] }); 
+								}
+		
 							}
 						}
 					}
@@ -1783,36 +1973,80 @@ $(function() {
 	
 	
 	
-	$agrega_empleado_grid = function($grid_empleados, id_periodicidad_pago, id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad){
+	$agrega_empleado_grid = function($grid_empleados, id_periodicidad_pago, id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad, facturado, serie_folio){
 		//Obtiene numero de trs
 		var tr = $("tr", $grid_empleados).size();
 		tr++;
 		
 		var trr = '';
 		trr = '<tr class="gral">';
-		trr += '<td class="grid3" width="50">';
+		trr += '<td class="grid3" width="40">';
 			trr += '<a href="#" id="delete_empleado'+ tr +'">Eliminar</a>';
 			trr += '<input type="hidden" name="id_reg" id="id_reg" class="id_reg'+ tr +'" value="'+ id_reg +'">';
 			trr += '<input type="hidden" name="id_emp" id="id_emp" value="'+ id_empleado +'">';
 			trr += '<input type="hidden" name="elim" class="elim'+ tr +'" value="1">';
 			trr += '<input type="hidden" name="noTr" value="'+ tr +'">';
+			trr += '<input type="hidden" name="no_nom" class="no_nom'+ tr +'" value="'+ serie_folio +'">';
 		trr += '</td>';
 		trr += '<td class="grid3" width="50">';
-			trr += '<a href="#" id="editar'+ tr +'">Editar</a>';
+			if(facturado=='true'){
+				trr += '<a href="#" id="editar'+ tr +'">'+ serie_folio +'</a>';
+			}else{
+				trr += '<a href="#" id="editar'+ tr +'">Editar</a>';
+			}
 		trr += '</td>';
-		trr += '<td class="grid4" width="375">'+ nombre_empleado +'</td>';
-		trr += '<td class="grid3" width="120">';
-			trr += '<input type="text" name="tpercep" value="'+ t_percep +'" id="tpercep" class="tpercep'+ tr +' borde_oculto" readOnly="true" style="width:116px; text-align:right;">';
+		trr += '<td class="grid4" width="300">'+ nombre_empleado +'</td>';
+		trr += '<td class="grid3" width="100">';
+			trr += '<input type="text" name="tpercep" value="'+ t_percep +'" id="tpercep" class="tpercep'+ tr +' borde_oculto" readOnly="true" style="width:96px; text-align:right;">';
 		trr += '</td>';
-		trr += '<td class="grid3" width="120">';
-			trr += '<input type="text" name="tdeduc" value="'+ t_deduc +'" id="tdeduc" class="tdeduc'+ tr +' borde_oculto" readOnly="true" style="width:116px; text-align:right;">';
+		trr += '<td class="grid3" width="100">';
+			trr += '<input type="text" name="tdeduc" value="'+ t_deduc +'" id="tdeduc" class="tdeduc'+ tr +' borde_oculto" readOnly="true" style="width:96px; text-align:right;">';
 		trr += '</td>';
-		trr += '<td class="grid3" width="105">';
-			trr += '<input type="text" name="pago_neto" value="'+ pago_neto +'" id="pago_neto" class="pago_neto'+ tr +' borde_oculto" readOnly="true" style="width:101px; text-align:right;">';
+		trr += '<td class="grid3" width="90">';
+			trr += '<input type="text" name="pago_neto" value="'+ pago_neto +'" id="pago_neto" class="pago_neto'+ tr +' borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
 		trr += '</td>';
+		trr += '<td class="grid3" width="40">';
+			if(facturado=='true'){
+				trr += '<input type="button" id="xml" class="xml'+ tr +'" value="XML" style="width:35px; font-weight:bold;">';
+			}
+		trr += '</td>';
+		trr += '<td class="grid3" width="40">';
+			if(facturado=='true'){
+				trr += '<input type="button" id="pdf" class="pdf'+ tr +'" value="PDF" style="width:35px; font-weight:bold;">';
+			}
+		trr += '</td>';
+		
 		trr += '</tr>';
 		$grid_empleados.append(trr);
 		
+		
+		if(facturado=='true'){
+			$grid_empleados.find('#delete_empleado'+ tr).hide();
+			
+			$grid_empleados.find('.xml'+ tr).click(function(){
+				$fila=$(this).parent().parent();
+				var id_reg = $grid_empleados.find('.id_reg'+ tr).val();
+				
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivo.json';
+				$arreglo = {'id_reg':id_reg,
+							'ext':'xml',
+							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
+						  }
+				
+				$.post(input_json,$arreglo,function(entry){
+					var descargar  = entry['descargar'];
+					if(descargar == 'true'){
+						var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+						var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getXml/'+id_reg+'/'+iu+'/out.json';
+						window.location.href=input_json;
+					}else{
+						jAlert("El xml de la nomina "+$grid_empleados.find('.no_nom'+ tr).val()+" no esta disponible para descarga.", 'Atencion!');
+					}
+				});//termina llamada json
+				
+				
+			});
+		}
 		
 		//Editar un empleado
 		$grid_empleados.find('#editar'+ tr).click(function(){
@@ -1827,7 +2061,7 @@ $(function() {
 				var $neto_pagar = $fila.find('#pago_neto');
 				
 				//Llamada a la función que crea la ventana para la nomina del empleado
-				$forma_nomina_empleado(idEmpleado, id_periodicidad_pago, $id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad);
+				$forma_nomina_empleado(idEmpleado, id_periodicidad_pago, $id_reg, $total_percep, $total_deduc, $neto_pagar, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad, facturado);
 			}else{
 				jAlert('Es necesario seleccionar un periodo para la Nomina.', 'Atencion!', function(r) { 
 					$('#forma-facnomina-window').find('select[name=select_no_periodo]').focus();
@@ -1865,7 +2099,9 @@ $(function() {
 					var t_percep="0.00";
 					var t_deduc="0.00";
 					var pago_neto="0.00"
-					$agrega_empleado_grid($grid_empleados, id_periodicidad_pago, id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad);
+					var facturado = 'false';
+					var serie_folio = '';
+					$agrega_empleado_grid($grid_empleados, id_periodicidad_pago, id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, arrayPar, arrayDeptos, arrayPuestos, arrayRegimenContrato, arrayTipoContrato, arrayTipoJornada, arrayPeriodicidad, arrayBancos, arrayRiesgos, arrayImpuestoRet, arrayPercep, arrayDeduc, arrayTiposHrsExtra, arrayTiposIncapacidad, facturado, serie_folio);
 				});
 			}else{
 				jAlert('No hay empleados que se le pague con la Periodicidad seleccionada.', 'Atencion!', function(r) { 
@@ -1877,16 +2113,21 @@ $(function() {
 	
 	
 	
-	$get_periodos_por_tipo_periodicidad = function(id_periodicidad_pago, id_periodo_selec, $select_no_periodo){
+	$get_periodos_por_tipo_periodicidad = function(id_periodicidad_pago, id_periodo_selec, $select_no_periodo, status){
 		$select_no_periodo.children().remove();
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPeriodosPorTipoPeridicidad.json';
 		$arreglo = {'id':id_periodicidad_pago, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
 		$.post(input_json,$arreglo,function(entry){
-			elemento_seleccionado = id_periodo_selec;
-			texto_elemento_cero = '[-Seleccionar-]';
-			campo_indice = 'id';
-			campo_valor = 'periodo';
-			$carga_campos_select($select_no_periodo, entry['Periodos'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+			var elemento_fijo=false;
+			var elemento_seleccionado = id_periodo_selec;
+			var texto_elemento_cero = '[-Seleccionar-]';
+			var campo_indice = 'id';
+			var campo_valor = 'periodo';
+			if(parseInt(status)>0){
+				texto_elemento_cero='';
+				elemento_fijo=true;
+			}
+			$carga_campos_select($select_no_periodo, entry['Periodos'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 			
 			if (entry['Periodos'].length <= 0){
 				jAlert('No hay periodos configurados para la Periodicidad seleccionada.', 'Atencion!', function(r) { 
@@ -2071,7 +2312,7 @@ $(function() {
 								if (r){
 									id_periodicidad_pago=0;
 									$get_empleados(valor, $grid_empleados, $select_comp_periodicidad, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones'], entry['TiposHrsExtra'], entry['TiposIncapacidad']);
-									$get_periodos_por_tipo_periodicidad(valor, id_periodicidad_pago, $select_no_periodo);
+									$get_periodos_por_tipo_periodicidad(valor, id_periodicidad_pago, $select_no_periodo, 0);
 									$periodicidad_selec.val(valor);
 									$no_periodo_selec.val(id_periodicidad_pago);
 								}else{
@@ -2081,20 +2322,20 @@ $(function() {
 									campo_indice = 'id';
 									campo_valor = 'titulo';
 									$carga_campos_select($select_comp_periodicidad, entry['Periodicidad'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
-									$get_periodos_por_tipo_periodicidad($periodicidad_selec.val(), $no_periodo_selec.val(), $select_no_periodo);
+									$get_periodos_por_tipo_periodicidad($periodicidad_selec.val(), $no_periodo_selec.val(), $select_no_periodo, 0);
 								}
 							});
 						}else{
 							id_periodicidad_pago=0;
 							$get_empleados(valor, $grid_empleados, $select_comp_periodicidad, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones'], entry['TiposHrsExtra'], entry['TiposIncapacidad']);
-							$get_periodos_por_tipo_periodicidad(valor, id_periodicidad_pago, $select_no_periodo);
+							$get_periodos_por_tipo_periodicidad(valor, id_periodicidad_pago, $select_no_periodo, 0);
 							$periodicidad_selec.val(valor);
 							$no_periodo_selec.val(id_periodicidad_pago);
 						}
 					}else{
 						id_periodicidad_pago=0;
 						$get_empleados(valor, $grid_empleados, $select_comp_periodicidad, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones'], entry['TiposHrsExtra'], entry['TiposIncapacidad']);
-						$get_periodos_por_tipo_periodicidad(valor, id_periodicidad_pago, $select_no_periodo);
+						$get_periodos_por_tipo_periodicidad(valor, id_periodicidad_pago, $select_no_periodo,0);
 						$periodicidad_selec.val(valor);
 						$no_periodo_selec.val(id_periodicidad_pago);
 					}
@@ -2106,7 +2347,7 @@ $(function() {
 						campo_indice = 'id';
 						campo_valor = 'titulo';
 						$carga_campos_select($select_comp_periodicidad, entry['Periodicidad'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
-						$get_periodos_por_tipo_periodicidad($periodicidad_selec.val(), $no_periodo_selec.val(), $select_no_periodo);
+						$get_periodos_por_tipo_periodicidad($periodicidad_selec.val(), $no_periodo_selec.val(), $select_no_periodo, 0);
 						$select_comp_periodicidad.focus();
 					});
 				}
@@ -2142,22 +2383,23 @@ $(function() {
 		$genera_nomina.bind('click',function(){
 			$generar.val("true");
 			$id_generar.val(0);
-			alert($generar.val());
+			$nivel_ejecucion.val(1);
+			
+			//Redefinir click del boton actualizar
+			$submit_actualizar.bind('click',function(){
+				$nivel_ejecucion.val(1);
+				if(parseInt($("tr", $grid_empleados).size()) > 0){
+					return true;
+				}else{
+					jAlert('No hay datos para actualizar', 'Atencion!', function(r) { $select_comp_periodicidad.focus(); });
+					return false;
+				}
+			});
+			
 			//Ejecutar submit del Formulario proncipal
 			$submit_actualizar.trigger( "click" );
 		});
 		
-		/*
-		$submit_actualizar.submit(function( event ) {
-			var trCount = $("tr", $grid_empleados).size();
-			if(parseInt(trCount) > 0){
-				return true;
-			}else{
-				jAlert('No hay datos para actualizar', 'Atencion!', function(r) { $select_comp_periodicidad.focus(); });
-				return false;
-			}
-		});
-		*/
 		
 		//cerrar plugin
 		$cerrar_plugin.bind('click',function(){
@@ -2267,7 +2509,7 @@ $(function() {
 			$aplicar_readonly_input($comp_forma_pago);
 			$aplicar_readonly_input($fecha_pago);
 			
-			$add_calendar($fecha_pago, " ", "");
+			
 			
 			//quitar enter a todos los campos input
 			$('#forma-facnomina-window').find('input').keypress(function(e){
@@ -2282,14 +2524,14 @@ $(function() {
 				$arreglo = {'identificador':id_to_show, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() };
 				
 				var respuestaProcesada = function(data){
-					alert('Nivel: '+$nivel_ejecucion.val());
+					//alert('Nivel: '+$nivel_ejecucion.val());
 					if(parseInt($nivel_ejecucion.val())==1){
 						//Solo se debe mostrar el alert cuando se actualiza desde la ventana principal
 						
-						if ( data['success'] == "true" ){
+						if ( data['success'] == 'true' ){
 							$('#forma-facnomina-window').find('div.interrogacion').css({'display':'none'});
 							
-							jAlert(data['msjRespuesta'], 'Atencion!');
+							jAlert(data['msj'], 'Atencion!');
 							
 							var remove = function() {$(this).remove();};
 							$('#forma-facnomina-overlay').fadeOut(remove);
@@ -2314,8 +2556,6 @@ $(function() {
 									.easyTooltip({tooltipId: "easyTooltip2",content: tmp.split(':')[1]});
 									
 									//alert(tmp.split(':')[0]);
-
-									
 								}
 							}
 						}
@@ -2338,29 +2578,42 @@ $(function() {
 					$comp_tc.val(entry['Datos'][0]['tipo_cambio']);
 					$fecha_pago.val(entry['Datos'][0]['fecha_pago']);
 					
+					var texto_elemento_cero = '';
+					var elemento_fijo=false;
+					if(parseInt(entry['Datos'][0]['status'])>0){
+						elemento_fijo=true;
+					}else{
+						elemento_fijo=false;
+						texto_elemento_cero = '[--Seleccionar--]';
+					}
 					var elemento_seleccionado=entry['Datos'][0]['metodo_pago_id'];
-					var texto_elemento_cero = '[--Seleccionar--]';
 					var campo_indice = 'id';
 					var campo_valor = 'titulo';
-					$carga_campos_select($select_comp_metodo_pago, entry['MetodosPago'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, false);
+					$carga_campos_select($select_comp_metodo_pago, entry['MetodosPago'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 					
 					
+					elemento_fijo=true;
 					elemento_seleccionado=entry['Datos'][0]['mon_id'];
 					texto_elemento_cero = '';
 					campo_indice = 'id';
 					campo_valor = 'descripcion';
-					$carga_campos_select($select_comp_moneda, entry['Monedas'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+					$carga_campos_select($select_comp_moneda, entry['Monedas'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 					
+					if(parseInt(entry['Datos'][0]['status'])>0){
+						texto_elemento_cero = '';
+					}else{
+						texto_elemento_cero = '[--Seleccionar--]';
+					}
+					elemento_fijo=true;
 					elemento_seleccionado=entry['Datos'][0]['periodicidad_pago_id'];
-					texto_elemento_cero = '[-Seleccionar-]';
 					campo_indice = 'id';
 					campo_valor = 'titulo';
-					$carga_campos_select($select_comp_periodicidad, entry['Periodicidad'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, true);
+					$carga_campos_select($select_comp_periodicidad, entry['Periodicidad'], elemento_seleccionado, texto_elemento_cero, campo_indice, campo_valor, elemento_fijo);
 					
 					
-					$get_periodos_por_tipo_periodicidad(entry['Datos'][0]['periodicidad_pago_id'], entry['Datos'][0]['no_periodo_id'], $select_no_periodo);
+					$get_periodos_por_tipo_periodicidad(entry['Datos'][0]['periodicidad_pago_id'], entry['Datos'][0]['no_periodo_id'], $select_no_periodo, entry['Datos'][0]['status']);
 					$no_periodo_selec.val(entry['Datos'][0]['no_periodo_id']);
-
+					
 					
 					//Cambiar el periodo
 					$select_no_periodo.change(function(){
@@ -2375,9 +2628,21 @@ $(function() {
 						var t_percep = data['total_percep'];
 						var t_deduc = data['total_deduc'];
 						var pago_neto = data['total_pago'];
-						
-						$agrega_empleado_grid($grid_empleados, entry['Datos'][0]['periodicidad_pago_id'], id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones'], entry['TiposHrsExtra'], entry['TiposIncapacidad']);
+						var facturado = data['facturado'];
+						var serie_folio = data['no_nom'];
+						//alert(data['facturado']);
+						$agrega_empleado_grid($grid_empleados, entry['Datos'][0]['periodicidad_pago_id'], id_reg, id_empleado, nombre_empleado, t_percep, t_deduc, pago_neto, entry['Par'], entry['Deptos'], entry['Puestos'], entry['RegimenContrato'], entry['TipoContrato'], entry['TipoJornada'], entry['Periodicidad'], entry['Bancos'], entry['Riesgos'], entry['ImpuestoRet'], entry['Percepciones'], entry['Deducciones'], entry['TiposHrsExtra'], entry['TiposIncapacidad'], facturado, serie_folio);
 					});
+					
+					
+					
+					
+					if(parseInt(entry['Datos'][0]['status'])>0){
+						
+					}else{
+						$add_calendar($fecha_pago, " ", "");
+					}
+					
 				});//termina llamada json
                 
                 
@@ -2400,14 +2665,27 @@ $(function() {
 				});
 				
 				
-		$genera_nomina.bind('click',function(){
-			$generar.val("true");
-			$id_generar.val(0);
-			//alert($generar.val());
-			//Ejecutar submit del Formulario proncipal
-			$submit_actualizar.trigger( "click" );
-		});
-		
+				$genera_nomina.bind('click',function(){
+					$nivel_ejecucion.val(1);
+					$generar.val("true");
+					$id_generar.val(0);
+					
+					//Redefinir click del boton actualizar
+					$submit_actualizar.bind('click',function(){
+						$nivel_ejecucion.val(1);
+						if(parseInt($("tr", $grid_empleados).size()) > 0){
+							return true;
+						}else{
+							jAlert('No hay datos para actualizar', 'Atencion!', function(r) { $select_comp_periodicidad.focus(); });
+							return false;
+						}
+					});
+					
+					//alert($generar.val());
+					//Ejecutar submit del Formulario proncipal
+					$submit_actualizar.trigger( "click" );
+				});
+				
                 
 				//Ligamos el boton cancelar al evento click para eliminar la forma
 				$cancelar_plugin.bind('click',function(){
