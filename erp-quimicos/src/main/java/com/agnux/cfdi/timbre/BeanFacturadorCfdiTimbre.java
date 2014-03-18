@@ -511,8 +511,7 @@ public class BeanFacturadorCfdiTimbre {
                         
                         String cadena_xml = FileHelper.stringFromFile(path_file+"/"+ xml_file_name);
                         String cadena_original_timbre = this.cadenaOriginalTimbre(cadena_xml, this.getId_empresa(), this.getId_sucursal());
-                        
-                        System.out.println("XML_TIMBRADO: "+cadena_xml);
+                        //System.out.println("XML_TIMBRADO: "+cadena_xml);
                         
                         this.setCadenaOriginalTimbre(cadena_original_timbre);
                         

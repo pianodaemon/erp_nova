@@ -4596,7 +4596,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     //Obtener ref_id(nombre del archivo)
     @Override
     public HashMap<String, String> getFacNomina_RefId(Integer id) {
-        String valor_retorno="";
         String sql_to_query = "SELECT ref_id, (CASE WHEN serie IS NULL THEN '' ELSE serie END)||(CASE WHEN folio IS NULL THEN '' ELSE folio END) AS serie_folio FROM fac_nomina_det WHERE id=? AND facturado=true;";
         
         HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(

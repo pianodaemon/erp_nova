@@ -447,7 +447,7 @@ public class FacNominaController {
         String codeRespuesta="0";
         String valorRespuesta="false";
         String msjRespuesta="";
-        
+        String cfdis_generados="";
         String retorno="";
         String tipo_facturacion="";
         String folio="";
@@ -614,11 +614,13 @@ public class FacNominaController {
                                     String cadRes[] = timbrado_correcto.split("___");
                                     
                                     //Aqui se checa si el xml fue validado correctamente
-                                    //Si fue correcto debe traer un valor "true", de otra manera trae un error y ppor lo tanto no se genera el pdf
+                                    //Si fue correcto debe traer un valor "true", de otra manera trae un error y por lo tanto no se genera el pdf
                                     if(cadRes[0].equals("true")){
+                                        //Obtiene serie_folio del CFDI de Nomina que se acaba de guardar
+                                        serieFolio = this.getFacdao().getFacNomina_RefId(id).get("serie_folio");
+                                        cfdis_generados += serieFolio+"<br>";
+                                        
                                         /*
-                                        //Obtiene serie_folio de la factura que se acaba de guardar
-                                        serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura, id_empresa);
 
                                         String cadena_original=this.getBfCfdiTf().getCadenaOriginalTimbre();
                                         //System.out.println("cadena_original:"+cadena_original);
@@ -646,7 +648,7 @@ public class FacNominaController {
                                         datosExtrasPdfCfd.put("uuid", uuid);
                                         datosExtrasPdfCfd.put("fechaTimbre", fechaTimbre);
                                         datosExtrasPdfCfd.put("noCertificadoSAT", noCertSAT);
-
+                                        
                                         //Pdf factura
                                         if (parametros.get("formato_factura").equals("2")){
                                             pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, leyendas, datosExtrasPdfCfd, id_empresa, id_sucursal);
@@ -664,31 +666,22 @@ public class FacNominaController {
                                     }else{
                                         valorRespuesta="false";
                                         codeRespuesta="7001";
-                                        msjRespuesta=cadRes[1];
+                                        msjRespuesta+=cadRes[1]+"<br>";
                                     }
                                 }
+                                
                             }else{
                                 codeRespuesta="7001";
                                 valorRespuesta="false";
                                 msjRespuesta = "No hay registros de empleados configurados para generar N&oacute;mina.";
                             }
-                            
-                            
-                            
                         }else{
                             valorRespuesta="false";
                             codeRespuesta="7001";
-                            msjRespuesta="No se puede Timbrar la Factura con el PAC actual.\nVerifique la configuraci&oacute;n del tipo de Facturaci&oacute;n y del PAC.";
+                            msjRespuesta="No se puede Timbrar la Nomina con el PAC actual.\nVerifique la configuraci&oacute;n del tipo de Facturaci&oacute;n y del PAC.";
                         }
                     }
-                    
-                    
-            }else{
-                if (accion.equals("new") ){
-                    valorRespuesta="true";
-                    msjRespuesta="El registro se gener&oacute; con &eacute;xito, puede proceder a Facturar.";
-                }
-            }//termina if accion diferente de new
+            }
             
             System.out.println("Folio: "+ String.valueOf(jsonretorno.get("folio")));
             
@@ -903,7 +896,7 @@ public class FacNominaController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-
+        
         
         
         if(Integer.parseInt(id_reg)>0){
