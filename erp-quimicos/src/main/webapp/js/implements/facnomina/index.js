@@ -2125,8 +2125,13 @@ $(function() {
 	
 	$get_periodos_por_tipo_periodicidad = function(id_periodicidad_pago, id_periodo_selec, $select_no_periodo, status){
 		$select_no_periodo.children().remove();
+		var identificador=0;
+		if(parseInt(status)>0){
+			identificador = $('#forma-facnomina-window').find('input[name=identificador]').val();
+		}
+		
 		var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getPeriodosPorTipoPeridicidad.json';
-		$arreglo = {'id':id_periodicidad_pago, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
+		$arreglo = {'id':id_periodicidad_pago, 'identificador':identificador, 'iu':$('#lienzo_recalculable').find('input[name=iu]').val()};
 		$.post(input_json,$arreglo,function(entry){
 			var elemento_fijo=false;
 			var elemento_seleccionado = id_periodo_selec;
