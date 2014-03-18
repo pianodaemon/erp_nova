@@ -589,8 +589,37 @@ public class GralSpringDao implements GralInterfaceDao{
         this.getJdbcTemplate().execute(sql_to_query_update);
     }
 
+    
+    
+    
+    
+    
+    @Override
+    public String getSerieFacNomina(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf_folios.serie FROM fac_cfds_conf JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id WHERE lower(trim(fac_cfds_conf_folios.proposito))='nom' AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map_serie_nota_cargo = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String serie_nota_cargo_emisora = map_serie_nota_cargo.get("serie").toString();
+        return serie_nota_cargo_emisora;
+    }
 
 
+
+    @Override
+    public String getFolioFacNomina(Integer id_empresa, Integer id_sucursal) {
+        String sql_to_query = "SELECT fac_cfds_conf_folios.folio_actual FROM fac_cfds_conf JOIN fac_cfds_conf_folios ON fac_cfds_conf_folios.fac_cfds_conf_id=fac_cfds_conf.id WHERE lower(trim(fac_cfds_conf_folios.proposito))='nom' AND fac_cfds_conf.empresa_id="+id_empresa+" AND fac_cfds_conf.gral_suc_id="+id_sucursal+";";
+        Map<String, Object> map_folio_nota_cargo = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String folio_nota_cargo_emisora = map_folio_nota_cargo.get("folio_actual").toString();
+        return folio_nota_cargo_emisora;
+    }
+    
+
+    @Override
+    public String getNoIdEmpresa(Integer id_empresa) {
+        String sql_to_query = "SELECT no_id FROM gral_emp WHERE gral_emp.id ="+id_empresa+";";
+        Map<String, Object> map_calle = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String no_id = map_calle.get("no_id").toString();
+        return no_id;
+    }
 
 
     @Override

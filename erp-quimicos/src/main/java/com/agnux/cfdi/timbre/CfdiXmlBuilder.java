@@ -211,248 +211,247 @@ public class CfdiXmlBuilder {
             this.setDoc(tmp);
 	}
         
-        public void configurarImpuestos(ArrayList<LinkedHashMap<String,String>> lista_de_retenidos,ArrayList<LinkedHashMap<String,String>> lista_de_traslados, String valor_nomina){
-		Document tmp = this.getDoc();
-		Element root = tmp.createElement("cfdi:Impuestos");
-		root.setAttribute("totalImpuestosRetenidos", "@SUMIMPUESTOS_RETENIDOS");
-                if(valor_nomina.equals("false")){
-                    //Solo se incluye cuando no es nomina
-                    root.setAttribute("totalImpuestosTrasladados", "@SUMIMPUESTOS_TRASLADADOS" );
-                }
-                
-                
-		Element child_1 = tmp.createElement("cfdi:Retenciones");
-                if (lista_de_retenidos.size() > 0){
-                    for( LinkedHashMap<String,String> i : lista_de_retenidos ){
-                        Element child_1_1 = tmp.createElement("cfdi:Retencion");
-                        
+        public void configurarImpuestos(ArrayList<LinkedHashMap<String,String>> lista_de_retenidos,ArrayList<LinkedHashMap<String,String>> lista_de_traslados){
+            Document tmp = this.getDoc();
+            Element root = tmp.createElement("cfdi:Impuestos");
+            root.setAttribute("totalImpuestosRetenidos", "@SUMIMPUESTOS_RETENIDOS");
+
+            if (lista_de_traslados.size() > 0){
+                //Se incluye solamente cuando hay elementos en la lista de impuestos trasladados
+                root.setAttribute("totalImpuestosTrasladados", "@SUMIMPUESTOS_TRASLADADOS" );
+            }
+
+
+            Element child_1 = tmp.createElement("cfdi:Retenciones");
+            if (lista_de_retenidos.size() > 0){
+                for( LinkedHashMap<String,String> i : lista_de_retenidos ){
+                    Element child_1_1 = tmp.createElement("cfdi:Retencion");
+
+                    @SuppressWarnings("rawtypes")
+                    Iterator it = i.entrySet().iterator();
+                    while (it.hasNext()) {
                         @SuppressWarnings("rawtypes")
-			Iterator it = i.entrySet().iterator();
-			while (it.hasNext()) {
-                            @SuppressWarnings("rawtypes")
-                            Map.Entry elemento_hash = (Map.Entry)it.next();
-                            String llave = (String)elemento_hash.getKey();
-                            String valor = (String)elemento_hash.getValue();
-                            if (llave.equals("importe")){ child_1_1.setAttribute(llave , valor);  }
-                            if (llave.equals("impuesto")){ child_1_1.setAttribute(llave , valor); }
-                        }
-                        
-                        child_1.appendChild(child_1_1);
+                        Map.Entry elemento_hash = (Map.Entry)it.next();
+                        String llave = (String)elemento_hash.getKey();
+                        String valor = (String)elemento_hash.getValue();
+                        if (llave.equals("importe")){ child_1_1.setAttribute(llave , valor);  }
+                        if (llave.equals("impuesto")){ child_1_1.setAttribute(llave , valor); }
                     }
+                    child_1.appendChild(child_1_1);
                 }
-                root.appendChild(child_1);
-                
-                
-		Element child_2 = tmp.createElement("cfdi:Traslados");
-                if (lista_de_traslados.size() > 0){
-                    for( LinkedHashMap<String,String> i : lista_de_traslados ){
-                        Element child_2_1 = tmp.createElement("cfdi:Traslado");
-                        
-                        @SuppressWarnings("rawtypes")
-                        Iterator it = i.entrySet().iterator();
-			while (it.hasNext()) {
-                            Map.Entry elemento_hash = (Map.Entry)it.next();
-                            String llave = (String)elemento_hash.getKey();
-                            String valor = (String)elemento_hash.getValue();
-                            if (llave.equals("importe")){ child_2_1.setAttribute(llave , valor);  }
-                            if (llave.equals("impuesto")){ child_2_1.setAttribute(llave , valor); }
-                            if (llave.equals("tasa")){ child_2_1.setAttribute(llave , valor); }
-                        }
-                        
-                        child_2.appendChild(child_2_1);
+            }
+            root.appendChild(child_1);
+            
+            if (lista_de_traslados.size() > 0){
+                Element child_2 = tmp.createElement("cfdi:Traslados");
+                for( LinkedHashMap<String,String> i : lista_de_traslados ){
+                    Element child_2_1 = tmp.createElement("cfdi:Traslado");
+
+                    @SuppressWarnings("rawtypes")
+                    Iterator it = i.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry elemento_hash = (Map.Entry)it.next();
+                        String llave = (String)elemento_hash.getKey();
+                        String valor = (String)elemento_hash.getValue();
+                        if (llave.equals("importe")){ child_2_1.setAttribute(llave , valor);  }
+                        if (llave.equals("impuesto")){ child_2_1.setAttribute(llave , valor); }
+                        if (llave.equals("tasa")){ child_2_1.setAttribute(llave , valor); }
                     }
+                    child_2.appendChild(child_2_1);
                 }
-		root.appendChild(child_2);
-                
-		tmp.getDocumentElement().appendChild(root);
-		this.setDoc(tmp);
+                root.appendChild(child_2);
+            }
+            
+            tmp.getDocumentElement().appendChild(root);
+            this.setDoc(tmp);
 	}
         
         
         
         
         public void configurarComplementos(LinkedHashMap<String,Object> dataNomina){
-		Document tmp = this.getDoc();
-		Element root = tmp.createElement("<cfdi:Complemento>");
+            Document tmp = this.getDoc();
+            Element root = tmp.createElement("cfdi:Complemento");
+            
+            //Inicia complemento Nomina
+            if (dataNomina.get("valor").equals("true")){
+                Element child_1 = tmp.createElement("nomina:Nomina");
+                child_1.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
+                child_1.setAttribute("xmlns:nomina", "http://www.sat.gob.mx/nomina");
+                child_1.setAttribute("xsi:schemaLocation","http://www.sat.gob.mx/nomina http://www.sat.gob.mx/sitio_internet/cfd/nomina/nomina11.xsd");
+                child_1.setAttribute("Version", "1.1" );
                 
-                //Inicia complemento Nomina
-                if (dataNomina.get("valor").equals("true")){
-                    Element child_1 = tmp.createElement("nomina:Nomina");
-                    child_1.setAttribute("xmlns:nomina", "http://www.sat.gob.mx/nomina" );
-                    child_1.setAttribute("Version", "1.1" );
-                    
-                    String registro_patronal = String.valueOf(dataNomina.get("registro_patronal"));
-                    if(!registro_patronal.equals("") && registro_patronal!=null){ child_1.setAttribute("RegistroPatronal", registro_patronal ); }
-                    child_1.setAttribute("NumEmpleado", String.valueOf(dataNomina.get("numero_empleado")));
-                    child_1.setAttribute("CURP", String.valueOf(dataNomina.get("curp")) );
-                    child_1.setAttribute("TipoRegimen", String.valueOf(dataNomina.get("tipo_regimen")) );
-                    
-                    String nss = String.valueOf(dataNomina.get("no_seguridad_social"));
-                    if(!nss.equals("") && !nss.equals("null") && nss!=null){ child_1.setAttribute("NumSeguridadSocial", nss ); }
-                    
-                    child_1.setAttribute("FechaPago", String.valueOf(dataNomina.get("fecha_pago")) );
-                    child_1.setAttribute("FechaInicialPago", String.valueOf(dataNomina.get("fecha_inicial_pago")) );
-                    child_1.setAttribute("FechaFinalPago", String.valueOf(dataNomina.get("fecha_final_pago")) );
-                    child_1.setAttribute("NumDiasPagados", String.valueOf(dataNomina.get("no_dias_pagados")) );
-                    
-                    String departamento = String.valueOf(dataNomina.get("departamento"));
-                    if(!departamento.equals("") && !departamento.equals("null") && departamento!=null){ child_1.setAttribute("Departamento", departamento ); }
-                    
-                    String clabe = String.valueOf(dataNomina.get("clabe"));
-                    if(!clabe.equals("") && !clabe.equals("null") && clabe!=null){ child_1.setAttribute("CLABE", clabe ); }
-                    
-                    String banco = String.valueOf(dataNomina.get("banco"));
-                    if(!banco.equals("") && !banco.equals("null") && banco!=null){ child_1.setAttribute("Banco", banco ); }
-                    
-                    String fecha_contrato = String.valueOf(dataNomina.get("fecha_contrato"));
-                    if(!fecha_contrato.equals("") && !fecha_contrato.equals("null") && fecha_contrato!=null){ child_1.setAttribute("FechaInicioRelLaboral", fecha_contrato ); }
-                    
-                    String antiguedad = String.valueOf(dataNomina.get("antiguedad"));
-                    if(!antiguedad.equals("") && !antiguedad.equals("null") && antiguedad!=null){ child_1.setAttribute("Antiguedad", antiguedad ); }
-                    
-                    String puesto = String.valueOf(dataNomina.get("puesto"));
-                    if(!puesto.equals("") && !puesto.equals("null") && puesto!=null){ child_1.setAttribute("Puesto", puesto ); }
-                    
-                    String tipo_contrato = String.valueOf(dataNomina.get("tipo_contrato"));
-                    if(!tipo_contrato.equals("") && !tipo_contrato.equals("null") && tipo_contrato!=null){ child_1.setAttribute("TipoContrato", tipo_contrato ); }
-                    
-                    String tipo_jornada = String.valueOf(dataNomina.get("tipo_jornada"));
-                    if(!tipo_jornada.equals("") && !tipo_jornada.equals("null") && tipo_jornada!=null){ child_1.setAttribute("TipoJornada", tipo_jornada ); }
-                    
-                    child_1.setAttribute("PeriodicidadPago", String.valueOf(dataNomina.get("PeriodicidadPago")) );
-                    
-                    String salario_base = String.valueOf(dataNomina.get("salario_base"));
-                    if(!salario_base.equals("") && !salario_base.equals("null") && salario_base!=null){ child_1.setAttribute("SalarioBaseCotApor", salario_base ); }
-                    
-                    String riesgo_puesto = String.valueOf(dataNomina.get("riesgo_puesto"));
-                    if(!riesgo_puesto.equals("") && !riesgo_puesto.equals("null") && riesgo_puesto!=null){ child_1.setAttribute("RiesgoPuesto", riesgo_puesto ); }
-                    
-                    String salario_integrado = String.valueOf(dataNomina.get("salario_integrado"));
-                    if(!salario_integrado.equals("") && !salario_integrado.equals("null") && salario_integrado!=null){ child_1.setAttribute("SalarioDiarioIntegrado", salario_integrado ); }
-                    
-                    
-                    //PERCEPCIONES
-                    ArrayList<LinkedHashMap<String,String>> lista_percepciones = new ArrayList<LinkedHashMap<String,String>>();
-                    lista_percepciones = (ArrayList<LinkedHashMap<String,String>>) dataNomina.get("percepciones");
-                    
-                    if(lista_percepciones.size()>0){
-                        Element child_1_1 = tmp.createElement("nomina:Percepciones");
-                        child_1_1.setAttribute("TotalGravado", String.valueOf(dataNomina.get("percep_total_gravado")) );
-                        child_1_1.setAttribute("TotalExento", String.valueOf(dataNomina.get("percep_total_excento")) );
+                String registro_patronal = String.valueOf(dataNomina.get("registro_patronal"));
+                if(!registro_patronal.equals("") && registro_patronal!=null){ child_1.setAttribute("RegistroPatronal", registro_patronal ); }
+                child_1.setAttribute("NumEmpleado", String.valueOf(dataNomina.get("numero_empleado")));
+                child_1.setAttribute("CURP", String.valueOf(dataNomina.get("curp")) );
+                child_1.setAttribute("TipoRegimen", String.valueOf(dataNomina.get("tipo_regimen")) );
 
-                        for( LinkedHashMap<String,String> i : lista_percepciones ){
-                            Element child_1_1_1 = tmp.createElement("nomina:Percepcion");
-                            @SuppressWarnings("rawtypes")
-                            Iterator it = i.entrySet().iterator();
-                            while (it.hasNext()) {
-                                @SuppressWarnings("rawtypes")
-                                Map.Entry elemento_hash = (Map.Entry)it.next();
-                                String llave = (String)elemento_hash.getKey();
-                                String valor = (String)elemento_hash.getValue();
-                                if (llave.equals("TipoPercepcion")){ child_1_1_1.setAttribute(llave, valor);  }
-                                if (llave.equals("Clave")){ child_1_1_1.setAttribute(llave, valor); }
-                                if (llave.equals("Concepto")){ child_1_1_1.setAttribute(llave, valor); }
-                                if (llave.equals("ImporteGravado")){ child_1_1_1.setAttribute(llave, valor); }
-                                if (llave.equals("ImporteExento")){ child_1_1_1.setAttribute(llave, valor); }
-                            }
-                            child_1_1.appendChild(child_1_1_1);
-                        }
-                        child_1.appendChild(child_1_1);
-                    }
-                    
-                    
-                    
-                    //DEDUCCIONES
-                    ArrayList<LinkedHashMap<String,String>> lista_deducciones = new ArrayList<LinkedHashMap<String,String>>();
-                    lista_deducciones = (ArrayList<LinkedHashMap<String,String>>) dataNomina.get("deducciones");
-                    
-                    if(lista_deducciones.size()>0){
-                        Element child_1_2 = tmp.createElement("nomina:Deducciones");
-                        child_1_2.setAttribute("TotalGravado", String.valueOf(dataNomina.get("deduc_total_gravado")) );
-                        child_1_2.setAttribute("TotalExento", String.valueOf(dataNomina.get("deduc_total_excento")) );
+                String nss = String.valueOf(dataNomina.get("no_seguridad_social"));
+                if(!nss.equals("") && !nss.equals("null") && nss!=null){ child_1.setAttribute("NumSeguridadSocial", nss ); }
 
-                        for( LinkedHashMap<String,String> i : lista_percepciones ){
-                            Element child_1_2_1 = tmp.createElement("nomina:Percepcion");
+                child_1.setAttribute("FechaPago", String.valueOf(dataNomina.get("fecha_pago")) );
+                child_1.setAttribute("FechaInicialPago", String.valueOf(dataNomina.get("fecha_inicial_pago")) );
+                child_1.setAttribute("FechaFinalPago", String.valueOf(dataNomina.get("fecha_final_pago")) );
+                child_1.setAttribute("NumDiasPagados", String.valueOf(dataNomina.get("no_dias_pagados")) );
+
+                String departamento = String.valueOf(dataNomina.get("departamento"));
+                if(!departamento.equals("") && !departamento.equals("null") && departamento!=null){ child_1.setAttribute("Departamento", departamento ); }
+
+                String clabe = String.valueOf(dataNomina.get("clabe"));
+                if(!clabe.equals("") && !clabe.equals("null") && clabe!=null){ child_1.setAttribute("CLABE", clabe ); }
+
+                String banco = String.valueOf(dataNomina.get("banco"));
+                if(!banco.equals("") && !banco.equals("null") && banco!=null){ child_1.setAttribute("Banco", banco ); }
+
+                String fecha_contrato = String.valueOf(dataNomina.get("fecha_contrato"));
+                if(!fecha_contrato.equals("") && !fecha_contrato.equals("null") && fecha_contrato!=null){ child_1.setAttribute("FechaInicioRelLaboral", fecha_contrato ); }
+
+                String antiguedad = String.valueOf(dataNomina.get("antiguedad"));
+                if(!antiguedad.equals("") && !antiguedad.equals("null") && antiguedad!=null){ child_1.setAttribute("Antiguedad", antiguedad ); }
+
+                String puesto = String.valueOf(dataNomina.get("puesto"));
+                if(!puesto.equals("") && !puesto.equals("null") && puesto!=null){ child_1.setAttribute("Puesto", puesto ); }
+
+                String tipo_contrato = String.valueOf(dataNomina.get("tipo_contrato"));
+                if(!tipo_contrato.equals("") && !tipo_contrato.equals("null") && tipo_contrato!=null){ child_1.setAttribute("TipoContrato", tipo_contrato ); }
+
+                String tipo_jornada = String.valueOf(dataNomina.get("tipo_jornada"));
+                if(!tipo_jornada.equals("") && !tipo_jornada.equals("null") && tipo_jornada!=null){ child_1.setAttribute("TipoJornada", tipo_jornada ); }
+
+                child_1.setAttribute("PeriodicidadPago", String.valueOf(dataNomina.get("PeriodicidadPago")) );
+
+                String salario_base = String.valueOf(dataNomina.get("salario_base"));
+                if(!salario_base.equals("") && !salario_base.equals("null") && salario_base!=null){ child_1.setAttribute("SalarioBaseCotApor", salario_base ); }
+
+                String riesgo_puesto = String.valueOf(dataNomina.get("riesgo_puesto"));
+                if(!riesgo_puesto.equals("") && !riesgo_puesto.equals("null") && riesgo_puesto!=null){ child_1.setAttribute("RiesgoPuesto", riesgo_puesto ); }
+
+                String salario_integrado = String.valueOf(dataNomina.get("salario_integrado"));
+                if(!salario_integrado.equals("") && !salario_integrado.equals("null") && salario_integrado!=null){ child_1.setAttribute("SalarioDiarioIntegrado", salario_integrado ); }
+
+
+                //PERCEPCIONES
+                ArrayList<LinkedHashMap<String,String>> lista_percepciones = new ArrayList<LinkedHashMap<String,String>>();
+                lista_percepciones = (ArrayList<LinkedHashMap<String,String>>) dataNomina.get("percepciones");
+
+                if(lista_percepciones.size()>0){
+                    Element child_1_1 = tmp.createElement("nomina:Percepciones");
+                    child_1_1.setAttribute("TotalGravado", String.valueOf(dataNomina.get("percep_total_gravado")) );
+                    child_1_1.setAttribute("TotalExento", String.valueOf(dataNomina.get("percep_total_excento")) );
+
+                    for( LinkedHashMap<String,String> i : lista_percepciones ){
+                        Element child_1_1_1 = tmp.createElement("nomina:Percepcion");
+                        @SuppressWarnings("rawtypes")
+                        Iterator it = i.entrySet().iterator();
+                        while (it.hasNext()) {
                             @SuppressWarnings("rawtypes")
-                            Iterator it = i.entrySet().iterator();
-                            while (it.hasNext()) {
-                                @SuppressWarnings("rawtypes")
-                                Map.Entry elemento_hash = (Map.Entry)it.next();
-                                String llave = (String)elemento_hash.getKey();
-                                String valor = (String)elemento_hash.getValue();
-                                if (llave.equals("TipoDeduccion")){ child_1_2_1.setAttribute(llave, valor);  }
-                                if (llave.equals("Clave")){ child_1_2_1.setAttribute(llave, valor); }
-                                if (llave.equals("Concepto")){ child_1_2_1.setAttribute(llave, valor); }
-                                if (llave.equals("ImporteGravado")){ child_1_2_1.setAttribute(llave, valor); }
-                                if (llave.equals("ImporteExento")){ child_1_2_1.setAttribute(llave, valor); }
-                            }
-                            child_1_2.appendChild(child_1_2_1);
+                            Map.Entry elemento_hash = (Map.Entry)it.next();
+                            String llave = (String)elemento_hash.getKey();
+                            String valor = (String)elemento_hash.getValue();
+                            if (llave.equals("TipoPercepcion")){ child_1_1_1.setAttribute(llave, valor);  }
+                            if (llave.equals("Clave")){ child_1_1_1.setAttribute(llave, valor); }
+                            if (llave.equals("Concepto")){ child_1_1_1.setAttribute(llave, valor); }
+                            if (llave.equals("ImporteGravado")){ child_1_1_1.setAttribute(llave, valor); }
+                            if (llave.equals("ImporteExento")){ child_1_1_1.setAttribute(llave, valor); }
                         }
-                        child_1.appendChild(child_1_2);
+                        child_1_1.appendChild(child_1_1_1);
                     }
-                    
-                    
-                    
-                    
-                    //INCAPACIDADES
-                    ArrayList<LinkedHashMap<String,String>> lista_incapacidades = new ArrayList<LinkedHashMap<String,String>>();
-                    lista_incapacidades = (ArrayList<LinkedHashMap<String,String>>) dataNomina.get("incapacidades");
-                    
-                    if(lista_deducciones.size()>0){
-                        Element child_1_3 = tmp.createElement("nomina:Incapacidades");
-                        for( LinkedHashMap<String,String> i : lista_percepciones ){
-                            Element child_1_3_1 = tmp.createElement("nomina:Incapacidad");
-                            @SuppressWarnings("rawtypes")
-                            Iterator it = i.entrySet().iterator();
-                            while (it.hasNext()) {
-                                @SuppressWarnings("rawtypes")
-                                Map.Entry elemento_hash = (Map.Entry)it.next();
-                                String llave = (String)elemento_hash.getKey();
-                                String valor = (String)elemento_hash.getValue();
-                                if (llave.equals("DiasIncapacidad")){ child_1_3_1.setAttribute(llave, valor);  }
-                                if (llave.equals("TipoIncapacidad")){ child_1_3_1.setAttribute(llave, valor); }
-                                if (llave.equals("Descuento")){ child_1_3_1.setAttribute(llave, valor); }
-                            }
-                            child_1_3.appendChild(child_1_3_1);
-                        }
-                        child_1.appendChild(child_1_3);
-                    }
-                    
-                    
-                    
-                    
-                    //HORAS EXTRAS
-                    ArrayList<LinkedHashMap<String,String>> lista_hrs_extras = new ArrayList<LinkedHashMap<String,String>>();
-                    lista_hrs_extras = (ArrayList<LinkedHashMap<String,String>>) dataNomina.get("HorasExtras");
-                    
-                    if(lista_hrs_extras.size()>0){
-                        Element child_1_4 = tmp.createElement("nomina:HorasExtras");
-                        for( LinkedHashMap<String,String> i : lista_hrs_extras ){
-                            Element child_1_4_1 = tmp.createElement("nomina:HorasExtra");
-                            @SuppressWarnings("rawtypes")
-                            Iterator it = i.entrySet().iterator();
-                            while (it.hasNext()) {
-                                @SuppressWarnings("rawtypes")
-                                Map.Entry elemento_hash = (Map.Entry)it.next();
-                                String llave = (String)elemento_hash.getKey();
-                                String valor = (String)elemento_hash.getValue();
-                                if (llave.equals("Dias")){ child_1_4_1.setAttribute(llave, valor);  }
-                                if (llave.equals("TipoHoras")){ child_1_4_1.setAttribute(llave, valor); }
-                                if (llave.equals("HorasExtra")){ child_1_4_1.setAttribute(llave, valor); }
-                                if (llave.equals("ImportePagado")){ child_1_4_1.setAttribute(llave, valor); }
-                            }
-                            child_1_4.appendChild(child_1_4_1);
-                        }
-                        child_1.appendChild(child_1_4);
-                    }
-                    
-                    
-                    root.appendChild(child_1);
+                    child_1.appendChild(child_1_1);
                 }
-                //Termina complemando Nomina
+
+
+
+                //DEDUCCIONES
+                ArrayList<LinkedHashMap<String,String>> lista_deducciones = new ArrayList<LinkedHashMap<String,String>>();
+                lista_deducciones = (ArrayList<LinkedHashMap<String,String>>) dataNomina.get("deducciones");
+
+                if(lista_deducciones.size()>0){
+                    Element child_1_2 = tmp.createElement("nomina:Deducciones");
+                    child_1_2.setAttribute("TotalGravado", String.valueOf(dataNomina.get("deduc_total_gravado")) );
+                    child_1_2.setAttribute("TotalExento", String.valueOf(dataNomina.get("deduc_total_excento")) );
+
+                    for( LinkedHashMap<String,String> i : lista_deducciones ){
+                        Element child_1_2_1 = tmp.createElement("nomina:Deduccion");
+                        @SuppressWarnings("rawtypes")
+                        Iterator it = i.entrySet().iterator();
+                        while (it.hasNext()) {
+                            @SuppressWarnings("rawtypes")
+                            Map.Entry elemento_hash = (Map.Entry)it.next();
+                            String llave = (String)elemento_hash.getKey();
+                            String valor = (String)elemento_hash.getValue();
+                            if (llave.equals("TipoDeduccion")){ child_1_2_1.setAttribute(llave, valor);  }
+                            if (llave.equals("Clave")){ child_1_2_1.setAttribute(llave, valor); }
+                            if (llave.equals("Concepto")){ child_1_2_1.setAttribute(llave, valor); }
+                            if (llave.equals("ImporteGravado")){ child_1_2_1.setAttribute(llave, valor); }
+                            if (llave.equals("ImporteExento")){ child_1_2_1.setAttribute(llave, valor); }
+                        }
+                        child_1_2.appendChild(child_1_2_1);
+                    }
+                    child_1.appendChild(child_1_2);
+                }
+
+
+
+
+                //INCAPACIDADES
+                ArrayList<LinkedHashMap<String,String>> lista_incapacidades = new ArrayList<LinkedHashMap<String,String>>();
+                lista_incapacidades = (ArrayList<LinkedHashMap<String,String>>) dataNomina.get("incapacidades");
+
+                if(lista_incapacidades.size()>0){
+                    Element child_1_3 = tmp.createElement("nomina:Incapacidades");
+                    for( LinkedHashMap<String,String> i : lista_incapacidades ){
+                        Element child_1_3_1 = tmp.createElement("nomina:Incapacidad");
+                        @SuppressWarnings("rawtypes")
+                        Iterator it = i.entrySet().iterator();
+                        while (it.hasNext()) {
+                            @SuppressWarnings("rawtypes")
+                            Map.Entry elemento_hash = (Map.Entry)it.next();
+                            String llave = (String)elemento_hash.getKey();
+                            String valor = (String)elemento_hash.getValue();
+                            if (llave.equals("DiasIncapacidad")){ child_1_3_1.setAttribute(llave, valor);  }
+                            if (llave.equals("TipoIncapacidad")){ child_1_3_1.setAttribute(llave, valor); }
+                            if (llave.equals("Descuento")){ child_1_3_1.setAttribute(llave, valor); }
+                        }
+                        child_1_3.appendChild(child_1_3_1);
+                    }
+                    child_1.appendChild(child_1_3);
+                }
+
+
+
+
+                //HORAS EXTRAS
+                ArrayList<LinkedHashMap<String,String>> lista_hrs_extras = new ArrayList<LinkedHashMap<String,String>>();
+                lista_hrs_extras = (ArrayList<LinkedHashMap<String,String>>) dataNomina.get("HorasExtras");
+
+                if(lista_hrs_extras.size()>0){
+                    Element child_1_4 = tmp.createElement("nomina:HorasExtras");
+                    for( LinkedHashMap<String,String> i : lista_hrs_extras ){
+                        Element child_1_4_1 = tmp.createElement("nomina:HorasExtra");
+                        @SuppressWarnings("rawtypes")
+                        Iterator it = i.entrySet().iterator();
+                        while (it.hasNext()) {
+                            @SuppressWarnings("rawtypes")
+                            Map.Entry elemento_hash = (Map.Entry)it.next();
+                            String llave = (String)elemento_hash.getKey();
+                            String valor = (String)elemento_hash.getValue();
+                            if (llave.equals("Dias")){ child_1_4_1.setAttribute(llave, valor);  }
+                            if (llave.equals("TipoHoras")){ child_1_4_1.setAttribute(llave, valor); }
+                            if (llave.equals("HorasExtra")){ child_1_4_1.setAttribute(llave, valor); }
+                            if (llave.equals("ImportePagado")){ child_1_4_1.setAttribute(llave, valor); }
+                        }
+                        child_1_4.appendChild(child_1_4_1);
+                    }
+                    child_1.appendChild(child_1_4);
+                }
                 
-		tmp.getDocumentElement().appendChild(root);
-		this.setDoc(tmp);
+                root.appendChild(child_1);
+            }
+            //Termina complemando Nomina
+            
+            tmp.getDocumentElement().appendChild(root);
+            this.setDoc(tmp);
 	}
 
         

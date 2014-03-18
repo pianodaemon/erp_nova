@@ -60,10 +60,14 @@ public class validarXml {
             System.out.println("DOCUMENTO VÁLIDO");
             
         }catch (SAXException e){
-            // esta excepción indica fallo de validación
-            retorno = "DOCUMENTO INVÁLIDO: "+ e.toString();
-            //System.err.println(retorno);
-            return retorno;
+            
+           if( e.getMessage().contains("'nomina:Nomina'")){
+               //Si el error contiene el elemento 'nomina:Nomina', entonces lo dejamos pasar
+               retorno="true";
+           }else{
+                //Esta excepción indica fallo de validación
+                retorno = "DOCUMENTO INVÁLIDO: "+ e.getMessage();
+           }
             //e.printStackTrace();
         }catch (ParserConfigurationException e){
             // errores en la configuración del parser

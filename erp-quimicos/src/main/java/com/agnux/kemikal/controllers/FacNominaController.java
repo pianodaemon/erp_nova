@@ -276,12 +276,10 @@ public class FacNominaController {
             extra.put("identificador", this.getFacdao().getIdSeqFacNomina());
             
             arrayExtra.add(extra);
-            
-            //Obtiene parametros
-            parametros = this.getFacdao().getFacNomina_Parametros(id_empresa, id_sucursal);
         }
         
-        
+        //Obtiene parametros
+        parametros = this.getFacdao().getFacNomina_Parametros(id_empresa, id_sucursal);
         
         jsonretorno.put("Datos", datos);
         jsonretorno.put("datosGrid", datosGrid);
@@ -383,8 +381,7 @@ public class FacNominaController {
         ) {
         HashMap<String,ArrayList<HashMap<String, Object>>> jsonretorno = new HashMap<String,ArrayList<HashMap<String, Object>>>();
         HashMap<String, String> userDat = new HashMap<String, String>();
-        //ArrayList<HashMap<String, Object>> arrayExtra = new ArrayList<HashMap<String, Object>>();
-        //HashMap<String, Object> extra = new HashMap<String, Object>();
+        ArrayList<HashMap<String, Object>> datos = new ArrayList<HashMap<String, Object>>();
         
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
@@ -395,21 +392,27 @@ public class FacNominaController {
         
         if(id_nom_det!=0){
             //Editar. Obtener datos de tabla de Nomina
-            jsonretorno.put("Data", this.getFacdao().getFacNomina_DataNomina(id_nom_det, id_empleado));
-            jsonretorno.put("HrsExtraEmpleado", this.getFacdao().getFacNomina_HorasExtras(id_nom_det));
-            jsonretorno.put("IncapaEmpleado", this.getFacdao().getFacNomina_Incapacidades(id_nom_det));
-            
-            //Tipo=3, Obtener las Percepciones y Deducciones de la Nomina de un Periodo en especifico segun el id_reg
-            tipo=3;
+            datos = this.getFacdao().getFacNomina_DataNomina(id_nom_det, id_empleado);
+            if(datos.get(0).get("validado").equals("true")){
+                jsonretorno.put("Data", datos);
+                jsonretorno.put("HrsExtraEmpleado", this.getFacdao().getFacNomina_HorasExtras(id_nom_det));
+                jsonretorno.put("IncapaEmpleado", this.getFacdao().getFacNomina_Incapacidades(id_nom_det));
+                //Tipo=3, Obtener las Percepciones y Deducciones de la Nomina de un Periodo en especifico segun el id_reg
+                tipo=3;
+            }else{
+                //Aqui se busca los datos del empleado porque solo existe el registro sin datos
+                jsonretorno.put("Data", this.getFacdao().getFacNomina_DataEmpleado(id_empleado));
+                jsonretorno.put("Periodo", this.getFacdao().getFacNomina_DataPeriodo(id_periodo, id_empresa));
+                //Tipo=2, Obtener las Percepciones y Deducciones configuradas en el catalogo de empleados
+                tipo=2;
+            }
         }else{
             //Nuevo. Obtener datos de tabla de empleados
             jsonretorno.put("Data", this.getFacdao().getFacNomina_DataEmpleado(id_empleado));
             jsonretorno.put("Periodo", this.getFacdao().getFacNomina_DataPeriodo(id_periodo, id_empresa));
-            
             //Tipo=2, Obtener las Percepciones y Deducciones configuradas en el catalogo de empleados
             tipo=2;
         }
-        
         
         jsonretorno.put("PercepEmpleado", this.getFacdao().getFacNomina_Percepciones(tipo, id_nom_det, id_empleado, id_empresa));
         jsonretorno.put("DeducEmpleado", this.getFacdao().getFacNomina_Deducciones(tipo, id_nom_det, id_empleado, id_empresa));
@@ -582,12 +585,12 @@ public class FacNominaController {
                         if(!noPac.equals("0")){
                             //Solo se permite generar Factura para Timbrado con Diverza y ServiSim
                             //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Obteniendo datos para CFDI:::::::::::::::::..");
-                            command_selected = "facturar_cfditf";
+                            command_selected = "facturar_nomina";
                             extra_data_array = "'sin datos'";
                             
                             //Obtener los valores del IEPS e IVAque se estan utilizando
-                            ieps = this.getFacdao().getIeps(id_empresa);
-                            iva = this.getFacdao().getIvas();
+                            //ieps = this.getFacdao().getIeps(id_empresa);
+                            //iva = this.getFacdao().getIvas();
                             
                             
                             //Obtiene los registros de nomina que se deben facturar
@@ -600,15 +603,10 @@ public class FacNominaController {
                                     ArrayList<LinkedHashMap<String,String>> incapacidades = new ArrayList<LinkedHashMap<String,String>>();
                                     ArrayList<LinkedHashMap<String,String>> hrs_extras = new ArrayList<LinkedHashMap<String,String>>();
                                     
-                                    
                                     Integer id = Integer.parseInt(String.valueOf(i.get("id_reg")));
                                     Integer empleado_id = Integer.parseInt(String.valueOf(i.get("empleado_id")));
                                     
-                                    conceptos = this.getFacdao().getFacNomina_ConceptosXml(id, empleado_id);
-                                    impRetenidos = this.getFacdao().getFacNomina_ImpuestosRetenidosXml(id, empleado_id);
-                                    //No existe impuestos trasladados para Nomina
-                                    //impTrasladados
-                                    
+                                    //Obtener datos para el Comprobante, Receptor, Nomina
                                     dataFactura = this.getFacdao().getFacNomina_DataXml(id, empleado_id);
                                     
                                     //Obtener fecha del sistema
@@ -618,27 +616,34 @@ public class FacNominaController {
                                     dataFactura.put("comprobante_attr_fecha",fecha_hora[0]+"T"+fecha_hora[1]);
                                     
                                     //Estos son requeridos para cfditf
-                                    datosExtrasXmlFactura.put("prefactura_id", "");
-                                    datosExtrasXmlFactura.put("tipo_documento", String.valueOf(""));
-                                    datosExtrasXmlFactura.put("moneda_id", "");
+                                    //datosExtrasXmlFactura.put("prefactura_id", "");
+                                    //datosExtrasXmlFactura.put("tipo_documento", "");
+                                    //datosExtrasXmlFactura.put("moneda_id", "");
+                                    //datosExtrasXmlFactura.put("refacturar", "false");
+                                    datosExtrasXmlFactura.put("id", String.valueOf(id));
+                                    datosExtrasXmlFactura.put("empleado_id", String.valueOf(empleado_id));
                                     datosExtrasXmlFactura.put("usuario_id", String.valueOf(id_usuario));
                                     datosExtrasXmlFactura.put("empresa_id", String.valueOf(id_empresa));
                                     datosExtrasXmlFactura.put("sucursal_id", String.valueOf(id_sucursal));
-                                    datosExtrasXmlFactura.put("refacturar", "false");
                                     datosExtrasXmlFactura.put("app_selected", String.valueOf(app_selected));
                                     datosExtrasXmlFactura.put("command_selected", command_selected);
                                     datosExtrasXmlFactura.put("extra_data_array", extra_data_array);
                                     datosExtrasXmlFactura.put("noPac", noPac);
                                     datosExtrasXmlFactura.put("ambienteFac", ambienteFac);
-
+                                    
+                                    conceptos = this.getFacdao().getFacNomina_ConceptosXml(id, empleado_id);
+                                    impRetenidos = this.getFacdao().getFacNomina_ImpuestosRetenidosXml(id, empleado_id);
                                     percepciones = this.getFacdao().getFacNomina_PercepcionesXml(id);
-                                            
+                                    deducciones = this.getFacdao().getFacNomina_DeduccionesXml(id);
+                                    incapacidades = this.getFacdao().getFacNomina_IncapacidadesXml(id);
+                                    hrs_extras = this.getFacdao().getFacNomina_HorasExtrasXml(id);
+                                    
                                     //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia BeanFacturador:::::::::::::::::..");
                                     //Llamada a metodo que inicializa carga de datos para el xml
                                     this.getBfCfdiTf().init(dataFactura, conceptos, impRetenidos, impTrasladados, proposito, datosExtrasXmlFactura, id_empresa, id_sucursal, percepciones, deducciones, incapacidades, hrs_extras);
                                     //Llamada a metodo que costruye, sella y timbra el xml
                                     String timbrado_correcto = this.getBfCfdiTf().start();
-
+                                    
                                     //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina BeanFacturador:::::::::::::::::..");
                                     String cadRes[] = timbrado_correcto.split("___");
                                     
@@ -658,7 +663,7 @@ public class FacNominaController {
                                         //este es el timbre fiscal, se debe extraer del xml que nos devuelve el web service del timbrado
                                         String sello_digital_sat = this.getBfCfdiTf().getSelloDigitalSat();
 
-                                        //Este es el folio fiscal del la factura timbrada, se obtiene   del xml
+                                        //Este es el folio fiscal del la factura timbrada, se obtiene  del xml
                                         String uuid = this.getBfCfdiTf().getUuid();
                                         String fechaTimbre = this.getBfCfdiTf().getFechaTimbrado();
                                         String noCertSAT = this.getBfCfdiTf().getNoCertificadoSAT();
@@ -684,7 +689,7 @@ public class FacNominaController {
                                             pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
                                         }
                                         //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina construccion de PDF:::::::::::::::::..");
-
+                                        
                                         jsonretorno.put("folio",serieFolio);
                                         valorRespuesta="true";
                                         codeRespuesta="7001";
@@ -741,6 +746,108 @@ public class FacNominaController {
         
         return jsonretorno;
     }
+    
+    
+    
+    
+    
+    
+    //obtiene los tipos de cancelacion
+    @RequestMapping(method = RequestMethod.POST, value="/getVerificaArchivo.json")
+    public @ResponseBody HashMap<String,String> getVerificaArchivoGeneradoJson(
+            @RequestParam(value="id_reg", required=true) Integer id,
+            @RequestParam(value="ext", required=true) String extension,
+            @RequestParam(value="iu", required=true) String id_user_cod,
+            Model model
+            ) {
+        
+        log.log(Level.INFO, "Ejecutando getVerificaArchivoGeneradoJson de {0}", FacNominaController.class.getName());
+        HashMap<String, String> jsonretorno = new HashMap<String,String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> data = new HashMap<String, String>();
+        String existe ="false";
+        String dirSalidas = "";
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
+        data = this.getFacdao().getFacNomina_RefId(id);
+        
+        String nombre_archivo = data.get("ref_id");
+        String serie_folio = data.get("serie_folio");
+        
+        if(tipo_facturacion.equals("cfditf")){
+            dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa) + "/nomina";
+        }
+        
+        String fileout = dirSalidas +"/"+ nombre_archivo +"."+extension;
+        
+        System.out.println("Ruta: " + fileout);
+        File file = new File(fileout);
+        if (file.exists()){
+            existe="true";
+        }
+        
+        jsonretorno.put("descargar", existe);
+        
+        return jsonretorno;
+    }
+    
+    
+    
+    //Descarga xml de factura
+    @RequestMapping(value = "/getXml/{id_reg}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getDescargaXmlFacturaJson(
+            @PathVariable("id_reg") Integer id_reg, 
+            @PathVariable("iu") String id_user,
+            HttpServletRequest request, 
+            HttpServletResponse response, 
+            Model model) throws ServletException, IOException, URISyntaxException {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> data = new HashMap<String, String>();
+        String dirSalidas = "";
+        String nombre_archivo = "";
+        
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        
+        String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
+        data = this.getFacdao().getFacNomina_RefId(id_reg);
+        nombre_archivo = data.get("ref_id");
+        String serie_folio = data.get("serie_folio");
+        
+        if(tipo_facturacion.equals("cfditf")){
+            dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa) + "/nomina";
+        }
+        
+        //Ruta completa del archivo a descargar
+        String fileout = dirSalidas + "/" + nombre_archivo +".xml";
+        
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        
+        if (file.exists()){
+            int size = (int) file.length(); // Tamaño del archivo
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            response.setBufferSize(size);
+            response.setContentLength(size);
+            response.setContentType("text/plain");
+            response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+            FileCopyUtils.copy(bis, response.getOutputStream());  	
+            response.flushBuffer();
+            
+        }
+        return null;
+    }
+    
+    
     
     
     

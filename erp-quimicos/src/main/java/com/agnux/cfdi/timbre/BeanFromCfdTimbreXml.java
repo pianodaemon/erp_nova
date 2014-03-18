@@ -465,7 +465,7 @@ public class BeanFromCfdTimbreXml {
                         lista.add(articulo);
                         setListaConceptos(lista);
                     }
-
+                    
                     if("cfdi:InformacionAduanera".equals(qName)){
                         LinkedHashMap<String,String> InformacionAduanera = new LinkedHashMap<String,String>();
                         for(int i=0;i<atts.getLength();i++){

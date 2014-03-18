@@ -81,6 +81,10 @@ public interface GralInterfaceDao {
     public void actualizarFolioNotaCredito(Integer id_empresa, Integer id_sucursal);
     public void actualizarFolioNotaCargo(Integer id_empresa, Integer id_sucursal);
     
+    public String getSerieFacNomina(Integer id_empresa, Integer id_sucursal);
+    public String getFolioFacNomina(Integer id_empresa, Integer id_sucursal);
+    public String getNoIdEmpresa(Integer id_empresa);
+            
     public String getCalleDomicilioFiscalEmpresaEmisora(Integer id_empresa);
     public String getCpDomicilioFiscalEmpresaEmisora(Integer id_empresa);
     public String getColoniaDomicilioFiscalEmpresaEmisora(Integer id_empresa);

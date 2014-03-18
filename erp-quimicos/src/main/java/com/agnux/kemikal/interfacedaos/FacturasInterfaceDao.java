@@ -203,13 +203,17 @@ public interface FacturasInterfaceDao {
     public ArrayList<HashMap<String, Object>> getFacNomina_DataEmpleado(Integer id_empleado);
     public ArrayList<HashMap<String, Object>> getFacNomina_DataPeriodo(Integer id_periodo, Integer idEmpresa);
     
+    public HashMap<String, String> getFacNomina_RefId(Integer id);
+    
     //Obtener registros para generar CFDI de Nomina
     public ArrayList<HashMap<String, Object>> getFacNomina_Registros(Integer id);
+    //::::::METODOS QUE OBTIENEN DATOS PARA EL XML DE LA NOMINA CFDI::::::::::::
     public ArrayList<LinkedHashMap<String, String>> getFacNomina_ConceptosXml(Integer id, Integer id_empleado);
     public ArrayList<LinkedHashMap<String, String>> getFacNomina_ImpuestosRetenidosXml(Integer id, Integer id_empleado);
     public HashMap<String, String> getFacNomina_DataXml(Integer id, Integer id_empleado);
-    public ArrayList<LinkedHashMap<String,String>> getFacNomina_PercepcionesXml(Integer id_reg);
-    
-    
-    
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_PercepcionesXml(Integer id);
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_DeduccionesXml(Integer id);
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_IncapacidadesXml(Integer id);
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_HorasExtrasXml(Integer id);
+    //::::::TERMINA METODOS QUE OBTIENEN DATOS PARA EL XML DE LA NOMINA CFDI::::
 }

@@ -3374,7 +3374,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_nomina.fac_metodos_pago_id AS metodo_pago_id,"
             + "fac_nomina.gral_mon_id AS mon_id,"
             + "fac_nomina.nom_periodicidad_pago_id AS periodicidad_pago_id,"
-            + "fac_nomina.nom_periodos_conf_det_id AS no_periodo_id "
+            + "fac_nomina.nom_periodos_conf_det_id AS no_periodo_id,"
+            + "fac_nomina.status "
         + "FROM fac_nomina "
         + "JOIN gral_emp ON gral_emp.id=fac_nomina.gral_emp_id "
         + "JOIN gral_pais ON gral_pais.id=gral_emp.pais_id "
@@ -3383,7 +3384,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         + "WHERE fac_nomina.id=?;";
         
         System.out.println("Ejecutando query:"+ sql_query);
-        System.out.println("Identificador: "+id);
+        //System.out.println("Identificador: "+id);
         
         ArrayList<HashMap<String, Object>> hm = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_query,
@@ -3405,7 +3406,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("mon_id",rs.getString("mon_id"));
                     row.put("periodicidad_pago_id",String.valueOf(rs.getInt("periodicidad_pago_id")));
                     row.put("no_periodo_id",rs.getString("no_periodo_id"));
-                    
+                    row.put("status",String.valueOf(rs.getInt("status")));
                     return row;
                 }
             }
@@ -3423,14 +3424,18 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "nombre, "
             + "sum_percep,"
             + "sbt_deduc, "
-            + "(sum_percep - sbt_deduc) AS total_pago "
+            + "(sum_percep - sbt_deduc) AS total_pago,"
+            + "facturado,"
+            + "serie_folio "
         + "FROM ("
             + "SELECT "
                 + "fac_nomina_det.id AS id_reg, "
                 + "fac_nomina_det.gral_empleado_id AS empleado_id, "
                 + "(CASE WHEN gral_empleados.clave IS NULL THEN lpad('',4,' ') ELSE lpad(gral_empleados.clave,4,'0') END)||' '||(CASE WHEN gral_empleados.nombre_pila IS NULL THEN '' ELSE gral_empleados.nombre_pila END)||' '||(CASE WHEN gral_empleados.apellido_paterno IS NULL THEN '' ELSE gral_empleados.apellido_paterno END)||' '||(CASE WHEN gral_empleados.apellido_materno IS NULL THEN '' ELSE gral_empleados.apellido_materno END) AS nombre, "
                 + "(CASE WHEN sbt_percep.fac_nomina_det_id IS NULL THEN 0 ELSE sbt_percep.sum_percep END) AS sum_percep,"
-                + "(CASE WHEN sbt_deduc.fac_nomina_det_id IS NULL THEN 0 ELSE sbt_deduc.sum_deduc END) AS sbt_deduc "
+                + "(CASE WHEN sbt_deduc.fac_nomina_det_id IS NULL THEN 0 ELSE sbt_deduc.sum_deduc END) AS sbt_deduc,"
+                + "fac_nomina_det.facturado,"
+                + "(CASE WHEN serie IS NULL THEN '' ELSE serie END)||(CASE WHEN folio IS NULL THEN '' ELSE folio END) AS serie_folio "
             + "FROM fac_nomina_det "
             + "LEFT JOIN (SELECT fac_nomina_det_id, sum(gravado + excento) AS sum_percep FROM fac_nomina_det_percep GROUP BY fac_nomina_det_id) AS sbt_percep ON sbt_percep.fac_nomina_det_id=fac_nomina_det.id "
             + "LEFT JOIN (SELECT fac_nomina_det_id, sum(gravado + excento) AS sum_deduc FROM fac_nomina_det_deduc GROUP BY fac_nomina_det_id) AS sbt_deduc ON sbt_deduc.fac_nomina_det_id=fac_nomina_det.id "
@@ -3450,6 +3455,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                  row.put("total_percep",StringHelper.roundDouble(rs.getDouble("sum_percep"),2));
                  row.put("total_deduc",StringHelper.roundDouble(rs.getDouble("sbt_deduc"),2));
                  row.put("total_pago",StringHelper.roundDouble(rs.getDouble("total_pago"),2));
+                 row.put("facturado",String.valueOf(rs.getBoolean("facturado")).toLowerCase());
+                 row.put("no_nom",rs.getString("serie_folio"));
                  return row;
                 }
             }
@@ -3919,6 +3926,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             sql_to_query=""
             + "SELECT "
                 + "nom_deduc.id, "
+                + "nom_deduc_tipo.id AS nom_deduc_id, "
                 + "(case when nom_deduc_tipo.clave is null then '' else (case when nom_deduc_tipo.clave<>'' then nom_deduc_tipo.clave||' ' else '' end) end)||upper(nom_deduc_tipo.titulo) AS tipo_deduc,"
                 + "(case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||upper(nom_deduc.titulo) AS deduccion,  "
                 + "0::double precision AS gravado,"
@@ -3934,6 +3942,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 sql_to_query=""
                 + "SELECT "
                     + "nom_deduc.id, "
+                    + "nom_deduc_tipo.id AS nom_deduc_id, "
                     + "(case when nom_deduc_tipo.clave is null then '' else (case when nom_deduc_tipo.clave<>'' then nom_deduc_tipo.clave||' ' else '' end) end)||upper(nom_deduc_tipo.titulo) AS tipo_deduc,"
                     + "(case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||upper(nom_deduc.titulo) AS deduccion,"
                     + "0::double precision AS gravado,"
@@ -3949,6 +3958,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             sql_to_query=""
             + "SELECT "
                 + "nom_deduc.id, "
+                + "fac_nomina_det_deduc.nom_deduc_id, "
                 + "(case when nom_deduc_tipo.clave is null then '' else (case when nom_deduc_tipo.clave<>'' then nom_deduc_tipo.clave||' ' else '' end) end)||upper(nom_deduc_tipo.titulo) AS tipo_deduc,"
                 + "(case when nom_deduc.clave is null then '' else (case when nom_deduc.clave<>'' then nom_deduc.clave||' ' else '' end) end)||upper(nom_deduc.titulo) AS deduccion, "
                 + "(CASE WHEN fac_nomina_det_deduc.gravado IS NULL THEN 0 ELSE fac_nomina_det_deduc.gravado END) AS gravado,"
@@ -3959,7 +3969,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "WHERE fac_nomina_det_deduc.fac_nomina_det_id="+id_reg+" ORDER BY fac_nomina_det_deduc.id;";
         }
         
-        System.out.println("QueryPercepciones: "+sql_to_query);
+        System.out.println("QueryDeducciones: "+sql_to_query);
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{},new RowMapper(){
@@ -3967,6 +3977,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
                  HashMap<String,Object>row=new HashMap<String,Object>();
                  row.put("id",rs.getString("id"));
+                 row.put("tipo_deduc_id",rs.getString("nom_deduc_id"));
                  row.put("tipo_deduc",rs.getString("tipo_deduc"));
                  row.put("deduccion",rs.getString("deduccion"));
                  row.put("m_gravado",StringHelper.roundDouble(rs.getDouble("gravado"), 2));
@@ -4061,7 +4072,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("salario_base",StringHelper.roundDouble(rs.getDouble("salario_base"),2));
                     row.put("salario_int",StringHelper.roundDouble(rs.getDouble("salario_int"),2));
                     row.put("reg_patronal",rs.getString("reg_patronal"));
-                    
+                    row.put("validado","false");
                     return row;
                 }
             }
@@ -4147,7 +4158,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "percep_total_gravado,"
             + "percep_total_excento,"
             + "deduc_total_gravado,"
-            + "deduc_total_excento "
+            + "deduc_total_excento,"
+            + "validado "
         + "FROM fac_nomina_det "
         + "WHERE id=? AND gral_empleado_id=?;";
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
@@ -4198,6 +4210,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 row.put("percep_total_excento",StringHelper.roundDouble(rs.getString("percep_total_excento"),2));
                 row.put("deduc_total_gravado",StringHelper.roundDouble(rs.getString("deduc_total_gravado"),2));
                 row.put("deduc_total_excento",StringHelper.roundDouble(rs.getString("deduc_total_excento"),2));
+                row.put("validado",String.valueOf(rs.getBoolean("validado")).toLowerCase());
                  return row;
                 }
             }
@@ -4238,9 +4251,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     //Obtiene las Horas Extras de un empleado de un Periodo especifico
     @Override
     public ArrayList<HashMap<String, Object>> getFacNomina_Incapacidades(Integer id_nom_det) {
-        String sql_to_query="";
-        
-        sql_to_query="SELECT id, nom_tipo_incapacidad_id AS tipo_incapa_id, no_dias, importe FROM fac_nomina_det_incapa WHERE fac_nomina_det_id=? ORDER BY id;";
+        String sql_to_query="SELECT id, nom_tipo_incapacidad_id AS tipo_incapa_id, no_dias, importe FROM fac_nomina_det_incapa WHERE fac_nomina_det_id=? ORDER BY id;";
         
         System.out.println("QueryIncapacidades: "+sql_to_query);
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
@@ -4333,11 +4344,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    
+    //Obtener datos para el Comprobante, Receptor y Complemento de Nomina
     @Override
     public HashMap<String, String> getFacNomina_DataXml(Integer id, Integer id_empleado) {
-        
-        //Obtener datos para el comprobante y Complemento de Nomina
         String sql_to_query = ""
         + "SELECT "
             + "fac_nomina_det.gral_empleado_id, "
@@ -4370,7 +4379,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "(CASE WHEN nom_tipo_jornada.titulo IS NULL THEN '' ELSE nom_tipo_jornada.titulo END ) AS tipo_jornada,"
             + "(CASE WHEN nom_periodicidad_pago.titulo IS NULL THEN '' ELSE nom_periodicidad_pago.titulo END ) AS periodicidad_pago,"
             + "(CASE WHEN fac_nomina_det.clabe IS NULL THEN '' ELSE fac_nomina_det.clabe::character varying END ) AS clabe,"
-            + "(CASE WHEN tes_ban.titulo IS NULL THEN '' ELSE tes_ban.titulo END ) AS banco,"
+            + "(CASE WHEN tes_ban.clave IS NULL THEN '' ELSE tes_ban.clave END ) AS banco,"
             + "(CASE WHEN nom_riesgo_puesto.clave IS NULL THEN '' ELSE nom_riesgo_puesto.clave END ) AS riesgo_puesto,"
             + "(CASE WHEN fac_nomina_det.imss IS NULL THEN '' ELSE fac_nomina_det.imss::character varying END ) AS imss,"
             + "(CASE WHEN fac_nomina_det.reg_patronal IS NULL THEN '' ELSE fac_nomina_det.reg_patronal::character varying END ) AS reg_patronal,"
@@ -4441,7 +4450,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("comprobante_receptor_domicilio_attr_pais",rs.getString("pais"));
                     row.put("comprobante_receptor_domicilio_attr_codigopostal",rs.getString("cp"));
                     
-                    
                     row.put("comprobante_receptor_attr_curp",rs.getString("curp"));
                     row.put("comprobante_attr_depto",rs.getString("departamento"));
                     row.put("comprobante_attr_puesto",rs.getString("puesto"));
@@ -4484,34 +4492,21 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
-    //Obtiene todas las Percepciones disponibles
+    //Obtiene las Percepciones del empleado para la Nomina de un Periodo especifico
     @Override
-    public ArrayList<LinkedHashMap<String,String>> getFacNomina_PercepcionesXml(Integer id_reg) {
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_PercepcionesXml(Integer id) {
         String sql_to_query="";
-        
-        //Obtener las Percepciones configuradas para la Nomina de Empleado de un periodo en especifico
-        sql_to_query=""
-        + "SELECT "
-            + "nom_percep.id, "
-            + "(case when nom_percep_tipo.clave is null then '' else nom_percep_tipo.clave end) tipo_percepcion,"
-            + "(case when nom_percep.clave is null then '' else nom_percep.clave end) AS clave,"
-            + "(case when nom_percep.titulo is null then '' else nom_percep.titulo end) AS percepcion,"
-            + "(CASE WHEN fac_nomina_det_percep.gravado IS NULL THEN 0 ELSE fac_nomina_det_percep.gravado END) AS gravado,"
-            + "(CASE WHEN fac_nomina_det_percep.excento IS NULL THEN 0 ELSE fac_nomina_det_percep.excento END) AS excento  "
-        + "FROM fac_nomina_det_percep "
-        + "JOIN nom_percep ON nom_percep.id=fac_nomina_det_percep.nom_percep_id "
-        + "JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id  "
-        + "WHERE fac_nomina_det_percep.fac_nomina_det_id="+id_reg+" ORDER BY fac_nomina_det_percep.id;";
+        sql_to_query="SELECT (case when nom_percep_tipo.clave is null then '' else nom_percep_tipo.clave end) tipo_percepcion,(case when nom_percep.clave is null then '' else nom_percep.clave end) AS clave,(case when nom_percep.titulo is null then '' else nom_percep.titulo end) AS percepcion, (CASE WHEN fac_nomina_det_percep.gravado IS NULL THEN 0 ELSE fac_nomina_det_percep.gravado END) AS gravado, (CASE WHEN fac_nomina_det_percep.excento IS NULL THEN 0 ELSE fac_nomina_det_percep.excento END) AS excento FROM fac_nomina_det_percep JOIN nom_percep ON nom_percep.id=fac_nomina_det_percep.nom_percep_id JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id WHERE fac_nomina_det_percep.fac_nomina_det_id=? ORDER BY fac_nomina_det_percep.id;";
         
         System.out.println("QueryPercepcionesXml: "+sql_to_query);
         ArrayList<LinkedHashMap<String,String>>hm=(ArrayList<LinkedHashMap<String,String>>)this.jdbcTemplate.query(
             sql_to_query,
-            new Object[]{},new RowMapper(){
+            new Object[]{new Integer(id)},new RowMapper(){
                 @Override
                 public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
                  LinkedHashMap<String,String>row=new LinkedHashMap<String,String>();
-                 row.put("TipoPercepcion",rs.getString("id"));
-                 row.put("Clave",rs.getString("tipo_percepcion"));
+                 row.put("TipoPercepcion",rs.getString("tipo_percepcion"));
+                 row.put("Clave",rs.getString("clave"));
                  row.put("Concepto",rs.getString("percepcion"));
                  row.put("ImporteGravado",StringHelper.roundDouble(rs.getDouble("gravado"), 2));
                  row.put("ImporteExento",StringHelper.roundDouble(rs.getDouble("excento"), 2));
@@ -4524,6 +4519,100 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     
     
+    //Obtiene las Deducciones del empleado para la Nomina de un Periodo especifico
+    @Override
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_DeduccionesXml(Integer id) {
+        String sql_to_query="";
+        sql_to_query="SELECT (case when nom_deduc_tipo.clave is null then '' else nom_deduc_tipo.clave end) tipo_deduccion,(case when nom_deduc.clave is null then '' else nom_deduc.clave end) AS clave,(case when nom_deduc.titulo is null then '' else nom_deduc.titulo end) AS deduccion,(CASE WHEN fac_nomina_det_deduc.gravado IS NULL THEN 0 ELSE fac_nomina_det_deduc.gravado END) AS gravado,(CASE WHEN fac_nomina_det_deduc.excento IS NULL THEN 0 ELSE fac_nomina_det_deduc.excento END) AS excento FROM fac_nomina_det_deduc JOIN nom_deduc ON nom_deduc.id=fac_nomina_det_deduc.nom_deduc_id JOIN nom_deduc_tipo ON nom_deduc_tipo.id=nom_deduc.nom_deduc_tipo_id WHERE fac_nomina_det_deduc.fac_nomina_det_id=? ORDER BY fac_nomina_det_deduc.id;";
+        
+        System.out.println("QueryDeduccionesXml: "+sql_to_query);
+        ArrayList<LinkedHashMap<String,String>>hm=(ArrayList<LinkedHashMap<String,String>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 LinkedHashMap<String,String>row=new LinkedHashMap<String,String>();
+                 row.put("TipoDeduccion",rs.getString("tipo_deduccion"));
+                 row.put("Clave",rs.getString("clave"));
+                 row.put("Concepto",rs.getString("deduccion"));
+                 row.put("ImporteGravado",StringHelper.roundDouble(rs.getDouble("gravado"), 2));
+                 row.put("ImporteExento",StringHelper.roundDouble(rs.getDouble("excento"), 2));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    //Obtiene las Incapacidades del empleado para la Nomina de un Periodo especifico
+    @Override
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_IncapacidadesXml(Integer id) {
+        String sql_to_query="";
+        sql_to_query="SELECT (CASE WHEN nom_tipo_incapacidad.clave IS NULL THEN '' ELSE nom_tipo_incapacidad.clave END) AS tipo_incapacidad, fac_nomina_det_incapa.no_dias, fac_nomina_det_incapa.importe FROM fac_nomina_det_incapa JOIN nom_tipo_incapacidad ON nom_tipo_incapacidad.id=fac_nomina_det_incapa.nom_tipo_incapacidad_id WHERE fac_nomina_det_incapa.fac_nomina_det_id=? ORDER BY fac_nomina_det_incapa.id;";
+        
+        System.out.println("QueryIncapacidadesXml: "+sql_to_query);
+        ArrayList<LinkedHashMap<String,String>>hm=(ArrayList<LinkedHashMap<String,String>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 LinkedHashMap<String,String>row=new LinkedHashMap<String,String>();
+                 row.put("DiasIncapacidad",rs.getString("no_dias"));
+                 row.put("TipoIncapacidad",rs.getString("tipo_incapacidad"));
+                 row.put("Descuento",StringHelper.roundDouble(rs.getDouble("importe"), 2));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }
+    
+    
+    //Obtiene las Horas Extras del empleado para la Nomina de un Periodo especifico
+    @Override
+    public ArrayList<LinkedHashMap<String,String>> getFacNomina_HorasExtrasXml(Integer id) {
+        String sql_to_query="SELECT nom_tipo_hrs_extra.titulo AS tipo_he, tbl_he.no_dias::integer AS no_dias, tbl_he.no_hrs::integer AS no_hrs, tbl_he.importe FROM fac_nomina_det_hrs_extra AS tbl_he JOIN nom_tipo_hrs_extra ON nom_tipo_hrs_extra.id=nom_tipo_hrs_extra_id WHERE tbl_he.fac_nomina_det_id=? ORDER BY tbl_he.id;";
+        
+        System.out.println("QueryHorasExtrasXml: "+sql_to_query);
+        ArrayList<LinkedHashMap<String,String>>hm=(ArrayList<LinkedHashMap<String,String>>)this.jdbcTemplate.query(
+            sql_to_query,
+            new Object[]{new Integer(id)},new RowMapper(){
+                @Override
+                public Object mapRow(ResultSet rs,int rowNum)throws SQLException{
+                 LinkedHashMap<String,String>row=new LinkedHashMap<String,String>();
+                 row.put("TipoHoras",rs.getString("tipo_he"));
+                 row.put("Dias",String.valueOf(rs.getInt("no_dias")));
+                 row.put("HorasExtra",String.valueOf(rs.getInt("no_hrs")));
+                 row.put("ImportePagado",StringHelper.roundDouble(rs.getDouble("importe"), 2));
+                 return row;
+                }
+            }
+        );
+        return hm;
+    }    
+    
+    
+    
+    //Obtener ref_id(nombre del archivo)
+    @Override
+    public HashMap<String, String> getFacNomina_RefId(Integer id) {
+        String valor_retorno="";
+        String sql_to_query = "SELECT ref_id, (CASE WHEN serie IS NULL THEN '' ELSE serie END)||(CASE WHEN folio IS NULL THEN '' ELSE folio END) AS serie_folio FROM fac_nomina_det WHERE id=? AND facturado=true;";
+        
+        HashMap<String, String> hm = (HashMap<String, String>) this.jdbcTemplate.queryForObject(
+            sql_to_query, 
+            new Object[]{new Integer(id)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, String> row = new HashMap<String, String>();
+                    row.put("ref_id",rs.getString("ref_id"));
+                    row.put("serie_folio",rs.getString("serie_folio"));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
     
     
 }
