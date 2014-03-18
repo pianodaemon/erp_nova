@@ -1767,7 +1767,7 @@ $(function() {
 			$('#forma-facnomina-window').find( "#submit" ).bind('click',function(){
 				//Aqui se establece el nivel de ejecucion 2, porque se ejecita desde la ventana de nomina de Empleado
 				$('#forma-facnomina-window').find('input[name=nivel_ejecucion]').val(2);
-				if(parseInt($('#forma-facnomina-window').find('#grid_empleados')).size()) > 0){
+				if(parseInt($('#forma-facnomina-window').find('#grid_empleados').size()) > 0){
 					return true;
 				}else{
 					alert('No hay datos para actualizar');
