@@ -3560,16 +3560,15 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     
     //Obtiene los Periodos de Pago Configurados por Tipo de Periodicidad
     @Override
-    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodosPorTipo(Integer tipo, Integer idEmp) {
-        String sql_to_query=""
-        + "SELECT "
-            + "nom_periodos_conf_det.id,"
-            + "(CASE WHEN nom_periodos_conf.prefijo IS NULL THEN '' ELSE (CASE WHEN nom_periodos_conf.prefijo='' THEN '' ELSE nom_periodos_conf.prefijo||'-' END) END)||nom_periodos_conf_det.folio||' '||nom_periodos_conf_det.titulo AS periodo,"
-            + "(CASE WHEN nom_periodos_conf_det.fecha_ini IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_ini::character varying END) AS fecha_ini,"
-            + "(CASE WHEN nom_periodos_conf_det.fecha_fin IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_fin::character varying END) AS fecha_fin "
-        + "FROM nom_periodos_conf "
-        + "JOIN nom_periodos_conf_det ON nom_periodos_conf_det.nom_periodos_conf_id=nom_periodos_conf.id "
-        + "WHERE nom_periodos_conf.borrado_logico=false AND nom_periodos_conf.gral_emp_id=? AND nom_periodos_conf.nom_periodicidad_pago_id=? AND nom_periodos_conf_det.estatus=false ORDER BY nom_periodos_conf_det.id;";
+    public ArrayList<HashMap<String, Object>> getFacNomina_PeriodosPorTipo(Integer tipo, Integer idEmp, Integer identificador) {
+        String sql_to_query="";
+        
+        if(identificador>0){
+            sql_to_query="SELECT nom_periodos_conf_det.id,(CASE WHEN nom_periodos_conf.prefijo IS NULL THEN '' ELSE (CASE WHEN nom_periodos_conf.prefijo='' THEN '' ELSE nom_periodos_conf.prefijo||'-' END) END)||nom_periodos_conf_det.folio||' '||nom_periodos_conf_det.titulo AS periodo,(CASE WHEN nom_periodos_conf_det.fecha_ini IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_ini::character varying END) AS fecha_ini,(CASE WHEN nom_periodos_conf_det.fecha_fin IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_fin::character varying END) AS fecha_fin, nom_periodos_conf_det.estatus FROM nom_periodos_conf JOIN nom_periodos_conf_det ON nom_periodos_conf_det.nom_periodos_conf_id=nom_periodos_conf.id JOIN fac_nomina ON fac_nomina.nom_periodos_conf_det_id=nom_periodos_conf_det.id WHERE nom_periodos_conf.gral_emp_id=? AND nom_periodos_conf.nom_periodicidad_pago_id=? AND fac_nomina.id="+identificador+" ORDER BY nom_periodos_conf_det.id;";
+        }else{
+            sql_to_query="SELECT nom_periodos_conf_det.id,(CASE WHEN nom_periodos_conf.prefijo IS NULL THEN '' ELSE (CASE WHEN nom_periodos_conf.prefijo='' THEN '' ELSE nom_periodos_conf.prefijo||'-' END) END)||nom_periodos_conf_det.folio||' '||nom_periodos_conf_det.titulo AS periodo,(CASE WHEN nom_periodos_conf_det.fecha_ini IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_ini::character varying END) AS fecha_ini,(CASE WHEN nom_periodos_conf_det.fecha_fin IS NULL THEN '' ELSE nom_periodos_conf_det.fecha_fin::character varying END) AS fecha_fin, nom_periodos_conf_det.estatus FROM nom_periodos_conf JOIN nom_periodos_conf_det ON nom_periodos_conf_det.nom_periodos_conf_id=nom_periodos_conf.id WHERE nom_periodos_conf.borrado_logico=false AND nom_periodos_conf.gral_emp_id=? AND nom_periodos_conf.nom_periodicidad_pago_id=? AND nom_periodos_conf_det.estatus=false ORDER BY nom_periodos_conf_det.id;";
+        }
+        
         ArrayList<HashMap<String,Object>>hm=(ArrayList<HashMap<String,Object>>)this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{new Integer(idEmp), new Integer(tipo)},new RowMapper(){
@@ -3580,6 +3579,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                  row.put("periodo",rs.getString("periodo"));
                  row.put("fecha_ini",rs.getString("fecha_ini"));
                  row.put("fecha_fin",rs.getString("fecha_fin"));
+                 row.put("status",String.valueOf(rs.getBoolean("estatus")));
                  return row;
                 }
             }

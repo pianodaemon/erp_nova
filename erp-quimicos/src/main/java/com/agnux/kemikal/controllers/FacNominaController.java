@@ -315,6 +315,7 @@ public class FacNominaController {
     @RequestMapping(method = RequestMethod.POST, value="/getPeriodosPorTipoPeridicidad.json")
     public @ResponseBody HashMap<String,ArrayList<HashMap<String, Object>>> getPeriodosPorTipoPeridicidadJson(
             @RequestParam(value="id", required=true) Integer periodicidad_id,
+            @RequestParam(value="identificador", required=true) Integer identificador,
             @RequestParam(value="iu", required=true) String id_user,
             Model model
         ) {
@@ -327,7 +328,7 @@ public class FacNominaController {
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         //Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
         
-        jsonretorno.put("Periodos", this.getFacdao().getFacNomina_PeriodosPorTipo(periodicidad_id, id_empresa));
+        jsonretorno.put("Periodos", this.getFacdao().getFacNomina_PeriodosPorTipo(periodicidad_id, id_empresa, identificador));
         
         return jsonretorno;
     }
@@ -448,6 +449,7 @@ public class FacNominaController {
         String valorRespuesta="false";
         String msjRespuesta="";
         String cfdis_generados="";
+        String cfdis_no_generados="";
         String retorno="";
         String tipo_facturacion="";
         String folio="";
@@ -666,10 +668,9 @@ public class FacNominaController {
                                     }else{
                                         valorRespuesta="false";
                                         codeRespuesta="7001";
-                                        msjRespuesta+=cadRes[1]+"<br>";
+                                        cfdis_no_generados+=cadRes[1]+"<br>";
                                     }
                                 }
-                                
                             }else{
                                 codeRespuesta="7001";
                                 valorRespuesta="false";
