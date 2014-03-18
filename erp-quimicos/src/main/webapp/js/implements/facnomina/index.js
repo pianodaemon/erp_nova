@@ -2024,15 +2024,9 @@ $(function() {
 			$grid_empleados.find('#delete_empleado'+ tr).hide();
 			
 			$grid_empleados.find('.xml'+ tr).click(function(){
-				$fila=$(this).parent().parent();
 				var id_reg = $grid_empleados.find('.id_reg'+ tr).val();
-				
 				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivo.json';
-				$arreglo = {'id_reg':id_reg,
-							'ext':'xml',
-							'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-						  }
-				
+				$arreglo = {'id_reg':id_reg,'ext':'xml', 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
 				$.post(input_json,$arreglo,function(entry){
 					var descargar  = entry['descargar'];
 					if(descargar == 'true'){
@@ -2043,9 +2037,25 @@ $(function() {
 						jAlert("El xml de la nomina "+$grid_empleados.find('.no_nom'+ tr).val()+" no esta disponible para descarga.", 'Atencion!');
 					}
 				});//termina llamada json
-				
-				
 			});
+			
+			$grid_empleados.find('.pdf'+ tr).click(function(){
+				var id_reg = $grid_empleados.find('.id_reg'+ tr).val();
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivo.json';
+				$arreglo = {'id_reg':id_reg,'ext':'pdf', 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
+				$.post(input_json,$arreglo,function(entry){
+					var descargar  = entry['descargar'];
+					if(descargar == 'true'){
+						var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+						var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getXml/'+id_reg+'/'+iu+'/out.json';
+						window.location.href=input_json;
+					}else{
+						jAlert("El xml de la nomina "+$grid_empleados.find('.no_nom'+ tr).val()+" no esta disponible para descarga.", 'Atencion!');
+					}
+				});//termina llamada json
+			});
+			
+			
 		}
 		
 		//Editar un empleado
