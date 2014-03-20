@@ -589,7 +589,7 @@
 																								<td width="120" height="10">Salario&nbsp;Diario&nbsp;Integrado</td>
 																								<td width="150"><input type="text" name="salario_integrado" style="width:150px;"></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_salariointegrado"></div></td>
-																								<td width="115" colspan="3">*No. de d&iacute;as pagados</td>
+																								<td width="115" colspan="3">*No.&nbsp;de&nbsp;d&iacute;as pagados</td>
 																								<td width="75"><input type="text" name="no_dias_pago" style="width:75px;"></td>
 																								<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_nodiaspago"></div></td>
 																								<td width="85"></td>
@@ -655,30 +655,30 @@
 																									<!--style="border-top: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7; border-left: 1px solid #FFFFFF; border-right: 1px solid #FFFFFF;"-->
 																									<table style="margin:0; padding:0;">
 																										<tr>
-																											<td height="10" colspan="7" class="td_etiqueta_titulo"><strong>Descuento Aplicable</strong></td>
+																											<td height="10" colspan="7" class="td_etiqueta_titulo"><strong>Descuento&nbsp;Aplicable</strong></td>
 																										</tr>
 																										<tr>
 																											<td width="10"></td>
 																											<td width="60">Monto</td>
 																											<td width="90"><input type="text" name="descuento" value="" style="width:90px;"></td>
 																											<td width="25"></td>
-																											<td width="130" colspan="2">Motivo del Descuento</td>
+																											<td width="130" colspan="2">Motivo&nbsp;del&nbsp;Descuento</td>
 																											<td width="200"><input type="text" name="motivo_descuento" value="" style="width:200px;"></td>
 																										</tr>
 																										<tr>
 																											<td height="10" colspan="7"></td>
 																										</tr>
 																										<tr>
-																											<td height="10" colspan="7" class="td_etiqueta_titulo"><strong>Impuestos Retenidos</strong></td>
+																											<td height="10" colspan="7" class="td_etiqueta_titulo"><strong>Impuestos&nbsp;Retenidos</strong></td>
 																										</tr>
 																										<tr>
 																											<td width="10"></td>
 																											<td width="60">*Impuesto</td>
 																											<td width="90"><select name="select_impuesto_retencion" style="width:90px;"></select></td>
-																											<td width="25"></td>
+																											<td width="25"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_selectimpuestoret"></div></td>
 																											<td width="65">*Importe</td>
 																											<td width="65"><input type="text" name="importe_retencion" value="" style="width:65px;"></td>
-																											<td width="200"></td>
+																											<td width="200"><div class="interrogacion"><img src="../../img/help-16x16.png" align="top" rel="warning_importeisr"></div></td>
 																										</tr>
 																									</table>
 																									
