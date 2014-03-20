@@ -680,24 +680,29 @@ $(function() {
 		
 		var suma_deduc_gravado=0;
 		var suma_deduc_excento=0;
-		var monto_isr=0;
+		var monto_isr_gravado=0;
+		var monto_isr_excento=0;
 		$grid_deducciones.find('tr').each(function (index){
 			if($(this).find('input[name=deduc_monto_gravado]').val().trim()!=''){
 				if(parseInt($(this).find('#tdeduc_id').val().trim())==2){
-					monto_isr = parseFloat(monto_isr) + parseFloat($(this).find('input[name=deduc_monto_gravado]').val());
+					monto_isr_gravado = parseFloat(monto_isr_gravado) + parseFloat($(this).find('input[name=deduc_monto_gravado]').val());
 				}else{
 					suma_deduc_gravado = parseFloat(suma_deduc_gravado) + parseFloat($(this).find('input[name=deduc_monto_gravado]').val());
 				}
 			}
 			if($(this).find('input[name=deduc_monto_excento]').val().trim()!=''){
-				suma_deduc_excento = parseFloat(suma_deduc_excento) + parseFloat($(this).find('input[name=deduc_monto_excento]').val());
+				if(parseInt($(this).find('#tdeduc_id').val().trim())==2){
+					monto_isr_excento = parseFloat(monto_isr_excento) + parseFloat($(this).find('input[name=deduc_monto_excento]').val());
+				}else{
+					suma_deduc_excento = parseFloat(suma_deduc_excento) + parseFloat($(this).find('input[name=deduc_monto_excento]').val());
+				}
 			}
 		});
-		$deduc_total_gravado.val(parseFloat(suma_deduc_gravado).toFixed(2));
-		$deduc_total_excento.val(parseFloat(suma_deduc_excento).toFixed(2));
+		$deduc_total_gravado.val(parseFloat(parseFloat(suma_deduc_gravado) + parseFloat(monto_isr_gravado)).toFixed(2));
+		$deduc_total_excento.val(parseFloat(parseFloat(suma_deduc_excento) + parseFloat(monto_isr_excento)).toFixed(2));
 		
-		$descuento.val(parseFloat(parseFloat($deduc_total_gravado.val()) + parseFloat($deduc_total_excento.val())).toFixed(2));
-		$importe_retencion.val(parseFloat(monto_isr).toFixed(2));
+		$descuento.val(parseFloat(parseFloat(suma_deduc_gravado) + parseFloat(suma_deduc_excento)).toFixed(2));
+		$importe_retencion.val(parseFloat(parseFloat(monto_isr_gravado) + parseFloat(monto_isr_excento)).toFixed(2));
 		
 		/*
 		$grid_horas_extras.find('tr').each(function (index){
@@ -2235,6 +2240,8 @@ $(function() {
 		$aplicar_readonly_input($comp_forma_pago);
 		$aplicar_readonly_input($fecha_pago);
 		
+		$genera_nomina.hide();
+		
 		//Quitar enter a todos los campos input
 		$('#forma-facnomina-window').find('input').keypress(function(e){
 			if(e.which==13 ) {
@@ -2524,7 +2531,7 @@ $(function() {
 			$aplicar_readonly_input($comp_forma_pago);
 			$aplicar_readonly_input($fecha_pago);
 			
-			
+			$genera_nomina.hide();
 			
 			//quitar enter a todos los campos input
 			$('#forma-facnomina-window').find('input').keypress(function(e){
@@ -2650,10 +2657,13 @@ $(function() {
 					});
 					
 					
-					
-					
-					if(parseInt(entry['Datos'][0]['status'])>0){
-						
+					if(parseInt(entry['Datos'][0]['status'])>=0){
+						if(parseInt(entry['Datos'][0]['status'])==0 || parseInt(entry['Datos'][0]['status'])==1){
+							$genera_nomina.show();
+						}
+						if(parseInt(entry['Datos'][0]['status'])==2){
+							$genera_nomina.hide();
+						}
 					}else{
 						$add_calendar($fecha_pago, " ", "");
 					}
