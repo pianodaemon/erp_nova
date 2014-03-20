@@ -4464,8 +4464,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("comprobante_attr_riesgo_puesto",rs.getString("riesgo_puesto"));
                     row.put("comprobante_attr_imss",rs.getString("imss"));
                     row.put("comprobante_attr_reg_patronal",rs.getString("reg_patronal"));
-                    row.put("comprobante_attr_salario_base",rs.getString("salario_base"));
-                    row.put("comprobante_attr_salario_integrado",rs.getString("salario_integrado"));
+                    row.put("comprobante_attr_salario_base",StringHelper.roundDouble(rs.getString("salario_base"),2));
+                    row.put("comprobante_attr_salario_integrado",StringHelper.roundDouble(rs.getString("salario_integrado"),2));
                     row.put("comprobante_attr_fecha_fecha_pago",rs.getString("fecha_pago"));
                     row.put("comprobante_attr_fecha_ini_pago",rs.getString("fecha_ini_pago"));
                     row.put("comprobante_attr_fecha_fin_pago",rs.getString("fecha_fin_pago"));

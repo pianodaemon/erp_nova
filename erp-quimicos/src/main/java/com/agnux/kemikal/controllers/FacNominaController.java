@@ -3,14 +3,8 @@
  * and open the template in the editor.
  */
 package com.agnux.kemikal.controllers;
-import com.agnux.cfd.v2.ArchivoInformeMensual;
 import com.agnux.cfd.v2.Base64Coder;
-import com.agnux.cfd.v2.BeanFacturador;
-import com.agnux.cfdi.BeanFacturadorCfdi;
-import com.agnux.cfdi.adendas.AdendaCliente;
 import com.agnux.cfdi.timbre.BeanFacturadorCfdiTimbre;
-import com.agnux.common.helpers.FileHelper;
-import com.agnux.kemikal.interfacedaos.PrefacturasInterfaceDao;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
 import com.agnux.common.obj.DataPost;
@@ -19,8 +13,6 @@ import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbrado;
-import com.agnux.kemikal.reportes.pdfCfd_CfdiTimbradoFormato2;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +27,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -620,7 +611,7 @@ public class FacNominaController {
                                     if(cadRes[0].equals("true")){
                                         //Obtiene serie_folio del CFDI de Nomina que se acaba de guardar
                                         serieFolio = this.getFacdao().getFacNomina_RefId(id).get("serie_folio");
-                                        cfdis_generados += serieFolio+"<br>";
+                                        cfdis_generados += "[" + dataFactura.get("comprobante_receptor_attr_nombre") + "] = " + serieFolio+"<br>";
                                         
                                         /*
 
@@ -668,9 +659,20 @@ public class FacNominaController {
                                     }else{
                                         valorRespuesta="false";
                                         codeRespuesta="7001";
-                                        cfdis_no_generados+=cadRes[1]+"<br>";
+                                        cfdis_no_generados+= "[" + dataFactura.get("comprobante_receptor_attr_nombre") + "] = " + cadRes[1]+"<br>";
                                     }
                                 }
+                                
+                                codeRespuesta="0";
+                                valorRespuesta="true";
+                                if(!cfdis_generados.equals("")){
+                                    msjRespuesta += "CFDI de N&oacute;mina Generedos:<br>"+cfdis_generados+"<br><br>";
+                                }
+        
+                                if(!cfdis_no_generados.equals("")){
+                                    msjRespuesta += "No Generados:<br>"+cfdis_no_generados+"<br>";
+                                }
+                                
                             }else{
                                 codeRespuesta="7001";
                                 valorRespuesta="false";
@@ -679,12 +681,14 @@ public class FacNominaController {
                         }else{
                             valorRespuesta="false";
                             codeRespuesta="7001";
-                            msjRespuesta="No se puede Timbrar la Nomina con el PAC actual.\nVerifique la configuraci&oacute;n del tipo de Facturaci&oacute;n y del PAC.";
+                            msjRespuesta="No se puede Timbrar la N&oacute;mina con el PAC actual.\nVerifique la configuraci&oacute;n del tipo de Facturaci&oacute;n y del PAC.";
                         }
                     }
             }
             
             System.out.println("Folio: "+ String.valueOf(jsonretorno.get("folio")));
+            
+            
             
         }else{
             if(actualizo.equals("0")){
@@ -692,15 +696,12 @@ public class FacNominaController {
             }
         }
         
-        
         jsonretorno.put("success",succes_validation);
-        jsonretorno.put("valor",codeRespuesta);
+        jsonretorno.put("valor",valorRespuesta);
         jsonretorno.put("msj",msjRespuesta);
         
-        System.out.println("Validacion: "+ String.valueOf(jsonretorno.get("success")));
+        System.out.println("Validacion: "+ String.valueOf(jsonretorno.get("success")) + " | codeRespuesta: "+String.valueOf(codeRespuesta) + " | "+"valorRespuesta: "+String.valueOf(valorRespuesta)+ " | "+"msjRespuesta: "+String.valueOf(msjRespuesta));
         //System.out.println("Actualizo: "+String.valueOf(jsonretorno.get("actualizo")));
-        System.out.println("codeRespuesta: "+String.valueOf(codeRespuesta));
-        System.out.println("msjRespuesta: "+String.valueOf(msjRespuesta));
         
         //System.out.println(TimeHelper.getFechaActualYMDH()+": FIN------------------------------------");
         
