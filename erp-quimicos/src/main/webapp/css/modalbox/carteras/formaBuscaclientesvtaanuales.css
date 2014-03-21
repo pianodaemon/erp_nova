@@ -57,9 +57,9 @@ table tr td.grid_head {
 	/*font: 12px normal Tahoma,Geneva,"Helvetica Neue",Helvetica,Arial,sans-serif;*/
 	background: #fff;
 	/*padding: 2px;*/
-	padding: 3px 5px;
+	/*padding: 3px 5px;*/
 	text-align: center;
-	vertical-align: top;
+	vertical-align: centerline;
 	/*background-color:rgb(180, 180, 180);*/
 	background-color:#dddddd;
 	border-top:0px solid #ccc !important;
@@ -68,6 +68,7 @@ table tr td.grid_head {
 	border-left:1px solid #ccc !important;
 	/*border-right: 1px solid #ccc !important;*/
 	background-image: url("../../../img/datagrid00/bar_table.png");
+	height:18px;
 
 }
 
@@ -75,11 +76,7 @@ table tr td.grid_head {
 table tr td.grid_datos {
 	font: 12px normL Tahoma,Geneva,"Helvetica Neue",Helvetica,Arial,sans-serif;
 	background: #FFFFFF ;
-	/*padding: 2px;*/
-	/*padding: 3px 5px;*/
-	text-align: center;
 	vertical-align: top;
-	/*background-color:rgb(180, 180, 180);*/
 	background-color:#FFFFFF ;
 	border:1px solid #ccc !important;
 	border-right: 1px solid #ccc !important;
@@ -89,20 +86,16 @@ table tr td.grid_datos {
 tfoot tr td.grid_foot {
 	font-size: 12px;
 	font-weight: bold;
-	/*font: 12px normal Tahoma,Geneva,"Helvetica Neue",Helvetica,Arial,sans-serif;*/
 	background: #fff;
-	/*padding: 2px;*/
-	padding: 3px 5px;
-	text-align: center;
-	vertical-align: top;
-	/*background-color:rgb(180, 180, 180);*/
+	vertical-align: centerline;
 	background-color:#dddddd;
 	border-top:0px solid #ccc !important;
 	border-bottom:0px solid #ccc !important;
 	border-right:1px solid #ccc !important;
 	border-left:1px solid #ccc !important;
 	/*border-right: 1px solid #ccc !important;*/
-	/*background-image: url("../../../img/datagrid00/bar_table.png");*/
+	background-image: url("../../../img/datagrid00/bar_table.png");
+	height:18px;
 
 }
 /*table .table_reporte {
