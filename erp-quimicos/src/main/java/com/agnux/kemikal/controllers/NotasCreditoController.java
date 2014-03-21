@@ -432,6 +432,7 @@ public class NotasCreditoController {
             String valorRespuesta="";
             String msjRespuesta = "";
             String serieFolio="";
+            String rfiId="";
             String rfcEmisor="";
             userDat = this.getHomeDao().getUserById(id_usuario);
             Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -507,6 +508,7 @@ public class NotasCreditoController {
                         
                         //obtiene serie_folio de la Nota de Credito que se acaba de guardar
                         serieFolio = this.getFacdao().getSerieFolioNotaCredito(id_nota_credito);
+                        rfiId = this.getFacdao().getRefIdNotaCredito(id_nota_credito);
                         
                         String cadena_original=this.getBf().getCadenaOriginal();
                         //System.out.println("cadena_original:"+cadena_original);
@@ -610,17 +612,17 @@ public class NotasCreditoController {
                             data_string="";
                             extra_data_array = "'sin datos'";
                             command_selected="genera_nota_credito_cfditf";
-
+                            
                             String Serie=this.getGralDao().getSerieNotaCredito(id_empresa, id_sucursal);
                             String Folio=this.getGralDao().getFolioNotaCredito(id_empresa, id_sucursal);
                             rfcEmisor = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-
+                            
                             //lista de conceptos para la Nota de Credito cfditf
                             listaConceptos = this.getFacdao().getNotaCreditoCfdiTf_ListaConceptosXml(id_nota_credito);
                             impRetenidos = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosRetenidosXml();
                             impTrasladados = this.getFacdao().getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(id_sucursal);
                             dataCliente = this.getFacdao().getNotaCreditoCfd_Cfdi_Datos(id_nota_credito);
-
+                            
                             //obtiene datos extras para el cfdi
                             datosExtras = this.getFacdao().getNotaCreditoCfdi_DatosExtras(id_nota_credito, Serie, Folio);
 
@@ -640,7 +642,7 @@ public class NotasCreditoController {
                             datosExtras.put("extra_data_array", extra_data_array);
                             datosExtras.put("noPac", noPac);
                             datosExtras.put("ambienteFac", ambienteFac);
-                            
+                            datosExtras.put("identificador", String.valueOf(id_nota_credito));
                             
                             //genera xml factura
                             this.getBfcfditf().init(dataCliente, listaConceptos, impRetenidos, impTrasladados, proposito, datosExtras, id_empresa, id_sucursal, percepciones, deducciones, incapacidades, hrs_extras);
@@ -656,7 +658,7 @@ public class NotasCreditoController {
                             if(cadRes[0].equals("true")){
                                 //System.out.println("timbrado_correcto dentro:"+timbrado_correcto);
                                 //aqui se debe actializar el registro
-                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado;
+                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado+"___"+this.getBfcfditf().getRef_id()+"___"+this.getBfcfditf().getXml_timbrado();
                                 
                                 actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
                                 
@@ -667,6 +669,7 @@ public class NotasCreditoController {
                                 /*Codigo para generar el pdf para nota de credito*/
                                 //Obtiene serie_folio de la Nota de Credito que se acaba de guardar
                                 serieFolio = this.getFacdao().getSerieFolioNotaCredito(id_nota_credito);
+                                rfiId = this.getFacdao().getRefIdNotaCredito(id_nota_credito);
                                 
                                 String cadena_original=this.getBfcfditf().getCadenaOriginalTimbre();
                                 //System.out.println("cadena_original:"+cadena_original);
@@ -724,13 +727,13 @@ public class NotasCreditoController {
                                             
                                             String path_file = new String();
                                             String xml_file_name = new String();
-
+                                            
                                             //Tipo 9=Nota de credito
                                             int tipoDocAdenda=9;
-
+                                            
                                             path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-                                            xml_file_name = serieFolio+".xml";
-
+                                            xml_file_name = rfiId+".xml";
+                                            
                                             //Agregar estos datos para generar el objeto que contiene los datos de la Adenda
                                             dataCliente.put("emailEmisor", this.getGralDao().getEmailSucursal(id_sucursal));
                                             
@@ -821,6 +824,7 @@ public class NotasCreditoController {
     public @ResponseBody HashMap<String,String> getVerificaArchivoGeneradoJson(
             @RequestParam(value="serie_folio", required=true) String serie_folio,
             @RequestParam(value="ext", required=true) String extension,
+            @RequestParam(value="id", required=true) Integer id,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
             ) {
@@ -836,7 +840,7 @@ public class NotasCreditoController {
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
         
-        //obtener tipo de facturacion
+        //Obtener tipo de facturacion
         String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         
         if(tipo_facturacion.equals("cfd")){
@@ -848,9 +852,11 @@ public class NotasCreditoController {
                 dirSalidas = this.getGralDao().getCfdiSolicitudesDir() + "out/";
             }
         }
-            
         
-        String fileout = dirSalidas +"/"+ serie_folio +"."+extension;
+        String nombre_archivo = this.getFacdao().getRefIdNotaCredito(id);
+        
+        
+        String fileout = dirSalidas +"/"+ nombre_archivo +"."+extension;
         
         System.out.println("Ruta: " + fileout);
         File file = new File(fileout);
@@ -892,6 +898,7 @@ public class NotasCreditoController {
         String extra_data_array = "'sin datos'";
         String succcess = "false";
         String serie_folio="";
+        String refId="";
         String tipo_facturacion="";
         String valorRespuesta="false";
         String msjRespuesta="";
@@ -916,6 +923,7 @@ public class NotasCreditoController {
         }
         
         serie_folio = this.getFacdao().getSerieFolioNotaCredito(id_nota);
+        refId = this.getFacdao().getRefIdNotaCredito(id_nota);
         
         if(tipo_facturacion.equals("cfd")){
             if(succcess.split(":")[1].equals("true")){
@@ -936,7 +944,7 @@ public class NotasCreditoController {
             if(!noPac.equals("0") && !noPac.equals("2")){
                 //Solo se permite Cancelar Nota de Credito por Conector Fiscal con Diverza
                 
-                File toFile = new File(this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
+                File toFile = new File(this.getGralDao().getCfdiSolicitudesDir() + "out/"+refId+".xml");
                 //System.out.println("FicheroXML: "+this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
                 
                 if (toFile.exists()) {
@@ -946,7 +954,7 @@ public class NotasCreditoController {
                         HashMap<String, String> data = new HashMap<String, String>();
                         serie_folio = succcess.split(":")[0];
                         
-                        String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
+                        String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+refId+".xml";
                         BeanFromCfdiXml pop = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
                         
                         data.put("uuid", pop.getUuid());
@@ -982,7 +990,7 @@ public class NotasCreditoController {
                 
                 String rfcEmpresaEmisora = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
                 
-                String directorioEmitidosCfdiTimbre = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresaEmisora +"/"+ serie_folio+".xml";
+                String directorioEmitidosCfdiTimbre = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresaEmisora +"/"+ refId+".xml";
                 
                 File toFile = new File(directorioEmitidosCfdiTimbre);
                 //System.out.println("FicheroXML: "+directorioEmitidosCfdiTimbre);
@@ -1143,7 +1151,7 @@ public class NotasCreditoController {
             }
         }
         
-        nombre_archivo = this.getFacdao().getSerieFolioNotaCredito(id_nota_credito);
+        nombre_archivo = this.getFacdao().getRefIdNotaCredito(id_nota_credito);
         
         
         String fileout = dirSalidas + "/" + nombre_archivo +".pdf";
@@ -1201,7 +1209,7 @@ public class NotasCreditoController {
             }
         }
         
-        nombre_archivo = this.getFacdao().getSerieFolioNotaCredito(id_nota_credito);
+        nombre_archivo = this.getFacdao().getRefIdNotaCredito(id_nota_credito);
         
         //ruta completa del archivo a descargar
         String fileout = dirSalidas + "/" + nombre_archivo +".xml";

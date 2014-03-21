@@ -380,6 +380,7 @@ public class FacConsultasController {
     public @ResponseBody HashMap<String,String> getVerificaArchivoGeneradoJson(
             @RequestParam(value="serie_folio", required=true) String serie_folio,
             @RequestParam(value="ext", required=true) String extension,
+            @RequestParam(value="id", required=true) Integer id_fac,
             @RequestParam(value="iu", required=true) String id_user_cod,
             Model model
             ) {
@@ -389,6 +390,7 @@ public class FacConsultasController {
         HashMap<String, String> userDat = new HashMap<String, String>();
         String existe ="false";
         String dirSalidas = "";
+        String nombre_archivo="";
         
         //decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user_cod));
@@ -410,12 +412,12 @@ public class FacConsultasController {
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
-        //nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura);
+        nombre_archivo = this.getFacdao().getRefIdFactura(id_fac, id_empresa);
         
         //String generado = this.getFacdao().verifica_fac_docs_salidas( id_factura );
         //String dirSalidasBuzonFiscal = this.getGralDao().getCfdiSolicitudesDir() + "out";
         
-        String fileout = dirSalidas +"/"+ serie_folio +"."+extension;
+        String fileout = dirSalidas +"/"+ nombre_archivo +"."+extension;
         
         System.out.println("Ruta: " + fileout);
         File file = new File(fileout);
@@ -468,7 +470,8 @@ public class FacConsultasController {
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
-        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
+        //nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
+        nombre_archivo = this.getFacdao().getRefIdFactura(id_factura, id_empresa);
         
         
         String fileout = dirSalidas + "/" + nombre_archivo +".pdf";
@@ -530,7 +533,8 @@ public class FacConsultasController {
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
         }
         
-        nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
+        //nombre_archivo = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
+        nombre_archivo = this.getFacdao().getRefIdFactura(id_factura, id_empresa);
         
         //ruta completa del archivo a descargar
         String fileout = dirSalidas + "/" + nombre_archivo +".xml";
@@ -593,6 +597,7 @@ public class FacConsultasController {
         //obtener tipo de facturacion
         String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
+        String refId = this.getFacdao().getRefIdFactura(id_factura, id_empresa);
         Integer id_prefactura = this.getFacdao().getIdPrefacturaByIdFactura(id_factura);
         
         //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
@@ -607,14 +612,14 @@ public class FacConsultasController {
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + rfcEmpresa;
-            fileout = dirSalidas +"/"+ serieFolio +".pdf";
+            fileout = dirSalidas +"/"+ refId +".pdf";
             System.out.println("Ruta: " + fileout);
             file = new File(fileout);
             if (file.exists()){
                 file.delete();
             }
             
-            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ serieFolio +".xml");
+            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ refId +".xml");
             //System.out.println("cadena_xml: "+cadena_xml);
             try {
                 
@@ -629,7 +634,7 @@ public class FacConsultasController {
                 
                 //BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+serieFolio +".xml");
                 
-                BeanFromCfdXml pop = new BeanFromCfdXml(dirSalidas+"/"+ serieFolio +".xml");
+                BeanFromCfdXml pop = new BeanFromCfdXml(dirSalidas+"/"+ refId +".xml");
                 
                 //sacar la fecha del comprobante 
                 String fecha_comprobante=pop.getFecha();
@@ -677,14 +682,14 @@ public class FacConsultasController {
         
         if(tipo_facturacion.equals("cfditf")){
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresa;
-            fileout = dirSalidas +"/"+ serieFolio +".pdf";
+            fileout = dirSalidas +"/"+ refId +".pdf";
             file = new File(fileout);
             if (file.exists()){
                 file.delete();
             }
             
             
-            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ serieFolio +".xml");
+            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ refId +".xml");
             //System.out.println("cadena_xml: "+cadena_xml);
             
             try {
@@ -701,7 +706,7 @@ public class FacConsultasController {
                 String cadena_original ="";
                 String sello_digital_emisor="";
                 */
-                BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+serieFolio +".xml");
+                BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+refId +".xml");
                 
                 //sacar la fecha del comprobante 
                 String fecha_comprobante=pop2.getFecha_comprobante();

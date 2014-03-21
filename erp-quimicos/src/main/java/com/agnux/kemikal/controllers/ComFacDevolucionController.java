@@ -472,6 +472,10 @@ public class ComFacDevolucionController {
                     importeIepsPartida=0.0;
                     importePartida = Double.parseDouble(costo[i]) * Double.parseDouble(StringHelper.removerComas(cant_dev[i]));
                     
+                    if(tasaIeps[i].trim().equals("")){
+                        tasaIeps[i]="0";
+                    }
+                    
                     if(Double.parseDouble(tasaIeps[i])>0){
                         importeIepsPartida = importePartida * (Double.parseDouble(tasaIeps[i])/100);
                     }

@@ -351,6 +351,7 @@ public class FacDevolucionesController {
             String extra_data_array = "'sin datos'";
             String actualizo = "0";
             String serieFolio="";
+            String refId="";
             String rfcEmisor="";
             String tipo_facturacion="";
             String observaciones="NOTA DE CREDITO POR DEVOLUCION DE MERCANCIA";
@@ -503,6 +504,7 @@ public class FacDevolucionesController {
                         
                         //obtiene serie_folio de la Nota de Credito que se acaba de guardar
                         serieFolio = this.getFacdao().getSerieFolioNotaCredito(id_nota_credito);
+                        //refId = this.getFacdao().getRefIdNotaCredito(id_nota_credito);
                         
                         String cadena_original=this.getBfcfd().getCadenaOriginal();
                         //System.out.println("cadena_original:"+cadena_original);
@@ -654,7 +656,7 @@ public class FacDevolucionesController {
                             if(cadRes[0].equals("true")){
                                 
                                 //aqui se debe actializar el registro
-                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado+"___"+id_cliente;
+                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_nota_credito+"___"+Serie+Folio+"___"+fac_saldado+"___"+id_cliente+"___"+this.getBfcfditf().getRef_id()+"___"+this.getBfcfditf().getXml_timbrado();
 
                                 actualizo = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
 
@@ -665,7 +667,8 @@ public class FacDevolucionesController {
                                 /*Codigo para generar el pdf para nota de credito*/
                                 //obtiene serie_folio de la Nota de Credito que se acaba de guardar
                                 serieFolio = this.getFacdao().getSerieFolioNotaCredito(id_nota_credito);
-
+                                refId = this.getFacdao().getRefIdNotaCredito(id_nota_credito);
+                                
                                 String cadena_original=this.getBfcfditf().getCadenaOriginalTimbre();
                                 //System.out.println("cadena_original:"+cadena_original);
 
@@ -724,7 +727,7 @@ public class FacDevolucionesController {
                                             int tipoDocAdenda=9;
                                             
                                             path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-                                            xml_file_name = serieFolio+".xml";
+                                            xml_file_name = refId+".xml";
                                             
                                             //Agregar estos datos para generar el objeto que contiene los datos de la Adenda
                                             dataCliente.put("emailEmisor", this.getGralDao().getEmailSucursal(id_sucursal));

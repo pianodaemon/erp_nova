@@ -5099,9 +5099,7 @@ return subfamilias;
     + "SELECT distinct ano,inv_prod_id,inv_prod_presentacion_id,costo_imp_1,costo_dir_1,precio_min_1,actualizacion_1,usr_id_actualiza_1,costo_imp_2,costo_dir_2,precio_min_2,actualizacion_2,usr_id_actualiza_2,costo_imp_3,costo_dir_3,precio_min_3,actualizacion_3,usr_id_actualiza_3,costo_imp_4,costo_dir_4,precio_min_4,actualizacion_4,usr_id_actualiza_4,costo_imp_5,costo_dir_5,precio_min_5,actualizacion_5,usr_id_actualiza_5,costo_imp_6,costo_dir_6,precio_min_6,actualizacion_6,usr_id_actualiza_6,costo_imp_7,costo_dir_7,precio_min_7,actualizacion_7,usr_id_actualiza_7,costo_imp_8,costo_dir_8,precio_min_8,actualizacion_8,usr_id_actualiza_8,costo_imp_9,costo_dir_9,precio_min_9,actualizacion_9,usr_id_actualiza_9,costo_imp_10,costo_dir_10,precio_min_10,actualizacion_10,usr_id_actualiza_10,costo_imp_11,costo_dir_11,precio_min_11,actualizacion_11,usr_id_actualiza_11,costo_imp_12,costo_dir_12,precio_min_12,actualizacion_12,usr_id_actualiza_12,gral_emp_id,costo_adic_1,costo_adic_2,costo_adic_3,costo_adic_4,costo_adic_5,costo_adic_6,costo_adic_7,costo_adic_8,costo_adic_9,costo_adic_10, costo_adic_11, costo_adic_12 FROM inv_prod_costos "
     + " ) AS sbt_costos ON (sbt_costos.inv_prod_id=fac_docs_detalles.inv_prod_id AND sbt_costos.inv_prod_presentacion_id=fac_docs_detalles.inv_prod_presentacion_id AND sbt_costos.ano=EXTRACT(YEAR FROM fac_docs.momento_creacion)::integer ) "
     + "LEFT JOIN inv_prod_cost_prom ON (inv_prod_cost_prom.inv_prod_id=inv_prod.id AND inv_prod_cost_prom.ano=EXTRACT(YEAR FROM fac_docs.momento_creacion)::integer) "
-    + "WHERE erp_proceso.empresa_id=1 "
-    + "AND fac_docs.cancelado=false "
-    + "AND EXTRACT(YEAR  FROM fac_docs.momento_creacion)="+anio+" "
+    + "WHERE erp_proceso.empresa_id="+id_empresa+" AND fac_docs.cancelado=false AND EXTRACT(YEAR  FROM fac_docs.momento_creacion)="+anio+" "
     + ") AS sbt "
     +")as sbt2 "
     +"GROUP BY razon_social ";

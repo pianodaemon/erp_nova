@@ -790,6 +790,7 @@ public class FacturasController {
         //obtener tipo de facturacion
         String tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
         String serieFolio = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
+        String refId = this.getFacdao().getRefIdFactura(id_factura, id_empresa);
         Integer id_prefactura = this.getFacdao().getIdPrefacturaByIdFactura(id_factura);
         
         //aqui se obtienen los parametros de la facturacion, nos intersa el tipo de formato para el pdf de la factura
@@ -803,14 +804,14 @@ public class FacturasController {
         
         if(tipo_facturacion.equals("cfd")){
             dirSalidas = this.getGralDao().getCfdEmitidosDir() + rfcEmpresa;
-            fileout = dirSalidas +"/"+ serieFolio +".pdf";
+            fileout = dirSalidas +"/"+ refId +".pdf";
             System.out.println("Ruta: " + fileout);
             file = new File(fileout);
             if (file.exists()){
                 file.delete();
             }
             
-            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ serieFolio +".xml");
+            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ refId +".xml");
             //System.out.println("cadena_xml: "+cadena_xml);
             try {
                 
@@ -825,7 +826,7 @@ public class FacturasController {
                 
                 //BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+serieFolio +".xml");
                 
-                BeanFromCfdXml pop = new BeanFromCfdXml(dirSalidas+"/"+ serieFolio +".xml");
+                BeanFromCfdXml pop = new BeanFromCfdXml(dirSalidas+"/"+ refId +".xml");
                 
                 //sacar la fecha del comprobante 
                 String fecha_comprobante=pop.getFecha();
@@ -873,14 +874,14 @@ public class FacturasController {
         
         if(tipo_facturacion.equals("cfditf")){
             dirSalidas = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresa;
-            fileout = dirSalidas +"/"+ serieFolio +".pdf";
+            fileout = dirSalidas +"/"+ refId +".pdf";
             file = new File(fileout);
             if (file.exists()){
                 file.delete();
             }
             
             
-            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ serieFolio +".xml");
+            String cadena_xml = FileHelper.stringFromFile(dirSalidas+"/"+ refId +".xml");
             //System.out.println("cadena_xml: "+cadena_xml);
             
             try {
@@ -897,7 +898,7 @@ public class FacturasController {
                 String cadena_original ="";
                 String sello_digital_emisor="";
                 */
-                BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+serieFolio +".xml");
+                BeanFromCfdiXml pop2 = new BeanFromCfdiXml(dirSalidas+"/"+refId +".xml");
                 
                 //sacar la fecha del comprobante 
                 String fecha_comprobante=pop2.getFecha_comprobante();

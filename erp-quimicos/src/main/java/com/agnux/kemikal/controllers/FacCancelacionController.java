@@ -337,6 +337,7 @@ public class FacCancelacionController {
         String extra_data_array = "'sin datos'";
         String succcess = "false";
         String serie_folio="";
+        String refId = "";
         String tipo_facturacion="";
         String valorRespuesta="false";
         String msjRespuesta="";
@@ -359,6 +360,8 @@ public class FacCancelacionController {
             System.out.println("Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
             
             serie_folio = this.getFacdao().getSerieFolioFactura(id_factura, id_empresa);
+            refId = this.getFacdao().getRefIdFactura(id_factura, id_empresa);
+            
             
             if(tipo_facturacion.equals("cfd") ){
                 succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);//llamada al procedimiento para cancelacion
@@ -378,7 +381,7 @@ public class FacCancelacionController {
                 if(!noPac.equals("0") && !noPac.equals("2")){
                     //Solo se permite Cancelar Factura por Conector Fiscal con Diverza
                 
-                    File toFile = new File(this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
+                    File toFile = new File(this.getGralDao().getCfdiSolicitudesDir() + "out/"+refId+".xml");
                     //System.out.println("FicheroXML: "+this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml");
 
                     if (toFile.exists()) {
@@ -391,7 +394,7 @@ public class FacCancelacionController {
                             HashMap<String, String> data = new HashMap<String, String>();
                             //serie_folio = succcess.split(":")[0];
                             
-                            String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+serie_folio+".xml";
+                            String directorioSolicitudesCfdiOut=this.getGralDao().getCfdiSolicitudesDir() + "out/"+refId+".xml";
                             BeanFromCfdiXml pop = new BeanFromCfdiXml(directorioSolicitudesCfdiOut);
                             
                             data.put("uuid", pop.getUuid());
@@ -440,7 +443,7 @@ public class FacCancelacionController {
                             //String ruta_java_almacen_certificados = "/home/agnux/jdk/jre/lib/security/cacerts";
                             
                             String rutaCanceladosDir = this.getGralDao().getCfdiTimbreCanceladosDir();
-                            String RutaficheroXml = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresaEmisora +"/"+ serie_folio+".xml";
+                            String RutaficheroXml = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresaEmisora +"/"+ refId+".xml";
                             BeanFromCfdiXml pop = new BeanFromCfdiXml(RutaficheroXml);
                             
                             String uuid = pop.getUuid();

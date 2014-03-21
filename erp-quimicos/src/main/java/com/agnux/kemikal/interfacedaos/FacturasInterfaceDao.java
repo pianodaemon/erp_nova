@@ -30,6 +30,8 @@ public interface FacturasInterfaceDao {
     public String getSerieFolioFactura(Integer id_factura, Integer idEmp);
     public String getSerieFolioFacturaByIdPrefactura(Integer id_prefactura, Integer idEmp);
     public Integer getIdPrefacturaByIdFactura(Integer id_factura);
+    public String getRefIdFactura(Integer id_factura, Integer idEmp);
+    public String getRefIdByIdPrefactura(Integer id_prefactura, Integer idEmp);
     
     public Double getTipoCambioActual();
     public ArrayList<HashMap<String, Object>> getValoriva(Integer id_sucursal);
@@ -135,6 +137,7 @@ public interface FacturasInterfaceDao {
     public ArrayList<LinkedHashMap<String,String>> getNotaCreditoCfd_CfdiTf_ImpuestosTrasladadosXml(Integer id_sucursal);
     public LinkedHashMap<String,String> getNotaCreditoCfd_DatosExtrasXml(Integer id_nota_credito, String tipo_cambio,String id_usuario,String moneda_id, Integer id_empresa, Integer id_sucursal, Integer app_selected, String command_selected, String extra_data_array, String fac_saldado);
     public String getSerieFolioNotaCredito(Integer id_nota_credito);
+    public String getRefIdNotaCredito(Integer id_nota_credito);
     public ArrayList<HashMap<String, String>> getNotaCreditoCfd_ListaConceptosPdf(String serieFolio);
     public HashMap<String, String> getNotaCreditoCfd_DatosExtrasPdf(String serieFolio, String proposito, String cadena_original, String sello_digital, Integer id_sucursal, Integer id_empresa);
     

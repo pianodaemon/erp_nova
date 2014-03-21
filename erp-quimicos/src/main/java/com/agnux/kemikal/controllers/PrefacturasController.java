@@ -624,6 +624,7 @@ public class PrefacturasController {
         String tipo_facturacion="";
         String folio="";
         String serieFolio="";
+        String refId="";
         String rfcEmisor="";
         Integer id_factura=0;
         //Variable para el id  del usuario
@@ -877,6 +878,7 @@ public class PrefacturasController {
                             if(cadRes[0].equals("true")){
                                 //obtiene serie_folio de la factura que se acaba de guardar
                                 serieFolio = this.getFacdao().getSerieFolioFacturaByIdPrefactura(id_prefactura, id_empresa);
+                                refId = this.getFacdao().getRefIdByIdPrefactura(id_prefactura, id_empresa);
                                 
                                 String cadena_original=this.getBfCfdiTf().getCadenaOriginalTimbre();
                                 //System.out.println("cadena_original:"+cadena_original);
@@ -938,7 +940,7 @@ public class PrefacturasController {
                                         
                                         
                                         path_file = this.getGralDao().getCfdiTimbreEmitidosDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa);
-                                        xml_file_name = serieFolio+".xml";
+                                        xml_file_name = refId+".xml";
                                         
                                         
                                         if(numAdenda==1){

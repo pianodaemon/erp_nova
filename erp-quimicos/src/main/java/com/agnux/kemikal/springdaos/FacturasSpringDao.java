@@ -1144,20 +1144,21 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         final String rfc = rfcEmisor;
         
-        String sql_query = "SELECT inv_prod.sku,"
-                                    +"inv_prod.descripcion,"
-                                    +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
-                                    +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
-                                    +"fac_docs_detalles.cantidad,"
-                                    +"fac_docs_detalles.precio_unitario,"
-                                    +"(fac_docs_detalles.cantidad * fac_docs_detalles.precio_unitario) AS importe, "
-                                    +"fac_docs.moneda_id AS moneda_factura "
-                            +"FROM fac_docs "
-                            +"JOIN fac_docs_detalles on fac_docs_detalles.fac_doc_id=fac_docs.id "
-                            +"LEFT JOIN inv_prod on inv_prod.id = fac_docs_detalles.inv_prod_id "
-                            +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_docs_detalles.inv_prod_unidad_id "
-                            +"LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=fac_docs_detalles.inv_prod_presentacion_id "
-                            +"WHERE fac_docs.id="+id_factura+";";
+        String sql_query = ""
+        + "SELECT inv_prod.sku,"
+            +"inv_prod.descripcion,"
+            +"(CASE WHEN inv_prod_unidades.titulo IS NULL THEN '' ELSE inv_prod_unidades.titulo END) as unidad,"
+            +"(CASE WHEN inv_prod_presentaciones.titulo IS NULL THEN '' ELSE inv_prod_presentaciones.titulo END) AS presentacion, "
+            +"fac_docs_detalles.cantidad,"
+            +"fac_docs_detalles.precio_unitario,"
+            +"(fac_docs_detalles.cantidad * fac_docs_detalles.precio_unitario) AS importe, "
+            +"fac_docs.moneda_id AS moneda_factura "
+        +"FROM fac_docs "
+        +"JOIN fac_docs_detalles on fac_docs_detalles.fac_doc_id=fac_docs.id "
+        +"LEFT JOIN inv_prod on inv_prod.id = fac_docs_detalles.inv_prod_id "
+        +"LEFT JOIN inv_prod_unidades on inv_prod_unidades.id = fac_docs_detalles.inv_prod_unidad_id "
+        +"LEFT JOIN inv_prod_presentaciones ON inv_prod_presentaciones.id=fac_docs_detalles.inv_prod_presentacion_id "
+        +"WHERE fac_docs.id="+id_factura+";";
         
         //System.out.println("Obteniendo lista de conceptos para cfdi: "+sql_query);
         ArrayList<LinkedHashMap<String, String>> hm_conceptos = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
@@ -1481,25 +1482,26 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         //obtener datos del vendedor y terminos de pago
         String sql_to_query = ""
-                + "SELECT fac_docs.subtotal, "
-                    + "fac_docs.monto_ieps,"
-                    + "fac_docs.impuesto, "
-                    + "fac_docs.monto_retencion, "
-                    + "fac_docs.total, "
-                    + "(CASE WHEN fac_docs.fecha_vencimiento IS NULL THEN '' ELSE to_char(fac_docs.fecha_vencimiento,'dd/mm/yyyy') END) AS fecha_vencimiento, "
-                    + "fac_docs.orden_compra, "
-                    + "fac_docs.orden_compra AS folio_pedido, "
-                    + "fac_docs.observaciones, "
-                    + "cxc_agen.nombre AS nombre_vendedor, "
-                    + "cxc_clie_credias.descripcion AS terminos,"
-                    + "cxc_clie_credias.dias, "
-                    + "gral_mon.descripcion AS nombre_moneda,"
-                    + "gral_mon.descripcion_abr AS moneda_abr "
-                + "FROM fac_docs  "
-                + "LEFT JOIN cxc_clie_credias ON cxc_clie_credias.id = fac_docs.terminos_id "
-                + "LEFT JOIN gral_mon on gral_mon.id = fac_docs.moneda_id "
-                + "JOIN cxc_agen ON cxc_agen.id =  fac_docs.cxc_agen_id  "
-                + "WHERE fac_docs.serie_folio='"+serieFolio+"';";
+        + "SELECT fac_docs.subtotal, "
+            + "fac_docs.monto_ieps,"
+            + "fac_docs.impuesto, "
+            + "fac_docs.monto_retencion, "
+            + "fac_docs.total, "
+            + "(CASE WHEN fac_docs.fecha_vencimiento IS NULL THEN '' ELSE to_char(fac_docs.fecha_vencimiento,'dd/mm/yyyy') END) AS fecha_vencimiento, "
+            + "fac_docs.orden_compra, "
+            + "fac_docs.orden_compra AS folio_pedido, "
+            + "fac_docs.observaciones, "
+            + "cxc_agen.nombre AS nombre_vendedor, "
+            + "cxc_clie_credias.descripcion AS terminos,"
+            + "cxc_clie_credias.dias, "
+            + "gral_mon.descripcion AS nombre_moneda,"
+            + "gral_mon.descripcion_abr AS moneda_abr,"
+            + "(CASE WHEN fac_docs.ref_id='' THEN fac_docs.serie_folio ELSE fac_docs.ref_id END) AS ref_id "
+        + "FROM fac_docs  "
+        + "LEFT JOIN cxc_clie_credias ON cxc_clie_credias.id = fac_docs.terminos_id "
+        + "LEFT JOIN gral_mon on gral_mon.id = fac_docs.moneda_id "
+        + "JOIN cxc_agen ON cxc_agen.id =  fac_docs.cxc_agen_id  "
+        + "WHERE fac_docs.serie_folio='"+serieFolio+"';";
         
         Map<String, Object> mapVendedorCondiciones = this.getJdbcTemplate().queryForMap(sql_to_query);
         extras.put("subtotal", StringHelper.roundDouble(mapVendedorCondiciones.get("subtotal").toString(),2));
@@ -1509,7 +1511,6 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         extras.put("total", StringHelper.roundDouble(mapVendedorCondiciones.get("total").toString(),2));
         extras.put("nombre_moneda", mapVendedorCondiciones.get("nombre_moneda").toString());
         extras.put("moneda_abr", mapVendedorCondiciones.get("moneda_abr").toString());
-        
         
         extras.put("nombre_vendedor", mapVendedorCondiciones.get("nombre_vendedor").toString());
         extras.put("terminos", mapVendedorCondiciones.get("terminos").toString());
@@ -1525,6 +1526,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         extras.put("serieFolio", serieFolio);
         extras.put("valor_iva", StringHelper.roundDouble(valorIva.get(0).get("valor_impuesto").toString(),2));
         extras.put("fecha_comprobante", getFechaComprobante());
+        extras.put("refId", mapVendedorCondiciones.get("ref_id").toString());
         
         return extras;
     }
@@ -1624,9 +1626,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         
         if(tipo_facturacion.equals("cfditf")){
             //para facturacion tipo CFDI Buzon Fiscal
-            sql_to_query = "SELECT serie_folio AS nombre_archivo FROM fac_docs WHERE id ="+id_factura+";";
+            sql_to_query = "SELECT fac_docs.serie_folio AS nombre_archivo FROM fac_docs JOIN erp_proceso ON erp_proceso.id=fac_docs.proceso_id WHERE fac_docs.id="+id_factura+" AND erp_proceso.empresa_id="+idEmp+" LIMIT 1;";
         }
-
         
         //System.out.println(sql_to_query);
         Map<String, Object> map_iva = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -1635,6 +1636,42 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     }
     
     
+    
+    @Override
+    public String getRefIdFactura(Integer id_factura, Integer idEmp) {
+        String sql_to_query="";
+        
+        //obtener tipo de facturacion
+        String tipo_facturacion = getTipoFacturacion(idEmp);
+        if(tipo_facturacion.equals("cfditf")){
+            //para facturacion tipo CFDI Buzon Fiscal
+            sql_to_query = "SELECT (CASE WHEN fac_docs.ref_id='' THEN fac_docs.serie_folio ELSE fac_docs.ref_id END) AS ref_id FROM fac_docs JOIN erp_proceso ON erp_proceso.id=fac_docs.proceso_id WHERE fac_docs.id="+id_factura+" AND erp_proceso.empresa_id="+idEmp+" LIMIT 1;";
+        }
+        
+        //System.out.println(sql_to_query);
+        Map<String, Object> map_iva = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String ref_id = map_iva.get("ref_id").toString();
+        return ref_id;
+    }
+    
+    
+    @Override
+    public String getRefIdByIdPrefactura(Integer id_prefactura, Integer idEmp) {
+        String sql_to_query="";
+        
+        //obtener tipo de facturacion
+        String tipo_facturacion = getTipoFacturacion(idEmp);
+        if(tipo_facturacion.equals("cfditf")){
+            //para facturacion tipo CFDI Buzon Fiscal
+            sql_to_query = "SELECT SELECT (CASE WHEN fac_docs.ref_id='' THEN fac_docs.serie_folio ELSE fac_docs.ref_id END) AS ref_id FROM erp_prefacturas  JOIN  fac_docs ON fac_docs.proceso_id=erp_prefacturas.proceso_id WHERE erp_prefacturas.id="+id_prefactura+" AND fac_docs.cancelado=false ORDER BY fac_docs.id DESC LIMIT 1;";
+        }
+        
+        //System.out.println(sql_to_query);
+        Map<String, Object> map_iva = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String ref_id = map_iva.get("ref_id").toString();
+        return ref_id;
+    }
+
     
     
     @Override
@@ -2672,6 +2709,14 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         return serie_folio;
     }
     
+    @Override
+    public String getRefIdNotaCredito(Integer id_nota_credito) {
+        String sql_to_query = "SELECT (CASE WHEN ref_id='' THEN serie_folio ELSE ref_id END) AS ref_id FROM fac_nota_credito WHERE id="+id_nota_credito+" LIMIT 1;";
+        //System.out.println("GetSerieFolioNotaCredito:"+sql_to_query);
+        Map<String, Object> map_iva = this.getJdbcTemplate().queryForMap(sql_to_query);
+        String serie_folio = map_iva.get("ref_id").toString();
+        return serie_folio;
+    }
     
     
     
@@ -2750,7 +2795,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "fac_nota_credito.observaciones, "
             + "cxc_agen.nombre AS nombre_vendedor, "
             + "gral_mon.descripcion AS nombre_moneda,"
-            + "gral_mon.descripcion_abr AS moneda_abr "
+            + "gral_mon.descripcion_abr AS moneda_abr,"
+            + "(CASE WHEN fac_nota_credito.ref_id='' THEN fac_nota_credito.serie_folio ELSE fac_nota_credito.ref_id END) AS ref_id "
         + "FROM fac_nota_credito  "
         + "LEFT JOIN gral_mon on gral_mon.id = fac_nota_credito.moneda_id "
         + "JOIN cxc_agen ON cxc_agen.id =  fac_nota_credito.cxc_agen_id  "
@@ -2776,6 +2822,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         extras.put("cadena_original", cadena_original);
         extras.put("sello_digital", sello_digital);
         extras.put("serieFolio", serieFolio);
+        extras.put("refId", mapVendedorCondiciones.get("ref_id").toString());
         return extras;
     }
     

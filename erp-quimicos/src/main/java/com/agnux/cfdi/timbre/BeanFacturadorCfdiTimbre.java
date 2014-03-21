@@ -118,6 +118,10 @@ public class BeanFacturadorCfdiTimbre {
     private BigDecimal sumatoriaImportes = new BigDecimal("0");
     private Validacion valedor = null;
     
+    //Solo se utiliza para nota de credito
+    private String xml_timbrado;
+
+    
     private ArrayList<LinkedHashMap<String, String>> lista_namespaces;
 
     //Estas variables son exclusivas para la Nomina CFDI
@@ -561,7 +565,7 @@ public class BeanFacturadorCfdiTimbre {
                                 String refacturar = this.getDatosExtras().get("refacturar");
                                 String id_moneda = this.getDatosExtras().get("moneda_id");
                                 
-                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+Serie+"___"+Folio+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion;
+                                data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+prefactura_id+"___"+pop.getRfc_receptor()+"___"+Serie+"___"+Folio+"___"+no_aprobacion+"___"+pop.getTotal()+"___"+pop.getTotalImpuestosTrasladados()+"___"+estado_comprobante+"___"+xml_file_name+"___"+pop.getFecha()+"___"+pop.getRazon_social_receptor()+"___"+pop.getTipoDeComprobante()+"___"+this.getProposito()+"___"+ano_aprobacion+"___"+cadena_conceptos+"___"+cadena_imp_trasladados+"___"+cadena_imp_retenidos+"___"+Integer.parseInt(id_moneda)+"___"+tipo_cambio+"___"+refacturar+"___"+regimen_fiscal+"___"+metodo_pago+"___"+num_cuenta+"___"+lugar_de_expedicion+"___"+this.getRef_id()+"___"+cadena_xml;
                                 
                                 System.out.println(TimeHelper.getFechaActualYMDH()+":::Inicia Salvar datos de la Factura.");
                                 
@@ -576,6 +580,9 @@ public class BeanFacturadorCfdiTimbre {
                                 
                             case NOTA_CREDITO:
                                 System.out.println("LLego en Nota de Credito");
+                                
+                                this.setXml_timbrado(cadena_xml);
+                                
                                 //Este es el valor del retorno idicando que todo se efectuo correctamente hasta aqui
                                 retorno="true";
                             break;
@@ -1803,6 +1810,15 @@ public class BeanFacturadorCfdiTimbre {
 
     public void setSelloDigitalSat(String selloDigitalSat) {
         this.selloDigitalSat = selloDigitalSat;
+    }
+    
+
+    public String getXml_timbrado() {
+        return xml_timbrado;
+    }
+
+    public void setXml_timbrado(String xml_timbrado) {
+        this.xml_timbrado = xml_timbrado;
     }
     
     public String getUuid() {

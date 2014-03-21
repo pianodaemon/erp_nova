@@ -4,6 +4,7 @@
  */
 package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
+import com.agnux.cfdi.BeanFromCfdiXml;
 import com.agnux.cfdi.timbre.BeanFacturadorCfdiTimbre;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
@@ -14,9 +15,12 @@ import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1002,6 +1006,206 @@ public class FacNominaController {
     
     
     
+    
+    
+    
+    
+    //Cancelacion de CFDi de Nomina
+    @RequestMapping(method = RequestMethod.POST, value="/getCancelaNomina.json")
+    public @ResponseBody HashMap<String, String> getCancelaNominaJson(
+            @RequestParam(value="id_reg", required=true) Integer id_reg,
+            @RequestParam(value="id_emp", required=true) Integer id_empleado,
+            @RequestParam(value="iu", required=true) String id_user,
+            Model model
+        ) {
+        
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String, String> jsonretorno = new HashMap<String, String>();
+        HashMap<String, String> validacion = new HashMap<String, String>();
+        HashMap<String, String> data1 = new HashMap<String, String>();
+        
+        
+        //Decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        //System.out.println("id_usuario: "+id_usuario);
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        
+        //Aplicativo CFDi de Nomina
+        Integer app_selected = 173;
+        String command_selected = "cancelacion";
+        String extra_data_array = "'sin datos'";
+        String succcess = "false";
+        String nombre_archivo="";
+        String serie_folio="";
+        String tipo_facturacion="";
+        String valorRespuesta="false";
+        String msjRespuesta="";
+        
+        String data_string = app_selected+"___"+command_selected+"___"+id_usuario+"___"+id_reg+"___"+id_empleado;
+        
+        validacion = this.getFacdao().selectFunctionValidateAaplicativo(data_string,app_selected,extra_data_array);
+        
+        if(String.valueOf(validacion.get("success")).equals("true")){
+            
+            tipo_facturacion = this.getFacdao().getTipoFacturacion(id_empresa);
+            tipo_facturacion = String.valueOf(tipo_facturacion);
+            
+            //Obtener el numero del PAC para el Timbrado de la Factura
+            String noPac = this.getFacdao().getNoPacFacturacion(id_empresa);
+            
+            //Obtener el Ambiente de Facturacion PRUEBAS ó PRODUCCION, solo aplica para Facturacion por Timbre FIscal(cfditf)
+            String ambienteFac = this.getFacdao().getAmbienteFacturacion(id_empresa);
+            
+            System.out.println("Tipo::"+tipo_facturacion+" | noPac::"+noPac+" | Ambiente::"+ambienteFac);
+            
+            
+                
+            if(tipo_facturacion.equals("cfditf") ){
+                try {
+                    //Pac 0=Sin PAC, 1=Diverza, 2=ServiSim
+                    if(!String.valueOf(noPac).equals("0")){
+                        //Solo se permite Cancelar Factura con Diverza y ServiSim
+                        data1 = this.getFacdao().getFacNomina_RefId(id_reg);
+                        nombre_archivo = data1.get("ref_id");
+                        serie_folio = data1.get("serie_folio");
+
+
+                        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                        //aqui inicia request al webservice
+                        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                        String rfcEmpresaEmisora = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+                        String ruta_ejecutable_java = this.getGralDao().getJavaVmDir(id_empresa, id_sucursal);
+                        String ruta_jarWebService = this.getGralDao().getCfdiTimbreJarWsDir()+"wscli.jar";
+
+                        String rutaCanceladosDir = this.getGralDao().getCfdiTimbreCanceladosDir();
+                        String RutaficheroXml = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresaEmisora +"/nomina/"+ nombre_archivo+".xml";
+                        BeanFromCfdiXml pop = new BeanFromCfdiXml(RutaficheroXml);
+
+                        String uuid = pop.getUuid();
+                        String emisor_rfc = pop.getEmisor_rfc();
+                        String receptor_rfc = pop.getReceptor_rfc();
+                        String tipo_peticion = "cancelacfdi";
+
+                        String str_execute="";
+
+                        //Cancelacion con DIVERZA
+                        if(String.valueOf(noPac).equals("1")){
+                            String ruta_fichero_llave_pfx = this.getGralDao().getSslDir() + rfcEmpresaEmisora+ "/" +this.getGralDao().getFicheroPfxTimbradoCfdi(id_empresa,id_sucursal) ;
+                            String password_pfx = this.getGralDao().getPasswdFicheroPfxTimbradoCfdi(id_empresa, id_sucursal);
+                            String ruta_java_almacen_certificados = this.getGralDao().getJavaRutaCacerts(id_empresa, id_sucursal);
+                            /*
+                            //Datos para cancelacion
+                            args[0] = PAC proveedor
+                            args[1] = tipo de ambiente(pruebas, produccion)
+                            args[2] = tipo_peticion
+                            args[3] = FicheroPfxTimbradoCfdi
+                            args[4] = PasswdFicheroPfxTimbradoCfdi
+                            args[5] = JavaVmDir
+                            args[6] = getRfc_emisor
+                            args[7] = getRfc_receptor
+                            args[8] = uuid
+                            args[9] = DirCancelados
+                            args[10] = serie_folio
+                             */
+
+                            //str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "+noPac+" "+ambienteFac+" "+tipo_peticion+" "+ruta_fichero_llave_pfx+" "+password_pfx+" "+ruta_java_almacen_certificados+" "+emisor_rfc+" "+receptor_rfc+" "+uuid+" "+rutaCanceladosDir+" "+serie_folio;
+                        }
+
+                        //Cancelacion con SERVISIM
+                        if(String.valueOf(noPac).equals("2")){
+
+                            /*
+                            //Datos para Cancelacion
+                            args[0] = PAC proveedor
+                            args[1] = tipo de ambiente(pruebas, produccion)
+                            args[2] = tipo_peticion(cancelacion, timbrado)
+                            args[3] = Usuario
+                            args[4] = Password
+                            args[5] = uuid
+                            args[6] = rfcEmisor
+                            args[7] = serieFolio
+                            args[8] = dirCancelados
+                            */
+
+                            String usuario = this.getGralDao().getUserContrato(id_empresa, id_sucursal);
+                            String contrasena = this.getGralDao().getPasswordUserContrato(id_empresa, id_sucursal);
+
+                            //aqui se forma la cadena con los parametros que se le pasan a jar
+                            str_execute = ruta_ejecutable_java+" -jar "+ruta_jarWebService+" "+noPac+" "+ambienteFac+" "+tipo_peticion+" "+usuario+" "+contrasena+" "+uuid+" "+emisor_rfc+" "+serie_folio+" "+rutaCanceladosDir;
+                        }
+
+
+                        System.out.println("str_execute: "+str_execute);
+                        Process resultado = null; 
+
+                        resultado = Runtime.getRuntime().exec(str_execute);
+
+                        InputStream myInputStream=null;
+                        myInputStream= resultado.getInputStream();
+
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(myInputStream));
+                        StringBuilder sb = new StringBuilder();
+                        String line = null;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        myInputStream.close();
+
+                        System.out.println("Resultado: "+sb.toString());
+                        String arrayResult[] = sb.toString().split("___");
+
+                        //Toma el valor true o false
+                        valorRespuesta = arrayResult[0];
+
+                        //Toma el mensaje
+                        msjRespuesta = arrayResult[1];
+
+                        if(String.valueOf(valorRespuesta).equals("true")){
+                            succcess = this.getFacdao().selectFunctionForFacAdmProcesos(data_string, extra_data_array);
+                            if(String.valueOf(succcess).equals("true")){
+                                HashMap<String, String> data = new HashMap<String, String>();
+                                //serie_folio = succcess.split(":")[0];
+                                //System.out.println("serie_folio:"+serie_folio + "    Cancelado:"+succcess.split(":")[1]);
+                            }
+                        }
+
+                        jsonretorno.put("success", succcess);
+                    }else{
+                        valorRespuesta="false";
+                        msjRespuesta="No se puede Cancelar el CFDi de la Nomina con el PAC actual.\nVerifique la configuraci&oacute;n del tipo de Facturaci&oacute;n y del PAC.";
+                    }
+                } catch (IOException ex) {
+                    valorRespuesta="false";
+                    msjRespuesta="No fue posible Cancelar el CFDi de la Nomina.";
+                    Logger.getLogger(FacCancelacionController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //Termina CANCELACION cfditf
+            }else{
+                jsonretorno.put("success", succcess);
+                valorRespuesta="false";
+                msjRespuesta="No se ha configurado el tipo de facturacion.";
+            }
+            
+            
+            jsonretorno.put("success", String.valueOf(validacion.get("success")));
+        }else{
+            jsonretorno.put("success", "false");
+            valorRespuesta="false";
+            String resultValidacion[] = validacion.get("success").split("___");
+            msjRespuesta=resultValidacion[1];
+        }
+        
+        System.out.println("valor_retorno:: "+ jsonretorno.get("success"));
+        jsonretorno.put("valor",valorRespuesta);
+        jsonretorno.put("msj",msjRespuesta);
+        
+        System.out.println("valorRespuesta: "+String.valueOf(valorRespuesta));
+        System.out.println("msjRespuesta: "+String.valueOf(msjRespuesta));
+        
+        return jsonretorno;
+    }
     
     
 }

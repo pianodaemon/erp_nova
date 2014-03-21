@@ -34,6 +34,7 @@ public class pdfCfd_CfdiTimbradoFormato2 {
     private  GralInterfaceDao gralDao;
     public static enum Proposito {FACTURA, NOTA_CREDITO, NOTA_CARGO};
     private String fileout;
+    private String refId;
     
     private String tipo_facturacion;
     private String imagen;
@@ -113,6 +114,8 @@ public class pdfCfd_CfdiTimbradoFormato2 {
         this.setDatosCliente(datosCliente);
         this.setDatosExtras(extras);
         this.setLeyendas(leyendasEspeciales);
+        
+        this.setRefId(extras.get("refId"));
         
         this.setGralDao(gDao);
         this.setTipo_facturacion(extras.get("tipo_facturacion"));
@@ -199,12 +202,12 @@ public class pdfCfd_CfdiTimbradoFormato2 {
         this.setImagen_cedula( this.getGralDao().getImagesDir()+this.getEmisora_rfc()+"_cedula.png" );
         String tipo = "";
         if(this.getTipo_facturacion().equals("cfd")){
-            this.setFileout(this.getGralDao().getCfdEmitidosDir() + this.getEmisora_rfc() + "/" + this.getSerie_folio() +".pdf");
+            this.setFileout(this.getGralDao().getCfdEmitidosDir() + this.getEmisora_rfc() + "/" + this.getRefId() +".pdf");
             tipo="ESTE DOCUMENTO ES UNA REPRESENTACIÓN IMPRESA DE UN CFD";
         }
         
         if(this.getTipo_facturacion().equals("cfditf")){
-            this.setFileout(this.getGralDao().getCfdiTimbreEmitidosDir() + this.getEmisora_rfc() + "/" + this.getSerie_folio() +".pdf");
+            this.setFileout(this.getGralDao().getCfdiTimbreEmitidosDir() + this.getEmisora_rfc() + "/" + this.getRefId() +".pdf");
             tipo="ESTE DOCUMENTO ES UNA REPRESENTACIÓN IMPRESA DE UN CFDI";
             
             //cadena para el CBB, solo es para cfdi con timbrado Fiscal
@@ -2201,6 +2204,14 @@ public class pdfCfd_CfdiTimbradoFormato2 {
 
     public String getTipo_facturacion() {
         return tipo_facturacion;
+    }
+    
+    public String getRefId() {
+        return refId;
+    }
+
+    public void setRefId(String refId) {
+        this.refId = refId;
     }
     
     public void setTipo_facturacion(String tipo_facturacion) {
