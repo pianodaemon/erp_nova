@@ -228,13 +228,12 @@ $(function() {
                              
                              
                                 var height2 = $('#cuerpo').css('height');
-                                var alto = parseInt(height2)-300;
+                                var alto = parseInt(height2)-270;
                                 var pix_alto=alto+'px';
-                                
                                  html_reporte +='<tbody>';
 								html_reporte +='<tr>';
 								html_reporte +='<td colspan="40">';
-								html_reporte +='<div id="reporte" style="overflow:scroll; overflow-y:auto; height:'+pix_alto+'; width=4900px; align=top;">';
+								html_reporte +='<div id="reporte" style="background-color:#ffffff; overflow:scroll; overflow-x:hidden; overflow-y:auto; height:'+pix_alto+'; width=4900px; align=top;">';
 								html_reporte +='<table class="table_reporte" >';
 
                                 for(var i=0; i<body_tabla.length; i++){
@@ -244,7 +243,7 @@ $(function() {
                                         totalano3=parseFloat(totalano3)+parseFloat(body_tabla[i]["suma_total3"]);
 
                                         html_reporte +='<tr>';
-                                        html_reporte +='<td class="grid_datos" width="220" valign="top" align="left">'+body_tabla[i]["razon_social"]+'</td>'; 
+                                        html_reporte +='<td style="background-color:#ffffff; border:1px solid #ccc !important; border-right: 1px solid #ccc !important;" width="220" valign="top" align="left">'+body_tabla[i]["razon_social"]+'</td>'; 
                                         html_reporte +='<td class="grid_datos" width="120" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["enero"]).toFixed(2))+'</td>';
                                         html_reporte +='<td class="grid_datos" width="120" align="right">'+$(this).agregar_comas(parseFloat(body_tabla[i]["enero1"]).toFixed(2))+'</td>';
                                         //html_reporte +='<td width="120" align="right">'+$(this).agregar_comas((parseFloat(body_tabla[i]["enero11"]) * 100 ).toFixed(2))+' %</td>';

@@ -2001,14 +2001,14 @@ $(function() {
 			}
 		trr += '</td>';
 		trr += '<td class="grid4" width="300">'+ nombre_empleado +'</td>';
-		trr += '<td class="grid3" width="100">';
-			trr += '<input type="text" name="tpercep" value="'+ t_percep +'" id="tpercep" class="tpercep'+ tr +' borde_oculto" readOnly="true" style="width:96px; text-align:right;">';
+		trr += '<td class="grid3" width="95">';
+			trr += '<input type="text" name="tpercep" value="'+ t_percep +'" id="tpercep" class="tpercep'+ tr +' borde_oculto" readOnly="true" style="width:91px; text-align:right;">';
 		trr += '</td>';
-		trr += '<td class="grid3" width="100">';
-			trr += '<input type="text" name="tdeduc" value="'+ t_deduc +'" id="tdeduc" class="tdeduc'+ tr +' borde_oculto" readOnly="true" style="width:96px; text-align:right;">';
+		trr += '<td class="grid3" width="95">';
+			trr += '<input type="text" name="tdeduc" value="'+ t_deduc +'" id="tdeduc" class="tdeduc'+ tr +' borde_oculto" readOnly="true" style="width:91px; text-align:right;">';
 		trr += '</td>';
-		trr += '<td class="grid3" width="90">';
-			trr += '<input type="text" name="pago_neto" value="'+ pago_neto +'" id="pago_neto" class="pago_neto'+ tr +' borde_oculto" readOnly="true" style="width:86px; text-align:right;">';
+		trr += '<td class="grid3" width="85">';
+			trr += '<input type="text" name="pago_neto" value="'+ pago_neto +'" id="pago_neto" class="pago_neto'+ tr +' borde_oculto" readOnly="true" style="width:81px; text-align:right;">';
 		trr += '</td>';
 		trr += '<td class="grid3" width="40">';
 			if(facturado=='true'){
@@ -2020,7 +2020,11 @@ $(function() {
 				trr += '<input type="button" id="pdf" class="pdf'+ tr +'" value="PDF" style="width:35px; font-weight:bold;">';
 			}
 		trr += '</td>';
-		
+		trr += '<td class="grid3" width="60">';
+			if(facturado=='true'){
+				trr += '<input type="button" id="cancel" class="cancel'+ tr +'" value="Cancelar" style="width:55px; font-weight:bold;">';
+			}
+		trr += '</td>';
 		trr += '</tr>';
 		$grid_empleados.append(trr);
 		
@@ -2044,16 +2048,27 @@ $(function() {
 				});//termina llamada json
 			});
 			
+			
 			$grid_empleados.find('.pdf'+ tr).click(function(){
 				var id_reg = $grid_empleados.find('.id_reg'+ tr).val();
-				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivo.json';
-				$arreglo = {'id_reg':id_reg,'ext':'pdf', 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
+				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+				var id_empleado = $(this).parent().parent().find('#id_emp').val();
+				var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getPDF/'+id_reg+'/'+id_empleado+'/'+iu+'/out.json';
+				window.location.href=input_json;
+			});
+			
+			
+			$grid_empleados.find('.cancel'+ tr).click(function(){
+				var id_reg = $grid_empleados.find('.id_reg'+ tr).val();
+				var id_empleado = $(this).parent().parent().find('#id_emp').val();
+				var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
+				
+				var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getCancelaNomina.json';
+				$arreglo = {'id_reg':id_reg,'id_emp':id_empleado, 'iu':iu }
 				$.post(input_json,$arreglo,function(entry){
 					var descargar  = entry['descargar'];
 					if(descargar == 'true'){
-						var iu = $('#lienzo_recalculable').find('input[name=iu]').val();
-						var input_json = document.location.protocol + '//' + document.location.host + '/' + controller + '/getXml/'+id_reg+'/'+iu+'/out.json';
-						window.location.href=input_json;
+						
 					}else{
 						jAlert("El xml de la nomina "+$grid_empleados.find('.no_nom'+ tr).val()+" no esta disponible para descarga.", 'Atencion!');
 					}

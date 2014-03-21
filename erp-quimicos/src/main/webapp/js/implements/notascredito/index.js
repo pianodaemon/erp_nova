@@ -1555,6 +1555,7 @@ $(function() {
 					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivoGenerado.json';
 					$arreglo = {'serie_folio':$folio_nota_credito.val(),
 								'ext':'pdf',
+								'id':$identificador.val(),
 								'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
 							  }
 					

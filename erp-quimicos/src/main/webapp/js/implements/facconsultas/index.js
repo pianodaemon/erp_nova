@@ -1157,11 +1157,7 @@ $(function() {
 				$boton_descargarpdf.click(function(event){
 					
 					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivoGenerado.json';
-					$arreglo = {'serie_folio':$serie_folio.val(),
-								'ext':'pdf',
-								'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							  }
-					
+					$arreglo = {'serie_folio':$serie_folio.val(),'ext':'pdf', 'id':$id_factura.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
 					$.post(input_json,$arreglo,function(entry){
 						var descargar  = entry['descargar'];
 						if(descargar == 'true'){
@@ -1182,10 +1178,7 @@ $(function() {
 				//descargar xml de factura
 				$boton_descargarxml.click(function(event){
 					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivoGenerado.json';
-					$arreglo = {	'serie_folio':$serie_folio.val(),
-									'ext':'xml',
-									'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-								}
+					$arreglo = {'serie_folio':$serie_folio.val(), 'ext':'xml', 'id':$id_factura.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
 					
 					$.post(input_json,$arreglo,function(entry){
 						var descargar  = entry['descargar'];
