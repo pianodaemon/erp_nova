@@ -340,12 +340,12 @@
 																<td class="grid_head" width="40" id="td_ocultar">&nbsp;#</td>
 																<td class="grid_head" width="50">&nbsp;#</td>
 																<td class="grid_head" width="300">&nbsp;Nombre&nbsp;del&nbsp;Empleado</td>
-																<td class="grid_head" width="100">&nbsp;Total&nbsp;Percepciones</td>
-																<td class="grid_head" width="100">&nbsp;Total&nbsp;Deducciones</td>
-																<td class="grid_head" width="90">&nbsp;Neto&nbsp;a&nbsp;Pagar</td>
-																<td class="grid_head" width="40">&nbsp;#</td>
-																<td class="grid_head" width="40">&nbsp;#</td>
-																<td class="grid_head" width="60">&nbsp;#</td>
+																<td class="grid_head" width="95">&nbsp;Total&nbsp;Percepciones</td>
+																<td class="grid_head" width="95">&nbsp;Total&nbsp;Deducciones</td>
+																<td class="grid_head" width="85">&nbsp;Neto&nbsp;a&nbsp;Pagar</td>
+																<td class="grid_head" width="40">&nbsp;</td>
+																<td class="grid_head" width="40">&nbsp;</td>
+																<td class="grid_head" width="78">&nbsp;</td>
 															</tr>
 														</thead>
 													</table>

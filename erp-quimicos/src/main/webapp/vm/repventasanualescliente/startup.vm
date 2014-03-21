@@ -85,7 +85,7 @@
             </tr>
             <tr>
                 <td>&nbsp;&nbsp;</td>
-                <td><div id="div_reporte" style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:1300px; align=top;">
+                <td><div id="div_reporte" style="overflow:scroll; overflow-x:auto; overflow-y:auto; width:1300px; align=top; background-color:#dddddd;">
                 <!--<div id="reporte"></div>-->
                 </div></td>
             </tr>
