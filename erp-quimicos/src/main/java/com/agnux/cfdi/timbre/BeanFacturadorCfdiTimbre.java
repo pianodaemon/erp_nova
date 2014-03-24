@@ -386,7 +386,7 @@ public class BeanFacturadorCfdiTimbre {
             boolean fichero_xml_ok = FileHelper.createFileWithText(path_file, xml_file_name, comprobante_firmado);
             
             System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina construccion del XML CFD:::::::::::::::::::");
-            System.out.println("comprobante_firmado:::::\n"+comprobante_firmado);
+            //System.out.println("comprobante_firmado:::::\n"+comprobante_firmado);
             
             
             //System.out.println("fichero_xml_ok :"+fichero_xml_ok);

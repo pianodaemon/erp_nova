@@ -135,7 +135,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public String selectFunctionForFacAdmProcesos(String campos_data, String extra_data_array) {
         String sql_to_query = "select * from fac_adm_procesos('"+campos_data+"',array["+extra_data_array+"]);";
         
-        System.out.println("selectFunctionForFacAdmProcesos: "+sql_to_query);
+        //System.out.println("selectFunctionForFacAdmProcesos: "+sql_to_query);
         
         String valor_retorno="";
         Map<String, Object> update = this.getJdbcTemplate().queryForMap(sql_to_query);
@@ -591,7 +591,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     public ArrayList<LinkedHashMap<String, String>> getDataXml_Namespaces(String tipo) {
         //tipo='fac', tipo='fac_nomina'
         String sql_to_query = "SELECT (CASE WHEN key_xmlns IS NULL THEN '' ELSE key_xmlns END) AS key_xmlns, (CASE WHEN xmlns IS NULL THEN '' ELSE xmlns END) AS xmlns, (CASE WHEN schemalocation IS NULL THEN '' ELSE schemalocation END) AS schemalocation FROM fac_namespaces WHERE derogado=false AND "+tipo+"=true;";
-        System.out.println("getNamesPaces: "+sql_to_query);
+        //System.out.println("getNamesPaces: "+sql_to_query);
         ArrayList<LinkedHashMap<String, String>> datos = (ArrayList<LinkedHashMap<String, String>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -807,7 +807,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                         + ") AS sbt";
         
         //System.out.println(sql_query);
-        System.out.println("Obteniendo lista de conceptos: "+sql_query);
+        //System.out.println("Obteniendo lista de conceptos: "+sql_query);
         
         //System.out.println("noIdentificacion "+" | descripcion      "+" | cant"+" | precio_uni"+" | importe"+" | importe_imp"+" | valor_imp"+" | tasa_ret"  );
         
@@ -980,7 +980,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     idIvaConcepto = Integer.parseInt(item_con.get("id_impto"));
                     tasaIva = item_con.get("tasa_impuesto");
                     sumaImporteIva = sumaImporteIva + Double.parseDouble(StringHelper.roundDouble(item_con.get("importe_impuesto"),4));
-                    System.out.println(""+idIva+"="+idIvaConcepto+" | tasaIva:"+tasaIva+" | importeIva:"+StringHelper.roundDouble(item_con.get("importe_impuesto"),4));
+                    //System.out.println(""+idIva+"="+idIvaConcepto+" | tasaIva:"+tasaIva+" | importeIva:"+StringHelper.roundDouble(item_con.get("importe_impuesto"),4));
                 }
             }
             
@@ -991,7 +991,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 impuesto.put("importe", StringHelper.roundDouble(sumaImporteIva,2));
                 impuesto.put("tasa", tasaIva);
                 impuestos.add(impuesto);
-                System.out.println("impuesto:IVA | tasa:"+tasaIva+" | importe:"+StringHelper.roundDouble(sumaImporteIva,2));
+                //System.out.println("impuesto:IVA | tasa:"+tasaIva+" | importe:"+StringHelper.roundDouble(sumaImporteIva,2));
             }
         }
         
@@ -1663,7 +1663,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         String tipo_facturacion = getTipoFacturacion(idEmp);
         if(tipo_facturacion.equals("cfditf")){
             //para facturacion tipo CFDI Buzon Fiscal
-            sql_to_query = "SELECT SELECT (CASE WHEN fac_docs.ref_id='' THEN fac_docs.serie_folio ELSE fac_docs.ref_id END) AS ref_id FROM erp_prefacturas  JOIN  fac_docs ON fac_docs.proceso_id=erp_prefacturas.proceso_id WHERE erp_prefacturas.id="+id_prefactura+" AND fac_docs.cancelado=false ORDER BY fac_docs.id DESC LIMIT 1;";
+            sql_to_query = "SELECT (CASE WHEN fac_docs.ref_id='' THEN fac_docs.serie_folio ELSE fac_docs.ref_id END) AS ref_id FROM erp_prefacturas  JOIN  fac_docs ON fac_docs.proceso_id=erp_prefacturas.proceso_id WHERE erp_prefacturas.id="+id_prefactura+" AND fac_docs.cancelado=false ORDER BY fac_docs.id DESC LIMIT 1;";
         }
         
         //System.out.println(sql_to_query);
@@ -3058,7 +3058,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 
                 
         
-        System.out.println("NC: "+sql_query);
+        //System.out.println("NC: "+sql_query);
         //System.out.println("getListaConceptosXmlCfdiTimbreFiscal: "+sql_query);
         
         //System.out.println("noIdentificacion "+" | descripcion      "+" | cant"+" | precio_uni"+" | importe"+" | importe_imp"+" | valor_imp"+" | tasa_ret"  );
