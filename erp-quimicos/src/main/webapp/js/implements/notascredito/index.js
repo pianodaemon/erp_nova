@@ -1553,11 +1553,7 @@ $(function() {
 				//descargar pdf de la Nota de Credito
 				$descargar_pdf.click(function(event){
 					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivoGenerado.json';
-					$arreglo = {'serie_folio':$folio_nota_credito.val(),
-								'ext':'pdf',
-								'id':$identificador.val(),
-								'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-							  }
+					$arreglo = {'serie_folio':$folio_nota_credito.val(), 'ext':'pdf', 'id':$identificador.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
 					
 					$.post(input_json,$arreglo,function(entry){
 						var descargar  = entry['descargar'];
@@ -1577,10 +1573,7 @@ $(function() {
 				//descargar xml de la Nota de Credito
 				$descargar_xml.click(function(event){
 					var input_json = document.location.protocol + '//' + document.location.host + '/'+controller+'/getVerificaArchivoGenerado.json';
-					$arreglo = {	'serie_folio':$folio_nota_credito.val(),
-									'ext':'xml',
-									'iu':$('#lienzo_recalculable').find('input[name=iu]').val()
-								}
+					$arreglo = {'serie_folio':$folio_nota_credito.val(), 'ext':'xml', 'id':$identificador.val(), 'iu':$('#lienzo_recalculable').find('input[name=iu]').val() }
 					$.post(input_json,$arreglo,function(entry){
 						var descargar  = entry['descargar'];
 						if(descargar == 'true'){
