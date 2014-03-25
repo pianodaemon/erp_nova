@@ -39,7 +39,6 @@ public final class PdfCfdiNomina {
     private String imagen;
     private String rutaImagenCBB;
     private String cadenaCBB;
-    private String imagen_cedula;
     private String empresa_emisora;
     private String emisora_rfc;
     private String emisora_regimen_fiacal;
@@ -143,9 +142,7 @@ public final class PdfCfdiNomina {
         //this.setLeyendas(leyendasEspeciales);
         
         this.setGralDao(gDao);
-        //this.setTipo_facturacion(extras.get("tipo_facturacion"));
-        //this.setSello_digital_sat(extras.get("sello_sat"));
-        //this.setUuid(extras.get("uuid"));
+
         
         
          //datos_remision.put("emisor_rfc", this.getGralDao().getRfcEmpresaEmisora(id_empresa));*/
@@ -168,8 +165,7 @@ public final class PdfCfdiNomina {
         this.setNo_certificado(this.getGralDao().getNoCertificadoEmpresaEmisora(id_empresa, id_sucursal));
         //this.setProposito(extras.get("proposito"));
         this.setSerie_folio(datos_nomina.get("serie_folio"));
-        this.setCadena_original(datos_nomina.get("facha_comprobante"));
-        this.setSello_digital(datos_nomina.get("facha_comprobante"));
+
         this.setFacha_comprobante(datos_nomina.get("facha_comprobante"));
         this.setOrdenCompra(datos_nomina.get("facha_comprobante"));
         this.setFolioPedido(datos_nomina.get("facha_comprobante"));
@@ -180,29 +176,25 @@ public final class PdfCfdiNomina {
         this.setFecha_pago(datos_nomina.get("facha_comprobante"));
         this.setMetodo_pago(datos_nomina.get("comprobante_attr_metododepago"));
         this.setNo_cuenta(datos_nomina.get("comprobante_attr_numerocuenta"));
-        this.setFormaPago("PAGO EN UNA SOLA EXIBICION");
+        this.setFormaPago(datos_nomina.get("comprobante_attr_formadepago"));
         this.setCondicionesPago(datos_nomina.get("comprobante_attr_condicionesdepago"));
-        this.setFachaTimbrado(datos_nomina.get("facha_comprobante"));
-        this.setNoCertificadoSAT(datos_nomina.get("facha_comprobante"));
+
         
-       /* switch (PdfCfdiNomina.Proposito.valueOf(this.getProposito())) {
-            case FACTURA:*/
-                this.setNo_aprobacion(this.getGralDao().getNoAprobacionFactura(id_empresa, id_sucursal));
-                this.setAno_aprobacion(this.getGralDao().getAnoAprobacionFactura(id_empresa, id_sucursal));
-                this.setEtiqueta_tipo_doc("RECIBO DE NÓMINA");
-                /*break;
-                
-            case NOTA_CREDITO:
-                this.setNo_aprobacion(this.getGralDao().getNoAprobacionNotaCredito(id_empresa, id_sucursal));
-                this.setAno_aprobacion(this.getGralDao().getAnoAprobacionNotaCredito(id_empresa, id_sucursal));
-                this.setEtiqueta_tipo_doc("NOTA DE CREDITO");
-                break;
-                
-            case NOTA_CARGO:
-                this.setNo_aprobacion(this.getGralDao().getNoAprobacionNotaCargo(id_empresa, id_sucursal));
-                this.setAno_aprobacion(this.getGralDao().getAnoAprobacionNotaCargo(id_empresa, id_sucursal));
-                break;
-        }*/
+
+        this.setSello_digital_sat(datos_nomina.get("sello_sat"));
+        this.setUuid(datos_nomina.get("uuid"));
+        this.setFachaTimbrado(datos_nomina.get("fechaTimbre"));
+        this.setNoCertificadoSAT(datos_nomina.get("noCertificadoSAT"));
+        this.setCadena_original(datos_nomina.get("cadena_original_timbre"));
+        this.setSello_digital(datos_nomina.get("sello_digital_emisor"));
+        
+        
+        
+        this.setNo_aprobacion(this.getGralDao().getNoAprobacionFactura(id_empresa, id_sucursal));
+        this.setAno_aprobacion(this.getGralDao().getAnoAprobacionFactura(id_empresa, id_sucursal));
+        this.setEtiqueta_tipo_doc("RECIBO DE NÓMINA");
+        
+        
         //percepciones
         this.setSubTotal(datos_nomina.get("comprobante_attr_subtotal"));
         this.setMontoIeps(datos_nomina.get("comprobante_attr_descuento"));
@@ -259,23 +251,15 @@ public final class PdfCfdiNomina {
         this.setTipoCambio(datos_nomina.get("comprobante_attr_tc"));
         
         this.setImagen( this.getGralDao().getImagesDir()+this.getEmisora_rfc()+"_logo.png" );
-        this.setImagen_cedula( this.getGralDao().getImagesDir()+this.getEmisora_rfc()+"_cedula.png" );
         String tipo = "";
         
-       /* if(this.getTipo_facturacion().equals("cfd")){
-            this.setFileout(this.getGralDao().getCfdEmitidosDir() + this.getEmisora_rfc() + "/" + this.getSerie_folio() +".pdf");
-            tipo="ESTE DOCUMENTO ES UNA REPRESENTACIÓN IMPRESA DE UN CFD";
-        }
+        this.setFileout(fileout);
+        tipo="ESTE DOCUMENTO ES UNA REPRESENTACIÓN IMPRESA DE UN CFDI";
         
-        if(this.getTipo_facturacion().equals("cfditf")){*/
-            this.setFileout(fileout);
-            tipo="ESTE DOCUMENTO ES UNA REPRESENTACIÓN IMPRESA DE UN CFDI";
-            
-            //cadena para el CBB, solo es para cfdi con timbrado Fiscal
-           String cadenaCBB = "?re="+this.getEmisora_rfc()+"&rr="+this.getReceptor_rfc()+"&tt="+StringHelper.roundDouble(this.getMontoTotal(), 6)+"&id="+this.getUuid();
-            this.setCadenaCBB(cadenaCBB);
-            this.setRutaImagenCBB( this.getGralDao().getTmpDir()+this.getReceptor_rfc()+".png");
-        //}
+        //cadena para el CBB, solo es para cfdi con timbrado Fiscal
+        String cadenaCBB = "?re="+this.getEmisora_rfc()+"&rr="+this.getReceptor_rfc()+"&tt="+StringHelper.roundDouble(this.getMontoTotal(), 6)+"&id="+this.getUuid();
+        this.setCadenaCBB(cadenaCBB);
+        this.setRutaImagenCBB( this.getGralDao().getTmpDir()+this.getReceptor_rfc()+".png");
         
         HashMap<String, String> datos = new HashMap<String, String>();
         //datos para pie de pagina
@@ -348,26 +332,15 @@ public final class PdfCfdiNomina {
             cellEmp.setHorizontalAlignment(Element.ALIGN_CENTER);
             tableDatosEmpresa.addCell(cellEmp);
             
-            /*//DOMICILIO FISCAL --> texto
-            cellEmp = new PdfPCell(new Paragraph("DOMICILIO FISCAL", smallBoldFont7));
-            cellEmp.setBorder(0);
-            cellEmp.setUseAscender(true);
-            cellEmp.setHorizontalAlignment(Element.ALIGN_CENTER);
-            tableDatosEmpresa.addCell(cellEmp);*/
             
             String dirEmisor = this.getEmisora_calle()+ " " + this.getEmisora_numero()+ " " + this.getEmisora_colonia()+ "\n" + this.getEmisora_municipio()+ ", " + this.getEmisora_estado()+ ",  "+ " C.P. " + this.getEmisora_cp()+ "\n"  +"    Tel./Fax. " + this.getEmisora_telefono();
             
-            cellEmp = new PdfPCell(new Paragraph(dirEmisor.toUpperCase()+"\n"+this.getEmisora_pagina_web(), smallFont));
+            //cellEmp = new PdfPCell(new Paragraph(dirEmisor.toUpperCase()+"\n"+this.getEmisora_pagina_web(), smallFont));
+            cellEmp = new PdfPCell(new Paragraph(dirEmisor.toUpperCase(), smallFont));
             cellEmp.setBorder(0);
             cellEmp.setUseAscender(true);
             cellEmp.setHorizontalAlignment(Element.ALIGN_CENTER);
             tableDatosEmpresa.addCell(cellEmp);
-            
-            /*cellEmp = new PdfPCell(new Paragraph(this.getEmisora_regimen_fiacal().toUpperCase(), smallFont));
-            cellEmp.setBorder(0);
-            cellEmp.setUseAscender(true);
-            cellEmp.setHorizontalAlignment(Element.ALIGN_CENTER);
-            tableDatosEmpresa.addCell(cellEmp);*/
             
             //celda vacia
             cellEmp = new PdfPCell(new Paragraph(" ", smallFont));
@@ -375,17 +348,6 @@ public final class PdfCfdiNomina {
             cellEmp.setFixedHeight(5);
             tableDatosEmpresa.addCell(cellEmp);
             
-            /*cellEmp = new PdfPCell(new Paragraph("LUGAR DE EXPEDICIÓN", smallBoldFont7));
-            cellEmp.setBorder(0);
-            cellEmp.setUseAscender(true);
-            cellEmp.setHorizontalAlignment(Element.ALIGN_CENTER);
-            tableDatosEmpresa.addCell(cellEmp);
-            
-            cellEmp = new PdfPCell(new Paragraph(this.getLugar_expedidion().toUpperCase(), smallFont));
-            cellEmp.setBorder(0);
-            cellEmp.setUseAscender(true);
-            cellEmp.setHorizontalAlignment(Element.ALIGN_CENTER);
-            tableDatosEmpresa.addCell(cellEmp);*/
             
             //AQUI TERMINA LA TABLA PARA DATOS DE LA EMPRESA--------------------
             //------------------------------------------------------------------
@@ -429,6 +391,8 @@ public final class PdfCfdiNomina {
             
             //agregar tabla vacia
             document.add(tableVacia);
+            
+            
             
             
             //agregamos la tabla de observaciones
@@ -669,7 +633,7 @@ public final class PdfCfdiNomina {
             
            
             //fila 6
-            cell = new PdfPCell(new Paragraph("EXPEDICIÓN", smallBoldFont7));
+            cell = new PdfPCell(new Paragraph("LUGAR DE EXPEDICIÓN", smallBoldFont7));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1303,63 +1267,45 @@ public final class PdfCfdiNomina {
             float [] widthsdeduc;
             String[] columnas;
             String[] columnasdeduc;
-
-            float [] widths1 = {
-                1f, //TIPO PERCEPCION
-                1.5f,//CLAVE
-                1f, //CONCEPTO
-                0.5f,//simbolo
-                1f, //IMPORTE GRAVADO
-                0.5f, //simbolo UNITARIO
-                1f, //IMPORTE EXCENTO
-
-            };
             
-               float [] widthsd = {
-             
-                1f, //TIPO DEDUCCIÓN
-                1.5f,//CLAVE
-                1f, //CONCEPTO
-                0.5f,//simbolo
-                1f, //IMPORTE GRAVADO
-                0.5f, //simbolo UNITARIO
-                1f, //IMPORTE EXCENTO
-                //1f //IMPORTE
-            };
             
-            //String[] columnas1 = {"Tipo de Percepción","Clave","Concepto"," ","Importe Gravado"," ","Importe Excento","Tipo de Deducción","Clave","Concepto"," ","Importe Gravado"," ","Importe Excento"};
-            String[] columnas1 = {"Tipo de Percepción","Clave","Concepto"," ","Importe Gravado"," ","Importe Excento"};
-            String[] columnasd = {"Tipo de Deducción","Clave","Concepto"," ","Importe Gravado"," ","Importe Excento"};
            
              //tabla contenedor
             float [] widthscont = {8f,8f};
             PdfPTable table4 = new PdfPTable(widthscont);
             PdfPCell cell;
 
-            //fila 1
+            //fila 1 -> Columna 1
             cell = new PdfPCell(new Paragraph("PERCEPCIONES", smallBoldFont6));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table4.addCell(cell);
             
-             //fila 
+             //fila  1 -> Columna 2
             cell = new PdfPCell(new Paragraph("DEDUCCIONES", smallBoldFont6));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             cell.setUseAscender(true);
             table4.addCell(cell);
             
- 
-            widths=widths1;
-            columnas = columnas1;
-
             
-            //float [] widths = {8};
-            PdfPTable table = new PdfPTable(widths);
+            
+            String[] columnas_percep = {"Tipo","Clave","Concepto","Importe Gravado","Importe Excento"};
+            
+            //INICIA TABLA DE PERCEPCIONES
+            float [] widths_percep = {
+                1f, //TIPO PERCEPCION
+                1f,//CLAVE
+                2f, //CONCEPTO
+                1f, //IMPORTE GRAVADO
+                1f //IMPORTE EXCENTO
+            };
+            
+            PdfPTable table = new PdfPTable(widths_percep);
             table.setKeepTogether(false);
-
-            List<String>  lista_columnas = (List<String>) Arrays.asList(columnas);
+            
+            List<String>  lista_columnas = (List<String>) Arrays.asList(columnas_percep);
             Integer contador = 0;
             PdfPCell cellX;
             
@@ -1450,16 +1396,6 @@ public final class PdfCfdiNomina {
                         table.addCell(celda);
                     }
                     
-                    if (omega.equals("simbolo_moneda")){
-                        celda = new PdfPCell(new Paragraph( "$",smallFont));
-                        celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                        celda.setVerticalAlignment(Element.ALIGN_TOP);
-                        celda.setBorderWidthBottom(0);
-                        celda.setBorderWidthLeft(0);
-                        celda.setBorderWidthRight(0);
-                        celda.setBorderWidthTop(0);
-                        table.addCell(celda);
-                    }
                     
                     if (omega.equals("ImporteGravado")){
                         celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
@@ -1500,15 +1436,25 @@ public final class PdfCfdiNomina {
             
             
            
-            widthsdeduc=widthsd;
-            columnasdeduc = columnasd;
-
-            //deducciones
             
-            PdfPTable tabled = new PdfPTable(widthsdeduc);
+            
+            /*---------------------------------------------------------------------------------------------------------------------*/
+            //INICIA TABLA DE DEDUCCIONES
+            
+            String[] columnas_deduc = {"Tipo","Clave","Concepto","Importe Gravado","Importe Excento"};
+            
+            float [] widths_deduc = {
+                1f, //TIPO DEDUCCIÓN
+                1f,//CLAVE
+                2f, //CONCEPTO
+                1f, //IMPORTE GRAVADO
+                1f //IMPORTE EXCENTO
+            };
+            
+            PdfPTable tabled = new PdfPTable(widths_deduc);
             tabled.setKeepTogether(false);
             
-            List<String>  lista_columnas2 = (List<String>) Arrays.asList(columnasdeduc);
+            List<String>  lista_columnas2 = (List<String>) Arrays.asList(columnas_deduc);
             Integer contador2 = 0;
             PdfPCell cellX2;
             
@@ -1592,17 +1538,6 @@ public final class PdfCfdiNomina {
                         celdad.setBorderWidthTop(0);
                         celdad.setBorderWidthRight(0.5f);
                         celdad.setBorderColorRight(BaseColor.LIGHT_GRAY);
-                        tabled.addCell(celdad);
-                    }
-                    
-                    if (omega.equals("simbolo_moneda")){
-                        celdad = new PdfPCell(new Paragraph( "$",smallFont));
-                        celdad.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                        celdad.setVerticalAlignment(Element.ALIGN_TOP);
-                        celdad.setBorderWidthBottom(0);
-                        celdad.setBorderWidthLeft(0);
-                        celdad.setBorderWidthRight(0);
-                        celdad.setBorderWidthTop(0);
                         tabled.addCell(celdad);
                     }
                     
@@ -1922,176 +1857,156 @@ public final class PdfCfdiNomina {
             //tabla contenedor
             PdfPCell cell;
             
-             float [] widths = {2.5f,10f};
+            float [] widths = {2.5f,10f};
             PdfPTable table = new PdfPTable(widths);
             table.setKeepTogether(false);
             
-   
             
-            //if(getTipo_facturacion().equals("cfditf")){
-                cell = new PdfPCell(new Paragraph("INFORMACIÓN DEL TIMBRE FISCAL DIGITAL", smallBoldFont7));
-                cell.setBorder(0);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                cell.setColspan(2);
-                table.addCell(cell);
-                
-                //fila vacia
-                cell = new PdfPCell(new Paragraph("", smallFontBold5));
-                cell.setUseAscender(true);
-                cell.setBorderWidthBottom(0);
-                cell.setColspan(2);
-                table.addCell(cell);
-                
-                
-                PdfCfdiNomina.ImagenCBB icbb = new PdfCfdiNomina.ImagenCBB();
-                
-                if(!getRutaImagenCBB().trim().equals("")){
-                    try {
-                        String FORMATO_IMAGEN="png";
-                        String RUTA_IMAGEN = getRutaImagenCBB();
-                        int ancho=500;
-                        int alto=500;
-                        String cadenaDatos = getCadenaCBB();
-                        
-                        CodigoQRHelper codeQR = new CodigoQRHelper();
-                        
-                        String rutaImgCodQR = new String();
-                        
-                        rutaImgCodQR = codeQR.CodeQR(FORMATO_IMAGEN, RUTA_IMAGEN, ancho, alto, cadenaDatos);
-                        
-                        //celda imagen cbb
-                        cell = new PdfPCell(icbb.addContent(rutaImgCodQR));
-                        cell.setUseAscender(true);
-                        cell.setBorderWidthRight(0);
-                        cell.setBorderWidthTop(0);
-                        cell.setBorderWidthBottom(0);
-                        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        table.addCell(cell);
-                        
-                        FileHelper.delete(RUTA_IMAGEN);
-                        
-                    } catch (WriterException ex) {
-                        Logger.getLogger(PdfCfdiNomina.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(PdfCfdiNomina.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(PdfCfdiNomina.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }else{
-                    //no hay imagen
-                    cell = new PdfPCell(new Paragraph("", smallFontBold5));
+            
+            cell = new PdfPCell(new Paragraph("INFORMACIÓN DEL TIMBRE FISCAL DIGITAL", smallBoldFont7));
+            cell.setBorder(0);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            cell.setColspan(2);
+            table.addCell(cell);
+
+            //fila vacia
+            cell = new PdfPCell(new Paragraph("", smallFontBold5));
+            cell.setBorder(0);
+            cell.setUseAscender(true);
+            cell.setBorderWidthBottom(0);
+            cell.setColspan(2);
+            table.addCell(cell);
+
+
+            PdfCfdiNomina.ImagenCBB icbb = new PdfCfdiNomina.ImagenCBB();
+
+            if(!getRutaImagenCBB().trim().equals("")){
+                try {
+                    String FORMATO_IMAGEN="png";
+                    String RUTA_IMAGEN = getRutaImagenCBB();
+                    int ancho=500;
+                    int alto=500;
+                    String cadenaDatos = getCadenaCBB();
+
+                    CodigoQRHelper codeQR = new CodigoQRHelper();
+
+                    String rutaImgCodQR = new String();
+
+                    rutaImgCodQR = codeQR.CodeQR(FORMATO_IMAGEN, RUTA_IMAGEN, ancho, alto, cadenaDatos);
+
+                    //celda imagen cbb
+                    cell = new PdfPCell(icbb.addContent(rutaImgCodQR));
                     cell.setUseAscender(true);
                     cell.setBorderWidthRight(0);
+                    cell.setBorderWidthLeft(0);
                     cell.setBorderWidthTop(0);
                     cell.setBorderWidthBottom(0);
                     cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                     table.addCell(cell);
-                }
 
-                
-                
-                
-                float [] widths2 = {2,1.5f,2.2f,1.5f};
-                PdfPTable table2 = new PdfPTable(widths2);
-                table2.setKeepTogether(false);
-                
-                cell = new PdfPCell(new Paragraph("NO. CERTIFICADO DEL SAT:", smallBoldFont7));
-                cell.setBorder(0);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                table2.addCell(cell);
-                
-               /* cell = new PdfPCell(new Paragraph(getNoCertificadoSAT(), smallFont7));
-                cell.setBorder(0);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                table2.addCell(cell);
-                
-                cell = new PdfPCell(new Paragraph("FECHA Y HORA DE CERTIFICACIÓN:", smallBoldFont7));
-                cell.setBorder(0);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                table2.addCell(cell);
-                
-                cell = new PdfPCell(new Paragraph(getFachaTimbrado(), smallFont7));
-                cell.setBorder(0);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                table2.addCell(cell);
-                
-                
-                //fila vacia
-                cell = new PdfPCell(new Paragraph("", smallFont7));
-                cell.setBorder(0);
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setColspan(4);
-                table2.addCell(cell);
-                
-                cell = new PdfPCell(new Paragraph("CADENA ORIGINAL DEL TIMBRE:", smallBoldFont7));
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setUseAscender(true);
-                cell.setBorderWidthBottom(0);
-                cell.setColspan(4);
-                table2.addCell(cell);
-            
-                cell = new PdfPCell(new Paragraph(  getCadena_original()  ,smallFont7));
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setBorderWidthTop(0);
-                cell.setColspan(4);
-                table2.addCell(cell);
-                
-                
-                cell = new PdfPCell(new Paragraph("SELLO DIGITAL DEL EMISOR:", smallBoldFont7));
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setUseAscender(true);
-                cell.setBorderWidthBottom(0);
-                cell.setColspan(4);
-                table2.addCell(cell);
-            
-                cell = new PdfPCell(new Paragraph(getSello_digital()  ,smallFont7));
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setBorderWidthTop(0);
-                cell.setColspan(4);
-                table2.addCell(cell);
-                
-                cell = new PdfPCell(new Paragraph("SELLO DIGITAL DEL SAT:", smallBoldFont7));
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setUseAscender(true);
-                cell.setBorderWidthBottom(0);
-                cell.setColspan(4);
-                table2.addCell(cell);
-            
-                cell = new PdfPCell(new Paragraph(getSello_digital_sat()  ,smallFont7));
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setBorderWidthTop(0);
-                cell.setColspan(4);
-                table2.addCell(cell);
-                
-                
-                cell = new PdfPCell(table2);
-                cell.setBorderWidthLeft(0);
-                cell.setBorderWidthBottom(0);
-                cell.setBorderWidthTop(0);
-                cell.setUseAscender(true);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                table.addCell(cell);
-                
-                //fila vacia
+                    FileHelper.delete(RUTA_IMAGEN);
+
+                } catch (WriterException ex) {
+                    Logger.getLogger(PdfCfdiNomina.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(PdfCfdiNomina.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(PdfCfdiNomina.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
+                //no hay imagen
                 cell = new PdfPCell(new Paragraph("", smallFontBold5));
                 cell.setUseAscender(true);
+                cell.setBorderWidthRight(0);
                 cell.setBorderWidthTop(0);
-                cell.setColspan(2);
-                table.addCell(cell);*/
-                
-          //  }
+                cell.setBorderWidthBottom(0);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                table.addCell(cell);
+            }
+
+
+
+
+            float [] widths2 = {1.7f,1.8f,2.2f,1.5f};
+            PdfPTable table2 = new PdfPTable(widths2);
+            table2.setKeepTogether(false);
+
+            cell = new PdfPCell(new Paragraph("NO. CERTIFICADO DEL SAT:", smallBoldFont7));
+            cell.setBorder(0);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table2.addCell(cell);
+
+            cell = new PdfPCell(new Paragraph(getNoCertificadoSAT(), smallFont7));
+            cell.setBorder(0);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table2.addCell(cell);
+
+            cell = new PdfPCell(new Paragraph("FECHA Y HORA DE CERTIFICACIÓN:", smallBoldFont7));
+            cell.setBorder(0);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            table2.addCell(cell);
+
+            cell = new PdfPCell(new Paragraph(getFachaTimbrado(), smallFont7));
+            cell.setBorder(0);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table2.addCell(cell);
+
+
+            //fila vacia
+            cell = new PdfPCell(new Paragraph("", smallFont7));
+            cell.setBorder(0);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setColspan(4);
+            table2.addCell(cell);
+
+            cell = new PdfPCell(new Paragraph("CADENA ORIGINAL DEL TIMBRE:", smallBoldFont7));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorder(0);
+            cell.setColspan(4);
+            table2.addCell(cell);
+
+            cell = new PdfPCell(new Paragraph(  getCadena_original()+"\n"  ,smallFont7));
+            cell.setBorder(0);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setColspan(4);
+            table2.addCell(cell);
+
+
+            cell = new PdfPCell(new Paragraph("SELLO DIGITAL DEL CFDI:", smallBoldFont7));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorder(0);
+            cell.setColspan(4);
+            table2.addCell(cell);
+
+            cell = new PdfPCell(new Paragraph(getSello_digital()+"\n"  ,smallFont7));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorder(0);
+            cell.setColspan(4);
+            table2.addCell(cell);
+
+            cell = new PdfPCell(new Paragraph("SELLO DIGITAL DEL SAT:", smallBoldFont7));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorder(0);
+            cell.setColspan(4);
+            table2.addCell(cell);
+
+            cell = new PdfPCell(new Paragraph(getSello_digital_sat()+"\n"  ,smallFont7));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorder(0);
+            cell.setColspan(4);
+            table2.addCell(cell);
+
             
-            
-           
+            cell = new PdfPCell(table2);
+            cell.setBorderWidthRight(0);
+            cell.setBorderWidthLeft(0);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            table.addCell(cell);
             
             return table;
         }
@@ -2121,25 +2036,6 @@ public final class PdfCfdiNomina {
     }
     
     
-    
-    private class CedulaPDF {
-        public Image addContent(int alto, int ancho) {
-            Image img = null;
-            //alto=130  ancho=85
-            try {
-                img = Image.getInstance(getImagen_cedula());
-                img.scaleAbsoluteHeight(alto);
-                img.scaleAbsoluteWidth(ancho);
-                img.setAlignment(Element.ALIGN_CENTER);
-                //img.setSpacingBefore(6);
-                //img.setAlignment(0);
-            }
-            catch(Exception e){
-                System.out.println(e);
-            }
-            return img;
-        }
-    }
     
     
     private class ImagenCBB {
@@ -2185,13 +2081,6 @@ public final class PdfCfdiNomina {
     	return imagen;
     }
      
-    public String getImagen_cedula() {
-        return imagen_cedula;
-    }
-
-    public void setImagen_cedula(String imagen_cedula) {
-        this.imagen_cedula = imagen_cedula;
-    }
     
     public String getCadena_original() {
         return cadena_original;

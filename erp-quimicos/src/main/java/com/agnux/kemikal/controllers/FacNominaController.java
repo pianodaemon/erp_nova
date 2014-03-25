@@ -6,21 +6,19 @@ package com.agnux.kemikal.controllers;
 import com.agnux.cfd.v2.Base64Coder;
 import com.agnux.cfdi.BeanFromCfdiXml;
 import com.agnux.cfdi.timbre.BeanFacturadorCfdiTimbre;
+import com.agnux.common.helpers.FileHelper;
 import com.agnux.common.helpers.StringHelper;
 import com.agnux.common.helpers.TimeHelper;
+import com.agnux.common.helpers.XmlHelper;
 import com.agnux.common.obj.DataPost;
 import com.agnux.common.obj.ResourceProject;
 import com.agnux.common.obj.UserSessionData;
 import com.agnux.kemikal.interfacedaos.FacturasInterfaceDao;
 import com.agnux.kemikal.interfacedaos.GralInterfaceDao;
 import com.agnux.kemikal.interfacedaos.HomeInterfaceDao;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.agnux.kemikal.reportes.PdfCfdiNomina;
+import com.itextpdf.text.DocumentException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1208,4 +1206,135 @@ public class FacNominaController {
     }
     
     
+    
+    
+  @RequestMapping(value = "/getPDF/{id_reg}/{id_empleado}/{iu}/out.json", method = RequestMethod.GET ) 
+    public ModelAndView getGeneraPdfFacturacionJson(
+                @PathVariable("id_reg") Integer id,
+                @PathVariable("id_empleado") Integer id_empleado,
+                @PathVariable("iu") String id_user,
+                HttpServletRequest request, 
+                HttpServletResponse response, 
+                Model model)
+            throws ServletException, IOException, URISyntaxException, DocumentException, FileNotFoundException, Exception {
+          
+        HashMap<String, String> jsonretorno = new HashMap<String,String>();
+        HashMap<String, String> userDat = new HashMap<String, String>();
+        
+        String generado ="false";
+        String rutaXml = "";
+        
+        
+        HashMap<String,String> datos_nomina = new HashMap<String,String>();
+        HashMap<String, String> data = new HashMap<String, String>();
+        
+        ArrayList<LinkedHashMap<String,String>> conceptospercepciones = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<LinkedHashMap<String,String>> conceptosdeducciones = new ArrayList<LinkedHashMap<String,String>>();
+      
+        //decodificar id de usuario
+        Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
+        userDat = this.getHomeDao().getUserById(id_usuario);
+        Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
+        Integer id_sucursal = Integer.parseInt(userDat.get("sucursal_id"));
+        String rfcEmpresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        
+        //Obtiene serie_folio y ref_id de la nomina
+        data = this.getFacdao().getFacNomina_RefId(id);
+        
+        //Ruta de Directorio de Emitidos de CFDi de Nominas
+        rutaXml = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresa + "/nomina/"+ data.get("ref_id") + ".xml";
+        
+        
+        //Obtener la cadena completa del xml
+        String cadena_xml = FileHelper.stringFromFile(rutaXml);
+        
+        //Obtener la cadena original del timbre
+        String cadena_original_timbre = this.getCadenaOriginalTimbre(cadena_xml, id_empresa, id_sucursal);
+        System.out.println("cadena_original_timbre: "+cadena_original_timbre);
+        
+        //Parsear el xml timbrado
+        BeanFromCfdiXml pop2 = new BeanFromCfdiXml(rutaXml);
+        
+        //Fecha del comprobante 
+        String fecha_comprobante=pop2.getFecha_comprobante();
+        
+        //Sello del Emisor
+        String sello_digital_emisor = pop2.getSelloCfd();
+        System.out.println("getSelloCfd: "+sello_digital_emisor);
+        
+        //Sello del Sat
+        String sello_digital_sat = pop2.getSelloSat();
+        System.out.println("sello_digital_sat: "+sello_digital_sat);
+        
+        String uuid = pop2.getUuid();
+        System.out.println("uuid: "+uuid);
+        
+        String fechaTimbre = pop2.getFecha_timbre();
+        String noCertSAT = pop2.getNoCertificadoSAT();
+        String rfcReceptor = pop2.getReceptor_rfc();
+        
+        
+        datos_nomina = this.getFacdao().getFacNomina_DataXml(id, id_empleado);
+        datos_nomina.put("serie_folio",data.get("serie_folio"));
+        datos_nomina.put("sello_sat", sello_digital_sat);
+        datos_nomina.put("uuid", uuid);
+        datos_nomina.put("fecha_comprobante", fecha_comprobante);
+        datos_nomina.put("fechaTimbre", fechaTimbre);
+        datos_nomina.put("noCertificadoSAT", noCertSAT);
+        datos_nomina.put("sello_digital_emisor", sello_digital_emisor);
+        datos_nomina.put("cadena_original_timbre", cadena_original_timbre);
+        
+        
+        conceptospercepciones = this.getFacdao().getFacNomina_PercepcionesXml(id);
+        conceptosdeducciones = this.getFacdao().getFacNomina_DeduccionesXml(id);
+        
+        
+        
+        System.out.println("::::::::::::Generando PDF de Nomina:::::::::::::::::..");
+        
+        //String razon_social_empresa = this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa);
+        //String rfc_empresa = this.getGralDao().getRfcEmpresaEmisora(id_empresa);
+        
+        //obtener el directorio temporal
+        String dir_tmp = this.getGralDao().getTmpDir();
+        //String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
+        
+        File file_dir_tmp = new File(dir_tmp);
+        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
+
+        
+        //genera nombre del archivo
+        String file_name = data.get("serie_folio") +".pdf";
+
+        //ruta de archivo de salida
+        String fileout = file_dir_tmp +"/"+  file_name;
+
+        
+        PdfCfdiNomina Pdf = new PdfCfdiNomina(this.getGralDao(),datos_nomina,conceptospercepciones,conceptosdeducciones,fileout,id_empresa, id_sucursal);
+        Pdf.ViewPDF();
+  
+        System.out.println("Recuperando archivo: " + fileout);
+        File file = new File(fileout);
+        int size = (int) file.length(); // Tamaño del archivo
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        response.setBufferSize(size);
+        response.setContentLength(size);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=\"" + file.getCanonicalPath() +"\"");
+        FileCopyUtils.copy(bis, response.getOutputStream());  	
+        response.flushBuffer();
+        
+        FileHelper.delete(fileout);
+        
+        return null;
+    } 
+
+    
+    private String getCadenaOriginalTimbre(String comprobante, Integer id_empresa, Integer id_sucursal) throws Exception {
+        String valor_retorno = new String();
+        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
+        valor_retorno = XmlHelper.transformar(comprobante, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
+        
+        return valor_retorno;
+    }
 }

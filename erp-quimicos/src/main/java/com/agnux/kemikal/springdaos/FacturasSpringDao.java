@@ -4403,6 +4403,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "gral_mon.iso_4217 AS moneda, "
             + "gral_mon.iso_4217_anterior AS moneda2, "
             + "gral_mon.simbolo AS simbolo_moneda, "
+            + "gral_mon.descripcion_abr AS moneda_abr,"
             + "fac_nomina.tipo_cambio, "
             + "fac_nomina_det.no_empleado, "
             + "fac_nomina_det.nombre, "
@@ -4474,6 +4475,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("comprobante_attr_descuento",StringHelper.roundDouble(rs.getString("comp_descuento"),2));
                     row.put("comprobante_attr_motivodescuento",rs.getString("motivo_descuento"));
                     row.put("comprobante_attr_subtotal", StringHelper.roundDouble(rs.getString("comp_subtotal"),2));
+                    row.put("comprobante_attr_retencion", StringHelper.roundDouble(rs.getString("comp_retencion"),2));
                     row.put("comprobante_attr_total",StringHelper.roundDouble(rs.getString("comp_total"),2));
                     row.put("comprobante_attr_moneda",rs.getString("moneda"));
                     
@@ -4527,6 +4529,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     //Este campo es utilizado para la adenda de Quimiproductos
                     row.put("moneda2",rs.getString("moneda2"));
                     row.put("orden_compra","");
+                    row.put("comprobante_attr_simbolo_moneda_abr",rs.getString("moneda_abr"));
                     
                     return row;
                 }
