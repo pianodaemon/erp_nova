@@ -184,6 +184,7 @@ public interface FacturasInterfaceDao {
     
     public HashMap<String, Object> getFacNomina_DatosEmisor(Integer id_emp);
     public ArrayList<HashMap<String,Object>>getFacNomina_Parametros(Integer idEmp,Integer idSuc);
+    public HashMap<String,Object>getFacNomina_LeyendaReciboNomina(Integer idEmp,Integer idSuc);
     public ArrayList<HashMap<String, Object>> getFacNomina_Empleados(Integer id_emp, Integer periodicidad_id);
     //Obtiene la siguiente secuencia para el id de la tabla fac_nomina
     public int getIdSeqFacNomina();

@@ -3660,7 +3660,24 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
         return hm;
     }
     
-    
+    //Obtiene la Leyenda que debe ir en el Recibo de la Nomina
+    @Override
+    public HashMap<String, Object> getFacNomina_LeyendaReciboNomina(Integer idEmp,Integer idSuc) {
+        String sql_to_query="SELECT (CASE WHEN leyenda IS NULL THEN '' ELSE upper(leyenda) END) AS leyenda_nomina FROM fac_nomina_par WHERE gral_emp_id=? AND gral_suc_id=?;";
+        
+        HashMap<String, Object> hm = (HashMap<String, Object>) this.jdbcTemplate.queryForObject(
+            sql_to_query, 
+            new Object[]{new Integer(idEmp), new Integer(idSuc)}, new RowMapper() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    HashMap<String, Object> row = new HashMap<String, Object>();
+                    row.put("leyenda_nomina",String.valueOf(rs.getString("leyenda_nomina")));
+                    return row;
+                }
+            }
+        );
+        return hm;
+    }
     
     //Obtiene obtiene la lista de empleados
     @Override
@@ -4598,7 +4615,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
     @Override
     public ArrayList<LinkedHashMap<String,String>> getFacNomina_IncapacidadesXml(Integer id) {
         String sql_to_query="";
-        sql_to_query="SELECT (CASE WHEN nom_tipo_incapacidad.clave IS NULL THEN '' ELSE nom_tipo_incapacidad.clave END) AS tipo_incapacidad, fac_nomina_det_incapa.no_dias, fac_nomina_det_incapa.importe FROM fac_nomina_det_incapa JOIN nom_tipo_incapacidad ON nom_tipo_incapacidad.id=fac_nomina_det_incapa.nom_tipo_incapacidad_id WHERE fac_nomina_det_incapa.fac_nomina_det_id=? ORDER BY fac_nomina_det_incapa.id;";
+        sql_to_query="SELECT (CASE WHEN nom_tipo_incapacidad.clave IS NULL THEN '' ELSE nom_tipo_incapacidad.clave END) AS tipo_incapacidad, nom_tipo_incapacidad.titulo AS titulo_tipo_incapacidad, fac_nomina_det_incapa.no_dias, fac_nomina_det_incapa.importe FROM fac_nomina_det_incapa JOIN nom_tipo_incapacidad ON nom_tipo_incapacidad.id=fac_nomina_det_incapa.nom_tipo_incapacidad_id WHERE fac_nomina_det_incapa.fac_nomina_det_id=? ORDER BY fac_nomina_det_incapa.id;";
         
         System.out.println("QueryIncapacidadesXml: "+sql_to_query);
         ArrayList<LinkedHashMap<String,String>>hm=(ArrayList<LinkedHashMap<String,String>>)this.jdbcTemplate.query(
@@ -4610,6 +4627,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                  row.put("DiasIncapacidad",rs.getString("no_dias"));
                  row.put("TipoIncapacidad",rs.getString("tipo_incapacidad"));
                  row.put("Descuento",StringHelper.roundDouble(rs.getDouble("importe"), 2));
+                 //Este solo se utiliza para el pdf
+                 row.put("titulo_tipo_incapacidad",rs.getString("titulo_tipo_incapacidad"));
                  return row;
                 }
             }

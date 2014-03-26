@@ -1218,20 +1218,21 @@ public class FacNominaController {
                 Model model)
             throws ServletException, IOException, URISyntaxException, DocumentException, FileNotFoundException, Exception {
           
-        HashMap<String, String> jsonretorno = new HashMap<String,String>();
         HashMap<String, String> userDat = new HashMap<String, String>();
+        HashMap<String,String> datos_nomina = new HashMap<String,String>();
+        HashMap<String, String> data = new HashMap<String, String>();
+        ArrayList<LinkedHashMap<String,String>> percepciones = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<LinkedHashMap<String,String>> hrs_extras = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<LinkedHashMap<String,String>> incapacidades = new ArrayList<LinkedHashMap<String,String>>();
+        ArrayList<LinkedHashMap<String,String>> deducciones = new ArrayList<LinkedHashMap<String,String>>();
         
         String generado ="false";
         String rutaXml = "";
         
         
-        HashMap<String,String> datos_nomina = new HashMap<String,String>();
-        HashMap<String, String> data = new HashMap<String, String>();
+
         
-        ArrayList<LinkedHashMap<String,String>> conceptospercepciones = new ArrayList<LinkedHashMap<String,String>>();
-        ArrayList<LinkedHashMap<String,String>> conceptosdeducciones = new ArrayList<LinkedHashMap<String,String>>();
-      
-        //decodificar id de usuario
+        //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
         Integer id_empresa = Integer.parseInt(userDat.get("empresa_id"));
@@ -1283,11 +1284,13 @@ public class FacNominaController {
         datos_nomina.put("noCertificadoSAT", noCertSAT);
         datos_nomina.put("sello_digital_emisor", sello_digital_emisor);
         datos_nomina.put("cadena_original_timbre", cadena_original_timbre);
+        datos_nomina.put("leyenda_nomina", String.valueOf(this.getFacdao().getFacNomina_LeyendaReciboNomina(id_empresa, id_sucursal).get("leyenda_nomina")));
         
         
-        conceptospercepciones = this.getFacdao().getFacNomina_PercepcionesXml(id);
-        conceptosdeducciones = this.getFacdao().getFacNomina_DeduccionesXml(id);
-        
+        percepciones = this.getFacdao().getFacNomina_PercepcionesXml(id);
+        deducciones = this.getFacdao().getFacNomina_DeduccionesXml(id);
+        incapacidades = this.getFacdao().getFacNomina_IncapacidadesXml(id);
+        hrs_extras = this.getFacdao().getFacNomina_HorasExtrasXml(id);
         
         
         System.out.println("::::::::::::Generando PDF de Nomina:::::::::::::::::..");
@@ -1310,7 +1313,7 @@ public class FacNominaController {
         String fileout = file_dir_tmp +"/"+  file_name;
 
         
-        PdfCfdiNomina Pdf = new PdfCfdiNomina(this.getGralDao(),datos_nomina,conceptospercepciones,conceptosdeducciones,fileout,id_empresa, id_sucursal);
+        PdfCfdiNomina Pdf = new PdfCfdiNomina(this.getGralDao(), datos_nomina, percepciones, deducciones, hrs_extras, incapacidades, fileout, id_empresa, id_sucursal);
         Pdf.ViewPDF();
   
         System.out.println("Recuperando archivo: " + fileout);

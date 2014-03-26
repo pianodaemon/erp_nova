@@ -69,7 +69,8 @@ public final class PdfCfdiNomina {
     //private ArrayList<HashMap<String, String>> rows;
     private ArrayList<LinkedHashMap<String,String>> rows;
     private ArrayList<LinkedHashMap<String,String>> rowsd;
-    private ArrayList<String> leyendas;
+    private ArrayList<LinkedHashMap<String,String>> rows_horas_extras;
+    private ArrayList<LinkedHashMap<String,String>> rows_incapacidades;
     private HashMap<String, String> encabezado;
     private HashMap<String, String> datos_nomina;
     private HashMap<String, String> datosExtras;
@@ -94,6 +95,13 @@ public final class PdfCfdiNomina {
     private String tipoCambio;
     private String monedaIso;
     
+    
+    private String percep_total_gravado;
+    private String percep_total_excento;
+    private String deduc_total_gravado;
+    private String deduc_total_excento;
+
+
     private String receptor_razon_social;
     private String receptor_no_control;
     private String receptor_rfc;
@@ -107,6 +115,7 @@ public final class PdfCfdiNomina {
     private String receptor_pais;
     private String receptor_telefono;
     private String etiqueta_tipo_doc;
+    private String leyenda;
     
     private String nombre;
     private String regpatronal;
@@ -133,21 +142,18 @@ public final class PdfCfdiNomina {
     
   
     
-    public PdfCfdiNomina(GralInterfaceDao gDao,HashMap<String, String> datos_nomina, ArrayList<LinkedHashMap<String,String>>  conceptospercepciones, ArrayList<LinkedHashMap<String,String>>  conceptosdeducciones, String fileout,Integer id_empresa, Integer id_sucursal) {
-        //HashMap<String, String> datos_remision, ArrayList<HashMap<String, String>> conceptos,
+    public PdfCfdiNomina(GralInterfaceDao gDao,HashMap<String, String> datos_nomina, ArrayList<LinkedHashMap<String,String>> conceptospercepciones, ArrayList<LinkedHashMap<String,String>>  conceptosdeducciones, ArrayList<LinkedHashMap<String,String>> horas_extras, ArrayList<LinkedHashMap<String,String>> incapacidades, String fileout,Integer id_empresa, Integer id_sucursal) {
+        this.setGralDao(gDao);
         this.setRows(conceptospercepciones);
         this.setRowsd(conceptosdeducciones);
+        this.setRows_horas_extras(horas_extras);
+        this.setRows_incapacidades(incapacidades);
         this.setDatosCliente(datos_nomina);
-        //is.setDatosExtras(extras);
-        //this.setLeyendas(leyendasEspeciales);
         
-        this.setGralDao(gDao);
+        
+        
 
         
-        
-         //datos_remision.put("emisor_rfc", this.getGralDao().getRfcEmpresaEmisora(id_empresa));*/
-                 
-                 
         this.setEmpresa_emisora( this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa) );
         this.setEmisora_rfc(this.getGralDao().getRfcEmpresaEmisora(id_empresa));
         this.setEmisora_regimen_fiacal(this.getGralDao().getRegimenFiscalEmpresaEmisora(id_empresa));
@@ -178,7 +184,7 @@ public final class PdfCfdiNomina {
         this.setNo_cuenta(datos_nomina.get("comprobante_attr_numerocuenta"));
         this.setFormaPago(datos_nomina.get("comprobante_attr_formadepago"));
         this.setCondicionesPago(datos_nomina.get("comprobante_attr_condicionesdepago"));
-
+        
         
 
         this.setSello_digital_sat(datos_nomina.get("sello_sat"));
@@ -203,6 +209,12 @@ public final class PdfCfdiNomina {
         this.setTitulo_moneda(datos_nomina.get("comprobante_attr_moneda"));
         this.setSimbolo_moneda(datos_nomina.get("comprobante_attr_simbolo_moneda"));
         this.setMoneda_abr(datos_nomina.get("comprobante_attr_simbolo_moneda_abr"));
+        
+        
+        this.setPercep_total_excento(datos_nomina.get("comprobante_attr_percep_total_excento"));
+        this.setPercep_total_gravado(datos_nomina.get("comprobante_attr_percep_total_gravado"));
+        this.setDeduc_total_excento(datos_nomina.get("comprobante_attr_deduc_total_excento"));
+        this.setDeduc_total_gravado(datos_nomina.get("comprobante_attr_deduc_total_gravado"));
         
         /*//deducciones
         this.setDeducSubTotal(datos_nomina.get("comprobante_attr_subtotal"));
@@ -249,6 +261,7 @@ public final class PdfCfdiNomina {
         this.setReceptor_telefono("");
         this.setMonedaIso(datos_nomina.get("comprobante_attr_moneda"));
         this.setTipoCambio(datos_nomina.get("comprobante_attr_tc"));
+        this.setLeyenda(datos_nomina.get("leyenda_nomina"));
         
         this.setImagen( this.getGralDao().getImagesDir()+this.getEmisora_rfc()+"_logo.png" );
         String tipo = "";
@@ -272,23 +285,21 @@ public final class PdfCfdiNomina {
     
     
     public void ViewPDF() throws URISyntaxException, FileNotFoundException, Exception {
-        Font smallsmall = new Font(Font.FontFamily.HELVETICA,5,Font.NORMAL,BaseColor.BLACK);
         Font smallFont6 = new Font(Font.FontFamily.HELVETICA,6,Font.NORMAL,BaseColor.BLACK);
         Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
         Font smallBoldFont7= new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.BLACK);
-        Font smallBoldFont = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
         Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
         PdfPTable tableHeader;
         PdfPCell cellHeader;
         PdfPCell cell;
-        PdfCfdiNomina.CeldaCustomer tableCustomer = new PdfCfdiNomina.CeldaCustomer();
-        PdfCfdiNomina.tablaConceptos tablaCon = new PdfCfdiNomina.tablaConceptos();
-        PdfCfdiNomina.celdaDatosFiscales tablaSellos = new PdfCfdiNomina.celdaDatosFiscales();
-        PdfPTable table_observ;
-        PdfPTable table_leyendas;
+        CeldaCustomer tableCustomer = new CeldaCustomer();
+        TableReceptor tablaReceptor = new TableReceptor();
+        tablaConceptos tablaCon = new tablaConceptos();
+        celdaDatosFiscales tablaSellos = new celdaDatosFiscales();
+        PdfPTable table_leyenda;
         
-        PdfCfdiNomina.ImagenPDF ipdf = new PdfCfdiNomina.ImagenPDF();
-        PdfCfdiNomina.CeldaPDF cepdf = new PdfCfdiNomina.CeldaPDF();
+        ImagenPDF ipdf = new ImagenPDF();
+        CeldaPDF cepdf = new CeldaPDF();
         
         try {
             
@@ -303,7 +314,7 @@ public final class PdfCfdiNomina {
             float [] widths = {6,12,6};
             tableHeader = new PdfPTable(widths);
             tableHeader.setKeepTogether(false);
-
+            
             
             //IMAGEN --> logo empresa
             cellHeader = new PdfPCell(ipdf.addContent());
@@ -318,7 +329,7 @@ public final class PdfCfdiNomina {
             PdfPTable tableDatosEmpresa = new PdfPTable(1);
             PdfPCell cellEmp;
             
-            //RAZON SOCIAL --> BeanFromCFD (X_emisor)
+            //RAZON SOCIAL
             cellEmp = new PdfPCell(new Paragraph(StringHelper.capitalizaString(this.getEmpresa_emisora().toUpperCase()),largeBoldFont));
             cellEmp.setBorder(0);
             cellEmp.setUseAscender(true);
@@ -328,12 +339,12 @@ public final class PdfCfdiNomina {
             //celda vacia
             cellEmp = new PdfPCell(new Paragraph("R.F.C: "+this.getEmisora_rfc().toUpperCase(), smallBoldFont7));
             cellEmp.setBorder(0);
-            //cellEmp.setFixedHeight(5);
             cellEmp.setHorizontalAlignment(Element.ALIGN_CENTER);
             tableDatosEmpresa.addCell(cellEmp);
             
             
-            String dirEmisor = this.getEmisora_calle()+ " " + this.getEmisora_numero()+ " " + this.getEmisora_colonia()+ "\n" + this.getEmisora_municipio()+ ", " + this.getEmisora_estado()+ ",  "+ " C.P. " + this.getEmisora_cp()+ "\n"  +"    Tel./Fax. " + this.getEmisora_telefono();
+            //String dirEmisor = this.getEmisora_calle()+ " " + this.getEmisora_numero()+ " " + this.getEmisora_colonia()+ "\n" + this.getEmisora_municipio()+ ", " + this.getEmisora_estado()+ ",  "+ " C.P. " + this.getEmisora_cp()+ "\n"  +"    Tel./Fax. " + this.getEmisora_telefono();
+            String dirEmisor = this.getEmisora_calle()+ " " + this.getEmisora_numero()+ " " + this.getEmisora_colonia()+ "\n" + this.getEmisora_municipio()+ ", " + this.getEmisora_estado()+ ",  "+ " C.P. " + this.getEmisora_cp();
             
             //cellEmp = new PdfPCell(new Paragraph(dirEmisor.toUpperCase()+"\n"+this.getEmisora_pagina_web(), smallFont));
             cellEmp = new PdfPCell(new Paragraph(dirEmisor.toUpperCase(), smallFont));
@@ -343,7 +354,7 @@ public final class PdfCfdiNomina {
             tableDatosEmpresa.addCell(cellEmp);
             
             //celda vacia
-            cellEmp = new PdfPCell(new Paragraph(" ", smallFont));
+            cellEmp = new PdfPCell(new Paragraph("", smallFont));
             cellEmp.setBorder(0);
             cellEmp.setFixedHeight(5);
             tableDatosEmpresa.addCell(cellEmp);
@@ -352,7 +363,7 @@ public final class PdfCfdiNomina {
             //AQUI TERMINA LA TABLA PARA DATOS DE LA EMPRESA--------------------
             //------------------------------------------------------------------
             
-            //aqui se agrega la tableDatosEmpresa a la tablaPrincipal
+            //Aqui se agrega la tableDatosEmpresa a la tablaPrincipal
             cellHeader = new PdfPCell(tableDatosEmpresa);
             cellHeader.setBorder(0);
             tableHeader.addCell(cellHeader);
@@ -384,8 +395,18 @@ public final class PdfCfdiNomina {
             
             document.add(tableVacia);
             
+            
+            
             //------------------------------------------------------------------
-            //AQUI AGREGAMOS LA TABLA DE CONCEPTOS------------------------------
+            //AQUI AGREGAMOS LA TABLA DE DATOS DEL EMPLEADO
+            document.add(tablaReceptor.addContent());
+            //------------------------------------------------------------------
+            
+            
+            document.add(tableVacia);
+            
+            //------------------------------------------------------------------
+            //AQUI AGREGAMOS LA TABLA DE PERCEPCIONES, DEDUCCIONES, HORAS EXTRAS, INCAPACIDADES Y TOTALES
             document.add(tablaCon.addContent());
             //------------------------------------------------------------------
             
@@ -395,28 +416,47 @@ public final class PdfCfdiNomina {
             
             
             
-            //agregamos la tabla de observaciones
-            //aqui comienza la tabla de para las OBSERVACIONES
-            float [] widths_table_observ = {1};
-            table_observ = new PdfPTable(widths_table_observ);
-            table_observ.setKeepTogether(false);
+            //Aqui comienza la tabla de para la Leyenda de la Nomina
+            float [] widths_table_leyenda = {1,1,1,1,1};
+            table_leyenda = new PdfPTable(widths_table_leyenda);
+            table_leyenda.setKeepTogether(false);
             
-            if(!this.getObservaciones().trim().equals("")){
-                cell = new PdfPCell(new Paragraph("OBSERVACIONES:",smallBoldFont7));
+            cell = new PdfPCell(new Paragraph("",smallBoldFont7));
+            cell.setBorder(0);
+            cell.setColspan(2);
+            table_leyenda.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("FIRMA DEL EMPLEADO",smallBoldFont7));
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthLeft(0);
+            cell.setBorderWidthRight(0);
+            cell.setBorderWidthTop(1);
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table_leyenda.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallBoldFont7));
+            cell.setBorder(0);
+            cell.setColspan(2);
+            table_leyenda.addCell(cell);
+            
+            if(!this.getLeyenda().trim().equals("")){
+                cell = new PdfPCell(new Paragraph("",smallBoldFont7));
                 cell.setBorder(0);
-                cell.setVerticalAlignment(Element.ALIGN_TOP);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                table_observ.addCell(cell);
+                table_leyenda.addCell(cell);
                 
-                cell = new PdfPCell(new Paragraph(this.getObservaciones(),smallFont));
-                cell.setUseAscender(true);
-                cell.setUseDescender(true);
-                cell.setVerticalAlignment(Element.ALIGN_TOP);
-                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                table_observ.addCell(cell);
+                cell = new PdfPCell(new Paragraph(this.getLeyenda().replace("\"X\"", this.getEmpresa_emisora().toUpperCase()),smallFont6));
+                cell.setBorder(0);
+                cell.setColspan(3);
+                cell.setVerticalAlignment(Element.ALIGN_CENTER);
+                cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+                table_leyenda.addCell(cell);
+                
+                cell = new PdfPCell(new Paragraph("",smallBoldFont7));
+                cell.setBorder(0);
+                table_leyenda.addCell(cell);
             }
-            document.add(table_observ);
+            document.add(table_leyenda);
             
             
             //Agregar tabla vacia
@@ -427,65 +467,6 @@ public final class PdfCfdiNomina {
             //AQUI AGREGAMOS LA TABLA DE SELLOS---------------------------------
             document.add(tablaSellos.addContent());
             //------------------------------------------------------------------
-            
-            //Agregar Leyendas solo cuando es Factura
-            /*if (this.getProposito().equals("RECIBO DE NÓMINA")){
-                int noElements=this.getLeyendas().size();
-                
-                //Agregar solo cuando existan leyendas
-                if(noElements>0){
-                    //Agregar tabla vacia
-                    document.add(tableVacia);
-                    
-                    //Aqui comienza la tabla de para las Leyendas Especiales
-                    float [] widths_table_leyendas = {1};
-                    table_leyendas = new PdfPTable(widths_table_leyendas);
-                    table_leyendas.setKeepTogether(false);
-                    int counter=0;
-                    
-                    for (String i : this.getLeyendas()){
-                        cell = new PdfPCell(new Paragraph(i,smallFont));
-                        
-                        if(counter==0){
-                            if(noElements==1){
-                                //Cuando solo es un elmento hay que pintar todos los bordes
-                                cell.setBorderWidthBottom(0.5f);
-                                cell.setBorderWidthLeft(0.5f);
-                                cell.setBorderWidthRight(0.5f);
-                                cell.setBorderWidthTop(0.5f);                                
-                            }else{
-                                //Si es mas de un elemento solo hay que pintar borde Superior, Izquierdo y Derecho
-                                cell.setBorderWidthBottom(0);
-                                cell.setBorderWidthLeft(0.5f);
-                                cell.setBorderWidthRight(0.5f);
-                                cell.setBorderWidthTop(0.5f);   
-                            }
-                        }else{
-                            if(counter<(noElements-1)){
-                                //Aqui entra cuando no es el primero ni el ultimo elemento. Solo se debe pintar el borde Izquierdo y Derecho
-                                cell.setBorderWidthBottom(0);
-                                cell.setBorderWidthLeft(0.5f);
-                                cell.setBorderWidthRight(0.5f);
-                                cell.setBorderWidthTop(0);   
-                            }else{
-                                //Aqui entra cuando es el ultimo elemento. Hay que pintar borde Inferior, Izquierda y Derecha
-                                cell.setBorderWidthBottom(0.5f);
-                                cell.setBorderWidthLeft(0.5f);
-                                cell.setBorderWidthRight(0.5f);
-                                cell.setBorderWidthTop(0);
-                            }
-                        }
-                        
-                        cell.setVerticalAlignment(Element.ALIGN_TOP);
-                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        table_leyendas.addCell(cell);
-                        counter++;
-                    }
-                    //Agregar tabla Leyendas Especiales al DOCUMENTO
-                    document.add(table_leyendas);
-                }
-            }*/
-
             
             
             //CERRAR EL DOCUMENTO
@@ -507,34 +488,29 @@ public final class PdfCfdiNomina {
     private class CeldaPDF {
         public PdfPTable addContent() {
             Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
-            Font sont = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
-            Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
-            Font smallBoldFont7= new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.WHITE);
-            Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
+            Font largeBoldFont13 = new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLACK);
             
             PdfPTable table = new PdfPTable(1);
+            table.setKeepTogether(false);
             PdfPCell cell;
             
-            //TIPO DE DOCUMENTO
-            cell = new PdfPCell(new Paragraph("",smallBoldFont7));
+            cell = new PdfPCell(new Paragraph(getEtiqueta_tipo_doc(),largeBoldFont13));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            //cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("",smallBoldFont7));
+            cell = new PdfPCell(new Paragraph("",largeBoldFont13));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setUseDescender(true);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            //cell.setBackgroundColor(BaseColor.BLACK);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getEtiqueta_tipo_doc(),largeBoldFont));
+            cell = new PdfPCell(new Paragraph("CFDI",largeBoldFont13));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -553,6 +529,42 @@ public final class PdfCfdiNomina {
             return table;
         }
     }
+    
+    
+    
+    
+    
+    
+    //esta es la tabla que va en la parte Superior Derecha
+    private class TableReceptor {
+        public PdfPTable addContent() {
+            Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
+            Font smallBoldFont7White = new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.WHITE);
+            
+            
+            
+            float [] widths_table = {1,1,1,1,1};
+            PdfPTable table = new PdfPTable(widths_table);
+            table.setKeepTogether(false);
+            PdfPCell cell;
+            
+            cell = new PdfPCell(new Paragraph("EMPLEADO", smallBoldFont7White));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthLeft(1);
+            cell.setBorderWidthRight(0);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
+            cell.setColspan(5);
+            table.addCell(cell);
+            
+
+            
+            return table;
+        }
+    }
+    
     
     
     
@@ -1172,7 +1184,7 @@ public final class PdfCfdiNomina {
             table2.addCell(cell);
             
             //fila 17
-            cell = new PdfPCell(new Paragraph("NÚMERO DE DIAS PAGADOS", smallBoldFont7));
+            cell = new PdfPCell(new Paragraph("NÚMERO DE DÍAS PAGADOS", smallBoldFont7));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1191,7 +1203,7 @@ public final class PdfCfdiNomina {
             table2.addCell(cell);
             
             //fila 18
-            cell = new PdfPCell(new Paragraph("BANCOS", smallBoldFont7));
+            cell = new PdfPCell(new Paragraph("BANCO", smallBoldFont7));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1256,36 +1268,38 @@ public final class PdfCfdiNomina {
     private class tablaConceptos {
         public PdfPTable addContent() {
             Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
-            Font sont = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
-            Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 6, Font.BOLD, BaseColor.WHITE);
-            Font smallBoldFont6= new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.BLACK);
-            Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
-            
+            //Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 6, Font.BOLD, BaseColor.WHITE);
+            Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 6, Font.BOLD, BaseColor.BLACK);
+            Font smallBoldFont7Black= new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.BLACK);
+            Font smallBoldFont7White= new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.WHITE);
             
             //tabla contenedor
-            float [] widths;
-            float [] widthsdeduc;
-            String[] columnas;
-            String[] columnasdeduc;
-            
-            
-           
-             //tabla contenedor
             float [] widthscont = {8f,8f};
             PdfPTable table4 = new PdfPTable(widthscont);
             PdfPCell cell;
-
-            //fila 1 -> Columna 1
-            cell = new PdfPCell(new Paragraph("PERCEPCIONES", smallBoldFont6));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
+            
+            //fila 1 -> Columna 1 table4
+            cell = new PdfPCell(new Paragraph("PERCEPCIONES", smallBoldFont7White));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthLeft(1);
+            cell.setBorderWidthRight(0.5f);
+            cell.setBorderColorRight(BaseColor.WHITE);
+            cell.setBorderColorLeft(BaseColor.LIGHT_GRAY);
+            cell.setUseAscender(true);
             table4.addCell(cell);
             
-             //fila  1 -> Columna 2
-            cell = new PdfPCell(new Paragraph("DEDUCCIONES", smallBoldFont6));
+             //fila  1 -> Columna 2 table4
+            cell = new PdfPCell(new Paragraph("DEDUCCIONES", smallBoldFont7White));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setBorder(0);
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBorderWidthLeft(0);
+            cell.setBorderWidthRight(1);
+            cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
             cell.setUseAscender(true);
             table4.addCell(cell);
             
@@ -1295,11 +1309,11 @@ public final class PdfCfdiNomina {
             
             //INICIA TABLA DE PERCEPCIONES
             float [] widths_percep = {
-                1f, //TIPO PERCEPCION
-                1f,//CLAVE
+                0.3f, //TIPO PERCEPCION
+                0.4f,//CLAVE
                 2f, //CONCEPTO
-                1f, //IMPORTE GRAVADO
-                1f //IMPORTE EXCENTO
+                0.8f, //IMPORTE GRAVADO
+                0.8f //IMPORTE EXCENTO
             };
             
             PdfPTable table = new PdfPTable(widths_percep);
@@ -1313,18 +1327,18 @@ public final class PdfCfdiNomina {
                 cellX = new PdfPCell(new Paragraph(columna_titulo,smallBoldFont));
                 cellX.setUseAscender(true);
                 cellX.setUseDescender(true);
-                cellX.setBackgroundColor(BaseColor.BLACK);
+                //cellX.setBackgroundColor(BaseColor.BLACK);
                 
                 if(columna_titulo.equals("Tipo de Percepción")){
-                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cellX.setVerticalAlignment(Element.ALIGN_TOP);
                 }
                 if(columna_titulo.equals("Clave")){
-                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cellX.setVerticalAlignment(Element.ALIGN_TOP);
                 }
                 if(columna_titulo.equals("Concepto")){
-                    cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cellX.setVerticalAlignment(Element.ALIGN_TOP);
                 }
                 if(columna_titulo.equals("Importe Gravado")){
@@ -1342,19 +1356,8 @@ public final class PdfCfdiNomina {
             //Percepciones
            for (LinkedHashMap<String,String> registro : getRows()){
                 //Indices del HashMap que representa el row
-                //String[] wordList = {"sku","titulo","unidad","presentacion","cantidad","simbolo_moneda","precio_unitario","simbolo_moneda","importe"};
-               String[] wordList;
-               String[] wordList1 = {"TipoPercepcion","Clave","Concepto","simbolo_moneda","ImporteGravado","simbolo_moneda","ImporteExento"};
-               //String[] wordList2 = {"sku","titulo","unidad","cantidad","simbolo_moneda","precio_unitario","simbolo_moneda","importe","simbolo_moneda_ieps","importe_ieps"};
-               // if(Double.parseDouble(getMontoIeps())>0){
-                    //Aqui entra cuando incluye IEPS
-            
-                    //Aqui entra cuando NO INCLUYE IEPS
-                    wordList=wordList1;
-                
-                
-               
-                List<String>  indices = (List<String>) Arrays.asList(wordList);
+               String[] wordList1 = {"TipoPercepcion","Clave","Concepto","ImporteGravado","ImporteExento"};
+                List<String>  indices = (List<String>) Arrays.asList(wordList1);
                 
                 for (String omega : indices){
                     PdfPCell celda;
@@ -1364,13 +1367,12 @@ public final class PdfCfdiNomina {
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
                         celda.setBorderWidthBottom(0);
-                        celda.setBorderWidthLeft(1);
+                        celda.setBorderWidthLeft(0);
                         celda.setBorderWidthRight(0.5f);
                         celda.setBorderWidthTop(0);
                         celda.setBorderColorRight(BaseColor.LIGHT_GRAY);
                         table.addCell(celda);
                     }
-                    
                     if (omega.equals("Clave")){
                         celda = new PdfPCell(new Paragraph(registro.get(omega).toString(),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1382,8 +1384,6 @@ public final class PdfCfdiNomina {
                         celda.setBorderColorRight(BaseColor.LIGHT_GRAY);
                         table.addCell(celda);
                     }
-                    
-                    
                     if (omega.equals("Concepto")){
                         celda = new PdfPCell(new Paragraph(registro.get(omega).toString().toUpperCase(),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1395,8 +1395,6 @@ public final class PdfCfdiNomina {
                         celda.setBorderColorRight(BaseColor.LIGHT_GRAY);
                         table.addCell(celda);
                     }
-                    
-                    
                     if (omega.equals("ImporteGravado")){
                         celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -1408,27 +1406,23 @@ public final class PdfCfdiNomina {
                         celda.setBorderColorRight(BaseColor.LIGHT_GRAY);
                         table.addCell(celda);
                     }
-                    
                     if (omega.equals("ImporteExento")){
                         celda= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                         celda.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celda.setVerticalAlignment(Element.ALIGN_TOP);
+                        celda.setBorderWidthRight(0);
                         celda.setBorderWidthBottom(0);
                         celda.setBorderWidthLeft(0);
                         celda.setBorderWidthTop(0);
                         table.addCell(celda);
                     }
-             
                 }
-                contador++;
             }
            
-           
-                //agregar tabla de condiciones de venta y pago
-           cell = new PdfPCell(table);
+            //agregar tabla de condiciones de venta y pago
+            cell = new PdfPCell(table);
             cell.setUseAscender(true);
             cell.setUseDescender(true);
-            //cell.setColspan(1);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             table4.addCell(cell);
@@ -1444,11 +1438,11 @@ public final class PdfCfdiNomina {
             String[] columnas_deduc = {"Tipo","Clave","Concepto","Importe Gravado","Importe Excento"};
             
             float [] widths_deduc = {
-                1f, //TIPO DEDUCCIÓN
-                1f,//CLAVE
+                0.3f, //TIPO DEDUCCIÓN
+                0.4f,//CLAVE
                 2f, //CONCEPTO
-                1f, //IMPORTE GRAVADO
-                1f //IMPORTE EXCENTO
+                0.8f, //IMPORTE GRAVADO
+                0.8f //IMPORTE EXCENTO
             };
             
             PdfPTable tabled = new PdfPTable(widths_deduc);
@@ -1462,18 +1456,18 @@ public final class PdfCfdiNomina {
                 cellX2 = new PdfPCell(new Paragraph(columna_titulo2,smallBoldFont));
                 cellX2.setUseAscender(true);
                 cellX2.setUseDescender(true);
-                cellX2.setBackgroundColor(BaseColor.BLACK);
+                //cellX2.setBackgroundColor(BaseColor.BLACK);
                 
                 if(columna_titulo2.equals("Tipo de Deducción")){
-                    cellX2.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cellX2.setVerticalAlignment(Element.ALIGN_TOP);
                 }
                 if(columna_titulo2.equals("Clave")){
-                    cellX2.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cellX2.setVerticalAlignment(Element.ALIGN_TOP);
                 }
                 if(columna_titulo2.equals("Concepto")){
-                    cellX2.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cellX2.setVerticalAlignment(Element.ALIGN_TOP);
                 }
                 if(columna_titulo2.equals("Importe Gravado")){
@@ -1484,20 +1478,13 @@ public final class PdfCfdiNomina {
                     cellX2.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellX2.setVerticalAlignment(Element.ALIGN_TOP);
                 }
-                
-
                 tabled.addCell(cellX2);
             }
             
            //Deducciones
            for (LinkedHashMap<String,String> registro : getRowsd()){
                 //Indices del HashMap que representa el row
-               String[] wordList2;
-               String[] wordList3 = {"TipoDeduccion","Clave","Concepto","simbolo_moneda","ImporteGravado","simbolo_moneda","ImporteExento"};
-            
-                    //Aqui entra cuando NO INCLUYE IEPS
-                    wordList2=wordList3;
-                
+                String[] wordList2 = {"TipoDeduccion","Clave","Concepto","ImporteGravado","ImporteExento"};
                 List<String>  indices2 = (List<String>) Arrays.asList(wordList2);
                 
                 for (String omega : indices2){
@@ -1509,7 +1496,7 @@ public final class PdfCfdiNomina {
                         celdad.setHorizontalAlignment(Element.ALIGN_LEFT);
                         celdad.setVerticalAlignment(Element.ALIGN_TOP);
                         celdad.setBorderWidthBottom(0);
-                        celdad.setBorderWidthLeft(1);
+                        celdad.setBorderWidthLeft(0);
                         celdad.setBorderWidthRight(0.5f);
                         celdad.setBorderWidthTop(0);
                         celdad.setBorderColorRight(BaseColor.LIGHT_GRAY);
@@ -1557,190 +1544,456 @@ public final class PdfCfdiNomina {
                         celdad= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
                         celdad.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         celdad.setVerticalAlignment(Element.ALIGN_TOP);
+                        celdad.setBorderWidthRight(0);
                         celdad.setBorderWidthBottom(0);
                         celdad.setBorderWidthLeft(0);
                         celdad.setBorderWidthTop(0);
                         tabled.addCell(celdad);
                     }
-             
                 }
                 contador2++;
             }
            
-                  
-          
-              //agregar tabla deducciones
+            //Agregar tabla deducciones
             cell = new PdfPCell(tabled);
             cell.setUseAscender(true);
             cell.setUseDescender(true);
-            //cell.setColspan(1);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_TOP);
             table4.addCell(cell);
            
-
-             //tabla contenedor
-              float [] widthstot = {
-             
-                1f, //TIPO DEDUCCIÓN
-                1.5f,//CLAVE
-                1f, //CONCEPTO
-                0.5f,//simbolo
-                1f, //IMPORTE GRAVADO
-                0.5f, //simbolo UNITARIO
-                1f, //IMPORTE EXCENTO
-                
-                1f, //TIPO DEDUCCIÓN
-                1.5f,//CLAVE
-                
-                1f, //CONCEPTO
-                0.5f,//simbolo
-                1f, //IMPORTE GRAVADO
-                0.5f, //simbolo UNITARIO
-                1f, //IMPORTE EXCENTO
-                //1f //IMPORTE
-            };
-               int colspan=10;
             
+            
+            
+            
+            
+            
+            
+            
+            //Crear tabla de SUMAS DE PERCEPCIONES
+            float [] widths_sumas_percep = {2.7f,0.8f,0.8f};
+            PdfPTable table_sumas_percep = new PdfPTable(widths_sumas_percep);
+            tabled.setKeepTogether(false);
+            cellX2 = new PdfPCell(new Paragraph("Suma de las Percepciones",smallBoldFont));
+            cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellX2.setBorder(0);
+            table_sumas_percep.addCell(cellX2);
+            
+            cellX2 = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getPercep_total_gravado(),2)),smallBoldFont));
+            cellX2.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cellX2.setBorder(0);
+            table_sumas_percep.addCell(cellX2);
+            
+            cellX2 = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getPercep_total_excento(),2)),smallBoldFont));
+            cellX2.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cellX2.setBorder(0);
+            table_sumas_percep.addCell(cellX2);
+            
+            //Agregar tabla  SUMAS DE PERCEPCIONES
+            cell = new PdfPCell(table_sumas_percep);
+            cell.setUseAscender(true);
+            cell.setUseDescender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
+            table4.addCell(cell);
+            
+            
+            
+            //Crear tabla de SUMAS DE DEDUCCIONES
+            float [] widths_sumas_deduc = {2.7f,0.8f,0.8f};
+            PdfPTable table_sumas_deduc = new PdfPTable(widths_sumas_deduc);
+            tabled.setKeepTogether(false);
+            cellX2 = new PdfPCell(new Paragraph("Suma de las Deducciones",smallBoldFont));
+            cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellX2.setBorder(0);
+            table_sumas_deduc.addCell(cellX2);
+            
+            cellX2 = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getDeduc_total_gravado(),2)),smallBoldFont));
+            cellX2.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cellX2.setBorder(0);
+            table_sumas_deduc.addCell(cellX2);
+            
+            cellX2 = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getDeduc_total_excento(),2)),smallBoldFont));
+            cellX2.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cellX2.setBorder(0);
+            table_sumas_deduc.addCell(cellX2);
+            
+            //Agregar tabla  SUMAS DE DEDUCCIONES
+            cell = new PdfPCell(table_sumas_deduc);
+            cell.setUseAscender(true);
+            cell.setUseDescender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_TOP);
+            table4.addCell(cell);
+            
+            
+            
+            
+            
+            
+            
+            //Agregar fila Vacia
+            cell = new PdfPCell(new Paragraph("", smallBoldFont7Black));
+            cell.setBorder(0);
+            cell.setColspan(2);
+            cell.setFixedHeight(10);
+            table4.addCell(cell);
+           
+            
+            
+            
+            //fila 3 -> Columna 1 table4
+            if(getRows_horas_extras().size()>0){
+                cell = new PdfPCell(new Paragraph("Detalle de Horas Extras", smallBoldFont7White));
+                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthLeft(1);
+                cell.setBorderWidthRight(0.5f);
+            }else{
+                cell = new PdfPCell(new Paragraph("", smallBoldFont7White));
+                cell.setBorder(0);
+            }
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
+            table4.addCell(cell);
+            
+            
+            
+            
+            //fila  3 -> Columna 2 table4
+            if(getRows_incapacidades().size()>0){
+                cell = new PdfPCell(new Paragraph("Detalle de Incapacidades", smallBoldFont7White));
+                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                cell.setBorderWidthBottom(0);
+                cell.setBorderWidthTop(0);
+                cell.setBorderWidthLeft(0);
+                cell.setBorderWidthRight(1);
+            }else{
+                cell = new PdfPCell(new Paragraph("", smallBoldFont7White));
+                cell.setBorder(0);
+            }
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
+            table4.addCell(cell);
+            
+            
+            
+            
+            
+            
+            //fila 4 -> Columna 1 table4
+            if(getRows_horas_extras().size()>0){
+                //Crear tabla de HORAS EXTRAS
+                String[] columnas_hrs = {"Días","Horas","Tipo de Hora","Importe Pagado"};
+                float [] widths_hrs = {0.3f,0.4f,2f,1.6f};
+                PdfPTable table_hrs = new PdfPTable(widths_hrs);
+                tabled.setKeepTogether(false);
+                
+                List<String>  lista_columnas_hrs = (List<String>) Arrays.asList(columnas_hrs);
+                PdfPCell cellHrs;
+                for ( String columna_titulo2 : lista_columnas_hrs){
+                    cellHrs = new PdfPCell(new Paragraph(columna_titulo2,smallBoldFont));
+                    cellHrs.setUseAscender(true);
+                    cellHrs.setUseDescender(true);
+                    //cellHrs.setBackgroundColor(BaseColor.BLACK);
+                    if(columna_titulo2.equals("Días")){
+                        cellHrs.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    }
+                    if(columna_titulo2.equals("Horas")){
+                        cellHrs.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    }
+                    if(columna_titulo2.equals("Tipo de Hora")){
+                        cellHrs.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    }
+                    if(columna_titulo2.equals("Importe Pagado")){
+                        cellHrs.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    }
+                    table_hrs.addCell(cellHrs);
+                }
+                
+                for (LinkedHashMap<String,String> registro : getRows_horas_extras()){
+                    //Indices del HashMap que representa el row
+                    String[] wordList2 = {"Dias","HorasExtra","TipoHoras","ImportePagado"};
+                    List<String>  indices2 = (List<String>) Arrays.asList(wordList2);
+                    for (String omega : indices2){
+                        PdfPCell celdad;
+                        if (omega.equals("Dias")){
+                            celdad = new PdfPCell(new Paragraph(registro.get(omega).toString(),smallFont));
+                            celdad.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            celdad.setVerticalAlignment(Element.ALIGN_TOP);
+                            celdad.setBorderWidthBottom(0);
+                            celdad.setBorderWidthLeft(0);
+                            celdad.setBorderWidthRight(0.5f);
+                            celdad.setBorderWidthTop(0);
+                            celdad.setBorderColorRight(BaseColor.LIGHT_GRAY);
+                            table_hrs.addCell(celdad);
+                        }
+                        if (omega.equals("HorasExtra")){
+                            celdad = new PdfPCell(new Paragraph(registro.get(omega).toString(),smallFont));
+                            celdad.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            celdad.setVerticalAlignment(Element.ALIGN_TOP);
+                            celdad.setBorderWidthBottom(0);
+                            celdad.setBorderWidthLeft(0);
+                            celdad.setBorderWidthTop(0);
+                            celdad.setBorderWidthRight(0.5f);
+                            celdad.setBorderColorRight(BaseColor.LIGHT_GRAY);
+                            table_hrs.addCell(celdad);
+                        }
+                        if (omega.equals("TipoHoras")){
+                            celdad = new PdfPCell(new Paragraph(registro.get(omega).toString().toUpperCase(),smallFont));
+                            celdad.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            celdad.setVerticalAlignment(Element.ALIGN_TOP);
+                            celdad.setBorderWidthBottom(0);
+                            celdad.setBorderWidthLeft(0);
+                            celdad.setBorderWidthTop(0);
+                            celdad.setBorderWidthRight(0.5f);
+                            celdad.setBorderColorRight(BaseColor.LIGHT_GRAY);
+                            table_hrs.addCell(celdad);
+                        }
+                        if (omega.equals("ImportePagado")){
+                            celdad= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                            celdad.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                            celdad.setVerticalAlignment(Element.ALIGN_TOP);
+                            celdad.setBorderWidthRight(0);
+                            celdad.setBorderWidthLeft(0);
+                            celdad.setBorderWidthBottom(0);
+                            celdad.setBorderWidthTop(0);
+                            table_hrs.addCell(celdad);
+                        }
+                    }
+                }
+
+                //Agregar tabla de HORAS EXTRAS
+                cell = new PdfPCell(table_hrs);
+                cell.setUseAscender(true);
+                cell.setUseDescender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                table4.addCell(cell);
+            }else{
+                cell = new PdfPCell(new Paragraph("", smallBoldFont7White));
+                cell.setBorder(0);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table4.addCell(cell);
+            }
+
+            
+            
+            
+            
+            //fila  4 -> Columna 2 table4
+            if(getRows_incapacidades().size()>0){
+                //Crear tabla de INCAPACIDADES
+                String[] columnas_incapa = {"Días","Tipo de Incapacidad","Descuento"};
+                float [] widths_incapa = {0.3f,2.4f,1.6f};
+                PdfPTable table_incapacidades = new PdfPTable(widths_incapa);
+                tabled.setKeepTogether(false);
+                
+                List<String>  lista_columnas_incapa = (List<String>) Arrays.asList(columnas_incapa);
+                PdfPCell cellIncapa;
+                for ( String columna_titulo2 : lista_columnas_incapa){
+                    cellIncapa = new PdfPCell(new Paragraph(columna_titulo2,smallBoldFont));
+                    cellIncapa.setUseAscender(true);
+                    cellIncapa.setUseDescender(true);
+                    //cellIncapa.setBackgroundColor(BaseColor.BLACK);
+                    if(columna_titulo2.equals("Días")){
+                        cellIncapa.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    }
+                    if(columna_titulo2.equals("Tipo de Incapacidad")){
+                        cellIncapa.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    }
+                    if(columna_titulo2.equals("Descuento")){
+                        cellIncapa.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    }
+                    table_incapacidades.addCell(cellIncapa);
+                }
+                
+                
+                for (LinkedHashMap<String,String> registro : getRows_incapacidades()){
+                    //Indices del HashMap que representa el row
+                    String[] wordList2 = {"DiasIncapacidad","titulo_tipo_incapacidad","Descuento"};
+                    List<String>  indices2 = (List<String>) Arrays.asList(wordList2);
+                    for (String omega : indices2){
+                        PdfPCell celdad;
+                        if (omega.equals("DiasIncapacidad")){
+                            celdad = new PdfPCell(new Paragraph(registro.get(omega).toString(),smallFont));
+                            celdad.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            celdad.setVerticalAlignment(Element.ALIGN_TOP);
+                            celdad.setBorderWidthBottom(0);
+                            celdad.setBorderWidthLeft(0);
+                            celdad.setBorderWidthRight(0.5f);
+                            celdad.setBorderWidthTop(0);
+                            celdad.setBorderColorRight(BaseColor.LIGHT_GRAY);
+                            table_incapacidades.addCell(celdad);
+                        }
+                        if (omega.equals("titulo_tipo_incapacidad")){
+                            celdad = new PdfPCell(new Paragraph(registro.get(omega).toString().toUpperCase(),smallFont));
+                            celdad.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            celdad.setVerticalAlignment(Element.ALIGN_TOP);
+                            celdad.setBorderWidthBottom(0);
+                            celdad.setBorderWidthLeft(0);
+                            celdad.setBorderWidthTop(0);
+                            celdad.setBorderWidthRight(0.5f);
+                            celdad.setBorderColorRight(BaseColor.LIGHT_GRAY);
+                            table_incapacidades.addCell(celdad);
+                        }
+                        if (omega.equals("Descuento")){
+                            celdad= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(registro.get(omega).toString(),2)),smallFont));
+                            celdad.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                            celdad.setVerticalAlignment(Element.ALIGN_TOP);
+                            celdad.setBorderWidthLeft(0);
+                            celdad.setBorderWidthRight(0);
+                            celdad.setBorderWidthTop(0);
+                            celdad.setBorderWidthBottom(0);
+                            table_incapacidades.addCell(celdad);
+                        }
+                    }
+                }
+                
+                //Agregar tabla de INCAPACIDADES
+                cell = new PdfPCell(table_incapacidades);
+                cell.setUseAscender(true);
+                cell.setUseDescender(true);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setVerticalAlignment(Element.ALIGN_TOP);
+                table4.addCell(cell);
+            }else{
+                cell = new PdfPCell(new Paragraph("", smallBoldFont7White));
+                cell.setBorder(0);
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table4.addCell(cell);
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //INICIA TABLA TOTALES
+            float [] widthstot = {5f,1f,0.5f,1f};
             PdfPTable table5 = new PdfPTable(widthstot);
             table5.setKeepTogether(false);
             PdfPCell celltot;
-           //fila SUBTOTAL
-            celltot = new PdfPCell(new Paragraph("", smallFont));
+            
+            //fila SUBTOTAL
+            celltot = new PdfPCell(new Paragraph("", smallBoldFont7Black));
             celltot.setHorizontalAlignment(Element.ALIGN_LEFT);
             celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //celda.setBorder(0);
-            celltot.setBorderWidthBottom(0);
-            celltot.setBorderWidthLeft(0);
-            celltot.setBorderWidthRight(1);
-            celltot.setBorderWidthTop(1);
-            celltot.setColspan(colspan);
-            table5.addCell(celltot);
-            
-            celltot = new PdfPCell(new Paragraph("SUB-TOTAL",smallBoldFont6));
-            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            celltot.setBorderWidthBottom(0);
-            celltot.setBorderWidthLeft(0);
-            celltot.setBorderWidthRight(1);
-            celltot.setBorderWidthTop(1);
-            celltot.setColspan(2);
-            table5.addCell(celltot);
-            
-            celltot= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallBoldFont6));
-            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
             celltot.setBorderWidthBottom(0);
             celltot.setBorderWidthLeft(0);
             celltot.setBorderWidthRight(0);
-            celltot.setBorderWidthTop(1);
+            celltot.setBorderWidthTop(0);
             table5.addCell(celltot);
             
-            celltot= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getSubTotal(),2)),smallBoldFont6));
+            celltot = new PdfPCell(new Paragraph("SUB-TOTAL",smallBoldFont7Black));
             celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
             celltot.setBorderWidthBottom(0);
             celltot.setBorderWidthLeft(0);
-            celltot.setBorderWidthRight(1);
-            celltot.setBorderWidthTop(1);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
+            table5.addCell(celltot);
+            
+            celltot= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallBoldFont7Black));
+            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celltot.setVerticalAlignment(Element.ALIGN_TOP);
+            celltot.setBorderWidthBottom(0);
+            celltot.setBorderWidthLeft(0);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
+            table5.addCell(celltot);
+            
+            celltot= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getSubTotal(),2)),smallBoldFont7Black));
+            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celltot.setVerticalAlignment(Element.ALIGN_TOP);
+            celltot.setBorderWidthBottom(0);
+            celltot.setBorderWidthLeft(0);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
             table5.addCell(celltot);
             
             
-            //FILA ISR
-            //if(Double.parseDouble(getMontoIeps())>0){
-                celltot = new PdfPCell(new Paragraph("", smallBoldFont6));
-                celltot.setHorizontalAlignment(Element.ALIGN_LEFT);
-                celltot.setVerticalAlignment(Element.ALIGN_TOP);
-                //celda.setBorder(0);
-                celltot.setBorderWidthBottom(0);
-                celltot.setBorderWidthLeft(0);
-                celltot.setBorderWidthRight(1);
-                celltot.setBorderWidthTop(0);
-                celltot.setColspan(colspan);
-                table5.addCell(celltot);
-                
-                celltot = new PdfPCell(new Paragraph("DESCUENTOS",smallBoldFont6));
-                celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                celltot.setVerticalAlignment(Element.ALIGN_TOP);
-                //cell.setBorder(0);
-                celltot.setBorderWidthBottom(0);
-                celltot.setBorderWidthLeft(0);
-                celltot.setBorderWidthRight(1);
-                celltot.setBorderWidthTop(0);
-                celltot.setColspan(2);
-                table5.addCell(celltot);
-                
-                celltot= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallFont));
-                celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                celltot.setVerticalAlignment(Element.ALIGN_TOP);
-                //cell.setBorder(0);
-                celltot.setBorderWidthBottom(0);
-                celltot.setBorderWidthLeft(0);
-                celltot.setBorderWidthRight(0);
-                celltot.setBorderWidthTop(0);
-                table5.addCell(celltot);
+            celltot = new PdfPCell(new Paragraph("", smallBoldFont7Black));
+            celltot.setHorizontalAlignment(Element.ALIGN_LEFT);
+            celltot.setVerticalAlignment(Element.ALIGN_TOP);
+            celltot.setBorderWidthBottom(0);
+            celltot.setBorderWidthLeft(0);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
+            table5.addCell(celltot);
 
-                celltot= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoIeps(),2)),smallBoldFont6));
-                celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                celltot.setVerticalAlignment(Element.ALIGN_TOP);
-                //cell.setBorder(0);
-                celltot.setBorderWidthBottom(0);
-                celltot.setBorderWidthLeft(0);
-                celltot.setBorderWidthRight(1);
-                celltot.setBorderWidthTop(0);
-                table5.addCell(celltot);
-         
-            
-             String etiqueta_importe="";
-           // if(Double.parseDouble(getMontmoneda_abroRetencion())<=0){
-                etiqueta_importe = "IMPORTE CON LETRA";
-           // }
+            celltot = new PdfPCell(new Paragraph("DESCUENTOS",smallBoldFont7Black));
+            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celltot.setVerticalAlignment(Element.ALIGN_TOP);
+            celltot.setBorderWidthBottom(0);
+            celltot.setBorderWidthLeft(0);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
+            table5.addCell(celltot);
 
-        
+            celltot= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallBoldFont7Black));
+            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celltot.setVerticalAlignment(Element.ALIGN_TOP);
+            celltot.setBorderWidthBottom(0);
+            celltot.setBorderWidthLeft(0);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
+            table5.addCell(celltot);
+
+            celltot= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoIeps(),2)),smallBoldFont7Black));
+            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celltot.setVerticalAlignment(Element.ALIGN_TOP);
+            celltot.setBorderWidthBottom(0);
+            celltot.setBorderWidthLeft(0);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
+            table5.addCell(celltot);
+
             
             //fila IVA
-            celltot = new PdfPCell(new Paragraph(etiqueta_importe, smallBoldFont6));
+            celltot = new PdfPCell(new Paragraph("IMPORTE CON LETRA", smallBoldFont7Black));
             celltot.setHorizontalAlignment(Element.ALIGN_LEFT);
             celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //celda.setBorder(0);
-            celltot.setBorderWidthBottom(0);
-            celltot.setBorderWidthLeft(0);
-            celltot.setBorderWidthRight(1);
-            celltot.setBorderWidthTop(0);
-            celltot.setColspan(colspan);
-            table5.addCell(celltot);
-            
-            celltot = new PdfPCell(new Paragraph("ISR",smallBoldFont6));
-            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            celltot.setBorderWidthBottom(0);
-            celltot.setBorderWidthLeft(0);
-            celltot.setBorderWidthRight(1);
-            celltot.setBorderWidthTop(0);
-            celltot.setColspan(2);
-            table5.addCell(celltot);
-            
-            celltot= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallFont));
-            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
             celltot.setBorderWidthBottom(0);
             celltot.setBorderWidthLeft(0);
             celltot.setBorderWidthRight(0);
             celltot.setBorderWidthTop(0);
             table5.addCell(celltot);
             
-            celltot= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoImpuesto(),2)),smallBoldFont6));
+            celltot = new PdfPCell(new Paragraph("ISR",smallBoldFont7Black));
             celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
             celltot.setBorderWidthBottom(0);
             celltot.setBorderWidthLeft(0);
-            celltot.setBorderWidthRight(1);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
+            table5.addCell(celltot);
+            
+            celltot= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallBoldFont7Black));
+            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celltot.setVerticalAlignment(Element.ALIGN_TOP);
+            celltot.setBorderWidthBottom(0);
+            celltot.setBorderWidthLeft(0);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
+            table5.addCell(celltot);
+            
+            celltot= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoImpuesto(),2)),smallBoldFont7Black));
+            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celltot.setVerticalAlignment(Element.ALIGN_TOP);
+            celltot.setBorderWidthBottom(0);
+            celltot.setBorderWidthLeft(0);
+            celltot.setBorderWidthRight(0);
             celltot.setBorderWidthTop(0);
             table5.addCell(celltot);
             
@@ -1753,7 +2006,7 @@ public final class PdfCfdiNomina {
             String centavos = getMontoTotal().substring(getMontoTotal().indexOf(".")+1);
             String numero = cal.convertirLetras(num);
             
-            //convertir a mayuscula la primera letra de la cadena
+            //Convertir a mayuscula la primera letra de la cadena
             String numeroMay = numero.substring(0, 1).toUpperCase() + numero.substring(1, numero.length());
             
             String denom = "";
@@ -1773,44 +2026,39 @@ public final class PdfCfdiNomina {
             //celda.setBorder(0);
             celltot.setBorderWidthBottom(0);
             celltot.setBorderWidthLeft(0);
-            celltot.setBorderWidthRight(1);
+            celltot.setBorderWidthRight(0);
             celltot.setBorderWidthTop(0);
-            celltot.setColspan(colspan);
             table5.addCell(celltot);
             
-            celltot = new PdfPCell(new Paragraph("NETO A PAGAR",smallBoldFont6));
+            celltot = new PdfPCell(new Paragraph("NETO A PAGAR",smallBoldFont7Black));
             celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            celltot.setBorderWidthBottom(1);
-            celltot.setBorderWidthLeft(0);
-            celltot.setBorderWidthRight(1);
-            celltot.setBorderWidthTop(0);
-            celltot.setColspan(2);
-            table5.addCell(celltot);
-            
-            celltot= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallBoldFont6));
-            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            celltot.setBorderWidthBottom(1);
+            celltot.setBorderWidthBottom(0);
             celltot.setBorderWidthLeft(0);
             celltot.setBorderWidthRight(0);
             celltot.setBorderWidthTop(0);
             table5.addCell(celltot);
             
-            celltot= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoTotal(),2)),smallBoldFont6));
+            celltot= new PdfPCell(new Paragraph(getSimbolo_moneda(),smallBoldFont7Black));
             celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
             celltot.setVerticalAlignment(Element.ALIGN_TOP);
-            //cell.setBorder(0);
-            celltot.setBorderWidthBottom(1);
+            celltot.setBorderWidthBottom(0);
             celltot.setBorderWidthLeft(0);
-            celltot.setBorderWidthRight(1);
+            celltot.setBorderWidthRight(0);
+            celltot.setBorderWidthTop(0);
+            table5.addCell(celltot);
+            
+            celltot= new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getMontoTotal(),2)),smallBoldFont7Black));
+            celltot.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            celltot.setVerticalAlignment(Element.ALIGN_TOP);
+            celltot.setBorderWidthBottom(0);
+            celltot.setBorderWidthLeft(0);
+            celltot.setBorderWidthRight(0);
             celltot.setBorderWidthTop(0);
             table5.addCell(celltot);
             
             
-              //agregar tabla totales
+            //agregar tabla totales
             cell = new PdfPCell(table5);
             cell.setUseAscender(true);
             cell.setUseDescender(true);
@@ -1849,10 +2097,9 @@ public final class PdfCfdiNomina {
     private class celdaDatosFiscales {
         public PdfPTable addContent() throws Exception {
             Font smallFontBold5 = new Font(Font.FontFamily.HELVETICA,5,Font.BOLD,BaseColor.BLACK);
-            Font smallFont6 = new Font(Font.FontFamily.HELVETICA,6,Font.NORMAL,BaseColor.BLACK);
             Font smallFont7 = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
-            Font smallBoldFont6= new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
             Font smallBoldFont7= new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.BLACK);
+            Font smallBoldFont7White= new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.WHITE);
             
             //tabla contenedor
             PdfPCell cell;
@@ -1863,7 +2110,7 @@ public final class PdfCfdiNomina {
             
             
             
-            cell = new PdfPCell(new Paragraph("INFORMACIÓN DEL TIMBRE FISCAL DIGITAL", smallBoldFont7));
+            cell = new PdfPCell(new Paragraph("INFORMACIÓN DEL TIMBRE FISCAL DIGITAL", smallBoldFont7White));
             cell.setBorder(0);
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -2023,8 +2270,8 @@ public final class PdfCfdiNomina {
             Image img = null;
             try {
                 img = Image.getInstance(getImagen());
-                img.scaleAbsoluteHeight(100);
-                img.scaleAbsoluteWidth(145);
+                img.scaleAbsoluteHeight(60);
+                img.scaleAbsoluteWidth(120);
                 //img.setAlignment(0);
                 img.setAlignment(Element.ALIGN_CENTER);
             }
@@ -2187,14 +2434,6 @@ public final class PdfCfdiNomina {
         this.rowsd = rowsd;
     }
     
-
-    public ArrayList<String> getLeyendas() {
-        return leyendas;
-    }
-
-    public void setLeyendas(ArrayList<String> leyendas) {
-        this.leyendas = leyendas;
-    }
     
     public HashMap<String, String> getDatosCliente() {
         return datos_nomina;
@@ -2807,7 +3046,63 @@ public final class PdfCfdiNomina {
         this.curp = curp;
     }
 
-     static class HeaderFooter extends PdfPageEventHelper {
+    public String getLeyenda() {
+        return leyenda;
+    }
+
+    public void setLeyenda(String leyenda) {
+        this.leyenda = leyenda;
+    }
+    
+    public ArrayList<LinkedHashMap<String, String>> getRows_horas_extras() {
+        return rows_horas_extras;
+    }
+
+    public void setRows_horas_extras(ArrayList<LinkedHashMap<String, String>> rows_horas_extras) {
+        this.rows_horas_extras = rows_horas_extras;
+    }
+
+    public ArrayList<LinkedHashMap<String, String>> getRows_incapacidades() {
+        return rows_incapacidades;
+    }
+
+    public void setRows_incapacidades(ArrayList<LinkedHashMap<String, String>> rows_incapacidades) {
+        this.rows_incapacidades = rows_incapacidades;
+    }
+    
+    public String getDeduc_total_excento() {
+        return deduc_total_excento;
+    }
+
+    public void setDeduc_total_excento(String deduc_total_excento) {
+        this.deduc_total_excento = deduc_total_excento;
+    }
+
+    public String getDeduc_total_gravado() {
+        return deduc_total_gravado;
+    }
+
+    public void setDeduc_total_gravado(String deduc_total_gravado) {
+        this.deduc_total_gravado = deduc_total_gravado;
+    }
+
+    public String getPercep_total_excento() {
+        return percep_total_excento;
+    }
+
+    public void setPercep_total_excento(String percep_total_excento) {
+        this.percep_total_excento = percep_total_excento;
+    }
+
+    public String getPercep_total_gravado() {
+        return percep_total_gravado;
+    }
+
+    public void setPercep_total_gravado(String percep_total_gravado) {
+        this.percep_total_gravado = percep_total_gravado;
+    }
+    
+    static class HeaderFooter extends PdfPageEventHelper {
         protected PdfTemplate total;
         protected BaseFont helv;
         protected PdfContentByte cb;
@@ -2878,7 +3173,6 @@ public final class PdfCfdiNomina {
             cb2 = writer.getDirectContent();
             float textBase = document.bottom() - 10;
             
-            
             //texto inferior izquieda pie de pagina
             String text_left = this.getCodigo1();
             float text_left_Size = helv.getWidthPoint(text_left, 7);
@@ -2887,8 +3181,6 @@ public final class PdfCfdiNomina {
             cb.setTextMatrix(document.left()+85, textBase );  //definir la posicion de text
             cb.showText(text_left);
             cb.endText();
-            
-            
             
             //texto centro pie de pagina
             String text_center1 = this.getCadena();
@@ -2899,7 +3191,6 @@ public final class PdfCfdiNomina {
             cb2.setTextMatrix(pos_text_center1, (textBase+10) );  //definir la posicion de text
             cb2.showText(text_center1);
             cb2.endText();
-            
             
             //texto centro pie de pagina
             String text_center ="Página " + writer.getPageNumber() + " de ";
@@ -2912,7 +3203,6 @@ public final class PdfCfdiNomina {
             cb.showText(text_center);
             cb.endText();
             cb.addTemplate(total, pos_text_center + adjust, textBase);
-            
             
             //texto inferior derecha pie de pagina
             String text_right = this.getCodigo2();
