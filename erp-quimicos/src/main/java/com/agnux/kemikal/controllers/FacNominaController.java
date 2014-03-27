@@ -1229,9 +1229,6 @@ public class FacNominaController {
         String generado ="false";
         String rutaXml = "";
         
-        
-
-        
         //Decodificar id de usuario
         Integer id_usuario = Integer.parseInt(Base64Coder.decodeString(id_user));
         userDat = this.getHomeDao().getUserById(id_usuario);
@@ -1245,35 +1242,23 @@ public class FacNominaController {
         //Ruta de Directorio de Emitidos de CFDi de Nominas
         rutaXml = this.getGralDao().getCfdiTimbreEmitidosDir() + rfcEmpresa + "/nomina/"+ data.get("ref_id") + ".xml";
         
-        
         //Obtener la cadena completa del xml
         String cadena_xml = FileHelper.stringFromFile(rutaXml);
         
         //Obtener la cadena original del timbre
         String cadena_original_timbre = this.getCadenaOriginalTimbre(cadena_xml, id_empresa, id_sucursal);
-        System.out.println("cadena_original_timbre: "+cadena_original_timbre);
         
         //Parsear el xml timbrado
         BeanFromCfdiXml pop2 = new BeanFromCfdiXml(rutaXml);
         
-        //Fecha del comprobante 
+        //Obtener datos del comprobante
         String fecha_comprobante=pop2.getFecha_comprobante();
-        
-        //Sello del Emisor
         String sello_digital_emisor = pop2.getSelloCfd();
-        System.out.println("getSelloCfd: "+sello_digital_emisor);
-        
-        //Sello del Sat
         String sello_digital_sat = pop2.getSelloSat();
-        System.out.println("sello_digital_sat: "+sello_digital_sat);
-        
         String uuid = pop2.getUuid();
-        System.out.println("uuid: "+uuid);
-        
         String fechaTimbre = pop2.getFecha_timbre();
         String noCertSAT = pop2.getNoCertificadoSAT();
         String rfcReceptor = pop2.getReceptor_rfc();
-        
         
         datos_nomina = this.getFacdao().getFacNomina_DataXml(id, id_empleado);
         datos_nomina.put("serie_folio",data.get("serie_folio"));
@@ -1285,8 +1270,6 @@ public class FacNominaController {
         datos_nomina.put("sello_digital_emisor", sello_digital_emisor);
         datos_nomina.put("cadena_original_timbre", cadena_original_timbre);
         datos_nomina.put("leyenda_nomina", String.valueOf(this.getFacdao().getFacNomina_LeyendaReciboNomina(id_empresa, id_sucursal).get("leyenda_nomina")));
-        
-        System.out.println("fecha_comprobante: "+fecha_comprobante);
         
         percepciones = this.getFacdao().getFacNomina_PercepcionesXml(id);
         deducciones = this.getFacdao().getFacNomina_DeduccionesXml(id);
@@ -1304,8 +1287,7 @@ public class FacNominaController {
         //String ruta_imagen = this.getGralDao().getImagesDir()+rfc_empresa+"_logo.png";
         
         File file_dir_tmp = new File(dir_tmp);
-        System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
-
+        //System.out.println("Directorio temporal: "+file_dir_tmp.getCanonicalPath());
         
         //genera nombre del archivo
         String file_name = data.get("serie_folio") +".pdf";
@@ -1336,7 +1318,7 @@ public class FacNominaController {
     
     private String getCadenaOriginalTimbre(String comprobante, Integer id_empresa, Integer id_sucursal) throws Exception {
         String valor_retorno = new String();
-        System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
+        //System.out.println("EsquemaXslt: "+this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
         valor_retorno = XmlHelper.transformar(comprobante, this.getGralDao().getXslDir() + this.getGralDao().getRfcEmpresaEmisora(id_empresa)+"/"+ this.getGralDao().getFicheroXslTimbre(id_empresa, id_sucursal));
         
         return valor_retorno;
