@@ -1286,6 +1286,7 @@ public class FacNominaController {
         datos_nomina.put("cadena_original_timbre", cadena_original_timbre);
         datos_nomina.put("leyenda_nomina", String.valueOf(this.getFacdao().getFacNomina_LeyendaReciboNomina(id_empresa, id_sucursal).get("leyenda_nomina")));
         
+        System.out.println("fecha_comprobante: "+fecha_comprobante);
         
         percepciones = this.getFacdao().getFacNomina_PercepcionesXml(id);
         deducciones = this.getFacdao().getFacNomina_DeduccionesXml(id);

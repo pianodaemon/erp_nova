@@ -74,11 +74,7 @@ public final class PdfCfdiNomina {
     private HashMap<String, String> encabezado;
     private HashMap<String, String> datos_nomina;
     private HashMap<String, String> datosExtras;
-    private String vendedor;
-    private String ordenCompra;
-    private String folioPedido;
     private String terminos;
-    private int dias;
     private String formaPago;
     private String observaciones;
     private String fecha_pago;
@@ -117,7 +113,6 @@ public final class PdfCfdiNomina {
     private String etiqueta_tipo_doc;
     private String leyenda;
     
-    private String nombre;
     private String nss;
     private String regpatronal;
     private String regimen;
@@ -136,6 +131,7 @@ public final class PdfCfdiNomina {
     private String fechafin;
     private String ndias;
     private String banco;
+    private String nombre_banco;
     private String clabe;
     private String condiciones_pago;
     private String curp;
@@ -173,12 +169,8 @@ public final class PdfCfdiNomina {
         //this.setProposito(extras.get("proposito"));
         this.setSerie_folio(datos_nomina.get("serie_folio"));
 
-        this.setFacha_comprobante(datos_nomina.get("facha_comprobante"));
-        //this.setOrdenCompra(datos_nomina.get("facha_comprobante"));
-        //this.setFolioPedido(datos_nomina.get("facha_comprobante"));
+        this.setFacha_comprobante(datos_nomina.get("fecha_comprobante"));
         //this.setTerminos(datos_nomina.get("serie_folio"));
-        //this.setDias(Integer.parseInt(datos_nomina.get("dias")));
-        //this.setVendedor(datos_nomina.get("comprobante_attr_depto"));
         //this.setObservaciones(datos_nomina.get("comprobante_attr_depto"));
         //this.setFecha_pago(datos_nomina.get("comprobante_attr_fecha_fecha_pago"));
         this.setMetodo_pago(datos_nomina.get("comprobante_attr_metododepago"));
@@ -245,6 +237,7 @@ public final class PdfCfdiNomina {
         this.setReceptor_fechafin(datos_nomina.get("comprobante_attr_fecha_fin_pago"));
         this.setReceptor_ndias(datos_nomina.get("comprobante_attr_no_dias_pago"));
         this.setReceptor_banco(datos_nomina.get("comprobante_attr_banco"));
+        this.setNombre_banco(datos_nomina.get("nombre_banco"));
         this.setReceptor_clabe(datos_nomina.get("comprobante_attr_clabe"));
 
         this.setReceptor_razon_social(datos_nomina.get("comprobante_receptor_attr_nombre"));
@@ -647,14 +640,14 @@ public final class PdfCfdiNomina {
             
             
             //fila 3
-            cell = new PdfPCell(new Paragraph("TIPO COMPROBANTE", smallFontBoldBlack6));
+            cell = new PdfPCell(new Paragraph("FECHA Y HORA DE EMISIÓN", smallFontBoldBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             table.addCell(cell);
             
             
-            cell = new PdfPCell(new Paragraph(getEtiqueta_tipo_doc(),smallFontNormalBlack6));
+            cell = new PdfPCell(new Paragraph(getFacha_comprobante(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
@@ -704,13 +697,13 @@ public final class PdfCfdiNomina {
             table.addCell(cell);
             
             
-            cell = new PdfPCell(new Paragraph("FECHA Y HORA DE EMISIÓN", smallFontBoldBlack6));
+            cell = new PdfPCell(new Paragraph("TIPO COMPROBANTE", smallFontBoldBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getFacha_comprobante(),smallFontNormalBlack6));
+            cell = new PdfPCell(new Paragraph(getEtiqueta_tipo_doc(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
@@ -968,13 +961,13 @@ public final class PdfCfdiNomina {
             
             
             //Fila 2
-            cell = new PdfPCell(new Paragraph("", smallFontBoldBlack6));
+            cell = new PdfPCell(new Paragraph("DEPARTAMENTO", smallFontBoldBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell = new PdfPCell(new Paragraph(getReceptor_depto().toUpperCase(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
@@ -994,41 +987,6 @@ public final class PdfCfdiNomina {
             table.addCell(cell);
             
             cell = new PdfPCell(new Paragraph(getReceptor_puesto().toUpperCase(),smallFontNormalBlack6));
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setVerticalAlignment(Element.ALIGN_CENTER);
-            cell.setBorder(0);
-            table.addCell(cell);
-            
-            
-            
-            
-            //Fila 2
-            cell = new PdfPCell(new Paragraph("", smallFontBoldBlack6));
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setVerticalAlignment(Element.ALIGN_CENTER);
-            cell.setBorder(0);
-            table.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setVerticalAlignment(Element.ALIGN_CENTER);
-            cell.setBorder(0);
-            table.addCell(cell);
-            
-            //Celda Vacia
-            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setVerticalAlignment(Element.ALIGN_CENTER);
-            cell.setBorder(0);
-            table.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph("DEPARTAMENTO", smallFontBoldBlack6));
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setVerticalAlignment(Element.ALIGN_CENTER);
-            cell.setBorder(0);
-            table.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_depto().toUpperCase(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
@@ -1151,7 +1109,7 @@ public final class PdfCfdiNomina {
             cell.setBorder(0);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getReceptor_banco(),smallFontNormalBlack6));
+            cell = new PdfPCell(new Paragraph(getReceptor_banco()+" " + getNombre_banco().toUpperCase(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
@@ -2411,13 +2369,6 @@ public final class PdfCfdiNomina {
         this.cadena_original = cadena_original;
     }
 
-    public int getDias() {
-        return dias;
-    }
-
-    public void setDias(int dias) {
-        this.dias = dias;
-    }
 
     public String getEmpresa_emisora() {
         return empresa_emisora;
@@ -2433,14 +2384,6 @@ public final class PdfCfdiNomina {
 
     public void setFacha_comprobante(String facha_comprobante) {
         this.facha_comprobante = facha_comprobante;
-    }
-
-    public String getOrdenCompra() {
-        return ordenCompra;
-    }
-
-    public void setOrdenCompra(String ordenCompra) {
-        this.ordenCompra = ordenCompra;
     }
 
     public String getProposito() {
@@ -2475,15 +2418,6 @@ public final class PdfCfdiNomina {
         this.terminos = terminos;
     }
 
-    public String getVendedor() {
-        return vendedor;
-    }
-
-    public void setVendedor(String vendedor) {
-        this.vendedor = vendedor;
-    }
-
-    
     public HashMap<String, String> getEncabezado() {
         return encabezado;
     }
@@ -2774,15 +2708,6 @@ public final class PdfCfdiNomina {
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
-    }
-    
-
-    public String getFolioPedido() {
-        return folioPedido;
-    }
-
-    public void setFolioPedido(String folioPedido) {
-        this.folioPedido = folioPedido;
     }
     
     public String getMontoImpuesto() {
@@ -3173,6 +3098,14 @@ public final class PdfCfdiNomina {
 
     public void setNss(String nss) {
         this.nss = nss;
+    }
+    
+    public String getNombre_banco() {
+        return nombre_banco;
+    }
+
+    public void setNombre_banco(String nombre_banco) {
+        this.nombre_banco = nombre_banco;
     }
     
     static class HeaderFooter extends PdfPageEventHelper {

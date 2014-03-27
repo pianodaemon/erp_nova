@@ -4444,6 +4444,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "(CASE WHEN nom_tipo_jornada.titulo IS NULL THEN '' ELSE nom_tipo_jornada.titulo END ) AS tipo_jornada,"
             + "(CASE WHEN nom_periodicidad_pago.titulo IS NULL THEN '' ELSE nom_periodicidad_pago.titulo END ) AS periodicidad_pago,"
             + "(CASE WHEN fac_nomina_det.clabe IS NULL THEN '' ELSE fac_nomina_det.clabe::character varying END ) AS clabe,"
+            + "(CASE WHEN tes_ban.descripcion IS NULL THEN '' ELSE tes_ban.descripcion END ) AS nombre_banco,"
+                
             + "(CASE WHEN tes_ban.clave IS NULL THEN '' ELSE tes_ban.clave END ) AS banco,"
             + "(CASE WHEN nom_riesgo_puesto.clave IS NULL THEN '' ELSE nom_riesgo_puesto.clave END ) AS riesgo_puesto,"
             + "(CASE WHEN fac_nomina_det.imss IS NULL THEN '' ELSE fac_nomina_det.imss::character varying END ) AS imss,"
@@ -4547,6 +4549,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("moneda2",rs.getString("moneda2"));
                     row.put("orden_compra","");
                     row.put("comprobante_attr_simbolo_moneda_abr",rs.getString("moneda_abr"));
+                    row.put("nombre_banco",rs.getString("nombre_banco"));
                     
                     return row;
                 }
