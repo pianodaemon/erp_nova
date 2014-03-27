@@ -640,14 +640,14 @@ public final class PdfCfdiNomina {
             
             
             //fila 3
-            cell = new PdfPCell(new Paragraph("FECHA Y HORA DE EMISIÓN", smallFontBoldBlack6));
+            cell = new PdfPCell(new Paragraph("LUGAR DE EXPEDICIÓN", smallFontBoldBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             table.addCell(cell);
             
             
-            cell = new PdfPCell(new Paragraph(getFacha_comprobante(),smallFontNormalBlack6));
+            cell = new PdfPCell(new Paragraph(getLugar_expedidion().toUpperCase(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
@@ -661,13 +661,13 @@ public final class PdfCfdiNomina {
             table.addCell(cell);
             
             
-            cell = new PdfPCell(new Paragraph("LUGAR DE EXPEDICIÓN", smallFontBoldBlack6));
+            cell = new PdfPCell(new Paragraph("FECHA Y HORA DE EMISIÓN", smallFontBoldBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getLugar_expedidion().toUpperCase(),smallFontNormalBlack6));
+            cell = new PdfPCell(new Paragraph(getFacha_comprobante(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
