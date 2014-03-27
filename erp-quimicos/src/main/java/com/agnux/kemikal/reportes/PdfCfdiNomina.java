@@ -118,6 +118,7 @@ public final class PdfCfdiNomina {
     private String leyenda;
     
     private String nombre;
+    private String nss;
     private String regpatronal;
     private String regimen;
     private String depto;
@@ -173,13 +174,13 @@ public final class PdfCfdiNomina {
         this.setSerie_folio(datos_nomina.get("serie_folio"));
 
         this.setFacha_comprobante(datos_nomina.get("facha_comprobante"));
-        this.setOrdenCompra(datos_nomina.get("facha_comprobante"));
-        this.setFolioPedido(datos_nomina.get("facha_comprobante"));
-        this.setTerminos(datos_nomina.get("serie_folio"));
+        //this.setOrdenCompra(datos_nomina.get("facha_comprobante"));
+        //this.setFolioPedido(datos_nomina.get("facha_comprobante"));
+        //this.setTerminos(datos_nomina.get("serie_folio"));
         //this.setDias(Integer.parseInt(datos_nomina.get("dias")));
-        this.setVendedor(datos_nomina.get("comprobante_attr_depto"));
-        this.setObservaciones(datos_nomina.get("comprobante_attr_depto"));
-        this.setFecha_pago(datos_nomina.get("facha_comprobante"));
+        //this.setVendedor(datos_nomina.get("comprobante_attr_depto"));
+        //this.setObservaciones(datos_nomina.get("comprobante_attr_depto"));
+        //this.setFecha_pago(datos_nomina.get("comprobante_attr_fecha_fecha_pago"));
         this.setMetodo_pago(datos_nomina.get("comprobante_attr_metododepago"));
         this.setNo_cuenta(datos_nomina.get("comprobante_attr_numerocuenta"));
         this.setFormaPago(datos_nomina.get("comprobante_attr_formadepago"));
@@ -247,7 +248,6 @@ public final class PdfCfdiNomina {
         this.setReceptor_clabe(datos_nomina.get("comprobante_attr_clabe"));
 
         this.setReceptor_razon_social(datos_nomina.get("comprobante_receptor_attr_nombre"));
-        this.setReceptor_nombre(datos_nomina.get("comprobante_receptor_attr_nombre"));
         this.setReceptor_curp(datos_nomina.get("comprobante_receptor_attr_curp"));
         this.setReceptor_rfc(datos_nomina.get("comprobante_receptor_attr_rfc"));
         this.setReceptor_calle(datos_nomina.get("comprobante_receptor_domicilio_attr_calle"));
@@ -261,7 +261,12 @@ public final class PdfCfdiNomina {
         this.setReceptor_telefono("");
         this.setMonedaIso(datos_nomina.get("comprobante_attr_moneda"));
         this.setTipoCambio(datos_nomina.get("comprobante_attr_tc"));
+        
         this.setLeyenda(datos_nomina.get("leyenda_nomina"));
+        
+        
+        this.setNss(datos_nomina.get("comprobante_attr_imss"));
+        
         
         this.setImagen( this.getGralDao().getImagesDir()+this.getEmisora_rfc()+"_logo.png" );
         String tipo = "";
@@ -292,7 +297,8 @@ public final class PdfCfdiNomina {
         PdfPTable tableHeader;
         PdfPCell cellHeader;
         PdfPCell cell;
-        CeldaCustomer tableCustomer = new CeldaCustomer();
+        CeldaDataNomina tableDataNomina = new CeldaDataNomina();
+        TableComprobante tablaComprobante = new TableComprobante();
         TableReceptor tablaReceptor = new TableReceptor();
         tablaConceptos tablaCon = new tablaConceptos();
         celdaDatosFiscales tablaSellos = new celdaDatosFiscales();
@@ -382,27 +388,32 @@ public final class PdfCfdiNomina {
             
             
             //------------------------------------------------------------------
-            //AQUI AGREGAMOS LA TABLA DE DATOS DEL CLIENTE----------------------
-            document.add(tableCustomer.addContent());
+            //AQUI AGREGAMOS LA TABLA CON LOS DATOS DEL COMROBANTE FISCAL
+            document.add(tablaComprobante.addContent());
             //------------------------------------------------------------------
+            
             
             //TABLA VACIA-------------------
             PdfPTable tableVacia = new PdfPTable(1);
             cellEmp = new PdfPCell(new Paragraph("",largeBoldFont));
             cellEmp.setBorder(0);
-            cellEmp.setFixedHeight(15);
             tableVacia.addCell(cellEmp);
-            
+            document.add(tableVacia);
             document.add(tableVacia);
             
-            
-            
+                    
             //------------------------------------------------------------------
             //AQUI AGREGAMOS LA TABLA DE DATOS DEL EMPLEADO
             document.add(tablaReceptor.addContent());
             //------------------------------------------------------------------
             
             
+            //------------------------------------------------------------------
+            //AQUI AGREGAMOS LA TABLA DE DATOS DE LA NOMINA----------------------
+            document.add(tableDataNomina.addContent());
+            //------------------------------------------------------------------
+            
+            document.add(tableVacia);
             document.add(tableVacia);
             
             //------------------------------------------------------------------
@@ -411,6 +422,8 @@ public final class PdfCfdiNomina {
             //------------------------------------------------------------------
             
             //agregar tabla vacia
+            document.add(tableVacia);
+            document.add(tableVacia);
             document.add(tableVacia);
             
             
@@ -535,31 +548,246 @@ public final class PdfCfdiNomina {
     
     
     
+    
+    
     //esta es la tabla que va en la parte Superior Derecha
-    private class TableReceptor {
+    private class TableComprobante {
         public PdfPTable addContent() {
-            Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
+            Font smallFontBoldBlack6 = new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
+            Font smallFontNormalBlack6 = new Font(Font.FontFamily.HELVETICA,6,Font.NORMAL,BaseColor.BLACK);
             Font smallBoldFont7White = new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.WHITE);
             
-            
-            
-            float [] widths_table = {1,1,1,1,1};
+            float [] widths_table = {2f,5f,0.5f,2.4f,5f};
             PdfPTable table = new PdfPTable(widths_table);
-            table.setKeepTogether(false);
             PdfPCell cell;
             
-            cell = new PdfPCell(new Paragraph("EMPLEADO", smallBoldFont7White));
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            cell = new PdfPCell(new Paragraph("COMPROBANTE FISCAL DIGITAL POR INTERNET", smallBoldFont7White));
+            cell.setBorderWidthLeft(1);
+            cell.setBorderWidthRight(1);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthTop(0);
-            cell.setBorderWidthLeft(1);
-            cell.setBorderWidthRight(0);
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
+            cell.setBorderColorLeft(BaseColor.LIGHT_GRAY);
             cell.setColspan(5);
+            cell.setUseAscender(true);
+            table.addCell(cell);
+            
+            
+            //fila 1
+            cell = new PdfPCell(new Paragraph("FOLIO FISCAL", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph(getUuid(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph("NO. CERTIFICADO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getNo_certificado(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            //fila 2
+            cell = new PdfPCell(new Paragraph("SERIE Y FOLIO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph(getSerie_folio(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("REGIMEN FISCAL", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph(getEmisora_regimen_fiacal(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            //fila 3
+            cell = new PdfPCell(new Paragraph("TIPO COMPROBANTE", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph(getEtiqueta_tipo_doc(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph("LUGAR DE EXPEDICIÓN", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getLugar_expedidion().toUpperCase(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
             table.addCell(cell);
             
 
+            
+            //fila 4
+            cell = new PdfPCell(new Paragraph("FORMA DE PAGO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph(getFormaPago(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph("FECHA Y HORA DE EMISIÓN", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getFacha_comprobante(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+
+
+            
+            //fila 5
+            cell = new PdfPCell(new Paragraph("MÉTODO DE PAGO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph(getMetodo_pago().toUpperCase(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph("NO. DE CUENTA", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getNo_cuenta(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+
+            
+            
+            //fila 6
+            cell = new PdfPCell(new Paragraph("MONEDA", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph(getMonedaIso().toUpperCase(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            cell = new PdfPCell(new Paragraph("TIPO DE CAMBIO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getTipoCambio(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
             
             return table;
         }
@@ -569,695 +797,526 @@ public final class PdfCfdiNomina {
     
     
     
-   //esta es la tabla para los datos del CLIENTE
-    private class CeldaCustomer {
+    
+    
+    
+    
+    //Tabla empleado
+    private class TableReceptor {
         public PdfPTable addContent() {
-            Font smallFont = new Font(Font.FontFamily.HELVETICA,6,Font.NORMAL,BaseColor.BLACK);
-            Font sont = new Font(Font.FontFamily.HELVETICA,8,Font.BOLD,BaseColor.BLACK);
-            Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, BaseColor.WHITE);
-            Font smallBoldFont7= new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
-            Font largeBoldFont = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD,BaseColor.BLACK);
+            Font smallFontBoldBlack6 = new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
+            Font smallFontNormalBlack6 = new Font(Font.FontFamily.HELVETICA,6,Font.NORMAL,BaseColor.BLACK);
+            Font smallBoldFont7White = new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.WHITE);
             
-            //tabla contenedor
-            float [] widths = {8f,0.3f,8f};
-            PdfPTable table = new PdfPTable(widths);
+            float [] widths_table = {1f,5f,0.6f,2.5f,0.6f,2.5f};
+            PdfPTable table = new PdfPTable(widths_table);
             PdfPCell cell;
             
+            cell = new PdfPCell(new Paragraph("EMPLEADO", smallBoldFont7White));
+            cell.setBorderWidthLeft(1);
+            cell.setBorderWidthRight(1);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
+            cell.setBorderColorLeft(BaseColor.LIGHT_GRAY);
+            cell.setColspan(6);
+            cell.setUseAscender(true);
+            table.addCell(cell);
             
-            float [] widths1 = {2.5f,3.5f};
-            PdfPTable tableCustomer = new PdfPTable(widths1);
-            tableCustomer.setKeepTogether(false);
+            
             
             //fila 1
-            cell = new PdfPCell(new Paragraph("FOLIO FISCAL", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
+            cell = new PdfPCell(new Paragraph("NOMBRE", smallFontBoldBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-   
-
-            cell = new PdfPCell(new Paragraph(getUuid(),smallFont));
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-            //modificando
-
+            table.addCell(cell);
             
-            
-            //fila 3
-            cell = new PdfPCell(new Paragraph("NO. CERTIFICADO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
+            cell = new PdfPCell(new Paragraph(getReceptor_razon_social(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getNo_certificado(), smallFont));
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("R.F.C.", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //RFC
+            cell = new PdfPCell(new Paragraph(getReceptor_rfc(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("N.S.S.", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //NUMERO DE SEGURIDAD SOCIAL
+            cell = new PdfPCell(new Paragraph(getNss(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            //fila 2
+            cell = new PdfPCell(new Paragraph("DIRECCIÓN", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            String dir_receptor = getReceptor_calle()+ " " + getReceptor_numero() +" "+ getReceptor_colonia().toUpperCase() + " " + getReceptor_municipio().toUpperCase() + ", " + getReceptor_estado().toUpperCase()+", " + getReceptor_pais().toUpperCase()+ " "+ "C.P. " + getReceptor_cp();
+            
+            cell = new PdfPCell(new Paragraph(dir_receptor,smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setColspan(3);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("C.U.R.P.", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_curp(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            return table;
+        }
+    }
     
+    
+    
+    
+    
+   //Tabla para datos de la Nomina
+    private class CeldaDataNomina {
+        public PdfPTable addContent() {
+            Font smallFontBoldBlack6 = new Font(Font.FontFamily.HELVETICA,6,Font.BOLD,BaseColor.BLACK);
+            Font smallFontNormalBlack6 = new Font(Font.FontFamily.HELVETICA,6,Font.NORMAL,BaseColor.BLACK);
+            Font smallBoldFont7White = new Font(Font.FontFamily.HELVETICA,7,Font.BOLD,BaseColor.WHITE);
             
-             //fila 5
-            cell = new PdfPCell(new Paragraph("REGIMEN FISCAL", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
+            float [] widths_table = {2f,4.8f,0.5f,2.6f,4.8f};
+            PdfPTable table = new PdfPTable(widths_table);
+            PdfPCell cell;
+            
+            /*
+            //Fila 1
+            cell = new PdfPCell(new Paragraph("COMPROBANTE FISCAL DIGITAL POR INTERNET", smallBoldFont7White));
+            cell.setBorderWidthLeft(1);
+            cell.setBorderWidthRight(1);
+            cell.setBorderWidthBottom(0);
+            cell.setBorderWidthTop(0);
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-
-            cell = new PdfPCell(new Paragraph(getEmisora_regimen_fiacal().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-           
-            //fila 6
-            cell = new PdfPCell(new Paragraph("LUGAR DE EXPEDICIÓN", smallBoldFont7));
-            cell.setBorder(0);
+            cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
+            cell.setBorderColorLeft(BaseColor.LIGHT_GRAY);
+            cell.setColspan(5);
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getLugar_expedidion().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-
-             //fila 7 
-            cell = new PdfPCell(new Paragraph("TIPO COMPROBANTE", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getEtiqueta_tipo_doc().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-            
-             //fila 8
-            cell = new PdfPCell(new Paragraph("FOLIO/SERIE", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getSerie_folio().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-            
-             //fila 9
-            cell = new PdfPCell(new Paragraph("FECHA Y HORA DE EMISIÓN", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph("FECHA Y HORA DE EMISIÓN", smallBoldFont7));
-            //cell = new PdfPCell(new Paragraph(getFacha_comprobante().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-             //fila 10
-            cell = new PdfPCell(new Paragraph("CONDICIONES DE PAGO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-            
-            
-            cell = new PdfPCell(new Paragraph(getCondicionesPago().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-             //fila 11
-            cell = new PdfPCell(new Paragraph("MÉTODO DE PAGO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getMetodo_pago().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-            
-             
-            //fila 12
-            cell = new PdfPCell(new Paragraph("NO. DE CUENTA", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            tableCustomer.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getNo_cuenta(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-             //fila 13
-            cell = new PdfPCell(new Paragraph("MONEDA", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getMonedaIso(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-             //fila 14
-            cell = new PdfPCell(new Paragraph("TIPO DE CAMBIO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(false);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getTipoCambio(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(false);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(false);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableCustomer.addCell(cell);
-            
-            
-            //fila 15
-            cell = new PdfPCell(new Paragraph(" ", smallFont));
-            cell.setBorder(1);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setColspan(2);
-            cell.setRowspan(2);
-            tableCustomer.addCell(cell);
-            
-
-            
-            //fila 16
-            cell = new PdfPCell(new Paragraph("EMPLEADO", smallBoldFont7));
-            cell.setBorder(1);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.WHITE);
-            cell.setColspan(2);
-            tableCustomer.addCell(cell);
-   
-
-             //fila 17
-            cell = new PdfPCell(new Paragraph(getReceptor_rfc()+" "+getReceptor_nombre(), smallFont));
-            //cell = new PdfPCell(new Paragraph("MARTIN PEREZ", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.WHITE);
-            //cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setColspan(2);
-            tableCustomer.addCell(cell);
-  
-            //fila 18
-            
-            cell = new PdfPCell(new Paragraph("CURP: "+getReceptor_curp().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.WHITE);
-            cell.setColspan(2);
-            tableCustomer.addCell(cell);
-            
-             //fila 19
-            cell = new PdfPCell(new Paragraph("N.S.S:", smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.WHITE);
-            cell.setColspan(2);
-            tableCustomer.addCell(cell);
-            
-             //fila 20
-            String dirReceptor = getReceptor_calle()+ " " +getReceptor_numero()+ " " +getReceptor_colonia()+ "\n" +getReceptor_municipio()+ ", " + getReceptor_estado()+ ",  "+ getReceptor_pais()+ " "  + " C.P. " + getReceptor_cp()+" "+ getReceptor_telefono();
-            cell = new PdfPCell(new Paragraph(dirReceptor.toUpperCase()+"\n", smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.WHITE);
-            cell.setColspan(2);
-            cell.setRowspan(3);
-            tableCustomer.addCell(cell);
-            
-            //agregar la tabla con datos de la empresa
-            cell = new PdfPCell(tableCustomer);
-            //cell.setBorder(1);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
             table.addCell(cell);
-
-            
-            //celda vacia
-            cell = new PdfPCell(new Paragraph("", smallBoldFont7));
-            cell.setBorder(0);
-            table.addCell(cell);
-            
-            float [] widths2 = {2.5f,3.5f};
-            PdfPTable table2 = new PdfPTable(widths2);
-            table2.setKeepTogether(false);
+            */
             
             //fila 1
-            cell = new PdfPCell(new Paragraph("REGISTRO PATRONAL", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
+            cell = new PdfPCell(new Paragraph("NÚMERO DE EMPLEADO", smallFontBoldBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-   
-
-            cell = new PdfPCell(new Paragraph(getReceptor_regpatronal(),smallFont));
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-            //modificando
+            table.addCell(cell);
             
-             //fila 2
-            cell = new PdfPCell(new Paragraph("NÚMERO DE EMPLEADO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
+            cell = new PdfPCell(new Paragraph(getReceptor_no_control(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            table2.addCell(cell);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getReceptor_no_control(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-
-            //fila 3
-            cell = new PdfPCell(new Paragraph("TIPO DE RÉGIMEN", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getReceptor_regimen(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-    
-
-            //fila 4
-            cell = new PdfPCell(new Paragraph("DEPARTAMENTO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
+            cell = new PdfPCell(new Paragraph("REGISTRO PATRONAL", smallFontBoldBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            table2.addCell(cell);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getReceptor_depto(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-
-             //fila 5
-            cell = new PdfPCell(new Paragraph("PUESTO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
+            cell = new PdfPCell(new Paragraph(getReceptor_regpatronal(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-
-            cell = new PdfPCell(new Paragraph(getReceptor_puesto().toUpperCase(), smallFont));
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-           
-            //fila 6
-            cell = new PdfPCell(new Paragraph("RIESGO DE PUESTO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_riesgo_puesto().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-               
-             //fila 7 
-            cell = new PdfPCell(new Paragraph("TIPO DE CONTRATO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_tipo_contrato().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            
-             //fila 8
-            cell = new PdfPCell(new Paragraph("TIPO DE JORNADA", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_tipo_jornada().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            
-             //fila 9
-            cell = new PdfPCell(new Paragraph("ANTIGUEDAD", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-            
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_fecha_antiguedad().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-             //fila 10
-            cell = new PdfPCell(new Paragraph("INICIO DE RELACIÓN LABORAL", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(geteReceptor_fecha_contrato().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-             //fila 11
-            cell = new PdfPCell(new Paragraph("PERIODO DE PAGO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_periodicidad_pago().toUpperCase(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            
-             
-            //fila 12
-            cell = new PdfPCell(new Paragraph("SALARIO BASE COTAPORT", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_salario_base(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            //fila 13
-            cell = new PdfPCell(new Paragraph("SALARIO DIARIO INTEGRADO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_sdi(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            //fila 14
-            cell = new PdfPCell(new Paragraph("FECHA DE PAGO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_fechapago(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            //fila 15
-            cell = new PdfPCell(new Paragraph("FECHA INICIAL DE PAGO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_fechain(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.  
-
-            
-            setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            //fila 16
-            cell = new PdfPCell(new Paragraph("FECHA FINAL DE PAGO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_fechafin(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            //fila 17
-            cell = new PdfPCell(new Paragraph("NÚMERO DE DÍAS PAGADOS", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_ndias(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            //fila 18
-            cell = new PdfPCell(new Paragraph("BANCO", smallBoldFont7));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_banco(), smallFont));
-            cell.setBorder(0);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            table2.addCell(cell);
-            
-             //fila 19
-            cell = new PdfPCell(new Paragraph("CLABE", smallBoldFont7));
-            //cell.setBorder(1);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthTop(0);
-            table2.addCell(cell);
-            
-            cell = new PdfPCell(new Paragraph(getReceptor_clabe(), smallFont));
-            //cell.setBorder(1);
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setUseDescender(true);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorderWidthBottom(0);
-            cell.setBorderWidthLeft(0);
-            cell.setBorderWidthRight(0);
-            cell.setBorderWidthTop(0);
-            table2.addCell(cell);
-            
-
-            //agregar table2
-            cell = new PdfPCell(table2);
-            cell.setUseAscender(true);
-            cell.setUseDescender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_TOP);
             table.addCell(cell);
             
             
+            
+            
+            //Fila 2
+            cell = new PdfPCell(new Paragraph("", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("PUESTO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_puesto().toUpperCase(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            
+            //Fila 2
+            cell = new PdfPCell(new Paragraph("", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("DEPARTAMENTO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_depto().toUpperCase(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            
+            
+            
+            
+            //Fila 3
+            cell = new PdfPCell(new Paragraph("TIPO DE CONTRATO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_tipo_contrato().toUpperCase(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("RÉGIMEN DE CONTRATACIÓN", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_regimen(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            //Fila 4
+            cell = new PdfPCell(new Paragraph("FECHA DE CONTRATO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(geteReceptor_fecha_contrato(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("ANTIGUEDAD", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_fecha_antiguedad(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            
+            //Fila 5
+            cell = new PdfPCell(new Paragraph("TIPO DE JORNADA", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_tipo_jornada().toUpperCase(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("RIESGO DE PUESTO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_riesgo_puesto().toUpperCase(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            
+            //Fila 6
+            cell = new PdfPCell(new Paragraph("BANCO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_banco(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("SALARIO BASE DE COTIZACIÓN", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_salario_base(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            
+            //Fila 7
+            cell = new PdfPCell(new Paragraph("CLABE", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_clabe(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("SALARIO DIARIO INTEGRADO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_sdi(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+
+            
+
+            
+            //Fila 8
+            cell = new PdfPCell(new Paragraph("PERIODICIDAD DE PAGO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_periodicidad_pago().toUpperCase(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("FECHA DE PAGO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_fechapago(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            //Fila 9
+            cell = new PdfPCell(new Paragraph("FECHA INICIAL DE PAGO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_fechain(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("FECHA FINAL DE PAGO", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_fechafin(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            
+            
+            //Fila 10
+            cell = new PdfPCell(new Paragraph("NO. DE DÍAS PAGADOS", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_ndias(),smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            //Celda Vacia
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("", smallFontBoldBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+            cell = new PdfPCell(new Paragraph("",smallFontNormalBlack6));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            cell.setBorder(0);
+            table.addCell(cell);
+            
+
             return table;
         }
     }
@@ -1281,6 +1340,7 @@ public final class PdfCfdiNomina {
             //fila 1 -> Columna 1 table4
             cell = new PdfPCell(new Paragraph("PERCEPCIONES", smallBoldFont7White));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthTop(0);
@@ -1294,6 +1354,7 @@ public final class PdfCfdiNomina {
              //fila  1 -> Columna 2 table4
             cell = new PdfPCell(new Paragraph("DEDUCCIONES", smallBoldFont7White));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
             cell.setBorderWidthBottom(0);
             cell.setBorderWidthTop(0);
@@ -1331,23 +1392,23 @@ public final class PdfCfdiNomina {
                 
                 if(columna_titulo.equals("Tipo de Percepción")){
                     cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
                 if(columna_titulo.equals("Clave")){
                     cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
                 if(columna_titulo.equals("Concepto")){
                     cellX.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
                 if(columna_titulo.equals("Importe Gravado")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
                 if(columna_titulo.equals("Importe Excento")){
                     cellX.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellX.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
 
                 table.addCell(cellX);
@@ -1460,23 +1521,23 @@ public final class PdfCfdiNomina {
                 
                 if(columna_titulo2.equals("Tipo de Deducción")){
                     cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    cellX2.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
                 if(columna_titulo2.equals("Clave")){
                     cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    cellX2.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
                 if(columna_titulo2.equals("Concepto")){
                     cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    cellX2.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
                 if(columna_titulo2.equals("Importe Gravado")){
                     cellX2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellX2.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
                 if(columna_titulo2.equals("Importe Excento")){
                     cellX2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellX2.setVerticalAlignment(Element.ALIGN_TOP);
+                    cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
                 }
                 tabled.addCell(cellX2);
             }
@@ -1576,16 +1637,19 @@ public final class PdfCfdiNomina {
             tabled.setKeepTogether(false);
             cellX2 = new PdfPCell(new Paragraph("Suma de las Percepciones",smallBoldFont));
             cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
             cellX2.setBorder(0);
             table_sumas_percep.addCell(cellX2);
             
             cellX2 = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getPercep_total_gravado(),2)),smallBoldFont));
             cellX2.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
             cellX2.setBorder(0);
             table_sumas_percep.addCell(cellX2);
             
             cellX2 = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getPercep_total_excento(),2)),smallBoldFont));
             cellX2.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
             cellX2.setBorder(0);
             table_sumas_percep.addCell(cellX2);
             
@@ -1605,6 +1669,7 @@ public final class PdfCfdiNomina {
             tabled.setKeepTogether(false);
             cellX2 = new PdfPCell(new Paragraph("Suma de las Deducciones",smallBoldFont));
             cellX2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
             cellX2.setBorder(0);
             table_sumas_deduc.addCell(cellX2);
             
@@ -1615,6 +1680,7 @@ public final class PdfCfdiNomina {
             
             cellX2 = new PdfPCell(new Paragraph(StringHelper.AgregaComas(StringHelper.roundDouble(getDeduc_total_excento(),2)),smallBoldFont));
             cellX2.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cellX2.setVerticalAlignment(Element.ALIGN_CENTER);
             cellX2.setBorder(0);
             table_sumas_deduc.addCell(cellX2);
             
@@ -1636,26 +1702,34 @@ public final class PdfCfdiNomina {
             cell = new PdfPCell(new Paragraph("", smallBoldFont7Black));
             cell.setBorder(0);
             cell.setColspan(2);
-            cell.setFixedHeight(10);
             table4.addCell(cell);
            
+            //Agregar fila Vacia
+            cell = new PdfPCell(new Paragraph("", smallBoldFont7Black));
+            cell.setBorder(0);
+            cell.setColspan(2);
+            table4.addCell(cell);
+            
+            
             
             
             
             //fila 3 -> Columna 1 table4
             if(getRows_horas_extras().size()>0){
                 cell = new PdfPCell(new Paragraph("Detalle de Horas Extras", smallBoldFont7White));
-                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                 cell.setBorderWidthBottom(0);
                 cell.setBorderWidthTop(0);
                 cell.setBorderWidthLeft(1);
                 cell.setBorderWidthRight(0.5f);
+                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderColorRight(BaseColor.WHITE);
+                cell.setBorderColorLeft(BaseColor.LIGHT_GRAY);
             }else{
                 cell = new PdfPCell(new Paragraph("", smallBoldFont7White));
                 cell.setBorder(0);
             }
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
+            cell.setUseAscender(true);
             table4.addCell(cell);
             
             
@@ -1664,17 +1738,18 @@ public final class PdfCfdiNomina {
             //fila  3 -> Columna 2 table4
             if(getRows_incapacidades().size()>0){
                 cell = new PdfPCell(new Paragraph("Detalle de Incapacidades", smallBoldFont7White));
-                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                 cell.setBorderWidthBottom(0);
                 cell.setBorderWidthTop(0);
                 cell.setBorderWidthLeft(0);
                 cell.setBorderWidthRight(1);
+                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
             }else{
                 cell = new PdfPCell(new Paragraph("", smallBoldFont7White));
                 cell.setBorder(0);
             }
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-            cell.setBorderColorRight(BaseColor.LIGHT_GRAY);
+            cell.setUseAscender(true);
             table4.addCell(cell);
             
             
@@ -1882,7 +1957,6 @@ public final class PdfCfdiNomina {
             //INICIA TABLA TOTALES
             float [] widthstot = {5f,1f,0.5f,1f};
             PdfPTable table5 = new PdfPTable(widthstot);
-            table5.setKeepTogether(false);
             PdfPCell celltot;
             
             //fila SUBTOTAL
@@ -3029,16 +3103,7 @@ public final class PdfCfdiNomina {
         this.condiciones_pago = condiciones_pago;
     }
     
-       //
-      public String getReceptor_nombre() {
-        return nombre;
-    }
-
-    public void setReceptor_nombre(String nombre) {
-        this.nombre = nombre;
-    }
-         //
-      public String getReceptor_curp() {
+    public String getReceptor_curp() {
         return curp;
     }
 
@@ -3100,6 +3165,14 @@ public final class PdfCfdiNomina {
 
     public void setPercep_total_gravado(String percep_total_gravado) {
         this.percep_total_gravado = percep_total_gravado;
+    }
+    
+    public String getNss() {
+        return nss;
+    }
+
+    public void setNss(String nss) {
+        this.nss = nss;
     }
     
     static class HeaderFooter extends PdfPageEventHelper {
