@@ -614,50 +614,6 @@ public class FacNominaController {
                                         //Obtiene serie_folio del CFDI de Nomina que se acaba de guardar
                                         serieFolio = this.getFacdao().getFacNomina_RefId(id).get("serie_folio");
                                         cfdis_generados += "[" + dataFactura.get("comprobante_receptor_attr_nombre") + "] = " + serieFolio+"<br>";
-                                        
-                                        /*
-
-                                        String cadena_original=this.getBfCfdiTf().getCadenaOriginalTimbre();
-                                        //System.out.println("cadena_original:"+cadena_original);
-
-                                        String sello_digital = this.getBfCfdiTf().getSelloDigital();
-                                        //System.out.println("sello_digital:"+sello_digital);
-
-                                        //este es el timbre fiscal, se debe extraer del xml que nos devuelve el web service del timbrado
-                                        String sello_digital_sat = this.getBfCfdiTf().getSelloDigitalSat();
-
-                                        //Este es el folio fiscal del la factura timbrada, se obtiene  del xml
-                                        String uuid = this.getBfCfdiTf().getUuid();
-                                        String fechaTimbre = this.getBfCfdiTf().getFechaTimbrado();
-                                        String noCertSAT = this.getBfCfdiTf().getNoCertificadoSAT();
-
-                                        //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Inicia construccion de PDF:::::::::::::::::..");
-
-                                        //Conceptos para el pdfcfd
-                                        listaConceptosPdfCfd = this.getFacdao().getListaConceptosPdfCfd(serieFolio);
-
-                                        //Datos para el pdf
-                                        datosExtrasPdfCfd = this.getFacdao().getDatosExtrasPdfCfd( serieFolio, proposito, cadena_original,sello_digital, id_sucursal);
-                                        datosExtrasPdfCfd.put("tipo_facturacion", tipo_facturacion);
-                                        datosExtrasPdfCfd.put("sello_sat", sello_digital_sat);
-                                        datosExtrasPdfCfd.put("uuid", uuid);
-                                        datosExtrasPdfCfd.put("fechaTimbre", fechaTimbre);
-                                        datosExtrasPdfCfd.put("noCertificadoSAT", noCertSAT);
-                                        
-                                        //Pdf factura
-                                        if (parametros.get("formato_factura").equals("2")){
-                                            pdfCfd_CfdiTimbradoFormato2 pdfFactura = new pdfCfd_CfdiTimbradoFormato2(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, leyendas, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                                            pdfFactura.ViewPDF();
-                                        }else{
-                                            pdfCfd_CfdiTimbrado pdfFactura = new pdfCfd_CfdiTimbrado(this.getGralDao(), dataFacturaCliente, listaConceptosPdfCfd, datosExtrasPdfCfd, id_empresa, id_sucursal);
-                                        }
-                                        //System.out.println(TimeHelper.getFechaActualYMDH()+":::::::::::Termina construccion de PDF:::::::::::::::::..");
-                                        
-                                        jsonretorno.put("folio",serieFolio);
-                                        valorRespuesta="true";
-                                        codeRespuesta="7001";
-                                        msjRespuesta = "Se gener&oacute; la Factura: "+serieFolio;
-                                        */
                                     }else{
                                         valorRespuesta="false";
                                         codeRespuesta="7001";
@@ -1032,7 +988,7 @@ public class FacNominaController {
         
         //Aplicativo CFDi de Nomina
         Integer app_selected = 173;
-        String command_selected = "cancelacion";
+        String command_selected = "cancelacion_cfdi_nomina";
         String extra_data_array = "'sin datos'";
         String succcess = "false";
         String nombre_archivo="";

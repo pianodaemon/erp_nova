@@ -3473,7 +3473,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "sbt_deduc, "
             + "(sum_percep - sbt_deduc) AS total_pago,"
             + "facturado,"
-            + "serie_folio "
+            + "serie_folio,"
+            + "cancelado "
         + "FROM ("
             + "SELECT "
                 + "fac_nomina_det.id AS id_reg, "
@@ -3482,7 +3483,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                 + "(CASE WHEN sbt_percep.fac_nomina_det_id IS NULL THEN 0 ELSE sbt_percep.sum_percep END) AS sum_percep,"
                 + "(CASE WHEN sbt_deduc.fac_nomina_det_id IS NULL THEN 0 ELSE sbt_deduc.sum_deduc END) AS sbt_deduc,"
                 + "fac_nomina_det.facturado,"
-                + "(CASE WHEN serie IS NULL THEN '' ELSE serie END)||(CASE WHEN folio IS NULL THEN '' ELSE folio END) AS serie_folio "
+                + "(CASE WHEN fac_nomina_det.serie IS NULL THEN '' ELSE fac_nomina_det.serie END)||(CASE WHEN fac_nomina_det.folio IS NULL THEN '' ELSE fac_nomina_det.folio END) AS serie_folio,"
+                + "(CASE WHEN fac_nomina_det.cancelado IS NULL THEN false ELSE fac_nomina_det.cancelado END) AS cancelado "
             + "FROM fac_nomina_det "
             + "LEFT JOIN (SELECT fac_nomina_det_id, sum(gravado + excento) AS sum_percep FROM fac_nomina_det_percep GROUP BY fac_nomina_det_id) AS sbt_percep ON sbt_percep.fac_nomina_det_id=fac_nomina_det.id "
             + "LEFT JOIN (SELECT fac_nomina_det_id, sum(gravado + excento) AS sum_deduc FROM fac_nomina_det_deduc GROUP BY fac_nomina_det_id) AS sbt_deduc ON sbt_deduc.fac_nomina_det_id=fac_nomina_det.id "
@@ -3504,6 +3506,7 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                  row.put("total_pago",StringHelper.roundDouble(rs.getDouble("total_pago"),2));
                  row.put("facturado",String.valueOf(rs.getBoolean("facturado")).toLowerCase());
                  row.put("no_nom",rs.getString("serie_folio"));
+                 row.put("cancelado",String.valueOf(rs.getBoolean("cancelado")).toLowerCase());
                  return row;
                 }
             }
@@ -4440,14 +4443,17 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "(CASE WHEN fac_nomina_det.fecha_contrato IS NULL THEN '' ELSE fac_nomina_det.fecha_contrato::character varying END ) AS fecha_contrato,"
             + "(CASE WHEN (fac_nomina_det.antiguedad IS NOT NULL AND fac_nomina_det.antiguedad <>0) THEN fac_nomina_det.antiguedad::character varying ELSE '' END ) AS antiguedad,"
             + "(CASE WHEN nom_regimen_contratacion.clave IS NULL THEN '' ELSE nom_regimen_contratacion.clave END ) AS regimen_contratacion,"
+            + "(CASE WHEN nom_regimen_contratacion.titulo IS NULL THEN '' ELSE nom_regimen_contratacion.titulo END ) AS regimen_contratacion_titulo,"
+            
             + "(CASE WHEN nom_tipo_contrato.titulo IS NULL THEN '' ELSE nom_tipo_contrato.titulo END ) AS tipo_contrato,"
             + "(CASE WHEN nom_tipo_jornada.titulo IS NULL THEN '' ELSE nom_tipo_jornada.titulo END ) AS tipo_jornada,"
             + "(CASE WHEN nom_periodicidad_pago.titulo IS NULL THEN '' ELSE nom_periodicidad_pago.titulo END ) AS periodicidad_pago,"
             + "(CASE WHEN fac_nomina_det.clabe IS NULL THEN '' ELSE fac_nomina_det.clabe::character varying END ) AS clabe,"
             + "(CASE WHEN tes_ban.descripcion IS NULL THEN '' ELSE tes_ban.descripcion END ) AS nombre_banco,"
-                
             + "(CASE WHEN tes_ban.clave IS NULL THEN '' ELSE tes_ban.clave END ) AS banco,"
             + "(CASE WHEN nom_riesgo_puesto.clave IS NULL THEN '' ELSE nom_riesgo_puesto.clave END ) AS riesgo_puesto,"
+            + "(CASE WHEN nom_riesgo_puesto.titulo IS NULL THEN '' ELSE nom_riesgo_puesto.titulo END ) AS riesgo_puesto_titulo,"
+                
             + "(CASE WHEN fac_nomina_det.imss IS NULL THEN '' ELSE fac_nomina_det.imss::character varying END ) AS imss,"
             + "(CASE WHEN fac_nomina_det.reg_patronal IS NULL THEN '' ELSE fac_nomina_det.reg_patronal::character varying END ) AS reg_patronal,"
             + "(CASE WHEN fac_nomina_det.salario_base IS NULL THEN '' ELSE fac_nomina_det.salario_base::character varying END ) AS salario_base,"
@@ -4464,7 +4470,8 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
             + "(CASE WHEN fac_nomina_det.percep_total_gravado IS NULL THEN '0' ELSE fac_nomina_det.percep_total_gravado::character varying END ) AS percep_total_gravado,"
             + "(CASE WHEN fac_nomina_det.percep_total_excento IS NULL THEN '0' ELSE fac_nomina_det.percep_total_excento::character varying END ) AS percep_total_excento,"
             + "(CASE WHEN fac_nomina_det.deduc_total_gravado IS NULL THEN '0' ELSE fac_nomina_det.deduc_total_gravado::character varying END ) AS deduc_total_gravado,"
-            + "(CASE WHEN fac_nomina_det.deduc_total_excento IS NULL THEN '0' ELSE fac_nomina_det.deduc_total_excento::character varying END ) AS deduc_total_excento "
+            + "(CASE WHEN fac_nomina_det.deduc_total_excento IS NULL THEN '0' ELSE fac_nomina_det.deduc_total_excento::character varying END ) AS deduc_total_excento,"
+            + "(CASE WHEN fac_nomina_det.cancelado IS NULL THEN false ELSE fac_nomina_det.cancelado END ) AS cancelado "
         + "FROM fac_nomina_det "
         + "JOIN fac_nomina ON fac_nomina.id=fac_nomina_det.fac_nomina_id "
         + "LEFT JOIN gral_empleados ON gral_empleados.id=fac_nomina_det.gral_empleado_id "
@@ -4550,7 +4557,9 @@ public class FacturasSpringDao implements FacturasInterfaceDao{
                     row.put("orden_compra","");
                     row.put("comprobante_attr_simbolo_moneda_abr",rs.getString("moneda_abr"));
                     row.put("nombre_banco",rs.getString("nombre_banco"));
-                    
+                    row.put("riesgo_puesto_titulo",rs.getString("riesgo_puesto_titulo"));
+                    row.put("comprobante_cancelado",String.valueOf(rs.getBoolean("cancelado")).toLowerCase());
+                    row.put("regimen_contratacion_titulo",String.valueOf(rs.getString("regimen_contratacion_titulo")));
                     return row;
                 }
             }

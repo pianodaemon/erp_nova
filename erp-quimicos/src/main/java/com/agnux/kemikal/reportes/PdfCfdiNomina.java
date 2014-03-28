@@ -35,6 +35,7 @@ public final class PdfCfdiNomina {
     public static enum Proposito {FACTURA, NOTA_CREDITO, NOTA_CARGO};
     private String fileout;
     
+    private String comprobante_cancelado;
     private String tipo_facturacion;
     private String imagen;
     private String rutaImagenCBB;
@@ -73,10 +74,8 @@ public final class PdfCfdiNomina {
     private ArrayList<LinkedHashMap<String,String>> rows_incapacidades;
     private HashMap<String, String> encabezado;
     private HashMap<String, String> datos_nomina;
-    private HashMap<String, String> datosExtras;
     private String terminos;
     private String formaPago;
-    private String observaciones;
     private String fecha_pago;
     private String metodo_pago;
     private String no_cuenta;
@@ -116,9 +115,11 @@ public final class PdfCfdiNomina {
     private String nss;
     private String regpatronal;
     private String regimen;
+    private String regimen_contratacion_titulo;
     private String depto;
     private String puesto;
     private String riesgo_puesto;
+    private String riesgo_puesto_titulo;
     private String tipo_contrato;
     private String tipo_jornada;
     private String fecha_antiguedad;
@@ -147,10 +148,6 @@ public final class PdfCfdiNomina {
         this.setRows_incapacidades(incapacidades);
         this.setDatosCliente(datos_nomina);
         
-        
-        
-
-        
         this.setEmpresa_emisora( this.getGralDao().getRazonSocialEmpresaEmisora(id_empresa) );
         this.setEmisora_rfc(this.getGralDao().getRfcEmpresaEmisora(id_empresa));
         this.setEmisora_regimen_fiacal(this.getGralDao().getRegimenFiscalEmpresaEmisora(id_empresa));
@@ -167,19 +164,23 @@ public final class PdfCfdiNomina {
         
         this.setNo_certificado(this.getGralDao().getNoCertificadoEmpresaEmisora(id_empresa, id_sucursal));
         //this.setProposito(extras.get("proposito"));
+        
+        
+        if(datos_nomina.get("comprobante_cancelado").equals("true")){
+            this.setComprobante_cancelado("CANCELADO");
+        }else{
+            this.setComprobante_cancelado("");
+        }
+        
         this.setSerie_folio(datos_nomina.get("serie_folio"));
-
         this.setFacha_comprobante(datos_nomina.get("fecha_comprobante"));
         //this.setTerminos(datos_nomina.get("serie_folio"));
-        //this.setObservaciones(datos_nomina.get("comprobante_attr_depto"));
         //this.setFecha_pago(datos_nomina.get("comprobante_attr_fecha_fecha_pago"));
         this.setMetodo_pago(datos_nomina.get("comprobante_attr_metododepago"));
         this.setNo_cuenta(datos_nomina.get("comprobante_attr_numerocuenta"));
         this.setFormaPago(datos_nomina.get("comprobante_attr_formadepago"));
         this.setCondicionesPago(datos_nomina.get("comprobante_attr_condicionesdepago"));
         
-        
-
         this.setSello_digital_sat(datos_nomina.get("sello_sat"));
         this.setUuid(datos_nomina.get("uuid"));
         this.setFachaTimbrado(datos_nomina.get("fechaTimbre"));
@@ -222,9 +223,11 @@ public final class PdfCfdiNomina {
         this.setReceptor_regpatronal(datos_nomina.get("comprobante_attr_reg_patronal"));
         this.setReceptor_no_control(datos_nomina.get("numero_control"));            
         this.setReceptor_regimen(datos_nomina.get("comprobante_attr_regimen_contratacion"));
+        this.setRegimen_contratacion_titulo(datos_nomina.get("regimen_contratacion_titulo"));
         this.setReceptor_depto(datos_nomina.get("comprobante_attr_depto"));
         this.setReceptor_puesto(datos_nomina.get("comprobante_attr_puesto"));
         this.setReceptor_riesgo_puesto(datos_nomina.get("comprobante_attr_riesgo_puesto"));
+        this.setRiesgo_puesto_titulo(datos_nomina.get("riesgo_puesto_titulo"));
         this.setReceptor_tipo_contrato(datos_nomina.get("comprobante_attr_tipo_contrato"));
         this.setReceptor_tipo_jornada(datos_nomina.get("comprobante_attr_tipo_jornada"));
         this.setReceptor_fecha_antiguedad(datos_nomina.get("comprobante_attr_fecha_antiguedad"));
@@ -495,6 +498,7 @@ public final class PdfCfdiNomina {
         public PdfPTable addContent() {
             Font smallFont = new Font(Font.FontFamily.HELVETICA,7,Font.NORMAL,BaseColor.BLACK);
             Font largeBoldFont13 = new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.BLACK);
+            Font largeBoldFont13Red = new Font(Font.FontFamily.HELVETICA,13,Font.BOLD,BaseColor.RED);
             
             PdfPTable table = new PdfPTable(1);
             table.setKeepTogether(false);
@@ -524,11 +528,26 @@ public final class PdfCfdiNomina {
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             table.addCell(cell);
             
-            //celda vacia
-            cell = new PdfPCell(new Paragraph("",smallFont));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell = new PdfPCell(new Paragraph("",largeBoldFont13));
             cell.setBorder(0);
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setUseDescender(true);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            table.addCell(cell);
+            
+            //Celda vacia
+            cell = new PdfPCell(new Paragraph(getComprobante_cancelado(),largeBoldFont13Red));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_CENTER);
+            if(getComprobante_cancelado().equals("CANCELADO")){
+                cell.setBorderWidthLeft(1);
+                cell.setBorderWidthRight(1);
+                cell.setBorderWidthBottom(1);
+                cell.setBorderWidthTop(1);
+            }else{
+                cell.setBorder(0);
+            }
             table.addCell(cell);
 
             
@@ -1024,11 +1043,12 @@ public final class PdfCfdiNomina {
             cell.setBorder(0);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getReceptor_regimen(),smallFontNormalBlack6));
+            cell = new PdfPCell(new Paragraph(getReceptor_regimen() + " " +getRegimen_contratacion_titulo().toUpperCase(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             table.addCell(cell);
+            
             
             
             
@@ -1052,13 +1072,20 @@ public final class PdfCfdiNomina {
             cell.setBorder(0);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph("ANTIGUEDAD", smallFontBoldBlack6));
+            cell = new PdfPCell(new Paragraph("ANTIGÜEDAD", smallFontBoldBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getReceptor_fecha_antiguedad(),smallFontNormalBlack6));
+            String etiqueta_semanas="";
+            if(!getReceptor_fecha_antiguedad().equals("")){
+                if(Double.parseDouble(getReceptor_fecha_antiguedad())>0){
+                    etiqueta_semanas = "SEMANAS";
+                }
+            }
+            
+            cell = new PdfPCell(new Paragraph(getReceptor_fecha_antiguedad() + " " + etiqueta_semanas,smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
@@ -1093,7 +1120,7 @@ public final class PdfCfdiNomina {
             cell.setBorder(0);
             table.addCell(cell);
             
-            cell = new PdfPCell(new Paragraph(getReceptor_riesgo_puesto().toUpperCase(),smallFontNormalBlack6));
+            cell = new PdfPCell(new Paragraph(getReceptor_riesgo_puesto() + " " + getRiesgo_puesto_titulo().toUpperCase(),smallFontNormalBlack6));
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
@@ -2451,14 +2478,6 @@ public final class PdfCfdiNomina {
         this.datos_nomina = datos_nomina;
     }
     
-    public HashMap<String, String> getDatosExtras() {
-        return datosExtras;
-    }
-    
-    public void setDatosExtras(HashMap<String, String> datosExtras) {
-        this.datosExtras = datosExtras;
-    }
-    
     public String getEmisora_calle() {
         return emisora_calle;
     }
@@ -2701,14 +2720,6 @@ public final class PdfCfdiNomina {
     public void setNo_cuenta(String no_cuenta) {
         this.no_cuenta = no_cuenta;
     }
-
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
     
     public String getMontoImpuesto() {
         return montoImpuesto;
@@ -2879,6 +2890,15 @@ public final class PdfCfdiNomina {
     public void setReceptor_regimen(String regimen) {
         this.regimen = regimen;
     }
+    
+    public String getRegimen_contratacion_titulo() {
+        return regimen_contratacion_titulo;
+    }
+
+    public void setRegimen_contratacion_titulo(String regimen_contratacion_titulo) {
+        this.regimen_contratacion_titulo = regimen_contratacion_titulo;
+    }
+    
     //depto
     public String getReceptor_depto() {
         return depto;
@@ -2903,6 +2923,15 @@ public final class PdfCfdiNomina {
     public void setReceptor_riesgo_puesto(String riesgo_puesto) {
         this.riesgo_puesto = riesgo_puesto;
     }
+    
+    public String getRiesgo_puesto_titulo() {
+        return riesgo_puesto_titulo;
+    }
+
+    public void setRiesgo_puesto_titulo(String riesgo_puesto_titulo) {
+        this.riesgo_puesto_titulo = riesgo_puesto_titulo;
+    }
+    
     //
     public String getReceptor_tipo_contrato() {
         return tipo_contrato;
@@ -3106,6 +3135,15 @@ public final class PdfCfdiNomina {
 
     public void setNombre_banco(String nombre_banco) {
         this.nombre_banco = nombre_banco;
+    }
+    
+
+    public String getComprobante_cancelado() {
+        return comprobante_cancelado;
+    }
+
+    public void setComprobante_cancelado(String comprobante_cancelado) {
+        this.comprobante_cancelado = comprobante_cancelado;
     }
     
     static class HeaderFooter extends PdfPageEventHelper {
