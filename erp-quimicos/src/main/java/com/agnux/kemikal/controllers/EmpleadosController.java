@@ -482,6 +482,8 @@ public class EmpleadosController {
                 check_genera_nomina = "false";
             }
             
+            salario_base = StringHelper.removerComas(salario_base);
+            salario_integrado = StringHelper.removerComas(salario_integrado);
             
             String data_string =
             app_selected //1

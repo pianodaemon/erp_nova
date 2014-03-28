@@ -52,7 +52,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
         +"JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id=gral_usr.id "
         +"JOIN gral_suc ON gral_suc.id=gral_usr_suc.gral_suc_id "
         +"JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
-        +"WHERE gral_usr.username ILIKE '"+name+"';";
+        +"WHERE gral_usr.username ILIKE '"+name+"' AND gral_usr.enabled=true;";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
@@ -82,7 +82,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
         );
         
         //actualiza ultimo acceso
-        this.getJdbcTemplate().execute("UPDATE gral_usr SET ultimo_acceso=now() WHERE username = '"+name+"'");
+        this.getJdbcTemplate().execute("UPDATE gral_usr SET ultimo_acceso=now() WHERE username='"+name+"' AND enabled=true;");
         
         return hm; 
     }
@@ -112,7 +112,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
                 + "JOIN gral_usr_suc ON gral_usr_suc.gral_usr_id = gral_usr.id "
                 + "JOIN gral_suc ON gral_suc.id = gral_usr_suc.gral_suc_id "
                 + "JOIN gral_emp ON gral_emp.id=gral_suc.empresa_id "
-                + "WHERE gral_usr.id ="+id_user;
+                + "WHERE gral_usr.id ="+id_user +" AND gral_usr.enabled=true";
         
         //log.log(Level.INFO, "Ejecutando query de {0}", sql_to_query);
         
@@ -141,7 +141,7 @@ public class HomeSpringDao  implements HomeInterfaceDao  {
             }
         );
         //actualiza ultimo acceso
-        this.getJdbcTemplate().execute("UPDATE gral_usr SET ultimo_acceso=now() WHERE id="+id_user);
+        this.getJdbcTemplate().execute("UPDATE gral_usr SET ultimo_acceso=now() WHERE id="+id_user +" AND enabled=true;");
         return hm; 
     }
     
