@@ -72,6 +72,7 @@ public class GralDeduccionesController {
         infoConstruccionTabla.put("clave", "Clave:100");
         infoConstruccionTabla.put("deduccion", "Titulo:350");
         infoConstruccionTabla.put("estado", "Estado:100");
+        infoConstruccionTabla.put("tipo_deduccion", "Tipo Deducci&oacute;n:400");
         
         ModelAndView x = new ModelAndView("graldeducciones/startup", "title", "Cat&aacute;logo de Deducciones");
         x = x.addObject("layoutheader", resource.getLayoutheader());

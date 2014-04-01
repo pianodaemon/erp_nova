@@ -2623,8 +2623,10 @@ public class GralSpringDao implements GralInterfaceDao{
             +"nom_percep.id, "
             +"nom_percep.clave as clave, "
             +"nom_percep.titulo as percepcion, "
-            +"(CASE WHEN nom_percep.activo=TRUE THEN  'ACTIVO' ELSE 'INACTIVO' END) AS estado "
+            +"(CASE WHEN nom_percep.activo=TRUE THEN  'ACTIVO' ELSE 'INACTIVO' END) AS estado,"
+            +"(CASE WHEN nom_percep_tipo.clave IS NULL THEN '' ELSE nom_percep_tipo.clave END)||' '||nom_percep_tipo.titulo AS tipo_percepcion "
         +"FROM nom_percep "
+        +"LEFT JOIN nom_percep_tipo ON nom_percep_tipo.id=nom_percep.nom_percep_tipo_id "
         +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = nom_percep.id "
         +"WHERE nom_percep.borrado_logico=false "
         +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
@@ -2640,6 +2642,7 @@ public class GralSpringDao implements GralInterfaceDao{
                     row.put("clave",rs.getString("clave"));
                     row.put("percepcion",rs.getString("percepcion"));
                     row.put("estado",rs.getString("estado"));
+                    row.put("tipo_percepcion",rs.getString("tipo_percepcion"));
                     return row;
                 }
             }
@@ -2650,7 +2653,7 @@ public class GralSpringDao implements GralInterfaceDao{
     //Alimenta select de tipo de Tipo Percepciones
     @Override
     public ArrayList<HashMap<String, Object>> getPercepciones_Tipos(Integer id_empresa) {
-        String sql_to_query = "select id,titulo from nom_percep_tipo order by titulo";
+        String sql_to_query = "select id,(CASE WHEN clave IS NULL THEN '' ELSE clave END)||' '||titulo AS titulo from nom_percep_tipo order by titulo";
         ArrayList<HashMap<String, Object>> percepciones = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){
@@ -2700,9 +2703,11 @@ public class GralSpringDao implements GralInterfaceDao{
             +"nom_deduc.id, "
             +"nom_deduc.clave as clave, "
             +"nom_deduc.titulo as deduccion, "
-            +"(CASE WHEN nom_deduc.activo=TRUE THEN  'ACTIVO' ELSE 'INACTIVO' END) AS estado "
+            +"(CASE WHEN nom_deduc.activo=TRUE THEN  'ACTIVO' ELSE 'INACTIVO' END) AS estado,"
+            +"(CASE WHEN nom_deduc_tipo.clave IS NULL THEN '' ELSE nom_deduc_tipo.clave END)||' '||nom_deduc_tipo.titulo AS tipo_deduccion "
         +"FROM nom_deduc "
-        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id = nom_deduc.id "
+        +"LEFT JOIN nom_deduc_tipo ON nom_deduc_tipo.id=nom_deduc.nom_deduc_tipo_id "
+        +"JOIN ("+sql_busqueda+") AS sbt ON sbt.id=nom_deduc.id "
         +"WHERE nom_deduc.borrado_logico=false "
         +"order by "+orderBy+" "+asc+" limit ? OFFSET ? ";
 
@@ -2717,6 +2722,7 @@ public class GralSpringDao implements GralInterfaceDao{
                     row.put("clave",rs.getString("clave"));
                     row.put("deduccion",rs.getString("deduccion"));
                     row.put("estado",rs.getString("estado"));
+                    row.put("tipo_deduccion",rs.getString("tipo_deduccion"));
                     return row;
                 }
             }
@@ -2730,7 +2736,7 @@ public class GralSpringDao implements GralInterfaceDao{
     @Override
     public ArrayList<HashMap<String, Object>> getDeducciones_Tipos(Integer id_empresa) {
 
-        String sql_to_query = "select id,titulo from nom_deduc_tipo order by titulo";
+        String sql_to_query = "select id,(CASE WHEN clave IS NULL THEN '' ELSE clave END)||' '||titulo AS titulo from nom_deduc_tipo order by titulo";
         ArrayList<HashMap<String, Object>> percepciones = (ArrayList<HashMap<String, Object>>) this.jdbcTemplate.query(
             sql_to_query,
             new Object[]{}, new RowMapper(){

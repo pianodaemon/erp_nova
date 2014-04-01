@@ -73,6 +73,7 @@ public class GralPercepcionesController {
         infoConstruccionTabla.put("clave", "Clave:100");
         infoConstruccionTabla.put("percepcion", "Titulo:350");
         infoConstruccionTabla.put("estado", "Estado:100");
+        infoConstruccionTabla.put("tipo_percepcion", "Tipo Percepci&oacute;n:400");
         
         ModelAndView x = new ModelAndView("gralpercepciones/startup", "title", "Cat&aacute;logo de Percepciones");
         x = x.addObject("layoutheader", resource.getLayoutheader());
